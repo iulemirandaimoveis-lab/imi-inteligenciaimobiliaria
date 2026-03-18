@@ -53,12 +53,12 @@ export const T = {
     infoBg: 'var(--info-bg)',
     // Radius — DS3 scale
     radius: {
-        xs: 'var(--r-xs, 3px)',
-        sm: 'var(--r-sm, 6px)',
-        md: 'var(--r-md, 8px)',
-        lg: 'var(--r-lg, 12px)',
-        xl: 'var(--r-xl, 16px)',
-        '2xl': 'var(--r-2xl, 24px)',
+        xs: 'var(--r-xs, 4px)',
+        sm: 'var(--r-sm, 4px)',
+        md: 'var(--r-md, 4px)',
+        lg: 'var(--r-lg, 4px)',
+        xl: 'var(--r-xl, 4px)',
+        '2xl': 'var(--r-2xl, 4px)',
         full: '9999px',
     },
     // Shadow — DS3 depth scale
@@ -80,11 +80,14 @@ export const T = {
     dur: { micro: 'var(--dur-1)', fast: 'var(--dur-2)', normal: 'var(--dur-3)', slow: 'var(--dur-4)' },
     // Easing
     ease: { default: 'var(--ease)', spring: 'var(--ease-spring)', out: 'var(--ease-out)' },
-    // Font families
+    // Font families — DS3.1 semantic roles
     font: {
         serif: 'var(--font-serif)',
         sans: 'var(--font-sans)',
         mono: 'var(--font-mono)',
+        display: 'var(--font-display)',
+        ui: 'var(--font-ui)',
+        data: 'var(--font-data)',
     },
 }
 
@@ -96,7 +99,7 @@ export const ctaShadow = 'none'
 export const cardStyle: React.CSSProperties = {
     background: 'var(--bg-surface)',
     border: '1px solid var(--border-subtle)',
-    borderRadius: 'var(--r-xl, 16px)',
+    borderRadius: 'var(--r-xl, 4px)',
     boxShadow: 'var(--shadow-xs)',
 }
 
@@ -106,7 +109,7 @@ export const inputStyle: React.CSSProperties = {
     padding: '0 14px',
     background: 'var(--bg-surface)',
     border: '1.5px solid var(--border-default)',
-    borderRadius: 'var(--r-md, 8px)',
+    borderRadius: 'var(--r-md, 4px)',
     color: 'var(--text-primary)',
     fontFamily: 'var(--font-sans)',
     fontSize: 14,

@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import {
     LayoutDashboard, Building2, Users, X, Sun,
@@ -13,6 +13,7 @@ import {
     QrCode, Sparkles, Building, Brain, LineChart, Wand2, BarChart3, Shield,
     UserPlus, CalendarPlus, ClipboardList,
     BookMarked, Inbox, MoreHorizontal,
+    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell,
 } from 'lucide-react'
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
@@ -26,10 +27,10 @@ const BOTTOM_ITEMS = [
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
     { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--imi-gold-500)', iconBg: 'rgba(184,148,58,0.14)'  },
-    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#60A5FA',              iconBg: 'rgba(96,165,250,0.14)'  },
-    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: '#A78BFA',              iconBg: 'rgba(167,139,250,0.14)' },
+    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: 'var(--info)',              iconBg: 'rgba(96,165,250,0.14)'  },
+    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--imi-gold-400)',              iconBg: 'rgba(167,139,250,0.14)' },
     { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus, color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },
-    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: '#34D399',              iconBg: 'rgba(52,211,153,0.14)'  },
+    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: 'var(--success)',              iconBg: 'rgba(52,211,153,0.14)'  },
     { label: 'Novo Contrato',  subtitle: 'Registrar contrato',       href: '/backoffice/contratos/novo',  icon: FileSignature,color: '#F87171',              iconBg: 'rgba(248,113,113,0.14)' },
 ]
 
@@ -49,7 +50,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Captação', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)',
+        label: 'Captação', color: 'var(--warning)', bg: 'rgba(232,168,124,0.12)',
         items: [
             { name: 'Leads',         href: '/backoffice/leads',            icon: Users,         badge: 'NEW'   },
             { name: 'Inbox IA',      href: '/backoffice/leads/inbox',      icon: Inbox },
@@ -73,21 +74,25 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         label: 'Portfólio', color: '#D4A929', bg: 'rgba(212,169,41,0.12)',
         items: [
             { name: 'Imóveis',      href: '/backoffice/imoveis',            icon: Building2,  badge: 'NEW'   },
+            { name: 'Explorer',     href: '/backoffice/imoveis/explorer',   icon: Search,     badge: 'NEW'   },
             { name: 'Construtoras', href: '/backoffice/construtoras',       icon: Building,   badge: 'NEW'   },
             { name: 'Projetos',     href: '/backoffice/projetos',           icon: FolderOpen, badge: 'NEW'   },
             { name: 'Publicações',  href: '/backoffice/conteudos',          icon: FileText   },
             { name: 'Criador IA',   href: '/backoffice/conteudo/criador',   icon: Wand2      },
             { name: 'eBook IA',     href: '/backoffice/conteudo/ebook',     icon: BookMarked },
+            { name: 'Vídeo IA',     href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },
             { name: 'Automação',    href: '/backoffice/conteudo/automacao', icon: Zap        },
         ],
     },
     {
-        label: 'Inteligência', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)',
+        label: 'Inteligência', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)',
         items: [
             { name: 'eBooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen  },
-            { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack, badge: 'NEW' },
+            { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack,   badge: 'NEW' },
             { name: 'Indicadores', href: '/backoffice/inteligencia/indicadores',  icon: LineChart },
-            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain,     badge: 'NEW' },
+            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain,       badge: 'NEW' },
+            { name: 'Widgets',     href: '/backoffice/inteligencia/widgets',      icon: LayoutGrid,  badge: 'NEW' },
+            { name: 'Agentes IA',  href: '/backoffice/ia/agentes',               icon: Bot,         badge: 'NEW' },
         ],
     },
     {
@@ -114,7 +119,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Crescimento', color: '#A78BFA', bg: 'rgba(167,139,250,0.12)',
+        label: 'Crescimento', color: 'var(--imi-gold-400)', bg: 'rgba(167,139,250,0.12)',
         items: [
             { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap,       badge: 'BREVE' },
             { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen,  badge: 'NEW'   },
@@ -124,14 +129,16 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Configurações', color: '#94A3B8', bg: 'rgba(148,163,184,0.10)',
+        label: 'Configurações', color: 'var(--text-tertiary)', bg: 'rgba(148,163,184,0.10)',
         items: [
-            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building,  badge: 'BREVE' },
-            { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,     badge: 'NEW'   },
+            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building,    badge: 'BREVE' },
+            { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,       badge: 'NEW'   },
+            { name: 'Usuários',     href: '/backoffice/settings/usuarios',   icon: UserCog,     badge: 'NEW'   },
             { name: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
             { name: 'Settings',     href: '/backoffice/settings',            icon: Settings  },
             { name: 'Corretores',   href: '/backoffice/settings/corretores', icon: Users     },
             { name: 'Permissões',   href: '/backoffice/settings/permissoes', icon: Shield    },
+            { name: 'Logs',         href: '/backoffice/settings/logs',       icon: ScrollText },
             { name: 'Config. IA',   href: '/backoffice/settings/ia',         icon: Brain     },
         ],
     },
@@ -143,20 +150,21 @@ function TileBadge({ badge }: { badge: string }) {
     return (
         <span style={{
             position: 'absolute',
-            top: 6,
-            right: 6,
-            fontSize: 9,
-            fontWeight: isNew ? 700 : 600,
-            padding: '1px 5px',
-            borderRadius: 999,
-            letterSpacing: isNew ? '0.06em' : '0.05em',
-            background: isNew ? 'rgba(45,143,92,0.15)' : 'var(--bg-muted)',
-            color: isNew ? '#2D8F5C' : 'var(--text-tertiary)',
-            border: isNew ? '1px solid rgba(45,143,92,0.2)' : '1px solid var(--border-subtle)',
-            lineHeight: 1.4,
+            top: 2,
+            right: isNew ? 2 : -2,
+            fontSize: isNew ? 8 : 7,
+            fontWeight: 700,
+            padding: isNew ? '2px 5px' : '2px 4px',
+            borderRadius: 4,
+            letterSpacing: '0.05em',
+            background: isNew ? '#2D8F5C' : 'rgba(148,163,184,0.20)',
+            color: isNew ? '#fff' : 'var(--text-tertiary)',
+            lineHeight: 1.2,
             pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            boxShadow: isNew ? '0 1px 4px rgba(45,143,92,0.3)' : 'none',
         }}>
-            {isNew ? 'NEW' : 'EM BREVE'}
+            {isNew ? 'NEW' : 'BREVE'}
         </span>
     )
 }
@@ -166,24 +174,24 @@ function NetflixItemCard({
     name, icon: Icon, color, bg, active, badge,
 }: { name: string; icon: React.ElementType; color: string; bg: string; active: boolean; badge?: string }) {
     return (
-        <div className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[64px]" style={{ position: 'relative' }}>
+        <div className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[68px]" style={{ position: 'relative' }}>
             <div
-                className="w-[48px] h-[48px] flex items-center justify-center transition-all duration-150"
+                className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200"
                 style={{
-                    borderRadius: 'var(--r-lg)',
+                    borderRadius: 4,
                     background: active ? bg : 'var(--bg-elevated)',
-                    border: active ? `1px solid ${color}40` : '1px solid var(--border-subtle)',
-                    boxShadow: active ? `0 2px 8px ${color}28` : 'none',
+                    border: active ? `1.5px solid ${color}50` : '1px solid var(--border-subtle)',
+                    boxShadow: active ? `0 4px 14px ${color}30` : '0 1px 3px rgba(0,0,0,0.06)',
                     position: 'relative',
                 }}
             >
-                <Icon size={19} style={{ color: active ? color : 'var(--text-tertiary)' }} />
+                <Icon size={20} style={{ color: active ? color : 'var(--text-secondary)' }} />
             </div>
             {badge && <TileBadge badge={badge} />}
             <span
-                className="text-[9px] font-semibold text-center leading-tight w-full"
+                className="text-[10px] font-semibold text-center leading-tight w-full"
                 style={{
-                    color: active ? color : 'var(--text-tertiary)',
+                    color: active ? color : 'var(--text-secondary)',
                     fontFamily: 'var(--font-sans)',
                 }}
             >
@@ -196,18 +204,19 @@ function NetflixItemCard({
 // ── Netflix row label ──────────────────────────────────────────────
 function NetflixRowLabel({ color, label }: { color: string; label: string }) {
     return (
-        <div className="flex items-center gap-2.5 px-4 mb-2">
-            {/* DS3 brandkit 4px indicator */}
+        <div className="flex items-center gap-2.5 px-4 mb-2.5">
+            {/* Colored indicator */}
             <div
                 className="flex-shrink-0"
-                style={{ width: 4, height: 14, borderRadius: 2, background: color }}
+                style={{ width: 3, height: 16, borderRadius: 4, background: color, boxShadow: `0 0 8px ${color}40` }}
             />
             <span
-                className="text-[10px] font-bold tracking-[0.12em] uppercase"
-                style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}
+                className="text-[11px] font-bold tracking-[0.10em] uppercase"
+                style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-sans)' }}
             >
                 {label}
             </span>
+            <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
         </div>
     )
 }
@@ -217,15 +226,15 @@ function NetflixRow({ children }: { children: React.ReactNode }) {
     return (
         <div className="relative">
             <div
-                className="flex gap-2 overflow-x-auto px-4 pb-2"
+                className="flex gap-2.5 overflow-x-auto px-4 pb-2"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
             >
                 {children}
             </div>
-            {/* Right fade hint */}
+            {/* Right fade hint — matches sheet bg */}
             <div
-                className="absolute right-0 top-0 bottom-0 w-6 pointer-events-none"
-                style={{ background: 'linear-gradient(to left, var(--bg-base) 20%, transparent)' }}
+                className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none"
+                style={{ background: 'linear-gradient(to left, var(--bg-surface) 10%, transparent)' }}
             />
         </div>
     )
@@ -283,7 +292,7 @@ export function MobileBottomNav() {
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
                         border: '1px solid var(--border-default)',
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
+                        boxShadow: 'var(--shadow-lg)',
                     }}
                 >
                     <div className="flex items-center h-16 px-1">
@@ -353,7 +362,7 @@ export function MobileBottomNav() {
                                 style={{
                                     width: 44,
                                     height: 44,
-                                    borderRadius: 14,
+                                    borderRadius: 4,
                                     background: open ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
                                     border: `1px solid ${open ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
                                     transition: 'background 0.2s, border-color 0.2s',
@@ -488,15 +497,17 @@ export function MobileBottomNav() {
                             transition={{ type: 'spring', stiffness: 420, damping: 42 }}
                             className="lg:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col"
                             style={{
-                                borderRadius: 'var(--r-xl) var(--r-xl) 0 0',
+                                borderRadius: '4px 4px 0 0',
                                 background: 'var(--bg-surface)',
                                 borderTop: '1px solid var(--border-default)',
                                 borderLeft: '1px solid var(--border-default)',
                                 borderRight: '1px solid var(--border-default)',
-                                boxShadow: '0 -8px 40px rgba(0,0,0,0.25)',
-                                maxHeight: 'min(94dvh, 94vh)',
-                                height: 'min(94dvh, 94vh)',
+                                boxShadow: '0 -8px 40px rgba(0,0,0,0.30)',
+                                maxHeight: 'min(88dvh, 88vh)',
+                                height: 'min(88dvh, 88vh)',
                                 overflow: 'hidden',
+                                maxWidth: '100vw',
+                                width: '100%',
                             }}
                         >
                             {/* ── Header with drag handle + IMI brand + close ── */}
@@ -527,7 +538,7 @@ export function MobileBottomNav() {
                                         }}>IMI</span>
                                         <div style={{ width: 1, height: 13, background: 'var(--border-strong)', flexShrink: 0 }} />
                                         <span style={{
-                                            fontSize: 7,
+                                            fontSize: 11,
                                             fontWeight: 700,
                                             color: 'var(--text-gold)',
                                             letterSpacing: '0.12em',
@@ -538,40 +549,93 @@ export function MobileBottomNav() {
                                             MENU<br />PRINCIPAL
                                         </span>
                                     </div>
-                                    <button
-                                        onClick={() => setOpen(false)}
-                                        className="flex items-center justify-center"
-                                        style={{
-                                            width: 32,
-                                            height: 32,
-                                            borderRadius: 'var(--r-md)',
-                                            background: 'var(--bg-elevated)',
-                                            border: '1px solid var(--border-subtle)',
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        <X size={14} style={{ color: 'var(--text-tertiary)' }} />
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        {/* Notification bell */}
+                                        <Link
+                                            href="/backoffice/notificacoes"
+                                            onClick={() => setOpen(false)}
+                                            className="relative flex items-center justify-center"
+                                            style={{
+                                                width: 32,
+                                                height: 32,
+                                                borderRadius: 'var(--r-md)',
+                                                background: 'var(--bg-elevated)',
+                                                border: '1px solid var(--border-subtle)',
+                                            }}
+                                        >
+                                            <Bell size={14} style={{ color: 'var(--text-tertiary)' }} />
+                                            <span
+                                                className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full"
+                                                style={{ background: 'var(--imi-gold-500)', border: '2px solid var(--bg-surface)' }}
+                                            />
+                                        </Link>
+                                        <button
+                                            onClick={() => setOpen(false)}
+                                            className="flex items-center justify-center"
+                                            style={{
+                                                width: 32,
+                                                height: 32,
+                                                borderRadius: 'var(--r-md)',
+                                                background: 'var(--bg-elevated)',
+                                                border: '1px solid var(--border-subtle)',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            <X size={14} style={{ color: 'var(--text-tertiary)' }} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* ── Netflix scrollable rows ── */}
                             <div
                                 className="overflow-y-auto flex-1"
-                                style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom))' }}
+                                style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom))', overflowX: 'hidden' }}
                             >
+                                {/* ── Top Widget — Quick Stats ── */}
+                                <motion.div
+                                    className="px-4 pt-4 pb-2"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.02, duration: 0.25 }}
+                                >
+                                    <div className="flex gap-2">
+                                        {[
+                                            { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)' },
+                                            { label: 'Imóveis', value: '—', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
+                                            { label: 'Leads', value: '—', color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
+                                        ].map((w, i) => (
+                                            <div
+                                                key={w.label}
+                                                className="flex-1 rounded-xl px-3 py-2.5"
+                                                style={{
+                                                    background: w.bg,
+                                                    border: `1px solid ${w.color}20`,
+                                                }}
+                                            >
+                                                <p className="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--text-tertiary)' }}>
+                                                    {w.label}
+                                                </p>
+                                                <p className="text-sm font-bold" style={{ color: w.color }}>
+                                                    {w.value}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+
                                 {/* Quick Create — premium 2-column launcher */}
                                 <motion.div
-                                    className="pt-4 px-4"
+                                    className="pt-3 px-4"
                                     initial={{ opacity: 0, y: 12 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.05, duration: 0.28 }}
                                 >
                                     {/* Section label */}
                                     <div className="flex items-center gap-2.5 mb-3">
-                                        <div style={{ width: 4, height: 12, borderRadius: 2, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                                        <div style={{ width: 4, height: 12, borderRadius: 4, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
                                         <span style={{
-                                            fontSize: '9px', fontWeight: 700,
+                                            fontSize: '11px', fontWeight: 700,
                                             color: 'var(--text-tertiary)',
                                             letterSpacing: '0.14em',
                                             textTransform: 'uppercase',
@@ -622,7 +686,7 @@ export function MobileBottomNav() {
                                                             className="flex-shrink-0 flex items-center justify-center"
                                                             style={{
                                                                 width: 36, height: 36,
-                                                                borderRadius: 8,
+                                                                borderRadius: 4,
                                                                 background: item.iconBg,
                                                                 border: `1px solid ${item.color}28`,
                                                             }}

@@ -51,7 +51,7 @@ function ShimmerBlock({ style }: { style?: React.CSSProperties }) {
         background: 'linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-hover) 50%, var(--bg-muted) 75%)',
         backgroundSize: '200% 100%',
         animation: 'cs-shimmer 1.6s ease-in-out infinite',
-        borderRadius: 'var(--r-md, 8px)',
+        borderRadius: 'var(--r-md, 4px)',
         ...style,
       }}
     />
@@ -62,13 +62,13 @@ function LoadingContent({ height }: { height: number }) {
   return (
     <div style={{ padding: '20px 20px 20px' }} aria-hidden="true">
       {/* Label placeholder */}
-      <ShimmerBlock style={{ height: 10, width: 80, marginBottom: 10, borderRadius: 'var(--r-xs, 3px)' }} />
+      <ShimmerBlock style={{ height: 10, width: 80, marginBottom: 10, borderRadius: 'var(--r-xs, 4px)' }} />
       {/* Title placeholder */}
-      <ShimmerBlock style={{ height: 18, width: 160, marginBottom: 8, borderRadius: 'var(--r-sm, 6px)' }} />
+      <ShimmerBlock style={{ height: 18, width: 160, marginBottom: 8, borderRadius: 'var(--r-sm, 4px)' }} />
       {/* Value placeholder */}
-      <ShimmerBlock style={{ height: 32, width: 110, marginBottom: 20, borderRadius: 'var(--r-sm, 6px)' }} />
+      <ShimmerBlock style={{ height: 32, width: 110, marginBottom: 20, borderRadius: 'var(--r-sm, 4px)' }} />
       {/* Chart area placeholder */}
-      <ShimmerBlock style={{ height, borderRadius: 'var(--r-lg, 12px)' }} />
+      <ShimmerBlock style={{ height, borderRadius: 'var(--r-lg, 4px)' }} />
     </div>
   )
 }
@@ -78,7 +78,7 @@ function LoadingContent({ height }: { height: number }) {
 export const chartTooltipStyle: React.CSSProperties = {
   background: 'var(--bg-elevated)',
   border: '1px solid var(--border-default)',
-  borderRadius: 'var(--r-lg, 12px)',
+  borderRadius: 'var(--r-lg, 4px)',
   boxShadow: 'var(--shadow-md)',
   fontFamily: 'var(--font-mono)',
   fontSize: 11,
@@ -93,7 +93,7 @@ export const chartCursorStyle = { stroke: 'var(--border-subtle)', strokeWidth: 1
 export const chartAxisTickStyle: React.SVGProps<SVGTextElement> = {
   fill: 'var(--text-tertiary)',
   fontFamily: 'var(--font-mono)',
-  fontSize: 10,
+  fontSize: 11,
 }
 
 /* ── Main component ───────────────────────────────────────── */
@@ -119,7 +119,7 @@ export function ChartShell({
         style={{
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--r-xl, 16px)',
+          borderRadius: 'var(--r-xl, 4px)',
           boxShadow: 'var(--shadow-xs)',
           overflow: 'hidden',
           ...style,
@@ -147,7 +147,7 @@ export function ChartShell({
                     <div
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 500,
                         color: 'var(--text-tertiary)',
                         textTransform: 'uppercase',
@@ -194,7 +194,7 @@ export function ChartShell({
 
                   {/* Primary metric value */}
                   {value !== undefined && (
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
                       <span
                         style={{
                           fontFamily: 'var(--font-serif)',
@@ -215,7 +215,7 @@ export function ChartShell({
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: 3,
+                            gap: 4,
                             padding: '2px 8px',
                             borderRadius: 'var(--r-full, 9999px)',
                             fontFamily: 'var(--font-mono)',
@@ -269,7 +269,7 @@ export function ChartShell({
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 6,
+                      gap: 8,
                     }}
                   >
                     {/* Color dot */}
@@ -285,7 +285,7 @@ export function ChartShell({
                     <span
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: 10,
+                        fontSize: 11,
                         color: 'var(--text-tertiary)',
                         textTransform: 'uppercase',
                         letterSpacing: '0.06em',
@@ -297,7 +297,7 @@ export function ChartShell({
                       <span
                         style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 600,
                           color: 'var(--text-secondary)',
                         }}

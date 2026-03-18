@@ -124,7 +124,7 @@ export default function NovoProjetoPage() {
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex-1 justify-center"
                                 style={{
                                     background: currentStep === i ? T.elevated : 'transparent',
-                                    color: currentStep === i ? T.text : i < currentStep ? '#10B981' : T.textMuted,
+                                    color: currentStep === i ? T.text : i < currentStep ? 'var(--success)' : T.textMuted,
                                     border: currentStep === i ? `1px solid ${T.border}` : '1px solid transparent',
                                 }}
                             >

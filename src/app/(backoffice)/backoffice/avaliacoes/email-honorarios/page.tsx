@@ -215,15 +215,15 @@ export default function EmailHonorariosPage() {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
   const ENTITY_BADGE: Record<string, { bg: string; color: string }> = {
-    tribunal: { bg: 'rgba(139,92,246,0.12)', color: '#A78BFA' },
+    tribunal: { bg: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)' },
     banco: { bg: 'rgba(72,101,129,0.12)', color: 'var(--bo-accent)' },
     particular: { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' },
-    escritorio: { bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
+    escritorio: { bg: 'rgba(245,158,11,0.12)', color: 'var(--warning)' },
     outro: { bg: 'rgba(255,255,255,0.05)', color: T.textMuted },
   }
   const URGENCIA_BADGE: Record<string, { bg: string; color: string }> = {
     baixa: { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' },
-    media: { bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
+    media: { bg: 'rgba(245,158,11,0.12)', color: 'var(--warning)' },
     alta: { bg: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)' },
   }
 
@@ -353,7 +353,7 @@ export default function EmailHonorariosPage() {
               {/* Honorários */}
               <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)' }}>
                 <div className="px-4 py-2.5" style={{ background: 'rgba(245,158,11,0.08)', borderBottom: '1px solid rgba(245,158,11,0.20)' }}>
-                  <p className="text-sm font-semibold flex items-center gap-2" style={{ color: '#F59E0B' }}>
+                  <p className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--warning)' }}>
                     <DollarSign size={14} /> Proposta de Honorários (IBAPE)
                   </p>
                 </div>

@@ -29,7 +29,7 @@ const STEPS = [
 const PLATAFORMAS = [
     { id: 'sem_assinatura', label: 'Sem assinatura digital', sub: 'Gera e baixa — assine fisicamente ou via outro meio', icon: FileText, cor: '#4E5669', gratuito: true, env: '' },
     { id: 'clicksign', label: 'ClickSign', sub: 'Juridicamente válido BR · WhatsApp integrado · ~R$99/mês', icon: FileSignature, cor: 'var(--bo-accent)', gratuito: false, env: 'CLICKSIGN_ACCESS_TOKEN' },
-    { id: 'docusign', label: 'DocuSign', sub: 'Aceito globalmente · maior plataforma de assinatura do mundo', icon: Shield, cor: '#7B9EC4', gratuito: false, env: 'DOCUSIGN_ACCESS_TOKEN' },
+    { id: 'docusign', label: 'DocuSign', sub: 'Aceito globalmente · maior plataforma de assinatura do mundo', icon: Shield, cor: 'var(--info)', gratuito: false, env: 'DOCUSIGN_ACCESS_TOKEN' },
     { id: 'govbr', label: 'Gov.br Assinatura', sub: 'Gratuito · válido no Brasil · exige CPF autenticado via Gov.br', icon: Lock, cor: 'var(--bo-success)', gratuito: true, env: 'GOVBR_CLIENT_ID' },
 ]
 const SEC_LABELS: Record<string, string> = {
@@ -38,7 +38,7 @@ const SEC_LABELS: Record<string, string> = {
 }
 const st = (extra?: any): React.CSSProperties => ({
     width: '100%', background: T.elevated, border: `1px solid ${T.border}`,
-    borderRadius: 12, color: T.text, fontSize: 13, padding: '10px 14px', outline: 'none', ...extra
+    borderRadius: 4, color: T.text, fontSize: 13, padding: '10px 14px', outline: 'none', ...extra
 })
 const onF = (e: any) => (e.target.style.border = `1px solid ${T.borderGold}`)
 const onB = (e: any) => (e.target.style.border = `1px solid ${T.border}`)
@@ -243,7 +243,7 @@ function NovoContratoInner() {
                                                 <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
                                                     <p className="text-xs font-semibold" style={{ color: sel ? T.accent : T.text }}>{m.nome}</p>
                                                     {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bo-hover)', color: T.accent }}>★</span>}
-                                                    {m.internacional && <span className="text-[9px]" style={{ color: '#E8A87C' }}>🌐</span>}
+                                                    {m.internacional && <span className="text-[9px]" style={{ color: 'var(--warning)' }}>🌐</span>}
                                                 </div>
                                                 <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>
                                                 <div className="flex gap-1 mt-1.5">{m.idiomas.map((l: string) => <span key={l} className="text-[10px]">{(IDIOMAS_LABEL as any)[l]?.flag}</span>)}</div>

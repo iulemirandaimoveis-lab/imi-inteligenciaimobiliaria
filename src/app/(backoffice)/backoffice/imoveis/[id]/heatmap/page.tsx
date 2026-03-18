@@ -40,7 +40,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
 
     function retentionColor(retention: number): string {
         if (retention >= 70) return '#6BB87B'
-        if (retention >= 40) return '#F59E0B'
+        if (retention >= 40) return 'var(--warning)'
         return '#F87171'
     }
 
@@ -73,10 +73,10 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                 flexShrink: 0,
                                 height: 32, minWidth: 48,
                                 padding: '0 14px',
-                                borderRadius: 999,
+                                borderRadius: 4,
                                 background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
-                                color: isActive ? '#0B1120' : '#9FAAB8',
+                                color: isActive ? T.text : 'var(--text-tertiary)',
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
                                 fontSize: 12, fontWeight: isActive ? 700 : 500,
                                 cursor: 'pointer',
@@ -98,29 +98,29 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                     <div style={{
                         background: 'var(--bg-elevated)',
                         border: '1px solid rgba(184,148,58,0.12)',
-                        borderRadius: 12,
+                        borderRadius: 4,
                         padding: '12px 14px',
                         marginBottom: 12,
                     }}>
                         <div style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 9, fontWeight: 700,
+                            fontSize: 11, fontWeight: 700,
                             letterSpacing: '2px', textTransform: 'uppercase',
-                            color: '#5C6B7D', marginBottom: 3,
+                            color: 'var(--text-secondary)', marginBottom: 3,
                         }}>
                             LISTING HEATMAP
                         </div>
                         <div style={{
                             fontFamily: 'var(--font-playfair, serif)',
                             fontSize: 15, fontWeight: 600,
-                            color: '#EBE7E0',
+                            color: 'var(--imi-cream)',
                         }}>
                             {development.name || '—'}
                         </div>
                         {development.neighborhood && (
                             <div style={{
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                                fontSize: 11, color: '#5C6B7D', marginTop: 2,
+                                fontSize: 11, color: 'var(--text-secondary)', marginTop: 2,
                             }}>
                                 {development.neighborhood}, {development.city}
                             </div>
@@ -139,8 +139,8 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                 style={{
                                     background: 'var(--bg-elevated)',
                                     border: '1px solid rgba(184,148,58,0.12)',
-                                    borderRadius: 12,
-                                    padding: '14px 14px',
+                                    borderRadius: 4,
+                                    padding: '16px',
                                 }}
                             >
                                 {/* Header row */}
@@ -148,7 +148,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                         <div style={{
                                             width: 32, height: 32,
-                                            borderRadius: 8,
+                                            borderRadius: 4,
                                             background: `${color}18`,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             flexShrink: 0,
@@ -159,13 +159,13 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                             <div style={{
                                                 fontFamily: 'var(--font-playfair, serif)',
                                                 fontSize: 14, fontWeight: 600,
-                                                color: '#EBE7E0',
+                                                color: 'var(--imi-cream)',
                                             }}>
                                                 {section.label}
                                             </div>
                                             <div style={{
                                                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                                                fontSize: 10, color: '#5C6B7D', marginTop: 1,
+                                                fontSize: 11, color: 'var(--text-secondary)', marginTop: 1,
                                             }}>
                                                 {section.detail}
                                             </div>
@@ -209,23 +209,23 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                     marginTop: 14,
                     background: 'rgba(251,191,36,0.06)',
                     border: '1px solid rgba(251,191,36,0.18)',
-                    borderRadius: 12,
+                    borderRadius: 4,
                     padding: '12px 14px',
                     display: 'flex', gap: 10,
                 }}>
-                    <Zap size={14} style={{ color: '#F59E0B', flexShrink: 0, marginTop: 1 }} />
+                    <Zap size={14} style={{ color: 'var(--warning)', flexShrink: 0, marginTop: 1 }} />
                     <div>
                         <div style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 9, fontWeight: 700,
+                            fontSize: 11, fontWeight: 700,
                             letterSpacing: '2px', textTransform: 'uppercase',
-                            color: '#F59E0B', marginBottom: 4,
+                            color: 'var(--warning)', marginBottom: 4,
                         }}>
                             Insight IA
                         </div>
                         <div style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 12, color: '#9FAAB8', lineHeight: 1.5,
+                            fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.5,
                         }}>
                             Usuários saem na seção &quot;Preços&quot;. Considere adicionar labels &quot;Financiamento Facilitado&quot; próximo para reter interesse.
                         </div>
@@ -256,7 +256,7 @@ export default function ImovelHeatmapPage() {
         since.setDate(since.getDate() - daysAgo)
 
         Promise.all([
-            supabase.from('developments').select('id, name, neighborhood, city, images, status_commercial').eq('id', id).single(),
+            supabase.from('developments').select('*').eq('id', id).single(),
             supabase.from('page_views').select('*').eq('development_id', id).gte('created_at', since.toISOString()).order('created_at', { ascending: false }).limit(500),
         ]).then(([{ data: dev }, { data: pv }]) => {
             setDevelopment(dev)
@@ -310,10 +310,10 @@ export default function ImovelHeatmapPage() {
     if (loading) {
         return (
             <div className="max-w-3xl mx-auto pb-24 space-y-4 animate-pulse">
-                <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 10, width: '40%', opacity: 0.5 }} />
-                <div style={{ height: 160, background: 'var(--bo-card)', borderRadius: 20, opacity: 0.4 }} />
+                <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 4, width: '40%', opacity: 0.5 }} />
+                <div style={{ height: 160, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.4 }} />
                 {[1, 2, 3, 4].map(i => (
-                    <div key={i} style={{ height: 56, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 }} />
+                    <div key={i} style={{ height: 56, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.3 }} />
                 ))}
             </div>
         )
@@ -580,7 +580,7 @@ export default function ImovelHeatmapPage() {
 
                 <button
                     className="w-full mt-5 h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99]"
-                    style={{ background: '#3B82F6', color: '#fff' }}
+                    style={{ background: 'var(--info)', color: 'var(--text-inverse)' }}
                 >
                     <Share2 size={14} /> Compartilhar Analytics
                 </button>

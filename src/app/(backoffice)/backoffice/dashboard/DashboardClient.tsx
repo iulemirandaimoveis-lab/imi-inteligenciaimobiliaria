@@ -16,15 +16,16 @@ import { AvatarGroup as OldAvatarGroup, type BrokerAvatar } from '@/components/u
 import { AvatarGroup, AvatarGroupTooltip } from '@/components/animate-ui/components/animate/avatar-group'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { staggerContainer, cardVariants } from '@/lib/motion-config'
 
 // ── Avatar helpers ─────────────────────────────────────────────
 function getInitials(name: string) {
     return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
 }
 const PALETTES = [
-    ['#60A5FA','rgba(96,165,250,0.20)'],['var(--success)','rgba(74,222,128,0.18)'],
-    ['#F472B6','rgba(244,114,182,0.18)'],['#A78BFA','rgba(167,139,250,0.18)'],
-    ['#34D399','rgba(52,211,153,0.18)'],['var(--warning)','rgba(251,191,36,0.16)'],
+    ['var(--info)','rgba(96,165,250,0.20)'],['var(--success)','rgba(74,222,128,0.18)'],
+    ['var(--accent-pink, #F472B6)','rgba(244,114,182,0.18)'],['var(--accent-purple, #A78BFA)','rgba(167,139,250,0.18)'],
+    ['var(--success)','rgba(52,211,153,0.18)'],['var(--warning)','rgba(251,191,36,0.16)'],
 ]
 function getPalette(name: string) {
     let h = 0
@@ -98,11 +99,11 @@ const fmtCompact = (v: number) => {
 
 // ── Widget 1: Taxa de Conversão por Fonte ─────────────────────
 const CONVERSION_DATA = [
-    { fonte: 'Referral',  pct: 42, color: '#34D399' },
-    { fonte: 'WhatsApp',  pct: 31, color: '#60A5FA' },
-    { fonte: 'Instagram', pct: 24, color: '#A78BFA' },
-    { fonte: 'Facebook',  pct: 18, color: '#FB923C' },
-    { fonte: 'Orgânico',  pct: 12, color: '#F472B6' },
+    { fonte: 'Referral',  pct: 42, color: 'var(--success)' },
+    { fonte: 'WhatsApp',  pct: 31, color: 'var(--info)' },
+    { fonte: 'Instagram', pct: 24, color: 'var(--accent-purple, #A78BFA)' },
+    { fonte: 'Facebook',  pct: 18, color: 'var(--warning)' },
+    { fonte: 'Orgânico',  pct: 12, color: 'var(--accent-pink, #F472B6)' },
 ]
 
 function ConversaoFonteWidget() {
@@ -115,13 +116,13 @@ function ConversaoFonteWidget() {
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                padding: '18px',
+                boxShadow: 'var(--shadow-xs)',
+                padding: '20px',
             }}
         >
             <div className="flex items-center gap-2 mb-4">
-                <TrendingUp size={13} style={{ color: '#34D399' }} />
-                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                <TrendingUp size={13} style={{ color: 'var(--success)' }} />
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Conversão por Fonte
                 </span>
             </div>
@@ -136,7 +137,7 @@ function ConversaoFonteWidget() {
                                 {item.pct}%
                             </span>
                         </div>
-                        <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'var(--bg-elevated)' }}>
+                        <div className="h-[4px] rounded-full overflow-hidden" style={{ background: 'var(--bg-elevated)' }}>
                             <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${item.pct}%` }}
@@ -194,19 +195,19 @@ function ProximosCompromissosWidget() {
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                boxShadow: 'var(--shadow-xs)',
             }}
         >
             <div className="flex items-center justify-between px-4 py-3"
                 style={{ borderBottom: '1px solid var(--border-default)' }}>
                 <div className="flex items-center gap-2">
-                    <CalendarDays size={13} style={{ color: '#60A5FA' }} />
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                    <CalendarDays size={13} style={{ color: 'var(--info)' }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Próximos Compromissos
                     </span>
                 </div>
                 <Link href="/backoffice/agenda">
-                    <span className="text-[10px] font-semibold flex items-center gap-1"
+                    <span className="text-[11px] font-semibold flex items-center gap-1"
                         style={{ color: 'var(--imi-gold-500)' }}>
                         Ver agenda <ArrowUpRight size={10} />
                     </span>
@@ -229,14 +230,14 @@ function ProximosCompromissosWidget() {
                         >
                             <div className="flex-shrink-0 flex flex-col items-center justify-center"
                                 style={{
-                                    width: 36, height: 36, borderRadius: 8,
-                                    background: 'rgba(96,165,250,0.10)',
-                                    border: '1px solid rgba(96,165,250,0.20)',
+                                    width: 36, height: 36, borderRadius: 4,
+                                    background: 'var(--info-bg, rgba(96,165,250,0.10))',
+                                    border: '1px solid var(--info-border, rgba(96,165,250,0.20))',
                                 }}>
-                                <span className="text-[11px] font-bold tabular-nums leading-none" style={{ color: '#60A5FA' }}>
+                                <span className="text-[11px] font-bold tabular-nums leading-none" style={{ color: 'var(--info)' }}>
                                     {new Date(item.data).getDate()}
                                 </span>
-                                <span className="text-[8px] uppercase" style={{ color: 'var(--text-muted)' }}>
+                                <span className="text-[11px] uppercase" style={{ color: 'var(--text-muted)' }}>
                                     {['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][new Date(item.data).getMonth()]}
                                 </span>
                             </div>
@@ -245,11 +246,11 @@ function ProximosCompromissosWidget() {
                                     {item.titulo}
                                 </p>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                    <span className="flex items-center gap-1 text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                    <span className="flex items-center gap-1 text-[11px]" style={{ color: 'var(--text-muted)' }}>
                                         <Clock size={9} /> {item.hora}
                                     </span>
                                     {item.local && (
-                                        <span className="flex items-center gap-1 text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
+                                        <span className="flex items-center gap-1 text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>
                                             <MapPin size={9} /> {item.local}
                                         </span>
                                     )}
@@ -299,7 +300,7 @@ function TopImoveisWidget() {
             .catch(() => {})
     }, [])
 
-    const barColors = ['#D4A929','#60A5FA','#34D399','#A78BFA']
+    const barColors = ['var(--imi-gold-500)','var(--info)','var(--success)','var(--accent-purple, #A78BFA)']
 
     return (
         <motion.div
@@ -310,19 +311,19 @@ function TopImoveisWidget() {
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                padding: '18px',
+                boxShadow: 'var(--shadow-xs)',
+                padding: '20px',
             }}
         >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <Building2 size={13} style={{ color: 'var(--imi-gold-500)' }} />
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Top Imóveis com Interesse
                     </span>
                 </div>
                 <Link href="/backoffice/imoveis">
-                    <span className="text-[10px] font-semibold flex items-center gap-1"
+                    <span className="text-[11px] font-semibold flex items-center gap-1"
                         style={{ color: 'var(--imi-gold-500)' }}>
                         Ver todos <ArrowUpRight size={10} />
                     </span>
@@ -334,7 +335,7 @@ function TopImoveisWidget() {
                         <div className="group cursor-pointer">
                             <div className="flex items-center justify-between mb-1">
                                 <div className="flex items-center gap-2 min-w-0">
-                                    <span className="text-[9px] font-bold tabular-nums flex-shrink-0"
+                                    <span className="text-[11px] font-bold tabular-nums flex-shrink-0"
                                         style={{ color: barColors[i] }}>
                                         #{i + 1}
                                     </span>
@@ -344,10 +345,10 @@ function TopImoveisWidget() {
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                                    <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                    <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                                         {imovel.leads} leads
                                     </span>
-                                    <span className="text-[10px] font-bold tabular-nums"
+                                    <span className="text-[11px] font-bold tabular-nums"
                                         style={{ color: barColors[i] }}>
                                         {imovel.engajamento}%
                                     </span>
@@ -388,7 +389,7 @@ function VelocidadeRespostaWidget() {
     }, [])
 
     const getStatus = (h: number) => {
-        if (h < TARGET_HOURS) return { color: '#34D399', bg: 'rgba(52,211,153,0.10)', label: 'Excelente', border: 'rgba(52,211,153,0.25)' }
+        if (h < TARGET_HOURS) return { color: 'var(--success)', bg: 'rgba(52,211,153,0.10)', label: 'Excelente', border: 'rgba(52,211,153,0.25)' }
         if (h <= 4)           return { color: 'var(--warning)', bg: 'rgba(245,158,11,0.08)', label: 'Atenção', border: 'rgba(245,158,11,0.25)' }
         return                       { color: 'var(--error)', bg: 'rgba(239,68,68,0.08)', label: 'Crítico', border: 'rgba(239,68,68,0.25)' }
     }
@@ -405,17 +406,17 @@ function VelocidadeRespostaWidget() {
             style={{
                 background: status ? status.bg : 'var(--bg-surface)',
                 border: `1px solid ${status ? status.border : 'var(--border-default)'}`,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                padding: '18px',
+                boxShadow: 'var(--shadow-xs)',
+                padding: '20px',
             }}
         >
             <div className="flex items-center gap-2 mb-4">
                 <Clock size={13} style={{ color: status?.color ?? 'var(--text-muted)' }} />
-                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Velocidade de Resposta
                 </span>
                 {status && (
-                    <span className="ml-auto text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                    <span className="ml-auto text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
                         style={{ color: status.color, background: `${status.color}18` }}>
                         {status.label}
                     </span>
@@ -428,19 +429,19 @@ function VelocidadeRespostaWidget() {
                 <>
                     <div className="flex items-end gap-2 mb-3">
                         <span style={{
-                            fontSize: '40px', fontWeight: 800, letterSpacing: '-0.04em',
+                            fontSize: 40, fontWeight: 800, letterSpacing: '-0.04em',
                             lineHeight: 1, color: status?.color ?? 'var(--text-primary)',
-                            fontVariantNumeric: 'tabular-nums',
+                            fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums',
                         }}>
                             {avgHours?.toFixed(1)}h
                         </span>
                         <div className="mb-1.5">
-                            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                            <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                                 média de resposta
                             </p>
                             <div className="flex items-center gap-1 mt-0.5">
                                 <Target size={9} style={{ color: 'var(--text-muted)' }} />
-                                <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                                     meta: &lt; {TARGET_HOURS}h
                                 </span>
                             </div>
@@ -448,19 +449,19 @@ function VelocidadeRespostaWidget() {
                     </div>
 
                     {/* Progress bar — fills toward the 8h danger zone */}
-                    <div className="h-[5px] rounded-full overflow-hidden mb-2" style={{ background: 'var(--bg-elevated)' }}>
+                    <div className="h-[4px] rounded-full overflow-hidden mb-2" style={{ background: 'var(--bg-elevated)' }}>
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progressPct}%` }}
                             transition={{ delay: 0.7, duration: 0.7, ease: 'easeOut' }}
                             className="h-full rounded-full"
-                            style={{ background: status?.color ?? '#34D399' }}
+                            style={{ background: status?.color ?? 'var(--success)' }}
                         />
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>0h</span>
-                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>Meta 2h</span>
-                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>8h+</span>
+                        <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>0h</span>
+                        <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>Meta 2h</span>
+                        <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>8h+</span>
                     </div>
                 </>
             )}
@@ -505,10 +506,12 @@ function AIDailySummary() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-2xl p-4"
+            className="rounded-2xl p-5"
             style={{
-                background: 'linear-gradient(135deg, rgba(59,130,246,0.06) 0%, rgba(168,85,247,0.04) 100%)',
-                border: '1px solid rgba(59,130,246,0.15)',
+                background: 'linear-gradient(135deg, var(--surface-raised, var(--bg-surface)) 0%, rgba(200,164,74,0.06) 100%)',
+                border: '1px solid var(--surface-border-gold, rgba(200,164,74,0.30))',
+                borderLeft: '3px solid var(--color-gold, var(--imi-gold-500))',
+                boxShadow: 'var(--shadow-gold-glow, 0 0 30px rgba(200,164,74,0.20))',
             }}
         >
             {loading ? (
@@ -518,17 +521,23 @@ function AIDailySummary() {
                 </div>
             ) : summary ? (
                 <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Zap size={12} style={{ color: T.accent }} />
-                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.accent }}>
-                            Resumo IA do Dia
+                    <div className="flex items-center gap-2 mb-3">
+                        <span style={{ color: 'var(--color-gold, var(--imi-gold-500))', fontSize: '16px' }}>✦</span>
+                        <span style={{
+                            fontFamily: 'var(--font-display)',
+                            fontSize: '18px',
+                            fontStyle: 'italic',
+                            fontWeight: 400,
+                            color: 'var(--color-gold, var(--imi-gold-500))',
+                        }}>
+                            Briefing IA
                         </span>
                     </div>
                     <p className="text-xs font-medium mb-2" style={{ color: T.text }}>{summary.greeting}</p>
                     <div className="space-y-1 mb-2">
                         {summary.highlights?.map((h: string, i: number) => (
                             <div key={i} className="flex items-start gap-2">
-                                <span className="text-[10px] mt-0.5" style={{ color: T.accent }}>▸</span>
+                                <span className="text-[11px] mt-0.5" style={{ color: T.accent }}>▸</span>
                                 <span className="text-xs" style={{ color: T.textMuted }}>{h}</span>
                             </div>
                         ))}
@@ -579,9 +588,9 @@ export default function DashboardClient({
         info:    Info,
     }
     const alertaColor: Record<string, { border: string; bg: string; text: string; btn: string }> = {
-        warning: { border: 'rgba(245,158,11,0.3)',  bg: 'rgba(245,158,11,0.06)',  text: '#F59E0B', btn: 'rgba(245,158,11,0.15)' },
+        warning: { border: 'rgba(245,158,11,0.3)',  bg: 'rgba(245,158,11,0.06)',  text: 'var(--warning)', btn: 'rgba(245,158,11,0.15)' },
         danger:  { border: 'rgba(239,68,68,0.3)',   bg: 'rgba(239,68,68,0.06)',   text: 'var(--error)', btn: 'rgba(239,68,68,0.15)' },
-        info:    { border: 'rgba(59,130,246,0.3)',  bg: 'rgba(59,130,246,0.06)',  text: '#3B82F6', btn: 'rgba(59,130,246,0.15)' },
+        info:    { border: 'rgba(59,130,246,0.3)',  bg: 'rgba(59,130,246,0.06)',  text: 'var(--info)', btn: 'rgba(59,130,246,0.15)' },
     }
 
     const completionRate = avStats.total > 0
@@ -607,7 +616,7 @@ export default function DashboardClient({
                             display: 'inline-block', flexShrink: 0,
                         }} />
                         <span style={{
-                            fontSize: '9px', fontWeight: 700,
+                            fontSize: '11px', fontWeight: 700,
                             color: 'var(--imi-gold-500)',
                             textTransform: 'uppercase', letterSpacing: '0.14em',
                         }}>
@@ -619,7 +628,7 @@ export default function DashboardClient({
                         }}>
                             <span className="live-dot" />
                             <span style={{
-                                fontSize: '8px', fontWeight: 700,
+                                fontSize: '11px', fontWeight: 700,
                                 color: 'var(--imi-ai-green)',
                                 textTransform: 'uppercase', letterSpacing: '0.05em',
                             }}>LIVE</span>
@@ -635,7 +644,7 @@ export default function DashboardClient({
                                     return (
                                         <Avatar key={b.id} size={26} style={{ border: '2px solid var(--bg-base)', flexShrink: 0 }}>
                                             <AvatarImage src={b.avatar_url ?? undefined} />
-                                            <AvatarFallback style={{ background: bg, color: fg, fontSize: 9, fontWeight: 700 }}>
+                                            <AvatarFallback style={{ background: bg, color: fg, fontSize: 11, fontWeight: 700 }}>
                                                 {getInitials(b.name)}
                                             </AvatarFallback>
                                             <AvatarGroupTooltip>{b.name.split(' ').slice(0, 2).join(' ')}</AvatarGroupTooltip>
@@ -643,7 +652,7 @@ export default function DashboardClient({
                                     )
                                 })}
                             </AvatarGroup>
-                            <span className="text-[10px] font-medium opacity-50 group-hover:opacity-80 transition-opacity"
+                            <span className="text-[11px] font-medium opacity-50 group-hover:opacity-80 transition-opacity"
                                 style={{ color: 'var(--text-muted)' }}>
                                 {brokers.length}
                             </span>
@@ -655,8 +664,9 @@ export default function DashboardClient({
                 <div className="flex items-end justify-between gap-3">
                     <div>
                         <h1 className="gradient-text" style={{
-                            fontSize: '26px', fontWeight: 800,
-                            lineHeight: 1.15, letterSpacing: '-0.03em', margin: 0,
+                            fontFamily: 'var(--font-serif)',
+                            fontSize: 32, fontWeight: 400,
+                            lineHeight: 1.20, letterSpacing: '-0.01em', margin: 0,
                         }}>
                             Painel Executivo
                         </h1>
@@ -671,7 +681,7 @@ export default function DashboardClient({
                         className="flex items-center gap-2 h-9 px-4 rounded-xl text-[13px] font-semibold text-white flex-shrink-0"
                         style={{
                             background: T.accent,
-                            boxShadow: '0 4px 16px rgba(59,130,246,0.25)',
+                            boxShadow: 'var(--shadow-md)',
                         }}
                     >
                         <Plus size={14} />
@@ -708,7 +718,7 @@ export default function DashboardClient({
                                     {alerta.mensagem}
                                 </p>
                                 <Link href={alerta.href}>
-                                    <span className="text-[10px] font-semibold px-2 py-1 rounded-lg whitespace-nowrap"
+                                    <span className="text-[11px] font-semibold px-2 py-1 rounded-lg whitespace-nowrap"
                                         style={{ color: c.text, background: c.btn }}>
                                         {alerta.acao}
                                     </span>
@@ -727,9 +737,9 @@ export default function DashboardClient({
                 className="relative overflow-hidden rounded-2xl"
                 style={{
                     background: T.card,
-                    border: `1px solid rgba(59,130,246,0.28)`,
+                    border: '1px solid var(--info-border, rgba(59,130,246,0.28))',
                     boxShadow: '0 0 0 1px rgba(59,130,246,0.06) inset, 0 4px 20px rgba(0,0,0,0.15)',
-                    padding: '18px 20px',
+                    padding: '20px',
                 }}
             >
                 {/* Blue accent overlay — top-left radial glow, fully decorative */}
@@ -743,13 +753,13 @@ export default function DashboardClient({
                 <div className="relative flex items-center justify-between gap-4 flex-wrap">
                     {/* Primary metric */}
                     <div>
-                        <p style={{ fontSize: '9px', fontWeight: 700, color: '#60A5FA', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 6 }}>
+                        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--info)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
                             Honorários Totais Recebidos
                         </p>
-                        <div style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums', color: T.text }}>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 36, fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1, fontVariantNumeric: 'tabular-nums', color: 'var(--text-primary)' }}>
                             {fmtCompact(avStats.honorarios_recebidos)}
                         </div>
-                        <p style={{ fontSize: '11px', color: 'rgba(148,163,184,0.8)', marginTop: 5 }}>
+                        <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
                             {avStats.concluidas} avaliação{avStats.concluidas !== 1 ? 'ões' : ''} concluída{avStats.concluidas !== 1 ? 's' : ''}
                         </p>
                     </div>
@@ -757,33 +767,33 @@ export default function DashboardClient({
                     {/* Secondary stats */}
                     <div className="flex items-center gap-5 flex-wrap">
                         <div>
-                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
+                            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
                                 A Receber
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--warning)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 22, fontWeight: 400, color: 'var(--warning)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {fmtCompact(avStats.honorarios_pendentes)}
                             </p>
-                            <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.em_andamento} em andamento</p>
+                            <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>{avStats.em_andamento} em andamento</p>
                         </div>
-                        <div className="w-px h-10" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                        <div className="w-px h-10" style={{ background: 'var(--border-subtle)' }} />
                         <div>
-                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
+                            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
                                 Conclusão
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--success)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 22, fontWeight: 400, color: 'var(--success)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {completionRate}%
                             </p>
-                            <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.total} total</p>
+                            <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>{avStats.total} total</p>
                         </div>
-                        <div className="w-px h-10 hidden sm:block" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                        <div className="w-px h-10 hidden sm:block" style={{ background: 'var(--border-subtle)' }} />
                         <div className="hidden sm:block">
-                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
+                            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
                                 Leads
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: '#60A5FA', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 22, fontWeight: 400, color: 'var(--info)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {stats.total_leads}
                             </p>
-                            <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>
+                            <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
                                 {stats.leads_today > 0 ? `+${stats.leads_today} hoje` : 'pipeline'}
                             </p>
                         </div>
@@ -830,52 +840,60 @@ export default function DashboardClient({
 
             {/* ── KPI Row ──────────────────────────────────────── */}
             <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.14, duration: 0.35 }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-2 lg:grid-cols-4 gap-4"
                 data-tour="kpis"
             >
-                <Link href="/backoffice/financeiro">
-                    <KPICard
-                        label="Honorários Recebidos"
-                        value={fmtCompact(avStats.honorarios_recebidos)}
-                        sublabel={`${avStats.concluidas} concluídas`}
-                        icon={<Banknote size={14} />}
-                        accent="green"
-                        size="md"
-                    />
-                </Link>
-                <Link href="/backoffice/leads">
-                    <KPICard
-                        label="Leads Ativos"
-                        value={String(stats.total_leads)}
-                        sublabel={stats.leads_today > 0 ? `+${stats.leads_today} hoje` : 'pipeline'}
-                        icon={<Users size={14} />}
-                        accent="blue"
-                        size="md"
-                    />
-                </Link>
-                <Link href="/backoffice/avaliacoes">
-                    <KPICard
-                        label="A Receber"
-                        value={fmtCompact(avStats.honorarios_pendentes)}
-                        sublabel={`${avStats.em_andamento} em andamento`}
-                        icon={<Scale size={14} />}
-                        accent="warm"
-                        size="md"
-                    />
-                </Link>
-                <Link href="/backoffice/imoveis">
-                    <KPICard
-                        label="Portfólio"
-                        value={String(imoveisCount)}
-                        sublabel="imóveis cadastrados"
-                        icon={<Building2 size={14} />}
-                        accent="cold"
-                        size="md"
-                    />
-                </Link>
+                <motion.div variants={cardVariants}>
+                    <Link href="/backoffice/financeiro">
+                        <KPICard
+                            label="Honorários Recebidos"
+                            value={fmtCompact(avStats.honorarios_recebidos)}
+                            sublabel={`${avStats.concluidas} concluídas`}
+                            icon={<Banknote size={14} />}
+                            accent="green"
+                            size="md"
+                        />
+                    </Link>
+                </motion.div>
+                <motion.div variants={cardVariants}>
+                    <Link href="/backoffice/leads">
+                        <KPICard
+                            label="Leads Ativos"
+                            value={String(stats.total_leads)}
+                            sublabel={stats.leads_today > 0 ? `+${stats.leads_today} hoje` : 'pipeline'}
+                            icon={<Users size={14} />}
+                            accent="blue"
+                            size="md"
+                        />
+                    </Link>
+                </motion.div>
+                <motion.div variants={cardVariants}>
+                    <Link href="/backoffice/avaliacoes">
+                        <KPICard
+                            label="A Receber"
+                            value={fmtCompact(avStats.honorarios_pendentes)}
+                            sublabel={`${avStats.em_andamento} em andamento`}
+                            icon={<Scale size={14} />}
+                            accent="warm"
+                            size="md"
+                        />
+                    </Link>
+                </motion.div>
+                <motion.div variants={cardVariants}>
+                    <Link href="/backoffice/imoveis">
+                        <KPICard
+                            label="Portfólio"
+                            value={String(imoveisCount)}
+                            sublabel="imóveis cadastrados"
+                            icon={<Building2 size={14} />}
+                            accent="cold"
+                            size="md"
+                        />
+                    </Link>
+                </motion.div>
             </motion.div>
 
             {/* ── Gráfico + Ações Rápidas ─────────────────────── */}
@@ -892,24 +910,24 @@ export default function DashboardClient({
                         background: T.card,
                         border: `1px solid ${T.border}`,
                         boxShadow: T.shadowMd,
-                        padding: '18px',
+                        padding: '20px',
                     }}
                 >
                     <div className="flex items-start justify-between gap-3 mb-4">
                         <div>
                             <div className="flex items-center gap-2">
                                 <Activity size={13} style={{ color: 'var(--imi-gold-500)' }} />
-                                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                     Performance
                                 </span>
                             </div>
-                            <div className="flex items-center gap-3 text-[10px] mt-1.5">
+                            <div className="flex items-center gap-3 text-[11px] mt-1.5">
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full inline-block" style={{ background: '#3B82F6' }} />
+                                    <span className="w-2 h-2 rounded-full inline-block" style={{ background: 'var(--info)' }} />
                                     <span style={{ color: 'var(--text-muted)' }}>Leads</span>
                                 </span>
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full inline-block" style={{ background: '#22C55E' }} />
+                                    <span className="w-2 h-2 rounded-full inline-block" style={{ background: 'var(--success)' }} />
                                     <span style={{ color: 'var(--text-muted)' }}>Receita</span>
                                 </span>
                             </div>
@@ -947,13 +965,13 @@ export default function DashboardClient({
                                         </linearGradient>
                                     </defs>
                                     <XAxis dataKey="mes" axisLine={false} tickLine={false}
-                                        tick={{ fill: 'var(--text-muted)', fontSize: 10, fontWeight: 500 }} />
+                                        tick={{ fill: 'var(--text-muted)', fontSize: 11, fontWeight: 500 }} />
                                     <YAxis hide />
                                     <Tooltip
                                         contentStyle={{
                                             background: 'var(--bg-elevated)',
                                             border: '1px solid var(--border-default)',
-                                            borderRadius: 10,
+                                            borderRadius: 4,
                                             color: 'var(--text-primary)',
                                             fontSize: 11,
                                             boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
@@ -963,12 +981,12 @@ export default function DashboardClient({
                                             name === 'leads' ? 'Leads' : 'Receita',
                                         ] as [string, string]}
                                     />
-                                    <Area type="monotone" dataKey="leads" stroke="#3B82F6" strokeWidth={2}
+                                    <Area type="monotone" dataKey="leads" stroke="var(--info)" strokeWidth={2}
                                         fill="url(#blueGrad)" dot={false}
-                                        activeDot={{ r: 4, fill: '#3B82F6', strokeWidth: 0 }} />
-                                    <Area type="monotone" dataKey="receita" stroke="#22C55E" strokeWidth={2}
+                                        activeDot={{ r: 4, fill: 'var(--info)', strokeWidth: 0 }} />
+                                    <Area type="monotone" dataKey="receita" stroke="var(--success)" strokeWidth={2}
                                         fill="url(#greenGrad2)" dot={false}
-                                        activeDot={{ r: 4, fill: '#22C55E', strokeWidth: 0 }} />
+                                        activeDot={{ r: 4, fill: 'var(--success)', strokeWidth: 0 }} />
                                 </AreaChart>
                             </ResponsiveContainer>
                         ) : (
@@ -991,12 +1009,12 @@ export default function DashboardClient({
                         background: T.card,
                         border: '1px solid var(--border-default)',
                         boxShadow: T.shadowMd,
-                        padding: '18px',
+                        padding: '20px',
                     }}
                 >
                     <div className="flex items-center gap-2 mb-4">
                         <Zap size={13} style={{ color: 'var(--s-warm)' }} />
-                        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             Ações Rápidas
                         </span>
                     </div>
@@ -1045,16 +1063,16 @@ export default function DashboardClient({
                         background: T.card,
                         border: '1px solid var(--border-default)',
                         boxShadow: T.shadowMd,
-                        padding: '18px',
+                        padding: '20px',
                     }}
                 >
                     <div className="flex items-center gap-2 mb-1">
                         <BarChart2 size={13} style={{ color: 'var(--text-muted)' }} />
-                        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             Canais de Captação
                         </span>
                     </div>
-                    <p className="text-[10px] mb-4" style={{ color: 'var(--text-muted)' }}>últimos 6 meses</p>
+                    <p className="text-[11px] mb-4" style={{ color: 'var(--text-muted)' }}>últimos 6 meses</p>
                     {canalPerformance.length > 0 ? (
                         <div className="space-y-3">
                             {canalPerformance.map((item, i) => (
@@ -1092,12 +1110,12 @@ export default function DashboardClient({
                         style={{ borderBottom: '1px solid var(--border-default)' }}>
                         <div className="flex items-center gap-2">
                             <Users size={13} style={{ color: 'var(--imi-gold-500)' }} />
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                 Leads Recentes
                             </span>
                         </div>
                         <Link href="/backoffice/leads">
-                            <span className="text-[10px] font-semibold flex items-center gap-1"
+                            <span className="text-[11px] font-semibold flex items-center gap-1"
                                 style={{ color: 'var(--imi-gold-500)' }}>
                                 Ver todos <ArrowUpRight size={10} />
                             </span>
@@ -1114,14 +1132,14 @@ export default function DashboardClient({
                                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
                                         <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
-                                            style={{ background: 'rgba(59,130,246,0.14)', color: 'var(--imi-gold-500)' }}>
+                                            style={{ background: 'var(--info-bg, rgba(59,130,246,0.14))', color: 'var(--imi-gold-500)' }}>
                                             {lead.name?.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                                 {lead.name}
                                             </p>
-                                            <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
+                                            <p className="text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>
                                                 {lead.source}{lead.interest ? ` · ${lead.interest}` : ''}
                                             </p>
                                         </div>
@@ -1155,12 +1173,12 @@ export default function DashboardClient({
                         style={{ borderBottom: '1px solid var(--border-default)' }}>
                         <div className="flex items-center gap-2">
                             <Scale size={13} style={{ color: 'var(--s-warm)' }} />
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                 Avaliações Recentes
                             </span>
                         </div>
                         <Link href="/backoffice/avaliacoes">
-                            <span className="text-[10px] font-semibold flex items-center gap-1"
+                            <span className="text-[11px] font-semibold flex items-center gap-1"
                                 style={{ color: 'var(--imi-gold-500)' }}>
                                 Ver todas <ArrowUpRight size={10} />
                             </span>
@@ -1184,12 +1202,12 @@ export default function DashboardClient({
                                         <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                             {av.protocolo}
                                         </p>
-                                        <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
+                                        <p className="text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>
                                             {av.tipo_imovel} · {av.bairro}
                                         </p>
                                     </div>
                                     <div className="text-right flex-shrink-0">
-                                        <p className="text-[11px] font-bold mb-1 tabular-nums" style={{ color: 'var(--s-warm)' }}>
+                                        <p className="text-[11px] font-bold mb-1" style={{ color: 'var(--s-warm)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                                             {fmt(av.honorarios || 0)}
                                         </p>
                                         <StatusBadge status={s.statusKey} label={s.label} size="xs" />
@@ -1215,9 +1233,9 @@ export default function DashboardClient({
             >
                 {/* Section header */}
                 <div className="flex items-center gap-3 mb-3">
-                    <div style={{ width: 4, height: 14, borderRadius: 2, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                    <div style={{ width: 4, height: 14, borderRadius: 4, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
                     <span style={{
-                        fontSize: '9px', fontWeight: 700,
+                        fontSize: '11px', fontWeight: 700,
                         color: 'var(--text-tertiary)',
                         textTransform: 'uppercase', letterSpacing: '0.14em',
                         fontFamily: 'var(--font-mono)',

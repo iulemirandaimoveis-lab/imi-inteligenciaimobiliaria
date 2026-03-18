@@ -382,8 +382,8 @@ export default function NovaAvaliacaoPage() {
             </button>
             <div className="flex items-center gap-2 h-9 px-3 rounded-xl"
               style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)' }}>
-              <Sparkles size={14} style={{ color: '#F59E0B' }} />
-              <span className="text-xs font-semibold" style={{ color: '#F59E0B' }}>Motor IA</span>
+              <Sparkles size={14} style={{ color: 'var(--warning)' }} />
+              <span className="text-xs font-semibold" style={{ color: 'var(--warning)' }}>Motor IA</span>
             </div>
           </div>
         }
@@ -527,7 +527,7 @@ export default function NovaAvaliacaoPage() {
                   <button key={c} type="button" onClick={() => toggleCaracteristica(c)}
                     className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all"
                     style={formData.caracteristicas.includes(c)
-                      ? { background: T.accent, color: '#fff', borderColor: 'transparent' }
+                      ? { background: T.accent, color: 'var(--text-inverse)', borderColor: 'transparent' }
                       : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
                     {c}
                   </button>
@@ -547,7 +547,7 @@ export default function NovaAvaliacaoPage() {
                 <button key={t} type="button" onClick={() => handleChange('clienteTipo', t)}
                   className="px-4 py-2 rounded-lg text-sm font-medium border transition-all"
                   style={formData.clienteTipo === t
-                    ? { background: T.accent, color: '#fff', borderColor: 'transparent' }
+                    ? { background: T.accent, color: 'var(--text-inverse)', borderColor: 'transparent' }
                     : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
                   {t === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
                 </button>
@@ -683,10 +683,10 @@ export default function NovaAvaliacaoPage() {
                 className="w-full flex items-center justify-between p-4 transition-colors"
                 style={{ background: 'rgba(245,158,11,0.08)' }}>
                 <div className="flex items-center gap-3">
-                  <Calculator size={18} style={{ color: '#F59E0B' }} />
-                  <span className="text-sm font-semibold" style={{ color: '#F59E0B' }}>Calculadora de Honorários (IBAPE)</span>
+                  <Calculator size={18} style={{ color: 'var(--warning)' }} />
+                  <span className="text-sm font-semibold" style={{ color: 'var(--warning)' }}>Calculadora de Honorários (IBAPE)</span>
                 </div>
-                {showHonorarios ? <ChevronDown size={18} style={{ color: '#F59E0B' }} /> : <ChevronRight size={18} style={{ color: '#F59E0B' }} />}
+                {showHonorarios ? <ChevronDown size={18} style={{ color: 'var(--warning)' }} /> : <ChevronRight size={18} style={{ color: 'var(--warning)' }} />}
               </button>
 
               {showHonorarios && (
@@ -777,7 +777,7 @@ export default function NovaAvaliacaoPage() {
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
                 style={{
-                  background: formData.comparaveis.length >= 5 ? 'var(--bo-success)' : formData.comparaveis.length >= 3 ? '#F59E0B' : 'var(--bo-error)',
+                  background: formData.comparaveis.length >= 5 ? 'var(--bo-success)' : formData.comparaveis.length >= 3 ? 'var(--warning)' : 'var(--bo-error)',
                   color: 'white',
                 }}
               >
@@ -957,9 +957,9 @@ export default function NovaAvaliacaoPage() {
               </a>
               <a href="https://www.fipe.org.br/pt-br/indices/fipezap/" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <BarChart2 size={16} style={{ color: '#A78BFA' }} />
+                <BarChart2 size={16} style={{ color: 'var(--imi-gold-400)' }} />
                 <div>
-                  <p className="text-sm group-hover:underline" style={{ color: '#A78BFA' }}>FIPE ZAP — Índice de Preços</p>
+                  <p className="text-sm group-hover:underline" style={{ color: 'var(--imi-gold-400)' }}>FIPE ZAP — Índice de Preços</p>
                   <p className="text-xs" style={{ color: T.textMuted }}>fipe.org.br</p>
                 </div>
               </a>

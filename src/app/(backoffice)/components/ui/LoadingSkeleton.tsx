@@ -14,10 +14,10 @@ interface LoadingSkeletonProps {
 }
 
 const shimmerStyle: React.CSSProperties = {
-  background: 'linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-hover) 50%, var(--bg-muted) 75%)',
+  background: 'linear-gradient(90deg, var(--surface-raised, var(--bg-muted)) 25%, var(--surface-overlay, var(--bg-hover)) 50%, var(--surface-raised, var(--bg-muted)) 75%)',
   backgroundSize: '200% 100%',
   animation: 'bo-shimmer 1.6s ease-in-out infinite',
-  borderRadius: 'var(--r-md, 8px)',
+  borderRadius: 'var(--r-md, 4px)',
 }
 
 // Single shimmer block with configurable style overrides
@@ -39,7 +39,7 @@ function CardSkeleton({ height = 120, count = 1 }: { height?: number; count?: nu
         <div
           key={i}
           style={{
-            borderRadius: 'var(--r-xl, 16px)',
+            borderRadius: 'var(--r-xl, 4px)',
             overflow: 'hidden',
             border: '1px solid var(--border-subtle)',
           }}
@@ -69,22 +69,22 @@ function KPISkeleton() {
           style={{
             background: 'var(--bg-surface)',
             border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--r-xl, 16px)',
+            borderRadius: 'var(--r-xl, 4px)',
             padding: '14px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
+            gap: '8px',
           }}
         >
           {/* label row */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShimmerBlock style={{ width: 26, height: 26, borderRadius: 'var(--r-md, 8px)', flexShrink: 0 }} />
-            <ShimmerBlock style={{ height: 8, width: '55%', borderRadius: 'var(--r-xs, 3px)' }} />
+            <ShimmerBlock style={{ width: 26, height: 26, borderRadius: 'var(--r-md, 4px)', flexShrink: 0 }} />
+            <ShimmerBlock style={{ height: 8, width: '55%', borderRadius: 'var(--r-xs, 4px)' }} />
           </div>
           {/* number */}
-          <ShimmerBlock style={{ height: 22, width: '70%', borderRadius: 'var(--r-sm, 6px)' }} />
+          <ShimmerBlock style={{ height: 22, width: '70%', borderRadius: 'var(--r-sm, 4px)' }} />
           {/* sublabel */}
-          <ShimmerBlock style={{ height: 8, width: '40%', borderRadius: 'var(--r-xs, 3px)' }} />
+          <ShimmerBlock style={{ height: 8, width: '40%', borderRadius: 'var(--r-xs, 4px)' }} />
         </div>
       ))}
     </div>
@@ -107,10 +107,10 @@ function RowSkeleton({ count = 1 }: { count?: number }) {
           }}
           aria-hidden="true"
         >
-          <ShimmerBlock style={{ width: 36, height: 36, borderRadius: 'var(--r-md, 8px)', flexShrink: 0 }} />
-          <ShimmerBlock style={{ height: 12, flex: 1, borderRadius: 'var(--r-sm, 6px)' }} />
-          <ShimmerBlock style={{ height: 12, width: 80, borderRadius: 'var(--r-sm, 6px)', flexShrink: 0 }} />
-          <ShimmerBlock style={{ height: 12, width: 60, borderRadius: 'var(--r-sm, 6px)', flexShrink: 0 }} />
+          <ShimmerBlock style={{ width: 36, height: 36, borderRadius: 'var(--r-md, 4px)', flexShrink: 0 }} />
+          <ShimmerBlock style={{ height: 12, flex: 1, borderRadius: 'var(--r-sm, 4px)' }} />
+          <ShimmerBlock style={{ height: 12, width: 80, borderRadius: 'var(--r-sm, 4px)', flexShrink: 0 }} />
+          <ShimmerBlock style={{ height: 12, width: 60, borderRadius: 'var(--r-sm, 4px)', flexShrink: 0 }} />
           <ShimmerBlock style={{ height: 24, width: 70, borderRadius: 'var(--r-full, 9999px)', flexShrink: 0 }} />
         </div>
       ))}
@@ -125,7 +125,7 @@ function TableSkeleton() {
       style={{
         background: 'var(--bg-surface)',
         border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--r-xl, 16px)',
+        borderRadius: 'var(--r-xl, 4px)',
         overflow: 'hidden',
       }}
       aria-hidden="true"
@@ -142,7 +142,7 @@ function TableSkeleton() {
         }}
       >
         {[40, 120, 80, 80, 60, 60].map((w, i) => (
-          <ShimmerBlock key={i} style={{ height: 10, width: w, borderRadius: 'var(--r-xs, 3px)', flexShrink: 0, opacity: 0.6 }} />
+          <ShimmerBlock key={i} style={{ height: 10, width: w, borderRadius: 'var(--r-xs, 4px)', flexShrink: 0, opacity: 0.6 }} />
         ))}
       </div>
       {/* tbody rows */}
@@ -171,9 +171,9 @@ function ListSkeleton({ count = 4 }: { count?: number }) {
             style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0 }}
           />
           {/* text lines */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '7px' }}>
-            <ShimmerBlock style={{ height: 11, width: `${55 + (i % 3) * 15}%`, borderRadius: 'var(--r-xs, 3px)' }} />
-            <ShimmerBlock style={{ height: 9, width: `${35 + (i % 2) * 20}%`, borderRadius: 'var(--r-xs, 3px)' }} />
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <ShimmerBlock style={{ height: 11, width: `${55 + (i % 3) * 15}%`, borderRadius: 'var(--r-xs, 4px)' }} />
+            <ShimmerBlock style={{ height: 9, width: `${35 + (i % 2) * 20}%`, borderRadius: 'var(--r-xs, 4px)' }} />
           </div>
           <ShimmerBlock style={{ height: 22, width: 60, borderRadius: 'var(--r-full, 9999px)', flexShrink: 0 }} />
         </div>

@@ -134,7 +134,7 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
         // Fetch up to 6 highlighted properties
         const { data } = await supabase
             .from('developments')
-            .select('*, developers(id, name, slug, logo_url)')
+            .select('*')
             .eq('status_commercial', 'published')
             .eq('is_highlighted', true)
             .order('created_at', { ascending: false })

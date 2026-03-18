@@ -42,34 +42,34 @@ interface Event {
 // ── Helpers ──────────────────────────────────────────────────
 const fmt = (v: number) => v
   ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
-  : '—'
+  : '--'
 
 const fmtDate = (s: string) => s
   ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(s))
-  : '—'
+  : '--'
 
 function Badge({ status }: { status: string }) {
   const cfg: Record<string, { label: string; bg: string; color: string }> = {
-    draft:     { label: 'Rascunho',     bg: 'rgba(107,119,133,0.12)', color: '#6b7785' },
-    sent:      { label: 'Enviada',      bg: 'rgba(96,165,250,0.12)',  color: '#60a5fa' },
-    viewed:    { label: 'Visualizada',  bg: 'rgba(167,139,250,0.12)', color: '#a78bfa' },
-    countered: { label: 'Contraposta',  bg: 'rgba(251,191,36,0.12)', color: '#fbbf24' },
-    accepted:  { label: 'Aceita',       bg: 'rgba(52,211,153,0.12)', color: '#34d399' },
-    rejected:  { label: 'Recusada',     bg: 'rgba(248,113,113,0.10)', color: '#f87171' },
-    expired:   { label: 'Expirada',     bg: 'rgba(107,119,133,0.10)', color: '#6b7785' },
+    draft:     { label: 'Rascunho',     bg: 'rgba(107,119,133,0.12)', color: 'var(--text-tertiary)' },
+    sent:      { label: 'Enviada',      bg: 'rgba(96,165,250,0.12)',  color: 'var(--info)' },
+    viewed:    { label: 'Visualizada',  bg: 'rgba(167,139,250,0.12)', color: 'var(--info)' },
+    countered: { label: 'Contraposta',  bg: 'rgba(251,191,36,0.12)', color: 'var(--warning)' },
+    accepted:  { label: 'Aceita',       bg: 'rgba(52,211,153,0.12)', color: 'var(--success)' },
+    rejected:  { label: 'Recusada',     bg: 'rgba(248,113,113,0.10)', color: 'var(--error)' },
+    expired:   { label: 'Expirada',     bg: 'rgba(107,119,133,0.10)', color: 'var(--text-tertiary)' },
   }
   const c = cfg[status] ?? cfg.draft
   return (
-    <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: c.bg, color: c.color }}>
+    <span style={{ padding: '4px 12px', borderRadius: 4, fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', background: c.bg, color: c.color }}>
       {c.label}
     </span>
   )
 }
 
 function TierIcon({ tier }: { tier: string }) {
-  if (tier === 'hot')  return <Flame size={16} color="#f87171" />
-  if (tier === 'warm') return <Thermometer size={16} color="#fbbf24" />
-  return <Snowflake size={16} color="#60a5fa" />
+  if (tier === 'hot')  return <Flame size={16} color="var(--error)" />
+  if (tier === 'warm') return <Thermometer size={16} color="var(--warning)" />
+  return <Snowflake size={16} color="var(--info)" />
 }
 
 function EventIcon({ type }: { type: string }) {
@@ -93,7 +93,7 @@ function EventLabel(type: string) {
     proposal_created: 'Proposta criada',
     proposal_sent: 'Link enviado',
     proposal_opened: 'Proposta aberta pelo cliente',
-    section_viewed: 'Seção visualizada',
+    section_viewed: 'Secao visualizada',
     simulation_opened: 'Simulação aberta',
     whatsapp_clicked: 'Clicou no WhatsApp',
     cta_clicked: 'Clicou em CTA',
@@ -107,13 +107,13 @@ function EventLabel(type: string) {
 function KPI({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: boolean }) {
   return (
     <div style={{ ...cardStyle, padding: '16px 20px' }}>
-      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.textMuted, marginBottom: 6 }}>
+      <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.textMuted, marginBottom: 8 }}>
         {label}
       </div>
-      <div style={{ fontSize: 20, fontWeight: 700, color: accent ? T.accent : T.text, fontVariantNumeric: 'tabular-nums' }}>
+      <div style={{ fontSize: 20, fontWeight: 700, color: accent ? T.accent : T.text, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
         {value}
       </div>
-      {sub && <div style={{ fontSize: 11, color: T.textMuted, marginTop: 3 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 11, color: T.textMuted, marginTop: 4 }}>{sub}</div>}
     </div>
   )
 }
@@ -175,7 +175,7 @@ export default function PropostaDetailPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: 48, color: T.textMuted, fontSize: 13, display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ padding: 48, color: T.textMuted, fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
         <Activity size={16} style={{ opacity: 0.5 }} />
         Carregando proposta...
       </div>
@@ -185,7 +185,7 @@ export default function PropostaDetailPage() {
   if (!proposal) {
     return (
       <div style={{ padding: 48, color: T.textMuted, fontSize: 13 }}>
-        Proposta não encontrada.
+        Proposta nao encontrada.
       </div>
     )
   }
@@ -197,23 +197,23 @@ export default function PropostaDetailPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
           <button
             onClick={() => router.push('/backoffice/propostas')}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer', fontSize: 13 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer', fontSize: 13 }}
           >
             <ChevronLeft size={16} /> Propostas
           </button>
 
           <div style={{ height: 16, width: 1, background: T.border }} />
 
-          <h1 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 20, color: T.text, fontWeight: 500, flex: 1 }}>
-            Proposta — {proposal.buyer_name}
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 20, color: T.text, fontWeight: 500, flex: 1 }}>
+            Proposta -- {proposal.buyer_name}
           </h1>
 
           <Badge status={proposal.status} />
 
           {/* Tier */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, ...cardStyle, padding: '6px 12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, ...cardStyle, padding: '8px 12px' }}>
             <TierIcon tier={proposal.tier ?? 'cold'} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: T.textMuted }}>
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', color: T.textMuted }}>
               Score {proposal.score ?? 0}
             </span>
           </div>
@@ -232,15 +232,15 @@ export default function PropostaDetailPage() {
               background: T.accentBg, borderColor: T.borderGold,
             }}
           >
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, whiteSpace: 'nowrap' }}>
               Link do Cliente
             </div>
-            <div style={{ flex: 1, fontSize: 12, color: T.textMuted, fontFamily: "'JetBrains Mono', monospace", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ flex: 1, fontSize: 12, color: T.textMuted, fontFamily: 'var(--font-mono)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {publicLink}
             </div>
             <button
               onClick={copyLink}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, background: T.accent, border: 'none', borderRadius: T.radius.sm, padding: '6px 12px', color: '#000', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, background: T.accent, border: 'none', borderRadius: T.radius.sm, padding: '8px 12px', color: 'var(--text-inverse)', fontSize: 11, fontWeight: 700, cursor: 'pointer', transition: T.transition.fast }}
             >
               <Copy size={12} />
               {copied ? 'Copiado!' : 'Copiar'}
@@ -249,7 +249,7 @@ export default function PropostaDetailPage() {
               href={publicLink}
               target="_blank"
               rel="noreferrer"
-              style={{ display: 'flex', alignItems: 'center', gap: 4, color: T.textMuted, fontSize: 11, textDecoration: 'none', border: `1px solid ${T.border}`, borderRadius: T.radius.sm, padding: '6px 10px' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 4, color: T.textMuted, fontSize: 11, textDecoration: 'none', border: `1px solid ${T.border}`, borderRadius: T.radius.sm, padding: '8px 12px', transition: T.transition.fast }}
             >
               <ExternalLink size={12} />
               Abrir
@@ -276,30 +276,30 @@ export default function PropostaDetailPage() {
 
             {/* Financial breakdown */}
             <div style={{ ...cardStyle, padding: 20 }}>
-              <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
+              <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
                 Composição do Pagamento
               </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                 {[
                   { label: 'Sinal / Entrada', v: proposal.entry_value },
                   { label: `Financiamento${proposal.financing_bank ? ` · ${proposal.financing_bank}` : ''}`, v: proposal.financing_value },
                   { label: 'Consórcio', v: proposal.consortium_value },
                   { label: 'FGTS', v: proposal.fgts_value },
-                  { label: 'À Vista', v: proposal.cash_value },
+                  { label: 'A Vista', v: proposal.cash_value },
                   {
-                    label: `Parcelas Diretas (${proposal.direct_installments_count}×)`,
+                    label: `Parcelas Diretas (${proposal.direct_installments_count}x)`,
                     v: (proposal.direct_installments_count || 0) * (proposal.direct_installments_value || 0)
                   },
                 ].filter(({ v }) => v && v > 0).map(({ label, v }) => (
-                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: `1px solid ${T.borderSubtle}` }}>
+                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${T.borderSubtle}` }}>
                     <span style={{ fontSize: 12, color: T.textMuted }}>{label}</span>
-                    <span style={{ fontSize: 12, color: T.text, fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>{fmt(v)}</span>
+                    <span style={{ fontSize: 12, color: T.text, fontWeight: 500, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{fmt(v)}</span>
                   </div>
                 ))}
                 {proposal.financing_value && estParcel && (
-                  <div style={{ padding: '10px 0 4px', display: 'flex', justifyContent: 'space-between' }}>
+                  <div style={{ padding: '8px 0 4px', display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontSize: 11, color: T.textMuted }}>Parcela estimada (SAC Price)</span>
-                    <span style={{ fontSize: 11, color: T.accent, fontWeight: 600 }}>≈ {fmt(estParcel)}/mês</span>
+                    <span style={{ fontSize: 11, color: T.accent, fontWeight: 600, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{fmt(estParcel)}/mês</span>
                   </div>
                 )}
               </div>
@@ -308,14 +308,14 @@ export default function PropostaDetailPage() {
             {/* Intercaladas */}
             {proposal.balloon_installments?.length > 0 && (
               <div style={{ ...cardStyle, padding: 20 }}>
-                <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>
+                <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
                   Parcelas Intercaladas
                 </h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {proposal.balloon_installments.map((b: any, i: number) => (
-                    <div key={i} style={{ ...cardStyle, padding: '8px 14px', background: T.surface }}>
-                      <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 2 }}>Mês {b.month}</div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{fmt(b.value)}</div>
+                    <div key={i} style={{ ...cardStyle, padding: '8px 12px', background: T.surface }}>
+                      <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 4 }}>Mês {b.month}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: T.text, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{fmt(b.value)}</div>
                     </div>
                   ))}
                 </div>
@@ -325,13 +325,13 @@ export default function PropostaDetailPage() {
             {/* Conditions */}
             {(proposal.conditions || proposal.commission_pct) && (
               <div style={{ ...cardStyle, padding: 20 }}>
-                <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>
+                <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
                   Condições
                 </h3>
                 {proposal.commission_pct && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${T.borderSubtle}` }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${T.borderSubtle}` }}>
                     <span style={{ fontSize: 12, color: T.textMuted }}>Comissão</span>
-                    <span style={{ fontSize: 12, color: T.text }}>
+                    <span style={{ fontSize: 12, color: T.text, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                       {proposal.commission_pct}% · paga pelo {proposal.commission_who_pays === 'seller' ? 'vendedor' : proposal.commission_who_pays === 'buyer' ? 'comprador' : 'ambos'}
                     </span>
                   </div>
@@ -346,15 +346,15 @@ export default function PropostaDetailPage() {
 
             {/* Counter proposal */}
             {proposal.counter_proposal && (
-              <div style={{ ...cardStyle, padding: 20, borderColor: 'rgba(251,191,36,0.25)', background: 'rgba(251,191,36,0.04)' }}>
-                <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#fbbf24', marginBottom: 14 }}>
+              <div style={{ ...cardStyle, padding: 20, borderColor: 'var(--warning)', background: 'var(--warning-bg)' }}>
+                <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--warning)', marginBottom: 16 }}>
                   Contraproposta do Cliente
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {proposal.counter_proposal.value && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontSize: 12, color: T.textMuted }}>Valor sugerido</span>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: '#fbbf24' }}>{fmt(proposal.counter_proposal.value)}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--warning)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{fmt(proposal.counter_proposal.value)}</span>
                     </div>
                   )}
                   {proposal.counter_proposal.conditions && (
@@ -366,15 +366,16 @@ export default function PropostaDetailPage() {
 
             {/* Actions */}
             {['sent', 'viewed', 'countered'].includes(proposal.status) && (
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ display: 'flex', gap: 12 }}>
                 <button
                   onClick={() => updateStatus('accepted')}
                   disabled={updating}
                   style={{
                     flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     padding: '12px 20px', borderRadius: T.radius.md, cursor: 'pointer',
-                    background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.25)',
-                    color: '#34d399', fontSize: 13, fontWeight: 700,
+                    background: T.successBg, border: `1px solid var(--success)`,
+                    color: 'var(--success)', fontSize: 13, fontWeight: 700,
+                    transition: T.transition.fast,
                   }}
                 >
                   <CheckCircle size={15} /> Marcar como Aceita
@@ -385,8 +386,9 @@ export default function PropostaDetailPage() {
                   style={{
                     flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     padding: '12px 20px', borderRadius: T.radius.md, cursor: 'pointer',
-                    background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)',
-                    color: '#f87171', fontSize: 13, fontWeight: 600,
+                    background: T.errorBg, border: `1px solid var(--error)`,
+                    color: 'var(--error)', fontSize: 13, fontWeight: 600,
+                    transition: T.transition.fast,
                   }}
                 >
                   <XCircle size={15} /> Recusada
@@ -405,8 +407,9 @@ export default function PropostaDetailPage() {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '12px 20px', borderRadius: T.radius.md, cursor: 'pointer',
-                  background: T.accent, border: 'none', color: '#000', fontSize: 13, fontWeight: 700,
+                  background: T.accent, border: 'none', color: 'var(--text-inverse)', fontSize: 13, fontWeight: 700,
                   width: '100%',
+                  transition: T.transition.fast,
                 }}
               >
                 <Send size={15} /> Gerar & Enviar Link ao Cliente
@@ -415,24 +418,24 @@ export default function PropostaDetailPage() {
           </div>
 
           {/* RIGHT: sidebar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Tracking summary */}
             <div style={{ ...cardStyle, padding: 20 }}>
-              <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
+              <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
                 Tracking de Interesse
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
                   { label: 'Visualizações', val: String(proposal.opens_count ?? 0), icon: Eye },
                   { label: 'Tempo total', val: proposal.total_time_seconds ? `${Math.round((proposal.total_time_seconds || 0) / 60)}min` : '0min', icon: Clock },
-                  { label: 'Última atividade', val: proposal.last_activity ? fmtDate(proposal.last_activity) : '—', icon: Activity },
+                  { label: 'Última atividade', val: proposal.last_activity ? fmtDate(proposal.last_activity) : '--', icon: Activity },
                 ].map(({ label, val, icon: Icon }) => (
-                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 28, height: 28, borderRadius: T.radius.sm, background: T.accentBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Icon size={13} color={T.accent} />
                     </div>
                     <div>
-                      <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: '0.04em' }}>{label}</div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: T.textMuted, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</div>
                       <div style={{ fontSize: 13, color: T.text, fontWeight: 600 }}>{val}</div>
                     </div>
                   </div>
@@ -441,23 +444,23 @@ export default function PropostaDetailPage() {
 
               {/* Score bar */}
               <div style={{ marginTop: 16 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <span style={{ fontSize: 10, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Score de interesse</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Score de interesse</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     <TierIcon tier={proposal.tier ?? 'cold'} />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: proposal.tier === 'hot' ? '#f87171' : proposal.tier === 'warm' ? '#fbbf24' : '#60a5fa' }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: proposal.tier === 'hot' ? 'var(--error)' : proposal.tier === 'warm' ? 'var(--warning)' : 'var(--info)' }}>
                       {(proposal.score ?? 0)}/50
                     </span>
                   </div>
                 </div>
-                <div style={{ height: 6, background: T.border, borderRadius: 999, overflow: 'hidden' }}>
+                <div style={{ height: 4, background: T.border, borderRadius: 4, overflow: 'hidden' }}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(100, ((proposal.score ?? 0) / 50) * 100)}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                     style={{
-                      height: '100%', borderRadius: 999,
-                      background: proposal.tier === 'hot' ? '#f87171' : proposal.tier === 'warm' ? '#fbbf24' : '#60a5fa',
+                      height: '100%', borderRadius: 4,
+                      background: proposal.tier === 'hot' ? 'var(--error)' : proposal.tier === 'warm' ? 'var(--warning)' : 'var(--info)',
                     }}
                   />
                 </div>
@@ -466,10 +469,10 @@ export default function PropostaDetailPage() {
 
             {/* Buyer card */}
             <div style={{ ...cardStyle, padding: 16 }}>
-              <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 12 }}>
+              <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 12 }}>
                 Comprador
               </h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                 <div style={{ width: 36, height: 36, borderRadius: '50%', background: T.accentBg, border: `1px solid ${T.borderGold}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: T.accent }}>
                   {proposal.buyer_name?.charAt(0)?.toUpperCase()}
                 </div>
@@ -484,9 +487,10 @@ export default function PropostaDetailPage() {
                   target="_blank"
                   rel="noreferrer"
                   style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                    padding: '8px 0', background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)',
-                    borderRadius: T.radius.md, color: '#34d399', fontSize: 11, fontWeight: 600, textDecoration: 'none', width: '100%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    padding: '8px 0', background: T.successBg, border: `1px solid var(--success)`,
+                    borderRadius: T.radius.md, color: 'var(--success)', fontSize: 11, fontWeight: 600, textDecoration: 'none', width: '100%',
+                    transition: T.transition.fast,
                   }}
                 >
                   <MessageCircle size={13} /> WhatsApp
@@ -496,12 +500,12 @@ export default function PropostaDetailPage() {
 
             {/* Event log */}
             <div style={{ ...cardStyle, padding: 20 }}>
-              <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>
+              <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
                 Linha do Tempo
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                 {events.slice(0, 12).map((ev, idx) => (
-                  <div key={ev.id} style={{ display: 'flex', gap: 10, paddingBottom: 12, position: 'relative' }}>
+                  <div key={ev.id} style={{ display: 'flex', gap: 8, paddingBottom: 12, position: 'relative' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <div style={{ width: 24, height: 24, borderRadius: '50%', background: T.accentBg, border: `1px solid ${T.borderGold}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.accent, flexShrink: 0 }}>
                         <EventIcon type={ev.event_type} />
@@ -510,17 +514,17 @@ export default function PropostaDetailPage() {
                         <div style={{ width: 1, flex: 1, background: T.border, marginTop: 4 }} />
                       )}
                     </div>
-                    <div style={{ paddingTop: 3 }}>
+                    <div style={{ paddingTop: 4 }}>
                       <div style={{ fontSize: 12, color: T.text, fontWeight: 500 }}>
                         {EventLabel(ev.event_type)}
                       </div>
                       {ev.device_type && (
-                        <div style={{ fontSize: 10, color: T.textMuted }}>{ev.device_type}</div>
+                        <div style={{ fontSize: 11, color: T.textMuted }}>{ev.device_type}</div>
                       )}
                       {ev.time_on_page_seconds && (
-                        <div style={{ fontSize: 10, color: T.textMuted }}>{ev.time_on_page_seconds}s na página</div>
+                        <div style={{ fontSize: 11, color: T.textMuted }}>{ev.time_on_page_seconds}s na página</div>
                       )}
-                      <div style={{ fontSize: 10, color: T.textDim, marginTop: 2 }}>
+                      <div style={{ fontSize: 11, color: T.textDim, marginTop: 4 }}>
                         {fmtDate(ev.created_at)}
                       </div>
                     </div>
@@ -535,7 +539,7 @@ export default function PropostaDetailPage() {
             {/* Notes */}
             {proposal.notes && (
               <div style={{ ...cardStyle, padding: 16 }}>
-                <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.textMuted, marginBottom: 8 }}>
+                <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.textMuted, marginBottom: 8 }}>
                   Notas Internas
                 </h3>
                 <p style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.7 }}>{proposal.notes}</p>

@@ -35,8 +35,8 @@ export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname
     const origin = request.headers.get('origin')
 
-    // 0. QR short-link redirects: /l/:shortCode — public, no locale, no auth
-    if (pathname.startsWith('/l/')) {
+    // 0. Short-link redirects: /l/:shortCode and /r/:code — public, no locale, no auth
+    if (pathname.startsWith('/l/') || pathname.startsWith('/r/')) {
         return NextResponse.next()
     }
 

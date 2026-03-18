@@ -93,14 +93,14 @@ export default function CreditoDetalhesPage() {
         const badges: Record<string, { label: string; textColor: string; bg: string; icon: React.ElementType }> = {
             approved:     { label: 'Aprovado',     textColor: '#4CAF7D', bg: 'rgba(76,175,125,0.12)', icon: CheckCircle },
             aprovado:     { label: 'Aprovado',     textColor: '#4CAF7D', bg: 'rgba(76,175,125,0.12)', icon: CheckCircle },
-            pending:      { label: 'Pendente',     textColor: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Clock },
-            pendente:     { label: 'Pendente',     textColor: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Clock },
+            pending:      { label: 'Pendente',     textColor: 'var(--warning)', bg: 'rgba(232,168,124,0.12)', icon: Clock },
+            pendente:     { label: 'Pendente',     textColor: 'var(--warning)', bg: 'rgba(232,168,124,0.12)', icon: Clock },
             rejected:     { label: 'Rejeitado',    textColor: T.error, bg: 'rgba(248,113,113,0.12)', icon: XCircle },
             recusado:     { label: 'Rejeitado',    textColor: T.error, bg: 'rgba(248,113,113,0.12)', icon: XCircle },
             under_review: { label: 'Em Análise',   textColor: '#7BA3C2', bg: 'rgba(123,163,194,0.12)', icon: AlertCircle },
             analise:      { label: 'Em Análise',   textColor: '#7BA3C2', bg: 'rgba(123,163,194,0.12)', icon: AlertCircle },
-            documents:    { label: 'Documentação', textColor: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: FileText },
-            documentacao: { label: 'Documentação', textColor: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: FileText },
+            documents:    { label: 'Documentação', textColor: 'var(--text-secondary)', bg: 'rgba(168,158,196,0.12)', icon: FileText },
+            documentacao: { label: 'Documentação', textColor: 'var(--text-secondary)', bg: 'rgba(168,158,196,0.12)', icon: FileText },
         }
         const badge = badges[status] || badges.pending
         const Icon = badge.icon
@@ -520,7 +520,7 @@ export default function CreditoDetalhesPage() {
                                         <div className="flex-1 pb-4">
                                             <p
                                                 className={`text-sm font-medium`}
-                                                style={{ color: item.status === 'current' ? '#60A5FA' : T.text }}
+                                                style={{ color: item.status === 'current' ? 'var(--info)' : T.text }}
                                             >
                                                 {item.event}
                                             </p>

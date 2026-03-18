@@ -352,7 +352,7 @@ export default function CampanhasROIPage() {
                         {/* Needs attention */}
                         <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-2 mb-4">
-                                <AlertTriangle size={18} style={{ color: '#E8A87C' }} />
+                                <AlertTriangle size={18} style={{ color: 'var(--warning)' }} />
                                 <h2 className="text-base font-bold" style={{ color: T.text }}>Requerem Atenção</h2>
                             </div>
                             {bottomPerformers.length === 0 ? (
@@ -364,14 +364,14 @@ export default function CampanhasROIPage() {
                                             <div className="flex items-start justify-between mb-1">
                                                 <p className="text-sm font-semibold line-clamp-1" style={{ color: T.text }}>{camp.name}</p>
                                                 <p className="text-sm font-bold ml-2 shrink-0"
-                                                    style={{ color: camp.roi < 0 ? 'var(--bo-error)' : '#E8A87C' }}>
+                                                    style={{ color: camp.roi < 0 ? 'var(--bo-error)' : 'var(--warning)' }}>
                                                     {fmtROI(camp.roi)}
                                                 </p>
                                             </div>
                                             <p className="text-xs" style={{ color: T.textMuted }}>
                                                 {fmtBRL(Number(camp.spent))} investido · {camp.leads || 0} leads · Canal: {CHANNEL_LABELS[(camp.channel || '').toLowerCase()] ?? camp.channel}
                                             </p>
-                                            <p className="text-xs mt-1" style={{ color: '#E8A87C' }}>Considerar otimização ou realocação de budget</p>
+                                            <p className="text-xs mt-1" style={{ color: 'var(--warning)' }}>Considerar otimização ou realocação de budget</p>
                                         </div>
                                     ))}
                                 </div>

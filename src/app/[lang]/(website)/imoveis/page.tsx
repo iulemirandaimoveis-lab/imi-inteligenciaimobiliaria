@@ -17,7 +17,7 @@ export default async function ImoveisPage({
 
     let query = supabase
         .from('developments')
-        .select(`*, developers(id, name, slug, logo_url)`)
+        .select('*')
         .eq('status_commercial', 'published')
         .order('is_highlighted', { ascending: false })
         .order('created_at', { ascending: false })

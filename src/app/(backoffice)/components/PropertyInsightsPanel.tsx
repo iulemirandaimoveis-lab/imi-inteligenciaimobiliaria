@@ -338,7 +338,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                             {insights.lead_strategy.priority_actions.map((a, i) => (
                                                 <div key={i} className="flex items-center gap-2 text-[11px]" style={{ color: T.text }}>
                                                     <span className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold flex-shrink-0"
-                                                        style={{ background: T.accent, color: '#fff' }}>{i + 1}</span>
+                                                        style={{ background: T.accent, color: 'var(--text-inverse)' }}>{i + 1}</span>
                                                     {a}
                                                 </div>
                                             ))}

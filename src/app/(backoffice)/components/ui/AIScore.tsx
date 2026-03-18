@@ -30,7 +30,7 @@ function getScoreBg(score: number): string {
 }
 
 const SIZE_CONFIG = {
-  xs: { fontSize: '10px', padding: '2px 5px', iconSize: 10 },
+  xs: { fontSize: '11px', padding: '2px 5px', iconSize: 10 },
   sm: { fontSize: '11px', padding: '3px 7px', iconSize: 11 },
   md: { fontSize: '13px', padding: '4px 9px', iconSize: 13 },
   lg: { fontSize: '16px', padding: '6px 12px', iconSize: 16 },
@@ -62,7 +62,7 @@ export function AIScore({
           border: `1px solid ${color}22`,
           fontSize: sz.fontSize,
           padding: sz.padding,
-          gap: '3px',
+          gap: '4px',
           lineHeight: 1,
           whiteSpace: 'nowrap',
         }}
@@ -77,7 +77,7 @@ export function AIScore({
           style={{
             width: '100%',
             height: '3px',
-            borderRadius: 'var(--r-xs, 3px)',
+            borderRadius: 'var(--r-xs, 4px)',
             background: 'var(--bg-muted)',
             overflow: 'hidden',
           }}
@@ -87,7 +87,7 @@ export function AIScore({
               width: `${clamped}%`,
               height: '100%',
               background: color,
-              borderRadius: 'var(--r-xs, 3px)',
+              borderRadius: 'var(--r-xs, 4px)',
               transition: 'width 0.8s var(--ease-out)',
             }}
           />

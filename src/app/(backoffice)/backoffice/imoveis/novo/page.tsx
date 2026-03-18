@@ -20,21 +20,21 @@ import UploadProgressPanel from '@/app/(backoffice)/components/ui/UploadProgress
 
 /* ─── Design Tokens ────────────────────────────────────────────────────────── */
 const T = {
-  navy:     '#0B1120',
-  surface:  '#101830',
-  elevated: '#162040',
-  raised:   '#1A3250',
+  navy:     'var(--text-primary)',
+  surface:  'var(--bg-surface)',
+  elevated: 'var(--bg-elevated)',
+  raised:   'var(--bg-subtle)',
   gold:     'var(--imi-gold-500)',
   goldBg:   'rgba(184,148,58,0.08)',
   goldBgHi: 'rgba(184,148,58,0.14)',
-  border:   'rgba(184,148,58,0.15)',
-  borderHi: 'rgba(184,148,58,0.4)',
-  text:     '#EBE7E0',
-  textSub:  '#9FAAB8',
-  textDim:  '#5C6B7D',
-  success:  '#2D8F5C',
-  error:    '#EF4444',
-  errorBg:  'rgba(239,68,68,0.08)',
+  border:   'var(--border-subtle)',
+  borderHi: 'var(--border-strong)',
+  text:     'var(--text-primary)',
+  textSub:  'var(--text-tertiary)',
+  textDim:  'var(--text-secondary)',
+  success:  'var(--success)',
+  error:    'var(--error)',
+  errorBg:  'var(--error-bg)',
 } as const
 
 /* ─── Constants ────────────────────────────────────────────────────────────── */
@@ -129,24 +129,24 @@ const inputStyle: React.CSSProperties = {
   background: T.elevated,
   border: `1px solid ${T.border}`,
   color: T.text,
-  borderRadius: 8,
+  borderRadius: 4,
   padding: '11px 14px',
   fontSize: 14,
   width: '100%',
   boxSizing: 'border-box',
-  fontFamily: 'Figtree, sans-serif',
-  transition: 'border-color 150ms ease, box-shadow 150ms ease',
+  fontFamily: 'var(--font-sans)',
+  transition: 'border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease)',
 }
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 11,
-  fontWeight: 700,
+  fontWeight: 600,
   color: T.textSub,
-  marginBottom: 6,
+  marginBottom: 8,
   textTransform: 'uppercase',
-  letterSpacing: '0.06em',
-  fontFamily: 'Figtree, sans-serif',
+  letterSpacing: '0.05em',
+  fontFamily: 'var(--font-sans)',
 }
 
 /* ─── Field Wrapper ──────────────────────────────────────────────────────────── */
@@ -187,7 +187,7 @@ function PriceInput({ value, onChange, placeholder, error }: {
     <div style={{ position: 'relative' }}>
       <span style={{
         position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-        fontSize: 12, fontWeight: 600, color: T.gold, fontFamily: 'JetBrains Mono, monospace',
+        fontSize: 12, fontWeight: 600, color: T.gold, fontFamily: 'var(--font-mono)',
         pointerEvents: 'none',
       }}>R$</span>
       <input
@@ -196,6 +196,8 @@ function PriceInput({ value, onChange, placeholder, error }: {
           ...inputStyle,
           paddingLeft: 36,
           borderColor: error ? T.error : T.border,
+          fontFamily: 'var(--font-mono)',
+          fontVariantNumeric: 'tabular-nums',
         }}
         value={value ? formatBRL(value) : ''}
         onChange={e => onChange(e.target.value.replace(/\D/g, ''))}
@@ -272,18 +274,18 @@ function StepIdentificacao({ form, errors, developers, set, isMobile }: {
                 style={{
                   background: sel ? T.goldBgHi : T.elevated,
                   border: `1.5px solid ${sel ? T.gold : T.border}`,
-                  borderRadius: 10,
+                  borderRadius: 4,
                   padding: isMobile ? '12px 8px' : '16px 10px',
                   cursor: 'pointer',
                   textAlign: 'center',
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', gap: 7,
-                  transition: 'all 150ms ease',
-                  boxShadow: sel ? `0 0 0 1px ${T.gold}22, 0 4px 16px rgba(184,148,58,0.08)` : 'none',
+                  transition: 'all var(--dur-2) var(--ease)',
+                  boxShadow: sel ? 'var(--shadow-gold)' : 'none',
                 }}
               >
                 <div style={{
-                  width: 36, height: 36, borderRadius: 10,
+                  width: 36, height: 36, borderRadius: 4,
                   background: sel ? `rgba(184,148,58,0.15)` : 'rgba(255,255,255,0.04)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
@@ -291,11 +293,11 @@ function StepIdentificacao({ form, errors, developers, set, isMobile }: {
                 </div>
                 <span style={{
                   fontSize: 12, fontWeight: 700, color: sel ? T.gold : T.text,
-                  fontFamily: 'Figtree, sans-serif',
+                  fontFamily: 'var(--font-sans)',
                 }}>{value}</span>
                 <span style={{
-                  fontSize: 10, color: T.textDim,
-                  fontFamily: 'Figtree, sans-serif',
+                  fontSize: 11, color: T.textDim,
+                  fontFamily: 'var(--font-sans)',
                   lineHeight: 1.3,
                 }}>{desc}</span>
                 {sel && (
@@ -353,31 +355,31 @@ function StepIdentificacao({ form, errors, developers, set, isMobile }: {
         padding: '14px 16px',
         background: form.is_highlighted ? T.goldBg : T.elevated,
         border: `1px solid ${form.is_highlighted ? T.border : 'rgba(255,255,255,0.06)'}`,
-        borderRadius: 10,
+        borderRadius: 4,
         cursor: 'pointer',
-        transition: 'all 150ms ease',
+        transition: 'all var(--dur-2) var(--ease)',
       }}
         onClick={() => set('is_highlighted', !form.is_highlighted)}
       >
         <div style={{
-          width: 40, height: 22, borderRadius: 11,
+          width: 40, height: 22, borderRadius: 4,
           background: form.is_highlighted ? T.gold : T.raised,
           border: `1px solid ${form.is_highlighted ? T.gold : T.border}`,
-          position: 'relative', transition: 'all 200ms ease', flexShrink: 0,
+          position: 'relative', transition: 'all var(--dur-2) var(--ease)', flexShrink: 0,
         }}>
           <span style={{
             position: 'absolute', top: 3,
             left: form.is_highlighted ? 20 : 3,
             width: 14, height: 14, borderRadius: '50%',
             background: form.is_highlighted ? T.navy : T.textSub,
-            transition: 'left 200ms ease',
+            transition: 'left var(--dur-2) var(--ease)',
           }} />
         </div>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: T.text, fontFamily: 'Figtree, sans-serif' }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: T.text, fontFamily: 'var(--font-sans)' }}>
             Destacar empreendimento
           </div>
-          <div style={{ fontSize: 11, color: T.textDim, fontFamily: 'Figtree, sans-serif' }}>
+          <div style={{ fontSize: 11, color: T.textDim, fontFamily: 'var(--font-sans)' }}>
             Aparece em destaque na vitrine e buscas
           </div>
         </div>
@@ -414,7 +416,7 @@ function StepLocalizacao({ form, errors, cepLoading, set, handleCepChange, isMob
               ...inputStyle,
               paddingRight: 44,
               letterSpacing: '0.1em',
-              fontFamily: 'JetBrains Mono, monospace',
+              fontFamily: 'var(--font-mono)',
               fontSize: 15,
             }}
             value={cepFormatted}
@@ -437,7 +439,7 @@ function StepLocalizacao({ form, errors, cepLoading, set, handleCepChange, isMob
         {cepLoading && (
           <span style={{
             fontSize: 11, color: T.gold, marginTop: 4,
-            fontFamily: 'Figtree, sans-serif',
+            fontFamily: 'var(--font-sans)',
             animation: 'fadeIn 150ms ease',
           }}>
             Buscando endereço...
@@ -451,7 +453,7 @@ function StepLocalizacao({ form, errors, cepLoading, set, handleCepChange, isMob
         gridTemplateColumns: isMobile ? '1fr' : '1fr 100px',
         gap: 14,
         opacity: form.cep.length > 0 ? 1 : 0.55,
-        transition: 'opacity 300ms ease',
+        transition: 'opacity var(--dur-3) var(--ease)',
       }}>
         <Field label="Logradouro">
           <input className="ni" style={inputStyle} value={form.address}
@@ -468,7 +470,7 @@ function StepLocalizacao({ form, errors, cepLoading, set, handleCepChange, isMob
         gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
         gap: 14,
         opacity: form.cep.length > 0 ? 1 : 0.55,
-        transition: 'opacity 300ms ease',
+        transition: 'opacity var(--dur-3) var(--ease)',
       }}>
         <Field label="Bairro">
           <input className="ni" style={inputStyle} value={form.neighborhood}
@@ -485,7 +487,7 @@ function StepLocalizacao({ form, errors, cepLoading, set, handleCepChange, isMob
         gridTemplateColumns: isMobile ? '1fr 1fr' : '80px 1fr',
         gap: 14,
         opacity: form.cep.length > 0 ? 1 : 0.55,
-        transition: 'opacity 300ms ease',
+        transition: 'opacity var(--dur-3) var(--ease)',
       }}>
         <Field label="UF">
           <input className="ni" style={{ ...inputStyle, textTransform: 'uppercase' }}
@@ -533,11 +535,11 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
             <div key={k} style={{
               background: T.elevated,
               border: `1px solid ${T.border}`,
-              borderRadius: 10, padding: '12px',
+              borderRadius: 4, padding: '12px',
               display: 'flex', flexDirection: 'column', gap: 6,
             }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: T.textDim,
-                textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'Figtree, sans-serif' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: T.textDim,
+                textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-sans)' }}>
                 {label}
               </span>
               <input
@@ -545,7 +547,7 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
                 style={{
                   background: 'transparent', border: 'none', outline: 'none',
                   color: T.text, fontSize: 20, fontWeight: 600,
-                  fontFamily: 'JetBrains Mono, monospace', padding: 0, width: '100%',
+                  fontFamily: 'var(--font-mono)', padding: 0, width: '100%',
                 }}
                 type="number"
                 min={0}
@@ -560,14 +562,14 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
 
       {/* Features / Amenities */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <label style={labelStyle}>Diferenciais & Amenidades</label>
           {form.features.length > 0 && (
             <span style={{
-              fontSize: 10, fontWeight: 700, color: T.gold,
+              fontSize: 11, fontWeight: 700, color: T.gold,
               background: T.goldBg, border: `1px solid ${T.border}`,
-              borderRadius: 99, padding: '2px 8px',
-              fontFamily: 'Figtree, sans-serif',
+              borderRadius: 4, padding: '2px 8px',
+              fontFamily: 'var(--font-sans)',
             }}>{form.features.length} selecionado{form.features.length > 1 ? 's' : ''}</span>
           )}
         </div>
@@ -584,16 +586,16 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
                 style={{
                   background: sel ? T.goldBgHi : T.elevated,
                   border: `1.5px solid ${sel ? T.gold : T.border}`,
-                  borderRadius: 99,
+                  borderRadius: 4,
                   padding: '7px 13px',
                   fontSize: 12,
                   color: sel ? T.gold : T.textSub,
                   cursor: 'pointer',
                   fontWeight: sel ? 700 : 400,
-                  transition: 'all 150ms ease',
+                  transition: 'all var(--dur-2) var(--ease)',
                   display: 'flex', alignItems: 'center', gap: 6,
                   minHeight: 34,
-                  fontFamily: 'Figtree, sans-serif',
+                  fontFamily: 'var(--font-sans)',
                 }}
               >
                 <Icon size={12} />
@@ -630,10 +632,10 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
         </div>
         {autoSqm && (
           <div style={{
-            marginTop: 10, padding: '8px 12px',
+            marginTop: 12, padding: '8px 12px',
             background: T.goldBg, border: `1px solid ${T.border}`,
-            borderRadius: 8, fontSize: 12, color: T.gold,
-            fontFamily: 'Figtree, sans-serif',
+            borderRadius: 4, fontSize: 12, color: T.gold,
+            fontFamily: 'var(--font-sans)',
             display: 'flex', alignItems: 'center', gap: 6,
           }}>
             <DollarSign size={13} />
@@ -719,11 +721,11 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Cover / Gallery upload zone */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <label style={labelStyle}>Galeria de imagens</label>
           {form.images.length > 0 && (
             <span style={{
-              fontSize: 10, color: T.textSub, fontFamily: 'Figtree, sans-serif',
+              fontSize: 11, color: T.textSub, fontFamily: 'var(--font-sans)',
             }}>
               {form.images.length} imagem{form.images.length > 1 ? 's' : ''} · primeira = capa
             </span>
@@ -738,13 +740,13 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
           onClick={() => fileInputRef.current?.click()}
           style={{
             border: `2px dashed ${isDragging ? T.gold : T.border}`,
-            borderRadius: 12,
+            borderRadius: 4,
             padding: isMobile ? '28px 20px' : '40px 32px',
             textAlign: 'center',
             cursor: 'pointer',
             background: isDragging ? T.goldBg : T.elevated,
-            transition: 'all 200ms ease',
-            boxShadow: isDragging ? `0 0 0 4px rgba(184,148,58,0.08)` : 'none',
+            transition: 'all var(--dur-2) var(--ease)',
+            boxShadow: isDragging ? 'var(--shadow-gold)' : 'none',
           }}
         >
           <input
@@ -756,20 +758,20 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
             onChange={handleImageInput}
           />
           <div style={{
-            width: 56, height: 56, borderRadius: 14,
+            width: 56, height: 56, borderRadius: 4,
             background: isDragging ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.04)',
             border: `1px solid ${isDragging ? T.gold : T.border}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 14px',
-            transition: 'all 200ms ease',
+            transition: 'all var(--dur-2) var(--ease)',
           }}>
             <Upload size={24} color={isDragging ? T.gold : T.textDim} />
           </div>
           <div style={{ fontSize: 14, fontWeight: 600, color: isDragging ? T.gold : T.textSub,
-            fontFamily: 'Figtree, sans-serif', marginBottom: 4 }}>
+            fontFamily: 'var(--font-sans)', marginBottom: 4 }}>
             {isDragging ? 'Soltar para adicionar' : 'Arraste imagens ou clique para selecionar'}
           </div>
-          <div style={{ fontSize: 11, color: T.textDim, fontFamily: 'Figtree, sans-serif' }}>
+          <div style={{ fontSize: 11, color: T.textDim, fontFamily: 'var(--font-sans)' }}>
             JPG, PNG, WEBP · Máx 50 MB por arquivo
           </div>
         </div>
@@ -779,14 +781,14 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
           <div style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-            gap: 10,
-            marginTop: 14,
+            gap: 12,
+            marginTop: 16,
           }}>
             {form.images.map((file, idx) => (
               <div key={idx} style={{
-                position: 'relative', borderRadius: 10, overflow: 'hidden',
+                position: 'relative', borderRadius: 4, overflow: 'hidden',
                 background: T.elevated, aspectRatio: '4/3',
-                boxShadow: idx === 0 ? `0 0 0 2px ${T.gold}` : 'none',
+                boxShadow: idx === 0 ? 'var(--shadow-gold)' : 'none',
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -803,10 +805,10 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
                   <span style={{
                     position: 'absolute', top: 6, left: 6,
                     background: T.gold, color: T.navy,
-                    fontSize: 8, fontWeight: 800,
+                    fontSize: 11, fontWeight: 800,
                     padding: '2px 7px', borderRadius: 4,
                     letterSpacing: '0.5px',
-                    fontFamily: 'Figtree, sans-serif',
+                    fontFamily: 'var(--font-sans)',
                   }}>CAPA</span>
                 )}
                 <button
@@ -819,7 +821,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
                     width: 24, height: 24,
                     cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: '#fff', transition: 'background 150ms ease',
+                    color: 'var(--text-inverse)', transition: 'background var(--dur-2) var(--ease)',
                   }}
                 >
                   <X size={12} />
@@ -827,8 +829,8 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
                 {/* File name */}
                 <span style={{
                   position: 'absolute', bottom: 5, left: 7,
-                  fontSize: 9, color: 'rgba(255,255,255,0.7)',
-                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: 11, color: 'rgba(255,255,255,0.7)',
+                  fontFamily: 'var(--font-mono)',
                   maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}>
                   {file.name}
@@ -840,7 +842,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
               type="button"
               onClick={() => fileInputRef.current?.click()}
               style={{
-                borderRadius: 10, aspectRatio: '4/3',
+                borderRadius: 4, aspectRatio: '4/3',
                 border: `2px dashed ${T.border}`,
                 background: 'transparent',
                 cursor: 'pointer',
@@ -850,7 +852,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
               }}
             >
               <ImageIcon size={20} />
-              <span style={{ fontSize: 10, fontFamily: 'Figtree, sans-serif' }}>Adicionar</span>
+              <span style={{ fontSize: 11, fontFamily: 'var(--font-sans)' }}>Adicionar</span>
             </button>
           </div>
         )}
@@ -864,10 +866,10 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
           padding: '12px 14px',
           background: T.elevated,
           border: `1px solid ${T.border}`,
-          borderRadius: 8, cursor: 'pointer',
+          borderRadius: 4, cursor: 'pointer',
         }}>
           <Upload size={15} color={T.textDim} />
-          <span style={{ fontSize: 13, color: T.textSub, fontFamily: 'Figtree, sans-serif' }}>
+          <span style={{ fontSize: 13, color: T.textSub, fontFamily: 'var(--font-sans)' }}>
             {form.floorPlans.length > 0
               ? `${form.floorPlans.length} planta(s) selecionada(s)`
               : 'Selecionar plantas (imagem ou PDF)'}
@@ -893,11 +895,11 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
           padding: '12px 14px',
           background: T.elevated,
           border: `1px solid ${form.brochure ? T.gold : T.border}`,
-          borderRadius: 8, cursor: 'pointer',
+          borderRadius: 4, cursor: 'pointer',
         }}>
           <Upload size={15} color={form.brochure ? T.gold : T.textDim} />
           <span style={{ fontSize: 13, color: form.brochure ? T.gold : T.textSub,
-            fontFamily: 'Figtree, sans-serif', flex: 1 }}>
+            fontFamily: 'var(--font-sans)', flex: 1 }}>
             {form.brochure ? form.brochure.name : 'Selecionar PDF ou imagem'}
           </span>
           {form.brochure && (
@@ -979,7 +981,7 @@ function StepProgressBar({ step, setStep, canJumpTo }: {
                 display: 'flex', alignItems: 'center', gap: 8,
                 padding: '0 4px',
                 color: active ? T.gold : done ? T.textSub : T.textDim,
-                transition: 'color 200ms ease',
+                transition: 'color var(--dur-2) var(--ease)',
                 flexShrink: 0,
               }}
             >
@@ -991,8 +993,8 @@ function StepProgressBar({ step, setStep, canJumpTo }: {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 11, fontWeight: 800,
                 color: active ? T.navy : done ? T.gold : T.textDim,
-                transition: 'all 200ms ease',
-                fontFamily: 'JetBrains Mono, monospace',
+                transition: 'all var(--dur-2) var(--ease)',
+                fontFamily: 'var(--font-mono)',
                 flexShrink: 0,
               }}>
                 {done ? <Check size={13} /> : n}
@@ -1000,7 +1002,7 @@ function StepProgressBar({ step, setStep, canJumpTo }: {
               {/* Label — hide on mobile */}
               <span style={{
                 fontSize: 12, fontWeight: active ? 700 : 400,
-                fontFamily: 'Figtree, sans-serif',
+                fontFamily: 'var(--font-sans)',
                 display: 'none',
               }} className="step-label">
                 {meta.title}
@@ -1012,7 +1014,7 @@ function StepProgressBar({ step, setStep, canJumpTo }: {
               <div style={{
                 flex: 1, height: 2, margin: '0 6px',
                 background: done ? T.gold : T.border,
-                borderRadius: 2, transition: 'background 300ms ease',
+                borderRadius: 4, transition: 'background var(--dur-3) var(--ease)',
               }} />
             )}
           </div>
@@ -1055,7 +1057,7 @@ export default function NovoImovelPage() {
   /* ── Fetch developers ── */
   useEffect(() => {
     const supabase = createClient()
-    supabase.from('developers').select('id, name, logo_url').order('name')
+    supabase.from('developers').select('*').order('name')
       .then(({ data }) => { if (data) setDevelopers(data) })
   }, [])
 
@@ -1334,9 +1336,9 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
   return (
     <div style={{ minHeight: '100vh', background: T.navy, color: T.text }}>
       <style suppressHydrationWarning>{`
-        .ni::placeholder { color: #5C6B7D }
-        .ni:focus { outline: none; border-color: var(--imi-gold-500) !important; box-shadow: 0 0 0 3px rgba(184,148,58,0.12); }
-        .ni option { background: #162040; color: #EBE7E0; }
+        .ni::placeholder { color: var(--text-tertiary) }
+        .ni:focus { outline: none; border-color: var(--imi-gold-500) !important; box-shadow: var(--shadow-xs); }
+        .ni option { background: var(--bg-elevated); color: var(--text-primary); }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: translateY(0) } }
@@ -1360,9 +1362,9 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               fontSize: 13, color: T.textSub, textDecoration: 'none',
-              fontFamily: 'Figtree, sans-serif', fontWeight: 500,
+              fontFamily: 'var(--font-sans)', fontWeight: 500,
               flexShrink: 0,
-              transition: 'color 150ms ease',
+              transition: 'color var(--dur-2) var(--ease)',
             }}
           >
             <ArrowLeft size={15} />
@@ -1381,7 +1383,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
             <div style={{
               display: 'flex', alignItems: 'center', gap: 6,
               fontSize: 11, color: T.success,
-              fontFamily: 'Figtree, sans-serif',
+              fontFamily: 'var(--font-sans)',
               animation: 'draftPop 3s ease forwards',
               flexShrink: 0,
             }}>
@@ -1414,7 +1416,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
             </h1>
             <p style={{
               fontSize: 13, color: T.textSub, margin: 0,
-              fontFamily: 'Figtree, sans-serif',
+              fontFamily: 'var(--font-sans)',
             }}>
               {STEP_META[step - 1].subtitle}
             </p>
@@ -1422,7 +1424,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
 
           <div style={{
             background: T.surface,
-            borderRadius: 14,
+            borderRadius: 4,
             border: `1px solid ${T.border}`,
             padding: 28,
             animation: 'slideDown 250ms ease both',
@@ -1435,14 +1437,14 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
         <div style={{ position: 'sticky', top: 96 }}>
           {/* Progress summary */}
           <div style={{
-            background: T.surface, borderRadius: 12,
+            background: T.surface, borderRadius: 4,
             border: `1px solid ${T.border}`, padding: 18,
             marginBottom: 16,
           }}>
             <div style={{
-              fontSize: 10, fontWeight: 700, color: T.textDim,
+              fontSize: 11, fontWeight: 700, color: T.textDim,
               textTransform: 'uppercase', letterSpacing: '0.1em',
-              fontFamily: 'Figtree, sans-serif',
+              fontFamily: 'var(--font-sans)',
               marginBottom: 12,
             }}>Progresso</div>
             {STEP_META.map((meta, i) => {
@@ -1464,14 +1466,14 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
                   }}>
                     {done
                       ? <Check size={11} color={T.navy} />
-                      : <span style={{ fontSize: 9, fontWeight: 700, color: active ? T.gold : T.textDim,
-                        fontFamily: 'JetBrains Mono, monospace' }}>{n}</span>
+                      : <span style={{ fontSize: 11, fontWeight: 700, color: active ? T.gold : T.textDim,
+                        fontFamily: 'var(--font-mono)' }}>{n}</span>
                     }
                   </div>
                   <span style={{
                     fontSize: 12, fontWeight: active ? 600 : 400,
                     color: active ? T.text : done ? T.textSub : T.textDim,
-                    fontFamily: 'Figtree, sans-serif',
+                    fontFamily: 'var(--font-sans)',
                   }}>{meta.title}</span>
                 </div>
               )
@@ -1480,19 +1482,19 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
 
           {/* Tips */}
           <div style={{
-            background: T.goldBg, borderRadius: 12,
+            background: T.goldBg, borderRadius: 4,
             border: `1px solid ${T.border}`, padding: 18,
           }}>
             <div style={{
-              fontSize: 10, fontWeight: 700, color: T.gold,
+              fontSize: 11, fontWeight: 700, color: T.gold,
               textTransform: 'uppercase', letterSpacing: '0.1em',
-              fontFamily: 'Figtree, sans-serif', marginBottom: 12,
+              fontFamily: 'var(--font-sans)', marginBottom: 12,
             }}>{tip.title}</div>
             <ul style={{ margin: 0, padding: '0 0 0 14px' }}>
               {tip.items.map((item, i) => (
                 <li key={i} style={{
                   fontSize: 12, color: T.textSub, marginBottom: 8,
-                  fontFamily: 'Figtree, sans-serif', lineHeight: 1.5,
+                  fontFamily: 'var(--font-sans)', lineHeight: 1.5,
                 }}>{item}</li>
               ))}
             </ul>
@@ -1524,13 +1526,13 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
           style={{
             background: 'transparent',
             border: `1px solid ${step === 1 ? 'rgba(184,148,58,0.08)' : T.border}`,
-            borderRadius: 8, padding: '10px 20px',
+            borderRadius: 4, padding: '10px 20px',
             fontSize: 13, fontWeight: 600,
             color: step === 1 ? T.textDim : T.textSub,
             cursor: step === 1 ? 'not-allowed' : 'pointer',
             display: 'flex', alignItems: 'center', gap: 8,
-            fontFamily: 'Figtree, sans-serif',
-            transition: 'all 150ms ease',
+            fontFamily: 'var(--font-sans)',
+            transition: 'all var(--dur-2) var(--ease)',
           }}
         >
           <ArrowLeft size={14} />
@@ -1540,7 +1542,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
         {/* Step indicator */}
         <span style={{
           fontSize: 12, color: T.textDim,
-          fontFamily: 'Figtree, sans-serif', fontVariantNumeric: 'tabular-nums',
+          fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums',
         }}>
           Passo {step} / 4
         </span>
@@ -1551,13 +1553,13 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
             type="button"
             onClick={next}
             style={{
-              background: T.gold, border: 'none', borderRadius: 8,
+              background: T.gold, border: 'none', borderRadius: 4,
               padding: '10px 24px', fontSize: 13, fontWeight: 700,
               color: T.navy, cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: 8,
-              fontFamily: 'Figtree, sans-serif',
-              boxShadow: '0 4px 16px rgba(184,148,58,0.2)',
-              transition: 'opacity 150ms ease',
+              fontFamily: 'var(--font-sans)',
+              boxShadow: 'var(--shadow-gold)',
+              transition: 'opacity var(--dur-2) var(--ease)',
             }}
           >
             Continuar
@@ -1571,14 +1573,14 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
             style={{
               background: saving ? T.elevated : T.gold,
               border: saving ? `1px solid ${T.border}` : 'none',
-              borderRadius: 8, padding: '10px 28px',
+              borderRadius: 4, padding: '10px 28px',
               fontSize: 13, fontWeight: 700,
               color: saving ? T.textSub : T.navy,
               cursor: saving ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', gap: 8,
-              fontFamily: 'Figtree, sans-serif',
-              boxShadow: saving ? 'none' : '0 4px 16px rgba(184,148,58,0.2)',
-              transition: 'all 200ms ease',
+              fontFamily: 'var(--font-sans)',
+              boxShadow: saving ? 'none' : 'var(--shadow-gold)',
+              transition: 'all var(--dur-2) var(--ease)',
               opacity: saving ? 0.8 : 1,
             }}
           >
@@ -1605,9 +1607,9 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
     <div style={{ minHeight: '100vh', background: T.navy, color: T.text }}>
       <MobileGlobalStyles />
       <style suppressHydrationWarning>{`
-        .ni::placeholder { color: #5C6B7D }
-        .ni:focus { outline: none; border-color: var(--imi-gold-500) !important; box-shadow: 0 0 0 3px rgba(184,148,58,0.12); }
-        .ni option { background: #162040; color: #EBE7E0; }
+        .ni::placeholder { color: var(--text-tertiary) }
+        .ni:focus { outline: none; border-color: var(--imi-gold-500) !important; box-shadow: var(--shadow-xs); }
+        .ni option { background: var(--bg-elevated); color: var(--text-primary); }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-8px) } to { opacity: 1; transform: translateY(0) } }
@@ -1621,8 +1623,8 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
         actions={
           draftSaved ? (
             <span style={{
-              fontSize: 10, color: T.success,
-              fontFamily: 'Figtree, sans-serif',
+              fontSize: 11, color: T.success,
+              fontFamily: 'var(--font-sans)',
               padding: '0 8px',
               display: 'flex', alignItems: 'center', gap: 4,
             }}>
@@ -1650,10 +1652,10 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
                 background: active ? T.gold : done ? T.goldBg : T.elevated,
                 border: `2px solid ${active ? T.gold : done ? T.gold : T.border}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 10, fontWeight: 800, color: active ? T.navy : done ? T.gold : T.textDim,
-                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: 11, fontWeight: 800, color: active ? T.navy : done ? T.gold : T.textDim,
+                fontFamily: 'var(--font-mono)',
                 flexShrink: 0,
-                transition: 'all 200ms ease',
+                transition: 'all var(--dur-2) var(--ease)',
               }}>
                 {done ? <Check size={11} /> : n}
               </div>
@@ -1661,7 +1663,7 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
                 <div style={{
                   flex: 1, height: 2, margin: '0 4px',
                   background: done ? T.gold : T.border,
-                  borderRadius: 2, transition: 'background 300ms ease',
+                  borderRadius: 4, transition: 'background var(--dur-3) var(--ease)',
                 }} />
               )}
             </div>
@@ -1701,7 +1703,7 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
           disabled={step === 1}
           style={{
             flex: '0 0 auto',
-            width: 48, height: 48, borderRadius: 10,
+            width: 48, height: 48, borderRadius: 4,
             background: 'transparent',
             border: `1px solid ${step === 1 ? 'rgba(184,148,58,0.08)' : T.border}`,
             cursor: step === 1 ? 'not-allowed' : 'pointer',
@@ -1717,13 +1719,13 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
             type="button"
             onClick={next}
             style={{
-              flex: 1, height: 48, borderRadius: 10,
+              flex: 1, height: 48, borderRadius: 4,
               background: T.gold, border: 'none',
               fontSize: 14, fontWeight: 700, color: T.navy,
               cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              fontFamily: 'Figtree, sans-serif',
-              boxShadow: '0 4px 16px rgba(184,148,58,0.2)',
+              fontFamily: 'var(--font-sans)',
+              boxShadow: 'var(--shadow-gold)',
             }}
           >
             Continuar
@@ -1735,14 +1737,14 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
             onClick={handleSave}
             disabled={saving}
             style={{
-              flex: 1, height: 48, borderRadius: 10,
+              flex: 1, height: 48, borderRadius: 4,
               background: saving ? T.elevated : T.gold,
               border: saving ? `1px solid ${T.border}` : 'none',
               fontSize: 14, fontWeight: 700,
               color: saving ? T.textSub : T.navy,
               cursor: saving ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              fontFamily: 'Figtree, sans-serif',
+              fontFamily: 'var(--font-sans)',
               opacity: saving ? 0.85 : 1,
             }}
           >

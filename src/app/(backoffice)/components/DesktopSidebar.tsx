@@ -31,6 +31,18 @@ interface NavSection {
     items: NavItem[]
 }
 
+// ── Section colors for visual differentiation ──
+const SECTION_COLORS: Record<string, string> = {
+    'Operações Diárias': 'var(--imi-gold-500)',
+    'Captação': 'var(--warning)',
+    'Conversão': '#4ADE80',
+    'Portfólio': '#D4A929',
+    'Operação': '#4ECDC4',
+    'Financeiro': '#84CC16',
+    'Inteligência': 'var(--info)',
+    'Configurações': 'var(--text-tertiary)',
+}
+
 // ── 8 groups: Operações Diárias always open, rest collapsed by default ──
 const SECTIONS: NavSection[] = [
     {
@@ -96,7 +108,7 @@ const SECTIONS: NavSection[] = [
             {
                 label: 'Conteúdo', icon: FileText,
                 children: [
-                    { label: 'Publicações', href: '/backoffice/conteudos',          icon: FileText,   badge: 'BREVE' },
+                    { label: 'Publicações', href: '/backoffice/conteudos',          icon: FileText,   badge: 'NEW'   },
                     { label: 'Criador IA',  href: '/backoffice/conteudo/criador',   icon: Wand2,      badge: 'NEW'   },
                     { label: 'eBook IA',    href: '/backoffice/conteudo/ebook',     icon: BookMarked, badge: 'NEW'   },
                     { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },
@@ -195,28 +207,31 @@ const SECTIONS: NavSection[] = [
 // ── Badge styling helper ──────────────────────────────────────────
 function badgeStyle(badge: string | number) {
     const base = {
-        fontSize: 9,
+        fontSize: 11,
         fontFamily: 'var(--font-mono)',
         fontWeight: 700 as const,
-        padding: '1px 5px',
-        borderRadius: 999,
+        padding: '2px 5px',
+        borderRadius: 4,
         letterSpacing: '0.06em',
+        lineHeight: 1.2,
+        whiteSpace: 'nowrap' as const,
+        flexShrink: 0,
     }
     if (badge === 'NEW') {
-        return { ...base, background: 'rgba(45,143,92,0.15)', color: '#2D8F5C', border: '1px solid rgba(45,143,92,0.2)' }
+        return { ...base, background: '#2D8F5C', color: 'var(--text-inverse)', border: 'none', boxShadow: '0 1px 4px rgba(45,143,92,0.25)' }
     }
     if (badge === 'IA') {
-        return { ...base, background: 'rgba(184,148,58,0.10)', color: 'var(--imi-gold-500)', border: '1px solid rgba(184,148,58,0.20)' }
+        return { ...base, background: 'var(--imi-gold-500)', color: 'var(--bg-base)', border: 'none', boxShadow: '0 1px 4px rgba(184,148,58,0.25)' }
     }
     if (badge === 'BREVE') {
-        return { ...base, background: 'var(--bg-muted)', color: 'var(--text-tertiary)', border: '1px solid var(--border-subtle)', letterSpacing: '0.05em', fontWeight: 600 as const }
+        return { ...base, fontSize: 11, background: 'rgba(148,163,184,0.15)', color: 'var(--text-tertiary)', border: '1px solid rgba(148,163,184,0.15)' }
     }
-    return { ...base, background: 'var(--bg-elevated)', color: '#fff', border: '1px solid transparent' }
+    return { ...base, background: 'var(--bg-elevated)', color: 'var(--text-inverse)', border: '1px solid transparent' }
 }
 
 // ── Badge display text helper ─────────────────────────────────────
 function badgeText(badge: string | number): string {
-    if (badge === 'BREVE') return 'EM BREVE'
+    if (badge === 'BREVE') return 'BREVE'
     return String(badge)
 }
 
@@ -294,19 +309,25 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
     return (
         <Link
             href={item.href!}
-            className="relative flex items-center gap-3 px-3 py-2 rounded text-sm transition-all"
+            className="relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all"
             style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: 14,
+                fontSize: 13,
                 color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
-                background: isActive ? 'rgba(184,148,58,0.08)' : 'transparent',
+                background: isActive ? 'rgba(184,148,58,0.10)' : 'transparent',
                 fontWeight: isActive ? 600 : 400,
             }}
             onMouseEnter={(e) => {
-                if (!isActive) e.currentTarget.style.background = 'rgba(184,148,58,0.05)'
+                if (!isActive) {
+                    e.currentTarget.style.background = 'rgba(184,148,58,0.06)'
+                    e.currentTarget.style.transform = 'translateX(2px)'
+                }
             }}
             onMouseLeave={(e) => {
-                if (!isActive) e.currentTarget.style.background = 'transparent'
+                if (!isActive) {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.transform = 'translateX(0)'
+                }
             }}
         >
             {/* Active indicator bar */}
@@ -314,7 +335,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 <motion.div
                     layoutId="sidebar-active"
                     className="absolute -left-[11px] top-1/2 w-[4px] h-5 rounded-full"
-                    style={{ background: 'var(--imi-gold-500)', transform: 'translateY(-50%)' }}
+                    style={{ background: 'var(--imi-gold-500)', transform: 'translateY(-50%)', boxShadow: '0 0 8px rgba(184,148,58,0.4)' }}
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 />
             )}
@@ -344,23 +365,31 @@ function SectionComponent({ section }: { section: NavSection }) {
         })
     })
 
+    const sectionColor = SECTION_COLORS[section.label] || 'var(--text-tertiary)'
+
     return (
-        <div className="mb-1">
+        <div className="mb-1.5">
             {/* Section header */}
             <button
                 onClick={() => { if (!isAlwaysOpen) setOpen(v => !v) }}
-                className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all group"
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all group"
                 style={{ cursor: isAlwaysOpen ? 'default' : 'pointer' }}
                 disabled={isAlwaysOpen}
             >
+                {/* Color indicator */}
+                <div
+                    className="flex-shrink-0"
+                    style={{ width: 3, height: 12, borderRadius: 4, background: sectionColor, opacity: open ? 1 : 0.4, transition: 'opacity 0.2s' }}
+                />
                 <p
                     className="flex-1 text-left uppercase"
                     style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: 10,
-                        fontWeight: 600,
-                        letterSpacing: '0.12em',
-                        color: 'var(--text-tertiary)',
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: '0.10em',
+                        color: open ? 'var(--text-secondary)' : 'var(--text-tertiary)',
+                        transition: 'color 0.2s',
                     }}
                 >
                     {section.label}
@@ -437,7 +466,7 @@ export function DesktopSidebar() {
                     className="leading-[1.35] select-none"
                     style={{
                         fontFamily: 'var(--font-sans)',
-                        fontSize: 8,
+                        fontSize: 11,
                         fontWeight: 500,
                         letterSpacing: '0.22em',
                         textTransform: 'uppercase',

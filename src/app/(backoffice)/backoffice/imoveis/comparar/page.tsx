@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { ArrowLeft, Star, Plus, X, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
+import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../mobile-ui'
@@ -22,16 +23,7 @@ const DB_STATUS: Record<string, string> = {
 function ns(s?: string) { return DB_STATUS[s?.toLowerCase() ?? ''] ?? s?.toLowerCase() ?? 'disponivel' }
 
 function toP(d: any): IMIProperty {
-  return {
-    id: d.id, name: d.name, type: d.type, condition: d.condition,
-    status: ns(d.status_commercial ?? d.status),
-    price: d.price_from, area: d.area_min,
-    bedrooms: d.bedrooms_from, bathrooms: d.bathrooms_from, parking: d.parking_from,
-    neighborhood: d.neighborhood, city: d.city, state: d.state,
-    image_urls: d.image_urls, cover_image_url: d.cover_image_url,
-    slug: d.slug, created_at: d.created_at,
-    developer: Array.isArray(d.developer) ? d.developer[0] : d.developer,
-  }
+  return mapDevToProperty(d)
 }
 
 function fmt(n?: number | null): string {
@@ -113,7 +105,7 @@ function EmptyState() {
       justifyContent: 'center', padding: '40px 24px', gap: 24, textAlign: 'center',
     }}>
       <div style={{
-        width: 80, height: 80, borderRadius: 20,
+        width: 80, height: 80, borderRadius: 4,
         background: 'rgba(184,148,58,0.06)',
         border: '1px solid rgba(184,148,58,0.18)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -143,7 +135,7 @@ function EmptyState() {
           padding: '10px 22px', borderRadius: 4,
           background: 'var(--gold, var(--imi-gold-500))', border: 'none',
           color: 'var(--navy, #0B1120)',
-          fontSize: '10px', fontWeight: 700, letterSpacing: '1.8px',
+          fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px',
           textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
           cursor: 'pointer',
         }}>
@@ -176,12 +168,7 @@ function MobileComparar() {
     const supabase = createClient()
     supabase
       .from('developments')
-      .select(`
-        id, name, type, status, status_commercial, condition,
-        price_from, area_min, area_max, bedrooms_from, bathrooms_from, parking_from,
-        neighborhood, city, state, image_urls, cover_image_url, slug, created_at,
-        developer:developers(id, name, logo_url)
-      `)
+      .select('*')
       .in('id', ids)
       .then(({ data, error: err }) => {
         if (err) { setError(err.message); setLoading(false); return }
@@ -229,7 +216,7 @@ function MobileComparar() {
           paddingTop: 72,
         }}>
           <div style={{
-            width: 80, height: 80, borderRadius: 20,
+            width: 80, height: 80, borderRadius: 4,
             background: 'rgba(184,148,58,0.06)',
             border: '1px solid rgba(184,148,58,0.18)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -246,7 +233,7 @@ function MobileComparar() {
           </div>
           <Link href="/backoffice/imoveis">
             <button style={{
-              height: 44, paddingLeft: 20, paddingRight: 20, borderRadius: 8,
+              height: 44, paddingLeft: 20, paddingRight: 20, borderRadius: 4,
               background: 'var(--imi-gold-500)', border: 'none', color: 'var(--bg-base)', fontSize: '11px', fontWeight: 700,
               letterSpacing: '1.5px', textTransform: 'uppercase',
               fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -279,7 +266,7 @@ function MobileComparar() {
         <button
           onClick={() => router.push('/backoffice/imoveis')}
           style={{
-            width: 44, height: 44, borderRadius: 8,
+            width: 44, height: 44, borderRadius: 4,
             background: 'transparent', border: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', flexShrink: 0,
@@ -339,13 +326,13 @@ function MobileComparar() {
                   <div key={p.id} style={{
                     background: 'var(--bg-elevated)',
                     border: '1px solid rgba(184,148,58,0.15)',
-                    borderRadius: 12, overflow: 'hidden',
+                    borderRadius: 4, overflow: 'hidden',
                   }}>
                     {/* Card header with image + info */}
                     <div style={{ display: 'flex', gap: 12, padding: '12px 12px 0' }}>
                       {/* Cover image */}
                       <div style={{
-                        width: 72, height: 72, borderRadius: 8, overflow: 'hidden',
+                        width: 72, height: 72, borderRadius: 4, overflow: 'hidden',
                         background: 'rgba(255,255,255,0.04)', flexShrink: 0,
                       }}>
                         {img ? (
@@ -374,7 +361,7 @@ function MobileComparar() {
                         </p>
                         {p.developer?.name && (
                           <p style={{
-                            fontSize: '10px', color: 'var(--text-tertiary)',
+                            fontSize: '11px', color: 'var(--text-tertiary)',
                             marginBottom: 6,
                           }}>
                             {p.developer.name}
@@ -384,7 +371,7 @@ function MobileComparar() {
                           {/* Score badge */}
                           <div style={{
                             display: 'inline-flex', alignItems: 'center', gap: 4,
-                            padding: '3px 8px', borderRadius: 20,
+                            padding: '4px 8px', borderRadius: 4,
                             background: `${scoreColor}18`,
                             border: `1px solid ${scoreColor}40`,
                           }}>
@@ -398,9 +385,9 @@ function MobileComparar() {
                           </div>
                           {/* Status */}
                           <span style={{
-                            display: 'inline-flex', padding: '3px 7px', borderRadius: 20,
+                            display: 'inline-flex', padding: '3px 7px', borderRadius: 4,
                             background: `${stColor}18`, border: `1px solid ${stColor}35`,
-                            fontSize: '8px', fontWeight: 600,
+                            fontSize: '11px', fontWeight: 600,
                             color: stColor, textTransform: 'uppercase',
                             whiteSpace: 'nowrap',
                           }}>
@@ -438,7 +425,7 @@ function MobileComparar() {
                           borderRight: si < 2 ? '1px solid rgba(184,148,58,0.08)' : 'none',
                         }}>
                           <div style={{
-                            fontSize: '8px', color: 'var(--text-tertiary)',
+                            fontSize: '11px', color: 'var(--text-tertiary)',
                             letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 3,
                           }}>
                             {stat.label}
@@ -478,7 +465,7 @@ function MobileComparar() {
                     display: 'grid',
                     gridTemplateColumns: `100px repeat(${properties.length}, 1fr)`,
                     background: 'rgba(184,148,58,0.04)',
-                    borderRadius: '10px 10px 0 0',
+                    borderRadius: '4px 4px 0 0',
                     border: '1px solid rgba(184,148,58,0.15)',
                     borderBottom: 'none',
                     overflow: 'hidden',
@@ -532,7 +519,7 @@ function MobileComparar() {
                                 gridTemplateColumns: `100px repeat(${properties.length}, 1fr)`,
                                 border: '1px solid rgba(184,148,58,0.10)',
                                 borderTop: 'none',
-                                borderRadius: isLastRow ? '0 0 10px 10px' : 0,
+                                borderRadius: isLastRow ? '0 0 4px 4px' : 0,
                                 overflow: 'hidden',
                               }}
                             >
@@ -544,7 +531,7 @@ function MobileComparar() {
                                 display: 'flex', alignItems: 'center',
                               }}>
                                 <span style={{
-                                  fontSize: '10px', color: 'var(--text-secondary)',
+                                  fontSize: '11px', color: 'var(--text-secondary)',
                                   fontFamily: 'var(--font-montserrat, sans-serif)',
                                 }}>
                                   {row.label}
@@ -611,7 +598,7 @@ function MobileComparar() {
         <button
           onClick={() => router.push('/backoffice/imoveis')}
           style={{
-            flex: 1, height: 44, borderRadius: 8,
+            flex: 1, height: 44, borderRadius: 4,
             background: 'transparent',
             border: '1px solid rgba(184,148,58,0.25)',
             color: 'var(--imi-gold-500)',
@@ -624,7 +611,7 @@ function MobileComparar() {
         </button>
         <Link href="/backoffice/imoveis" style={{ flex: 2 }}>
           <button style={{
-            width: '100%', height: 44, borderRadius: 8,
+            width: '100%', height: 44, borderRadius: 4,
             background: 'var(--imi-gold-500)', border: 'none',
             color: 'var(--bg-base)',
             fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
@@ -664,12 +651,7 @@ function DesktopComparar() {
     const supabase = createClient()
     supabase
       .from('developments')
-      .select(`
-        id, name, type, status, status_commercial, condition,
-        price_from, area_min, area_max, bedrooms_from, bathrooms_from, parking_from,
-        neighborhood, city, state, image_urls, cover_image_url, slug, created_at,
-        developer:developers(id, name, logo_url)
-      `)
+      .select('*')
       .in('id', ids)
       .then(({ data, error: err }) => {
         if (err) { setError(err.message); setLoading(false); return }
@@ -731,15 +713,15 @@ function DesktopComparar() {
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
             <Eyebrow>IMI</Eyebrow>
-            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 10 }}>›</span>
+            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
             <Link href="/backoffice/imoveis">
               <span style={{
-                fontSize: '8px', fontWeight: 500, letterSpacing: '2px',
+                fontSize: '11px', fontWeight: 500, letterSpacing: '2px',
                 textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
                 fontFamily: 'var(--font-montserrat, sans-serif)', cursor: 'pointer',
               }}>Imóveis</span>
             </Link>
-            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 10 }}>›</span>
+            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
             <Eyebrow>Comparativo</Eyebrow>
           </div>
 
@@ -767,7 +749,7 @@ function DesktopComparar() {
                   background: 'transparent',
                   border: '1px solid rgba(184,148,58,0.25)',
                   color: 'var(--gold, var(--imi-gold-500))',
-                  fontSize: '10px', fontWeight: 600, letterSpacing: '1.5px',
+                  fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px',
                   textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
                   cursor: 'pointer',
                 }}>
@@ -782,7 +764,7 @@ function DesktopComparar() {
                     padding: '8px 14px', borderRadius: 4,
                     background: 'var(--gold, var(--imi-gold-500))', border: 'none',
                     color: 'var(--navy, #0B1120)',
-                    fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px',
+                    fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
                     textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
                     cursor: 'pointer',
                   }}>
@@ -819,7 +801,7 @@ function DesktopComparar() {
           <div style={{
             background: 'var(--bo-card, #162040)',
             border: '1px solid rgba(184,148,58,0.18)',
-            borderRadius: 12, overflow: 'hidden',
+            borderRadius: 4, overflow: 'hidden',
             minWidth: 640,
           }}>
             {/* Property header columns */}
@@ -867,7 +849,7 @@ function DesktopComparar() {
 
                     {/* Cover image */}
                     <div style={{
-                      width: '100%', aspectRatio: '16/9', borderRadius: 8, overflow: 'hidden',
+                      width: '100%', aspectRatio: '16/9', borderRadius: 4, overflow: 'hidden',
                       background: 'rgba(255,255,255,0.04)',
                     }}>
                       {img ? (
@@ -898,7 +880,7 @@ function DesktopComparar() {
                       </p>
                       {p.developer?.name && (
                         <p style={{
-                          fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)',
+                          fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)',
                           fontFamily: 'var(--font-montserrat, sans-serif)',
                         }}>
                           {p.developer.name}
@@ -909,7 +891,7 @@ function DesktopComparar() {
                     {/* IMI Score badge */}
                     <div style={{
                       display: 'inline-flex', alignItems: 'center', gap: 5,
-                      padding: '4px 10px', borderRadius: 20,
+                      padding: '4px 10px', borderRadius: 4,
                       background: `${scoreColor}18`,
                       border: `1px solid ${scoreColor}40`,
                       alignSelf: 'flex-start',
@@ -922,7 +904,7 @@ function DesktopComparar() {
                         {p.imi_score ?? '—'}
                       </span>
                       <span style={{
-                        fontSize: '8px', color: scoreColor, opacity: 0.7,
+                        fontSize: '11px', color: scoreColor, opacity: 0.7,
                         fontFamily: 'var(--font-montserrat, sans-serif)',
                         letterSpacing: '1px', textTransform: 'uppercase',
                       }}>
@@ -971,7 +953,7 @@ function DesktopComparar() {
                           display: 'flex', alignItems: 'center',
                         }}>
                           <span style={{
-                            fontSize: '10px', color: 'var(--bo-text-muted, #9FAAB8)',
+                            fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)',
                             fontFamily: 'var(--font-montserrat, sans-serif)',
                           }}>
                             {row.label}
@@ -993,7 +975,7 @@ function DesktopComparar() {
                             <div
                               key={p.id}
                               style={{
-                                padding: '11px 16px',
+                                padding: '12px 16px',
                                 borderRight: pi < properties.length - 1
                                   ? '1px solid rgba(184,148,58,0.05)' : 'none',
                                 background: isBest
@@ -1048,7 +1030,7 @@ function DesktopComparar() {
                       background: 'transparent',
                       border: '1px dashed rgba(184,148,58,0.35)',
                       color: 'var(--gold, var(--imi-gold-500))',
-                      fontSize: '9px', fontWeight: 600, letterSpacing: '1.5px',
+                      fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px',
                       textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
                       cursor: 'pointer',
                     }}>

@@ -143,7 +143,7 @@ export default async function AboutPage({
                         <span className="text-navy-300 font-bold uppercase tracking-[0.25em] text-[11px]">Quem Somos</span>
                     </div>
                     <h1
-                        className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white"
+                        className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white"
                     >
                         IMI – Inteligência <br /><span className="text-navy-300 italic">Imobiliária</span>
                     </h1>
@@ -190,7 +190,7 @@ export default async function AboutPage({
                                 <span className="text-navy-200 font-bold uppercase tracking-[0.25em] text-[11px]">Identidade Profissional</span>
                             </div>
                             <h2
-                                className="font-display text-3xl sm:text-4xl font-bold text-white mb-3"
+                                className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white mb-3"
                             >
                                 Iule Miranda
                             </h2>
@@ -302,7 +302,7 @@ export default async function AboutPage({
                             Acompanhe análises de mercado, metodologias de avaliação e inteligência imobiliária em todas as plataformas.
                         </p>
                     </div>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                         {SOCIAL.map((s) => {
                             const Icon = s.icon
                             return (
@@ -366,7 +366,7 @@ export default async function AboutPage({
                             <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {EBOOKS.map((book) => (
                             <article
                                 key={book.slug}

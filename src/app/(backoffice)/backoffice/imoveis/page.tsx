@@ -14,6 +14,7 @@ import { createClient } from '@/lib/supabase/client'
 import { PropertyCard, PropertyListRow } from '@/features/properties/components/PropertyCard'
 import { AdvancedFilterPanel } from '@/features/properties/components/AdvancedFilterPanel'
 import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
+import { mapDevToProperty, normalizeStatus as normSt } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty, PropertyFilters } from '@/features/properties/types'
 import { DEFAULT_FILTERS } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
@@ -78,6 +79,7 @@ interface SharedProps {
   compareIds: Set<string>
   favorites: Set<string>
   toggleCompare: (id: string) => void
+  clearCompare: () => void
   toggleFavorite: (id: string) => void
   fetchProperties: () => void
   activeFiltersCount: number
@@ -184,7 +186,7 @@ function DesktopImoveisList(props: SharedProps) {
   const {
     properties, filtered, loading, searchInput, setSearchInput,
     filters, setFilters, sortField, setSortField, sortDir, setSortDir,
-    compareIds, favorites, toggleCompare, toggleFavorite,
+    compareIds, favorites, toggleCompare, clearCompare, toggleFavorite,
     fetchProperties, activeFiltersCount, market, setMarket,
   } = props
 
@@ -368,7 +370,7 @@ function DesktopImoveisList(props: SharedProps) {
               background: market === m.id ? 'rgba(184,148,58,0.10)' : 'transparent',
               color: market === m.id ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
               fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: market === m.id ? 600 : 400,
-              cursor: 'pointer', transition: 'all 180ms ease',
+              cursor: 'pointer', transition: 'all var(--dur-2) var(--ease)',
             }}
           >
             <span style={{ fontSize: 16 }}>{m.flag}</span>
@@ -574,15 +576,15 @@ function DesktopImoveisList(props: SharedProps) {
           background: 'rgba(11,25,40,0.97)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(184,148,58,0.35)',
-          borderRadius: 14,
+          borderRadius: 4,
           padding: '12px 20px',
           display: 'flex', alignItems: 'center', gap: 16,
-          boxShadow: '0 8px 48px rgba(0,0,0,0.6)',
+          boxShadow: 'var(--shadow-xl)',
           whiteSpace: 'nowrap',
         }}>
           {/* Left: count */}
           <span style={{
-            fontFamily: 'var(--font-dm-mono, monospace)',
+            fontFamily: 'var(--font-mono)',
             fontSize: 12, color: 'var(--imi-gold-500)', fontWeight: 400,
           }}>
             {selectedIds.size} imóvel{selectedIds.size !== 1 ? 's' : ''} selecionado{selectedIds.size !== 1 ? 's' : ''}
@@ -623,7 +625,7 @@ function DesktopImoveisList(props: SharedProps) {
           <Link href={`/backoffice/imoveis/comparar?ids=${Array.from(compareIds).join(',')}`}>
             <button className="imi-compare-btn">Comparar agora</button>
           </Link>
-          <button onClick={() => {}} className="imi-compare-clear">
+          <button onClick={clearCompare} className="imi-compare-clear">
             <X size={13} />
           </button>
         </div>
@@ -635,14 +637,14 @@ function DesktopImoveisList(props: SharedProps) {
           display: flex;
           flex-direction: column;
           min-height: 100vh;
-          background: var(--bo-bg, #0B1120);
+          background: var(--bg-base);
         }
 
         /* ═══ HEADER ═══ */
         .imi-header {
           padding: 24px 28px 0;
           border-bottom: 1px solid rgba(184,148,58,0.12);
-          background: var(--navy-mid, #101830);
+          background: var(--bg-surface);
           position: relative;
           overflow: hidden;
         }
@@ -668,10 +670,10 @@ function DesktopImoveisList(props: SharedProps) {
           text-transform: uppercase; color: var(--imi-gold-500);
           font-family: var(--font-montserrat, sans-serif);
         }
-        .imi-breadcrumb-sep { color: rgba(184,148,58,0.3); font-size: 10px; }
+        .imi-breadcrumb-sep { color: rgba(184,148,58,0.3); font-size: 11px; }
         .imi-breadcrumb-page {
           font-size: 8px; font-weight: 500; letter-spacing: 2px;
-          text-transform: uppercase; color: var(--bo-text-dim, #5C6B7D);
+          text-transform: uppercase; color: var(--text-tertiary);
           font-family: var(--font-montserrat, sans-serif);
         }
         .imi-header-row {
@@ -681,12 +683,12 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-page-title {
           font-family: var(--font-playfair, 'Libre Baskerville', Georgia, serif);
           font-size: 28px; font-weight: 600;
-          color: var(--bo-text, #EBE7E0);
+          color: var(--text-primary);
           line-height: 1.1; margin-bottom: 6px;
         }
         .imi-page-title em { font-style: italic; color: var(--imi-gold-500); }
         .imi-page-subtitle {
-          font-size: 11px; color: var(--bo-text-dim, #5C6B7D);
+          font-size: 11px; color: var(--text-tertiary);
           font-family: var(--font-montserrat, sans-serif); font-weight: 300;
         }
         .imi-header-actions {
@@ -701,12 +703,12 @@ function DesktopImoveisList(props: SharedProps) {
           background: transparent;
           border: 1px solid rgba(184,148,58,0.25);
           color: var(--imi-gold-500);
-          font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+          font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase;
           font-family: var(--font-montserrat, sans-serif);
           cursor: pointer;
           white-space: nowrap;
-          transition: background 0.2s, border-color 0.2s;
+          transition: background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
           min-height: 36px;
         }
         .imi-btn-ghost:hover { background: rgba(184,148,58,0.08); border-color: rgba(184,148,58,0.4); }
@@ -715,15 +717,15 @@ function DesktopImoveisList(props: SharedProps) {
           padding: 9px 18px; border-radius: 4px;
           background: var(--imi-gold-500); border: none;
           color: var(--bg-base);
-          font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
+          font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
           text-transform: uppercase;
           font-family: var(--font-montserrat, sans-serif);
           cursor: pointer;
-          box-shadow: 0 2px 12px rgba(184,148,58,0.25);
+          box-shadow: var(--shadow-sm);
           white-space: nowrap;
           min-height: 36px;
         }
-        .imi-btn-primary:hover { background: #D4B86A; }
+        .imi-btn-primary:hover { background: var(--imi-gold-400); }
 
         /* ═══ KPI STRIP ═══ */
         .imi-kpi-strip {
@@ -740,13 +742,14 @@ function DesktopImoveisList(props: SharedProps) {
           display: flex; align-items: center; gap: 5px;
         }
         .imi-kpi-label {
-          font-size: 8px; font-weight: 700; letter-spacing: 2px;
-          text-transform: uppercase; color: var(--bo-text-dim, #5C6B7D);
+          font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+          text-transform: uppercase; color: var(--text-tertiary);
           font-family: var(--font-montserrat, sans-serif);
         }
         .imi-kpi-value {
-          font-family: var(--font-dm-mono, monospace);
+          font-family: var(--font-mono);
           font-size: 20px; font-weight: 400;
+          font-variant-numeric: tabular-nums;
           letter-spacing: -0.5px; line-height: 1;
         }
 
@@ -769,14 +772,14 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-search-icon {
           position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-          color: var(--bo-text-dim, #5C6B7D); pointer-events: none;
+          color: var(--text-tertiary); pointer-events: none;
         }
         .imi-search-input {
           width: 100%; padding: 0 32px 0 32px;
           height: 40px; border-radius: 4px;
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.15);
-          color: var(--bo-text, #EBE7E0);
+          color: var(--text-primary);
           font-size: 13px; font-family: var(--font-montserrat, sans-serif);
           outline: none;
         }
@@ -784,12 +787,12 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-search-clear {
           position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
           background: none; border: none; cursor: pointer; padding: 4px;
-          color: var(--bo-text-dim, #5C6B7D);
+          color: var(--text-tertiary);
           display: flex; align-items: center;
           min-width: 24px; min-height: 24px;
         }
         .imi-results-count {
-          font-size: 11px; color: var(--bo-text-dim, #5C6B7D);
+          font-size: 11px; color: var(--text-tertiary);
           font-family: var(--font-montserrat, sans-serif);
           white-space: nowrap; flex-shrink: 0;
         }
@@ -799,14 +802,14 @@ function DesktopImoveisList(props: SharedProps) {
           padding: 0 12px; height: 36px; border-radius: 4px;
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.20);
-          color: var(--bo-text-muted, #9FAAB8);
+          color: var(--text-secondary);
           font-size: 12px; font-family: var(--font-montserrat, sans-serif);
           cursor: pointer; white-space: nowrap; flex-shrink: 0;
           min-height: 44px;
         }
         .imi-filter-badge {
           background: var(--imi-gold-500); color: var(--bg-base);
-          font-size: 9px; font-weight: 700; border-radius: 999px;
+          font-size: 11px; font-weight: 700; border-radius: 999px;
           padding: 1px 5px; min-width: 16px; text-align: center;
         }
         .imi-sort-btn {
@@ -814,7 +817,7 @@ function DesktopImoveisList(props: SharedProps) {
           padding: 0 12px; height: 36px; border-radius: 4px;
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.18);
-          color: var(--bo-text-muted, #9FAAB8);
+          color: var(--text-secondary);
           font-size: 11px; font-family: var(--font-montserrat, sans-serif);
           cursor: pointer; white-space: nowrap;
           min-height: 36px;
@@ -822,16 +825,16 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-sort-label { /* hide on very small screens */ }
         .imi-dropdown {
           position: absolute; top: calc(100% + 4px); right: 0; z-index: 50;
-          background: var(--navy-float, #1F3B5C);
+          background: var(--bg-elevated);
           border: 1px solid rgba(184,148,58,0.22);
           border-radius: 6px; padding: 4px; min-width: 160px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+          box-shadow: var(--shadow-lg);
         }
         .imi-dropdown-item {
           width: 100%; text-align: left;
           padding: 10px 12px; border-radius: 4px;
           background: transparent; border: none;
-          color: var(--bo-text-muted, #9FAAB8);
+          color: var(--text-secondary);
           font-size: 12px; font-family: var(--font-montserrat, sans-serif);
           cursor: pointer; display: block; min-height: 40px;
         }
@@ -846,7 +849,7 @@ function DesktopImoveisList(props: SharedProps) {
           background: transparent; border: none;
           border-right: 1px solid rgba(184,148,58,0.15);
           cursor: pointer;
-          color: var(--bo-text-dim, #5C6B7D);
+          color: var(--text-tertiary);
           min-height: 36px;
         }
         .imi-view-btn:last-child { border-right: none; }
@@ -857,7 +860,7 @@ function DesktopImoveisList(props: SharedProps) {
           background: transparent;
           border: 1px solid rgba(184,148,58,0.15);
           border-radius: 4px; cursor: pointer;
-          color: var(--bo-text-dim, #5C6B7D);
+          color: var(--text-tertiary);
           flex-shrink: 0;
         }
 
@@ -882,7 +885,7 @@ function DesktopImoveisList(props: SharedProps) {
           gap: 16px;
         }
         .imi-list-wrap {
-          background: var(--bo-card, #162040);
+          background: var(--bo-card);
           border: 1px solid rgba(184,148,58,0.12);
           border-radius: 10px; overflow: hidden;
         }
@@ -894,8 +897,8 @@ function DesktopImoveisList(props: SharedProps) {
           border-bottom: 1px solid rgba(184,148,58,0.12);
         }
         .imi-list-th {
-          font-size: 8px; font-weight: 700; letter-spacing: 2px;
-          text-transform: uppercase; color: var(--bo-text-dim, #5C6B7D);
+          font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+          text-transform: uppercase; color: var(--text-tertiary);
           font-family: var(--font-montserrat, sans-serif);
         }
 
@@ -912,29 +915,29 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-empty-title {
           font-family: var(--font-playfair, serif);
-          font-size: 18px; color: var(--bo-text, #EBE7E0);
+          font-size: 18px; color: var(--text-primary);
         }
         .imi-empty-subtitle {
-          font-size: 12px; color: var(--bo-text-dim, #5C6B7D);
+          font-size: 12px; color: var(--text-tertiary);
           font-family: var(--font-montserrat, sans-serif);
           margin-top: -8px;
         }
 
         /* ═══ SKELETON ═══ */
         .imi-skeleton-card {
-          background: var(--bo-card, #162040);
+          background: var(--bo-card);
           border: 1px solid rgba(184,148,58,0.10);
           border-radius: 12px; overflow: hidden;
         }
         .imi-skeleton-image {
           aspect-ratio: 16/9;
-          background: linear-gradient(90deg, var(--navy-card,#162040) 25%, var(--navy-raised,#1A3250) 50%, var(--navy-card,#162040) 75%);
+          background: linear-gradient(90deg, var(--bo-card) 25%, var(--bg-elevated) 50%, var(--bo-card) 75%);
           background-size: 200% 100%;
           animation: skeletonPulse 1.5s ease-in-out infinite;
         }
         .imi-skeleton-line {
           border-radius: 3px;
-          background: linear-gradient(90deg, var(--navy-card,#162040) 25%, var(--navy-raised,#1A3250) 50%, var(--navy-card,#162040) 75%);
+          background: linear-gradient(90deg, var(--bo-card) 25%, var(--bg-elevated) 50%, var(--bo-card) 75%);
           background-size: 200% 100%;
           animation: skeletonPulse 1.5s ease-in-out infinite;
         }
@@ -946,7 +949,7 @@ function DesktopImoveisList(props: SharedProps) {
           width: 52px; height: 52px; border-radius: 50%;
           background: var(--imi-gold-500); color: var(--bg-base);
           align-items: center; justify-content: center;
-          box-shadow: 0 4px 20px rgba(184,148,58,0.4);
+          box-shadow: var(--shadow-gold);
           z-index: 90; text-decoration: none;
         }
 
@@ -960,11 +963,11 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-sheet {
           width: 100%; max-height: 85vh;
-          background: var(--bo-card, #162040);
+          background: var(--bo-card);
           border-radius: 20px 20px 0 0;
           border-top: 1px solid rgba(184,148,58,0.25);
           display: flex; flex-direction: column;
-          box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+          box-shadow: var(--shadow-xl);
         }
         .imi-sheet-header {
           display: flex; align-items: center; justify-content: space-between;
@@ -973,14 +976,14 @@ function DesktopImoveisList(props: SharedProps) {
           flex-shrink: 0;
         }
         .imi-sheet-title {
-          font-size: 14px; font-weight: 600; color: var(--bo-text, #EBE7E0);
+          font-size: 14px; font-weight: 600; color: var(--text-primary);
           font-family: var(--font-montserrat, sans-serif); letter-spacing: 0.5px;
         }
         .imi-sheet-close {
           width: 36px; height: 36px; border-radius: 50%;
           background: rgba(255,255,255,0.06); border: none; cursor: pointer;
           display: flex; align-items: center; justify-content: center;
-          color: var(--bo-text-muted, #9FAAB8);
+          color: var(--text-secondary);
         }
         .imi-sheet-body {
           flex: 1; overflow-y: auto; padding: 0 4px;
@@ -1017,22 +1020,22 @@ function DesktopImoveisList(props: SharedProps) {
           border-radius: 4px; cursor: pointer;
           color: rgba(184,148,58,0.6);
           flex-shrink: 0;
-          transition: all 0.2s;
+          transition: all var(--dur-2) var(--ease);
         }
         .imi-kbd-help-btn:hover { background: rgba(184,148,58,0.08); color: var(--imi-gold-500); }
         .imi-kbd-panel {
           position: absolute; top: calc(100% + 8px); right: 0; z-index: 60;
-          background: var(--navy-float, #1F3B5C);
+          background: var(--bg-elevated);
           border: 1px solid rgba(184,148,58,0.25);
           border-radius: 10px; padding: 12px 14px;
           min-width: 180px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+          box-shadow: var(--shadow-lg);
         }
         .imi-kbd-panel-title {
-          font-size: 8px; font-weight: 700; letter-spacing: 2px;
+          font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase; color: var(--imi-gold-500);
           font-family: var(--font-montserrat, sans-serif);
-          margin-bottom: 10px;
+          margin-bottom: 12px;
         }
         .imi-kbd-row {
           display: flex; align-items: center; gap: 8px;
@@ -1044,24 +1047,24 @@ function DesktopImoveisList(props: SharedProps) {
           background: rgba(184,148,58,0.10);
           border: 1px solid rgba(184,148,58,0.30);
           border-radius: 4px;
-          font-family: var(--font-dm-mono, monospace);
-          font-size: 10px; color: var(--imi-gold-500);
+          font-family: var(--font-mono);
+          font-size: 11px; color: var(--imi-gold-500);
           flex-shrink: 0;
         }
         .imi-kbd-desc {
           font-family: var(--font-montserrat, sans-serif);
-          font-size: 11px; color: var(--bo-text-muted, #9FAAB8);
+          font-size: 11px; color: var(--text-secondary);
         }
 
         /* ═══ BULK ACTION BAR BUTTONS ═══ */
         .imi-bulk-btn {
           padding: 7px 14px; border-radius: 6px; cursor: pointer;
           font-family: var(--font-montserrat, sans-serif);
-          font-size: 10px; font-weight: 600; letter-spacing: 1px;
+          font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase;
           border: none;
           min-height: 32px;
-          transition: all 0.15s;
+          transition: all var(--dur-2) var(--ease);
         }
         .imi-bulk-btn-publish {
           background: rgba(93,184,135,0.15);
@@ -1091,7 +1094,7 @@ function DesktopImoveisList(props: SharedProps) {
           background: rgba(20,40,64,0.95);
           backdrop-filter: blur(16px);
           border: 1px solid rgba(184,148,58,0.30);
-          box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+          box-shadow: var(--shadow-xl);
           white-space: nowrap;
         }
         .imi-compare-label {
@@ -1103,7 +1106,7 @@ function DesktopImoveisList(props: SharedProps) {
           padding: 7px 16px; border-radius: 4px;
           background: var(--imi-gold-500); border: none;
           color: var(--bg-base);
-          font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+          font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
           text-transform: uppercase; cursor: pointer;
           font-family: var(--font-montserrat, sans-serif);
           min-height: 36px;
@@ -1135,12 +1138,12 @@ function DesktopImoveisList(props: SharedProps) {
 
         /* ═══ LIGHT THEME ═══ */
         .light .imi-page, [data-theme="light"] .imi-page {
-          background: var(--bo-bg, #F6F3ED);
+          background: var(--bg-base);
         }
         .light .imi-search-input, [data-theme="light"] .imi-search-input {
           background: rgba(0,0,0,0.04);
           border-color: rgba(168,132,42,0.20);
-          color: #1A2433;
+          color: var(--text-primary);
         }
 
         /* ═══════════════════════════════════════════
@@ -1154,7 +1157,7 @@ function DesktopImoveisList(props: SharedProps) {
           .imi-breadcrumb { display: none; }
           .imi-header-row { align-items: center; padding-bottom: 12px; }
           .imi-page-title { font-size: 20px; margin-bottom: 2px; }
-          .imi-page-subtitle { font-size: 10px; }
+          .imi-page-subtitle { font-size: 11px; }
           .imi-header-actions { display: none; }
           .imi-mobile-chips {
             display: flex; gap: 8px; padding-bottom: 12px;
@@ -1177,7 +1180,7 @@ function DesktopImoveisList(props: SharedProps) {
             padding: 12px 14px;
           }
           .imi-kpi-value { font-size: 16px; }
-          .imi-kpi-label { font-size: 7px; }
+          .imi-kpi-label { font-size: 11px; }
 
           /* Toolbar mobile */
           .imi-toolbar-search-row { padding: 10px 14px 0; }
@@ -1396,7 +1399,7 @@ function MobileImoveisList(props: SharedProps) {
               onClick={() => { setFilters(DEFAULT_FILTERS); setStatusFilter('') }}
               className="mob-btn-tap"
               style={{
-                flex: 1, height: 48, borderRadius: 10,
+                flex: 1, height: 48, borderRadius: 4,
                 background: 'transparent',
                 border: '1px solid rgba(184,148,58,0.25)',
                 color: 'var(--imi-gold-500)',
@@ -1410,7 +1413,7 @@ function MobileImoveisList(props: SharedProps) {
               onClick={() => setFilterSheetOpen(false)}
               className="mob-btn-tap"
               style={{
-                flex: 2, height: 48, borderRadius: 10,
+                flex: 2, height: 48, borderRadius: 4,
                 background: 'var(--imi-gold-500)', border: 'none',
                 color: 'var(--bg-base)',
                 fontFamily: 'var(--font-sans)',
@@ -1459,27 +1462,12 @@ export default function ImoveisPage() {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('developments')
-        .select(`
-          id, name, type, status, status_commercial, condition,
-          price_from, area_min, area_max, bedrooms_from, bathrooms_from,
-          parking_from, neighborhood, city, state, address, street_number,
-          image_urls, cover_image_url, slug, created_at,
-          developer:developers(id, name, logo_url)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
 
       if (error) throw error
 
-      const normalized: IMIProperty[] = (data ?? []).map(d => ({
-        id: d.id, name: d.name, type: d.type, condition: d.condition,
-        status: normalizeStatus(d.status_commercial ?? d.status ?? 'disponivel'),
-        price: d.price_from, area: d.area_min ?? d.area_max,
-        bedrooms: d.bedrooms_from, bathrooms: d.bathrooms_from, parking: d.parking_from,
-        neighborhood: d.neighborhood, city: d.city, state: d.state, address: d.address,
-        image_urls: d.image_urls, cover_image_url: d.cover_image_url, slug: d.slug,
-        created_at: d.created_at,
-        developer: Array.isArray(d.developer) ? d.developer[0] : d.developer,
-      }))
+      const normalized: IMIProperty[] = (data ?? []).map(mapDevToProperty)
       setProperties(normalized.map(enrichProperty))
     } catch (err) {
       console.error('Erro ao carregar imóveis:', err)
@@ -1570,6 +1558,7 @@ export default function ImoveisPage() {
     compareIds,
     favorites,
     toggleCompare,
+    clearCompare: useCallback(() => setCompareIds(new Set()), []),
     toggleFavorite,
     fetchProperties,
     activeFiltersCount,

@@ -6,7 +6,7 @@
  */
 
 import React from 'react'
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+// TrendingUp/TrendingDown removed — using unicode arrows ▲ ▼ instead
 
 interface KPICardProps {
   label: string
@@ -38,7 +38,7 @@ const ACCENT_CONFIG: Record<string, { border: string; iconBg: string; iconColor:
 }
 
 const VALUE_SIZES: Record<string, string> = { sm: '24px', md: '36px', lg: '48px' }
-const PAD: Record<string, string> = { sm: '14px 16px', md: '20px', lg: '24px' }
+const PAD: Record<string, string> = { sm: '14px 16px', md: 'var(--space-6, 24px)', lg: 'var(--space-6, 24px)' }
 
 export function KPICard({
   label,
@@ -62,22 +62,24 @@ export function KPICard({
       className={`group ${onClick ? 'cursor-pointer' : ''} ${className}`}
       style={{
         padding: PAD[size],
-        background: 'var(--bg-surface)',
-        border: '1px solid var(--border-subtle)',
+        background: 'var(--surface-raised, var(--bg-surface))',
+        border: '1px solid var(--surface-border, var(--border-subtle))',
         borderTop: `3px solid ${a.border}`,
-        borderRadius: 'var(--r-xl, 16px)',
-        boxShadow: 'var(--shadow-xs)',
-        transition: 'all 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        borderRadius: '4px',
+        boxShadow: 'var(--shadow-card, var(--shadow-xs))',
+        transition: 'background 200ms ease, box-shadow 200ms ease, transform 200ms ease',
         position: 'relative',
         overflow: 'hidden',
       }}
       onClick={onClick}
       onMouseEnter={e => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-md)'
+        e.currentTarget.style.boxShadow = 'var(--shadow-raised, var(--shadow-md))'
+        e.currentTarget.style.background = 'var(--surface-overlay, var(--bg-elevated))'
         e.currentTarget.style.transform = 'translateY(-2px)'
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-xs)'
+        e.currentTarget.style.boxShadow = 'var(--shadow-card, var(--shadow-xs))'
+        e.currentTarget.style.background = 'var(--surface-raised, var(--bg-surface))'
         e.currentTarget.style.transform = 'translateY(0)'
       }}
     >
@@ -85,12 +87,12 @@ export function KPICard({
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 12 }}>
         <span
           style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 10,
-            fontWeight: 500,
-            color: 'var(--text-tertiary)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 600,
+            color: 'var(--color-offwhite-mute, var(--text-tertiary))',
             textTransform: 'uppercase' as const,
-            letterSpacing: '0.10em',
+            letterSpacing: '0.08em',
             lineHeight: 1.4,
           }}
         >
@@ -106,7 +108,7 @@ export function KPICard({
               justifyContent: 'center',
               width: 36,
               height: 36,
-              borderRadius: 'var(--r-lg, 12px)',
+              borderRadius: 'var(--r-lg, 4px)',
               background: a.iconBg,
               flexShrink: 0,
             }}
@@ -116,17 +118,17 @@ export function KPICard({
         )}
       </div>
 
-      {/* Value — serif, large */}
+      {/* Value — DM Mono, monumental */}
       <div
         style={{
-          fontFamily: 'var(--font-serif)',
+          fontFamily: 'var(--font-data)',
           fontSize: VALUE_SIZES[size],
-          fontWeight: 700,
-          color: 'var(--text-primary)',
+          fontWeight: 500,
+          color: 'var(--color-offwhite, var(--text-primary))',
           lineHeight: 1,
           letterSpacing: '-0.03em',
           fontVariantNumeric: 'tabular-nums',
-          marginBottom: (delta !== undefined || sublabel) ? 8 : 0,
+          marginBottom: (delta !== undefined || sublabel) ? 'var(--space-2, 8px)' : 0,
         }}
       >
         {value}
@@ -134,28 +136,25 @@ export function KPICard({
 
       {/* Delta */}
       {delta !== undefined && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 'var(--space-2, 8px)' }}>
           <span
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 3,
+              gap: 4,
               padding: '2px 8px',
               borderRadius: 9999,
-              fontFamily: 'var(--font-mono)',
-              fontSize: 11,
-              fontWeight: 500,
+              fontFamily: 'var(--font-data)',
+              fontSize: 13,
+              fontWeight: 300,
               background: isPositive ? 'var(--success-bg)' : isNegative ? 'var(--error-bg)' : 'var(--bg-muted)',
-              color: isPositive ? 'var(--success)' : isNegative ? 'var(--error)' : 'var(--text-tertiary)',
+              color: isPositive ? 'var(--color-success, var(--success))' : isNegative ? 'var(--color-danger, var(--error))' : 'var(--text-tertiary)',
             }}
           >
-            {isPositive && <TrendingUp size={10} />}
-            {isNegative && <TrendingDown size={10} />}
-            {!isPositive && !isNegative && <Minus size={10} />}
-            {isPositive ? '+' : ''}{delta}%
+            {isPositive ? '▲ +' : isNegative ? '▼ ' : ''}{delta}%
           </span>
           {deltaLabel && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-disabled)' }}>
+            <span style={{ fontFamily: 'var(--font-data)', fontSize: 13, fontWeight: 300, color: 'var(--text-disabled)' }}>
               {deltaLabel}
             </span>
           )}
@@ -164,7 +163,7 @@ export function KPICard({
 
       {/* Sublabel */}
       {delta === undefined && sublabel && (
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)' }}>
+        <span style={{ fontFamily: 'var(--font-data)', fontSize: 13, fontWeight: 300, color: 'var(--text-tertiary)' }}>
           {sublabel}
         </span>
       )}

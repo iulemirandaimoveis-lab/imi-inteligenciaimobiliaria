@@ -86,6 +86,24 @@ const config: Config = {
                 'bo-muted':   'var(--bo-text-muted)',
                 'bo-border':  'var(--bo-border)',
 
+                // DS3.1 Surface tokens
+                surface: {
+                    base:    'var(--surface-base)',
+                    raised:  'var(--surface-raised)',
+                    overlay: 'var(--surface-overlay)',
+                    float:   'var(--surface-float)',
+                    border:  'var(--surface-border)',
+                },
+                offwhite: {
+                    DEFAULT: 'var(--color-offwhite)',
+                    dim:     'var(--color-offwhite-dim)',
+                    mute:    'var(--color-offwhite-mute)',
+                },
+                success: 'var(--color-success)',
+                warning: 'var(--color-warning)',
+                danger:  'var(--color-danger)',
+                info:    'var(--color-info)',
+
                 // BACKGROUNDS (mantém)
                 'background-light': 'var(--imi-cream, #F8F6EE)',
                 'background-dark': '#0B1120',
@@ -96,14 +114,14 @@ const config: Config = {
             // ============================================
             borderRadius: {
                 none:  '0',
-                xs:    'var(--r-xs, 3px)',
-                sm:    'var(--r-sm, 6px)',
-                DEFAULT: 'var(--r-sm, 6px)',
-                md:    'var(--r-md, 8px)',
-                lg:    'var(--r-lg, 12px)',
-                xl:    'var(--r-xl, 16px)',
-                '2xl': 'var(--r-2xl, 24px)',
-                '3xl': '24px',
+                xs:    'var(--r-xs, 4px)',
+                sm:    'var(--r-sm, 4px)',
+                DEFAULT: 'var(--r-sm, 4px)',
+                md:    'var(--r-md, 4px)',
+                lg:    'var(--r-lg, 4px)',
+                xl:    'var(--r-xl, 4px)',
+                '2xl': 'var(--r-2xl, 4px)',
+                '3xl': '4px',
                 full:  '9999px',
                 pill:  '9999px',
             },
@@ -130,11 +148,12 @@ const config: Config = {
             // TIPOGRAFIA (mantém estrutura institucional)
             // ============================================
             fontFamily: {
-                display:  ['var(--font-libre-baskerville)', 'Georgia', 'serif'],
-                sans:     ['var(--font-figtree)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
-                serif:    ['var(--font-libre-baskerville)', 'Georgia', 'serif'],
-                mono:     ['var(--font-jetbrains-mono)', 'SF Mono', 'monospace'],
-                ui:       ['var(--font-figtree)', 'system-ui', 'sans-serif'],
+                display:  ['var(--font-display)', 'Georgia', 'serif'],
+                sans:     ['var(--font-ui)', 'system-ui', 'sans-serif'],
+                serif:    ['var(--font-display)', 'Georgia', 'serif'],
+                mono:     ['var(--font-data)', 'monospace'],
+                ui:       ['var(--font-ui)', 'system-ui', 'sans-serif'],
+                data:     ['var(--font-data)', 'monospace'],
             },
             fontSize: {
                 xs: ['12px', { lineHeight: '16px', letterSpacing: '0' }],
@@ -164,6 +183,11 @@ const config: Config = {
                 lg: '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
                 xl: '0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
                 none: 'none',
+                // DS3.1 elevation system
+                card:   'var(--shadow-card)',
+                raised: 'var(--shadow-raised)',
+                float:  'var(--shadow-float)',
+                gold:   'var(--shadow-gold-glow)',
             },
 
             // ============================================

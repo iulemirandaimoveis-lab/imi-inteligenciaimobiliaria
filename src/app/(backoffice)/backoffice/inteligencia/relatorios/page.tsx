@@ -28,16 +28,16 @@ function formatDate(iso: string | null) {
 }
 
 const CATEGORY_COLORS: Record<string, { color: string; bg: string }> = {
-    mercado: { color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' },
-    residencial: { color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
-    comercial: { color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
-    luxo: { color: '#8B5CF6', bg: 'rgba(139,92,246,0.1)' },
+    mercado: { color: 'var(--info)', bg: 'rgba(59,130,246,0.1)' },
+    residencial: { color: 'var(--success)', bg: 'rgba(16,185,129,0.1)' },
+    comercial: { color: 'var(--warning)', bg: 'rgba(245,158,11,0.1)' },
+    luxo: { color: 'var(--imi-gold-500)', bg: 'rgba(139,92,246,0.1)' },
     macro: { color: '#EC4899', bg: 'rgba(236,72,153,0.1)' },
 }
 
 function getCategoryStyle(cat: string | null) {
     if (!cat) return { color: T.textMuted, bg: 'rgba(255,255,255,0.05)' }
-    return CATEGORY_COLORS[cat.toLowerCase()] ?? { color: '#8CA4B8', bg: 'rgba(72,101,129,0.1)' }
+    return CATEGORY_COLORS[cat.toLowerCase()] ?? { color: 'var(--text-secondary)', bg: 'rgba(72,101,129,0.1)' }
 }
 
 export default function RelatoriosBackofficePage() {

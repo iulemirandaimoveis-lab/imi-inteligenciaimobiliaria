@@ -127,7 +127,7 @@ export default function PlaybooksPage() {
                                             </span>
                                             {pb.norm_reference && (
                                                 <span className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                                                    style={{ background: 'rgba(168,158,196,0.12)', color: '#A89EC4' }}>
+                                                    style={{ background: 'rgba(168,158,196,0.12)', color: 'var(--text-secondary)' }}>
                                                     {pb.norm_reference}
                                                 </span>
                                             )}

@@ -12,6 +12,7 @@ import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
+import RealtorCard from '../components/RealtorCard'
 
 // ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
 export const revalidate = 60
@@ -94,6 +95,8 @@ const ANCHOR_SECTIONS = [
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
     const supabase = await createClient()
 
+    // Query development + developer (safe join via FK)
+    // Broker join is separate to avoid FK errors if brokers table is missing
     const { data, error } = await supabase
         .from('developments')
         .select(`
@@ -115,10 +118,21 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
     const development = mapDbPropertyToDevelopment(data)
 
+    // Fetch broker separately (resilient — won't break if brokers table is missing)
+    let brokerData: any = null
+    if (data.broker_id) {
+        const { data: broker } = await supabase
+            .from('brokers')
+            .select('id, name, email, phone, creci, avatar_url')
+            .eq('id', data.broker_id)
+            .single()
+        brokerData = broker
+    }
+
     // Fetch similar properties (same city, different slug, max 4)
     const { data: similarRaw } = await supabase
         .from('developments')
-        .select(`*, developers(id, name, slug, logo_url)`)
+        .select('*')
         .eq('status_commercial', 'published')
         .eq('city', data.city || 'Recife')
         .neq('slug', params.slug)
@@ -202,8 +216,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     </div>
 
                     {/* Sidebar — desktop only */}
-                    <aside className="hidden lg:block lg:col-span-4">
+                    <aside className="hidden lg:block lg:col-span-4 space-y-6">
                         <DevelopmentCTA development={development} />
+                        {brokerData?.name && (
+                            <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
+                                <RealtorCard broker={brokerData} propertyName={development.name} />
+                            </div>
+                        )}
                     </aside>
                 </div>
             </div>

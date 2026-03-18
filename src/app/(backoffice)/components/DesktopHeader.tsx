@@ -76,13 +76,12 @@ function NotificationBell() {
     const router = useRouter()
 
     useEffect(() => {
-        fetch('/api/notifications')
+        fetch('/api/notifications?limit=20')
             .then(r => r.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    setNotifications(data.slice(0, 10))
-                    setUnread(data.filter((n: Notification) => !n.read).length)
-                }
+            .then(res => {
+                const items: Notification[] = Array.isArray(res) ? res : (res.data || [])
+                setNotifications(items.slice(0, 10))
+                setUnread(items.filter((n: Notification) => !n.read).length)
             })
             .catch(() => {})
     }, [pathname])

@@ -119,7 +119,7 @@ function SimuladorCredito() {
 
   const inputS: React.CSSProperties = {
     background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
-    height: '36px', borderRadius: '8px', padding: '0 10px 0 30px', fontSize: '13px', outline: 'none', width: '100%',
+    height: '36px', borderRadius: '4px', padding: '0 10px 0 30px', fontSize: '13px', outline: 'none', width: '100%',
   }
 
   return (

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import {
     Bell, Check, CheckCheck, Loader2,
     User, Home, DollarSign, FileText, AlertCircle, Info, CheckCircle,
-    Sparkles, Bug, Zap,
+    Sparkles, Bug, Zap, Rocket,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -24,11 +24,13 @@ const TYPE_ICONS: Record<string, any> = {
     lead: User, imovel: Home, financeiro: DollarSign, contrato: FileText,
     alerta: AlertCircle, info: Info, sucesso: CheckCircle,
     system: Zap, development: Home, evaluation: Sparkles, comment: FileText,
+    update: Rocket,
 }
 const TYPE_COLORS: Record<string, string> = {
-    lead: '#7B9EC4', imovel: 'var(--bo-success)', financeiro: 'var(--bo-accent)', contrato: '#A89EC4',
-    alerta: 'var(--bo-error)', info: '#7B9EC4', sucesso: 'var(--bo-success)',
-    system: '#8B5CF6', development: 'var(--bo-success)', evaluation: '#F59E0B', comment: 'var(--bo-text-muted)',
+    lead: 'var(--info)', imovel: 'var(--bo-success)', financeiro: 'var(--bo-accent)', contrato: 'var(--text-secondary)',
+    alerta: 'var(--bo-error)', info: 'var(--info)', sucesso: 'var(--bo-success)',
+    system: 'var(--imi-gold-500)', development: 'var(--bo-success)', evaluation: 'var(--warning)', comment: 'var(--bo-text-muted)',
+    update: 'var(--success)',
 }
 
 const timeAgo = (d: string) => {
@@ -82,7 +84,7 @@ export default function NotificacoesPage() {
     if (loading) {
         return (
             <div className="space-y-5 max-w-3xl mx-auto">
-                <div className="animate-pulse" style={{ height: '72px', borderRadius: '16px', background: T.surface, border: `1px solid ${T.border}` }} />
+                <div className="animate-pulse" style={{ height: '72px', borderRadius: '4px', background: T.surface, border: `1px solid ${T.border}` }} />
                 <div className="flex gap-2">
                     <div className="animate-pulse h-9 w-28 rounded-xl" style={{ background: T.elevated }} />
                     <div className="animate-pulse h-9 w-36 rounded-xl" style={{ background: T.elevated }} />
@@ -91,11 +93,11 @@ export default function NotificacoesPage() {
                     {[...Array(5)].map((_, i) => (
                         <div key={i} className="animate-pulse flex items-start gap-3 p-4 rounded-2xl"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: T.elevated, flexShrink: 0 }} />
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '7px' }}>
-                                <div style={{ height: '12px', width: '55%', borderRadius: '6px', background: T.elevated }} />
-                                <div style={{ height: '10px', width: '75%', borderRadius: '6px', background: T.elevated }} />
-                                <div style={{ height: '9px', width: '20%', borderRadius: '6px', background: T.elevated }} />
+                            <div style={{ width: '36px', height: '36px', borderRadius: '4px', background: T.elevated, flexShrink: 0 }} />
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <div style={{ height: '12px', width: '55%', borderRadius: '4px', background: T.elevated }} />
+                                <div style={{ height: '10px', width: '75%', borderRadius: '4px', background: T.elevated }} />
+                                <div style={{ height: '9px', width: '20%', borderRadius: '4px', background: T.elevated }} />
                             </div>
                         </div>
                     ))}

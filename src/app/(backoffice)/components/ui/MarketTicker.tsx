@@ -39,7 +39,7 @@ function TickerItemChip({ item }: { item: TickerItem }) {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 6,
+        gap: 8,
         whiteSpace: 'nowrap',
         flexShrink: 0,
       }}
@@ -53,7 +53,7 @@ function TickerItemChip({ item }: { item: TickerItem }) {
       <span
         style={{
           fontFamily: 'var(--font-sans)',
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: 500,
           color: 'var(--text-tertiary)',
           textTransform: 'uppercase',
@@ -80,10 +80,10 @@ function TickerItemChip({ item }: { item: TickerItem }) {
           display: 'inline-flex',
           alignItems: 'center',
           gap: 2,
-          padding: '1px 6px',
+          padding: '2px 8px',
           borderRadius: 9999,
           fontFamily: 'var(--font-mono)',
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: 600,
           background: isUp
             ? 'rgba(0,178,127,0.12)'
@@ -158,7 +158,7 @@ export function MarketTicker({ items, speed = 30, paused = true }: MarketTickerP
         background: 'var(--bg-surface)',
         border: '1px solid var(--border-subtle)',
         borderLeft: '3px solid var(--imi-gold-500)',
-        borderRadius: 'var(--r-lg, 12px)',
+        borderRadius: 'var(--r-lg, 4px)',
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',

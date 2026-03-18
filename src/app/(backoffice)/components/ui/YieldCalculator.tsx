@@ -82,12 +82,12 @@ function CurrencyInput({ id, label, hint, value, onChange, onBlur }: CurrencyInp
   const [focused, setFocused] = useState(false)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <label
         htmlFor={id}
         style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: 10,
+          fontSize: 11,
           color: 'var(--text-tertiary)',
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
@@ -109,7 +109,7 @@ function CurrencyInput({ id, label, hint, value, onChange, onBlur }: CurrencyInp
           height: 40,
           background: 'var(--bg-muted)',
           border: `1px solid ${focused ? 'var(--border-focus)' : 'var(--border-subtle)'}`,
-          borderRadius: 'var(--r-md, 8px)',
+          borderRadius: 'var(--r-md, 4px)',
           overflow: 'hidden',
           transition: 'border-color 160ms ease',
         }}
@@ -177,16 +177,16 @@ function ResultTile({ label, value, sub, highlight, highlightBg }: ResultTilePro
         padding: '12px 14px',
         background: 'var(--bg-elevated)',
         border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--r-md, 8px)',
+        borderRadius: 'var(--r-md, 4px)',
         display: 'flex',
         flexDirection: 'column',
-        gap: 3,
+        gap: 4,
       }}
     >
       <span
         style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: 9,
+          fontSize: 11,
           color: 'var(--text-tertiary)',
           textTransform: 'uppercase',
           letterSpacing: '0.10em',
@@ -212,10 +212,10 @@ function ResultTile({ label, value, sub, highlight, highlightBg }: ResultTilePro
         <span
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: 10,
+            fontSize: 11,
             color: 'var(--text-tertiary)',
             marginTop: 2,
-            padding: '1px 6px',
+            padding: '2px 8px',
             borderRadius: 9999,
             background: highlightBg ?? 'var(--bg-muted)',
             alignSelf: 'flex-start',
@@ -271,7 +271,7 @@ export function YieldCalculator({
       style={{
         background: 'var(--bg-surface)',
         border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--r-xl, 16px)',
+        borderRadius: 'var(--r-xl, 4px)',
         boxShadow: 'var(--shadow-sm)',
         padding: '20px',
         display: 'flex',
@@ -284,7 +284,7 @@ export function YieldCalculator({
         <span
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: 10,
+            fontSize: 11,
             fontWeight: 600,
             color: 'var(--text-tertiary)',
             textTransform: 'uppercase',
@@ -297,7 +297,7 @@ export function YieldCalculator({
       </div>
 
       {/* Inputs */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <CurrencyInput
           id={`${uid}-property`}
           label="Valor do Imóvel"
@@ -332,7 +332,7 @@ export function YieldCalculator({
           background: 'var(--imi-gold-500)',
           color: 'var(--imi-navy-900)',
           border: 'none',
-          borderRadius: 'var(--r-md, 8px)',
+          borderRadius: 'var(--r-md, 4px)',
           fontFamily: 'var(--font-mono)',
           fontSize: 12,
           fontWeight: 700,
@@ -342,7 +342,7 @@ export function YieldCalculator({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 7,
+          gap: 8,
           transition: 'opacity 150ms ease, transform 150ms ease',
         }}
         onMouseEnter={e => {
@@ -367,7 +367,7 @@ export function YieldCalculator({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-            style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
           >
             {/* Divider */}
             <div style={{ height: 1, background: 'var(--border-subtle)' }} />
@@ -416,7 +416,7 @@ export function YieldCalculator({
                   padding: '10px 14px',
                   background: spreadPositive ? 'rgba(0,178,127,0.06)' : 'rgba(229,62,62,0.06)',
                   border: `1px solid ${spreadPositive ? 'rgba(0,178,127,0.18)' : 'rgba(229,62,62,0.18)'}`,
-                  borderRadius: 'var(--r-md, 8px)',
+                  borderRadius: 'var(--r-md, 4px)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
@@ -429,7 +429,7 @@ export function YieldCalculator({
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: 10,
+                    fontSize: 11,
                     color: 'var(--text-secondary)',
                     flex: 1,
                   }}

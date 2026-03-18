@@ -4,9 +4,10 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Building2, TrendingUp, BarChart2, Plus, Star, Eye } from 'lucide-react'
+import { Building2, TrendingUp, BarChart2, Plus, Star, Eye, Edit } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
+import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import {
@@ -69,38 +70,16 @@ function fmtArea(n?: number | null): string {
   return `${n.toLocaleString('pt-BR')} m²`
 }
 
-function toP(d: any): IMIProperty {
-  return {
-    id: d.id,
-    name: d.name,
-    type: d.type,
-    status: normalizeStatus(d.status_commercial),
-    price: d.price_from,
-    area: d.area_from,
-    bedrooms: d.bedrooms,
-    bathrooms: d.bathrooms,
-    parking: d.parking_spaces,
-    neighborhood: d.neighborhood,
-    city: d.city,
-    image_urls: d.gallery_images?.length
-      ? d.gallery_images
-      : d.image ? [d.image] : [],
-    cover_image_url: d.image,
-    developer: Array.isArray(d.developer) ? d.developer[0] : d.developer,
-    created_at: d.created_at,
-  }
-}
-
 /* ─── Data layer ─────────────────────────────────────────────────────────────── */
 async function fetchProperties(): Promise<IMIProperty[]> {
   const supabase = createClient()
   const { data, error } = await supabase
     .from('developments')
-    .select(`id, name, type, status_commercial, price_from, price_to, area_from, bedrooms, bathrooms, parking_spaces, neighborhood, city, image, gallery_images, is_highlighted, created_at, developer:developers(id, name, logo_url)`)
+    .select('*')
     .order('created_at', { ascending: false })
 
   if (error || !data) return []
-  return data.map(toP).map(enrichProperty)
+  return data.map(mapDevToProperty).map(enrichProperty)
 }
 
 /* ─── Type label map ─────────────────────────────────────────────────────────── */
@@ -192,7 +171,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
   const card: React.CSSProperties = {
     background: DT.elevated,
     border: `1px solid ${DT.border}`,
-    borderRadius: 10,
+    borderRadius: 4,
   }
 
   return (
@@ -228,7 +207,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
             <button className="desk-new-btn" style={{
               display: 'flex', alignItems: 'center', gap: 8,
               background: DT.gold, color: 'var(--bg-base)',
-              border: 'none', borderRadius: 8,
+              border: 'none', borderRadius: 4,
               padding: '10px 20px', cursor: 'pointer',
               fontFamily: 'var(--font-sans)',
               fontSize: 13, fontWeight: 600,
@@ -252,7 +231,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
             { label: 'Rendimento Est.', value: loading ? '—' : `${avgYield}% a.a.`, icon: <BarChart2 size={20} color="var(--info)" /> },
           ].map((kpi, i) => (
             <div key={i} className="desk-kpi" style={{ ...card, padding: '20px 22px', display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: DT.goldBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 4, background: DT.goldBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {kpi.icon}
               </div>
               <div>
@@ -272,7 +251,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
 
             {/* Distribution by type */}
-            <div style={{ ...card, padding: '22px 24px' }}>
+            <div style={{ ...card, padding: '24px' }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: DT.text, marginBottom: 18 }}>
                 Distribuição por Tipo
               </div>
@@ -281,7 +260,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {typeData.map((d, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ width: 10, height: 10, borderRadius: 2, background: d.color, flexShrink: 0 }} />
+                      <div style={{ width: 10, height: 10, borderRadius: 4, background: d.color, flexShrink: 0 }} />
                       <span style={{ fontSize: 12, color: DT.textSub, flex: 1 }}>{d.label}</span>
                       <span style={{ fontSize: 12, fontWeight: 600, color: DT.text }}>{d.value}</span>
                     </div>
@@ -291,7 +270,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
             </div>
 
             {/* Distribution by status */}
-            <div style={{ ...card, padding: '22px 24px' }}>
+            <div style={{ ...card, padding: '24px' }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: DT.text, marginBottom: 18 }}>
                 Distribuição por Status
               </div>
@@ -337,7 +316,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
               </div>
               <Link href="/backoffice/imoveis/novo" style={{ textDecoration: 'none' }}>
                 <button style={{
-                  background: DT.gold, color: 'var(--bg-base)', border: 'none', borderRadius: 8,
+                  background: DT.gold, color: 'var(--bg-base)', border: 'none', borderRadius: 4,
                   padding: '10px 20px', cursor: 'pointer',
                   fontFamily: 'var(--font-sans)',
                   fontSize: 13, fontWeight: 600,
@@ -355,7 +334,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                   {['Imóvel', 'Tipo', 'Score', 'Preço', 'Área', 'Status', 'Bairro', ''].map((h, i) => (
                     <th key={i} style={{
                       padding: '10px 16px', textAlign: 'left',
-                      fontSize: 10, fontWeight: 600, color: DT.textDim,
+                      fontSize: 11, fontWeight: 600, color: DT.textDim,
                       textTransform: 'uppercase', letterSpacing: '0.07em',
                       whiteSpace: 'nowrap',
                     }}>{h}</th>
@@ -377,11 +356,11 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                             <img
                               src={p.cover_image_url}
                               alt={p.name}
-                              style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }}
+                              style={{ width: 32, height: 32, borderRadius: 4, objectFit: 'cover', flexShrink: 0 }}
                             />
                           ) : (
                             <div style={{
-                              width: 32, height: 32, borderRadius: 6, flexShrink: 0,
+                              width: 32, height: 32, borderRadius: 4, flexShrink: 0,
                               background: DT.goldBg, display: 'flex', alignItems: 'center', justifyContent: 'center',
                             }}>
                               <Building2 size={14} color={DT.gold} />
@@ -405,7 +384,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                         <span style={{
                           fontSize: 13, fontWeight: 700, color: scoreColor,
                           background: `${scoreColor}1A`,
-                          borderRadius: 5, padding: '2px 8px',
+                          borderRadius: 4, padding: '2px 8px',
                         }}>{score}</span>
                       </td>
                       {/* Preço */}
@@ -421,7 +400,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                         <span style={{
                           fontSize: 11, fontWeight: 600,
                           color: st.color, background: st.bg,
-                          borderRadius: 20, padding: '3px 9px',
+                          borderRadius: 4, padding: '3px 9px',
                           whiteSpace: 'nowrap',
                         }}>{st.label}</span>
                       </td>
@@ -431,21 +410,38 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                       </td>
                       {/* Actions */}
                       <td style={{ padding: '12px 16px' }}>
-                        <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none' }}>
-                          <button className="desk-action-btn" style={{
-                            display: 'flex', alignItems: 'center', gap: 5,
-                            background: 'rgba(184,148,58,0.06)',
-                            border: `1px solid ${DT.border}`,
-                            borderRadius: 6, padding: '5px 10px',
-                            cursor: 'pointer', color: DT.textSub,
-                            fontSize: 11, fontWeight: 500,
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
-                            transition: 'background 0.15s, color 0.15s',
-                          }}>
-                            <Eye size={12} />
-                            Ver
-                          </button>
-                        </Link>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none' }}>
+                            <button className="desk-action-btn" style={{
+                              display: 'flex', alignItems: 'center', gap: 5,
+                              background: 'rgba(184,148,58,0.06)',
+                              border: `1px solid ${DT.border}`,
+                              borderRadius: 4, padding: '5px 10px',
+                              cursor: 'pointer', color: DT.textSub,
+                              fontSize: 11, fontWeight: 500,
+                              fontFamily: 'var(--font-montserrat, sans-serif)',
+                              transition: 'background 0.15s, color 0.15s',
+                            }}>
+                              <Eye size={12} />
+                              Ver
+                            </button>
+                          </Link>
+                          <Link href={`/backoffice/imoveis/${p.id}/editar`} style={{ textDecoration: 'none' }}>
+                            <button className="desk-action-btn" style={{
+                              display: 'flex', alignItems: 'center', gap: 5,
+                              background: 'rgba(184,148,58,0.06)',
+                              border: `1px solid ${DT.border}`,
+                              borderRadius: 4, padding: '5px 10px',
+                              cursor: 'pointer', color: DT.textSub,
+                              fontSize: 11, fontWeight: 500,
+                              fontFamily: 'var(--font-montserrat, sans-serif)',
+                              transition: 'background 0.15s, color 0.15s',
+                            }}>
+                              <Edit size={12} />
+                              Editar
+                            </button>
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -523,7 +519,7 @@ function MobilePortfolio({ properties, loading }: { properties: IMIProperty[]; l
               <button style={{
                 display: 'flex', alignItems: 'center', gap: 5,
                 background: T.gold, color: T.textInv,
-                border: 'none', borderRadius: 6,
+                border: 'none', borderRadius: 4,
                 padding: '6px 12px', cursor: 'pointer',
                 fontSize: 12, fontWeight: 600,
                 fontFamily: 'var(--font-montserrat, sans-serif)',

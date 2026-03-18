@@ -101,8 +101,8 @@ export default function AvaliacoesPage() {
               onClick={() => router.push('/backoffice/avaliacoes/nova')}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
-                height: '44px', padding: '0 20px', borderRadius: '14px',
-                fontSize: '13px', fontWeight: 700, color: '#fff',
+                height: '44px', padding: '0 20px', borderRadius: '4px',
+                fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
                 background: 'var(--imi-gold-500)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                 border: 'none', cursor: 'pointer',
@@ -137,11 +137,11 @@ export default function AvaliacoesPage() {
         style={{
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--r-xl, 16px)',
+          borderRadius: 'var(--r-xl, 4px)',
           padding: '16px 20px',
         }}
       >
-        <div style={{ marginBottom: 12, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <div style={{ marginBottom: 12, fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
           Pipeline de Avaliações
         </div>
         <Stepper
@@ -161,20 +161,20 @@ export default function AvaliacoesPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.3 }}
-        style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', marginInline: '-4px', paddingInline: '4px', paddingBottom: '4px' }}
+        style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none', marginInline: '-4px', paddingInline: '4px', paddingBottom: '4px' }}
       >
         {QUICK_ACTIONS.map((a) => (
           <Link key={a.href} href={a.href} style={{ textDecoration: 'none', flexShrink: 0 }}>
             <div
               style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
-                padding: '10px 14px', borderRadius: '12px',
+                padding: '10px 14px', borderRadius: '4px',
                 background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
                 cursor: 'pointer', transition: 'border-color 0.18s ease',
               }}
             >
               <div style={{
-                width: '28px', height: '28px', borderRadius: '8px',
+                width: '28px', height: '28px', borderRadius: '4px',
                 background: 'rgba(184,148,58,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <a.icon size={13} color="var(--imi-gold-500)" />
@@ -191,7 +191,7 @@ export default function AvaliacoesPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.16, duration: 0.3 }}
-        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '4px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}
       >
         <div style={{ position: 'relative' }}>
           <Search size={13} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }} />
@@ -200,7 +200,7 @@ export default function AvaliacoesPage() {
             value={search} onChange={e => setSearch(e.target.value)}
             style={{
               width: '100%', height: '38px', paddingLeft: '34px', paddingRight: '14px',
-              borderRadius: '10px', fontSize: '13px', color: 'var(--text-primary)',
+              borderRadius: '4px', fontSize: '13px', color: 'var(--text-primary)',
               background: 'var(--bg-muted)', border: '1px solid var(--border-default)',
               outline: 'none', boxSizing: 'border-box',
             }}
@@ -215,18 +215,18 @@ export default function AvaliacoesPage() {
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="animate-pulse" style={{
               background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
-              borderRadius: '14px', padding: '14px',
+              borderRadius: '4px', padding: '14px',
               display: 'flex', alignItems: 'center', gap: '12px',
             }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--bg-elevated)', flexShrink: 0 }} />
+              <div style={{ width: '40px', height: '40px', borderRadius: '4px', background: 'var(--bg-elevated)', flexShrink: 0 }} />
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ height: '11px', width: '40%', borderRadius: '6px', background: 'var(--bg-elevated)' }} />
-                <div style={{ height: '13px', width: '65%', borderRadius: '6px', background: 'var(--bg-elevated)' }} />
-                <div style={{ height: '11px', width: '50%', borderRadius: '6px', background: 'var(--bg-elevated)' }} />
+                <div style={{ height: '11px', width: '40%', borderRadius: '4px', background: 'var(--bg-elevated)' }} />
+                <div style={{ height: '13px', width: '65%', borderRadius: '4px', background: 'var(--bg-elevated)' }} />
+                <div style={{ height: '11px', width: '50%', borderRadius: '4px', background: 'var(--bg-elevated)' }} />
               </div>
               <div style={{ width: '70px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>
-                <div style={{ height: '13px', width: '60px', borderRadius: '6px', background: 'var(--bg-elevated)' }} />
-                <div style={{ height: '10px', width: '44px', borderRadius: '6px', background: 'var(--bg-elevated)' }} />
+                <div style={{ height: '13px', width: '60px', borderRadius: '4px', background: 'var(--bg-elevated)' }} />
+                <div style={{ height: '10px', width: '44px', borderRadius: '4px', background: 'var(--bg-elevated)' }} />
               </div>
             </div>
           ))}
@@ -250,14 +250,14 @@ export default function AvaliacoesPage() {
                   onClick={() => router.push(`/backoffice/avaliacoes/${av.id}`)}
                   style={{
                     background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
-                    borderRadius: '14px', padding: '12px 14px',
+                    borderRadius: '4px', padding: '12px 14px',
                     cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px',
                     transition: 'border-color 0.18s ease',
                   }}
                 >
                   {/* Status icon */}
                   <div style={{
-                    width: '40px', height: '40px', borderRadius: '12px', flexShrink: 0,
+                    width: '40px', height: '40px', borderRadius: '4px', flexShrink: 0,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     background: av.status === 'concluida' ? 'color-mix(in srgb, var(--success) 12%, transparent)' :
                       av.status === 'aguardando_docs' ? 'color-mix(in srgb, var(--info) 12%, transparent)' : 'color-mix(in srgb, var(--warning) 12%, transparent)',
@@ -273,7 +273,7 @@ export default function AvaliacoesPage() {
                   {/* Content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
-                      <span style={{ fontSize: '10px', fontFamily: 'monospace', color: 'var(--text-tertiary)' }}>
+                      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-tertiary)' }}>
                         {av.protocolo || '—'}
                       </span>
                       <StatusBadge status={sc.statusKey} label={sc.label} size="xs" />
@@ -294,11 +294,11 @@ export default function AvaliacoesPage() {
                       </p>
                     )}
                     <span style={{
-                      fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '6px',
+                      fontSize: '11px', fontWeight: 700, padding: '2px 7px', borderRadius: '4px',
                       background: `${hc.color}18`, color: hc.color,
                     }}>{hc.label}</span>
                     {av.valor_estimado && (
-                      <p style={{ fontSize: '10px', color: 'var(--text-tertiary)', marginTop: '4px', fontVariantNumeric: 'tabular-nums' }}>
+                      <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px', fontVariantNumeric: 'tabular-nums' }}>
                         Vlr: {fmt(Number(av.valor_estimado))}
                       </p>
                     )}
@@ -317,7 +317,7 @@ export default function AvaliacoesPage() {
           animate={{ opacity: 1, y: 0 }}
           style={{
             background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
-            borderRadius: '16px', padding: '48px 24px',
+            borderRadius: '4px', padding: '48px 24px',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', textAlign: 'center',
           }}
         >
@@ -331,8 +331,8 @@ export default function AvaliacoesPage() {
               onClick={() => router.push('/backoffice/avaliacoes/nova')}
               style={{
                 marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
-                height: '44px', padding: '0 20px', borderRadius: '14px',
-                fontSize: '13px', fontWeight: 700, color: '#fff',
+                height: '44px', padding: '0 20px', borderRadius: '4px',
+                fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
                 background: 'var(--imi-gold-500)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.22)',
                 border: 'none', cursor: 'pointer',

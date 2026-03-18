@@ -157,7 +157,7 @@ export default function PerformanceDashboard() {
                         onClick={fetchAiInsights}
                         disabled={aiLoading}
                         className="text-[10px] font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all hover:brightness-110"
-                        style={{ background: T.accent, color: '#fff' }}
+                        style={{ background: T.accent, color: 'var(--text-inverse)' }}
                     >
                         {aiLoading ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
                         {aiInsights ? 'Atualizar' : 'Gerar Insights'}

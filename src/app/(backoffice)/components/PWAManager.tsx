@@ -203,7 +203,7 @@ export default function PWAManager() {
             className="shrink-0 px-3 py-1.5 rounded text-xs font-semibold transition-opacity hover:opacity-80"
             style={{
               background: 'var(--imi-gold-500)',
-              color: '#0B1120',
+              color: T.text,
             }}
           >
             Ativar
@@ -241,7 +241,7 @@ export default function PWAManager() {
             className="shrink-0 px-4 py-1.5 rounded text-xs font-semibold transition-opacity hover:opacity-80"
             style={{
               background: 'var(--imi-gold-500)',
-              color: '#0B1120',
+              color: T.text,
             }}
           >
             Instalar

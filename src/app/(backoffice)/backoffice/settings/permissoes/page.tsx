@@ -142,7 +142,7 @@ const getRoleTextColor = (color: string) => {
         orange: '#fb923c',
         blue: '#60a5fa',
         purple: '#c084fc',
-        green: '#4ade80',
+        green: 'var(--success)',
     }
     return colors[color] || colors.blue
 }

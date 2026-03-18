@@ -8,7 +8,7 @@ interface OriginsChartProps {
     data: Array<{ name: string; value: number }>
 }
 
-const COLORS = ['#0F172A', '#EAB308', 'var(--bo-text-muted)', '#94A3B8', '#CBD5E1']
+const COLORS = ['var(--text-primary)', 'var(--imi-gold-500)', 'var(--text-secondary)', 'var(--text-tertiary)', 'var(--border-subtle)']
 
 export default function OriginsChart({ data }: OriginsChartProps) {
     if (!data || data.length === 0) {
@@ -38,9 +38,12 @@ export default function OriginsChart({ data }: OriginsChartProps) {
                     </Pie>
                     <Tooltip
                         contentStyle={{
-                            borderRadius: '12px',
-                            border: 'none',
-                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                            background: 'var(--bg-elevated)',
+                            borderRadius: 4,
+                            border: '1px solid var(--border-default)',
+                            color: 'var(--text-primary)',
+                            fontSize: 11,
+                            boxShadow: 'var(--shadow-md)',
                         }}
                     />
                     <Legend verticalAlign="bottom" height={36} iconType="circle" />

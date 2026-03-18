@@ -64,12 +64,12 @@ export default async function ConteudoPage() {
             <section style={{ background: '#0D1117' }} className="relative overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.04] bg-[url('/grid.svg')]" />
                 <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-[140px] opacity-20" style={{ background: '#334E68' }} />
-                <div className="max-w-[1280px] mx-auto px-6 lg:px-8 py-24 lg:py-32 relative z-10">
+                <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 relative z-10">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="h-px w-10" style={{ background: '#486581' }} />
                         <span className="text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: '#486581' }}>Inteligência de Mercado</span>
                     </div>
-                    <h1 className="text-5xl lg:text-6xl font-bold text-white leading-[1.05] mb-6" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                    <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.05] mb-6" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         Conteúdo &amp;<br />
                         <span style={{ color: '#486581' }}>Insights</span>
                     </h1>
@@ -93,7 +93,7 @@ export default async function ConteudoPage() {
                 </div>
             </section>
 
-            <div className="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 lg:py-20">
+            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
                 {items.length === 0 ? (
                     <div className="text-center py-24">
                         <div className="w-20 h-20 rounded-3xl mx-auto mb-6 flex items-center justify-center" style={{ background: '#F0F4F8' }}>
@@ -121,7 +121,7 @@ export default async function ConteudoPage() {
                         {featured && (
                             <div className="mb-12">
                                 <p className="text-[11px] font-bold uppercase tracking-[0.2em] mb-5" style={{ color: '#486581' }}>Em Destaque</p>
-                                <div className="rounded-3xl border p-8 lg:p-12" style={{ background: '#fff', borderColor: '#E9ECEF' }}>
+                                <div className="rounded-3xl border p-6 md:p-8 lg:p-12" style={{ background: '#fff', borderColor: '#E9ECEF' }}>
                                     <div className="flex flex-wrap items-center gap-3 mb-5">
                                         {(() => {
                                             const cfg = TIPO_CFG[featured.tipo] || TIPO_CFG.post
@@ -143,7 +143,7 @@ export default async function ConteudoPage() {
                                             </span>
                                         )}
                                     </div>
-                                    <h2 className="text-3xl lg:text-4xl font-bold leading-[1.15]" style={{ color: '#1A1A1A', fontFamily: "'Playfair Display', Georgia, serif" }}>
+                                    <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold leading-[1.15]" style={{ color: '#1A1A1A', fontFamily: "'Playfair Display', Georgia, serif" }}>
                                         {featured.titulo}
                                     </h2>
                                     {(() => {
@@ -211,7 +211,7 @@ export default async function ConteudoPage() {
                         )}
 
                         {/* CTA Newsletter */}
-                        <div className="mt-16 rounded-3xl p-10 lg:p-14 text-center" style={{ background: '#0D1117' }}>
+                        <div className="mt-16 rounded-3xl p-8 md:p-10 lg:p-14 text-center" style={{ background: '#0D1117' }}>
                             <p className="text-[11px] font-bold uppercase tracking-[0.22em] mb-4" style={{ color: '#486581' }}>Newsletter</p>
                             <h2 className="text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                                 Receba Inteligência de Mercado

@@ -107,7 +107,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'comportamento',
         icone: MessageSquare,
-        color: '#4ade80',
+        color: 'var(--success)',
         execucoes: 43,
     },
     {

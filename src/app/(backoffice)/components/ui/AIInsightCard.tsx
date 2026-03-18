@@ -63,12 +63,16 @@ export function AIInsightCard({
     <div
       className={className}
       style={{
-        background: 'var(--bg-surface)',
+        background: variant === 'gold'
+          ? 'linear-gradient(135deg, var(--surface-raised, var(--bg-surface)) 0%, rgba(200,164,74,0.06) 100%)'
+          : 'var(--bg-surface)',
         border: `1px solid ${v.border}`,
-        borderRadius: 'var(--r-xl, 16px)',
-        padding: '14px 16px',
+        borderLeft: variant === 'gold' ? '3px solid var(--color-gold, var(--imi-gold-500))' : undefined,
+        borderRadius: 'var(--r-xl, 4px)',
+        padding: 'var(--space-5, 20px)',
         position: 'relative',
         overflow: 'hidden',
+        boxShadow: variant === 'gold' ? 'var(--shadow-gold-glow, var(--shadow-gold))' : undefined,
       }}
     >
       {/* Background glow blob */}
@@ -91,11 +95,12 @@ export function AIInsightCard({
         <span style={{ color: v.iconColor, fontSize: '14px' }}>✦</span>
         <span
           style={{
-            fontFamily: 'var(--font-sans)',
-            fontSize: '12px',
-            fontWeight: 700,
+            fontFamily: variant === 'gold' ? 'var(--font-display)' : 'var(--font-ui)',
+            fontSize: variant === 'gold' ? '18px' : '12px',
+            fontWeight: variant === 'gold' ? 400 : 700,
+            fontStyle: variant === 'gold' ? 'italic' : 'normal',
             color: v.labelColor,
-            letterSpacing: '-0.01em',
+            letterSpacing: variant === 'gold' ? '0' : '-0.01em',
           }}
         >
           {title}
@@ -122,7 +127,7 @@ export function AIInsightCard({
           style={{
             background: 'var(--bg-muted)',
             border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--r-lg, 12px)',
+            borderRadius: 'var(--r-lg, 4px)',
             padding: '8px 12px',
           }}
         >
@@ -130,7 +135,7 @@ export function AIInsightCard({
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '9px',
+                fontSize: '11px',
                 fontWeight: 700,
                 color: v.labelColor,
                 textTransform: 'uppercase',
@@ -154,8 +159,8 @@ export function AIInsightCard({
             onClick={action.onClick}
             style={{
               fontFamily: 'var(--font-sans)',
-              padding: '7px 20px',
-              borderRadius: 'var(--r-md, 8px)',
+              padding: '8px 20px',
+              borderRadius: 'var(--r-md, 4px)',
               fontSize: '11px',
               fontWeight: 700,
               color: v.btnColor,
@@ -166,7 +171,7 @@ export function AIInsightCard({
               boxShadow: v.btnShadow,
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '5px',
+              gap: '4px',
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.1)' }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1)' }}

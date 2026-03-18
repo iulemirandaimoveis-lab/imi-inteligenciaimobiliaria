@@ -17,8 +17,8 @@ type Toast = { type: 'success' | 'error'; message: string } | null
 
 const CATEGORY_STYLE: Record<string, { bg: string; color: string; label: string }> = {
   market:  { bg: 'rgba(184,148,58,0.12)',  color: 'var(--bo-accent,var(--imi-gold-500))', label: 'Mercado'   },
-  finance: { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6',                  label: 'Finanças'  },
-  compare: { bg: 'rgba(139,92,246,0.12)',  color: '#8B5CF6',                  label: 'Comparação' },
+  finance: { bg: 'rgba(59,130,246,0.12)',  color: 'var(--info)',                  label: 'Finanças'  },
+  compare: { bg: 'rgba(139,92,246,0.12)',  color: 'var(--imi-gold-500)',                  label: 'Comparação' },
   risk:    { bg: 'rgba(239,68,68,0.12)',   color: '#EF4444',                  label: 'Risco'     },
 }
 
@@ -27,7 +27,7 @@ function ToggleSwitch({ enabled, onChange }: { enabled: boolean; onChange: (v: b
     <button
       onClick={() => onChange(!enabled)}
       style={{
-        width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
+        width: 44, height: 24, borderRadius: 4, border: 'none', cursor: 'pointer',
         background: enabled ? 'var(--bo-accent,var(--imi-gold-500))' : 'var(--bo-border,#2a3a4a)',
         position: 'relative', transition: 'background 200ms', flexShrink: 0,
       }}
@@ -51,7 +51,7 @@ function CategoryBadge({ category }: { category: string }) {
     <span style={{
       display: 'inline-block',
       padding: '2px 10px',
-      borderRadius: 100,
+      borderRadius: 4,
       fontSize: 11,
       fontWeight: 600,
       letterSpacing: '0.04em',
@@ -324,7 +324,7 @@ function WidgetCard({
           letterSpacing: '0.06em',
           background: 'var(--bo-bg,#0f1923)',
           border: '1px solid var(--bo-border)',
-          borderRadius: 100,
+          borderRadius: 4,
           padding: '2px 9px',
         }}>
           #{index + 1}

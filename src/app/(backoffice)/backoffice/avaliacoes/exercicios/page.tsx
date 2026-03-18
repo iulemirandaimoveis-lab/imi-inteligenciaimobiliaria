@@ -355,7 +355,7 @@ export default function ExerciciosPage() {
       <div className="max-w-2xl mx-auto space-y-6 pb-20">
         <div className="text-center py-8 rounded-2xl px-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(245,158,11,0.12)' }}>
-            <Trophy size={36} style={{ color: '#F59E0B' }} />
+            <Trophy size={36} style={{ color: 'var(--warning)' }} />
           </div>
           <h2 className="text-2xl font-bold mb-1" style={{ color: T.text }}>Treino Concluído!</h2>
           <p style={{ color: T.textMuted }}>{score.total} questões respondidas</p>
@@ -364,7 +364,7 @@ export default function ExerciciosPage() {
             {[
               { label: 'Aproveitamento', value: `${pct}%`, color: pct >= 70 ? 'var(--bo-success)' : 'var(--bo-error)' },
               { label: 'Corretas', value: score.corretas, color: 'var(--bo-success)' },
-              { label: 'Sequência max.', value: score.maxStreak, color: '#F59E0B' },
+              { label: 'Sequência max.', value: score.maxStreak, color: 'var(--warning)' },
             ].map(item => (
               <div key={item.label} className="rounded-xl p-3" style={{ background: T.elevated }}>
                 <p className="text-2xl font-bold" style={{ color: item.color, fontVariantNumeric: 'tabular-nums' }}>{item.value}</p>
@@ -434,7 +434,7 @@ export default function ExerciciosPage() {
           <p className="text-base font-semibold leading-relaxed" style={{ color: T.text }}>{current.pergunta}</p>
 
           {current.contexto && (
-            <div className="p-3 rounded-xl text-sm font-mono" style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)', color: '#F59E0B' }}>
+            <div className="p-3 rounded-xl text-sm font-mono" style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)', color: 'var(--warning)' }}>
               {current.contexto}
             </div>
           )}
@@ -508,8 +508,8 @@ export default function ExerciciosPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
           { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, bg: 'rgba(72,101,129,0.12)', color: 'var(--bo-accent)' },
-          { label: 'Categorias', value: CATEGORIAS.length, icon: Target, bg: 'rgba(139,92,246,0.12)', color: '#A78BFA' },
-          { label: 'Geradas por IA', value: '∞', icon: Sparkles, bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
+          { label: 'Categorias', value: CATEGORIAS.length, icon: Target, bg: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)' },
+          { label: 'Geradas por IA', value: '∞', icon: Sparkles, bg: 'rgba(245,158,11,0.12)', color: 'var(--warning)' },
         ].map(item => {
           const Icon = item.icon
           return (
@@ -567,7 +567,7 @@ export default function ExerciciosPage() {
           style={{ background: T.surface }}>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)' }}>
-              <Sparkles size={18} style={{ color: '#F59E0B' }} />
+              <Sparkles size={18} style={{ color: 'var(--warning)' }} />
             </div>
             <div className="text-left">
               <p className="text-sm font-semibold" style={{ color: T.text }}>Gerar Exercício com IA</p>
@@ -581,7 +581,7 @@ export default function ExerciciosPage() {
           <div className="p-4 space-y-3" style={{ borderTop: `1px solid ${T.border}` }}>
             <button onClick={generateIAExercise} disabled={isGenerating}
               className="w-full flex items-center justify-center gap-2 h-10 rounded-xl text-sm font-medium transition-all hover:opacity-80 disabled:opacity-50"
-              style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.25)', color: '#F59E0B' }}>
+              style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.25)', color: 'var(--warning)' }}>
               {isGenerating ? <><Loader2 size={16} className="animate-spin" /> Gerando...</> : <><Sparkles size={16} /> Nova Questão</>}
             </button>
             {iaExercicio && (() => {

@@ -126,7 +126,7 @@ export function PageIntelHeader({
 
             <span
               style={{
-                fontSize: '10px',
+                fontSize: '11px',
                 fontFamily: 'var(--font-mono)',
                 fontWeight: 700,
                 color: 'var(--text-gold)',
@@ -147,7 +147,7 @@ export function PageIntelHeader({
                 <span className="live-dot" />
                 <span
                   style={{
-                    fontSize: '8px',
+                    fontSize: '11px',
                     fontFamily: 'var(--font-mono)',
                     fontWeight: 700,
                     color: 'var(--success)',
@@ -183,10 +183,10 @@ export function PageIntelHeader({
                 <span
                   className="inline-flex items-center rounded-full"
                   style={{
-                    fontSize: '10px',
+                    fontSize: '11px',
                     fontFamily: 'var(--font-sans)',
                     fontWeight: 700,
-                    padding: '3px 10px',
+                    padding: '4px 12px',
                     color: c.color,
                     background: c.bg,
                     border: `1px solid ${c.border}`,

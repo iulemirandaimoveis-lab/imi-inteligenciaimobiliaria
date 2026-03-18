@@ -80,10 +80,10 @@ export default function ContactPage() {
     ]
 
     return (
-        <main className="bg-navy-950 min-h-screen">
+        <main className="bg-[#0D0F14] min-h-screen">
             {/* HERO */}
-            <section className="relative bg-navy-950 text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-navy-800/5 -skew-x-12 translate-x-1/4" />
+            <section className="relative bg-[#141420] text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-[#102A43]/5 -skew-x-12 translate-x-1/4" />
                 <div className="container-custom relative z-10">
                     <motion.div
                         initial="hidden"
@@ -92,13 +92,13 @@ export default function ContactPage() {
                         className="max-w-4xl"
                     >
                         <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-px bg-navy-800" />
-                            <span className="text-navy-300 font-bold uppercase tracking-[0.25em] text-[11px]">Fale Conosco</span>
+                            <div className="w-12 h-px bg-[#102A43]" />
+                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Fale Conosco</span>
                         </motion.div>
-                        <motion.h1 variants={slideUp} className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
-                            Atendimento Técnico <br /><span className="text-navy-300 italic">Personalizado</span>
+                        <motion.h1 variants={slideUp} className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
+                            Atendimento Técnico <br /><span className="text-[#486581] italic">Personalizado</span>
                         </motion.h1>
-                        <motion.p variants={slideUp} className="text-white/50 text-lg sm:text-xl font-light leading-relaxed max-w-2xl">
+                        <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg sm:text-xl font-light leading-relaxed max-w-2xl">
                             Entre em contato conosco e descubra como nossa inteligência pode proteger e valorizar seu patrimônio.
                         </motion.p>
                     </motion.div>
@@ -119,9 +119,9 @@ export default function ContactPage() {
                             <motion.div
                                 key={index}
                                 variants={slideUp}
-                                className="p-8 sm:p-10 rounded-3xl bg-navy-950 border border-white/[0.05] transition-all duration-300 group hover:border-navy-600/30 hover:shadow-[0_8px_32px_rgba(26,26,46,0.1)]"
+                                className="p-8 sm:p-10 rounded-3xl bg-[#141420] border border-white/[0.05] transition-all duration-300 group hover:border-[#334E68]/30 hover:shadow-[0_8px_32px_rgba(26,26,46,0.1)]"
                             >
-                                <div className="w-14 h-14 bg-navy-800 text-navy-300 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform border border-white/[0.05]">
+                                <div className="w-14 h-14 bg-[#1A1E2A] text-[#486581] rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform border border-white/[0.05]">
                                     <item.icon className="w-6 h-6" strokeWidth={1.5} />
                                 </div>
                                 <h3 className="text-xl font-bold text-white mb-4 font-display">
@@ -130,12 +130,12 @@ export default function ContactPage() {
                                 {item.link ? (
                                     <a
                                         href={item.link}
-                                        className="text-white/50 leading-relaxed text-sm hover:text-navy-300 transition-colors break-words"
+                                        className="text-[#9CA3AF] leading-relaxed text-sm hover:text-[#486581] transition-colors break-words"
                                     >
                                         {item.content}
                                     </a>
                                 ) : (
-                                    <p className="text-white/50 leading-relaxed text-sm">
+                                    <p className="text-[#9CA3AF] leading-relaxed text-sm">
                                         {item.content}
                                     </p>
                                 )}
@@ -154,13 +154,13 @@ export default function ContactPage() {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            className="bg-navy-950 rounded-3xl border border-white/[0.05] p-8 sm:p-12 lg:p-16"
+                            className="bg-[#141420] rounded-3xl border border-white/[0.05] p-8 sm:p-12 lg:p-16"
                         >
-                            <div className="text-center mb-12">
-                                <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
-                                    Envie sua <span className="text-navy-300 italic">Mensagem</span>
+                            <div className="text-center mb-10 md:mb-12">
+                                <h2 className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white mb-4">
+                                    Envie sua <span className="text-[#486581] italic">Mensagem</span>
                                 </h2>
-                                <p className="text-white/50 text-lg font-light">
+                                <p className="text-[#9CA3AF] text-lg font-light">
                                     Preencha o formulário abaixo e retornaremos em breve.
                                 </p>
                             </div>
@@ -168,7 +168,7 @@ export default function ContactPage() {
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="block text-[11px] font-bold text-white/40 uppercase tracking-[0.15em] mb-2">Nome Completo</label>
+                                        <label className="block text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-2">Nome Completo</label>
                                         <input
                                             type="text"
                                             placeholder="Como devemos chamá-lo?"
@@ -176,11 +176,11 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                             required
                                             disabled={isSubmitting}
-                                            className="w-full h-12 px-4 rounded-[4px] bg-navy-950 border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-navy-600/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
+                                            className="w-full h-12 px-4 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[11px] font-bold text-white/40 uppercase tracking-[0.15em] mb-2">Email</label>
+                                        <label className="block text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-2">Email</label>
                                         <input
                                             type="email"
                                             placeholder="seu@email.com"
@@ -188,14 +188,14 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             required
                                             disabled={isSubmitting}
-                                            className="w-full h-12 px-4 rounded-[4px] bg-navy-950 border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-navy-600/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
+                                            className="w-full h-12 px-4 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="block text-[11px] font-bold text-white/40 uppercase tracking-[0.15em] mb-2">Telefone / WhatsApp</label>
+                                        <label className="block text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-2">Telefone / WhatsApp</label>
                                         <input
                                             type="text"
                                             placeholder="(00) 00000-0000"
@@ -203,11 +203,11 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                             required
                                             disabled={isSubmitting}
-                                            className="w-full h-12 px-4 rounded-[4px] bg-navy-950 border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-navy-600/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
+                                            className="w-full h-12 px-4 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[11px] font-bold text-white/40 uppercase tracking-[0.15em] mb-2">Assunto</label>
+                                        <label className="block text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-2">Assunto</label>
                                         <input
                                             type="text"
                                             placeholder="Ex: Avaliação de Imóvel"
@@ -215,13 +215,13 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                                             required
                                             disabled={isSubmitting}
-                                            className="w-full h-12 px-4 rounded-[4px] bg-navy-950 border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-navy-600/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
+                                            className="w-full h-12 px-4 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-[11px] font-bold text-white/40 uppercase tracking-[0.15em] mb-2">Mensagem</label>
+                                    <label className="block text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-2">Mensagem</label>
                                     <textarea
                                         placeholder="Conte-nos brevemente sobre sua necessidade..."
                                         value={formData.message}
@@ -229,14 +229,14 @@ export default function ContactPage() {
                                         required
                                         disabled={isSubmitting}
                                         rows={5}
-                                        className="w-full px-4 py-3 rounded-[4px] bg-navy-950 border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-navy-600/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all resize-none disabled:opacity-50"
+                                        className="w-full px-4 py-3 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all resize-none disabled:opacity-50"
                                     />
                                 </div>
 
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full h-14 rounded-[4px] bg-navy-800 text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-navy-700 transition-all disabled:opacity-50 shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
+                                    className="w-full h-14 rounded-[4px] bg-[#102A43] text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#1A2F44] transition-all disabled:opacity-50 shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -257,7 +257,7 @@ export default function ContactPage() {
             </section>
 
             {/* CTA WHATSAPP */}
-            <section className="bg-navy-950 text-white py-20 md:py-32 text-center relative overflow-hidden border-t border-white/[0.05]">
+            <section className="bg-[#141420] text-white py-20 md:py-28 text-center relative overflow-hidden border-t border-white/[0.05]">
                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
                     <motion.div
@@ -266,9 +266,9 @@ export default function ContactPage() {
                         viewport={{ once: true }}
                     >
                         <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
-                            Respostas <span className="text-navy-300 italic">Imediatas</span>
+                            Respostas <span className="text-[#486581] italic">Imediatas</span>
                         </h2>
-                        <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
+                        <p className="text-[#9CA3AF] text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
                             Precisa de agilidade? Fale diretamente com nossa equipe técnica pelo WhatsApp.
                         </p>
                         <ButtonPrimary

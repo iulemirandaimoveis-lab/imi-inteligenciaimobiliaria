@@ -1,134 +1,223 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
-// Score weights
-const W = {
-    price: 40,
-    type: 30,
-    location: 20,
-    bedrooms: 10,
-}
+export const runtime = 'nodejs'
 
+/**
+ * GET /api/leads/[id]/matches
+ *
+ * Scores developments against a lead's preferences and returns the top 10.
+ *
+ * Scoring weights:
+ *   - Faixa de valor (budget overlap)  : 40 pts
+ *   - Tipo (property type match)       : 30 pts
+ *   - Localização (city/neighborhood)  : 20 pts
+ *   - Quartos (bedrooms)               : 10 pts
+ */
 export async function GET(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    _request: NextRequest,
+    { params }: { params: Promise<{ id: string }> },
 ) {
     try {
-        const { id } = params
+        const { id: leadId } = await params
+        const supabase = await createClient()
 
-        // Fetch lead data
-        const { data: lead, error: leadError } = await supabaseAdmin
+        // --- Auth check ---
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        // --- Load lead preferences ---
+        const { data: lead, error: leadError } = await supabase
             .from('leads')
-            .select('id, name, budget_min, budget_max, interest_type, city, state, bedrooms, interest')
-            .eq('id', id)
+            .select('id, interest_type, interest_location, budget_min, budget_max, capital')
+            .eq('id', leadId)
             .single()
 
         if (leadError || !lead) {
-            return NextResponse.json({ error: 'Lead não encontrado' }, { status: 404 })
+            return NextResponse.json(
+                { error: 'Lead não encontrado' },
+                { status: 404 },
+            )
         }
 
-        // Fetch available developments/units
-        const { data: developments } = await supabaseAdmin
+        const leadBudgetMin = lead.budget_min ?? lead.capital ?? null
+        const leadBudgetMax = lead.budget_max ?? null
+        const leadType = (lead.interest_type ?? '').toLowerCase().trim()
+        const leadLocation = (lead.interest_location ?? '').toLowerCase().trim()
+
+        // --- Fetch all developments ---
+        const { data: developments, error: devError } = await supabase
             .from('developments')
-            .select(`
-                id, name, slug, type, city, state, status,
-                min_price, max_price, bedrooms_options,
-                description, cover_image_url,
-                developer:developers(name)
-            `)
-            .in('status', ['em_construcao', 'pronto', 'lancamento'])
-            .limit(100)
+            .select(
+                'id, name, slug, type, tipo, property_type, city, neighborhood, state, bedrooms, ' +
+                'price_min, price_max, price_from, price_to, status, status_commercial, image_url, gallery_images',
+            )
 
-        if (!developments || developments.length === 0) {
-            return NextResponse.json({ matches: [] })
+        if (devError) {
+            console.error('Error fetching developments:', devError)
+            return NextResponse.json({ error: devError.message }, { status: 500 })
         }
 
-        const budgetMin = lead.budget_min ?? 0
-        const budgetMax = lead.budget_max ?? Infinity
-        const interestType = lead.interest_type?.toLowerCase() ?? ''
+        // --- Type-matching helpers ---
+        // Normalise the various type representations to a canonical group key.
+        const TYPE_GROUPS: Record<string, string[]> = {
+            apartamento: ['apartamento', 'apartment', 'flat', 'studio', 'penthouse', 'cobertura', 'loft'],
+            casa: ['casa', 'house', 'villa', 'sobrado'],
+            lote: ['lote', 'land', 'terreno'],
+            comercial: ['comercial', 'commercial'],
+            resort: ['resort'],
+        }
 
-        const scored = developments.map((dev) => {
-            let score = 0
-            const reasons: string[] = []
+        function normaliseType(raw: string | null | undefined): string {
+            if (!raw) return ''
+            const lower = raw.toLowerCase().trim()
+            for (const [group, members] of Object.entries(TYPE_GROUPS)) {
+                if (members.includes(lower)) return group
+            }
+            return lower
+        }
 
-            // 1. Price match (40pts)
-            const devMin = dev.min_price ?? 0
-            const devMax = dev.max_price ?? Infinity
-            if (budgetMin > 0 || budgetMax < Infinity) {
-                const overlap = devMax >= budgetMin && devMin <= budgetMax
-                if (overlap) {
-                    score += W.price
-                    reasons.push('Faixa de preço compatível')
+        // --- Score each development ---
+        interface ScoredMatch {
+            id: string
+            name: string
+            slug: string | null
+            type: string | null
+            tipo: string | null
+            city: string | null
+            neighborhood: string | null
+            state: string | null
+            bedrooms: number | null
+            price_min: number | null
+            price_max: number | null
+            image_url: string | null
+            status: string | null
+            score: number
+            score_breakdown: {
+                valor: number
+                tipo: number
+                localizacao: number
+                quartos: number
+            }
+        }
+
+        const scored: ScoredMatch[] = (developments ?? []).map((dev: any) => {
+            let valorScore = 0
+            let tipoScore = 0
+            let localizacaoScore = 0
+            let quartosScore = 0
+
+            // ---- 1. Faixa de valor (40 pts) ----
+            const devMin = dev.price_min ?? dev.price_from ?? null
+            const devMax = dev.price_max ?? dev.price_to ?? null
+
+            if ((devMin !== null || devMax !== null) && (leadBudgetMin !== null || leadBudgetMax !== null)) {
+                const lMin = leadBudgetMin ?? 0
+                const lMax = leadBudgetMax ?? Infinity
+                const dMin = devMin ?? 0
+                const dMax = devMax ?? Infinity
+
+                const overlapStart = Math.max(lMin, dMin)
+                const overlapEnd = Math.min(lMax, dMax)
+
+                if (overlapStart <= overlapEnd) {
+                    // Ranges overlap — compute how much of the lead range is covered
+                    const leadRange = lMax === Infinity ? (dMax === Infinity ? 1 : dMax - dMin || 1) : lMax - lMin || 1
+                    const overlapSize = overlapEnd - overlapStart
+                    const overlapRatio = Math.min(overlapSize / Math.abs(leadRange), 1)
+                    valorScore = Math.round(40 * overlapRatio)
+                    // Guarantee at least partial credit for any overlap
+                    if (valorScore < 10) valorScore = 10
                 } else {
-                    // Partial credit if close (within 20%)
-                    const gap = devMin > budgetMax ? devMin - budgetMax : budgetMin - devMax
-                    const ref = budgetMax > 0 ? budgetMax : budgetMin
-                    if (ref > 0 && gap / ref < 0.2) {
-                        score += Math.round(W.price * 0.4)
-                        reasons.push('Preço próximo ao orçamento')
+                    // No overlap — give partial credit if reasonably close (within 30%)
+                    const gap = overlapStart - overlapEnd
+                    const reference = Math.max(lMin, dMin, 1)
+                    const gapRatio = gap / reference
+                    if (gapRatio < 0.3) {
+                        valorScore = Math.round(10 * (1 - gapRatio / 0.3))
                     }
                 }
-            } else {
-                // No budget filter — partial credit
-                score += Math.round(W.price * 0.5)
             }
 
-            // 2. Type match (30pts)
-            const devType = dev.type?.toLowerCase() ?? ''
-            if (interestType && devType) {
-                if (
-                    devType === interestType ||
-                    (interestType.includes('apartamento') && devType.includes('apartamento')) ||
-                    (interestType.includes('casa') && devType.includes('casa')) ||
-                    (interestType.includes('comercial') && devType.includes('comercial'))
-                ) {
-                    score += W.type
-                    reasons.push('Tipo de imóvel compatível')
-                } else if (interestType && devType && interestType !== devType) {
-                    // No match
-                } else {
-                    score += Math.round(W.type * 0.3)
+            // ---- 2. Tipo (30 pts) ----
+            if (leadType) {
+                const normLead = normaliseType(leadType)
+                const normDev = normaliseType(dev.tipo) || normaliseType(dev.type) || normaliseType(dev.property_type)
+                if (normLead && normDev && normLead === normDev) {
+                    tipoScore = 30
                 }
-            } else {
-                score += Math.round(W.type * 0.5)
             }
 
-            // 3. Location match (20pts)
-            if (lead.city && dev.city) {
-                if (dev.city.toLowerCase() === lead.city.toLowerCase()) {
-                    score += W.location
-                    reasons.push(`Localizado em ${dev.city}`)
-                } else if (lead.state && dev.state && dev.state.toLowerCase() === lead.state.toLowerCase()) {
-                    score += Math.round(W.location * 0.5)
-                    reasons.push('Mesmo estado')
+            // ---- 3. Localização (20 pts) ----
+            if (leadLocation) {
+                const devCity = (dev.city ?? '').toLowerCase().trim()
+                const devNeighborhood = (dev.neighborhood ?? '').toLowerCase().trim()
+                const devState = (dev.state ?? '').toLowerCase().trim()
+
+                if (devNeighborhood && (leadLocation.includes(devNeighborhood) || devNeighborhood.includes(leadLocation))) {
+                    localizacaoScore = 20
+                } else if (devCity && (leadLocation.includes(devCity) || devCity.includes(leadLocation))) {
+                    localizacaoScore = 15
+                } else if (devState && leadLocation.includes(devState)) {
+                    localizacaoScore = 5
                 }
-            } else {
-                score += Math.round(W.location * 0.3)
             }
 
-            // 4. Bedrooms match (10pts)
-            if (lead.bedrooms && dev.bedrooms_options) {
-                const opts = Array.isArray(dev.bedrooms_options) ? dev.bedrooms_options : []
-                if (opts.includes(lead.bedrooms) || opts.includes(String(lead.bedrooms))) {
-                    score += W.bedrooms
-                    reasons.push(`${lead.bedrooms} quartos disponível`)
-                }
-            } else {
-                score += Math.round(W.bedrooms * 0.5)
+            // ---- 4. Quartos (10 pts) ----
+            // The leads table doesn't have a dedicated bedrooms column, but interest_type
+            // may contain a reference like "apartamento 3 quartos". Try to extract it.
+            const quartosMatch = (lead.interest_type ?? '').match(/(\d+)\s*(?:quartos?|dorm|suítes?|rooms?|bed)/i)
+            const leadQuartos = quartosMatch ? parseInt(quartosMatch[1], 10) : null
+
+            if (leadQuartos !== null && dev.bedrooms != null) {
+                const diff = Math.abs(leadQuartos - dev.bedrooms)
+                if (diff === 0) quartosScore = 10
+                else if (diff === 1) quartosScore = 5
+                else if (diff === 2) quartosScore = 2
             }
 
-            return { ...dev, match_score: Math.min(score, 100), match_reasons: reasons }
+            const totalScore = valorScore + tipoScore + localizacaoScore + quartosScore
+
+            return {
+                id: dev.id,
+                name: dev.name,
+                slug: dev.slug ?? null,
+                type: dev.type ?? null,
+                tipo: dev.tipo ?? null,
+                city: dev.city ?? null,
+                neighborhood: dev.neighborhood ?? null,
+                state: dev.state ?? null,
+                bedrooms: dev.bedrooms ?? null,
+                price_min: devMin,
+                price_max: devMax,
+                image_url: dev.image_url ?? dev.gallery_images?.[0] ?? null,
+                status: dev.status ?? null,
+                score: totalScore,
+                score_breakdown: {
+                    valor: valorScore,
+                    tipo: tipoScore,
+                    localizacao: localizacaoScore,
+                    quartos: quartosScore,
+                },
+            }
         })
 
-        // Sort by score desc, filter >= 30
-        const matches = scored
-            .filter(d => d.match_score >= 30)
-            .sort((a, b) => b.match_score - a.match_score)
-            .slice(0, 10)
+        // --- Sort by score descending and return top 10 ---
+        scored.sort((a, b) => b.score - a.score)
+        const top10 = scored.slice(0, 10)
 
-        return NextResponse.json({ matches, lead_id: id })
-    } catch (err) {
-        console.error('Lead Matches Error:', err)
-        return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
+        return NextResponse.json({
+            lead_id: leadId,
+            total_evaluated: scored.length,
+            matches: top10,
+        })
+    } catch (error) {
+        console.error('Error in GET /api/leads/[id]/matches:', error)
+        return NextResponse.json(
+            { error: 'Internal Server Error' },
+            { status: 500 },
+        )
     }
 }

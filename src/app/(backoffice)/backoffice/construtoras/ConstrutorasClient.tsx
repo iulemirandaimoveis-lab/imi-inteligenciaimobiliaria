@@ -222,7 +222,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                                 <TrendingUp size={12} className="text-emerald-400" />
                                 <span>Parceria: {construtora.parceriaDuracao || 'Nova'}</span>
                             </div>
-                            <div onClick={e => e.preventDefault()}>
+                            <div onClick={e => { e.preventDefault(); e.stopPropagation() }}>
                                 <ActionMenu
                                     size="sm"
                                     items={[

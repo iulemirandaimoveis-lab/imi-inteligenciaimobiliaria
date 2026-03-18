@@ -106,13 +106,13 @@ export default function Header({ lang, settings }: HeaderProps) {
                             className="flex items-center gap-2.5 sm:gap-3 group flex-shrink-0"
                         >
                             <span
-                                className="text-[20px] sm:text-[22px] lg:text-[24px] font-black tracking-tight text-neutral-900 group-hover:text-navy-300 transition-colors duration-200"
+                                className="text-[20px] sm:text-[22px] lg:text-[24px] font-black tracking-tight text-[#1A1A1A] group-hover:text-[#486581] transition-colors duration-200"
                                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                             >
                                 IMI
                             </span>
                             <div className="h-4 w-px bg-black/15" />
-                            <span className="text-[9px] font-bold text-white/40 uppercase tracking-[0.18em] leading-[1.35]">
+                            <span className="text-[9px] font-bold text-[#8A95A0] uppercase tracking-[0.18em] leading-[1.35]">
                                 Inteligência<br />Imobiliária
                             </span>
                         </Link>
@@ -127,15 +127,15 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         key={item.key}
                                         href={`/${lang}/${item.key}`}
                                         className={`relative px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 rounded-lg ${active
-                                            ? 'text-neutral-900'
-                                            : 'text-white/40 hover:text-neutral-900 hover:bg-black/[0.03]'
+                                            ? 'text-[#1A1A1A]'
+                                            : 'text-[#6C757D] hover:text-[#1A1A1A] hover:bg-black/[0.03]'
                                             }`}
                                     >
                                         {item.label}
                                         {active && (
                                             <motion.div
                                                 layoutId="nav-indicator"
-                                                className="absolute bottom-0.5 left-3 right-3 h-[2px] bg-navy-800 rounded-full"
+                                                className="absolute bottom-0.5 left-3 right-3 h-[2px] bg-[#102A43] rounded-full"
                                                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                                             />
                                         )}
@@ -148,8 +148,8 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 <button
                                     onClick={() => setMoreOpen(v => !v)}
                                     className={`flex items-center gap-1 px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 rounded-lg ${NAV_MORE.some(i => isActive(i.key))
-                                        ? 'text-neutral-900'
-                                        : 'text-white/40 hover:text-neutral-900 hover:bg-black/[0.03]'
+                                        ? 'text-[#1A1A1A]'
+                                        : 'text-[#6C757D] hover:text-[#1A1A1A] hover:bg-black/[0.03]'
                                         }`}
                                 >
                                     Mais
@@ -176,8 +176,8 @@ export default function Header({ lang, settings }: HeaderProps) {
                                                         href={`/${lang}/${item.key}`}
                                                         onClick={() => setMoreOpen(false)}
                                                         className={`flex items-center h-[40px] px-4 text-[13px] font-medium transition-colors duration-150 ${active
-                                                            ? 'text-neutral-900 bg-gray-50 border-l-[3px] border-navy-600 pl-[13px]'
-                                                            : 'text-gray-600 hover:text-neutral-900 hover:bg-gray-50'
+                                                            ? 'text-[#1A1A1A] bg-[#F4F6F8] border-l-[3px] border-[#334E68] pl-[13px]'
+                                                            : 'text-[#495057] hover:text-[#1A1A1A] hover:bg-[#F8F9FA]'
                                                             }`}
                                                     >
                                                         {item.label}
@@ -192,27 +192,13 @@ export default function Header({ lang, settings }: HeaderProps) {
 
                         {/* Desktop Right */}
                         <div className="hidden lg:flex items-center gap-3">
-                            <div className="flex items-center gap-1 border-r border-black/10 pr-3">
-                                {LANGS.map((l) => (
-                                    <Link
-                                        key={l.code}
-                                        href={`/${l.code}`}
-                                        className={`text-[11px] font-bold px-1.5 py-0.5 rounded transition-colors duration-150 ${lang === l.code
-                                            ? 'text-navy-300'
-                                            : 'text-gray-400 hover:text-gray-600'
-                                            }`}
-                                    >
-                                        {l.label}
-                                    </Link>
-                                ))}
-                            </div>
                             <a
                                 href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 bg-navy-800 hover:bg-navy-900 text-white text-[13px] font-semibold px-4 py-2 rounded-xl transition-all duration-200"
+                                className="inline-flex items-center gap-2 bg-[#102A43] hover:bg-[#0a1c2e] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
                             >
-                                <MessageCircle size={14} strokeWidth={2.5} />
+                                <MessageCircle size={15} strokeWidth={2.5} />
                                 WhatsApp
                             </a>
                         </div>
@@ -220,7 +206,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                         {/* Mobile Toggle */}
                         <button
                             onClick={() => setOpen(true)}
-                            className="lg:hidden p-2 -mr-1 rounded-xl hover:bg-black/[0.04] transition-colors text-neutral-900"
+                            className="lg:hidden p-2 -mr-1 rounded-xl hover:bg-black/[0.04] transition-colors text-[#1A1A1A]"
                             aria-label="Abrir menu"
                         >
                             <Menu size={22} />
@@ -259,17 +245,17 @@ export default function Header({ lang, settings }: HeaderProps) {
                             <div className="flex items-center justify-between px-5 h-[54px] border-b border-black/[0.06] flex-shrink-0">
                                 <div className="flex items-center gap-2">
                                     <span
-                                        className="text-[18px] font-black text-neutral-900"
+                                        className="text-[18px] font-black text-[#1A1A1A]"
                                         style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                                     >
                                         IMI
                                     </span>
                                     <div className="h-3.5 w-px bg-black/10" />
-                                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">Navegação</span>
+                                    <span className="text-[9px] font-bold text-[#ADB5BD] uppercase tracking-[0.2em]">Navegação</span>
                                 </div>
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="p-1.5 rounded-lg hover:bg-black/[0.05] text-white/40 transition-colors"
+                                    className="p-1.5 rounded-lg hover:bg-black/[0.05] text-[#6C757D] transition-colors"
                                     aria-label="Fechar menu"
                                 >
                                     <X size={18} />
@@ -292,8 +278,8 @@ export default function Header({ lang, settings }: HeaderProps) {
                                                     href={`/${lang}/${item.key}`}
                                                     onClick={() => setOpen(false)}
                                                     className={`flex items-center h-[46px] px-4 rounded-xl text-[14px] font-semibold transition-all duration-150 ${active
-                                                        ? 'bg-gray-50 text-neutral-900 border-l-[3px] border-navy-600 pl-[13px]'
-                                                        : 'text-gray-600 hover:bg-gray-50 hover:text-neutral-900'
+                                                        ? 'bg-[#F4F6F8] text-[#1A1A1A] border-l-[3px] border-[#334E68] pl-[13px]'
+                                                        : 'text-[#495057] hover:bg-[#F4F6F8] hover:text-[#1A1A1A]'
                                                         }`}
                                                 >
                                                     {item.label}
@@ -315,7 +301,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={() => setOpen(false)}
-                                        className="flex items-center justify-center gap-2 w-full bg-navy-800 hover:bg-navy-900 text-white font-bold text-[14px] h-[44px] rounded-xl transition-all duration-200 active:scale-[0.97]"
+                                        className="flex items-center justify-center gap-2 w-full bg-[#102A43] hover:bg-[#0a1c2e] text-white font-bold text-[14px] h-[44px] rounded-xl transition-all duration-200 active:scale-[0.97]"
                                     >
                                         <MessageCircle size={16} />
                                         WhatsApp
@@ -336,8 +322,8 @@ export default function Header({ lang, settings }: HeaderProps) {
                                             onClick={() => setOpen(false)}
                                             title={l.label}
                                             className={`flex-1 h-9 flex items-center justify-center rounded-lg text-lg transition-all duration-150 ${lang === l.code
-                                                ? 'bg-neutral-900 ring-2 ring-[#334E68] ring-offset-1'
-                                                : 'bg-gray-50 border border-[#E9ECEF] hover:border-navy-600/30'
+                                                ? 'bg-[#1A1A1A] ring-2 ring-[#334E68] ring-offset-1'
+                                                : 'bg-[#F4F6F8] border border-[#E9ECEF] hover:border-[#334E68]/30'
                                                 }`}
                                         >
                                             {l.flag}
@@ -354,12 +340,12 @@ export default function Header({ lang, settings }: HeaderProps) {
                                     style={{ background: '#F8F9FA' }}
                                 >
                                     <div className="flex items-center justify-between">
-                                        <p className="font-bold text-neutral-900 text-[13px]">Iule Miranda</p>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em]">CRECI 17933</p>
+                                        <p className="font-bold text-[#1A1A1A] text-[13px]">Iule Miranda</p>
+                                        <p className="text-[10px] text-[#ADB5BD] font-bold uppercase tracking-[0.15em]">CRECI 17933</p>
                                     </div>
                                     <a
                                         href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
-                                        className="text-[12px] text-white/40 mt-1 block hover:text-neutral-900 transition-colors"
+                                        className="text-[12px] text-[#6C757D] mt-1 block hover:text-[#1A1A1A] transition-colors"
                                     >
                                         {settings?.companyPhone || '+55 81 9 9723-0455'}
                                     </a>
