@@ -24,13 +24,13 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
     if (!developments.length) return null;
 
     return (
-        <section className="border-t border-gray-100 bg-[#F5F7FA] py-14 md:py-20">
+        <section className="py-14 md:py-20" style={{ background: '#0B1928', borderTop: '1px solid rgba(200,164,74,0.08)' }}>
             <div className="container-custom">
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="w-1 h-5 rounded-full bg-[#334E68]" />
+                    <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
                     <h2
-                        className="text-xl md:text-2xl text-gray-900 font-bold tracking-tight"
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        className="text-xl md:text-2xl font-bold tracking-tight"
+                        style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif", color: '#EBE7E0' }}
                     >
                         Empreendimentos semelhantes
                     </h2>
@@ -47,10 +47,11 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
                         >
                             <Link
                                 href={`/${lang}/imoveis/${dev.slug}`}
-                                className="group block rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                                className="group block rounded-2xl overflow-hidden transition-all duration-200"
+                                style={{ background: '#0F2035', border: '1px solid rgba(200,164,74,0.12)' }}
                             >
                                 {/* Image */}
-                                <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
+                                <div className="relative aspect-[16/10] overflow-hidden" style={{ background: '#142840' }}>
                                     {dev.images.main ? (
                                         <Image
                                             src={dev.images.main}
@@ -61,31 +62,32 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
-                                            <Building2 className="w-8 h-8 text-gray-200" />
+                                            <Building2 className="w-8 h-8" style={{ color: '#5C6B7D', opacity: 0.4 }} />
                                         </div>
                                     )}
+                                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11,25,40,0.7) 0%, transparent 50%)' }} />
                                 </div>
 
                                 {/* Content */}
                                 <div className="p-4">
-                                    <h3 className="text-sm font-bold text-gray-900 truncate mb-1 group-hover:text-[#334E68] transition-colors">
+                                    <h3 className="text-sm font-bold truncate mb-1 transition-colors" style={{ color: '#EBE7E0', fontFamily: "'Libre Baskerville', Georgia, serif" }}>
                                         {dev.name}
                                     </h3>
-                                    <div className="flex items-center gap-1 text-xs text-gray-400 mb-3">
-                                        <MapPin size={10} />
+                                    <div className="flex items-center gap-1 text-xs mb-3" style={{ color: '#627D98' }}>
+                                        <MapPin size={10} style={{ color: '#C8A44A', opacity: 0.6 }} />
                                         <span className="truncate">{dev.location.neighborhood}, {dev.location.city}</span>
                                     </div>
 
                                     {/* Specs */}
-                                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                                    <div className="flex items-center gap-3 text-xs mb-3" style={{ color: '#9FB3C8' }}>
                                         {dev.specs?.bedroomsRange && dev.specs.bedroomsRange !== '—' && (
                                             <span className="flex items-center gap-1">
-                                                <Bed size={11} /> {dev.specs.bedroomsRange}
+                                                <Bed size={11} style={{ color: '#5C6B7D' }} /> {dev.specs.bedroomsRange}
                                             </span>
                                         )}
                                         {dev.specs?.areaRange && dev.specs.areaRange !== '—' && (
                                             <span className="flex items-center gap-1">
-                                                <Ruler size={11} /> {dev.specs.areaRange}
+                                                <Ruler size={11} style={{ color: '#5C6B7D' }} /> {dev.specs.areaRange}
                                             </span>
                                         )}
                                     </div>
@@ -93,8 +95,8 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
                                     {/* Price */}
                                     {dev.priceRange.min > 0 && (
                                         <div>
-                                            <p className="text-[9px] text-gray-400 uppercase tracking-wider font-semibold">A partir de</p>
-                                            <p className="text-base font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                                            <p className="text-[9px] uppercase tracking-wider font-semibold" style={{ color: '#C8A44A', opacity: 0.6 }}>A partir de</p>
+                                            <p className="text-base font-bold" style={{ color: '#EBE7E0', fontFamily: "'Libre Baskerville', Georgia, serif" }}>
                                                 {formatPrice(dev.priceRange.min)}
                                             </p>
                                         </div>
