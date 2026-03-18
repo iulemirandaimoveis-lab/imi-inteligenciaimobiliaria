@@ -61,14 +61,16 @@ const VARIANT_STYLES: Record<string, VariantStyle> = {
     border: '1px solid transparent',
     hoverBackground: 'var(--btn-primary-hover)',
     activeTransform: 'scale(0.97)',
-  },
+    boxShadow: '0 1px 3px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)',
+  } as VariantStyle,
   gold: {
     background: 'var(--btn-primary-bg)',
     color: 'var(--btn-primary-text)',
     border: '1px solid transparent',
     hoverBackground: 'var(--btn-primary-hover)',
     activeTransform: 'scale(0.97)',
-  },
+    boxShadow: '0 1px 3px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)',
+  } as VariantStyle,
   secondary: {
     background: 'var(--bg-muted)',
     color: 'var(--text-primary)',
@@ -147,6 +149,7 @@ function buildStyle(
     border: v.border,
     background: hovered && !disabled ? v.hoverBackground : v.background,
     color: hovered && v.hoverColor && !disabled ? v.hoverColor : v.color,
+    boxShadow: !disabled ? (v as any).boxShadow : undefined,
     cursor: disabled ? 'default' : 'pointer',
     opacity: disabled ? 0.5 : 1,
     pointerEvents: disabled ? 'none' : undefined,
@@ -156,6 +159,8 @@ function buildStyle(
     whiteSpace: 'nowrap',
     userSelect: 'none',
     outline: 'none',
+    letterSpacing: variant === 'primary' || variant === 'gold' ? '0.01em' : undefined,
+    fontWeight: variant === 'primary' || variant === 'gold' ? 600 : 500,
   }
 
   return style

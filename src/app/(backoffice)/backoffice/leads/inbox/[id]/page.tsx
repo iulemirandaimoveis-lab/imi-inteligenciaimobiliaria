@@ -143,9 +143,28 @@ export default function LeadInboxDetailPage() {
 
     useEffect(() => {
         if (!id) return
-        supabase.from('leads').select('*').eq('id', id).single().then(({ data }) => {
-            setLead(data)
-            setMessages(buildMessages(data))
+        Promise.all([
+            supabase.from('leads').select('*').eq('id', id).single(),
+            supabase.from('lead_interactions')
+                .select('*')
+                .eq('lead_id', id)
+                .in('type', ['note', 'chat', 'whatsapp', 'email'])
+                .order('created_at', { ascending: true })
+                .limit(100),
+        ]).then(([leadRes, intRes]) => {
+            setLead(leadRes.data)
+            // Use persisted interactions if available, else build from lead data
+            if (intRes.data && intRes.data.length > 0) {
+                const mapped = intRes.data.map((i: any) => ({
+                    id: i.id,
+                    role: i.direction === 'inbound' ? 'bot' : 'user',
+                    text: i.content || i.notes || '',
+                    time: new Date(i.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                }))
+                setMessages(mapped)
+            } else {
+                setMessages(buildMessages(leadRes.data))
+            }
             setLoading(false)
         })
     }, [id])
@@ -161,6 +180,15 @@ export default function LeadInboxDetailPage() {
         setMessages(prev => [...prev, { id: Date.now(), role: 'user' as const, text: userMsg, time: now }])
         setChatInput('')
         setSending(true)
+
+        // Persist outbound message
+        supabase.from('lead_interactions').insert({
+            lead_id: id,
+            type: 'chat',
+            direction: 'outbound',
+            content: userMsg,
+            notes: userMsg,
+        }).then(() => {})
 
         // Try real AI response first, fall back to contextual local generation
         let botText = ''
@@ -182,13 +210,23 @@ export default function LeadInboxDetailPage() {
             botText = generateBotResponse(userMsg, lead, getScore(lead))
         }
 
-        setMessages(prev => [...prev, {
+        const botMsg = {
             id: Date.now() + 1,
             role: 'bot' as const,
             text: botText,
             time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        }])
+        }
+        setMessages(prev => [...prev, botMsg])
         setSending(false)
+
+        // Persist AI response
+        supabase.from('lead_interactions').insert({
+            lead_id: id,
+            type: 'chat',
+            direction: 'inbound',
+            content: botText,
+            notes: botText,
+        }).then(() => {})
     }
 
     if (loading) {

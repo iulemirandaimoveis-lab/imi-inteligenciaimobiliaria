@@ -410,7 +410,8 @@
   *:focus-visible {
     outline: 2px solid var(--imi-gold-500, #B8943A);
     outline-offset: 2px;
-    border-radius: var(--r-sm, 4px);
+    border-radius: var(--r-sm, 6px);
+    box-shadow: 0 0 0 4px rgba(184,148,58,0.12);
   }
 
   /* Selection color */
