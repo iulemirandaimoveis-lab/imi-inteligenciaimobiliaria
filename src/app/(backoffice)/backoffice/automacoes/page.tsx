@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Zap, Plus, ToggleLeft, ToggleRight,
@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { PageIntelHeader, KPICard, Btn } from '../../components/ui'
 import { T } from '../../lib/theme'
+import { createClient } from '@/lib/supabase/client'
 
 export const dynamic = 'force-dynamic'
 
@@ -308,7 +309,7 @@ function RuleCard({
 }
 
 /* ─── NOVA AUTOMAÇÃO MODAL ───────────────────────────────────────── */
-function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
+function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: (data?: Partial<AutomationRule>) => void }) {
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [selectedTrigger, setSelectedTrigger] = useState<string | null>(null)
   const [selectedAction, setSelectedAction] = useState<string | null>(null)
@@ -324,9 +325,9 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
   const handleSave = async () => {
     if (!canSave) return
     setSaving(true)
-    await new Promise(r => setTimeout(r, 700))
+    await new Promise(r => setTimeout(r, 300))
     setSaving(false)
-    onSave()
+    onSave({ name, triggerLabel: selectedTrigger || '', actionLabel: selectedAction || '' })
   }
 
   const inputS: React.CSSProperties = {
@@ -658,26 +659,76 @@ export default function AutomacoesPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [saved, setSaved] = useState(false)
 
+  // Load from Supabase on mount
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('automation_workflows')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const mapped: AutomationRule[] = data.map(w => ({
+            id: w.id,
+            name: w.name,
+            triggerLabel: w.trigger_type || 'Personalizado',
+            actionLabel: w.action_type || 'Personalizado',
+            status: w.is_active ? 'active' : 'paused',
+            firedToday: 0,
+            firedTotal: w.run_count || 0,
+            conversionRate: 0,
+            category: w.category || 'Geral',
+            triggerIcon: Clock,
+            actionIcon: Zap,
+            lastFired: w.last_run_at ? new Date(w.last_run_at).toLocaleDateString('pt-BR') : '—',
+          }))
+          setRules(mapped)
+        }
+      })
+  }, [])
+
   const activeCount = rules.filter(r => r.status === 'active').length
   const todayFired = rules.reduce((acc, r) => acc + r.firedToday, 0)
   const avgConversion = rules.length > 0
     ? Math.round(rules.reduce((acc, r) => acc + r.conversionRate, 0) / rules.length)
     : 0
 
-  const handleToggle = (id: string) => {
+  const handleToggle = async (id: string) => {
+    const rule = rules.find(r => r.id === id)
+    if (!rule) return
+    const newActive = rule.status !== 'active'
     setRules(prev => prev.map(r =>
-      r.id === id ? { ...r, status: r.status === 'active' ? 'paused' : 'active' } : r
+      r.id === id ? { ...r, status: newActive ? 'active' : 'paused' } : r
     ))
+    const supabase = createClient()
+    await supabase.from('automation_workflows').update({ is_active: newActive }).eq('id', id)
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     setRules(prev => prev.filter(r => r.id !== id))
+    const supabase = createClient()
+    await supabase.from('automation_workflows').delete().eq('id', id)
   }
 
-  const handleSaveNew = () => {
+  const handleSaveNew = async (newRule?: Partial<AutomationRule>) => {
     setModalOpen(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
+    if (newRule?.name) {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data: tenantData } = await supabase
+        .from('tenant_users').select('tenant_id').eq('user_id', user.id).single()
+      if (!tenantData) return
+      await supabase.from('automation_workflows').insert({
+        tenant_id: tenantData.tenant_id,
+        name: newRule.name,
+        trigger_type: newRule.triggerLabel || 'custom',
+        action_type: newRule.actionLabel || 'custom',
+        is_active: true,
+        created_by: user.id,
+      })
+    }
   }
 
   return (

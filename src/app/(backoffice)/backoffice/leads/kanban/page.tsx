@@ -1,13 +1,24 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp, BarChart3, Users } from 'lucide-react'
+import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp, BarChart3, Users, GripVertical } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
+import {
+    DndContext,
+    DragEndEvent,
+    DragOverlay,
+    DragStartEvent,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    useDroppable,
+    useDraggable,
+} from '@dnd-kit/core'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,6 +74,55 @@ function urgencyBadge(lead: any): { label: string; color: string; bg: string } |
     if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' }
     if (score >= 60 || status === 'warm') return { label: 'QUENTE', color: 'var(--warning)', bg: 'rgba(245,158,11,0.12)' }
     return { label: 'NORMAL', color: 'var(--text-secondary)', bg: 'var(--bg-elevated)' }
+}
+
+// ── Draggable card wrapper ─────────────────────────────────────────
+function DraggableLeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+        id: lead.id,
+        data: { lead },
+    })
+    return (
+        <div
+            ref={setNodeRef}
+            style={{
+                opacity: isDragging ? 0.4 : 1,
+                transform: transform ? `translate(${transform.x}px,${transform.y}px)` : undefined,
+            }}
+        >
+            <div style={{ position: 'relative' }}>
+                <div
+                    {...listeners}
+                    {...attributes}
+                    style={{
+                        position: 'absolute', left: 6, top: '50%', transform: 'translateY(-50%)',
+                        zIndex: 2, cursor: 'grab', touchAction: 'none',
+                        color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center',
+                    }}
+                >
+                    <GripVertical size={12} />
+                </div>
+                <LeadCard lead={lead} stageColor={stageColor} />
+            </div>
+        </div>
+    )
+}
+
+// ── Droppable column wrapper ────────────────────────────────────────
+function DroppableColumn({ stageKey, children }: { stageKey: string; children: React.ReactNode }) {
+    const { setNodeRef, isOver } = useDroppable({ id: stageKey })
+    return (
+        <div
+            ref={setNodeRef}
+            style={{
+                transition: 'background 0.15s',
+                background: isOver ? 'color-mix(in srgb, var(--imi-gold-500) 6%, transparent)' : undefined,
+                borderRadius: 16, minHeight: 120,
+            }}
+        >
+            {children}
+        </div>
+    )
 }
 
 // ── Card component ────────────────────────────────────────────────
@@ -142,12 +202,27 @@ function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
     )
 }
 
+// Stage key → DB status value mapping
+const STAGE_TO_STATUS: Record<string, string> = {
+    novo: 'new',
+    contatado: 'contacted',
+    qualificado: 'qualified',
+    proposta: 'proposal',
+    negociacao: 'hot',
+    ganho: 'won',
+}
+
 // ── Main ──────────────────────────────────────────────────────────
 export default function PipelineKanbanPage() {
     const [leads, setLeads] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [busca, setBusca] = useState('')
+    const [activeId, setActiveId] = useState<string | null>(null)
     const scrollRef = useRef<HTMLDivElement>(null)
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    )
 
     useEffect(() => {
         const supabase = createClient()
@@ -161,6 +236,25 @@ export default function PipelineKanbanPage() {
                 setLoading(false)
             })
     }, [])
+
+    const handleDragStart = (event: DragStartEvent) => {
+        setActiveId(event.active.id as string)
+    }
+
+    const handleDragEnd = async (event: DragEndEvent) => {
+        setActiveId(null)
+        const { active, over } = event
+        if (!over || active.id === over.id) return
+        const leadId = active.id as string
+        const newStage = over.id as string
+        const newStatus = STAGE_TO_STATUS[newStage]
+        if (!newStatus) return
+        // Optimistic update
+        setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: newStatus } : l))
+        // Persist
+        const supabase = createClient()
+        await supabase.from('leads').update({ status: newStatus }).eq('id', leadId)
+    }
 
     // Group leads by stage
     const filteredLeads = leads.filter(l =>
@@ -242,6 +336,7 @@ export default function PipelineKanbanPage() {
             </motion.div>
 
             {/* ── Kanban Board (horizontal scroll) ── */}
+            <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div
                 data-tour="kanban"
                 ref={scrollRef}
@@ -297,6 +392,7 @@ export default function PipelineKanbanPage() {
                                 borderTop: `2px solid ${stage.dot}40`,
                                 borderRadius: 16, padding: 10,
                                 minHeight: 120,
+                                /* intentional override — DroppableColumn wraps inside */
                                 maxHeight: 'calc(100vh - 320px)',
                                 overflowY: 'auto',
                                 scrollbarWidth: 'thin',
@@ -307,16 +403,20 @@ export default function PipelineKanbanPage() {
                                         <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bo-elevated)', opacity: 0.3 }} />
                                     </div>
                                 ) : stageLeads.length > 0 ? (
-                                    stageLeads.map(lead => (
-                                        <LeadCard key={lead.id} lead={lead} stageColor={stage.dot} />
-                                    ))
+                                    <DroppableColumn stageKey={stage.key}>
+                                    {stageLeads.map(lead => (
+                                        <DraggableLeadCard key={lead.id} lead={lead} stageColor={stage.dot} />
+                                    ))}
+                                    </DroppableColumn>
                                 ) : (
-                                    <div style={{ padding: '24px 8px', textAlign: 'center' }}>
-                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${stage.dot}10`, border: `1px dashed ${stage.dot}40`, margin: '0 auto 8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <Plus size={14} style={{ color: stage.dot, opacity: 0.5 }} />
+                                    <DroppableColumn stageKey={stage.key}>
+                                        <div style={{ padding: '24px 8px', textAlign: 'center' }}>
+                                            <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${stage.dot}10`, border: `1px dashed ${stage.dot}40`, margin: '0 auto 8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Plus size={14} style={{ color: stage.dot, opacity: 0.5 }} />
+                                            </div>
+                                            <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', opacity: 0.6 }}>Sem leads</p>
                                         </div>
-                                        <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', opacity: 0.6 }}>Sem leads</p>
-                                    </div>
+                                    </DroppableColumn>
                                 )}
                             </div>
 
@@ -333,6 +433,17 @@ export default function PipelineKanbanPage() {
                     )
                 })}
             </div>
+            <DragOverlay>
+                {activeId ? (
+                    <div style={{ opacity: 0.9, transform: 'rotate(2deg)', pointerEvents: 'none' }}>
+                        <LeadCard
+                            lead={leads.find(l => l.id === activeId) || {}}
+                            stageColor="var(--imi-gold-500)"
+                        />
+                    </div>
+                ) : null}
+            </DragOverlay>
+            </DndContext>
 
             {/* ── AI insight strip ── */}
             <motion.div

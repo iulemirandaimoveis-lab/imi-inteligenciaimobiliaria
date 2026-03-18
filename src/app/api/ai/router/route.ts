@@ -12,6 +12,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -338,6 +339,12 @@ async function callKling(prompt: string): Promise<{ result: string; cost_usd: nu
 
 export async function POST(request: NextRequest) {
     try {
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
         const body: AIRouterRequest = await request.json()
 
         if (!body.task_type || !body.prompt) {
