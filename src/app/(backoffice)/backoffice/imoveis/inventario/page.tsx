@@ -276,7 +276,7 @@ function MobileInventario({
                                 flexShrink: 0,
                                 display: 'flex', alignItems: 'center', gap: 5,
                                 height: 32, padding: '0 12px',
-                                borderRadius: 999,
+                                borderRadius: 6,
                                 background: isActive ? 'var(--imi-gold-500)' : 'transparent',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
@@ -454,7 +454,7 @@ function MobileInventario({
                                             color: status.color,
                                             background: status.bg,
                                             border: `1px solid ${status.color}40`,
-                                            padding: '4px 8px', borderRadius: 999,
+                                            padding: '4px 8px', borderRadius: 6,
                                         }}>
                                             {status.label}
                                         </span>
@@ -777,7 +777,7 @@ export default function InventarioPage() {
                                             {/* Status badge */}
                                             <div className="absolute top-3 left-3">
                                                 <span
-                                                    className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-md"
+                                                    className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-[6px] backdrop-blur-md"
                                                     style={{
                                                         background: status.bg,
                                                         color: status.color,

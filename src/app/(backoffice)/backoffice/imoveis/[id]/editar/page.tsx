@@ -64,7 +64,7 @@ function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, on
         </div>
         {/* Cover badge */}
         {isCover && (
-          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold"
+          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-[6px] text-[10px] font-bold"
             style={{ background: T.accent, color: 'white' }}>Capa</div>
         )}
         {/* "Nova" label */}

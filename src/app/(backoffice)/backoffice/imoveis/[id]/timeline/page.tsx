@@ -374,7 +374,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
             {!eventsLoading && events.length > 0 && (
                 <div className="flex items-center gap-3">
                     <div
-                        className="px-3 py-1.5 rounded-full text-xs font-bold"
+                        className="px-3 py-1.5 rounded-[6px] text-xs font-bold"
                         style={{ background: `${T.accent}15`, color: T.accent, border: `1px solid ${T.accent}30` }}
                     >
                         {events.length} evento{events.length !== 1 ? 's' : ''} registrado{events.length !== 1 ? 's' : ''}
@@ -421,7 +421,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                                     <div className="flex items-start justify-between mb-3">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <span
-                                                className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                                className="px-2.5 py-0.5 rounded-[6px] text-[10px] font-bold uppercase tracking-wider"
                                                 style={{ background: cfg.bg, color: cfg.color }}
                                             >
                                                 {event.event_type || 'Geral'}
