@@ -100,7 +100,7 @@ export default function Hero({ dict }: HeroProps) {
               {TRUST.map(t => {
                 const Icon = t.icon
                 return (
-                  <div key={t.text} className="flex items-center gap-1.5 bg-white/8 border border-white/10 px-3 py-1" style={{ borderRadius: 4 }}>
+                  <div key={t.text} className="flex items-center gap-1.5 bg-white/8 border border-white/10 px-3 py-1" style={{ borderRadius: 6 }}>
                     <Icon size={12} className="text-white/70" />
                     <span className="text-xs text-white/70 font-medium">{t.text}</span>
                   </div>
@@ -156,7 +156,7 @@ export default function Hero({ dict }: HeroProps) {
                     href={item.href}
                     className="group flex items-center gap-2 px-4 py-2 text-xs font-semibold transition-all duration-200"
                     style={{
-                      borderRadius: 4,
+                      borderRadius: 6,
                       background: 'rgba(255,255,255,0.06)',
                       border: '1px solid rgba(255,255,255,0.10)',
                       color: 'rgba(255,255,255,0.60)',
@@ -180,7 +180,7 @@ export default function Hero({ dict }: HeroProps) {
                   href={`/${lang}/imoveis`}
                   className="group flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all duration-200"
                   style={{
-                    borderRadius: 4,
+                    borderRadius: 6,
                     background: 'var(--imi-gold-500)',
                     border: '1px solid transparent',
                     color: '#0A1017',

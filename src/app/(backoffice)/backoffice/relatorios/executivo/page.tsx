@@ -184,7 +184,7 @@ export default function RelatoriosExecutivoPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <button style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
-                height: '44px', padding: '0 16px', borderRadius: '4px',
+                height: '44px', padding: '0 16px', borderRadius: '6px',
                 fontSize: '13px', fontWeight: 700, color: 'var(--bo-text-muted)',
                 background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer',
               }}>
@@ -193,7 +193,7 @@ export default function RelatoriosExecutivoPage() {
               </button>
               <button style={{
                 width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: '4px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer',
+                borderRadius: '6px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer',
               }}>
                 <RefreshCw size={14} color="var(--bo-text-muted)" />
               </button>
@@ -204,13 +204,13 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Period Tabs ──────────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}>
-        <div style={{ display: 'inline-flex', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '4px', gap: '2px' }}>
+        <div style={{ display: 'inline-flex', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '4px', gap: '2px' }}>
           {(['monthly', 'quarterly', 'yearly'] as Period[]).map(p => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
               style={{
-                height: '34px', padding: '0 18px', borderRadius: '4px',
+                height: '34px', padding: '0 18px', borderRadius: '6px',
                 fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: 'none',
                 transition: 'all 0.2s',
                 background: period === p ? 'var(--info)' : 'transparent',
@@ -227,9 +227,9 @@ export default function RelatoriosExecutivoPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
           {/* Pipeline */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Target size={15} color="#3B82F6" />
               </div>
               <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
@@ -246,9 +246,9 @@ export default function RelatoriosExecutivoPage() {
           </div>
 
           {/* Conversion */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgba(167,139,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(167,139,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <BarChart3 size={15} color="#A78BFA" />
               </div>
               <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
@@ -265,9 +265,9 @@ export default function RelatoriosExecutivoPage() {
           </div>
 
           {/* Total Leads */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Users size={15} color="var(--bo-success)" />
               </div>
               <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
@@ -284,9 +284,9 @@ export default function RelatoriosExecutivoPage() {
           </div>
 
           {/* Receita do Mês */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <TrendingUp size={15} color="var(--bo-warning)" />
               </div>
               <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
@@ -308,7 +308,7 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Sales Velocity Trend ─────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
-        <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px' }}>
+        <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>Sales Velocity Trend</p>
             <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--info)' }}>
@@ -364,7 +364,7 @@ export default function RelatoriosExecutivoPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           {/* Property Category */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px' }}>
             <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '16px' }}>Property Category</p>
 
             {/* Donut chart */}
@@ -412,7 +412,7 @@ export default function RelatoriosExecutivoPage() {
           </div>
 
           {/* Leads by Channel */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px' }}>
             <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '16px' }}>Leads por Canal</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {currentChannels.map(ch => (
@@ -421,12 +421,12 @@ export default function RelatoriosExecutivoPage() {
                     <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{ch.label}</span>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)' }}>{ch.pct}%</span>
                   </div>
-                  <div style={{ height: '6px', borderRadius: '4px', background: 'var(--bo-elevated)', overflow: 'hidden' }}>
+                  <div style={{ height: '6px', borderRadius: '6px', background: 'var(--bo-elevated)', overflow: 'hidden' }}>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${ch.pct}%` }}
                       transition={{ delay: 0.3, duration: 0.7, ease: 'easeOut' }}
-                      style={{ height: '100%', borderRadius: '4px', background: ch.color }}
+                      style={{ height: '100%', borderRadius: '6px', background: ch.color }}
                     />
                   </div>
                 </div>
@@ -438,7 +438,7 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Top Performance ──────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.20 }}>
-        <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', overflow: 'hidden' }}>
           {/* Header */}
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>Top Performance (Agente)</span>
@@ -484,14 +484,14 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Total Leads Indicator ────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
-        <div style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #0F172A 100%)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '4px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #0F172A 100%)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '6px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '6px' }}>Total Leads Capturados</p>
             <p style={{ fontSize: '40px', fontWeight: 900, color: 'var(--text-inverse)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>
               {loading ? <Loader2 size={24} className="animate-spin" /> : totalLeads.toLocaleString('pt-BR')}
             </p>
           </div>
-          <div style={{ width: '56px', height: '56px', borderRadius: '4px', background: 'rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '56px', height: '56px', borderRadius: '6px', background: 'rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Users size={26} color="#3B82F6" />
           </div>
         </div>

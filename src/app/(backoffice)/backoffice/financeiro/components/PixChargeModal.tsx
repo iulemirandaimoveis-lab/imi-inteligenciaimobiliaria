@@ -119,7 +119,7 @@ export default function PixChargeModal({
                     width: '100%', maxWidth: '420px',
                     background: 'var(--bo-card)',
                     border: '1px solid var(--bo-border)',
-                    borderRadius: '4px',
+                    borderRadius: '6px',
                     overflow: 'hidden',
                 }}
             >
@@ -132,7 +132,7 @@ export default function PixChargeModal({
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{
-                            width: '34px', height: '34px', borderRadius: '4px',
+                            width: '34px', height: '34px', borderRadius: '6px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             background: 'rgba(0,178,127,0.15)', border: '1px solid rgba(0,178,127,0.25)',
                         }}>
@@ -161,7 +161,7 @@ export default function PixChargeModal({
                         >
                             {/* Amount display */}
                             <div style={{
-                                padding: '16px', borderRadius: '4px', textAlign: 'center',
+                                padding: '16px', borderRadius: '6px', textAlign: 'center',
                                 background: 'rgba(0,178,127,0.08)', border: '1px solid rgba(0,178,127,0.18)',
                             }}>
                                 <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginBottom: '4px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
@@ -186,7 +186,7 @@ export default function PixChargeModal({
                                     placeholder="Ex: João da Silva"
                                     style={{
                                         width: '100%', height: '44px', padding: '0 12px',
-                                        borderRadius: '4px', fontSize: '13px',
+                                        borderRadius: '6px', fontSize: '13px',
                                         color: 'var(--bo-text)',
                                         background: 'var(--bo-surface)',
                                         border: '1px solid var(--bo-border)',
@@ -197,7 +197,7 @@ export default function PixChargeModal({
 
                             {/* Info */}
                             <div style={{
-                                display: 'flex', gap: '8px', padding: '10px 12px', borderRadius: '4px',
+                                display: 'flex', gap: '8px', padding: '10px 12px', borderRadius: '6px',
                                 background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
                                 alignItems: 'flex-start',
                             }}>
@@ -217,7 +217,7 @@ export default function PixChargeModal({
                                 <button
                                     onClick={onClose}
                                     style={{
-                                        flex: 1, height: '44px', borderRadius: '4px',
+                                        flex: 1, height: '44px', borderRadius: '6px',
                                         fontSize: '13px', fontWeight: 600, cursor: 'pointer',
                                         background: 'var(--bo-surface)', color: 'var(--bo-text-muted)',
                                         border: '1px solid var(--bo-border)',
@@ -229,7 +229,7 @@ export default function PixChargeModal({
                                     onClick={generate}
                                     disabled={loading}
                                     style={{
-                                        flex: 2, height: '44px', borderRadius: '4px',
+                                        flex: 2, height: '44px', borderRadius: '6px',
                                         fontSize: '13px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
                                         color: 'var(--text-inverse)',
                                         background: 'linear-gradient(135deg, #00B27F 0%, #00D9A0 100%)',
@@ -257,7 +257,7 @@ export default function PixChargeModal({
                         >
                             {/* QR Image */}
                             <div style={{
-                                padding: '16px', borderRadius: '4px',
+                                padding: '16px', borderRadius: '6px',
                                 background: '#FFFFFF',
                                 border: '2px solid rgba(0,178,127,0.25)',
                                 boxShadow: 'var(--shadow-md)',
@@ -268,7 +268,7 @@ export default function PixChargeModal({
                                     alt="QR Code Pix"
                                     width={220}
                                     height={220}
-                                    style={{ display: 'block', borderRadius: '4px' }}
+                                    style={{ display: 'block', borderRadius: '6px' }}
                                 />
                             </div>
 
@@ -293,7 +293,7 @@ export default function PixChargeModal({
                             {charge.expiresAt && (
                                 <div style={{
                                     display: 'flex', alignItems: 'center', gap: '6px',
-                                    padding: '6px 12px', borderRadius: '4px',
+                                    padding: '6px 12px', borderRadius: '6px',
                                     background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
                                 }}>
                                     <Clock size={11} style={{ color: 'var(--bo-text-muted)' }} />
@@ -307,7 +307,7 @@ export default function PixChargeModal({
                             <button
                                 onClick={copyPix}
                                 style={{
-                                    width: '100%', height: '44px', borderRadius: '4px',
+                                    width: '100%', height: '44px', borderRadius: '6px',
                                     fontSize: '13px', fontWeight: 700, cursor: 'pointer',
                                     color: copied ? '#00B27F' : 'var(--bo-text)',
                                     background: copied ? 'rgba(0,178,127,0.1)' : 'var(--bo-elevated)',
@@ -359,7 +359,7 @@ export default function PixChargeModal({
                             <button
                                 onClick={onClose}
                                 style={{
-                                    height: '44px', padding: '0 32px', borderRadius: '4px',
+                                    height: '44px', padding: '0 32px', borderRadius: '6px',
                                     fontSize: '13px', fontWeight: 700, cursor: 'pointer',
                                     color: 'var(--text-inverse)',
                                     background: 'linear-gradient(135deg, #00B27F 0%, #00D9A0 100%)',

@@ -546,7 +546,7 @@ function DesktopImoveisList(props: SharedProps) {
           ) : (
             <div className="imi-list-wrap">
               <div className="imi-list-header">
-                {['Imóvel', 'Preço', 'R$/m²', 'Yield', 'Status', 'Área', 'Score'].map(h => (
+                {['Imóvel', 'Preço', 'R$/m²', 'Yield', 'Status', 'Área', 'Score', 'Ações'].map(h => (
                   <span key={h} className="imi-list-th">{h}</span>
                 ))}
               </div>
@@ -576,7 +576,7 @@ function DesktopImoveisList(props: SharedProps) {
           background: 'rgba(11,25,40,0.97)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(184,148,58,0.35)',
-          borderRadius: 4,
+          borderRadius: 6,
           padding: '12px 20px',
           display: 'flex', alignItems: 'center', gap: 16,
           boxShadow: 'var(--shadow-xl)',
@@ -699,7 +699,7 @@ function DesktopImoveisList(props: SharedProps) {
         /* ═══ BUTTONS ═══ */
         .imi-btn-ghost {
           display: flex; align-items: center; gap: 6px;
-          padding: 9px 14px; border-radius: 4px;
+          padding: 9px 14px; border-radius: 6px;
           background: transparent;
           border: 1px solid rgba(184,148,58,0.25);
           color: var(--imi-gold-500);
@@ -714,7 +714,7 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-btn-ghost:hover { background: rgba(184,148,58,0.08); border-color: rgba(184,148,58,0.4); }
         .imi-btn-primary {
           display: flex; align-items: center; gap: 7px;
-          padding: 9px 18px; border-radius: 4px;
+          padding: 9px 18px; border-radius: 6px;
           background: var(--imi-gold-500); border: none;
           color: var(--bg-base);
           font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
@@ -776,7 +776,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-search-input {
           width: 100%; padding: 0 32px 0 32px;
-          height: 40px; border-radius: 4px;
+          height: 40px; border-radius: 6px;
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.15);
           color: var(--text-primary);
@@ -799,7 +799,7 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-filter-btn {
           display: none; /* hidden on desktop */
           align-items: center; gap: 6px;
-          padding: 0 12px; height: 36px; border-radius: 4px;
+          padding: 0 12px; height: 36px; border-radius: 6px;
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.20);
           color: var(--text-secondary);
@@ -814,7 +814,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-sort-btn {
           display: flex; align-items: center; gap: 6px;
-          padding: 0 12px; height: 36px; border-radius: 4px;
+          padding: 0 12px; height: 36px; border-radius: 6px;
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.18);
           color: var(--text-secondary);
@@ -832,7 +832,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-dropdown-item {
           width: 100%; text-align: left;
-          padding: 10px 12px; border-radius: 4px;
+          padding: 10px 12px; border-radius: 6px;
           background: transparent; border: none;
           color: var(--text-secondary);
           font-size: 12px; font-family: var(--font-montserrat, sans-serif);
@@ -840,7 +840,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-dropdown-item.active { background: rgba(184,148,58,0.08); color: var(--imi-gold-500); }
         .imi-view-toggle {
-          display: flex; border-radius: 4px; overflow: hidden;
+          display: flex; border-radius: 6px; overflow: hidden;
           border: 1px solid rgba(184,148,58,0.15); flex-shrink: 0;
         }
         .imi-view-btn {
@@ -859,7 +859,7 @@ function DesktopImoveisList(props: SharedProps) {
           display: flex; align-items: center; justify-content: center;
           background: transparent;
           border: 1px solid rgba(184,148,58,0.15);
-          border-radius: 4px; cursor: pointer;
+          border-radius: 6px; cursor: pointer;
           color: var(--text-tertiary);
           flex-shrink: 0;
         }
@@ -891,7 +891,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-list-header {
           display: grid;
-          grid-template-columns: 1fr 100px 90px 90px 80px 80px 48px;
+          grid-template-columns: 1fr 100px 90px 90px 80px 80px 48px 116px;
           padding: 10px 16px;
           background: rgba(184,148,58,0.04);
           border-bottom: 1px solid rgba(184,148,58,0.12);
@@ -1017,7 +1017,7 @@ function DesktopImoveisList(props: SharedProps) {
           display: flex; align-items: center; justify-content: center;
           background: transparent;
           border: 1px solid rgba(184,148,58,0.25);
-          border-radius: 4px; cursor: pointer;
+          border-radius: 6px; cursor: pointer;
           color: rgba(184,148,58,0.6);
           flex-shrink: 0;
           transition: all var(--dur-2) var(--ease);
@@ -1046,7 +1046,7 @@ function DesktopImoveisList(props: SharedProps) {
           min-width: 28px; height: 22px; padding: 0 6px;
           background: rgba(184,148,58,0.10);
           border: 1px solid rgba(184,148,58,0.30);
-          border-radius: 4px;
+          border-radius: 6px;
           font-family: var(--font-mono);
           font-size: 11px; color: var(--imi-gold-500);
           flex-shrink: 0;
@@ -1103,7 +1103,7 @@ function DesktopImoveisList(props: SharedProps) {
           font-weight: 600;
         }
         .imi-compare-btn {
-          padding: 7px 16px; border-radius: 4px;
+          padding: 7px 16px; border-radius: 6px;
           background: var(--imi-gold-500); border: none;
           color: var(--bg-base);
           font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
@@ -1203,8 +1203,8 @@ function DesktopImoveisList(props: SharedProps) {
           /* List view — scroll horizontally on mobile */
           .imi-list-wrap { overflow-x: auto; }
           .imi-list-header {
-            min-width: 560px;
-            grid-template-columns: 1.5fr 90px 80px 70px 70px 70px 44px;
+            min-width: 700px;
+            grid-template-columns: 1.5fr 90px 80px 70px 70px 70px 44px 100px;
           }
 
           /* FAB mobile */
@@ -1399,7 +1399,7 @@ function MobileImoveisList(props: SharedProps) {
               onClick={() => { setFilters(DEFAULT_FILTERS); setStatusFilter('') }}
               className="mob-btn-tap"
               style={{
-                flex: 1, height: 48, borderRadius: 4,
+                flex: 1, height: 48, borderRadius: 6,
                 background: 'transparent',
                 border: '1px solid rgba(184,148,58,0.25)',
                 color: 'var(--imi-gold-500)',
@@ -1413,7 +1413,7 @@ function MobileImoveisList(props: SharedProps) {
               onClick={() => setFilterSheetOpen(false)}
               className="mob-btn-tap"
               style={{
-                flex: 2, height: 48, borderRadius: 4,
+                flex: 2, height: 48, borderRadius: 6,
                 background: 'var(--imi-gold-500)', border: 'none',
                 color: 'var(--bg-base)',
                 fontFamily: 'var(--font-sans)',
@@ -1451,7 +1451,13 @@ export default function ImoveisPage() {
   const [filters, setFilters] = useState<PropertyFilters>(DEFAULT_FILTERS)
   const [sortField, setSortField] = useState<SortField>('imi_score')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
-  const [compareIds, setCompareIds] = useState<Set<string>>(new Set())
+  const [compareIds, setCompareIds] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set()
+    try {
+      const saved = localStorage.getItem('imi_compare_ids')
+      return saved ? new Set(JSON.parse(saved) as string[]) : new Set()
+    } catch { return new Set() }
+  })
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
   const [searchInput, setSearchInput] = useState('')
   const [market, setMarket] = useState<'BR' | 'US' | 'AE'>('BR')
@@ -1531,6 +1537,7 @@ export default function ImoveisPage() {
     setCompareIds(prev => {
       const next = new Set(prev)
       if (next.has(id)) { next.delete(id) } else if (next.size < 5) { next.add(id) }
+      try { localStorage.setItem('imi_compare_ids', JSON.stringify(Array.from(next))) } catch {}
       return next
     })
   }, [])
@@ -1558,7 +1565,10 @@ export default function ImoveisPage() {
     compareIds,
     favorites,
     toggleCompare,
-    clearCompare: useCallback(() => setCompareIds(new Set()), []),
+    clearCompare: useCallback(() => {
+      setCompareIds(new Set())
+      try { localStorage.removeItem('imi_compare_ids') } catch {}
+    }, []),
     toggleFavorite,
     fetchProperties,
     activeFiltersCount,

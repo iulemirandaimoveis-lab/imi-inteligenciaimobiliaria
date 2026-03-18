@@ -463,7 +463,7 @@ export default function VideoCreatorPage() {
                                         <div style={{
                                             width: fmt.h > fmt.w ? 280 : 460,
                                             aspectRatio: `${fmt.w}/${fmt.h}`,
-                                            borderRadius: 4,
+                                            borderRadius: 6,
                                             overflow: 'hidden',
                                             boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
                                         }}>

@@ -547,7 +547,7 @@ export default function AgentesIAPage() {
                                             key={tool}
                                             style={{
                                                 fontSize: 9, fontWeight: 600, padding: '2px 6px',
-                                                borderRadius: 4, background: 'var(--bo-hover)',
+                                                borderRadius: 6, background: 'var(--bo-hover)',
                                                 color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)',
                                             }}
                                         >

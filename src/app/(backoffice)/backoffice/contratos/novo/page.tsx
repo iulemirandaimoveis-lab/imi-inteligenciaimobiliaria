@@ -38,7 +38,7 @@ const SEC_LABELS: Record<string, string> = {
 }
 const st = (extra?: any): React.CSSProperties => ({
     width: '100%', background: T.elevated, border: `1px solid ${T.border}`,
-    borderRadius: 4, color: T.text, fontSize: 13, padding: '10px 14px', outline: 'none', ...extra
+    borderRadius: 6, color: T.text, fontSize: 13, padding: '10px 14px', outline: 'none', ...extra
 })
 const onF = (e: any) => (e.target.style.border = `1px solid ${T.borderGold}`)
 const onB = (e: any) => (e.target.style.border = `1px solid ${T.border}`)

@@ -42,7 +42,7 @@ const STEPS = [
 // ─── Input style ─────────────────────────────────────────────────────────────
 const inp: React.CSSProperties = {
     width: '100%', height: '48px', padding: '0 14px',
-    borderRadius: '4px', fontSize: '14px',
+    borderRadius: '6px', fontSize: '14px',
     color: 'var(--text-primary)',
     background: 'var(--bg-surface)',
     border: '1px solid var(--border-default)',
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
                                 </div>
                                 {i < STEPS.length - 1 && (
                                     <div style={{
-                                        flex: 1, height: '2px', borderRadius: '4px',
+                                        flex: 1, height: '2px', borderRadius: '6px',
                                         background: step > s.id ? 'var(--s-done)' : 'var(--border-default)',
                                         transition: 'background 0.3s ease',
                                     }} />
@@ -177,7 +177,7 @@ export default function OnboardingPage() {
                     style={{
                         background: 'var(--bg-surface)',
                         border: '1px solid var(--border-default)',
-                        borderRadius: '4px',
+                        borderRadius: '6px',
                         overflow: 'hidden',
                     }}
                 >
@@ -188,7 +188,7 @@ export default function OnboardingPage() {
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <div style={{
-                                width: '42px', height: '42px', borderRadius: '4px',
+                                width: '42px', height: '42px', borderRadius: '6px',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 background: 'rgba(184,148,58,0.12)', border: '1px solid rgba(184,148,58,0.25)',
                             }}>
@@ -265,7 +265,7 @@ export default function OnboardingPage() {
                                                 key={n.value}
                                                 onClick={() => set('niche', n.value)}
                                                 style={{
-                                                    padding: '12px 14px', borderRadius: '4px', textAlign: 'left',
+                                                    padding: '12px 14px', borderRadius: '6px', textAlign: 'left',
                                                     cursor: 'pointer', transition: 'all 0.18s ease',
                                                     background: data.niche === n.value ? 'rgba(184,148,58,0.12)' : 'var(--bg-surface)',
                                                     border: `1px solid ${data.niche === n.value ? 'rgba(184,148,58,0.4)' : 'var(--border-default)'}`,
@@ -340,7 +340,7 @@ export default function OnboardingPage() {
                                         { label: 'IA Engine', icon: '🤖', desc: 'Análises com Claude' },
                                     ].map(item => (
                                         <div key={item.label} style={{
-                                            padding: '14px 10px', borderRadius: '4px', textAlign: 'center',
+                                            padding: '14px 10px', borderRadius: '6px', textAlign: 'center',
                                             background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
                                         }}>
                                             <p style={{ fontSize: '22px', marginBottom: '4px' }}>{item.icon}</p>
@@ -365,7 +365,7 @@ export default function OnboardingPage() {
                                     <button
                                         onClick={() => setStep(s => s - 1)}
                                         style={{
-                                            height: '44px', padding: '0 20px', borderRadius: '4px',
+                                            height: '44px', padding: '0 20px', borderRadius: '6px',
                                             fontSize: '13px', fontWeight: 600, cursor: 'pointer',
                                             background: 'var(--bg-surface)', color: 'var(--text-secondary)',
                                             border: '1px solid var(--border-default)',
@@ -382,7 +382,7 @@ export default function OnboardingPage() {
                                     onClick={step === 2 ? handleFinish : () => setStep(s => s + 1)}
                                     disabled={(step === 1 && !step1Valid) || (step === 2 && !step2Valid) || saving}
                                     style={{
-                                        height: '44px', padding: '0 24px', borderRadius: '4px',
+                                        height: '44px', padding: '0 24px', borderRadius: '6px',
                                         fontSize: '13px', fontWeight: 700, cursor: 'pointer',
                                         color: 'var(--text-inverse)',
                                         background: 'linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-500) 100%)',
@@ -406,7 +406,7 @@ export default function OnboardingPage() {
                             <button
                                 onClick={() => router.push('/backoffice/dashboard')}
                                 style={{
-                                    width: '100%', height: '48px', borderRadius: '4px',
+                                    width: '100%', height: '48px', borderRadius: '6px',
                                     fontSize: '14px', fontWeight: 800, cursor: 'pointer',
                                     color: 'var(--text-inverse)',
                                     background: 'linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-500) 100%)',

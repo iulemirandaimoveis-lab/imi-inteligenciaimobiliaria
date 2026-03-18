@@ -68,7 +68,7 @@ export default function CookieConsent() {
                         style={{
                             flex: 1,
                             height: 36,
-                            borderRadius: 4,
+                            borderRadius: 6,
                             border: '1px solid var(--border-default, rgba(184,148,58,0.2))',
                             background: 'transparent',
                             color: 'var(--text-secondary, #8CA4B8)',
@@ -84,7 +84,7 @@ export default function CookieConsent() {
                         style={{
                             flex: 1,
                             height: 36,
-                            borderRadius: 4,
+                            borderRadius: 6,
                             background: 'var(--imi-gold-500, #B8943A)',
                             color: 'white',
                             border: 'none',

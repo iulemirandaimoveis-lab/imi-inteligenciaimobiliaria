@@ -105,7 +105,7 @@ function EmptyState() {
       justifyContent: 'center', padding: '40px 24px', gap: 24, textAlign: 'center',
     }}>
       <div style={{
-        width: 80, height: 80, borderRadius: 4,
+        width: 80, height: 80, borderRadius: 6,
         background: 'rgba(184,148,58,0.06)',
         border: '1px solid rgba(184,148,58,0.18)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -132,7 +132,7 @@ function EmptyState() {
       <Link href="/backoffice/imoveis">
         <button style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          padding: '10px 22px', borderRadius: 4,
+          padding: '10px 22px', borderRadius: 6,
           background: 'var(--gold, var(--imi-gold-500))', border: 'none',
           color: 'var(--navy, #0B1120)',
           fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px',
@@ -216,7 +216,7 @@ function MobileComparar() {
           paddingTop: 72,
         }}>
           <div style={{
-            width: 80, height: 80, borderRadius: 4,
+            width: 80, height: 80, borderRadius: 6,
             background: 'rgba(184,148,58,0.06)',
             border: '1px solid rgba(184,148,58,0.18)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -233,7 +233,7 @@ function MobileComparar() {
           </div>
           <Link href="/backoffice/imoveis">
             <button style={{
-              height: 44, paddingLeft: 20, paddingRight: 20, borderRadius: 4,
+              height: 44, paddingLeft: 20, paddingRight: 20, borderRadius: 6,
               background: 'var(--imi-gold-500)', border: 'none', color: 'var(--bg-base)', fontSize: '11px', fontWeight: 700,
               letterSpacing: '1.5px', textTransform: 'uppercase',
               fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -266,7 +266,7 @@ function MobileComparar() {
         <button
           onClick={() => router.push('/backoffice/imoveis')}
           style={{
-            width: 44, height: 44, borderRadius: 4,
+            width: 44, height: 44, borderRadius: 6,
             background: 'transparent', border: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', flexShrink: 0,
@@ -326,13 +326,13 @@ function MobileComparar() {
                   <div key={p.id} style={{
                     background: 'var(--bg-elevated)',
                     border: '1px solid rgba(184,148,58,0.15)',
-                    borderRadius: 4, overflow: 'hidden',
+                    borderRadius: 6, overflow: 'hidden',
                   }}>
                     {/* Card header with image + info */}
                     <div style={{ display: 'flex', gap: 12, padding: '12px 12px 0' }}>
                       {/* Cover image */}
                       <div style={{
-                        width: 72, height: 72, borderRadius: 4, overflow: 'hidden',
+                        width: 72, height: 72, borderRadius: 6, overflow: 'hidden',
                         background: 'rgba(255,255,255,0.04)', flexShrink: 0,
                       }}>
                         {img ? (
@@ -371,7 +371,7 @@ function MobileComparar() {
                           {/* Score badge */}
                           <div style={{
                             display: 'inline-flex', alignItems: 'center', gap: 4,
-                            padding: '4px 8px', borderRadius: 4,
+                            padding: '4px 8px', borderRadius: 6,
                             background: `${scoreColor}18`,
                             border: `1px solid ${scoreColor}40`,
                           }}>
@@ -385,7 +385,7 @@ function MobileComparar() {
                           </div>
                           {/* Status */}
                           <span style={{
-                            display: 'inline-flex', padding: '3px 7px', borderRadius: 4,
+                            display: 'inline-flex', padding: '3px 7px', borderRadius: 6,
                             background: `${stColor}18`, border: `1px solid ${stColor}35`,
                             fontSize: '11px', fontWeight: 600,
                             color: stColor, textTransform: 'uppercase',
@@ -598,7 +598,7 @@ function MobileComparar() {
         <button
           onClick={() => router.push('/backoffice/imoveis')}
           style={{
-            flex: 1, height: 44, borderRadius: 4,
+            flex: 1, height: 44, borderRadius: 6,
             background: 'transparent',
             border: '1px solid rgba(184,148,58,0.25)',
             color: 'var(--imi-gold-500)',
@@ -611,7 +611,7 @@ function MobileComparar() {
         </button>
         <Link href="/backoffice/imoveis" style={{ flex: 2 }}>
           <button style={{
-            width: '100%', height: 44, borderRadius: 4,
+            width: '100%', height: 44, borderRadius: 6,
             background: 'var(--imi-gold-500)', border: 'none',
             color: 'var(--bg-base)',
             fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
@@ -745,7 +745,7 @@ function DesktopComparar() {
               <Link href="/backoffice/imoveis">
                 <button style={{
                   display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '8px 14px', borderRadius: 4,
+                  padding: '8px 14px', borderRadius: 6,
                   background: 'transparent',
                   border: '1px solid rgba(184,148,58,0.25)',
                   color: 'var(--gold, var(--imi-gold-500))',
@@ -761,7 +761,7 @@ function DesktopComparar() {
                 <Link href="/backoffice/imoveis">
                   <button style={{
                     display: 'flex', alignItems: 'center', gap: 6,
-                    padding: '8px 14px', borderRadius: 4,
+                    padding: '8px 14px', borderRadius: 6,
                     background: 'var(--gold, var(--imi-gold-500))', border: 'none',
                     color: 'var(--navy, #0B1120)',
                     fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
@@ -801,7 +801,7 @@ function DesktopComparar() {
           <div style={{
             background: 'var(--bo-card, #162040)',
             border: '1px solid rgba(184,148,58,0.18)',
-            borderRadius: 4, overflow: 'hidden',
+            borderRadius: 6, overflow: 'hidden',
             minWidth: 640,
           }}>
             {/* Property header columns */}
@@ -849,7 +849,7 @@ function DesktopComparar() {
 
                     {/* Cover image */}
                     <div style={{
-                      width: '100%', aspectRatio: '16/9', borderRadius: 4, overflow: 'hidden',
+                      width: '100%', aspectRatio: '16/9', borderRadius: 6, overflow: 'hidden',
                       background: 'rgba(255,255,255,0.04)',
                     }}>
                       {img ? (
@@ -891,7 +891,7 @@ function DesktopComparar() {
                     {/* IMI Score badge */}
                     <div style={{
                       display: 'inline-flex', alignItems: 'center', gap: 5,
-                      padding: '4px 10px', borderRadius: 4,
+                      padding: '4px 10px', borderRadius: 6,
                       background: `${scoreColor}18`,
                       border: `1px solid ${scoreColor}40`,
                       alignSelf: 'flex-start',
@@ -1026,7 +1026,7 @@ function DesktopComparar() {
                   <Link href="/backoffice/imoveis">
                     <button style={{
                       display: 'flex', alignItems: 'center', gap: 6,
-                      padding: '8px 14px', borderRadius: 4,
+                      padding: '8px 14px', borderRadius: 6,
                       background: 'transparent',
                       border: '1px dashed rgba(184,148,58,0.35)',
                       color: 'var(--gold, var(--imi-gold-500))',

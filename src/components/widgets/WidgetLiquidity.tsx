@@ -164,7 +164,7 @@ export function WidgetLiquidity() {
                     {SEGMENTS.map(seg => (
                         <div key={seg.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <div style={{ width: 110, fontSize: 11, color: 'var(--bo-text)', flexShrink: 0 }}>{seg.name}</div>
-                            <div style={{ flex: 1, height: 7, background: 'var(--bo-border)', borderRadius: 4, overflow: 'hidden' }}>
+                            <div style={{ flex: 1, height: 7, background: 'var(--bo-border)', borderRadius: 6, overflow: 'hidden' }}>
                                 <div style={{
                                     height: '100%',
                                     width: `${seg.score}%`,
@@ -173,7 +173,7 @@ export function WidgetLiquidity() {
                                         : seg.score >= 45
                                             ? 'var(--bo-accent,#C8A44A)'
                                             : '#E05A5A',
-                                    borderRadius: 4,
+                                    borderRadius: 6,
                                     opacity: 0.8,
                                     transition: 'width 0.4s ease',
                                 }} />

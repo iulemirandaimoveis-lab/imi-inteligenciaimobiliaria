@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles } from 'lucide-react'
 import { IMIScoreBadge } from './IMIScoreBadge'
 import type { IMIProperty } from '../types'
 
@@ -47,6 +48,7 @@ export function PropertyCard({
   onSelect,
 }: PropertyCardProps) {
   const [hovered, setHovered] = useState(false)
+  const router = useRouter()
   const p = property
   const score = p.imi_score ?? 0
   const marketDelta = p.market_delta_pct ?? 0
@@ -167,6 +169,7 @@ export function PropertyCard({
               <button
                 onClick={(e) => { e.preventDefault(); onFavorite(p.id) }}
                 className="prop-action-btn"
+                title="Favoritar"
                 style={{
                   border: `1px solid ${isFavorited ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.1)'}`,
                 }}
@@ -178,6 +181,7 @@ export function PropertyCard({
               <button
                 onClick={(e) => { e.preventDefault(); onCompare(p.id) }}
                 className="prop-action-btn"
+                title="Comparar"
                 style={{
                   border: `1px solid ${isComparing ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.1)'}`,
                 }}
@@ -185,6 +189,37 @@ export function PropertyCard({
                 <Scale size={12} style={{ color: isComparing ? '#C8A44A' : '#9FAAB8' }} />
               </button>
             )}
+            {/* Quick navigation actions */}
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/backoffice/imoveis/${p.id}`) }}
+              className="prop-action-btn"
+              title="Ver detalhes"
+              style={{
+                border: '1px solid rgba(200,164,74,0.35)',
+              }}
+            >
+              <ExternalLink size={11} style={{ color: '#C8A44A' }} />
+            </button>
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/backoffice/tracking/qr?property=${p.id}`) }}
+              className="prop-action-btn"
+              title="Gerar QR Code"
+              style={{
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              <QrCode size={11} style={{ color: '#9FAAB8' }} />
+            </button>
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/backoffice/conteudo/criador?property=${p.id}`) }}
+              className="prop-action-btn"
+              title="Gerar Conteúdo"
+              style={{
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              <Sparkles size={11} style={{ color: '#9FAAB8' }} />
+            </button>
           </div>
         </div>
 
@@ -218,7 +253,7 @@ export function PropertyCard({
             {marketDelta !== 0 && (
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 3,
-                padding: '3px 7px', borderRadius: 4,
+                padding: '3px 7px', borderRadius: 6,
                 background: isBelowMarket ? 'rgba(93,184,135,0.10)' : 'rgba(224,107,107,0.10)',
                 border: `1px solid ${isBelowMarket ? 'rgba(93,184,135,0.25)' : 'rgba(224,107,107,0.22)'}`,
               }}>
@@ -450,22 +485,21 @@ export function PropertyListRow({
   const statusLabel = statusLabels[status] ?? p.status
 
   return (
-    <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none' }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 100px 90px 90px 80px 80px 48px',
-        gap: 0,
-        padding: '12px 16px',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
-        alignItems: 'center',
-        transition: 'background 150ms ease',
-        cursor: 'pointer',
-      }}
-        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(200,164,74,0.05)')}
-        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-      >
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr 100px 90px 90px 80px 80px 48px 116px',
+      gap: 0,
+      borderBottom: '1px solid rgba(255,255,255,0.05)',
+      alignItems: 'center',
+      transition: 'background 150ms ease',
+    }}
+      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(200,164,74,0.05)')}
+      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+    >
+      {/* Clickable main area */}
+      <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none', display: 'contents' }}>
         {/* Name + location */}
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, padding: '12px 16px', cursor: 'pointer' }}>
           <div style={{
             fontSize: '12px', fontWeight: 600,
             color: 'var(--bo-text, #EBE7E0)',
@@ -487,6 +521,7 @@ export function PropertyListRow({
           fontFamily: 'var(--font-dm-mono, monospace)',
           fontSize: '12px',
           color: 'var(--bo-text, #EBE7E0)',
+          padding: '12px 4px',
         }}>
           {fmt(p.price)}
         </div>
@@ -496,6 +531,7 @@ export function PropertyListRow({
           fontFamily: 'var(--font-dm-mono, monospace)',
           fontSize: '11px',
           color: 'var(--bo-text-muted, #9FAAB8)',
+          padding: '12px 4px',
         }}>
           {p.price_per_sqm ? `R$${(p.price_per_sqm / 1000).toFixed(1)}k` : '—'}
         </div>
@@ -505,12 +541,13 @@ export function PropertyListRow({
           fontFamily: 'var(--font-dm-mono, monospace)',
           fontSize: '11px',
           color: '#5DB887',
+          padding: '12px 4px',
         }}>
           {p.yield_est ? `${p.yield_est}%` : '—'}
         </div>
 
         {/* Status */}
-        <div>
+        <div style={{ padding: '12px 4px' }}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 4,
             padding: '2px 6px', borderRadius: 999,
@@ -530,15 +567,59 @@ export function PropertyListRow({
           fontFamily: 'var(--font-dm-mono, monospace)',
           fontSize: '11px',
           color: 'var(--bo-text-muted, #9FAAB8)',
+          padding: '12px 4px',
         }}>
           {p.area ? `${p.area}m²` : '—'}
         </div>
 
         {/* IMI Score */}
-        <div>
+        <div style={{ padding: '12px 4px' }}>
           <IMIScoreBadge score={score} size="xs" />
         </div>
+      </Link>
+
+      {/* Quick action buttons column */}
+      <div style={{ display: 'flex', gap: 4, padding: '0 8px', alignItems: 'center' }}>
+        <Link
+          href={`/backoffice/imoveis/${p.id}`}
+          title="Ver detalhes"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 28, height: 28, borderRadius: 6,
+            background: 'rgba(200,164,74,0.08)',
+            border: '1px solid rgba(200,164,74,0.3)',
+            cursor: 'pointer', textDecoration: 'none',
+          }}
+        >
+          <ExternalLink size={11} style={{ color: '#C8A44A' }} />
+        </Link>
+        <Link
+          href={`/backoffice/tracking/qr?property=${p.id}`}
+          title="Gerar QR Code"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 28, height: 28, borderRadius: 6,
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            cursor: 'pointer', textDecoration: 'none',
+          }}
+        >
+          <QrCode size={11} style={{ color: '#9FAAB8' }} />
+        </Link>
+        <Link
+          href={`/backoffice/conteudo/criador?property=${p.id}`}
+          title="Gerar Conteúdo"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 28, height: 28, borderRadius: 6,
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            cursor: 'pointer', textDecoration: 'none',
+          }}
+        >
+          <Sparkles size={11} style={{ color: '#9FAAB8' }} />
+        </Link>
       </div>
-    </Link>
+    </div>
   )
 }

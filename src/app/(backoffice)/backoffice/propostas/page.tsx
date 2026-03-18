@@ -205,7 +205,7 @@ export default function PropostasPage() {
                 {/* Status badge */}
                 <div>
                   <span style={{
-                    padding: '4px 12px', borderRadius: 4, fontSize: 11, fontWeight: 600,
+                    padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 600,
                     letterSpacing: '0.05em', textTransform: 'uppercase',
                     background: statusCfg.bg, color: statusCfg.color,
                   }}>

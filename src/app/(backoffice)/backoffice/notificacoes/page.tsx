@@ -84,7 +84,7 @@ export default function NotificacoesPage() {
     if (loading) {
         return (
             <div className="space-y-5 max-w-3xl mx-auto">
-                <div className="animate-pulse" style={{ height: '72px', borderRadius: '4px', background: T.surface, border: `1px solid ${T.border}` }} />
+                <div className="animate-pulse" style={{ height: '72px', borderRadius: '6px', background: T.surface, border: `1px solid ${T.border}` }} />
                 <div className="flex gap-2">
                     <div className="animate-pulse h-9 w-28 rounded-xl" style={{ background: T.elevated }} />
                     <div className="animate-pulse h-9 w-36 rounded-xl" style={{ background: T.elevated }} />
@@ -93,11 +93,11 @@ export default function NotificacoesPage() {
                     {[...Array(5)].map((_, i) => (
                         <div key={i} className="animate-pulse flex items-start gap-3 p-4 rounded-2xl"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <div style={{ width: '36px', height: '36px', borderRadius: '4px', background: T.elevated, flexShrink: 0 }} />
+                            <div style={{ width: '36px', height: '36px', borderRadius: '6px', background: T.elevated, flexShrink: 0 }} />
                             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <div style={{ height: '12px', width: '55%', borderRadius: '4px', background: T.elevated }} />
-                                <div style={{ height: '10px', width: '75%', borderRadius: '4px', background: T.elevated }} />
-                                <div style={{ height: '9px', width: '20%', borderRadius: '4px', background: T.elevated }} />
+                                <div style={{ height: '12px', width: '55%', borderRadius: '6px', background: T.elevated }} />
+                                <div style={{ height: '10px', width: '75%', borderRadius: '6px', background: T.elevated }} />
+                                <div style={{ height: '9px', width: '20%', borderRadius: '6px', background: T.elevated }} />
                             </div>
                         </div>
                     ))}

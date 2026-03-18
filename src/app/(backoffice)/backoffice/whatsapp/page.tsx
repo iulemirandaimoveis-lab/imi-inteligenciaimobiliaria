@@ -229,7 +229,7 @@ export default function WhatsAppPage() {
                 {SETUP_STEPS.map((step, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                     <div style={{
-                      width: 22, height: 22, borderRadius: 4, flexShrink: 0,
+                      width: 22, height: 22, borderRadius: 6, flexShrink: 0,
                       background: 'rgba(184,148,58,0.12)',
                       border: '1.5px solid rgba(184,148,58,0.30)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -311,7 +311,7 @@ export default function WhatsAppPage() {
               >
                 {/* Avatar */}
                 <div style={{
-                  width: 42, height: 42, borderRadius: 4, flexShrink: 0,
+                  width: 42, height: 42, borderRadius: 6, flexShrink: 0,
                   background: conv.color,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
@@ -336,7 +336,7 @@ export default function WhatsAppPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                       {conv.unread > 0 && (
                         <span style={{
-                          minWidth: 18, height: 18, borderRadius: 4,
+                          minWidth: 18, height: 18, borderRadius: 6,
                           background: 'var(--success)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
@@ -469,7 +469,7 @@ export default function WhatsAppPage() {
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                 {tpl.variables.map(v => (
                   <span key={v} style={{
-                    fontSize: 11, padding: '2px 7px', borderRadius: 4,
+                    fontSize: 11, padding: '2px 7px', borderRadius: 6,
                     background: 'var(--bg-muted)',
                     color: 'var(--imi-gold-500)',
                     fontFamily: 'var(--font-mono)',

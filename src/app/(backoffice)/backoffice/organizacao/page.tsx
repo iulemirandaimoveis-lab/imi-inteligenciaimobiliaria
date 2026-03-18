@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Building2, MapPin, Palette, Globe, Shield,
@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { PageIntelHeader, Btn } from '../../components/ui'
 import { T, inputStyle } from '../../lib/theme'
+import { createClient } from '@/lib/supabase/client'
 
 export const dynamic = 'force-dynamic'
 
@@ -157,6 +158,35 @@ export default function OrganizacaoPage() {
   const [saving, setSaving] = useState(false)
   const [savedOk, setSavedOk] = useState(false)
   const [cepLoading, setCepLoading] = useState(false)
+  const [tenantId, setTenantId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return
+      const { data } = await supabase
+        .from('tenant_users')
+        .select('tenant_id, tenants(*)')
+        .eq('user_id', user.id)
+        .single()
+      if (data?.tenant_id) {
+        setTenantId(data.tenant_id)
+        const tenant = (data as any).tenants
+        if (tenant) {
+          setForm(prev => ({
+            ...prev,
+            razaoSocial: tenant.name || prev.razaoSocial,
+            nomeFantasia: tenant.trade_name || tenant.name || prev.nomeFantasia,
+            website: tenant.website || prev.website,
+            emailComercial: tenant.email || prev.emailComercial,
+            telefone: tenant.phone || prev.telefone,
+            moeda: tenant.currency || prev.moeda,
+            idioma: tenant.language || prev.idioma,
+          }))
+        }
+      }
+    })
+  }, [])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const fI: React.CSSProperties = {
@@ -227,11 +257,28 @@ export default function OrganizacaoPage() {
 
   const handleSave = async () => {
     setSaving(true)
-    await new Promise(r => setTimeout(r, 700))
-    setSaving(false)
-    setSavedOk(true)
-    setIsDirty(false)
-    setTimeout(() => setSavedOk(false), 2000)
+    try {
+      const supabase = createClient()
+      if (tenantId) {
+        await supabase.from('tenants').update({
+          name: form.razaoSocial,
+          trade_name: form.nomeFantasia,
+          website: form.website,
+          email: form.emailComercial,
+          phone: form.telefone,
+          currency: form.moeda,
+          language: form.idioma,
+          updated_at: new Date().toISOString(),
+        }).eq('id', tenantId)
+      }
+      setSavedOk(true)
+      setIsDirty(false)
+      setTimeout(() => setSavedOk(false), 2000)
+    } catch {
+      // silently ignore
+    } finally {
+      setSaving(false)
+    }
   }
 
   const FONT_OPTIONS: { id: OrgForm['fonte']; label: string; family: string }[] = [

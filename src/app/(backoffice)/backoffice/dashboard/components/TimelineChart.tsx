@@ -42,7 +42,7 @@ export default function TimelineChart({ data }: TimelineChartProps) {
                     <Tooltip
                         contentStyle={{
                             background: 'var(--bg-elevated)',
-                            borderRadius: 4,
+                            borderRadius: 6,
                             border: '1px solid var(--border-default)',
                             color: 'var(--text-primary)',
                             fontSize: 11,

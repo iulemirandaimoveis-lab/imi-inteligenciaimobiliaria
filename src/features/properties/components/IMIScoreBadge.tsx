@@ -28,7 +28,7 @@ export function IMIScoreBadge({ score, size = 'sm', showLabel = false, className
           height: dims.h,
           background: `${color}18`,
           border: `1px solid ${color}55`,
-          borderRadius: 4,
+          borderRadius: 6,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

@@ -60,7 +60,7 @@ function Badge({ status }: { status: string }) {
   }
   const c = cfg[status] ?? cfg.draft
   return (
-    <span style={{ padding: '4px 12px', borderRadius: 4, fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', background: c.bg, color: c.color }}>
+    <span style={{ padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', background: c.bg, color: c.color }}>
       {c.label}
     </span>
   )
@@ -453,13 +453,13 @@ export default function PropostaDetailPage() {
                     </span>
                   </div>
                 </div>
-                <div style={{ height: 4, background: T.border, borderRadius: 4, overflow: 'hidden' }}>
+                <div style={{ height: 4, background: T.border, borderRadius: 6, overflow: 'hidden' }}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(100, ((proposal.score ?? 0) / 50) * 100)}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                     style={{
-                      height: '100%', borderRadius: 4,
+                      height: '100%', borderRadius: 6,
                       background: proposal.tier === 'hot' ? 'var(--error)' : proposal.tier === 'warm' ? 'var(--warning)' : 'var(--info)',
                     }}
                   />

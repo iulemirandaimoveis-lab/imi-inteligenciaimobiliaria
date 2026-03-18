@@ -46,7 +46,7 @@ export default function NovoUsuarioPage() {
         border: `1px solid ${T.border}`,
         color: T.text,
         height: '44px',
-        borderRadius: '4px',
+        borderRadius: '6px',
         padding: '0 14px 0 42px',
         fontSize: '14px',
         outline: 'none',

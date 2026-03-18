@@ -155,7 +155,7 @@ function TileBadge({ badge }: { badge: string }) {
             fontSize: isNew ? 8 : 7,
             fontWeight: 700,
             padding: isNew ? '2px 5px' : '2px 4px',
-            borderRadius: 4,
+            borderRadius: 6,
             letterSpacing: '0.05em',
             background: isNew ? '#2D8F5C' : 'rgba(148,163,184,0.20)',
             color: isNew ? '#fff' : 'var(--text-tertiary)',
@@ -178,7 +178,7 @@ function NetflixItemCard({
             <div
                 className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200"
                 style={{
-                    borderRadius: 4,
+                    borderRadius: 6,
                     background: active ? bg : 'var(--bg-elevated)',
                     border: active ? `1.5px solid ${color}50` : '1px solid var(--border-subtle)',
                     boxShadow: active ? `0 4px 14px ${color}30` : '0 1px 3px rgba(0,0,0,0.06)',
@@ -208,7 +208,7 @@ function NetflixRowLabel({ color, label }: { color: string; label: string }) {
             {/* Colored indicator */}
             <div
                 className="flex-shrink-0"
-                style={{ width: 3, height: 16, borderRadius: 4, background: color, boxShadow: `0 0 8px ${color}40` }}
+                style={{ width: 3, height: 16, borderRadius: 6, background: color, boxShadow: `0 0 8px ${color}40` }}
             />
             <span
                 className="text-[11px] font-bold tracking-[0.10em] uppercase"
@@ -362,7 +362,7 @@ export function MobileBottomNav() {
                                 style={{
                                     width: 44,
                                     height: 44,
-                                    borderRadius: 4,
+                                    borderRadius: 6,
                                     background: open ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
                                     border: `1px solid ${open ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
                                     transition: 'background 0.2s, border-color 0.2s',
@@ -633,7 +633,7 @@ export function MobileBottomNav() {
                                 >
                                     {/* Section label */}
                                     <div className="flex items-center gap-2.5 mb-3">
-                                        <div style={{ width: 4, height: 12, borderRadius: 4, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                                        <div style={{ width: 4, height: 12, borderRadius: 6, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
                                         <span style={{
                                             fontSize: '11px', fontWeight: 700,
                                             color: 'var(--text-tertiary)',
@@ -686,7 +686,7 @@ export function MobileBottomNav() {
                                                             className="flex-shrink-0 flex items-center justify-center"
                                                             style={{
                                                                 width: 36, height: 36,
-                                                                borderRadius: 4,
+                                                                borderRadius: 6,
                                                                 background: item.iconBg,
                                                                 border: `1px solid ${item.color}28`,
                                                             }}

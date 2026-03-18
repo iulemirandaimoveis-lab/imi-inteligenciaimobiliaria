@@ -155,7 +155,7 @@ const CARD: React.CSSProperties = {
 const BTN_PRIMARY: React.CSSProperties = {
   background: 'var(--gold, var(--imi-gold-500))',
   color: 'var(--navy, #0B1120)',
-  borderRadius: '4px',
+  borderRadius: '6px',
   letterSpacing: '1.8px',
   textTransform: 'uppercase',
   fontWeight: 700,
@@ -174,7 +174,7 @@ const BTN_SECONDARY: React.CSSProperties = {
   background: 'transparent',
   border: '1px solid rgba(184,148,58,0.25)',
   color: 'var(--gold, var(--imi-gold-500))',
-  borderRadius: '4px',
+  borderRadius: '6px',
   letterSpacing: '1.8px',
   textTransform: 'uppercase',
   fontWeight: 700,
@@ -250,11 +250,13 @@ interface DetailProps {
   copied: boolean
   handleCopyLink: () => void
   handleWhatsApp: () => void
+  handleLinkedIn: () => void
+  handleInstagramCopy: () => void
 }
 
 // ─── Mobile component ─────────────────────────────────────────────────────────
 
-function MobileImovelDetail({ dev, property, loading, router, id, enriched, notFound, copied, handleCopyLink, handleWhatsApp }: DetailProps) {
+function MobileImovelDetail({ dev, property, loading, router, id, enriched, notFound, copied, handleCopyLink, handleWhatsApp, handleLinkedIn, handleInstagramCopy }: DetailProps) {
   const [mobileGalleryIdx, setMobileGalleryIdx] = useState(0)
   const touchStartX = useRef<number | null>(null)
 
@@ -901,10 +903,15 @@ function DesktopImovelDetail({
   dev, enriched, loading, notFound, router, id,
   activeTab, setActiveTab, galleryIdx, setGalleryIdx,
   rentInput, setRentInput, expensePct, setExpensePct,
-  vacancyPct, setVacancyPct, copied, handleCopyLink, handleWhatsApp,
+  vacancyPct, setVacancyPct, copied, handleCopyLink, handleWhatsApp, handleLinkedIn, handleInstagramCopy,
 }: DetailProps) {
   const [statusOpen, setStatusOpen] = useState(false)
   const [localStatus, setLocalStatus] = useState(() => normalizeStatus(dev?.status_commercial ?? dev?.status))
+
+  // Sync localStatus when dev data loads (dev is null at mount)
+  useEffect(() => {
+    if (dev) setLocalStatus(normalizeStatus(dev.status_commercial ?? dev.status))
+  }, [dev])
 
   if (loading) {
     return (
@@ -1130,7 +1137,7 @@ function DesktopImovelDetail({
                 <div style={{
                   position: 'absolute', top: 14, right: 14,
                   background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(184,148,58,0.2)',
-                  borderRadius: 4, padding: '4px 10px',
+                  borderRadius: 6, padding: '4px 10px',
                   ...MONO, fontSize: 11, color: 'rgba(235,231,224,0.8)',
                 }}>
                   {galleryIdx + 1} / {images.length}
@@ -1257,7 +1264,7 @@ function DesktopImovelDetail({
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {[...(dev.features ?? []), ...(dev.amenities ?? [])].map((item, i) => (
                       <span key={i} style={{
-                        padding: '5px 12px', borderRadius: 4,
+                        padding: '5px 12px', borderRadius: 6,
                         background: 'rgba(184,148,58,0.08)',
                         border: '1px solid rgba(184,148,58,0.18)',
                         color: T.textMuted, fontSize: 12,
@@ -1608,6 +1615,17 @@ function DesktopImovelDetail({
                   <button onClick={handleWhatsApp} style={{ ...BTN_SECONDARY, borderColor: 'rgba(93,184,135,0.4)', color: '#5DB887' }}>
                     <MessageSquare size={13} /> WhatsApp
                   </button>
+                  <button onClick={handleLinkedIn} style={{ ...BTN_SECONDARY, borderColor: 'rgba(10,102,194,0.4)', color: '#0A66C2' }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    LinkedIn
+                  </button>
+                  <button onClick={handleInstagramCopy} style={{ ...BTN_SECONDARY, borderColor: 'rgba(225,48,108,0.4)', color: '#E1306C' }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    Instagram (copiar caption)
+                  </button>
+                  <Link href={`/backoffice/conteudo/novo?property=${id}`} style={{ ...BTN_SECONDARY, textDecoration: 'none', borderColor: 'rgba(200,164,74,0.4)', color: 'var(--imi-gold-500)' }}>
+                    <Sparkles size={13} /> Gerar Conteúdo IA
+                  </Link>
                 </div>
               </div>
 
@@ -1756,6 +1774,14 @@ function DesktopImovelDetail({
               color: '#5DB887',
             }}>
               <MessageSquare size={13} /> WhatsApp
+            </button>
+            <button onClick={handleLinkedIn} style={{ ...BTN_SECONDARY, justifyContent: 'center', borderColor: 'rgba(10,102,194,0.4)', color: '#0A66C2' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </button>
+            <button onClick={handleInstagramCopy} style={{ ...BTN_SECONDARY, justifyContent: 'center', borderColor: 'rgba(225,48,108,0.4)', color: '#E1306C' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+              Instagram
             </button>
             <button
               onClick={() => {
@@ -1944,6 +1970,20 @@ export default function ImovelDetailPage() {
     window.open(`https://wa.me/?text=${text}`, '_blank')
   }
 
+  function handleLinkedIn() {
+    const url = encodeURIComponent(`${window.location.origin}/imoveis/${dev?.slug ?? id}`)
+    const title = encodeURIComponent(dev?.name ?? 'Imóvel')
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}`, '_blank', 'width=600,height=500')
+  }
+
+  function handleInstagramCopy() {
+    const url = `${window.location.origin}/imoveis/${dev?.slug ?? id}`
+    const caption = `✨ ${dev?.name ?? 'Imóvel'}${dev?.city ? ` — ${dev.city}` : ''}\n\n📍 Localização privilegiada\n💎 Oportunidade exclusiva\n\n🔗 ${url}\n\n#imoveis #imobiliaria #investimento`
+    navigator.clipboard.writeText(caption).then(() => {
+      alert('Caption copiada! Cole no Instagram.')
+    })
+  }
+
   // ── Shared props ────────────────────────────────────────────────────────────
 
   const sharedProps: DetailProps = {
@@ -1967,6 +2007,8 @@ export default function ImovelDetailPage() {
     copied,
     handleCopyLink,
     handleWhatsApp,
+    handleLinkedIn,
+    handleInstagramCopy,
   }
 
   if (isMobile) {

@@ -629,7 +629,7 @@ export function MobileBottomSheet({ isOpen, onClose, title, children, footer }: 
       >
         {/* Handle */}
         <div style={{
-          width: 36, height: 4, borderRadius: 4,
+          width: 36, height: 4, borderRadius: 6,
           background: 'rgba(255,255,255,0.15)',
           margin: '12px auto 0',
         }} />

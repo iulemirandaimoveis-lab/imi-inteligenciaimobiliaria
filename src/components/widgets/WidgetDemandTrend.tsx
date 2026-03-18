@@ -101,12 +101,12 @@ export function WidgetDemandTrend() {
                             {row.name}
                         </div>
                         {/* Bar */}
-                        <div style={{ flex: 1, height: 20, background: 'var(--bo-border)', borderRadius: 4, overflow: 'hidden', position: 'relative' }}>
+                        <div style={{ flex: 1, height: 20, background: 'var(--bo-border)', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
                             <div style={{
                                 height: '100%',
                                 width: `${row.score}%`,
                                 background: `linear-gradient(90deg, var(--bo-accent,#C8A44A), rgba(200,164,74,0.55))`,
-                                borderRadius: 4,
+                                borderRadius: 6,
                                 transition: 'width 0.5s cubic-bezier(0.4,0,0.2,1)',
                                 display: 'flex', alignItems: 'center', paddingLeft: 8,
                             }}>
