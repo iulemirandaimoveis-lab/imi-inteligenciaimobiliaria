@@ -532,7 +532,7 @@ export default function NovoConteudoPage() {
               </div>
 
               {titulo && (
-                <h1 className="text-3xl font-bold mb-8 leading-tight tracking-tight border-l-4 border-[#334E68] pl-6" style={{ color: T.text }}>
+                <h1 className="text-3xl font-bold mb-8 leading-tight tracking-tight border-l-4 border-navy-600 pl-6" style={{ color: T.text }}>
                   {titulo}
                 </h1>
               )}

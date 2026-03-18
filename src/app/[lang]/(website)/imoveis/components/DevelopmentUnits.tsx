@@ -73,7 +73,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                     </p>
                 </div>
                 <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-lg text-gray-400 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">
-                    <Info className="w-3.5 h-3.5 text-[#627D98]" />
+                    <Info className="w-3.5 h-3.5 text-navy-200" />
                     <span>{units.length} {units.length === 1 ? 'unidade' : 'unidades'}</span>
                 </div>
             </div>
@@ -106,7 +106,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                                 <td className="p-4 text-center">
                                     <button
                                         onClick={() => handleWhatsApp(unit)}
-                                        className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-gray-200 text-gray-500 hover:border-[#334E68] hover:text-gray-700 transition-colors"
+                                        className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-gray-200 text-gray-500 hover:border-navy-600 hover:text-gray-700 transition-colors"
                                     >
                                         <MessageCircle className="w-3 h-3" />
                                         Consultar
@@ -139,7 +139,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                             </div>
                             <button
                                 onClick={() => handleWhatsApp(unit)}
-                                className="h-9 px-4 rounded-lg bg-[#102A43] text-white text-xs font-semibold hover:bg-[#1A2F44] transition-colors"
+                                className="h-9 px-4 rounded-lg bg-navy-800 text-white text-xs font-semibold hover:bg-navy-700 transition-colors"
                             >
                                 Consultar
                             </button>

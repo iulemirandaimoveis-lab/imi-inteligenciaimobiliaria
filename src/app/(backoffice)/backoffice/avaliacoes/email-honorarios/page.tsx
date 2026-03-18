@@ -255,7 +255,7 @@ export default function EmailHonorariosPage() {
           <div className="flex gap-2">
             {EXEMPLOS.map(ex => (
               <button key={ex.label} onClick={() => setEmailText(ex.conteudo)}
-                className="text-xs px-2.5 py-1 rounded-lg hover:border-[#334E68] hover:text-[var(--bo-accent)] transition-colors"
+                className="text-xs px-2.5 py-1 rounded-lg hover:border-navy-600 hover:text-[var(--bo-accent)] transition-colors"
                 style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>
                 {ex.label}
               </button>
@@ -265,7 +265,7 @@ export default function EmailHonorariosPage() {
 
         <textarea value={emailText} onChange={e => setEmailText(e.target.value)}
           rows={7} placeholder="Cole aqui o conteúdo do email recebido do tribunal, banco ou cliente..."
-          className="w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-[#334E68] resize-none"
+          className="w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-navy-600 resize-none"
           style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
 
         {error && (
@@ -405,7 +405,7 @@ export default function EmailHonorariosPage() {
               </div>
               {editing
                 ? <textarea value={editedDraft} onChange={e => setEditedDraft(e.target.value)}
-                  rows={22} className="w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-[#334E68] resize-none"
+                  rows={22} className="w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-navy-600 resize-none"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
                 : <pre className="whitespace-pre-wrap text-sm rounded-xl p-4 font-sans leading-relaxed" style={{ background: T.elevated, color: T.text }}>{editing ? editedDraft : draft}</pre>
               }

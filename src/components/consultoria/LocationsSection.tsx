@@ -27,13 +27,13 @@ const locations = [
 
 export function LocationsSection() {
     return (
-        <section id="locations" className="section-padding bg-[#141420]">
+        <section id="locations" className="section-padding bg-navy-950">
             <div className="container-custom">
                 <div className="max-w-2xl mx-auto text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
                         Mercados Premium Selecionados
                     </h2>
-                    <p className="text-lg text-[#9CA3AF] font-light">
+                    <p className="text-lg text-white/50 font-light">
                         Atuamos apenas onde existem fundamentos sólidos de economia, turismo e potencial de valorização comprovado.
                     </p>
                 </div>
@@ -49,7 +49,7 @@ export function LocationsSection() {
                         <motion.article
                             key={location.name}
                             variants={slideUp}
-                            className="flex flex-col bg-[#0D0F14] rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-white/[0.05] group hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] hover:border-[#334E68]/30 transition-all duration-500"
+                            className="flex flex-col bg-navy-950 rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-white/[0.05] group hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] hover:border-navy-600/30 transition-all duration-500"
                         >
                             <div className="relative aspect-[4/3] overflow-hidden">
                                 <Image
@@ -60,7 +60,7 @@ export function LocationsSection() {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#141420]/80 to-transparent opacity-80" />
                                 <div className="absolute bottom-6 left-6">
-                                    <span className="bg-[#102A43] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
+                                    <span className="bg-navy-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
                                         Internacional
                                     </span>
                                 </div>
@@ -70,12 +70,12 @@ export function LocationsSection() {
                                 <h3 className="text-2xl font-bold text-white mb-4 font-display">
                                     {location.name}
                                 </h3>
-                                <p className="text-[#9CA3AF] text-sm leading-relaxed mb-6 flex-grow">
+                                <p className="text-white/50 text-sm leading-relaxed mb-6 flex-grow">
                                     {location.description}
                                 </p>
                                 <div className="pt-6 border-t border-white/5">
                                     <span className="text-sm font-bold text-white flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-[#102A43]" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-navy-800" />
                                         {location.stats}
                                     </span>
                                 </div>

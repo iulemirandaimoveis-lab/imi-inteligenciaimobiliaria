@@ -207,7 +207,7 @@ export default function GlobalSearch() {
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 bg-[#0A0B0D]/80 backdrop-blur-xl z-[9999] flex items-start justify-center p-4 pt-[15vh]">
+        <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-xl z-[9999] flex items-start justify-center p-4 pt-[15vh]">
             <div
                 className="bg-white rounded-3xl shadow-[0_32px_128px_-16px_rgba(0,0,0,0.5)] max-w-3xl w-full overflow-hidden animate-in fade-in slide-in-from-top-8 duration-500 border border-imi-100"
                 role="dialog"

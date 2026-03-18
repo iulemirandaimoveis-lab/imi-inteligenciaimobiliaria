@@ -52,7 +52,7 @@ export default function Footer({ lang, settings }: FooterProps) {
     const year = new Date().getFullYear()
 
     return (
-        <footer className="bg-[#141420] text-white">
+        <footer className="bg-navy-950 text-white">
             {/* Gold accent line */}
             <div className="h-px bg-gradient-to-r from-transparent via-[#334E68]/50 to-transparent" />
 
@@ -63,25 +63,25 @@ export default function Footer({ lang, settings }: FooterProps) {
                     <div className="lg:col-span-5 overflow-hidden">
                         <Link href={`/${lang}`} className="inline-block group mb-8">
                             <span
-                                className="text-[28px] font-black tracking-tight text-white group-hover:text-[#486581] transition-colors duration-200"
+                                className="text-[28px] font-black tracking-tight text-white group-hover:text-navy-300 transition-colors duration-200"
                                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                             >
                                 IMI
                             </span>
-                            <span className="ml-2 text-[11px] font-semibold text-[#6C757D] uppercase tracking-[0.18em]">
+                            <span className="ml-2 text-[11px] font-semibold text-white/40 uppercase tracking-[0.18em]">
                                 Inteligência Imobiliária
                             </span>
                         </Link>
 
-                        <p className="text-[#6C757D] text-sm leading-relaxed max-w-sm mb-5 lg:mb-8">
+                        <p className="text-white/40 text-sm leading-relaxed max-w-sm mb-5 lg:mb-8">
                             Decisões imobiliárias baseadas em inteligência, método e segurança.
                             Transformamos incerteza em capital protegido.
                         </p>
 
                         {/* Credentials card */}
-                        <div className="border-l-[3px] border-[#334E68] bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-xl p-3 lg:p-4 mb-4 lg:mb-6">
+                        <div className="border-l-[3px] border-navy-600 bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-xl p-3 lg:p-4 mb-4 lg:mb-6">
                             <p className="font-bold text-white text-[13px] lg:text-[14px] mb-0.5">Iule Miranda</p>
-                            <p className="text-[#486581] text-[9px] font-bold uppercase tracking-[0.2em] mb-3">
+                            <p className="text-navy-300 text-[9px] font-bold uppercase tracking-[0.2em] mb-3">
                                 CRECI 17933 | CNAI 53290
                             </p>
 
@@ -90,10 +90,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] transition-colors border border-white/[0.04]">
+                                    <div className="w-[28px] h-[28px] bg-navy-800 rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-navy-300 transition-colors border border-white/[0.04]">
                                         <Mail className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
+                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
                                 </a>
 
                                 <a
@@ -102,10 +102,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] transition-colors border border-white/[0.04]">
+                                    <div className="w-[28px] h-[28px] bg-navy-800 rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-emerald-400 transition-colors border border-white/[0.04]">
                                         <MessageCircle className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[11px] font-medium">{settings?.companyPhone || '+55 (81) 9 9723-0455'}</span>
+                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium">{settings?.companyPhone || '+55 (81) 9 9723-0455'}</span>
                                 </a>
 
                                 <a
@@ -114,10 +114,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors border border-white/[0.04]">
+                                    <div className="w-[28px] h-[28px] bg-navy-800 rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-blue-600 transition-colors border border-white/[0.04]">
                                         <Linkedin className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors text-[11px] font-medium">linkedin.com/in/iule-miranda</span>
+                                    <span className="text-white/50 group-hover:text-blue-600 transition-colors text-[11px] font-medium">linkedin.com/in/iule-miranda</span>
                                 </a>
                             </div>
                         </div>
@@ -127,7 +127,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                     <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8 lg:gap-10">
                         {NAV_COLS.map((col) => (
                             <div key={col.title}>
-                                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#486581] mb-5">
+                                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy-300 mb-5">
                                     {col.title}
                                 </h4>
                                 <ul className="space-y-3">
@@ -135,7 +135,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                         <li key={link.href}>
                                             <Link
                                                 href={`/${lang}/${link.href}`}
-                                                className="text-[13px] text-[#6C757D] hover:text-white transition-colors duration-200"
+                                                className="text-[13px] text-white/40 hover:text-white transition-colors duration-200"
                                             >
                                                 {link.label}
                                             </Link>
@@ -149,7 +149,7 @@ export default function Footer({ lang, settings }: FooterProps) {
 
                 {/* ── Bottom bar ── */}
                 <div className="mt-16 pt-8 border-t border-white/[0.07] flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-[11px] text-[#495057] font-medium">
+                    <p className="text-[11px] text-gray-600 font-medium">
                         © {year} IMI – Inteligência Imobiliária. Todos os direitos reservados.
                     </p>
 
@@ -159,7 +159,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                 {i > 0 && <span className="text-[#2D2D3A] text-[10px]">|</span>}
                                 <Link
                                     href={`/${l.code}`}
-                                    className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-150 ${lang === l.code ? 'text-[#486581]' : 'text-[#495057] hover:text-white'
+                                    className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-150 ${lang === l.code ? 'text-navy-300' : 'text-gray-600 hover:text-white'
                                         }`}
                                 >
                                     {l.label}

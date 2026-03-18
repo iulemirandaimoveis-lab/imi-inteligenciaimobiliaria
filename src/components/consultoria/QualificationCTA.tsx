@@ -14,9 +14,9 @@ export function QualificationCTA() {
         setIsModalOpen(false);
     };
     return (
-        <section className="relative py-24 bg-[#0D0F14] overflow-hidden border-t border-white/[0.05]">
+        <section className="relative py-24 bg-navy-950 overflow-hidden border-t border-white/[0.05]">
             {/* Background Details */}
-            <div className="absolute top-0 right-0 w-1/3 h-full bg-[#102A43]/5 -skew-x-12 translate-x-1/4 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-1/3 h-full bg-navy-800/5 -skew-x-12 translate-x-1/4 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-1/4 h-full bg-white/5 skew-x-12 -translate-x-1/4 pointer-events-none" />
 
             <div className="container-custom relative z-10">
@@ -25,7 +25,7 @@ export function QualificationCTA() {
                         Vamos estruturar seu plano internacional?
                     </h2>
 
-                    <p className="mt-6 text-lg md:text-xl leading-relaxed text-[#9CA3AF] max-w-2xl mx-auto font-light">
+                    <p className="mt-6 text-lg md:text-xl leading-relaxed text-white/50 max-w-2xl mx-auto font-light">
                         Agende uma sessão estratégica exclusiva com nossos especialistas para analisar seu perfil e apresentar as melhores teses de investimento disponíveis hoje.
                     </p>
 
@@ -55,8 +55,8 @@ export function QualificationCTA() {
                             { label: 'Suporte VIP', value: '24/7' }
                         ].map((item, i) => (
                             <div key={i} className="text-center">
-                                <div className="text-xl font-bold text-[#486581] mb-1">{item.value}</div>
-                                <div className="text-[10px] uppercase tracking-widest text-[#9CA3AF] font-bold">{item.label}</div>
+                                <div className="text-xl font-bold text-navy-300 mb-1">{item.value}</div>
+                                <div className="text-[10px] uppercase tracking-widest text-white/50 font-bold">{item.label}</div>
                             </div>
                         ))}
                     </div>

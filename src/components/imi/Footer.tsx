@@ -33,7 +33,7 @@ const LANGUAGES = [
 
 export default function Footer() {
     return (
-        <footer className="bg-[#0A0F18] text-white">
+        <footer className="bg-navy-950 text-white">
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* Main grid */}
@@ -62,7 +62,7 @@ export default function Footer() {
                         {/* Compact contact */}
                         <div className="space-y-2 text-sm text-slate-400">
                             <p className="font-semibold text-white text-base">Iule Miranda</p>
-                            <p className="text-[11px] text-[#627D98] font-bold uppercase tracking-widest">
+                            <p className="text-[11px] text-navy-200 font-bold uppercase tracking-widest">
                                 CRECI 17933 · CNAI 53290
                             </p>
                             <div className="pt-2 space-y-1.5">
@@ -117,7 +117,7 @@ export default function Footer() {
                                 <Link
                                     key={lang.code}
                                     href={`/${lang.code}`}
-                                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-widest text-slate-400 bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] hover:text-white transition-all first:text-white first:bg-[#102A43]/40 first:border-[#334E68]/30"
+                                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-widest text-slate-400 bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] hover:text-white transition-all first:text-white first:bg-navy-800/40 first:border-navy-600/30"
                                 >
                                     {lang.label}
                                 </Link>

@@ -73,22 +73,22 @@ export default async function DashboardPage() {
     const lastUpdated = indicators[0]?.updated_at ? formatDate(indicators[0].updated_at) : '—'
 
     return (
-        <main className="bg-[#0D0F14] min-h-screen">
+        <main className="bg-navy-950 min-h-screen">
             {/* HERO */}
-            <section className="relative bg-[#0D1117] text-white pt-24 pb-16 md:pt-32 md:pb-20 border-b border-white/[0.05]">
+            <section className="relative bg-navy-950 text-white pt-24 pb-16 md:pt-32 md:pb-20 border-b border-white/[0.05]">
                 <div className="container-custom">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                         <div>
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-12 h-px bg-[#334E68]" />
-                                <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Inteligência · Dashboard</span>
+                                <div className="w-12 h-px bg-navy-600" />
+                                <span className="text-navy-300 font-bold uppercase tracking-[0.25em] text-[11px]">Inteligência · Dashboard</span>
                             </div>
                             <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
-                                Indicadores de <span className="text-[#486581] italic">Mercado</span>
+                                Indicadores de <span className="text-navy-300 italic">Mercado</span>
                             </h1>
                         </div>
-                        <div className="flex items-center gap-2 text-[#9CA3AF] text-sm border border-white/[0.08] rounded-xl px-4 py-2.5 bg-[#141420]">
-                            <Clock className="w-4 h-4 text-[#486581]" />
+                        <div className="flex items-center gap-2 text-white/50 text-sm border border-white/[0.08] rounded-xl px-4 py-2.5 bg-navy-950">
+                            <Clock className="w-4 h-4 text-navy-300" />
                             <span>Atualizado em <strong className="text-white font-semibold">{lastUpdated}</strong></span>
                         </div>
                     </div>
@@ -102,10 +102,10 @@ export default async function DashboardPage() {
                         {indicators.map((ind) => (
                             <div
                                 key={ind.id}
-                                className="p-6 sm:p-8 rounded-2xl bg-[#141420] border border-white/[0.05] hover:border-[#334E68]/30 transition-colors"
+                                className="p-6 sm:p-8 rounded-2xl bg-navy-950 border border-white/[0.05] hover:border-navy-600/30 transition-colors"
                             >
                                 <div className="flex items-start justify-between mb-5">
-                                    <span className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.15em]">
+                                    <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.15em]">
                                         {ind.category ?? 'Indicador'}
                                     </span>
                                     <span className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-full border ${trendColor(ind.trend)}`}>
@@ -113,15 +113,15 @@ export default async function DashboardPage() {
                                         {trendLabel(ind.trend)}
                                     </span>
                                 </div>
-                                <p className="text-[#9CA3AF] text-xs font-medium mb-2">{ind.metric_name}</p>
+                                <p className="text-white/50 text-xs font-medium mb-2">{ind.metric_name}</p>
                                 <div className="font-display text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight">
                                     {ind.value}
                                 </div>
                                 {ind.unit && (
-                                    <span className="text-[#486581] text-xs font-medium">{ind.unit}</span>
+                                    <span className="text-navy-300 text-xs font-medium">{ind.unit}</span>
                                 )}
                                 {ind.description && (
-                                    <p className="text-[#9CA3AF] text-xs mt-3 leading-relaxed font-light border-t border-white/[0.05] pt-3">
+                                    <p className="text-white/50 text-xs mt-3 leading-relaxed font-light border-t border-white/[0.05] pt-3">
                                         {ind.description}
                                     </p>
                                 )}
@@ -134,20 +134,20 @@ export default async function DashboardPage() {
             {/* CHART PLACEHOLDER */}
             <section className="pb-16 md:pb-24">
                 <div className="container-custom">
-                    <div className="rounded-3xl bg-[#141420] border border-white/[0.05] p-8 sm:p-12">
+                    <div className="rounded-3xl bg-navy-950 border border-white/[0.05] p-8 sm:p-12">
                         <div className="flex items-center gap-4 mb-8">
-                            <div className="w-10 h-10 bg-[#1A1E2A] text-[#486581] rounded-xl flex items-center justify-center border border-white/[0.05]">
+                            <div className="w-10 h-10 bg-navy-800 text-navy-300 rounded-xl flex items-center justify-center border border-white/[0.05]">
                                 <BarChart3 className="w-5 h-5" strokeWidth={1.5} />
                             </div>
                             <div>
                                 <h2 className="font-display text-xl font-bold text-white">Tendência de Preço (R$/m²)</h2>
-                                <p className="text-[#9CA3AF] text-sm font-light">Segmento alto padrão — orla de João Pessoa</p>
+                                <p className="text-white/50 text-sm font-light">Segmento alto padrão — orla de João Pessoa</p>
                             </div>
                         </div>
                         <div className="h-56 flex items-center justify-center border border-dashed border-white/[0.08] rounded-2xl">
                             <div className="text-center">
                                 <BarChart3 className="w-10 h-10 text-white/10 mx-auto mb-3" strokeWidth={1} />
-                                <p className="text-[#9CA3AF] text-sm font-light">Gráfico interativo disponível em breve</p>
+                                <p className="text-white/50 text-sm font-light">Gráfico interativo disponível em breve</p>
                                 <p className="text-white/20 text-xs mt-1">Integração com dados históricos Supabase</p>
                             </div>
                         </div>
@@ -156,17 +156,17 @@ export default async function DashboardPage() {
             </section>
 
             {/* LINK PARA INDICES */}
-            <section className="bg-[#141420] py-16 border-t border-white/[0.05]">
+            <section className="bg-navy-950 py-16 border-t border-white/[0.05]">
                 <div className="container-custom">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-8 sm:p-10 rounded-3xl bg-[#0D1117] border border-white/[0.05]">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-8 sm:p-10 rounded-3xl bg-navy-950 border border-white/[0.05]">
                         <div>
-                            <p className="text-[#486581] text-xs font-bold uppercase tracking-[0.2em] mb-2">Próxima Seção</p>
+                            <p className="text-navy-300 text-xs font-bold uppercase tracking-[0.2em] mb-2">Próxima Seção</p>
                             <h3 className="font-display text-2xl font-bold text-white">Índices IMI</h3>
-                            <p className="text-[#9CA3AF] text-sm font-light mt-1">Metodologia proprietária de precificação</p>
+                            <p className="text-white/50 text-sm font-light mt-1">Metodologia proprietária de precificação</p>
                         </div>
                         <a
                             href="../inteligencia/indices"
-                            className="flex items-center gap-2 text-[#486581] font-semibold text-sm hover:text-white transition-colors"
+                            className="flex items-center gap-2 text-navy-300 font-semibold text-sm hover:text-white transition-colors"
                         >
                             Ver Índices <ArrowUpRight className="w-4 h-4" />
                         </a>

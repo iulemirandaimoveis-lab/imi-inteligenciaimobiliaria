@@ -167,7 +167,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
 
     return (
-        <main className="bg-[#FAFBFC] pb-24 lg:pb-0">
+        <main className="bg-gray-50 pb-24 lg:pb-0">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

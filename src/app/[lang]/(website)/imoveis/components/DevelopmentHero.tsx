@@ -69,7 +69,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
 
     return (
         <>
-            <section className="relative bg-[#0A1017]">
+            <section className="relative bg-navy-950">
                 {/* ── Photo Grid (Zillow-style: 1 big + 4 small) ── */}
                 {allImages.length > 0 ? (
                     <div className="relative">
@@ -108,7 +108,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                                         </>
                                     ) : (
-                                        <div className="w-full h-full bg-[#141C26] flex items-center justify-center">
+                                        <div className="w-full h-full bg-navy-950 flex items-center justify-center">
                                             <Building2 className="w-8 h-8 text-white/10" />
                                         </div>
                                     )}

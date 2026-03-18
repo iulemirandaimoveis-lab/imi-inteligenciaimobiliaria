@@ -83,7 +83,7 @@ export default function Drawer({ open, setOpen }: Props) {
                                         href={href}
                                         onClick={() => setOpen(false)}
                                         className={`block py-2.5 px-3.5 rounded-xl text-[14px] font-semibold transition-all ${isActive
-                                                ? 'bg-neutral-100 text-black border-l-[3px] border-[#334E68] pl-[11px]'
+                                                ? 'bg-neutral-100 text-black border-l-[3px] border-navy-600 pl-[11px]'
                                                 : 'text-neutral-600 hover:bg-neutral-50 hover:text-black'
                                             }`}
                                     >
@@ -99,7 +99,7 @@ export default function Drawer({ open, setOpen }: Props) {
                         href="https://wa.me/5581997230455"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full mt-5 bg-[#1e1e2f] text-white py-3 rounded-xl font-bold text-sm text-center shadow-lg hover:bg-black transition-all active:scale-[0.98]"
+                        className="block w-full mt-5 bg-navy-900 text-white py-3 rounded-xl font-bold text-sm text-center shadow-lg hover:bg-black transition-all active:scale-[0.98]"
                     >
                         Falar pelo WhatsApp
                     </a>
@@ -115,7 +115,7 @@ export default function Drawer({ open, setOpen }: Props) {
                                     href={newPath}
                                     onClick={() => setOpen(false)}
                                     className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl transition-all ${isActive
-                                            ? 'bg-[#1e1e2f] border-2 border-[#334E68] shadow-sm'
+                                            ? 'bg-navy-900 border-2 border-navy-600 shadow-sm'
                                             : 'bg-neutral-50 border border-neutral-200 opacity-50 hover:opacity-100'
                                         }`}
                                 >
@@ -130,7 +130,7 @@ export default function Drawer({ open, setOpen }: Props) {
                 <div className="px-3 py-3 bg-neutral-50 border-t border-neutral-100">
                     <div className="bg-white rounded-xl px-4 py-3 text-center shadow-sm border border-neutral-100">
                         <p className="font-black text-sm text-neutral-900">Iule Miranda</p>
-                        <div className="h-0.5 w-6 bg-[#102A43] mx-auto my-1.5 rounded-full" />
+                        <div className="h-0.5 w-6 bg-navy-800 mx-auto my-1.5 rounded-full" />
                         <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider mb-2">
                             CRECI 17933 | CNAI 53290
                         </p>

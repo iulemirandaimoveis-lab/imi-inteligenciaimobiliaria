@@ -110,7 +110,7 @@ export default async function ProjetosWebsitePage({
         <main className="bg-white">
 
             {/* ── Hero ──────────────────────────────────────── */}
-            <section className="bg-[#141420] text-white py-24 lg:py-32 relative overflow-hidden">
+            <section className="bg-navy-950 text-white py-24 lg:py-32 relative overflow-hidden">
                 <div
                     className="absolute inset-0 opacity-[0.03]"
                     style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '48px 48px' }}
@@ -121,8 +121,8 @@ export default async function ProjetosWebsitePage({
                 />
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-px bg-[#102A43]" />
-                        <span className="text-[#486581] text-xs font-bold uppercase tracking-[0.25em]">Portfólio</span>
+                        <div className="w-10 h-px bg-navy-800" />
+                        <span className="text-navy-300 text-xs font-bold uppercase tracking-[0.25em]">Portfólio</span>
                     </div>
                     <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         Projetos &amp; Empreendimentos
@@ -134,7 +134,7 @@ export default async function ProjetosWebsitePage({
             </section>
 
             {/* ── Projeto em destaque ───────────────────────── */}
-            <section className="py-16 lg:py-24 bg-[#F8F9FA]">
+            <section className="py-16 lg:py-24 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
                     <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${destaque.cor} text-white`}>
                         {/* Background glow */}
@@ -232,10 +232,10 @@ export default async function ProjetosWebsitePage({
             <section className="py-16 lg:py-20">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
                     <div className="mb-10">
-                        <h2 className="font-bold text-2xl lg:text-3xl text-[#141420] mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        <h2 className="font-bold text-2xl lg:text-3xl text-navy-950 mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                             Portfólio Ativo
                         </h2>
-                        <p className="text-[#6C757D] text-sm">Empreendimentos em desenvolvimento e em comercialização.</p>
+                        <p className="text-white/40 text-sm">Empreendimentos em desenvolvimento e em comercialização.</p>
                     </div>
                     <div className="grid md:grid-cols-2 gap-5">
                         {outros.map((p) => {
@@ -280,7 +280,7 @@ export default async function ProjetosWebsitePage({
                                         </div>
                                         <Link
                                             href={`/${lang}/contato`}
-                                            className="flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-[#334E68] hover:text-[#486581] transition-all group-hover:border-gray-300"
+                                            className="flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-navy-600 hover:text-navy-300 transition-all group-hover:border-gray-300"
                                         >
                                             Solicitar informações <ArrowRight size={13} />
                                         </Link>
@@ -293,10 +293,10 @@ export default async function ProjetosWebsitePage({
             </section>
 
             {/* ── Proposta de valor para investidores ──────── */}
-            <section className="bg-[#141420] text-white py-16 lg:py-20">
+            <section className="bg-navy-950 text-white py-16 lg:py-20">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <p className="text-[#486581] text-xs font-bold uppercase tracking-[0.25em] mb-4">Para Investidores Institucionais</p>
+                        <p className="text-navy-300 text-xs font-bold uppercase tracking-[0.25em] mb-4">Para Investidores Institucionais</p>
                         <h2 className="font-bold text-3xl lg:text-4xl mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                             Acesso Privilegiado ao Pipeline IMI
                         </h2>
@@ -312,9 +312,9 @@ export default async function ProjetosWebsitePage({
                         ].map(item => {
                             const Icon = item.icon
                             return (
-                                <div key={item.title} className="bg-white/5 rounded-2xl p-7 border border-white/[0.08] hover:border-[#334E68]/30 transition-all">
-                                    <div className="w-10 h-10 rounded-xl bg-[#102A43]/10 flex items-center justify-center mb-5">
-                                        <Icon size={18} className="text-[#486581]" />
+                                <div key={item.title} className="bg-white/5 rounded-2xl p-7 border border-white/[0.08] hover:border-navy-600/30 transition-all">
+                                    <div className="w-10 h-10 rounded-xl bg-navy-800/10 flex items-center justify-center mb-5">
+                                        <Icon size={18} className="text-navy-300" />
                                     </div>
                                     <h3 className="font-semibold text-white mb-2">{item.title}</h3>
                                     <p className="text-white/50 text-sm leading-relaxed">{item.desc}</p>

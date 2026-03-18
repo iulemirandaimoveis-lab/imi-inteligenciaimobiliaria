@@ -26,7 +26,7 @@ export default function ServiceHero({
   return (
     <section
       className={`relative overflow-hidden ${
-        dark ? 'bg-[#141420] text-white' : 'bg-white text-[#1A1A1A]'
+        dark ? 'bg-navy-950 text-white' : 'bg-white text-neutral-900'
       }`}
     >
       {/* Background texture */}
@@ -39,7 +39,7 @@ export default function ServiceHero({
           }}
         />
         {/* Gold gradient orb */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-[#102A43]/[0.06] blur-[100px]" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-navy-800/[0.06] blur-[100px]" />
       </div>
 
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 py-20 lg:py-28">
@@ -51,8 +51,8 @@ export default function ServiceHero({
         >
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-px bg-[#102A43]" />
-            <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">
+            <div className="w-8 h-px bg-navy-800" />
+            <span className="text-navy-300 text-[11px] font-bold uppercase tracking-[0.25em]">
               {eyebrow}
             </span>
           </div>
@@ -60,7 +60,7 @@ export default function ServiceHero({
           {/* Title */}
           <h1
             className={`text-[36px] sm:text-[48px] lg:text-[60px] font-black leading-[1.05] tracking-tight mb-6 ${
-              dark ? 'text-white' : 'text-[#1A1A1A]'
+              dark ? 'text-white' : 'text-neutral-900'
             }`}
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
@@ -68,7 +68,7 @@ export default function ServiceHero({
             {titleHighlight && (
               <>
                 {' '}
-                <span className="text-[#486581]">{titleHighlight}</span>
+                <span className="text-navy-300">{titleHighlight}</span>
               </>
             )}
           </h1>
@@ -76,7 +76,7 @@ export default function ServiceHero({
           {/* Subtitle */}
           <p
             className={`text-[17px] lg:text-[19px] leading-relaxed font-light max-w-2xl ${
-              dark ? 'text-[#9CA3AF]' : 'text-[#6C757D]'
+              dark ? 'text-white/50' : 'text-white/40'
             }`}
           >
             {subtitle}
@@ -88,12 +88,12 @@ export default function ServiceHero({
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.5 }}
-              className="mt-8 inline-flex items-center gap-3 px-5 py-3 bg-[#102A43]/10 border border-[#334E68]/25 rounded-full"
+              className="mt-8 inline-flex items-center gap-3 px-5 py-3 bg-navy-800/10 border border-navy-600/25 rounded-full"
             >
               {badgeIcon && (
-                <span className="text-[#486581]">{badgeIcon}</span>
+                <span className="text-navy-300">{badgeIcon}</span>
               )}
-              <span className="text-[#486581] text-[12px] font-bold uppercase tracking-[0.15em]">
+              <span className="text-navy-300 text-[12px] font-bold uppercase tracking-[0.15em]">
                 {badge}
               </span>
             </motion.div>
@@ -110,14 +110,14 @@ export default function ServiceHero({
               {stats.map((stat, i) => (
                 <div key={i}>
                   <div
-                    className="text-[28px] lg:text-[32px] font-black text-[#486581] leading-none mb-1"
+                    className="text-[28px] lg:text-[32px] font-black text-navy-300 leading-none mb-1"
                     style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                   >
                     {stat.value}
                   </div>
                   <div
                     className={`text-[11px] font-semibold uppercase tracking-[0.15em] ${
-                      dark ? 'text-[#6C757D]' : 'text-[#ADB5BD]'
+                      dark ? 'text-white/40' : 'text-gray-400'
                     }`}
                   >
                     {stat.label}
