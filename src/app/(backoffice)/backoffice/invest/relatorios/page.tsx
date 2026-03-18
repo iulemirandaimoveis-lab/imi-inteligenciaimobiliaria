@@ -114,7 +114,7 @@ export default function RelatoriosPage() {
                     <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{report.views}</span>
                     <span className="flex items-center gap-1"><Download className="w-3 h-3" />{report.downloads}</span>
                   </div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${statusMap[report.status]?.cls || 'bg-white/10 text-white/50'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-[6px] ${statusMap[report.status]?.cls || 'bg-white/10 text-white/50'}`}>
                     {statusMap[report.status]?.label || report.status}
                   </span>
                 </div>

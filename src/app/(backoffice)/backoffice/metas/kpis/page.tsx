@@ -130,7 +130,7 @@ export default function KPIsDashboard() {
           <button
             key={d}
             onClick={() => setDept(d)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+            className={`px-3 py-1.5 rounded-[6px] text-xs font-medium whitespace-nowrap transition-colors ${
               dept === d
                 ? 'bg-gold/20 text-gold border border-gold/30'
                 : 'bg-white/[0.03] text-white/50 border border-white/10 hover:text-white/70'
@@ -196,7 +196,7 @@ export default function KPIsDashboard() {
 
                 {/* Status & target */}
                 <div className="flex items-center justify-between">
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${st.bg} ${st.text}`}>
+                  <span className={`px-2 py-0.5 rounded-[6px] text-xs ${st.bg} ${st.text}`}>
                     {status === 'green' ? 'Saudável' : status === 'yellow' ? 'Atenção' : 'Crítico'}
                   </span>
                   <span className="text-xs text-white/30">

@@ -426,9 +426,9 @@ export default function ExerciciosPage() {
         <div className="rounded-2xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
           {/* Meta */}
           <div className="flex items-center gap-2">
-            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: T.elevated, color: T.textMuted }}>{current.categoria}</span>
-            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: T.elevated, color: T.textMuted }}>{NIVEIS[current.nivel]}</span>
-            {current.normaRef && <span className="text-xs px-2 py-0.5 rounded-full font-mono" style={{ background: 'rgba(72,101,129,0.15)', color: 'var(--bo-accent)' }}>{current.normaRef}</span>}
+            <span className="text-xs px-2 py-0.5 rounded-[6px]" style={{ background: T.elevated, color: T.textMuted }}>{current.categoria}</span>
+            <span className="text-xs px-2 py-0.5 rounded-[6px]" style={{ background: T.elevated, color: T.textMuted }}>{NIVEIS[current.nivel]}</span>
+            {current.normaRef && <span className="text-xs px-2 py-0.5 rounded-[6px] font-mono" style={{ background: 'rgba(72,101,129,0.15)', color: 'var(--bo-accent)' }}>{current.normaRef}</span>}
           </div>
 
           <p className="text-base font-semibold leading-relaxed" style={{ color: T.text }}>{current.pergunta}</p>
@@ -532,7 +532,7 @@ export default function ExerciciosPage() {
         <div className="flex flex-wrap gap-2">
           {['Todos', ...CATEGORIAS].map(cat => (
             <button key={cat} onClick={() => setSelectedCat(cat)}
-              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:opacity-80"
+              className="px-3 py-1.5 rounded-[6px] text-xs font-medium transition-all hover:opacity-80"
               style={selectedCat === cat
                 ? { background: 'var(--btn-primary-bg)', color: 'white', border: '1px solid transparent' }
                 : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
@@ -543,7 +543,7 @@ export default function ExerciciosPage() {
         <div className="flex flex-wrap gap-2">
           {['Todos', 'basico', 'intermediario', 'avancado'].map(nv => (
             <button key={nv} onClick={() => setSelectedNivel(nv)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedNivel === nv ? 'bg-[var(--bo-accent)] text-white border-transparent' : ''}`}
+              className={`px-3 py-1.5 rounded-[6px] text-xs font-medium border transition-all ${selectedNivel === nv ? 'bg-[var(--bo-accent)] text-white border-transparent' : ''}`}
               style={selectedNivel !== nv ? { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` } : undefined}>
               {nv === 'Todos' ? 'Todos os níveis' : NIVEIS[nv as keyof typeof NIVEIS]}
             </button>

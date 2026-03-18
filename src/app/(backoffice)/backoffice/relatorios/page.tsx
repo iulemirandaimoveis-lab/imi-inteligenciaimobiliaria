@@ -310,7 +310,7 @@ export default function RelatoriosPage() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-1">
                                                 <p className="text-sm font-semibold" style={{ color: T.text }}>{r.label}</p>
-                                                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+                                                <span className="text-[11px] font-bold px-2 py-0.5 rounded-[6px]"
                                                     style={{ color: cat?.text, background: cat?.bg }}>
                                                     {cat?.label}
                                                 </span>

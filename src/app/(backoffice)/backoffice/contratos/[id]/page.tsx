@@ -125,7 +125,7 @@ export default function ContratoDetalhePage() {
                             style={{ background: T.card, border: `1px solid ${T.border}` }}>
                             <ArrowLeft size={18} style={{ color: T.text }} />
                         </button>
-                        <span className="px-3 py-1.5 rounded-full text-xs font-bold"
+                        <span className="px-3 py-1.5 rounded-[6px] text-xs font-bold"
                             style={{ color: sc.text, background: sc.bg }}>
                             {sc.label}
                         </span>

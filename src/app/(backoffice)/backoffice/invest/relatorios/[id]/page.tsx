@@ -89,7 +89,7 @@ export default function ReportDetailPage() {
       {report.tags && report.tags.length > 0 && (
         <div className="flex gap-2">
           {report.tags.map(tag => (
-            <span key={tag} className="text-xs px-2 py-1 rounded-full border border-white/10 text-white/50">
+            <span key={tag} className="text-xs px-2 py-1 rounded-[6px] border border-white/10 text-white/50">
               {tag}
             </span>
           ))}

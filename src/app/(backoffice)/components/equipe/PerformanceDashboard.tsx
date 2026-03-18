@@ -169,7 +169,7 @@ export default function PerformanceDashboard() {
                         {/* Health */}
                         <div className="flex items-center gap-2">
                             <span className="text-[10px] font-bold uppercase" style={{ color: T.textMuted }}>Saúde:</span>
-                            <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ color: healthColor, background: `${healthColor}15` }}>
+                            <span className="text-xs font-bold px-2 py-0.5 rounded-[6px]" style={{ color: healthColor, background: `${healthColor}15` }}>
                                 {aiInsights.overall_health}
                             </span>
                         </div>

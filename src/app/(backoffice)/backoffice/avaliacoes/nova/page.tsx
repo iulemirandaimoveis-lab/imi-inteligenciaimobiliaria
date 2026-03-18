@@ -525,7 +525,7 @@ export default function NovaAvaliacaoPage() {
               <div className="flex flex-wrap gap-2 mt-1">
                 {CARACTERISTICAS.map(c => (
                   <button key={c} type="button" onClick={() => toggleCaracteristica(c)}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all"
+                    className="px-3 py-1.5 rounded-[6px] text-xs font-medium border transition-all"
                     style={formData.caracteristicas.includes(c)
                       ? { background: T.accent, color: 'var(--text-inverse)', borderColor: 'transparent' }
                       : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>

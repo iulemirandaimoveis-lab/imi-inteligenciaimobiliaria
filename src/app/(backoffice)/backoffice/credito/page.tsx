@@ -207,7 +207,7 @@ function SimuladorCredito() {
           <p className="text-xs font-bold uppercase tracking-wide" style={{ color: T.text }}>
             Análise de Investimento
           </p>
-          <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
+          <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-[6px]"
             style={{ background: 'var(--bg-elevated)', color: T.textMuted }}>
             Simulação
           </span>
@@ -380,7 +380,7 @@ export default function CreditoPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-xs font-mono" style={{ color: T.textMuted }}>{op.protocol}</span>
-                        <span className="text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1"
+                        <span className="text-xs px-2 py-0.5 rounded-[6px] font-medium flex items-center gap-1"
                           style={{ background: stt.bg, color: stt.color }}>
                           <StatusIcon size={10} /> {stt.label}
                         </span>

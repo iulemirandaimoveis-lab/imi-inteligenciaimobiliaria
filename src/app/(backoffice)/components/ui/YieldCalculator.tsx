@@ -216,7 +216,7 @@ function ResultTile({ label, value, sub, highlight, highlightBg }: ResultTilePro
             color: 'var(--text-tertiary)',
             marginTop: 2,
             padding: '2px 8px',
-            borderRadius: 9999,
+            borderRadius: 6,
             background: highlightBg ?? 'var(--bg-muted)',
             alignSelf: 'flex-start',
           }}

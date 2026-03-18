@@ -122,7 +122,7 @@ export function PropertyCard({
 
           {/* IMI Score — top right */}
           <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 2 }}>
-            <IMIScoreBadge score={score} size="sm" />
+            <IMIScoreBadge score={score} size="md" />
           </div>
 
           {/* Bulk checkbox overlay — top left (replaces status badge position when active) */}

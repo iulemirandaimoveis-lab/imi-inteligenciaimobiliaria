@@ -144,7 +144,7 @@ export default function OmniChannelPage() {
                                 </div>
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <span
-                                        className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                                        className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-[6px]"
                                         style={{
                                             background: ch.status === 'Ativo' ? 'var(--s-done-bg)' : ch.status === 'Configurar' ? 'rgba(251,191,36,0.10)' : T.hover,
                                             color: ch.status === 'Ativo' ? 'var(--s-done)' : ch.status === 'Configurar' ? 'var(--warning)' : T.textMuted,
@@ -182,12 +182,12 @@ export default function OmniChannelPage() {
                                 </p>
                             </div>
                             {hasChatwoot ? (
-                                <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex-shrink-0"
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-[6px] flex-shrink-0"
                                     style={{ background: 'var(--s-done-bg)', color: 'var(--s-done)' }}>
                                     Conectado
                                 </span>
                             ) : (
-                                <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex-shrink-0"
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-[6px] flex-shrink-0"
                                     style={{ background: 'var(--s-warm-bg)', color: 'var(--s-warm)' }}>
                                     Aguardando Config
                                 </span>

@@ -38,7 +38,7 @@ function StatusBadge({ status }: { status: IntegracaoStatus }) {
     const cfg = STATUS_CFG[status]
     const Icon = cfg.icon
     return (
-        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full"
+        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-[6px]"
             style={{ color: cfg.text, background: cfg.bg }}>
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: cfg.dot }} />
             {cfg.label}
@@ -391,7 +391,7 @@ export default function IntegracoesPage() {
                                     <StatusBadge status={status} />
                                     <div className="flex items-center gap-1.5">
                                         {integ.gratuito && (
-                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded-[6px]"
                                                 style={{ background: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' }}>
                                                 Grátis
                                             </span>

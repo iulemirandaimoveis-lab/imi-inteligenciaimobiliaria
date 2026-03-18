@@ -143,7 +143,7 @@ export function KPICard({
               alignItems: 'center',
               gap: 4,
               padding: '2px 8px',
-              borderRadius: 9999,
+              borderRadius: 6,
               fontFamily: 'var(--font-data)',
               fontSize: 13,
               fontWeight: 300,

@@ -35,7 +35,7 @@ function StatusBadge({ status }: { status: string }) {
     const cfg = STATUS_CFG[status] || STATUS_CFG.rascunho
     const Icon = cfg.icon
     return (
-        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-[6px]"
             style={{ color: cfg.text, background: cfg.bg }}>
             <Icon size={9} /> {cfg.label}
         </span>
@@ -374,7 +374,7 @@ export default function ContratosPage() {
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-1.5 mb-1">
                                                             <p className="text-xs font-semibold" style={{ color: T.text }}>{m.nome}</p>
-                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bg-hover)', color: T.accent }}>✦</span>}
+                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[6px]" style={{ background: 'var(--bg-hover)', color: T.accent }}>✦</span>}
                                                             {m.internacional && <Globe size={9} style={{ color: 'var(--warning)' }} />}
                                                         </div>
                                                         <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>

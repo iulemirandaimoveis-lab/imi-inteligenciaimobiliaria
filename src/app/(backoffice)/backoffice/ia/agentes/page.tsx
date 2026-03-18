@@ -490,7 +490,7 @@ export default function AgentesIAPage() {
 
                                     {/* Status pill */}
                                     <span
-                                        className="flex items-center gap-1 px-2 py-1 rounded-full"
+                                        className="flex items-center gap-1 px-2 py-1 rounded-[6px]"
                                         style={{
                                             background: STATUS_MAP[agent.status].bg,
                                             color: STATUS_MAP[agent.status].color,

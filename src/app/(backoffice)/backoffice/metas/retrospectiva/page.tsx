@@ -144,7 +144,7 @@ export default function RetrospectivaPage() {
           <p className={`text-4xl font-bold ${companyStyle.text}`} style={{ fontFamily: 'DM Mono, monospace' }}>
             {(companyAvg * 100).toFixed(0)}%
           </p>
-          <span className={`px-2 py-0.5 rounded-full text-xs ${companyStyle.bg} ${companyStyle.text}`}>
+          <span className={`px-2 py-0.5 rounded-[6px] text-xs ${companyStyle.bg} ${companyStyle.text}`}>
             {companyStyle.label}
           </span>
         </div>
@@ -181,7 +181,7 @@ export default function RetrospectivaPage() {
                     <div>
                       <h3 className="text-sm font-semibold text-white">{obj.title}</h3>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="px-2 py-0.5 rounded-full text-xs bg-white/[0.06] text-white/50">{obj.department}</span>
+                        <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/50">{obj.department}</span>
                         <span className="text-xs text-white/30">{obj.krCount} KRs</span>
                       </div>
                     </div>
@@ -189,7 +189,7 @@ export default function RetrospectivaPage() {
                       <p className={`text-xl font-bold ${st.text}`} style={{ fontFamily: 'DM Mono, monospace' }}>
                         {(obj.score * 100).toFixed(0)}%
                       </p>
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${st.bg} ${st.text}`}>
+                      <span className={`px-2 py-0.5 rounded-[6px] text-xs ${st.bg} ${st.text}`}>
                         {st.label}
                       </span>
                     </div>

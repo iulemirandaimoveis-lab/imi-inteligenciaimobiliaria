@@ -335,7 +335,7 @@ export function ValuationEngine({
                     color: confidenceColor(clampedConfidence),
                     background: confidenceBg(clampedConfidence),
                     padding: '2px 8px',
-                    borderRadius: 9999,
+                    borderRadius: 6,
                   }}
                 >
                   {confidenceLabel(clampedConfidence)}
@@ -453,7 +453,7 @@ export function ValuationEngine({
                           fontSize: 11,
                           fontWeight: 600,
                           padding: '2px 8px',
-                          borderRadius: 9999,
+                          borderRadius: 6,
                           background: isPos
                             ? 'rgba(0,178,127,0.12)'
                             : isNeg

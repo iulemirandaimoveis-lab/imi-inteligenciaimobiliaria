@@ -464,7 +464,7 @@ export default function EbookPage() {
                         {/* Config summary */}
                         <div className="flex flex-wrap items-center gap-2 mb-5 p-3 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <span className="text-xs font-bold" style={{ color: T.text }}>"{config.titulo}"</span>
-                            <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: `${T.accent}20`, color: T.accent }}>{config.pilar}</span>
+                            <span className="text-[10px] px-2 py-0.5 rounded-[6px]" style={{ background: `${T.accent}20`, color: T.accent }}>{config.pilar}</span>
                             <span className="text-[10px]" style={{ color: T.textMuted }}>{config.num_capitulos} caps · {config.tom}</span>
                         </div>
 

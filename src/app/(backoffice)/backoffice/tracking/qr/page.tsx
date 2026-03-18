@@ -595,7 +595,7 @@ export default function QRGeneratorPage() {
                                                         imi.com.br/l/{link.short_code}
                                                     </p>
                                                     {link.team_label && (
-                                                        <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: T.elevated, color: T.textMuted }}>
+                                                        <span className="text-[9px] px-1.5 py-0.5 rounded-[6px] font-bold" style={{ background: T.elevated, color: T.textMuted }}>
                                                             {link.team_label}
                                                         </span>
                                                     )}

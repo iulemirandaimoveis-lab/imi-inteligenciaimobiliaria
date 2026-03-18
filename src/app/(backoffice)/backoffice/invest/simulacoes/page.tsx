@@ -125,7 +125,7 @@ export default function SimulacoesPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    <span className={`text-xs px-2 py-0.5 rounded-[6px] ${
                       sim.status === 'completed' ? 'bg-emerald-400/10 text-emerald-400' :
                       sim.status === 'running' ? 'bg-amber-400/10 text-amber-400' :
                       'bg-white/10 text-white/50'

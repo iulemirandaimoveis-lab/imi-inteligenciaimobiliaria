@@ -208,7 +208,7 @@ export default function SmartNotifications() {
               Assistente IA
             </span>
             <span
-              className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+              className="px-2 py-0.5 rounded-[6px] text-[10px] font-bold"
               style={{ background: 'rgba(184,148,58,0.15)', color: 'var(--imi-gold-500)' }}
             >
               BETA

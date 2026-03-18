@@ -179,7 +179,7 @@ export default function AvaliacaoDetalhesPage() {
                         >
                             <ArrowLeft size={18} style={{ color: T.text }} />
                         </button>
-                        <span className="px-3 py-1.5 rounded-full text-xs font-bold"
+                        <span className="px-3 py-1.5 rounded-[6px] text-xs font-bold"
                             style={{ color: sc.text, background: sc.bg }}>
                             {sc.label}
                         </span>
@@ -378,7 +378,7 @@ export default function AvaliacaoDetalhesPage() {
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-lg font-bold" style={{ color: T.text }}>Intervalo de Valores</h2>
                                     {hasRange && (
-                                        <span className="text-xs font-bold px-3 py-1 rounded-full"
+                                        <span className="text-xs font-bold px-3 py-1 rounded-[6px]"
                                             style={{ color: rangeConf.color, background: rangeConf.bg }}>
                                             {rangeConf.label}
                                         </span>
@@ -480,7 +480,7 @@ export default function AvaliacaoDetalhesPage() {
                             <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <div className="flex items-center justify-between mb-5">
                                     <h2 className="text-lg font-bold" style={{ color: T.text }}>Comparativo de Bairro</h2>
-                                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full"
+                                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-[6px]"
                                         style={{ background: 'rgba(72,101,129,0.12)', color: T.textMuted }}>
                                         {comps.count} empreend. em {data.bairro}
                                     </span>

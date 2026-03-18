@@ -1074,7 +1074,7 @@ export default function SettingsPage() {
                   </div>
                   {section.badge && (
                     <span style={{
-                      fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 'var(--r-full)',
+                      fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 6,
                       background: 'var(--success-bg)', color: section.badgeColor,
                       border: '1px solid rgba(52,196,117,0.25)', textTransform: 'uppercase',
                       letterSpacing: '0.08em', fontFamily: 'var(--font-mono)', flexShrink: 0,

@@ -185,7 +185,7 @@ export default function MetasDashboard() {
           <button
             key={d}
             onClick={() => setDept(d)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+            className={`px-3 py-1.5 rounded-[6px] text-xs font-medium whitespace-nowrap transition-colors ${
               dept === d
                 ? 'bg-gold/20 text-gold border border-gold/30'
                 : 'bg-white/[0.03] text-white/50 border border-white/10 hover:text-white/70'
@@ -294,7 +294,7 @@ export default function MetasDashboard() {
                     {fmt(kpi.currentValue)}
                   </p>
                   <div className="flex items-center justify-between mt-2">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${sc.bg} ${sc.text}`}>
+                    <span className={`px-2 py-0.5 rounded-[6px] text-xs ${sc.bg} ${sc.text}`}>
                       {kpi.status === 'green' ? 'Saudável' : kpi.status === 'yellow' ? 'Atenção' : 'Crítico'}
                     </span>
                     <span className="text-xs text-white/30">Meta: {fmt(kpi.target_value)}</span>

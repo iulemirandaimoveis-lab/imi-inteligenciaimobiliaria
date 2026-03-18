@@ -429,7 +429,7 @@ export default function IAHubPage() {
                                     const s = providerStatus[provider.id]
                                     const isOk = s === 'ok'
                                     return (
-                                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full" style={{
+                                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-[6px]" style={{
                                             background: isOk ? 'rgba(16,185,129,0.12)' : 'rgba(107,114,128,0.10)',
                                             color: isOk ? 'var(--success)' : T.textMuted,
                                             border: `1px solid ${isOk ? 'rgba(16,185,129,0.25)' : 'rgba(107,114,128,0.18)'}`,

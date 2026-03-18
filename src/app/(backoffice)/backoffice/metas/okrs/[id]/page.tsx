@@ -173,16 +173,16 @@ export default function OKRDetailPage() {
             <h1 className="text-xl font-bold text-white">{obj.title}</h1>
             {obj.description && <p className="text-sm text-white/50 mt-2">{obj.description}</p>}
             <div className="flex items-center gap-2 mt-3">
-              <span className="px-2 py-0.5 rounded-full text-xs bg-white/[0.06] text-white/50">{obj.department}</span>
-              <span className="px-2 py-0.5 rounded-full text-xs bg-white/[0.06] text-white/40">{obj.quarter}</span>
-              <span className="px-2 py-0.5 rounded-full text-xs bg-white/[0.06] text-white/40">{obj.level}</span>
+              <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/50">{obj.department}</span>
+              <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/40">{obj.quarter}</span>
+              <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/40">{obj.level}</span>
             </div>
           </div>
           <div className="text-right ml-4">
             <p className={`text-3xl font-bold ${sc.text}`} style={{ fontFamily: 'DM Mono, monospace' }}>
               {Math.round(avgScore * 100)}%
             </p>
-            <span className={`px-2 py-0.5 rounded-full text-xs ${sc.bg} ${sc.text}`}>
+            <span className={`px-2 py-0.5 rounded-[6px] text-xs ${sc.bg} ${sc.text}`}>
               Score
             </span>
           </div>

@@ -350,11 +350,11 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 flex-wrap mb-1">
                                         <p className="text-sm font-semibold" style={{ color: T.text }}>{member.name}</p>
-                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-[6px] border"
                                             style={{ color: role.color, background: role.bg, borderColor: `${role.color}30` }}>
                                             {role.label}
                                         </span>
-                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-[6px] border"
                                             style={{ color: status.color, background: status.bg, borderColor: `${status.color}30` }}>
                                             {status.label}
                                         </span>

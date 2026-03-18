@@ -308,7 +308,7 @@ export function MobileBottomNav() {
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
                                     >
                                         <item.icon
-                                            size={18}
+                                            size={active ? 22 : 20}
                                             className="transition-colors duration-150"
                                             style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                                         />
@@ -336,7 +336,7 @@ export function MobileBottomNav() {
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
                                     >
                                         <item.icon
-                                            size={18}
+                                            size={active ? 22 : 20}
                                             className="transition-colors duration-150"
                                             style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                                         />
@@ -413,7 +413,7 @@ export function MobileBottomNav() {
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
                                     >
                                         <item.icon
-                                            size={18}
+                                            size={active ? 22 : 20}
                                             className="transition-colors duration-150"
                                             style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                                         />
@@ -441,7 +441,7 @@ export function MobileBottomNav() {
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
                                     >
                                         <item.icon
-                                            size={18}
+                                            size={active ? 22 : 20}
                                             className="transition-colors duration-150"
                                             style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                                         />

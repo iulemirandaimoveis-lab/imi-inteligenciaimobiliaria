@@ -193,11 +193,11 @@ export default function ProjetosPage() {
                                         ) : (
                                             <Building2 size={48} style={{ color: T.textMuted, opacity: 0.3 }} />
                                         )}
-                                        <span className="absolute top-3 left-3 text-xs px-2 py-1 rounded-full font-medium"
+                                        <span className="absolute top-3 left-3 text-xs px-2 py-1 rounded-[6px] font-medium"
                                             style={{ backgroundColor: `${stt.color}20`, color: stt.color }}>
                                             {stt.l}
                                         </span>
-                                        <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full font-bold"
+                                        <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-[6px] font-bold"
                                             style={{ background: 'rgba(0,0,0,0.6)', color: 'var(--text-inverse)' }}>
                                             {fmtCurrency(Number(p.vgv || 0))} VGV
                                         </span>

@@ -144,7 +144,7 @@ export default function WhatsAppPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{
               fontSize: 11, fontWeight: 700, padding: '4px 10px',
-              borderRadius: 'var(--r-full)',
+              borderRadius: 6,
               background: 'rgba(184,148,58,0.12)',
               color: 'var(--imi-gold-500)',
               border: '1px solid rgba(184,148,58,0.30)',
@@ -286,7 +286,7 @@ export default function WhatsAppPage() {
             </div>
             <div style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              padding: '4px 10px', borderRadius: 'var(--r-full)',
+              padding: '4px 10px', borderRadius: 6,
               background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
             }}>
               <Users size={12} style={{ color: 'var(--text-tertiary)' }} />
@@ -398,7 +398,7 @@ export default function WhatsAppPage() {
           </div>
           <span style={{
             fontSize: 11, fontWeight: 700, padding: '4px 10px',
-            borderRadius: 'var(--r-full)',
+            borderRadius: 6,
             background: 'rgba(184,148,58,0.10)',
             color: 'var(--imi-gold-500)',
             border: '1px solid rgba(184,148,58,0.25)',
@@ -441,7 +441,7 @@ export default function WhatsAppPage() {
                 </div>
                 <span style={{
                   fontSize: 11, fontWeight: 700, padding: '4px 8px',
-                  borderRadius: 'var(--r-full)',
+                  borderRadius: 6,
                   background: 'rgba(184,148,58,0.10)',
                   color: 'var(--imi-gold-500)',
                   border: '1px solid rgba(184,148,58,0.22)',

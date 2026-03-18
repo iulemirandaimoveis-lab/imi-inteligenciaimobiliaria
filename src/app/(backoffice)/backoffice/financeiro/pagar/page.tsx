@@ -187,7 +187,7 @@ export default function PagarPage() {
                                             Vence {fmtDate(t.due_date)}
                                         </span>
                                         <span
-                                            className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                            className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-[6px]"
                                             style={{ color: isOverdue ? 'var(--bo-error)' : sc.text, background: isOverdue ? 'var(--error-bg, rgba(229,115,115,0.12))' : sc.bg }}>
                                             <Icon size={9} /> {isOverdue ? 'Atrasado' : sc.label}
                                         </span>

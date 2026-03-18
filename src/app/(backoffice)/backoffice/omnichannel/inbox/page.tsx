@@ -283,7 +283,7 @@ export default function SocialInboxPage() {
                 style={{ borderBottom: `1px solid ${T.border}`, scrollbarWidth: 'none' }}>
                 <button
                     onClick={() => setChannel('all')}
-                    className="flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all"
+                    className="flex-shrink-0 px-3 py-1.5 rounded-[6px] text-[11px] font-semibold transition-all"
                     style={{
                         background: channel === 'all' ? 'var(--bo-active-bg)' : 'rgba(255,255,255,0.04)',
                         color: channel === 'all' ? 'var(--bo-accent)' : T.textMuted,
@@ -297,7 +297,7 @@ export default function SocialInboxPage() {
                     return (
                         <button key={ch}
                             onClick={() => setChannel(ch)}
-                            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all"
+                            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[11px] font-semibold transition-all"
                             style={{
                                 background: channel === ch ? cfg.bg : 'rgba(255,255,255,0.04)',
                                 color: channel === ch ? cfg.color : T.textMuted,
@@ -396,7 +396,7 @@ export default function SocialInboxPage() {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 mb-0.5">
                                                     <span className="text-[14px] font-bold" style={{ color: T.text }}>{selected.from}</span>
-                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-[6px]"
                                                         style={{ background: cfg.bg, color: cfg.color }}>{cfg.label}</span>
                                                 </div>
                                                 {selected.subject && (

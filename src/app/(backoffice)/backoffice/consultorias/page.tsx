@@ -209,14 +209,14 @@ export default function ConsultoriasPage() {
                                                     </span>
                                                 )}
                                                 <span
-                                                    className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                                    className="text-[10px] font-bold px-2 py-0.5 rounded-[6px]"
                                                     style={{ color: stt.text, background: stt.bg }}
                                                 >
                                                     {stt.l}
                                                 </span>
                                                 {c.tipo && (
                                                     <span
-                                                        className="text-[10px] px-2 py-0.5 rounded-full"
+                                                        className="text-[10px] px-2 py-0.5 rounded-[6px]"
                                                         style={{ color: T.textMuted, background: T.elevated }}
                                                     >
                                                         {TIPO_LABEL[c.tipo] || c.tipo}

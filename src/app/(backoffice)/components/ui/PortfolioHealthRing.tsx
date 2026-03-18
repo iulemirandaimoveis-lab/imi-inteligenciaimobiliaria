@@ -243,7 +243,7 @@ export function PortfolioHealthRing({
                 color: gradeColor(grade),
                 background: gradeBg(grade),
                 padding: '2px 8px',
-                borderRadius: 9999,
+                borderRadius: 6,
                 letterSpacing: '0.06em',
               }}
             >

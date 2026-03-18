@@ -242,7 +242,7 @@ function NovoContratoInner() {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
                                                     <p className="text-xs font-semibold" style={{ color: sel ? T.accent : T.text }}>{m.nome}</p>
-                                                    {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bo-hover)', color: T.accent }}>★</span>}
+                                                    {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[6px]" style={{ background: 'var(--bo-hover)', color: T.accent }}>★</span>}
                                                     {m.internacional && <span className="text-[9px]" style={{ color: 'var(--warning)' }}>🌐</span>}
                                                 </div>
                                                 <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>
@@ -309,7 +309,7 @@ function NovoContratoInner() {
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2">
                                                     <p className="text-sm font-semibold" style={{ color: sel ? p.cor : T.text }}>{p.label}</p>
-                                                    {p.gratuito && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(107,184,123,0.15)', color: 'var(--bo-success)' }}>GRATUITO</span>}
+                                                    {p.gratuito && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[6px]" style={{ background: 'rgba(107,184,123,0.15)', color: 'var(--bo-success)' }}>GRATUITO</span>}
                                                 </div>
                                                 <p className="text-[10px] mt-0.5" style={{ color: T.textDim }}>{p.sub}</p>
                                                 {p.env && <p className="text-[9px] mt-0.5 font-mono" style={{ color: T.textDim }}>{p.env}</p>}

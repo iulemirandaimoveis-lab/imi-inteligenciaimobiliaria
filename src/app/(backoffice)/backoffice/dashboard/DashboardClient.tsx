@@ -416,7 +416,7 @@ function VelocidadeRespostaWidget() {
                     Velocidade de Resposta
                 </span>
                 {status && (
-                    <span className="ml-auto text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                    <span className="ml-auto text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[6px]"
                         style={{ color: status.color, background: `${status.color}18` }}>
                         {status.label}
                     </span>
@@ -622,7 +622,7 @@ export default function DashboardClient({
                         }}>
                             INTELLIGENCE OS
                         </span>
-                        <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{
+                        <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-[6px]" style={{
                             background: 'rgba(74,222,128,0.10)',
                             border: '1px solid rgba(74,222,128,0.22)',
                         }}>

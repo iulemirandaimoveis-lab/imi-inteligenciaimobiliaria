@@ -108,7 +108,7 @@ export default function PageHeader({
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.15, type: 'spring', stiffness: 500, damping: 25 }}
-                                    className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                    className="inline-flex items-center px-2.5 py-1 rounded-[6px] text-xs font-semibold"
                                     style={{ background: c.bg, color: c.text, border: `1px solid ${c.border}` }}
                                 >
                                     {badge.label}

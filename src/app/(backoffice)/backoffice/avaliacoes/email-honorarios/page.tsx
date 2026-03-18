@@ -308,7 +308,7 @@ export default function EmailHonorariosPage() {
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   <span
-                    className="text-xs px-2.5 py-1 rounded-full font-medium capitalize"
+                    className="text-xs px-2.5 py-1 rounded-[6px] font-medium capitalize"
                     style={{
                       background: ENTITY_BADGE[analysis.tipo_entidade]?.bg,
                       color: ENTITY_BADGE[analysis.tipo_entidade]?.color,
@@ -317,7 +317,7 @@ export default function EmailHonorariosPage() {
                     {analysis.tipo_entidade}
                   </span>
                   <span
-                    className="text-xs px-2.5 py-1 rounded-full font-medium capitalize"
+                    className="text-xs px-2.5 py-1 rounded-[6px] font-medium capitalize"
                     style={{
                       background: URGENCIA_BADGE[analysis.urgencia]?.bg,
                       color: URGENCIA_BADGE[analysis.urgencia]?.color,

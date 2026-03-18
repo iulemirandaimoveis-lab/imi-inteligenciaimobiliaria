@@ -138,7 +138,7 @@ export function PageIntelHeader({
             </span>
 
             {live && (
-              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-[6px]"
                 style={{
                   background: 'var(--success-bg)',
                   border: `1px solid color-mix(in srgb, var(--success) 20%, transparent)`,
@@ -181,7 +181,7 @@ export function PageIntelHeader({
               const c = BADGE_COLORS[badge.color || 'accent']
               return (
                 <span
-                  className="inline-flex items-center rounded-full"
+                  className="inline-flex items-center rounded-[6px]"
                   style={{
                     fontSize: '11px',
                     fontFamily: 'var(--font-sans)',

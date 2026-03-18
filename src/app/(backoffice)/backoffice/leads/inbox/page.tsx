@@ -197,7 +197,7 @@ export default function LeadsInboxPage() {
                         <button
                             key={tab.key}
                             onClick={() => setFilter(tab.key)}
-                            className="flex-shrink-0 h-8 px-4 rounded-full text-[11px] font-bold transition-all"
+                            className="flex-shrink-0 h-8 px-4 rounded-[6px] text-[11px] font-bold transition-all"
                             style={{
                                 background: isActive ? (tab.tc?.bg ?? 'rgba(72,101,129,0.2)') : 'transparent',
                                 border: `1px solid ${isActive ? (tab.tc?.border ?? T.accent) : T.border}`,

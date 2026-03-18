@@ -81,7 +81,7 @@ function TickerItemChip({ item }: { item: TickerItem }) {
           alignItems: 'center',
           gap: 2,
           padding: '2px 8px',
-          borderRadius: 9999,
+          borderRadius: 6,
           fontFamily: 'var(--font-mono)',
           fontSize: 11,
           fontWeight: 600,

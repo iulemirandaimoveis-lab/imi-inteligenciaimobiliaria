@@ -2267,3 +2267,40 @@ img, video, iframe, canvas, svg {
   box-shadow: 0 8px 32px rgba(11,17,32,0.14), 0 2px 8px rgba(11,17,32,0.08) !important;
 }
 
+/* ─── IMI Design System v3 — Utility Classes ────────────────────────── */
+
+/* Border radius standardization */
+.imi-chip { border-radius: 6px !important; }
+.imi-badge { border-radius: 6px !important; }
+.imi-btn { border-radius: 6px !important; }
+.imi-input { border-radius: 6px !important; }
+.imi-card { border-radius: 8px !important; }
+.imi-modal { border-radius: 12px !important; }
+.imi-pill { border-radius: 6px !important; }
+
+/* Shadow system */
+.imi-shadow-card { box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.imi-shadow-elevated { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+.imi-shadow-gold { box-shadow: 0 0 20px rgba(200,164,74,0.08); }
+
+/* Typography helpers */
+.imi-display { font-family: var(--font-cormorant, 'Cormorant Garamond', serif); }
+.imi-body { font-family: var(--font-outfit, 'Outfit', sans-serif); }
+.imi-mono { font-family: var(--font-dm-mono, 'DM Mono', monospace); }
+
+/* Interaction states */
+.imi-press { transition: transform 100ms ease; }
+.imi-press:active { transform: scale(0.97); opacity: 0.9; }
+.imi-hover-lift { transition: transform 200ms ease, box-shadow 200ms ease; }
+.imi-hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+
+/* Gold accent utilities */
+.imi-gold-border { border: 1px solid rgba(200,164,74,0.25); }
+.imi-gold-border-active { border: 1px solid rgba(200,164,74,0.6); }
+.imi-gold-glow { box-shadow: 0 0 20px rgba(200,164,74,0.08); }
+.imi-gold-glow:hover { box-shadow: 0 0 30px rgba(200,164,74,0.15); }
+
+/* Safe area helpers for mobile */
+.imi-safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.imi-safe-top { padding-top: env(safe-area-inset-top); }
+

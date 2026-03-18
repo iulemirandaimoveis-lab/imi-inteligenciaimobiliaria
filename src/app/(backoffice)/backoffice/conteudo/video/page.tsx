@@ -70,7 +70,7 @@ function RenderStatusBadge({ status }: { status: RenderStatus }) {
     return (
         <motion.span
             layout
-            className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full"
+            className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-[6px]"
             style={{ color: c.color, background: `${c.color}18`, border: `1px solid ${c.color}30` }}
         >
             {Icon && <Icon size={11} className={status === 'rendering' ? 'animate-spin' : ''} />}

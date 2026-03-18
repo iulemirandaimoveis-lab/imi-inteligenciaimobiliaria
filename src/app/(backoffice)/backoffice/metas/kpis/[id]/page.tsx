@@ -148,8 +148,8 @@ export default function KPIDetailPage() {
             <h1 className="text-xl font-bold text-white">{kpi.name}</h1>
             {kpi.description && <p className="text-sm text-white/50 mt-1">{kpi.description}</p>}
             <div className="flex items-center gap-2 mt-3">
-              <span className="px-2 py-0.5 rounded-full text-xs bg-white/[0.06] text-white/50">{kpi.department}</span>
-              <span className={`px-2 py-0.5 rounded-full text-xs ${st.bg} ${st.text}`}>{st.label}</span>
+              <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/50">{kpi.department}</span>
+              <span className={`px-2 py-0.5 rounded-[6px] text-xs ${st.bg} ${st.text}`}>{st.label}</span>
             </div>
           </div>
           <div className="text-right">

@@ -91,7 +91,7 @@ export default function LeadDetailPage() {
             <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{lead.phone}</span>
           </div>
         </div>
-        <span className="px-3 py-1 rounded-full text-xs font-medium bg-gold/10 text-gold">
+        <span className="px-3 py-1 rounded-[6px] text-xs font-medium bg-gold/10 text-gold">
           {lead.status}
         </span>
       </div>

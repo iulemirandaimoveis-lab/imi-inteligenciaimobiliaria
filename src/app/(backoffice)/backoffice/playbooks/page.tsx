@@ -121,12 +121,12 @@ export default function PlaybooksPage() {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <p className="text-sm font-bold" style={{ color: T.text }}>{pb.name}</p>
-                                            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                                            <span className="text-[10px] px-2 py-0.5 rounded-[6px] font-medium"
                                                 style={{ background: 'rgba(72,101,129,0.12)', color: T.accent }}>
                                                 {pb.category}
                                             </span>
                                             {pb.norm_reference && (
-                                                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                                                <span className="text-[10px] px-2 py-0.5 rounded-[6px] font-medium"
                                                     style={{ background: 'rgba(168,158,196,0.12)', color: 'var(--text-secondary)' }}>
                                                     {pb.norm_reference}
                                                 </span>
