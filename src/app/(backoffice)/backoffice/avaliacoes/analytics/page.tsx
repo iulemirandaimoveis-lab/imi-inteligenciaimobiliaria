@@ -140,13 +140,13 @@ export default function AvaliacoesAnalyticsPage() {
     if (loading) {
         return (
             <div className="space-y-5">
-                <div className="animate-pulse" style={{ height: '72px', borderRadius: '4px', background: T.surface, border: `1px solid ${T.border}` }} />
+                <div className="animate-pulse" style={{ height: '72px', borderRadius: '6px', background: T.surface, border: `1px solid ${T.border}` }} />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[...Array(4)].map((_, i) => (
                         <div key={i} className="animate-pulse rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '4px', background: T.elevated, marginBottom: '12px' }} />
-                            <div style={{ height: '28px', width: '60%', borderRadius: '4px', background: T.elevated, marginBottom: '8px' }} />
-                            <div style={{ height: '12px', width: '80%', borderRadius: '4px', background: T.elevated }} />
+                            <div style={{ width: '40px', height: '40px', borderRadius: '6px', background: T.elevated, marginBottom: '12px' }} />
+                            <div style={{ height: '28px', width: '60%', borderRadius: '6px', background: T.elevated, marginBottom: '8px' }} />
+                            <div style={{ height: '12px', width: '80%', borderRadius: '6px', background: T.elevated }} />
                         </div>
                     ))}
                 </div>

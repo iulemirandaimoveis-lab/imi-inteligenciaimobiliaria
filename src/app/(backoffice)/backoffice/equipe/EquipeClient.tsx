@@ -194,7 +194,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
         border: `1px solid ${T.border}`,
         color: T.text,
         height: '44px',
-        borderRadius: '4px',
+        borderRadius: '6px',
         padding: '0 14px',
         fontSize: '14px',
         outline: 'none',

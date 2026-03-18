@@ -312,7 +312,7 @@ export default function LeadsPage() {
                   style={{
                     fontSize: '12px', fontWeight: 700, color: 'var(--text-inverse)',
                     background: 'var(--btn-primary-bg)',
-                    border: 'none', padding: '8px 18px', borderRadius: '4px', cursor: 'pointer',
+                    border: 'none', padding: '8px 18px', borderRadius: '6px', cursor: 'pointer',
                   }}
                 >
                   + Novo Lead

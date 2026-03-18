@@ -16,7 +16,7 @@ const inputStyle: React.CSSProperties = {
   color: T.text,
   width: '100%',
   height: '44px',
-  borderRadius: '4px',
+  borderRadius: '6px',
   padding: '0 16px',
   fontSize: '14px',
   outline: 'none',
@@ -26,7 +26,7 @@ const inputStyle: React.CSSProperties = {
 const cardStyle: React.CSSProperties = {
   background: T.surface,
   border: `1px solid ${T.border}`,
-  borderRadius: '4px',
+  borderRadius: '6px',
   padding: '24px',
   boxShadow: 'var(--shadow-xs)',
 }
@@ -297,7 +297,7 @@ export default function NovaConstrutora() {
             placeholder="Informações adicionais sobre a construtora..."
             style={{
               background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
-              width: '100%', borderRadius: '4px', padding: '12px 16px', fontSize: '14px',
+              width: '100%', borderRadius: '6px', padding: '12px 16px', fontSize: '14px',
               outline: 'none', resize: 'vertical',
               transition: T.transition.fast,
             }} />

@@ -27,7 +27,7 @@ function ToggleSwitch({ enabled, onChange }: { enabled: boolean; onChange: (v: b
     <button
       onClick={() => onChange(!enabled)}
       style={{
-        width: 44, height: 24, borderRadius: 4, border: 'none', cursor: 'pointer',
+        width: 44, height: 24, borderRadius: 6, border: 'none', cursor: 'pointer',
         background: enabled ? 'var(--bo-accent,var(--imi-gold-500))' : 'var(--bo-border,#2a3a4a)',
         position: 'relative', transition: 'background 200ms', flexShrink: 0,
       }}
@@ -51,7 +51,7 @@ function CategoryBadge({ category }: { category: string }) {
     <span style={{
       display: 'inline-block',
       padding: '2px 10px',
-      borderRadius: 4,
+      borderRadius: 6,
       fontSize: 11,
       fontWeight: 600,
       letterSpacing: '0.04em',
@@ -324,7 +324,7 @@ function WidgetCard({
           letterSpacing: '0.06em',
           background: 'var(--bo-bg,#0f1923)',
           border: '1px solid var(--bo-border)',
-          borderRadius: 4,
+          borderRadius: 6,
           padding: '2px 9px',
         }}>
           #{index + 1}

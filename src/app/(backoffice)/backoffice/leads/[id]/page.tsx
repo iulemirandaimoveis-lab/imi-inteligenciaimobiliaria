@@ -70,12 +70,12 @@ const TIMELINE_ICONS: Record<string, React.ElementType> = {
 function LoadingSkeleton() {
   return (
     <div className="max-w-2xl mx-auto pb-24 space-y-4 animate-pulse">
-      <div style={{ height: 36, background: 'var(--bg-surface)', borderRadius: 4, width: '40%', opacity: 0.5 }} />
-      <div style={{ height: 180, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.4 }} />
-      <div style={{ height: 80, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.35 }} />
-      <div style={{ height: 120, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.3 }} />
+      <div style={{ height: 36, background: 'var(--bg-surface)', borderRadius: 6, width: '40%', opacity: 0.5 }} />
+      <div style={{ height: 180, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.4 }} />
+      <div style={{ height: 80, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.35 }} />
+      <div style={{ height: 120, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.3 }} />
       {[0,1,2].map(i => (
-        <div key={i} style={{ height: 80, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.25 - i * 0.05 }} />
+        <div key={i} style={{ height: 80, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.25 - i * 0.05 }} />
       ))}
     </div>
   )
@@ -229,7 +229,7 @@ export default function LeadDetailPage() {
             <button
               onClick={() => router.push(`/backoffice/leads/${id}/editar`)}
               style={{
-                width: '36px', height: '36px', borderRadius: '4px',
+                width: '36px', height: '36px', borderRadius: '6px',
                 background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 cursor: 'pointer',
@@ -242,7 +242,7 @@ export default function LeadDetailPage() {
             <button
               onClick={() => setStatusMenuOpen(p => !p)}
               style={{
-                width: '36px', height: '36px', borderRadius: '4px',
+                width: '36px', height: '36px', borderRadius: '6px',
                 background: statusMenuOpen ? 'var(--bg-elevated)' : 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -267,7 +267,7 @@ export default function LeadDetailPage() {
                   style={{
                     position: 'absolute', right: 0, top: '40px', zIndex: 50,
                     background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
-                    borderRadius: '4px', padding: '8px', width: '180px',
+                    borderRadius: '6px', padding: '8px', width: '180px',
                     boxShadow: 'var(--shadow-lg)',
                   }}
                 >
@@ -285,7 +285,7 @@ export default function LeadDetailPage() {
                       onClick={() => changeStatus(s.key)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        width: '100%', padding: '8px', borderRadius: '4px',
+                        width: '100%', padding: '8px', borderRadius: '6px',
                         background: leadStatus === s.key ? 'var(--bg-hover)' : 'transparent',
                         border: 'none', cursor: 'pointer', fontSize: '13px',
                         fontWeight: leadStatus === s.key ? 700 : 500,
@@ -316,7 +316,7 @@ export default function LeadDetailPage() {
                       onClick={() => changeStatus(s.key)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        width: '100%', padding: '8px', borderRadius: '4px',
+                        width: '100%', padding: '8px', borderRadius: '6px',
                         background: leadStatus === s.key ? 'var(--bg-hover)' : 'transparent',
                         border: 'none', cursor: 'pointer', fontSize: '13px',
                         fontWeight: leadStatus === s.key ? 700 : 500,
@@ -344,7 +344,7 @@ export default function LeadDetailPage() {
         style={{
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-default)',
-          borderRadius: '4px',
+          borderRadius: '6px',
           padding: '20px',
           position: 'relative',
           overflow: 'hidden',
@@ -365,7 +365,7 @@ export default function LeadDetailPage() {
         {/* Avatar + Info + AI Score */}
         <div className="flex items-start gap-4 mb-5" style={{ position: 'relative' }}>
           <div style={{
-            width: '56px', height: '56px', borderRadius: '4px',
+            width: '56px', height: '56px', borderRadius: '6px',
             background: avatarBg,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '18px', fontWeight: 700, color: 'rgba(255,255,255,0.92)',
@@ -394,7 +394,7 @@ export default function LeadDetailPage() {
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               background: 'var(--bg-elevated)',
               border: '1px solid rgba(184,148,58,0.25)',
-              borderRadius: '4px', padding: '12px',
+              borderRadius: '6px', padding: '12px',
               flexShrink: 0,
             }}
           >
@@ -413,7 +413,7 @@ export default function LeadDetailPage() {
             href={`tel:${lead.phone}`}
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              height: '44px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,
+              height: '44px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
               color: 'var(--text-primary)', background: 'var(--bg-elevated)',
               border: '1px solid var(--border-default)', textDecoration: 'none',
             }}
@@ -425,7 +425,7 @@ export default function LeadDetailPage() {
             target="_blank" rel="noopener noreferrer"
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              height: '44px', borderRadius: '4px', fontSize: '12px', fontWeight: 700,
+              height: '44px', borderRadius: '6px', fontSize: '12px', fontWeight: 700,
               color: 'var(--text-inverse)', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
               border: 'none', textDecoration: 'none',
             }}
@@ -436,7 +436,7 @@ export default function LeadDetailPage() {
             onClick={() => router.push(`/backoffice/hoje?lead_id=${id}&action=agendar`)}
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              height: '44px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,
+              height: '44px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
               color: 'var(--text-primary)', background: 'var(--bg-elevated)',
               border: '1px solid var(--border-default)', cursor: 'pointer',
             }}
@@ -492,7 +492,7 @@ export default function LeadDetailPage() {
                 style={{
                   fontSize: '11px', fontWeight: 600,
                   color: 'var(--text-secondary)', background: 'var(--bg-elevated)',
-                  border: '1px solid var(--border-default)', padding: '2px 8px', borderRadius: '4px',
+                  border: '1px solid var(--border-default)', padding: '2px 8px', borderRadius: '6px',
                 }}
               >
                 {tag}
@@ -550,23 +550,23 @@ export default function LeadDetailPage() {
                       fontSize: '11px', fontWeight: 700,
                       color: aiAnalysis.urgency === 'alta' ? 'var(--error)' : aiAnalysis.urgency === 'media' ? 'var(--warning)' : 'var(--text-secondary)',
                       background: aiAnalysis.urgency === 'alta' ? 'var(--error-bg)' : aiAnalysis.urgency === 'media' ? 'var(--warning-bg)' : 'var(--bg-elevated)',
-                      padding: '2px 8px', borderRadius: '4px',
+                      padding: '2px 8px', borderRadius: '6px',
                     }}>
                       Urgência {aiAnalysis.urgency}
                     </span>
                   )}
                   {aiAnalysis.approach && (
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-gold-500)', background: 'var(--info-bg)', padding: '2px 8px', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-gold-500)', background: 'var(--info-bg)', padding: '2px 8px', borderRadius: '6px' }}>
                       via {aiAnalysis.approach}
                     </span>
                   )}
                   {aiAnalysis.estimatedTimeline && (
-                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)', padding: '2px 8px', background: 'var(--bg-subtle)', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)', padding: '2px 8px', background: 'var(--bg-subtle)', borderRadius: '6px' }}>
                       ⏱ {aiAnalysis.estimatedTimeline}
                     </span>
                   )}
                   {aiAnalysis.keyRisk && (
-                    <span style={{ fontSize: '11px', color: 'var(--warning)', padding: '2px 8px', background: 'var(--warning-bg)', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--warning)', padding: '2px 8px', background: 'var(--warning-bg)', borderRadius: '6px' }}>
                       ⚠ {aiAnalysis.keyRisk}
                     </span>
                   )}
@@ -582,7 +582,7 @@ export default function LeadDetailPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.16 }}
-        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '4px', overflow: 'hidden' }}
+        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', overflow: 'hidden' }}
       >
         {/* Tab header */}
         <div className="flex" style={{ borderBottom: '1px solid var(--border-default)' }}>
@@ -661,7 +661,7 @@ export default function LeadDetailPage() {
                             flex: 1,
                             background: 'var(--bg-subtle)',
                             border: '1px solid var(--border-default)',
-                            borderRadius: '4px',
+                            borderRadius: '6px',
                             padding: '12px',
                             opacity: i > 0 ? 0.75 : 1,
                           }}
@@ -722,7 +722,7 @@ export default function LeadDetailPage() {
                 <div
                   style={{
                     background: 'var(--bg-subtle)', border: '1px solid var(--border-default)',
-                    borderRadius: '4px', padding: '12px', marginBottom: '12px',
+                    borderRadius: '6px', padding: '12px', marginBottom: '12px',
                   }}
                 >
                   <p style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
@@ -733,7 +733,7 @@ export default function LeadDetailPage() {
                 <div
                   style={{
                     background: 'var(--bg-subtle)', border: '1px solid var(--border-default)',
-                    borderRadius: '4px', padding: '20px', textAlign: 'center', marginBottom: '12px',
+                    borderRadius: '6px', padding: '20px', textAlign: 'center', marginBottom: '12px',
                   }}
                 >
                   <FileText size={20} style={{ color: 'var(--text-secondary)', opacity: 0.2, margin: '0 auto 8px' }} />
@@ -750,7 +750,7 @@ export default function LeadDetailPage() {
                   style={{
                     flex: 1, height: '44px', padding: '0 16px',
                     fontSize: '13px', background: 'var(--bg-elevated)',
-                    border: '1px solid var(--border-default)', borderRadius: '4px',
+                    border: '1px solid var(--border-default)', borderRadius: '6px',
                     color: 'var(--text-primary)', outline: 'none',
                   }}
                 />
@@ -768,7 +768,7 @@ export default function LeadDetailPage() {
                     } catch { /* silent */ }
                   }}
                   style={{
-                    width: '44px', height: '44px', borderRadius: '4px',
+                    width: '44px', height: '44px', borderRadius: '6px',
                     background: note.trim() ? 'var(--bo-accent)' : 'var(--bg-elevated)',
                     border: 'none', cursor: note.trim() ? 'pointer' : 'default',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -826,13 +826,13 @@ export default function LeadDetailPage() {
                   key={m.id}
                   style={{
                     display: 'flex', alignItems: 'flex-start', gap: '12px',
-                    padding: '12px', borderRadius: '4px', marginBottom: '8px',
+                    padding: '12px', borderRadius: '6px', marginBottom: '8px',
                     background: i === 0 ? 'rgba(184,148,58,0.07)' : 'rgba(255,255,255,0.03)',
                     border: `1px solid ${i === 0 ? 'rgba(184,148,58,0.2)' : 'var(--border-default)'}`,
                   }}
                 >
                   <div style={{
-                    minWidth: '40px', height: '40px', borderRadius: '4px',
+                    minWidth: '40px', height: '40px', borderRadius: '6px',
                     background: i === 0 ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.05)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
@@ -843,7 +843,7 @@ export default function LeadDetailPage() {
                       <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{m.name}</span>
                       <span style={{
                         fontSize: '11px', fontWeight: 700, padding: '2px 8px',
-                        borderRadius: '4px',
+                        borderRadius: '6px',
                         background: m.match_score >= 80 ? 'var(--success-bg)' : m.match_score >= 60 ? 'var(--warning-bg)' : 'var(--bg-hover)',
                         color: m.match_score >= 80 ? 'var(--success)' : m.match_score >= 60 ? 'var(--warning)' : 'var(--text-secondary)',
                       }}>
@@ -865,7 +865,7 @@ export default function LeadDetailPage() {
                     style={{
                       fontSize: '11px', color: 'var(--text-secondary)',
                       textDecoration: 'none', whiteSpace: 'nowrap',
-                      padding: '4px 8px', borderRadius: '4px',
+                      padding: '4px 8px', borderRadius: '6px',
                       background: 'var(--bg-elevated)',
                     }}
                   >

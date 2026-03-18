@@ -729,7 +729,7 @@ export default function NovaPropostaPage() {
           return (
             <div key={s.id} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
               <div style={{
-                width: '100%', height: 4, borderRadius: 4,
+                width: '100%', height: 4, borderRadius: 6,
                 background: done || active ? T.accent : T.border,
                 opacity: done ? 0.6 : 1,
                 transition: T.transition.normal,

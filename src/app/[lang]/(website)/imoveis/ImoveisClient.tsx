@@ -105,7 +105,7 @@ function PropertyCard({ dev, lang }: { dev: Development; lang: string }) {
                     position: 'absolute', top: 12, left: 12,
                     background: badge.bg, color: badge.color,
                     fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-                    padding: '3px 10px', borderRadius: 4, textTransform: 'uppercase',
+                    padding: '3px 10px', borderRadius: 6, textTransform: 'uppercase',
                 }}>
                     {label}
                 </span>
@@ -129,7 +129,7 @@ function PropertyCard({ dev, lang }: { dev: Development; lang: string }) {
                 <div style={{
                     position: 'absolute', bottom: 12, left: 12,
                     background: 'rgba(11,25,40,0.75)', backdropFilter: 'blur(8px)',
-                    borderRadius: 4, padding: '4px 12px',
+                    borderRadius: 6, padding: '4px 12px',
                     border: `1px solid rgba(200,164,74,0.3)`,
                 }}>
                     <span style={{ color: GOLD, fontSize: 15, fontWeight: 700 }}>{price}</span>
@@ -178,7 +178,7 @@ function PropertyCard({ dev, lang }: { dev: Development; lang: string }) {
                     style={{
                         marginTop: 4,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        height: 38, borderRadius: 4,
+                        height: 38, borderRadius: 6,
                         border: `1.5px solid ${GOLD}`,
                         color: GOLD, fontSize: 12, fontWeight: 700, letterSpacing: '0.06em',
                         textDecoration: 'none', transition: 'all 0.2s',
@@ -225,7 +225,7 @@ function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; la
                     <p style={{ color: TEXT, fontSize: 12, fontWeight: 700, lineHeight: 1.3, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>
                         {dev.name}
                     </p>
-                    <span style={{ flexShrink: 0, fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: badge.bg, color: badge.color, textTransform: 'uppercase' }}>
+                    <span style={{ flexShrink: 0, fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 6, background: badge.bg, color: badge.color, textTransform: 'uppercase' }}>
                         {label}
                     </span>
                 </div>
@@ -447,7 +447,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     </p>
                     <button
                         onClick={() => handleCTAClick('off-market')}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 44, padding: '0 24px', borderRadius: 4, background: GOLD_BG, border: `1.5px solid ${GOLD}`, color: GOLD, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 44, padding: '0 24px', borderRadius: 6, background: GOLD_BG, border: `1.5px solid ${GOLD}`, color: GOLD, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
                     >
                         <MessageCircle size={16} /> Consultar Off-Market
                     </button>
@@ -477,7 +477,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     key={chip.key}
                     onClick={() => setShowMobileFilters(true)}
                     style={{
-                        flexShrink: 0, height: 34, padding: '0 14px', borderRadius: 4,
+                        flexShrink: 0, height: 34, padding: '0 14px', borderRadius: 6,
                         background: chip.active ? GOLD : 'transparent',
                         border: `1.5px solid ${chip.active ? GOLD : 'rgba(200,164,74,0.3)'}`,
                         color: chip.active ? '#0B1928' : TEXT_MUTED,
@@ -531,7 +531,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     onClick={() => setViewMode(v => v === 'map' ? 'grid' : 'map')}
                     style={{
                         display: 'flex', alignItems: 'center', gap: 6,
-                        height: 34, padding: '0 14px', borderRadius: 4,
+                        height: 34, padding: '0 14px', borderRadius: 6,
                         background: viewMode === 'map' ? GOLD_BG : 'transparent',
                         border: `1.5px solid ${viewMode === 'map' ? GOLD : 'rgba(200,164,74,0.25)'}`,
                         color: viewMode === 'map' ? GOLD : TEXT_MUTED, fontSize: 13, fontWeight: 600, cursor: 'pointer',
@@ -578,7 +578,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         <div style={{ fontSize: 36, marginBottom: 12, opacity: 0.3 }}>🔍</div>
                         <p style={{ marginBottom: 16 }}>Nenhum imóvel encontrado</p>
                         <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                            style={{ padding: '8px 20px', borderRadius: 4, border: `1.5px solid ${GOLD}`, background: 'transparent', color: GOLD, fontSize: 13, cursor: 'pointer' }}>
+                            style={{ padding: '8px 20px', borderRadius: 6, border: `1.5px solid ${GOLD}`, background: 'transparent', color: GOLD, fontSize: 13, cursor: 'pointer' }}>
                             Limpar filtros
                         </button>
                     </div>
@@ -629,7 +629,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     placeholder="Nome, bairro, cidade…"
                                     value={filters.search}
                                     onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                                    style={{ width: '100%', background: BG, border: `1.5px solid ${BORDER}`, borderRadius: 4, padding: '10px 14px', color: TEXT, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+                                    style={{ width: '100%', background: BG, border: `1.5px solid ${BORDER}`, borderRadius: 6, padding: '10px 14px', color: TEXT, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
                                 />
                             </FilterSection>
 
@@ -639,7 +639,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     {[null, 1, 2, 3, 4].map(n => (
                                         <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: n }))}
                                             style={{
-                                                flex: 1, height: 36, borderRadius: 4,
+                                                flex: 1, height: 36, borderRadius: 6,
                                                 background: filters.bedrooms === n ? GOLD : BG,
                                                 border: `1.5px solid ${filters.bedrooms === n ? GOLD : BORDER}`,
                                                 color: filters.bedrooms === n ? '#0B1928' : TEXT_MUTED,
@@ -660,7 +660,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                         return (
                                             <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
                                                 style={{
-                                                    height: 34, padding: '0 14px', borderRadius: 4,
+                                                    height: 34, padding: '0 14px', borderRadius: 6,
                                                     background: active ? GOLD_BG : BG,
                                                     border: `1.5px solid ${active ? GOLD : BORDER}`,
                                                     color: active ? GOLD : TEXT_MUTED,
@@ -677,14 +677,14 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <FilterSection label="Localização">
                                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                                     <button onClick={() => setFilters(f => ({ ...f, location: null, neighborhood: null }))}
-                                        style={{ height: 34, padding: '0 14px', borderRadius: 4, background: !filters.location ? GOLD_BG : BG, border: `1.5px solid ${!filters.location ? GOLD : BORDER}`, color: !filters.location ? GOLD : TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                        style={{ height: 34, padding: '0 14px', borderRadius: 6, background: !filters.location ? GOLD_BG : BG, border: `1.5px solid ${!filters.location ? GOLD : BORDER}`, color: !filters.location ? GOLD : TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
                                         Todas
                                     </button>
                                     {availableLocations.map(loc => {
                                         const active = filters.location === loc;
                                         return (
                                             <button key={loc} onClick={() => setFilters(f => ({ ...f, location: active ? null : loc, neighborhood: null }))}
-                                                style={{ height: 34, padding: '0 14px', borderRadius: 4, background: active ? GOLD_BG : BG, border: `1.5px solid ${active ? GOLD : BORDER}`, color: active ? GOLD : TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                                style={{ height: 34, padding: '0 14px', borderRadius: 6, background: active ? GOLD_BG : BG, border: `1.5px solid ${active ? GOLD : BORDER}`, color: active ? GOLD : TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
                                                 {loc}
                                             </button>
                                         );
@@ -695,11 +695,11 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             {/* Actions */}
                             <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
                                 <button onClick={() => { setFilters(DEFAULT_FILTERS); setShowMobileFilters(false); }}
-                                    style={{ flex: 1, height: 44, borderRadius: 4, border: `1.5px solid ${BORDER}`, background: BG, color: TEXT_MUTED, fontSize: 14, cursor: 'pointer' }}>
+                                    style={{ flex: 1, height: 44, borderRadius: 6, border: `1.5px solid ${BORDER}`, background: BG, color: TEXT_MUTED, fontSize: 14, cursor: 'pointer' }}>
                                     Limpar
                                 </button>
                                 <button onClick={() => setShowMobileFilters(false)}
-                                    style={{ flex: 2, height: 44, borderRadius: 4, border: 'none', background: GOLD, color: '#0B1928', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                                    style={{ flex: 2, height: 44, borderRadius: 6, border: 'none', background: GOLD, color: '#0B1928', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
                                     Ver {filteredDevelopments.length} imóveis
                                 </button>
                             </div>
@@ -749,7 +749,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         )}
                         <button
                             onClick={() => {/* already filtering live */ }}
-                            style={{ height: 36, padding: '0 18px', borderRadius: 4, background: GOLD, border: 'none', color: '#0B1928', fontSize: 13, fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}>
+                            style={{ height: 36, padding: '0 18px', borderRadius: 6, background: GOLD, border: 'none', color: '#0B1928', fontSize: 13, fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}>
                             Buscar
                         </button>
                     </div>
@@ -768,7 +768,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         <button key={chip.label}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: 6,
-                                height: 36, padding: '0 14px', borderRadius: 4,
+                                height: 36, padding: '0 14px', borderRadius: 6,
                                 background: chip.active ? GOLD_BG : 'transparent',
                                 border: `1.5px solid ${chip.active ? GOLD : 'rgba(200,164,74,0.3)'}`,
                                 color: chip.active ? GOLD : TEXT_MUTED,
@@ -779,7 +779,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     ))}
                     {activeFilterCount > 0 && (
                         <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                            style={{ height: 36, padding: '0 14px', borderRadius: 4, border: 'none', background: 'none', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}>
+                            style={{ height: 36, padding: '0 14px', borderRadius: 6, border: 'none', background: 'none', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}>
                             Limpar filtros
                         </button>
                     )}
@@ -792,7 +792,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <strong>{filteredDevelopments.length}</strong> imóveis encontrados
                         </span>
                         {activeFilterCount > 0 && (
-                            <span style={{ fontSize: 12, color: GOLD, background: GOLD_BG, border: `1px solid rgba(200,164,74,0.3)`, borderRadius: 4, padding: '2px 10px' }}>
+                            <span style={{ fontSize: 12, color: GOLD, background: GOLD_BG, border: `1px solid rgba(200,164,74,0.3)`, borderRadius: 6, padding: '2px 10px' }}>
                                 {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''} ativo{activeFilterCount !== 1 ? 's' : ''}
                             </span>
                         )}
@@ -802,14 +802,14 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         <select
                             value={filters.sort}
                             onChange={e => setFilters(f => ({ ...f, sort: e.target.value as FilterState['sort'] }))}
-                            style={{ background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 4, padding: '6px 12px', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer', outline: 'none' }}>
+                            style={{ background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 6, padding: '6px 12px', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer', outline: 'none' }}>
                             <option value="relevant">Ordenar por: Relevância</option>
                             <option value="newest">Mais Recentes</option>
                             <option value="price-asc">Menor Preço</option>
                             <option value="price-desc">Maior Preço</option>
                         </select>
                         {/* View toggle */}
-                        <div style={{ display: 'flex', gap: 4, background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 4, padding: 4 }}>
+                        <div style={{ display: 'flex', gap: 4, background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 6, padding: 4 }}>
                             {([['grid', Grid3X3], ['map', Map]] as const).map(([mode, Icon]) => (
                                 <button key={mode}
                                     onClick={() => { setViewMode(mode); if (mode === 'map') setSelectedId(null); }}
@@ -847,7 +847,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     <span style={{ fontSize: 40, opacity: 0.2 }}>🗺️</span>
                                     <p style={{ margin: 0, fontSize: 14 }}>Nenhum resultado com esses filtros</p>
                                     <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                                        style={{ padding: '8px 20px', borderRadius: 4, border: `1.5px solid ${BORDER}`, background: 'transparent', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                        style={{ padding: '8px 20px', borderRadius: 6, border: `1.5px solid ${BORDER}`, background: 'transparent', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
                                         Limpar filtros
                                     </button>
                                 </div>
@@ -885,7 +885,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 <h3 style={{ color: TEXT, fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Nenhum ativo encontrado</h3>
                                 <p style={{ color: TEXT_MUTED, marginBottom: 20 }}>Tente remover alguns filtros.</p>
                                 <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                                    style={{ padding: '10px 24px', borderRadius: 4, border: `1.5px solid ${GOLD}`, background: 'transparent', color: GOLD, fontSize: 14, cursor: 'pointer' }}>
+                                    style={{ padding: '10px 24px', borderRadius: 6, border: `1.5px solid ${GOLD}`, background: 'transparent', color: GOLD, fontSize: 14, cursor: 'pointer' }}>
                                     Limpar filtros
                                 </button>
                             </div>
@@ -904,7 +904,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     onClick={() => setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, filteredDevelopments.length))}
                                     style={{
                                         display: 'flex', alignItems: 'center', gap: 8,
-                                        height: 44, padding: '0 28px', borderRadius: 4,
+                                        height: 44, padding: '0 28px', borderRadius: 6,
                                         border: `1.5px solid ${BORDER}`, background: 'transparent',
                                         color: TEXT_MUTED, fontSize: 14, fontWeight: 600, cursor: 'pointer',
                                     }}>
@@ -927,7 +927,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     </p>
                     <button
                         onClick={() => handleCTAClick('general')}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 46, padding: '0 28px', borderRadius: 4, background: GOLD_BG, border: `1.5px solid ${GOLD}`, color: GOLD, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 46, padding: '0 28px', borderRadius: 6, background: GOLD_BG, border: `1.5px solid ${GOLD}`, color: GOLD, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
                         <MessageCircle size={16} /> Iniciar Consultoria
                     </button>
                 </div>

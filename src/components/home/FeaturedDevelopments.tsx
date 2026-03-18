@@ -226,7 +226,7 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
                     <div className="sm:hidden mt-6 text-center">
                         <Link
                             href={`/${lang}/imoveis`}
-                            className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 text-white" style={{ borderRadius: 4, background: 'var(--imi-navy-700)', fontFamily: 'var(--font-sans)' }}
+                            className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 text-white" style={{ borderRadius: 6, background: 'var(--imi-navy-700)', fontFamily: 'var(--font-sans)' }}
                             >
                             Ver portfólio completo <ArrowRight size={14} />
                         </Link>

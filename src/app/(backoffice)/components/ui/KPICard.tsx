@@ -65,7 +65,7 @@ export function KPICard({
         background: 'var(--surface-raised, var(--bg-surface))',
         border: '1px solid var(--surface-border, var(--border-subtle))',
         borderTop: `3px solid ${a.border}`,
-        borderRadius: '4px',
+        borderRadius: '6px',
         boxShadow: 'var(--shadow-card, var(--shadow-xs))',
         transition: 'background 200ms ease, box-shadow 200ms ease, transform 200ms ease',
         position: 'relative',

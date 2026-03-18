@@ -155,7 +155,7 @@ const CARD: React.CSSProperties = {
 const BTN_PRIMARY: React.CSSProperties = {
   background: 'var(--gold, var(--imi-gold-500))',
   color: 'var(--navy, #0B1120)',
-  borderRadius: '4px',
+  borderRadius: '6px',
   letterSpacing: '1.8px',
   textTransform: 'uppercase',
   fontWeight: 700,
@@ -174,7 +174,7 @@ const BTN_SECONDARY: React.CSSProperties = {
   background: 'transparent',
   border: '1px solid rgba(184,148,58,0.25)',
   color: 'var(--gold, var(--imi-gold-500))',
-  borderRadius: '4px',
+  borderRadius: '6px',
   letterSpacing: '1.8px',
   textTransform: 'uppercase',
   fontWeight: 700,
@@ -906,6 +906,11 @@ function DesktopImovelDetail({
   const [statusOpen, setStatusOpen] = useState(false)
   const [localStatus, setLocalStatus] = useState(() => normalizeStatus(dev?.status_commercial ?? dev?.status))
 
+  // Sync localStatus when dev data loads (dev is null at mount)
+  useEffect(() => {
+    if (dev) setLocalStatus(normalizeStatus(dev.status_commercial ?? dev.status))
+  }, [dev])
+
   if (loading) {
     return (
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
@@ -1130,7 +1135,7 @@ function DesktopImovelDetail({
                 <div style={{
                   position: 'absolute', top: 14, right: 14,
                   background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(184,148,58,0.2)',
-                  borderRadius: 4, padding: '4px 10px',
+                  borderRadius: 6, padding: '4px 10px',
                   ...MONO, fontSize: 11, color: 'rgba(235,231,224,0.8)',
                 }}>
                   {galleryIdx + 1} / {images.length}
@@ -1257,7 +1262,7 @@ function DesktopImovelDetail({
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {[...(dev.features ?? []), ...(dev.amenities ?? [])].map((item, i) => (
                       <span key={i} style={{
-                        padding: '5px 12px', borderRadius: 4,
+                        padding: '5px 12px', borderRadius: 6,
                         background: 'rgba(184,148,58,0.08)',
                         border: '1px solid rgba(184,148,58,0.18)',
                         color: T.textMuted, fontSize: 12,

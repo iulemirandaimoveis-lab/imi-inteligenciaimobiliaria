@@ -102,10 +102,10 @@ export default function IASettingsPage() {
         </div>
         <span style={{ fontSize: '15px', fontWeight: 800, color }}>{value}%</span>
       </div>
-      <div style={{ position: 'relative', height: '8px', borderRadius: '4px', background: T.elevated, overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '4px', background: `${color}30` }} />
+      <div style={{ position: 'relative', height: '8px', borderRadius: '6px', background: T.elevated, overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, borderRadius: '6px', background: `${color}30` }} />
         <motion.div
-          style={{ height: '100%', borderRadius: '4px', background: color, width: `${value}%` }}
+          style={{ height: '100%', borderRadius: '6px', background: color, width: `${value}%` }}
           transition={{ duration: 0.3 }}
         />
         <input
@@ -197,7 +197,7 @@ export default function IASettingsPage() {
                 Lead Scoring Logic
               </span>
             </div>
-            <button style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer' }}>
+            <button style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer' }}>
               <Info size={13} color={T.textMuted} />
             </button>
           </div>
@@ -294,14 +294,14 @@ export default function IASettingsPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <button
                   onClick={() => setRules(r => ({ ...r, minScoreThreshold: Math.max(0, r.minScoreThreshold - 5) }))}
-                  style={{ width: '28px', height: '28px', borderRadius: '4px', background: T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
+                  style={{ width: '28px', height: '28px', borderRadius: '6px', background: T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
                 >
                   −
                 </button>
                 <span style={{ fontSize: '16px', fontWeight: 800, color: '#3B82F6', minWidth: '36px', textAlign: 'center' }}>{rules.minScoreThreshold}</span>
                 <button
                   onClick={() => setRules(r => ({ ...r, minScoreThreshold: Math.min(100, r.minScoreThreshold + 5) }))}
-                  style={{ width: '28px', height: '28px', borderRadius: '4px', background: T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
+                  style={{ width: '28px', height: '28px', borderRadius: '6px', background: T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
                 >
                   +
                 </button>

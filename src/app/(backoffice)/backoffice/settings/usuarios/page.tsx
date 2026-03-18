@@ -5,63 +5,145 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit, MoreVertical,
+  X, Loader2, UserX,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
+import { toast } from 'sonner'
 
 export const dynamic = 'force-dynamic'
 
+interface UserRow {
+  id: string
+  name: string
+  email: string
+  phone: string
+  role: string
+  avatar: string
+  status: string
+  ultimoAcesso: string
+  criadoEm: string
+}
+
+interface EditModal {
+  open: boolean
+  user: UserRow | null
+  name: string
+  role: string
+  saving: boolean
+}
+
+interface DeactivateModal {
+  open: boolean
+  user: UserRow | null
+  saving: boolean
+}
+
 export default function UsuariosPage() {
   const router = useRouter()
-  const [usuariosData, setUsuariosData] = useState<any[]>([])
+  const [usuariosData, setUsuariosData] = useState<UserRow[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
 
-  useEffect(() => {
-    async function loadUsers() {
-      try {
-        // Use the API route which tries profiles then falls back to users
-        const res = await fetch('/api/backoffice/users')
-        if (res.ok) {
-          const json = await res.json()
-          const users = json.users || []
-          const formatted = users.map((u: any) => ({
-            id: u.id,
-            name: u.name || 'Sem nome',
-            email: u.email,
-            phone: u.phone || '',
+  const [editModal, setEditModal] = useState<EditModal>({
+    open: false, user: null, name: '', role: '', saving: false,
+  })
+  const [deactivateModal, setDeactivateModal] = useState<DeactivateModal>({
+    open: false, user: null, saving: false,
+  })
+
+  async function loadUsers() {
+    try {
+      const res = await fetch('/api/backoffice/users')
+      if (res.ok) {
+        const json = await res.json()
+        const users = json.users || []
+        const formatted = users.map((u: any) => ({
+          id: u.id,
+          name: u.name || 'Sem nome',
+          email: u.email,
+          phone: u.phone || '',
+          role: (u.role || 'ADMIN').toUpperCase(),
+          avatar: (u.name || u.email || 'U').substring(0, 2).toUpperCase(),
+          status: u.is_active === false || u.active === false ? 'inativo' : 'ativo',
+          ultimoAcesso: u.updated_at || u.updatedAt || u.created_at || u.createdAt,
+          criadoEm: u.created_at || u.createdAt,
+        }))
+        setUsuariosData(formatted)
+      } else {
+        const supabase = createClient()
+        const { data } = await supabase.from('users').select('*').order('createdAt', { ascending: false })
+        if (data) {
+          setUsuariosData(data.map((u: any) => ({
+            id: u.id, name: u.name || 'Sem nome', email: u.email, phone: u.phone || '',
             role: (u.role || 'ADMIN').toUpperCase(),
             avatar: (u.name || u.email || 'U').substring(0, 2).toUpperCase(),
-            status: u.is_active === false || u.active === false ? 'inativo' : 'ativo',
-            ultimoAcesso: u.updated_at || u.updatedAt || u.created_at || u.createdAt,
-            criadoEm: u.created_at || u.createdAt,
-          }))
-          setUsuariosData(formatted)
-        } else {
-          // Fallback: direct query
-          const supabase = createClient()
-          const { data } = await supabase.from('users').select('*').order('createdAt', { ascending: false })
-          if (data) {
-            setUsuariosData(data.map((u: any) => ({
-              id: u.id, name: u.name || 'Sem nome', email: u.email, phone: u.phone || '',
-              role: (u.role || 'ADMIN').toUpperCase(),
-              avatar: (u.name || u.email || 'U').substring(0, 2).toUpperCase(),
-              status: u.active === false ? 'inativo' : 'ativo',
-              ultimoAcesso: u.updatedAt || u.createdAt, criadoEm: u.createdAt,
-            })))
-          }
+            status: u.active === false ? 'inativo' : 'ativo',
+            ultimoAcesso: u.updatedAt || u.createdAt, criadoEm: u.createdAt,
+          })))
         }
-      } catch (err) {
-        console.error('Error loading users:', err)
       }
-      setLoading(false)
+    } catch (err) {
+      console.error('Error loading users:', err)
     }
-    loadUsers()
-  }, [])
+    setLoading(false)
+  }
+
+  useEffect(() => { loadUsers() }, [])
+
+  // ── Edit handlers ─────────────────────────────────────────────
+  function openEdit(user: UserRow) {
+    setEditModal({ open: true, user, name: user.name, role: user.role, saving: false })
+  }
+
+  async function handleSaveEdit() {
+    if (!editModal.user) return
+    setEditModal(m => ({ ...m, saving: true }))
+    try {
+      const res = await fetch('/api/backoffice/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: editModal.user.id, name: editModal.name, role: editModal.role }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao salvar')
+      toast.success('Usuário atualizado com sucesso')
+      setEditModal({ open: false, user: null, name: '', role: '', saving: false })
+      setLoading(true)
+      await loadUsers()
+    } catch (err: any) {
+      toast.error(err.message)
+      setEditModal(m => ({ ...m, saving: false }))
+    }
+  }
+
+  // ── Deactivate handlers ────────────────────────────────────────
+  function openDeactivate(user: UserRow) {
+    setDeactivateModal({ open: true, user, saving: false })
+  }
+
+  async function handleDeactivate() {
+    if (!deactivateModal.user) return
+    setDeactivateModal(m => ({ ...m, saving: true }))
+    try {
+      const res = await fetch(`/api/backoffice/users?id=${deactivateModal.user.id}`, {
+        method: 'DELETE',
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao desativar')
+      toast.success(`Usuário "${deactivateModal.user.name}" desativado`)
+      setDeactivateModal({ open: false, user: null, saving: false })
+      setLoading(true)
+      await loadUsers()
+    } catch (err: any) {
+      toast.error(err.message)
+      setDeactivateModal(m => ({ ...m, saving: false }))
+    }
+  }
 
   const filteredUsuarios = usuariosData.filter(user => {
     const matchesSearch =
@@ -106,9 +188,8 @@ export default function UsuariosPage() {
 
   const inputStyle: React.CSSProperties = {
     background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
-    height: '44px', borderRadius: '4px', padding: '0 12px', fontSize: '13px', outline: 'none',
+    height: '44px', borderRadius: '6px', padding: '0 12px', fontSize: '13px', outline: 'none',
   }
-
 
   return (
     <div className="space-y-5">
@@ -184,7 +265,6 @@ export default function UsuariosPage() {
         </div>
       ) : (
         <>
-
           {/* Lista */}
           <div className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
             {filteredUsuarios.length === 0 ? (
@@ -242,19 +322,29 @@ export default function UsuariosPage() {
 
                         {/* Actions */}
                         <div className="flex items-center gap-1 flex-shrink-0">
+                          {/* Editar */}
                           <button
-                            onClick={() => router.push(`/backoffice/settings/usuarios/${user.id}`)}
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
-                            style={{ background: 'transparent', border: `1px solid ${T.border}` }}
+                            onClick={() => openEdit(user)}
+                            title="Editar usuário"
+                            className="flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-medium transition-all hover:brightness-110"
+                            style={{ background: 'rgba(72,101,129,0.1)', border: `1px solid ${T.border}`, color: T.textMuted }}
                           >
-                            <Edit size={14} style={{ color: T.textMuted }} />
+                            <Edit size={13} />
+                            <span className="hidden sm:inline">Editar</span>
                           </button>
-                          <button
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
-                            style={{ background: 'transparent', border: `1px solid ${T.border}` }}
-                          >
-                            <MoreVertical size={14} style={{ color: T.textMuted }} />
-                          </button>
+
+                          {/* Desativar */}
+                          {user.status === 'ativo' && (
+                            <button
+                              onClick={() => openDeactivate(user)}
+                              title="Desativar usuário"
+                              className="flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-medium transition-all hover:brightness-110"
+                              style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.2)', color: 'var(--bo-error, #e57373)' }}
+                            >
+                              <UserX size={13} />
+                              <span className="hidden sm:inline">Desativar</span>
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -264,6 +354,126 @@ export default function UsuariosPage() {
             )}
           </div>
         </>
+      )}
+
+      {/* ── Edit Modal ────────────────────────────────────────────── */}
+      {editModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div
+            className="w-full max-w-md rounded-2xl p-6 space-y-5"
+            style={{ background: 'var(--bo-elevated, var(--bg-elevated))', border: `1px solid ${T.border}` }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-base" style={{ color: T.text }}>Editar Usuário</h2>
+              <button
+                onClick={() => setEditModal({ open: false, user: null, name: '', role: '', saving: false })}
+                className="w-8 h-8 rounded-xl flex items-center justify-center hover:opacity-70 transition-all"
+                style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            {/* Name */}
+            <div>
+              <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textMuted }}>Nome</label>
+              <input
+                type="text"
+                value={editModal.name}
+                onChange={e => setEditModal(m => ({ ...m, name: e.target.value }))}
+                className="w-full rounded-xl text-sm outline-none"
+                style={{ ...inputStyle, padding: '0 14px', borderRadius: '10px' }}
+              />
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textMuted }}>Nível de Acesso</label>
+              <select
+                value={editModal.role}
+                onChange={e => setEditModal(m => ({ ...m, role: e.target.value }))}
+                className="w-full rounded-xl text-sm outline-none"
+                style={{ ...inputStyle, padding: '0 14px', borderRadius: '10px' }}
+              >
+                <option value="ADMIN">Administrador</option>
+                <option value="GESTOR">Gestor</option>
+                <option value="CORRETOR">Corretor</option>
+                <option value="EDITOR">Editor</option>
+                <option value="AVALIADOR">Avaliador</option>
+                <option value="MARKETING">Marketing</option>
+              </select>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={() => setEditModal({ open: false, user: null, name: '', role: '', saving: false })}
+                disabled={editModal.saving}
+                className="flex-1 h-11 rounded-xl text-sm font-medium transition-all"
+                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={editModal.saving}
+                className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
+                style={{ background: 'var(--btn-primary-bg, var(--bo-accent))' }}
+              >
+                {editModal.saving && <Loader2 size={14} className="animate-spin" />}
+                {editModal.saving ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Deactivate Confirmation Modal ─────────────────────────── */}
+      {deactivateModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div
+            className="w-full max-w-sm rounded-2xl p-6 space-y-5"
+            style={{ background: 'var(--bo-elevated, var(--bg-elevated))', border: `1px solid ${T.border}` }}
+          >
+            {/* Icon + Title */}
+            <div className="flex flex-col items-center text-center gap-3">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                style={{ background: 'rgba(229,115,115,0.12)', border: '1px solid rgba(229,115,115,0.25)' }}
+              >
+                <UserX size={22} style={{ color: 'var(--bo-error, #e57373)' }} />
+              </div>
+              <div>
+                <h2 className="font-semibold text-base" style={{ color: T.text }}>Desativar Usuário</h2>
+                <p className="text-sm mt-1" style={{ color: T.textMuted }}>
+                  Tem certeza que deseja desativar <strong style={{ color: T.text }}>{deactivateModal.user?.name}</strong>?
+                  O acesso ao sistema será revogado.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeactivateModal({ open: false, user: null, saving: false })}
+                disabled={deactivateModal.saving}
+                className="flex-1 h-11 rounded-xl text-sm font-medium transition-all"
+                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeactivate}
+                disabled={deactivateModal.saving}
+                className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
+                style={{ background: '#e57373' }}
+              >
+                {deactivateModal.saving && <Loader2 size={14} className="animate-spin" />}
+                {deactivateModal.saving ? 'Desativando...' : 'Desativar'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

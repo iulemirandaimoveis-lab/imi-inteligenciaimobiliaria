@@ -50,7 +50,7 @@ function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, on
   return (
     <div ref={setNodeRef} style={style} className="relative group rounded-xl overflow-hidden"
       {...attributes}>
-      <div className="w-full h-28 relative" style={{ border: `1px solid ${T.border}`, borderRadius: 4, overflow: 'hidden' }}>
+      <div className="w-full h-28 relative" style={{ border: `1px solid ${T.border}`, borderRadius: 6, overflow: 'hidden' }}>
         <img src={url} alt="" className="w-full h-full object-cover" />
         {/* Drag handle */}
         <div {...listeners} className="absolute top-2 left-2 w-6 h-6 rounded-lg flex items-center justify-center cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
@@ -626,7 +626,7 @@ export default function EditarImovelPage() {
             style={{
               width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)',
-              borderRadius: 4, flexShrink: 0,
+              borderRadius: 6, flexShrink: 0,
             }}
           >
             <ArrowLeft size={20} />
@@ -1026,7 +1026,7 @@ export default function EditarImovelPage() {
               onClick={() => setActiveTab(TABS[currentTabIndex - 1].id)}
               style={{
                 flex: '0 0 auto', height: 52, paddingLeft: 20, paddingRight: 20,
-                borderRadius: 4, background: 'rgba(184,148,58,0.08)',
+                borderRadius: 6, background: 'rgba(184,148,58,0.08)',
                 border: '1px solid rgba(184,148,58,0.25)', color: 'var(--imi-gold-500)',
                 fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 13, fontWeight: 700,
                 letterSpacing: '0.5px', cursor: 'pointer', touchAction: 'manipulation',
@@ -1038,7 +1038,7 @@ export default function EditarImovelPage() {
           <button
             onClick={currentTabIndex < totalTabs - 1 ? () => setActiveTab(TABS[currentTabIndex + 1].id) : handleSubmit}
             style={{
-              flex: 1, height: 52, borderRadius: 4,
+              flex: 1, height: 52, borderRadius: 6,
               background: currentTabIndex < totalTabs - 1 ? 'var(--imi-gold-500)' : 'var(--success)',
               border: 'none', color: currentTabIndex < totalTabs - 1 ? T.text : 'white',
               fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 13, fontWeight: 800,

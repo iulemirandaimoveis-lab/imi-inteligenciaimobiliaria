@@ -353,7 +353,7 @@ export default function HojePage() {
                   <span style={{
                     position: 'absolute', top: -5, right: -5,
                     fontSize: '7px', fontWeight: 800, padding: '1px 4px',
-                    borderRadius: 4, background: 'rgba(74,222,128,0.20)',
+                    borderRadius: 6, background: 'rgba(74,222,128,0.20)',
                     color: 'var(--success)', border: '1px solid rgba(74,222,128,0.35)',
                     letterSpacing: '0.03em',
                   }}>NEW</span>
@@ -882,7 +882,7 @@ export default function HojePage() {
                 <span style={{
                   position: 'absolute', top: 8, right: 8,
                   fontSize: '7px', fontWeight: 800, padding: '1px 4px',
-                  borderRadius: 4,
+                  borderRadius: 6,
                   background: 'rgba(184,148,58,0.12)',
                   color: 'var(--imi-gold-500)',
                   border: '1px solid rgba(184,148,58,0.25)',

@@ -106,7 +106,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                     flexShrink: 0,
                                     height: 36, minWidth: 52,
                                     padding: '0 16px',
-                                    borderRadius: 4,
+                                    borderRadius: 6,
                                     background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
                                     border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
                                     color: isActive ? T.text : 'var(--text-tertiary)',
@@ -136,14 +136,14 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                             style={{
                                 background: 'var(--bg-elevated)',
                                 border: '1px solid rgba(184,148,58,0.12)',
-                                borderRadius: 4,
+                                borderRadius: 6,
                                 padding: 14,
                             }}
                         >
                             {/* Icon container */}
                             <div style={{
                                 width: 32, height: 32,
-                                borderRadius: 4,
+                                borderRadius: 6,
                                 background: `${k.color}18`,
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 marginBottom: 10,
@@ -180,7 +180,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                     <div style={{
                         background: 'var(--bg-elevated)',
                         border: '1px solid rgba(184,148,58,0.12)',
-                        borderRadius: 4,
+                        borderRadius: 6,
                         padding: 14,
                     }}>
                         <div style={{
@@ -225,7 +225,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(184,148,58,0.08)" vertical={false} />
                                         <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-montserrat)' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
                                         <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 4, fontSize: 11, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(184,148,58,0.2)' }} />
+                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 6, fontSize: 11, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(184,148,58,0.2)' }} />
                                         <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--imi-gold-500)" strokeWidth={2} fill="url(#mobileViewsGrad)" dot={false} />
                                         <Area type="monotone" dataKey="leads" name="Leads" stroke="#5DB887" strokeWidth={1.5} fill="rgba(93,184,135,0.08)" dot={false} />
                                     </AreaChart>
@@ -240,7 +240,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                     <div style={{
                         background: 'var(--bg-elevated)',
                         border: '1px solid rgba(184,148,58,0.12)',
-                        borderRadius: 4,
+                        borderRadius: 6,
                         padding: 14,
                     }}>
                         <div style={{
@@ -290,18 +290,18 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                     fontSize: 11, fontWeight: 700,
                                                     color: 'var(--imi-gold-500)',
                                                     background: 'rgba(184,148,58,0.12)',
-                                                    borderRadius: 4,
+                                                    borderRadius: 6,
                                                     padding: '2px 8px',
                                                 }}>{f.percentage}%</span>
                                             </div>
                                         </div>
                                         <div style={{
-                                            height: 4, borderRadius: 4,
+                                            height: 4, borderRadius: 6,
                                             background: 'rgba(184,148,58,0.12)',
                                             overflow: 'hidden',
                                         }}>
                                             <div style={{
-                                                height: '100%', borderRadius: 4,
+                                                height: '100%', borderRadius: 6,
                                                 width: `${f.percentage}%`,
                                                 background: 'var(--imi-gold-500)',
                                             }} />
@@ -319,7 +319,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         <div style={{
                             background: 'var(--bg-elevated)',
                             border: '1px solid rgba(184,148,58,0.12)',
-                            borderRadius: 4,
+                            borderRadius: 6,
                             padding: 14,
                         }}>
                             <div style={{
@@ -344,12 +344,12 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         justifyContent: 'space-between',
                                         padding: '10px 12px',
                                         background: 'var(--bg-muted)',
-                                        borderRadius: 4,
+                                        borderRadius: 6,
                                         border: '1px solid rgba(184,148,58,0.08)',
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                             <div style={{
-                                                width: 28, height: 28, borderRadius: 4,
+                                                width: 28, height: 28, borderRadius: 6,
                                                 background: 'rgba(184,148,58,0.12)',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 flexShrink: 0,
@@ -366,7 +366,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                             fontSize: 12, fontWeight: 700,
                                             color: 'var(--imi-gold-500)',
                                             background: 'rgba(184,148,58,0.10)',
-                                            borderRadius: 4,
+                                            borderRadius: 6,
                                             padding: '4px 8px',
                                         }}>{loc.percentage}%</span>
                                     </div>
@@ -382,7 +382,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         <div style={{
                             background: 'var(--bg-elevated)',
                             border: '1px solid rgba(184,148,58,0.12)',
-                            borderRadius: 4,
+                            borderRadius: 6,
                             padding: 14,
                         }}>
                             <div style={{
@@ -418,12 +418,12 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                             }}>{d.percentage}%</span>
                                         </div>
                                         <div style={{
-                                            height: 6, borderRadius: 4,
+                                            height: 6, borderRadius: 6,
                                             background: 'rgba(168,158,196,0.15)',
                                             overflow: 'hidden',
                                         }}>
                                             <div style={{
-                                                height: '100%', borderRadius: 4,
+                                                height: '100%', borderRadius: 6,
                                                 width: `${d.percentage}%`,
                                                 background: '#A89EC4',
                                             }} />
@@ -441,7 +441,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         <div style={{
                             background: 'var(--bg-elevated)',
                             border: '1px solid rgba(184,148,58,0.12)',
-                            borderRadius: 4,
+                            borderRadius: 6,
                             padding: 14,
                         }}>
                             <div style={{
@@ -466,12 +466,12 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         justifyContent: 'space-between',
                                         padding: '10px 12px',
                                         background: 'var(--bg-muted)',
-                                        borderRadius: 4,
+                                        borderRadius: 6,
                                         border: '1px solid rgba(184,148,58,0.08)',
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
                                             <div style={{
-                                                width: 28, height: 28, borderRadius: 4,
+                                                width: 28, height: 28, borderRadius: 6,
                                                 background: 'rgba(184,148,58,0.12)',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 flexShrink: 0,
@@ -560,7 +560,7 @@ function MobileEmpty({ onBack }: { onBack: () => void }) {
             <button
                 onClick={onBack}
                 style={{
-                    height: 44, padding: '0 24px', borderRadius: 4,
+                    height: 44, padding: '0 24px', borderRadius: 6,
                     background: 'rgba(184,148,58,0.12)',
                     border: '1px solid rgba(184,148,58,0.25)',
                     color: 'var(--imi-gold-500)',
@@ -779,7 +779,7 @@ export default function ImovelAnalyticsPage() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(184,148,58,0.08)" vertical={false} />
                                 <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-montserrat)' }} axisLine={false} tickLine={false} />
                                 <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                                <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 4, fontSize: 12, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(184,148,58,0.2)' }} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(184,148,58,0.2)' }} />
                                 <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--imi-gold-500)" strokeWidth={2} fill="url(#viewsGrad)" dot={false} />
                                 <Area type="monotone" dataKey="leads" name="Leads" stroke="#6BB87B" strokeWidth={1.5} fill="url(#leadsGrad)" dot={false} />
                             </AreaChart>
@@ -809,7 +809,7 @@ export default function ImovelAnalyticsPage() {
                                                 <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                                             ))}
                                         </Pie>
-                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 4, fontSize: 12, color: 'var(--imi-cream)' }} />
+                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} />
                                     </PieChart>
                                 </ResponsiveContainer>
                                 <div className="space-y-2 mt-2">

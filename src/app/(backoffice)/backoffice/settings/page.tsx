@@ -73,7 +73,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
       role="switch"
       aria-checked={checked}
       style={{
-        width: 44, height: 24, borderRadius: 4, position: 'relative',
+        width: 44, height: 24, borderRadius: 6, position: 'relative',
         background: checked ? 'var(--imi-gold-500)' : 'var(--bg-muted)',
         border: checked ? 'none' : '1.5px solid var(--border-default)',
         cursor: 'pointer', transition: 'all var(--dur-2) var(--ease)', flexShrink: 0,
@@ -83,7 +83,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
       <span style={{
         position: 'absolute', top: checked ? 2 : 1,
         left: checked ? 22 : 2,
-        width: 20, height: 20, borderRadius: 4,
+        width: 20, height: 20, borderRadius: 6,
         background: checked ? '#fff' : 'var(--text-tertiary)',
         transition: 'all var(--dur-2) var(--ease)',
         boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
@@ -409,7 +409,7 @@ export default function SettingsPage() {
                 {/* Avatar Circle */}
                 <div style={{ position: 'relative', flexShrink: 0 }}>
                   <div style={{
-                    width: 80, height: 80, borderRadius: 4,
+                    width: 80, height: 80, borderRadius: 6,
                     overflow: 'hidden',
                     background: 'rgba(184,148,58,0.15)',
                     border: '2.5px solid rgba(184,148,58,0.35)',
@@ -435,7 +435,7 @@ export default function SettingsPage() {
                   </div>
                   {uploadingAvatar && (
                     <div style={{
-                      position: 'absolute', inset: 0, borderRadius: 4,
+                      position: 'absolute', inset: 0, borderRadius: 6,
                       background: 'rgba(0,0,0,0.50)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
@@ -795,7 +795,7 @@ export default function SettingsPage() {
                       </div>
                       {isSelected && (
                         <div style={{
-                          alignSelf: 'flex-end', width: 8, height: 8, borderRadius: 4,
+                          alignSelf: 'flex-end', width: 8, height: 8, borderRadius: 6,
                           background: 'var(--imi-gold-500)',
                           position: 'absolute', top: 10, right: 10,
                         }} />

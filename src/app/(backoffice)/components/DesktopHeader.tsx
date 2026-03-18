@@ -2,30 +2,14 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Bell, LogOut, Settings, ChevronDown, GraduationCap, Camera, Loader2 } from 'lucide-react'
-import { useRouter, usePathname } from 'next/navigation'
+import { Search, LogOut, Settings, ChevronDown, GraduationCap, Camera, Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from './ThemeToggle'
 import { useOnboardingContext } from './OnboardingWrapper'
+import SmartNotifications from './SmartNotifications'
 
 const supabase = createClient()
-
-interface Notification {
-    id: string
-    type: string
-    title: string
-    message?: string
-    read: boolean
-    created_at: string
-}
-
-function timeAgo(d: string) {
-    const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
-    if (diff < 1) return 'agora'
-    if (diff < 60) return `${diff}min`
-    if (diff < 1440) return `${Math.floor(diff / 60)}h`
-    return `${Math.floor(diff / 1440)}d`
-}
 
 function SearchBar() {
     const [focused, setFocused] = useState(false)
@@ -64,144 +48,6 @@ function SearchBar() {
                 </kbd>
             </div>
         </motion.button>
-    )
-}
-
-function NotificationBell() {
-    const [open, setOpen] = useState(false)
-    const [notifications, setNotifications] = useState<Notification[]>([])
-    const [unread, setUnread] = useState(0)
-    const ref = useRef<HTMLDivElement>(null)
-    const pathname = usePathname()
-    const router = useRouter()
-
-    useEffect(() => {
-        fetch('/api/notifications?limit=20')
-            .then(r => r.json())
-            .then(res => {
-                const items: Notification[] = Array.isArray(res) ? res : (res.data || [])
-                setNotifications(items.slice(0, 10))
-                setUnread(items.filter((n: Notification) => !n.read).length)
-            })
-            .catch(() => {})
-    }, [pathname])
-
-    useEffect(() => {
-        const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
-        document.addEventListener('mousedown', h)
-        return () => document.removeEventListener('mousedown', h)
-    }, [])
-
-    const markAllRead = async () => {
-        try {
-            await fetch('/api/notifications', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ read_all: true }),
-            })
-            setNotifications(prev => prev.map(n => ({ ...n, read: true })))
-            setUnread(0)
-        } catch (err) {
-            console.error('Failed to mark notifications as read:', err)
-        }
-    }
-
-    return (
-        <div ref={ref} className="relative">
-            <motion.button
-                whileTap={{ scale: 0.92 }}
-                onClick={() => setOpen(!open)}
-                className="relative flex items-center justify-center w-9 h-9 rounded-xl transition-all"
-                style={{
-                    background: open ? 'var(--bg-elevated)' : 'transparent',
-                    border: `1px solid ${open ? 'var(--border-focus)' : 'transparent'}`,
-                    color: open ? 'var(--imi-gold-500)' : 'var(--text-tertiary)',
-                }}
-            >
-                <Bell size={16} />
-                {unread > 0 && (
-                    <span
-                        className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-[10px] font-bold text-white rounded-full flex items-center justify-center"
-                        style={{ background: 'var(--imi-gold-500)', boxShadow: '0 0 0 2px var(--bg-surface)' }}
-                    >
-                        {unread > 9 ? '9+' : unread}
-                    </span>
-                )}
-            </motion.button>
-
-            <AnimatePresence>
-                {open && (
-                    <>
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-                        <motion.div
-                            initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -6, scale: 0.97 }}
-                            transition={{ duration: 0.16, ease: [0.34, 1.56, 0.64, 1] }}
-                            className="absolute right-0 top-11 w-80 z-20 overflow-hidden"
-                            style={{
-                                borderRadius: 'var(--r-xl)',
-                                background: 'var(--bg-elevated)',
-                                border: '1px solid var(--border-default)',
-                                boxShadow: 'var(--shadow-xl)',
-                                maxHeight: '70vh',
-                            }}
-                        >
-                            <div className="flex items-center justify-between px-4 py-3.5"
-                                style={{ borderBottom: '1px solid var(--border-default)' }}>
-                                <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Notificações</span>
-                                {unread > 0 && (
-                                    <button onClick={markAllRead} className="text-xs cursor-pointer" style={{ color: 'var(--imi-gold-500)' }}>
-                                        Marcar lidas
-                                    </button>
-                                )}
-                            </div>
-                            <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 100px)' }}>
-                                {notifications.length > 0 ? notifications.map((n, i) => (
-                                    <motion.div key={n.id}
-                                        initial={{ opacity: 0, x: -6 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.03 }}
-                                        className="hover-card flex gap-3 px-4 py-3 cursor-pointer transition-all"
-                                        style={{
-                                            background: !n.read ? 'rgba(184,148,58,0.08)' : 'transparent',
-                                            borderBottom: '1px solid var(--border-default)',
-                                        }}
-                                    >
-                                        <div
-                                            className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                                            style={{ background: n.read ? 'transparent' : 'var(--imi-gold-500)' }}
-                                        />
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-medium leading-tight" style={{ color: 'var(--text-primary)' }}>{n.title}</p>
-                                            {n.message && (
-                                                <p className="text-[11px] mt-0.5 leading-tight truncate" style={{ color: 'var(--text-tertiary)' }}>{n.message}</p>
-                                            )}
-                                            <p className="text-[10px] mt-1" style={{ color: 'var(--text-tertiary)' }}>{timeAgo(n.created_at)}</p>
-                                        </div>
-                                    </motion.div>
-                                )) : (
-                                    <div className="py-8 text-center">
-                                        <Bell size={20} className="mx-auto mb-2" style={{ color: 'var(--text-tertiary)', opacity: 0.3 }} />
-                                        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Nenhuma notificação</p>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="px-4 py-3 text-center" style={{ borderTop: '1px solid var(--border-default)' }}>
-                                <button
-                                    onClick={() => { setOpen(false); router.push('/backoffice/notificacoes') }}
-                                    className="text-xs cursor-pointer"
-                                    style={{ color: 'var(--imi-gold-500)' }}
-                                >
-                                    Ver todas →
-                                </button>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-        </div>
     )
 }
 
@@ -413,7 +259,7 @@ export default function DesktopHeader() {
                     </button>
                     <ThemeToggle />
                     <div className="w-px h-5 mx-0.5" style={{ background: 'var(--border-default)' }} />
-                    <NotificationBell />
+                    <SmartNotifications />
                     <div className="w-px h-5 mx-1" style={{ background: 'var(--border-default)' }} />
                     <UserMenu onSignOut={handleSignOut} />
                 </div>

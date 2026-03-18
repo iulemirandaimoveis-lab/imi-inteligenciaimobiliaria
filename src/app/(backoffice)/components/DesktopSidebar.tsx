@@ -10,7 +10,7 @@ import {
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
     Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot,
-    Map as MapIcon,
+    Map as MapIcon, Handshake,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -187,7 +187,13 @@ const SECTIONS: NavSection[] = [
         label: 'Configurações',
         items: [
             { label: 'Organização',  href: '/backoffice/organizacao',         icon: Building,  badge: 'BREVE' },
-            { label: 'Equipe',       href: '/backoffice/equipe',              icon: Users,     badge: 'NEW'   },
+            {
+                label: 'Equipe', icon: Users, badge: 'NEW',
+                children: [
+                    { label: 'Visão Geral',  href: '/backoffice/equipe',              icon: Users },
+                    { label: 'Colaboração',  href: '/backoffice/equipe/colaboracao',  icon: Handshake, badge: 'NEW' },
+                ]
+            },
             { label: 'Usuários',     href: '/backoffice/settings/usuarios',   icon: Users,     badge: 'NEW'   },
             { label: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
             {
@@ -211,7 +217,7 @@ function badgeStyle(badge: string | number) {
         fontFamily: 'var(--font-mono)',
         fontWeight: 700 as const,
         padding: '2px 5px',
-        borderRadius: 4,
+        borderRadius: 6,
         letterSpacing: '0.06em',
         lineHeight: 1.2,
         whiteSpace: 'nowrap' as const,
@@ -379,7 +385,7 @@ function SectionComponent({ section }: { section: NavSection }) {
                 {/* Color indicator */}
                 <div
                     className="flex-shrink-0"
-                    style={{ width: 3, height: 12, borderRadius: 4, background: sectionColor, opacity: open ? 1 : 0.4, transition: 'opacity 0.2s' }}
+                    style={{ width: 3, height: 12, borderRadius: 6, background: sectionColor, opacity: open ? 1 : 0.4, transition: 'opacity 0.2s' }}
                 />
                 <p
                     className="flex-1 text-left uppercase"

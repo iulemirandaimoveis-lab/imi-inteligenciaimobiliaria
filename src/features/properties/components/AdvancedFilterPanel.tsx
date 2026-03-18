@@ -115,7 +115,7 @@ function RangeRow({ labelMin, labelMax, min, max, onMin, onMax, prefix = '' }: {
             width: '100%', padding: '9px 8px',
             background: 'var(--bo-surface, rgba(255,255,255,0.04))',
             border: '1px solid rgba(200,164,74,0.18)',
-            borderRadius: 4, color: 'var(--bo-text, #EBE7E0)',
+            borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
             fontSize: '13px', fontFamily: 'var(--font-dm-mono, monospace)',
             outline: 'none', minHeight: 40,
           }}
@@ -138,7 +138,7 @@ function RangeRow({ labelMin, labelMax, min, max, onMin, onMax, prefix = '' }: {
             width: '100%', padding: '9px 8px',
             background: 'var(--bo-surface, rgba(255,255,255,0.04))',
             border: '1px solid rgba(200,164,74,0.18)',
-            borderRadius: 4, color: 'var(--bo-text, #EBE7E0)',
+            borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
             fontSize: '13px', fontFamily: 'var(--font-dm-mono, monospace)',
             outline: 'none', minHeight: 40,
           }}
@@ -299,7 +299,7 @@ export function AdvancedFilterPanel({
                 padding: '9px 10px',
                 background: 'var(--bo-surface, rgba(255,255,255,0.04))',
                 border: '1px solid rgba(200,164,74,0.18)',
-                borderRadius: 4, color: 'var(--bo-text, #EBE7E0)',
+                borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
                 fontSize: '13px', fontFamily: 'var(--font-montserrat, sans-serif)',
                 outline: 'none', minHeight: 40, width: '100%',
               }}
@@ -313,7 +313,7 @@ export function AdvancedFilterPanel({
                 padding: '9px 10px',
                 background: 'var(--bo-surface, rgba(255,255,255,0.04))',
                 border: '1px solid rgba(200,164,74,0.18)',
-                borderRadius: 4, color: 'var(--bo-text, #EBE7E0)',
+                borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
                 fontSize: '13px', fontFamily: 'var(--font-montserrat, sans-serif)',
                 outline: 'none', minHeight: 40, width: '100%',
               }}

@@ -145,6 +145,85 @@ export async function POST(request: Request) {
     }
 }
 
+export async function PUT(request: Request) {
+    try {
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
+        // Check admin
+        let isAdmin = false
+        const client = hasServiceKey ? supabaseAdmin : supabase
+        const { data: callerRow } = await client.from('users').select('role').eq('id', user.id).single()
+        if (callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(callerRow.role)) isAdmin = true
+        if (!isAdmin) {
+            const { data: callerProfile } = await client.from('profiles').select('role').eq('id', user.id).single()
+            if (callerProfile && ['admin', 'ADMIN', 'SUPER_ADMIN'].includes(callerProfile.role)) isAdmin = true
+        }
+        if (!isAdmin) return NextResponse.json({ error: 'Apenas administradores podem editar usuários' }, { status: 403 })
+
+        const body = await request.json()
+        const { id, name, role, is_active } = body
+        if (!id) return NextResponse.json({ error: 'ID do usuário é obrigatório' }, { status: 400 })
+
+        const updates: Record<string, any> = {}
+        if (name !== undefined) updates.name = name
+        if (role !== undefined) updates.role = role
+        if (is_active !== undefined) updates.is_active = is_active
+
+        // Update profiles table
+        const { error: profileErr } = await client.from('profiles').update(updates).eq('id', id)
+        if (profileErr) console.error('Update profiles error:', profileErr)
+
+        // Update users table (camelCase role, no is_active in that table typically)
+        const userUpdates: Record<string, any> = {}
+        if (name !== undefined) userUpdates.name = name
+        if (role !== undefined) userUpdates.role = role
+        if (is_active !== undefined) userUpdates.active = is_active
+        await client.from('users').update(userUpdates).eq('id', id)
+
+        return NextResponse.json({ success: true })
+    } catch (error: any) {
+        console.error('PUT /api/backoffice/users error:', error)
+        return NextResponse.json({ error: error.message || 'Erro interno' }, { status: 500 })
+    }
+}
+
+export async function DELETE(request: Request) {
+    try {
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
+        // Check admin
+        let isAdmin = false
+        const client = hasServiceKey ? supabaseAdmin : supabase
+        const { data: callerRow } = await client.from('users').select('role').eq('id', user.id).single()
+        if (callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(callerRow.role)) isAdmin = true
+        if (!isAdmin) {
+            const { data: callerProfile } = await client.from('profiles').select('role').eq('id', user.id).single()
+            if (callerProfile && ['admin', 'ADMIN', 'SUPER_ADMIN'].includes(callerProfile.role)) isAdmin = true
+        }
+        if (!isAdmin) return NextResponse.json({ error: 'Apenas administradores podem desativar usuários' }, { status: 403 })
+
+        const { searchParams } = new URL(request.url)
+        const id = searchParams.get('id')
+        if (!id) return NextResponse.json({ error: 'ID do usuário é obrigatório' }, { status: 400 })
+
+        // Prevent self-deactivation
+        if (id === user.id) return NextResponse.json({ error: 'Não é possível desativar o próprio usuário' }, { status: 400 })
+
+        // Soft-delete: mark as inactive in both tables
+        await client.from('profiles').update({ is_active: false }).eq('id', id)
+        await client.from('users').update({ active: false }).eq('id', id)
+
+        return NextResponse.json({ success: true })
+    } catch (error: any) {
+        console.error('DELETE /api/backoffice/users error:', error)
+        return NextResponse.json({ error: error.message || 'Erro interno' }, { status: 500 })
+    }
+}
+
 export async function GET(request: Request) {
     try {
         const supabase = await createClient()
