@@ -1920,12 +1920,12 @@ export default function ImovelDetailPage() {
           bedrooms_from, bathrooms_from, parking_from,
           neighborhood, city, state, country, address, street_number,
           cep, description, features, amenities,
-          image_urls, cover_image_url, video_url, slug,
+          image_urls, cover_image_url, images, video_url, slug,
           created_at, updated_at, latitude, longitude,
-          developer:developers(id, name, logo_url)
+          developer:developers!left(id, name, logo_url)
         `)
         .eq('id', id)
-        .single()
+        .maybeSingle()
 
       if (error || !data) {
         setNotFound(true)

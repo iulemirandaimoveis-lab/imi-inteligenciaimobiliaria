@@ -365,7 +365,7 @@ function DesktopImoveisList(props: SharedProps) {
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               height: 32, padding: '0 12px',
-              borderRadius: 'var(--r-full)',
+              borderRadius: 6,
               border: market === m.id ? '1.5px solid var(--imi-gold-500)' : '1.5px solid var(--border-subtle)',
               background: market === m.id ? 'rgba(184,148,58,0.10)' : 'transparent',
               color: market === m.id ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
@@ -1321,7 +1321,7 @@ function MobileImoveisList(props: SharedProps) {
               style={{
                 display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0,
                 height: 30, padding: '0 10px',
-                borderRadius: 'var(--r-full)',
+                borderRadius: 6,
                 border: market === m.id ? '1.5px solid var(--imi-gold-500)' : '1.5px solid rgba(184,148,58,0.20)',
                 background: market === m.id ? 'rgba(184,148,58,0.10)' : 'var(--bg-muted)',
                 color: market === m.id ? 'var(--imi-gold-500)' : 'var(--text-secondary)',

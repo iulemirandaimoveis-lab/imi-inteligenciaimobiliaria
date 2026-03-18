@@ -283,7 +283,7 @@ export function MobileSearchBar({ value, onChange, placeholder = 'Buscar...', au
       height: 44,
       background: 'var(--bg-elevated)',
       border: `1px solid ${focused ? 'rgba(184,148,58,0.5)' : 'var(--border-subtle)'}`,
-      borderRadius: 'var(--r-lg)',
+      borderRadius: 6,
       padding: '0 14px',
       transition: 'border-color 150ms ease',
     }}>
@@ -353,7 +353,7 @@ export function MobileFilterChips({ chips, active, onChange }: MobileFilterChips
               flexShrink: 0,
               display: 'flex', alignItems: 'center', gap: 5,
               height: 32, padding: '0 12px',
-              borderRadius: 'var(--r-full)',
+              borderRadius: 6,
               background: isActive ? T.gold : 'rgba(184,148,58,0.08)',
               border: `1px solid ${isActive ? T.gold : 'rgba(184,148,58,0.2)'}`,
               color: isActive ? T.textInv : 'var(--text-secondary)',
@@ -828,7 +828,7 @@ export function MobileSortChips({ options, activeField, activeDir, onChange }: M
             className="mob-chip-tap"
             style={{
               flexShrink: 0, height: 28, padding: '0 10px',
-              borderRadius: 'var(--r-full)',
+              borderRadius: 6,
               background: isActive ? 'rgba(184,148,58,0.15)' : 'transparent',
               border: `1px solid ${isActive ? T.gold : 'rgba(184,148,58,0.15)'}`,
               color: isActive ? T.gold : 'var(--text-tertiary)',
