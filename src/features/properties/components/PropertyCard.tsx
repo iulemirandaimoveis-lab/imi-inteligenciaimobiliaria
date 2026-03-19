@@ -82,6 +82,10 @@ export function PropertyCard({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onClick={bulkMode && onSelect ? (e) => { e.preventDefault(); onSelect(p.id) } : undefined}
+        onKeyDown={bulkMode && onSelect ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(p.id) } } : undefined}
+        role={bulkMode && onSelect ? 'button' : undefined}
+        tabIndex={bulkMode && onSelect ? 0 : undefined}
+        aria-label={bulkMode && onSelect ? p.name : undefined}
         className="prop-card"
         style={{
           background: 'var(--bg-surface, var(--navy-card, #142840))',

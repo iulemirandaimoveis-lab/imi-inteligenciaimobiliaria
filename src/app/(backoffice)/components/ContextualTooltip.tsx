@@ -144,12 +144,16 @@ export default function ContextualTooltip({
         <>
             {/* Backdrop with spotlight cutout */}
             <div
+                role="button"
+                tabIndex={0}
+                aria-label="Fechar tutorial"
                 className="fixed inset-0 z-[9998] transition-opacity"
                 style={{
                     background: 'rgba(0,0,0,0.45)',
                     backdropFilter: 'blur(2px)',
                 }}
                 onClick={onSkip}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSkip() }}
             />
 
             {/* Spotlight on target */}
@@ -243,6 +247,7 @@ export default function ContextualTooltip({
                                 {!isFirst && (
                                     <button
                                         onClick={onPrev}
+                                        aria-label="Voltar"
                                         className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors hover:bg-white/5"
                                         style={{ color: 'var(--text-secondary)' }}
                                     >

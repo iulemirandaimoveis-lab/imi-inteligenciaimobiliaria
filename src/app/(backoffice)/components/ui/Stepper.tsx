@@ -245,9 +245,11 @@ function HorizontalStepper({
           <React.Fragment key={step.id}>
             {/* Step item */}
             <div
-              role="listitem"
-              aria-current={status === 'active' ? 'step' : undefined}
+              role={isClickable ? 'button' : 'listitem'}
+              {...(!isClickable && { 'aria-current': status === 'active' ? 'step' as const : undefined })}
+              tabIndex={isClickable ? 0 : undefined}
               onClick={isClickable ? () => onStepClick(idx) : undefined}
+              onKeyDown={isClickable ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onStepClick(idx) } } : undefined}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -336,7 +338,10 @@ function VerticalStepper({
             {/* Left: circle + connector */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
               <div
+                role={isClickable ? 'button' : undefined}
+                tabIndex={isClickable ? 0 : undefined}
                 onClick={isClickable ? () => onStepClick(idx) : undefined}
+                onKeyDown={isClickable ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onStepClick(idx) } } : undefined}
                 style={{ cursor: isClickable ? 'pointer' : 'default' }}
               >
                 <StepCircle stepNumber={idx + 1} status={status} sizeCfg={sc} />
@@ -348,6 +353,8 @@ function VerticalStepper({
 
             {/* Right: label + description */}
             <div
+              role={isClickable ? 'button' : undefined}
+              tabIndex={isClickable ? 0 : undefined}
               style={{
                 paddingTop: 6,
                 paddingBottom: isLast ? 0 : sc.circle + 8,
@@ -356,6 +363,7 @@ function VerticalStepper({
                 minWidth: 0,
               }}
               onClick={isClickable ? () => onStepClick(idx) : undefined}
+              onKeyDown={isClickable ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onStepClick(idx) } } : undefined}
             >
               <div
                 style={{
