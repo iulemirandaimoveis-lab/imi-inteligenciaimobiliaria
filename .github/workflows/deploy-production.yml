@@ -72,7 +72,7 @@ jobs:
         if: steps.check_token.outputs.has_token == 'true'
         id: deploy
         run: |
-          DEPLOY_OUTPUT=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} 2>&1)
+          DEPLOY_OUTPUT=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} 2>&1) || true
           DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[a-zA-Z0-9_-]+\.vercel\.app' | tail -1)
           if [ -z "$DEPLOY_URL" ]; then
             echo "⚠️ Could not extract deploy URL from output:"
