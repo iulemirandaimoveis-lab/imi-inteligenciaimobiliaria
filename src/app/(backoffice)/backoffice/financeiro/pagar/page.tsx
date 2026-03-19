@@ -177,25 +177,25 @@ export default function PagarPage() {
 >
                                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                                     style={{ background: 'var(--error-bg, rgba(229,115,115,0.10))' }}>
-                                    <ArrowDownCircle size={18} style={{ color: 'var(--bo-error)' }} />
+                                    <ArrowDownCircle size={18} style={{ color: 'var(--error)' }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{t.description}</p>
                                     <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                                         <span className="text-[10px] font-medium" style={{ color: T.textMuted }}>{t.category}</span>
                                         <span className="text-[10px]" style={{ color: T.textMuted }}>·</span>
-                                        <span className="text-[10px]" style={{ color: isOverdue ? 'var(--bo-error)' : T.textMuted }}>
+                                        <span className="text-[10px]" style={{ color: isOverdue ? 'var(--error)' : T.textMuted }}>
                                             Vence {fmtDate(t.due_date)}
                                         </span>
                                         <span
                                             className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-[6px]"
-                                            style={{ color: isOverdue ? 'var(--bo-error)' : sc.text, background: isOverdue ? 'var(--error-bg, rgba(229,115,115,0.12))' : sc.bg }}>
+                                            style={{ color: isOverdue ? 'var(--error)' : sc.text, background: isOverdue ? 'var(--error-bg, rgba(229,115,115,0.12))' : sc.bg }}>
                                             <Icon size={9} /> {isOverdue ? 'Atrasado' : sc.label}
                                         </span>
                                     </div>
                                 </div>
                                 <div className="text-right flex-shrink-0">
-                                    <p className="text-base font-bold" style={{ color: 'var(--bo-error)' }}>−{fmt(Number(t.amount))}</p>
+                                    <p className="text-base font-bold" style={{ color: 'var(--error)' }}>−{fmt(Number(t.amount))}</p>
                                 </div>
                                 <ActionMenu items={[
                                     ...(t.status === 'pendente' ? [{ label: 'Marcar Pago', icon: <CheckCircle size={14} />, onClick: () => markPaid(t.id) }] : []),

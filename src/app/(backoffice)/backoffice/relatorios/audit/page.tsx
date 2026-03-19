@@ -114,19 +114,19 @@ type IconComponent = LucideIcon
 const ACAO_CONFIG: Record<string, { label: string; icon: IconComponent; textColor: string; bgColor: string }> = {
   login:  { label: 'Login',         icon: LogIn,    textColor: 'var(--info)', bgColor: 'rgba(96,165,250,0.10)'  },
   logout: { label: 'Logout',        icon: LogOut,   textColor: 'var(--text-tertiary)', bgColor: 'rgba(148,163,184,0.10)' },
-  create: { label: 'Criação',       icon: Plus,     textColor: 'var(--bo-success)', bgColor: 'rgba(107,184,123,0.10)' },
+  create: { label: 'Criação',       icon: Plus,     textColor: 'var(--success)', bgColor: 'rgba(107,184,123,0.10)' },
   update: { label: 'Edição',        icon: Edit,     textColor: 'var(--warning)', bgColor: 'rgba(232,168,124,0.10)' },
-  delete: { label: 'Exclusão',      icon: Trash2,   textColor: 'var(--bo-error)', bgColor: 'rgba(229,115,115,0.10)' },
+  delete: { label: 'Exclusão',      icon: Trash2,   textColor: 'var(--error)', bgColor: 'rgba(229,115,115,0.10)' },
   view:   { label: 'Visualização',  icon: Eye,      textColor: 'var(--text-tertiary)', bgColor: 'rgba(148,163,184,0.10)' },
   export: { label: 'Exportação',    icon: Download, textColor: '#C084FC', bgColor: 'rgba(192,132,252,0.10)' },
   sync:   { label: 'Sync',          icon: Settings, textColor: 'var(--info)', bgColor: 'rgba(96,165,250,0.10)'  },
-  backup: { label: 'Backup',        icon: Shield,   textColor: 'var(--bo-success)', bgColor: 'rgba(107,184,123,0.10)' },
+  backup: { label: 'Backup',        icon: Shield,   textColor: 'var(--success)', bgColor: 'rgba(107,184,123,0.10)' },
 }
 const SEVERIDADE_CONFIG: Record<string, { label: string; textColor: string; bgColor: string; icon: IconComponent }> = {
   info:    { label: 'Info',    textColor: 'var(--info)', bgColor: 'rgba(96,165,250,0.10)',   icon: CheckCircle  },
-  success: { label: 'Sucesso', textColor: 'var(--bo-success)', bgColor: 'rgba(107,184,123,0.10)', icon: CheckCircle  },
+  success: { label: 'Sucesso', textColor: 'var(--success)', bgColor: 'rgba(107,184,123,0.10)', icon: CheckCircle  },
   warning: { label: 'Atenção', textColor: '#FCD34D', bgColor: 'rgba(252,211,77,0.10)',  icon: AlertTriangle },
-  danger:  { label: 'Crítico', textColor: 'var(--bo-error)', bgColor: 'rgba(229,115,115,0.10)', icon: AlertTriangle },
+  danger:  { label: 'Crítico', textColor: 'var(--error)', bgColor: 'rgba(229,115,115,0.10)', icon: AlertTriangle },
 }
 const MODULOS = ['todos', 'auth', 'imoveis', 'leads', 'campanhas', 'avaliacoes', 'financeiro', 'contratos', 'automacoes', 'settings', 'sistema']
 export default function AuditPage() {
@@ -213,7 +213,7 @@ export default function AuditPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total de Eventos',  value: loading ? '…' : stats.total,    textColor: T.text,      bg: T.elevated,                      icon: Shield },
-          { label: 'Críticos',          value: loading ? '…' : stats.criticos,  textColor: 'var(--bo-error)',   bg: 'rgba(239,68,68,0.08)',           icon: AlertTriangle },
+          { label: 'Críticos',          value: loading ? '…' : stats.criticos,  textColor: 'var(--error)',   bg: 'rgba(239,68,68,0.08)',           icon: AlertTriangle },
           { label: 'Atenção',           value: loading ? '…' : stats.atencao,   textColor: '#FCD34D',   bg: 'rgba(245,158,11,0.08)',          icon: AlertTriangle },
           { label: 'Usuários Ativos',   value: loading ? '…' : stats.usuarios,  textColor: 'var(--info)',   bg: 'rgba(59,130,246,0.08)',          icon: User },
         ].map(s => {

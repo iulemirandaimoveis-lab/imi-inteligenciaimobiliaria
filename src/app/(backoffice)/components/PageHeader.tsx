@@ -21,11 +21,11 @@ interface PageHeaderProps {
 }
 
 const badgeColors = {
-    gold: { bg: 'var(--bo-active-bg)', text: 'var(--bo-text-gold, #486581)', border: 'var(--bo-border)' },
-    green: { bg: 'var(--s-done-bg, #F0FDF4)', text: 'var(--s-done, #15803D)', border: 'rgba(107,184,123,0.20)' },
-    blue: { bg: 'var(--s-cold-bg, #EFF6FF)', text: 'var(--s-cold, #1A2F44)', border: 'rgba(123,158,196,0.20)' },
-    red: { bg: 'var(--s-cancel-bg, #FEF2F2)', text: 'var(--s-cancel, #DC2626)', border: 'rgba(229,115,115,0.20)' },
-    gray: { bg: 'var(--bo-hover, #F8F9FA)', text: 'var(--bo-text-muted, #495057)', border: 'var(--bo-border, #DEE2E6)' },
+    gold: { bg: 'var(--bg-hover)', text: 'var(--text-secondary)', border: 'var(--border-default)' },
+    green: { bg: 'var(--success-bg, #F0FDF4)', text: 'var(--success)', border: 'rgba(107,184,123,0.20)' },
+    blue: { bg: 'var(--info-bg, #EFF6FF)', text: 'var(--info)', border: 'rgba(123,158,196,0.20)' },
+    red: { bg: 'var(--error-bg, #FEF2F2)', text: 'var(--text-tertiary)', border: 'rgba(229,115,115,0.20)' },
+    gray: { bg: 'var(--bg-hover)', text: 'var(--text-secondary)', border: 'var(--border-default)' },
 }
 
 export default function PageHeader({
@@ -56,24 +56,24 @@ export default function PageHeader({
                 >
                     <Link href="/backoffice/dashboard">
                         <span className="inline-flex items-center justify-center w-5 h-5 rounded-md transition-colors duration-120 hover:bg-imi-100">
-                            <Home size={11} style={{ color: 'var(--bo-text-muted)' }} />
+                            <Home size={11} style={{ color: 'var(--text-secondary)' }} />
                         </span>
                     </Link>
 
                     {breadcrumbs.map((crumb, i) => (
                         <span key={i} className="flex items-center gap-1">
-                            <ChevronRight size={12} style={{ color: 'var(--bo-text-tertiary, var(--bo-text-muted))' }} />
+                            <ChevronRight size={12} style={{ color: 'var(--text-tertiary)' }} />
                             {crumb.href ? (
                                 <Link href={crumb.href}>
                                     <span
-                                        className="text-xs font-medium transition-colors duration-120 hover:text-[var(--bo-accent)]"
-                                        style={{ color: 'var(--bo-text-muted)' }}
+                                        className="text-xs font-medium transition-colors duration-120 hover:text-[var(--imi-gold-500)]"
+                                        style={{ color: 'var(--text-secondary)' }}
                                     >
                                         {crumb.label}
                                     </span>
                                 </Link>
                             ) : (
-                                <span className="text-xs font-medium" style={{ color: 'var(--bo-text)' }}>
+                                <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>
                                     {crumb.label}
                                 </span>
                             )}
@@ -93,7 +93,7 @@ export default function PageHeader({
                             transition={{ delay: 0.06, duration: 0.3 }}
                             className="text-[26px] sm:text-[30px] font-bold tracking-tight leading-tight"
                             style={{
-                                color: 'var(--bo-text)',
+                                color: 'var(--text-primary)',
                                 fontFamily: 'var(--font-inter), sans-serif',
                                 letterSpacing: '-0.02em',
                             }}
@@ -124,7 +124,7 @@ export default function PageHeader({
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.12 }}
                             className="mt-1.5 text-sm leading-relaxed"
-                            style={{ color: 'var(--bo-text-muted)', maxWidth: '560px' }}
+                            style={{ color: 'var(--text-secondary)', maxWidth: '560px' }}
                         >
                             {desc}
                         </motion.p>
@@ -137,7 +137,7 @@ export default function PageHeader({
                         transition={{ delay: 0.2, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                         className="mt-4 h-px"
                         style={{
-                            background: 'var(--bo-border)',
+                            background: 'var(--border-default)',
                         }}
                     />
                 </div>

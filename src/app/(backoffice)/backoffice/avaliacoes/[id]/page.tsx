@@ -163,7 +163,7 @@ export default function AvaliacaoDetalhesPage() {
         ? { label: 'Alta Confiança', color: 'var(--success)', bg: 'rgba(16,185,129,0.12)' }
         : rangeSpread < 20
         ? { label: 'Média Confiança', color: 'var(--warning)', bg: 'rgba(245,158,11,0.12)' }
-        : { label: 'Confiança Baixa', color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' }
+        : { label: 'Confiança Baixa', color: 'var(--error)', bg: 'rgba(239,68,68,0.12)' }
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -194,7 +194,7 @@ export default function AvaliacaoDetalhesPage() {
                         )}
                         <button onClick={() => setShowDeleteConfirm(true)}
                             className="h-10 px-3 rounded-[6px] text-sm font-medium hover:bg-red-500/20"
-                            style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--bo-error)' }}>
+                            style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--error)' }}>
                             <Trash2 size={16} />
                         </button>
                     </div>
@@ -256,7 +256,7 @@ export default function AvaliacaoDetalhesPage() {
                                 <BarChart2 size={14} style={{ color: 'var(--imi-gold-500)' }} />
                             </div>
                         </div>
-                        <p className="text-lg font-bold leading-tight" style={{ color: 'var(--bo-accent)' }}>{formatPrice(Number(data.valor_m2))}/m²</p>
+                        <p className="text-lg font-bold leading-tight" style={{ color: 'var(--imi-gold-500)' }}>{formatPrice(Number(data.valor_m2))}/m²</p>
                     </div>
                 )}
                 {data.area_privativa && (
@@ -281,7 +281,7 @@ export default function AvaliacaoDetalhesPage() {
                         <p className="text-lg font-bold leading-tight" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
                         {data.honorarios_status && (
                             <p className="text-[10px] font-bold mt-1.5" style={{
-                                color: data.honorarios_status === 'pago' ? 'var(--bo-success)' : data.honorarios_status === 'parcial' ? 'var(--bo-accent)' : 'var(--warning)'
+                                color: data.honorarios_status === 'pago' ? 'var(--success)' : data.honorarios_status === 'parcial' ? 'var(--imi-gold-500)' : 'var(--warning)'
                             }}>
                                 ● {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
                             </p>
@@ -329,7 +329,7 @@ export default function AvaliacaoDetalhesPage() {
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
                                     {data.quartos != null && (
                                         <div className="text-center">
-                                            <Bed size={24} className="mx-auto mb-2" style={{ color: 'var(--bo-accent)' }} />
+                                            <Bed size={24} className="mx-auto mb-2" style={{ color: 'var(--imi-gold-500)' }} />
                                             <p className="text-xl font-bold" style={{ color: T.text }}>{data.quartos}</p>
                                             <p className="text-xs" style={{ color: T.textMuted }}>Quartos</p>
                                         </div>
@@ -366,7 +366,7 @@ export default function AvaliacaoDetalhesPage() {
                                 <div className="flex flex-wrap gap-2">
                                     {caracteristicas.map((f: string, i: number) => (
                                         <span key={i} className="px-3 py-1.5 rounded-lg text-sm"
-                                            style={{ background: 'rgba(59,130,246,0.1)', color: 'var(--bo-accent)' }}>
+                                            style={{ background: 'rgba(59,130,246,0.1)', color: 'var(--imi-gold-500)' }}>
                                             {f}
                                         </span>
                                     ))}
@@ -615,7 +615,7 @@ export default function AvaliacaoDetalhesPage() {
                         </div>
 
                         {/* AI Intelligence Card */}
-                        <div className="rounded-lg p-5" style={{ background: T.surface, border: '1px solid var(--bo-border-gold)' }}>
+                        <div className="rounded-lg p-5" style={{ background: T.surface, border: '1px solid rgba(184,148,58,0.25)' }}>
                             <div className="flex items-center gap-2 mb-3">
                                 <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(200,166,90,0.15)' }}>
                                     {aiLoading ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--imi-ai-gold)' }} /> : <Sparkles size={13} style={{ color: 'var(--imi-ai-gold)' }} />}
@@ -634,7 +634,7 @@ export default function AvaliacaoDetalhesPage() {
                                             <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Grau Invest.</p>
                                                 <p className="text-lg font-bold" style={{
-                                                    color: aiAnalysis.investmentGrade === 'A' ? 'var(--success)' : aiAnalysis.investmentGrade === 'B' ? 'var(--info)' : aiAnalysis.investmentGrade === 'C' ? 'var(--warning)' : 'var(--bo-error)'
+                                                    color: aiAnalysis.investmentGrade === 'A' ? 'var(--success)' : aiAnalysis.investmentGrade === 'B' ? 'var(--info)' : aiAnalysis.investmentGrade === 'C' ? 'var(--warning)' : 'var(--error)'
                                                 }}>{aiAnalysis.investmentGrade}</p>
                                             </div>
                                         )}
@@ -642,7 +642,7 @@ export default function AvaliacaoDetalhesPage() {
                                             <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Tendência</p>
                                                 <p className="text-sm font-bold" style={{
-                                                    color: aiAnalysis.marketTrend === 'alta' ? 'var(--success)' : aiAnalysis.marketTrend === 'queda' ? 'var(--bo-error)' : 'var(--warning)'
+                                                    color: aiAnalysis.marketTrend === 'alta' ? 'var(--success)' : aiAnalysis.marketTrend === 'queda' ? 'var(--error)' : 'var(--warning)'
                                                 }}>{aiAnalysis.marketTrend}</p>
                                             </div>
                                         )}

@@ -51,11 +51,11 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
 const TIPOS_CONTEUDO = [
   { id: 'blog',      label: 'Artigo Blog',       icon: FileText,  desc: 'SEO-friendly, 800-2000 palavras',     color: 'var(--info)', bg: 'rgba(59,130,246,0.12)'  },
-  { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: 'var(--bo-success)', bg: 'rgba(74,222,128,0.12)'  },
+  { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: 'var(--success)', bg: 'rgba(74,222,128,0.12)'  },
   { id: 'instagram', label: 'Post Instagram',    icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars',  color: 'var(--error)', bg: 'rgba(244,114,182,0.12)' },
   { id: 'linkedin',  label: 'Post LinkedIn',     icon: Linkedin,  desc: 'Artigo ou post profissional',         color: 'var(--info)', bg: 'rgba(96,165,250,0.12)'  },
   { id: 'facebook',  label: 'Post Facebook',     icon: Facebook,  desc: 'Post com engajamento',                color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
-  { id: 'landing',   label: 'Landing Page Copy', icon: Globe,     desc: 'Hero, benefícios, CTA',              color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.12)'  },
+  { id: 'landing',   label: 'Landing Page Copy', icon: Globe,     desc: 'Hero, benefícios, CTA',              color: 'var(--warning)', bg: 'rgba(251,191,36,0.12)'  },
 ]
 
 // ⚠️ NÃO MODIFICAR - Templates por tipo
@@ -504,7 +504,7 @@ export default function NovoConteudoPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: T.accent }}>
-                    <div className="w-2 h-2 bg-[var(--bo-accent)] rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-[var(--imi-gold-500)] rounded-full animate-pulse" />
                     Backup Automático Ativo
                   </div>
                 </div>
@@ -581,7 +581,7 @@ export default function NovoConteudoPage() {
               {aiPanel.loading ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-5">
                   <div className="relative">
-                    <Loader2 size={48} className="animate-spin text-[var(--bo-accent)]" />
+                    <Loader2 size={48} className="animate-spin text-[var(--imi-gold-500)]" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-2 h-2 rounded-full" style={{ background: T.accent }} />
                     </div>

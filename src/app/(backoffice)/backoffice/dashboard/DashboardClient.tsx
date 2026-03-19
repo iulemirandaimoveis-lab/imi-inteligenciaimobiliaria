@@ -579,9 +579,9 @@ export default function DashboardClient({
 
     const ACTIONS = [
         { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale,    color: 'rgba(59,130,246,0.12)',  fg: 'var(--imi-gold-500)', raw: '59,130,246' },
-        { label: 'Novo Lead',       href: '/backoffice/leads/novo',      icon: Users,    color: 'rgba(74,222,128,0.10)',  fg: 'var(--s-done)',          raw: '74,222,128' },
-        { label: 'Novo Imóvel',     href: '/backoffice/imoveis/novo',    icon: Building2,color: 'rgba(34,211,238,0.10)',  fg: 'var(--s-cold)',          raw: '34,211,238' },
-        { label: 'Ver Relatórios',  href: '/backoffice/relatorios',      icon: BarChart2,color: 'rgba(251,191,36,0.10)',  fg: 'var(--s-warm)',          raw: '251,191,36' },
+        { label: 'Novo Lead',       href: '/backoffice/leads/novo',      icon: Users,    color: 'rgba(74,222,128,0.10)',  fg: 'var(--success)',          raw: '74,222,128' },
+        { label: 'Novo Imóvel',     href: '/backoffice/imoveis/novo',    icon: Building2,color: 'rgba(34,211,238,0.10)',  fg: 'var(--info)',          raw: '34,211,238' },
+        { label: 'Ver Relatórios',  href: '/backoffice/relatorios',      icon: BarChart2,color: 'rgba(251,191,36,0.10)',  fg: 'var(--warning)',          raw: '251,191,36' },
     ]
 
     const alertaIcon: Record<string, any> = {
@@ -932,7 +932,7 @@ export default function DashboardClient({
                     }}
                 >
                     <div className="flex items-center gap-2 mb-4">
-                        <Zap size={13} style={{ color: 'var(--s-warm)' }} />
+                        <Zap size={13} style={{ color: 'var(--warning)' }} />
                         <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             Ações Rápidas
                         </span>
@@ -1091,7 +1091,7 @@ export default function DashboardClient({
                     <div className="flex items-center justify-between px-4 py-3"
                         style={{ borderBottom: '1px solid var(--border-default)' }}>
                         <div className="flex items-center gap-2">
-                            <Scale size={13} style={{ color: 'var(--s-warm)' }} />
+                            <Scale size={13} style={{ color: 'var(--warning)' }} />
                             <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                 Avaliações Recentes
                             </span>
@@ -1115,7 +1115,7 @@ export default function DashboardClient({
                                 >
                                     <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                                         style={{ background: 'rgba(251,191,36,0.12)' }}>
-                                        <Scale size={13} style={{ color: 'var(--s-warm)' }} />
+                                        <Scale size={13} style={{ color: 'var(--warning)' }} />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
@@ -1126,7 +1126,7 @@ export default function DashboardClient({
                                         </p>
                                     </div>
                                     <div className="text-right flex-shrink-0">
-                                        <p className="text-[11px] font-bold mb-1" style={{ color: 'var(--s-warm)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
+                                        <p className="text-[11px] font-bold mb-1" style={{ color: 'var(--warning)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                                             {fmt(av.honorarios || 0)}
                                         </p>
                                         <StatusBadge status={s.statusKey} label={s.label} size="xs" />

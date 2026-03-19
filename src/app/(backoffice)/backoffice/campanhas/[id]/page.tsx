@@ -121,7 +121,7 @@ export default function CampanhaDetalhesPage() {
         { label: 'Leads', value: fmtN(campanha.leads), color: T.accent },
         { label: 'Conversões', value: fmtN(campanha.conversions), color: '#4CAF7D' },
         { label: 'CPL', value: fmtBRL(campanha.cost_per_lead), color: 'var(--warning)' },
-        { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: 'var(--bo-success)' },
+        { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: 'var(--success)' },
         { label: 'Orçamento', value: fmtBRL(campanha.budget), color: T.text },
     ]
 
@@ -187,7 +187,7 @@ export default function CampanhaDetalhesPage() {
             )}
 
             {/* AI Insight Card */}
-            <div className="rounded-lg p-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border-gold)' }}>
+            <div className="rounded-lg p-5" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)' }}>
                 <div className="flex items-center gap-2 mb-3">
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(var(--imi-ai-gold-rgb),0.12)' }}>
                         {aiLoading ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--imi-ai-gold)' }} /> : <Sparkles size={13} style={{ color: 'var(--imi-ai-gold)' }} />}
@@ -206,7 +206,7 @@ export default function CampanhaDetalhesPage() {
                                 <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                     <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Performance</p>
                                     <p className="text-sm font-bold" style={{
-                                        color: aiAnalysis.status === 'excelente' ? 'var(--success)' : aiAnalysis.status === 'bom' ? 'var(--info)' : aiAnalysis.status === 'regular' ? 'var(--warning)' : 'var(--bo-error)'
+                                        color: aiAnalysis.status === 'excelente' ? 'var(--success)' : aiAnalysis.status === 'bom' ? 'var(--info)' : aiAnalysis.status === 'regular' ? 'var(--warning)' : 'var(--error)'
                                     }}>{aiAnalysis.status}</p>
                                 </div>
                             )}
@@ -218,7 +218,7 @@ export default function CampanhaDetalhesPage() {
                             )}
                         </div>
                         {aiAnalysis.nextAction && (
-                            <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--bo-border)' }}>
+                            <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-default)' }}>
                                 <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Próxima Ação</p>
                                 <p className="text-xs font-medium" style={{ color: T.text }}>{aiAnalysis.nextAction}</p>
                             </div>

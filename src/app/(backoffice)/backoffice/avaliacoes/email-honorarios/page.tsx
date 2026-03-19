@@ -216,15 +216,15 @@ export default function EmailHonorariosPage() {
 
   const ENTITY_BADGE: Record<string, { bg: string; color: string }> = {
     tribunal: { bg: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)' },
-    banco: { bg: 'rgba(72,101,129,0.12)', color: 'var(--bo-accent)' },
-    particular: { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' },
+    banco: { bg: 'rgba(72,101,129,0.12)', color: 'var(--imi-gold-500)' },
+    particular: { bg: 'rgba(107,184,123,0.12)', color: 'var(--success)' },
     escritorio: { bg: 'rgba(245,158,11,0.12)', color: 'var(--warning)' },
     outro: { bg: 'rgba(255,255,255,0.05)', color: T.textMuted },
   }
   const URGENCIA_BADGE: Record<string, { bg: string; color: string }> = {
-    baixa: { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' },
+    baixa: { bg: 'rgba(107,184,123,0.12)', color: 'var(--success)' },
     media: { bg: 'rgba(245,158,11,0.12)', color: 'var(--warning)' },
-    alta: { bg: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)' },
+    alta: { bg: 'rgba(229,115,115,0.12)', color: 'var(--error)' },
   }
 
   return (
@@ -255,7 +255,7 @@ export default function EmailHonorariosPage() {
           <div className="flex gap-2">
             {EXEMPLOS.map(ex => (
               <button key={ex.label} onClick={() => setEmailText(ex.conteudo)}
-                className="text-xs px-2.5 py-1 rounded-lg hover:border-navy-600 hover:text-[var(--bo-accent)] transition-colors"
+                className="text-xs px-2.5 py-1 rounded-lg hover:border-navy-600 hover:text-[var(--imi-gold-500)] transition-colors"
                 style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>
                 {ex.label}
               </button>
@@ -269,7 +269,7 @@ export default function EmailHonorariosPage() {
           style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
 
         {error && (
-          <p className="text-sm rounded-lg px-3 py-2" style={{ background: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)' }}>{error}</p>
+          <p className="text-sm rounded-lg px-3 py-2" style={{ background: 'rgba(229,115,115,0.12)', color: 'var(--error)' }}>{error}</p>
         )}
 
         <button onClick={analisar} disabled={!emailText.trim() || loading}
@@ -289,8 +289,8 @@ export default function EmailHonorariosPage() {
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className="px-5 py-3 text-sm font-medium transition-colors"
                 style={{
-                  borderBottom: `2px solid ${activeTab === tab ? 'var(--bo-accent)' : 'transparent'}`,
-                  color: activeTab === tab ? 'var(--bo-accent)' : T.textMuted,
+                  borderBottom: `2px solid ${activeTab === tab ? 'var(--imi-gold-500)' : 'transparent'}`,
+                  color: activeTab === tab ? 'var(--imi-gold-500)' : T.textMuted,
                 }}>
                 {tab === 'analise' ? '📊 Análise do Email' : '✉ Rascunho de Resposta'}
               </button>

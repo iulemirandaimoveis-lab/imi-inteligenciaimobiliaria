@@ -131,9 +131,9 @@ export default function OnboardingPage() {
                                     width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     fontSize: '11px', fontWeight: 800,
-                                    background: step > s.id ? 'var(--s-done-bg)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
-                                    color: step > s.id ? 'var(--s-done)' : step === s.id ? '#fff' : 'var(--text-secondary)',
-                                    border: `1px solid ${step > s.id ? 'var(--s-done)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--border-default)'}`,
+                                    background: step > s.id ? 'var(--success-bg)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
+                                    color: step > s.id ? 'var(--success)' : step === s.id ? '#fff' : 'var(--text-secondary)',
+                                    border: `1px solid ${step > s.id ? 'var(--success)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--border-default)'}`,
                                     transition: 'all var(--dur-3) var(--ease)',
                                 }}>
                                     {step > s.id ? <CheckCircle2 size={14} /> : s.id}
@@ -141,7 +141,7 @@ export default function OnboardingPage() {
                                 {i < STEPS.length - 1 && (
                                     <div style={{
                                         flex: 1, height: '2px', borderRadius: '6px',
-                                        background: step > s.id ? 'var(--s-done)' : 'var(--border-default)',
+                                        background: step > s.id ? 'var(--success)' : 'var(--border-default)',
                                         transition: 'background 0.3s ease',
                                     }} />
                                 )}
@@ -295,10 +295,10 @@ export default function OnboardingPage() {
                                     style={{
                                         width: '80px', height: '80px', borderRadius: '50%',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        background: 'var(--s-done-bg)', border: '2px solid var(--s-done)',
+                                        background: 'var(--success-bg)', border: '2px solid var(--success)',
                                     }}
                                 >
-                                    <CheckCircle2 size={40} style={{ color: 'var(--s-done)' }} />
+                                    <CheckCircle2 size={40} style={{ color: 'var(--success)' }} />
                                 </motion.div>
                                 <div>
                                     <h3 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>

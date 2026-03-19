@@ -55,11 +55,11 @@ function formatDate(iso: string) {
 }
 
 const inputStyle = {
-    background: 'var(--bo-surface)',
-    border: '1px solid var(--bo-border)',
-    color: 'var(--bo-text)',
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border-default)',
+    color: 'var(--text-primary)',
 }
-const inputClass = "h-9 px-3 rounded-[6px] text-sm outline-none transition-all w-full focus:ring-1 focus:ring-[var(--bo-accent)]"
+const inputClass = "h-9 px-3 rounded-[6px] text-sm outline-none transition-all w-full focus:ring-1 focus:ring-[var(--imi-gold-500)]"
 
 // ── Indicator Card — view mode ───────────────────────────────────
 function IndicatorCard({
@@ -103,16 +103,16 @@ function IndicatorCard({
                     <button
                         onClick={() => onEdit(ind)}
                         className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
-                        style={{ background: 'var(--bo-hover)' }}
+                        style={{ background: 'var(--bg-hover)' }}
                     >
                         <Edit2 size={11} style={{ color: T.textMuted }} />
                     </button>
                     <button
                         onClick={() => onDelete(ind.id)}
                         className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-red-500/10"
-                        style={{ background: 'var(--bo-hover)' }}
+                        style={{ background: 'var(--bg-hover)' }}
                     >
-                        <Trash2 size={11} color="var(--bo-error)" />
+                        <Trash2 size={11} color="var(--error)" />
                     </button>
                 </div>
             </div>
@@ -169,14 +169,14 @@ function IndicatorEditCard({
     return (
         <div
             className="rounded-lg p-4 flex flex-col gap-3"
-            style={{ background: 'var(--bo-active-bg)', border: `1px solid var(--bo-border-gold)` }}
+            style={{ background: 'var(--bg-active)', border: `1px solid rgba(184,148,58,0.25)` }}
         >
             <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold" style={{ color: T.text }}>
                     {isNew ? 'Novo Indicador' : 'Editar Indicador'}
                 </p>
                 <button onClick={onCancel} className="w-7 h-7 rounded-[6px] flex items-center justify-center"
-                    style={{ background: 'var(--bo-hover)' }}>
+                    style={{ background: 'var(--bg-hover)' }}>
                     <X size={13} style={{ color: T.textMuted }} />
                 </button>
             </div>
@@ -342,7 +342,7 @@ export default function IndicadoresPage() {
                     onClick={() => setCategoryFilter('all')}
                     className="flex-shrink-0 h-8 px-3 rounded-[6px] text-xs font-semibold transition-all"
                     style={{
-                        background: categoryFilter === 'all' ? 'var(--bo-accent)' : T.elevated,
+                        background: categoryFilter === 'all' ? 'var(--imi-gold-500)' : T.elevated,
                         color: categoryFilter === 'all' ? 'white' : T.textMuted,
                         border: `1px solid ${categoryFilter === 'all' ? 'transparent' : T.border}`,
                     }}
@@ -388,14 +388,14 @@ export default function IndicadoresPage() {
                         <div key={i} className="rounded-lg p-4 animate-pulse"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, height: 160 }}>
                             <div className="flex gap-2 mb-3">
-                                <div className="w-8 h-8 rounded-lg" style={{ background: 'var(--bo-hover)' }} />
+                                <div className="w-8 h-8 rounded-lg" style={{ background: 'var(--bg-hover)' }} />
                                 <div className="flex-1">
-                                    <div className="h-2.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: '50%' }} />
-                                    <div className="h-2 rounded" style={{ background: 'var(--bo-hover)', width: '70%' }} />
+                                    <div className="h-2.5 rounded mb-1.5" style={{ background: 'var(--bg-hover)', width: '50%' }} />
+                                    <div className="h-2 rounded" style={{ background: 'var(--bg-hover)', width: '70%' }} />
                                 </div>
                             </div>
-                            <div className="h-8 rounded mb-2" style={{ background: 'var(--bo-hover)', width: '60%' }} />
-                            <div className="h-2 rounded" style={{ background: 'var(--bo-hover)', width: '40%' }} />
+                            <div className="h-8 rounded mb-2" style={{ background: 'var(--bg-hover)', width: '60%' }} />
+                            <div className="h-2 rounded" style={{ background: 'var(--bg-hover)', width: '40%' }} />
                         </div>
                     ))}
                 </div>

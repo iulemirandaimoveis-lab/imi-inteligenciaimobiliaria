@@ -54,16 +54,16 @@ export function WidgetGlobalCompare() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Title */}
             <div>
-                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
                     Comparativo Global
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
                     Recife vs Outras Cidades
                 </div>
             </div>
 
             {/* Metric toggle */}
-            <div style={{ display: 'flex', gap: 4, background: 'var(--bo-bg)', border: '1px solid var(--bo-border)', borderRadius: 8, padding: 3 }}>
+            <div style={{ display: 'flex', gap: 4, background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, padding: 3 }}>
                 {METRICS.map(m => (
                     <button
                         key={m}
@@ -73,8 +73,8 @@ export function WidgetGlobalCompare() {
                             padding: '5px 8px',
                             borderRadius: 6,
                             border: 'none',
-                            background: metric === m ? 'var(--bo-surface)' : 'transparent',
-                            color: metric === m ? 'var(--bo-accent,#C8A44A)' : 'var(--bo-text-muted)',
+                            background: metric === m ? 'var(--bg-surface)' : 'transparent',
+                            color: metric === m ? 'var(--imi-gold-500,#C8A44A)' : 'var(--text-secondary)',
                             fontSize: 10,
                             fontWeight: metric === m ? 700 : 500,
                             fontFamily: 'var(--font-ui)',
@@ -106,7 +106,7 @@ export function WidgetGlobalCompare() {
                                 <span style={{
                                     fontSize: 11,
                                     fontWeight: isHighlight ? 700 : 400,
-                                    color: isHighlight ? 'var(--bo-text)' : 'var(--bo-text-muted)',
+                                    color: isHighlight ? 'var(--text-primary)' : 'var(--text-secondary)',
                                     fontFamily: 'var(--font-ui)',
                                 }}>
                                     {city.name}
@@ -114,12 +114,12 @@ export function WidgetGlobalCompare() {
                             </div>
 
                             {/* Bar */}
-                            <div style={{ flex: 1, height: 22, background: 'var(--bo-border)', borderRadius: 5, overflow: 'hidden', position: 'relative' }}>
+                            <div style={{ flex: 1, height: 22, background: 'var(--border-default)', borderRadius: 5, overflow: 'hidden', position: 'relative' }}>
                                 <div style={{
                                     height: '100%',
                                     width: `${barPct}%`,
                                     background: isHighlight
-                                        ? 'linear-gradient(90deg, var(--bo-accent,#C8A44A), rgba(200,164,74,0.7))'
+                                        ? 'linear-gradient(90deg, var(--imi-gold-500,#C8A44A), rgba(200,164,74,0.7))'
                                         : 'linear-gradient(90deg, rgba(200,164,74,0.35), rgba(200,164,74,0.15))',
                                     borderRadius: 5,
                                     transition: 'width 0.45s cubic-bezier(0.4,0,0.2,1)',
@@ -130,7 +130,7 @@ export function WidgetGlobalCompare() {
                                         <span style={{
                                             fontSize: 10,
                                             fontWeight: 700,
-                                            color: isHighlight ? 'var(--navy,#0B1928)' : 'var(--bo-text)',
+                                            color: isHighlight ? 'var(--navy,#0B1928)' : 'var(--text-primary)',
                                         }}>
                                             {d.label}
                                         </span>
@@ -142,7 +142,7 @@ export function WidgetGlobalCompare() {
                                         left: `${barPct + 2}%`,
                                         top: '50%', transform: 'translateY(-50%)',
                                         fontSize: 10, fontWeight: 600,
-                                        color: 'var(--bo-text)',
+                                        color: 'var(--text-primary)',
                                     }}>
                                         {d.label}
                                     </span>
@@ -150,7 +150,7 @@ export function WidgetGlobalCompare() {
                             </div>
 
                             {/* Unit */}
-                            <div style={{ width: 28, fontSize: 8, color: 'var(--bo-text-muted)', textAlign: 'right', flexShrink: 0 }}>
+                            <div style={{ width: 28, fontSize: 8, color: 'var(--text-secondary)', textAlign: 'right', flexShrink: 0 }}>
                                 {d.unit}
                             </div>
                         </div>
@@ -166,14 +166,14 @@ export function WidgetGlobalCompare() {
                 border: '1px solid rgba(200,164,74,0.20)',
                 borderRadius: 8,
             }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--bo-accent,#C8A44A)', flexShrink: 0 }} />
-                <span style={{ fontSize: 10, color: 'var(--bo-text)', fontFamily: 'var(--font-ui)' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--imi-gold-500,#C8A44A)', flexShrink: 0 }} />
+                <span style={{ fontSize: 10, color: 'var(--text-primary)', fontFamily: 'var(--font-ui)' }}>
                     Recife oferece melhor custo-benefício entre as capitais brasileiras em {metric.toLowerCase()}
                 </span>
             </div>
 
             {/* Source */}
-            <p style={{ fontSize: 9, color: 'var(--bo-text-muted)', margin: 0, lineHeight: 1.4, borderTop: '1px solid var(--bo-border)', paddingTop: 8 }}>
+            <p style={{ fontSize: 9, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4, borderTop: '1px solid var(--border-default)', paddingTop: 8 }}>
                 Dados: FipeZap, Idealista, Zillow — Fev/2026. Valores convertidos para comparação relativa.
             </p>
         </div>

@@ -131,7 +131,7 @@ export function Skeleton({ w, h, r = '6px' }: { w: string; h: string; r?: string
   return (
     <div style={{
       width: w, height: h, borderRadius: r,
-      background: 'var(--bo-surface)',
+      background: 'var(--bg-surface)',
       animation: 'pulse 1.8s ease-in-out infinite',
     }} />
   )

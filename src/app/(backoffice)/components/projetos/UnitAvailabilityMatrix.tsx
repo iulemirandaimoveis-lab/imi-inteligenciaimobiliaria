@@ -22,7 +22,7 @@ interface UnitAvailabilityMatrixProps {
 }
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-    disponivel: { bg: 'rgba(74,222,128,0.2)', text: 'var(--bo-success)', label: 'Disponível' },
+    disponivel: { bg: 'rgba(74,222,128,0.2)', text: 'var(--success)', label: 'Disponível' },
     reservado:  { bg: 'rgba(168,85,247,0.2)', text: '#a855f7', label: 'Reservado' },
     vendido:    { bg: 'rgba(234,179,8,0.2)', text: '#eab308', label: 'Vendido' },
     bloqueado:  { bg: 'rgba(156,163,175,0.2)', text: '#9ca3af', label: 'Bloqueado' },

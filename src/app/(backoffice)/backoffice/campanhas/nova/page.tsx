@@ -278,10 +278,10 @@ export default function NovaCampanhaPage() {
   // Reusable input style helper
   const inputStyle = (errKey?: string) => ({
     background: T.elevated,
-    border: `1px solid ${errKey && errors[errKey] ? 'var(--s-hot)' : T.border}`,
+    border: `1px solid ${errKey && errors[errKey] ? 'var(--error)' : T.border}`,
     color: T.text,
   })
-  const inputClass = 'focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]'
+  const inputClass = 'focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]'
 
   return (
     <div className="space-y-6">
@@ -354,7 +354,7 @@ export default function NovaCampanhaPage() {
                     className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
                     style={
                       isCompleted
-                        ? { background: 'var(--s-done)', color: 'var(--text-inverse)' }
+                        ? { background: 'var(--success)', color: 'var(--text-inverse)' }
                         : isActive
                           ? { background: T.accent, color: 'var(--text-inverse)' }
                           : { background: T.elevated, color: T.textMuted }
@@ -364,7 +364,7 @@ export default function NovaCampanhaPage() {
                   </div>
                   <p
                     className="text-sm font-medium mt-2"
-                    style={{ color: isActive ? T.text : isCompleted ? 'var(--s-done)' : T.textMuted }}
+                    style={{ color: isActive ? T.text : isCompleted ? 'var(--success)' : T.textMuted }}
                   >
                     {step.label}
                   </p>
@@ -372,7 +372,7 @@ export default function NovaCampanhaPage() {
                 {index < steps.length - 1 && (
                   <div
                     className="h-1 flex-1 mx-4 rounded-full transition-all"
-                    style={{ background: currentStep > step.number ? 'var(--s-done)' : T.elevated }}
+                    style={{ background: currentStep > step.number ? 'var(--success)' : T.elevated }}
                   />
                 )}
               </div>
@@ -412,7 +412,7 @@ export default function NovaCampanhaPage() {
                   />
                 </div>
                 {errors.name && (
-                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--s-hot)' }}>
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--error)' }}>
                     <AlertCircle size={14} />
                     {errors.name}
                   </p>
@@ -436,7 +436,7 @@ export default function NovaCampanhaPage() {
                   ))}
                 </select>
                 {errors.objective && (
-                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--s-hot)' }}>
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--error)' }}>
                     <AlertCircle size={14} />
                     {errors.objective}
                   </p>
@@ -460,7 +460,7 @@ export default function NovaCampanhaPage() {
                   ))}
                 </select>
                 {errors.channel && (
-                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--s-hot)' }}>
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--error)' }}>
                     <AlertCircle size={14} />
                     {errors.channel}
                   </p>
@@ -532,7 +532,7 @@ export default function NovaCampanhaPage() {
                   </p>
                 )}
                 {errors.budget && (
-                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--s-hot)' }}>
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--error)' }}>
                     <AlertCircle size={14} />
                     {errors.budget}
                   </p>
@@ -579,7 +579,7 @@ export default function NovaCampanhaPage() {
                   />
                 </div>
                 {errors.expectedLeads && (
-                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--s-hot)' }}>
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--error)' }}>
                     <AlertCircle size={14} />
                     {errors.expectedLeads}
                   </p>
@@ -729,7 +729,7 @@ export default function NovaCampanhaPage() {
                   {formData.adTitle.length}/60 caracteres
                 </p>
                 {errors.adTitle && (
-                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--s-hot)' }}>
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--error)' }}>
                     <AlertCircle size={14} />
                     {errors.adTitle}
                   </p>
@@ -754,7 +754,7 @@ export default function NovaCampanhaPage() {
                   {formData.adDescription.length}/200 caracteres
                 </p>
                 {errors.adDescription && (
-                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--s-hot)' }}>
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: 'var(--error)' }}>
                     <AlertCircle size={14} />
                     {errors.adDescription}
                   </p>
@@ -840,7 +840,7 @@ export default function NovaCampanhaPage() {
                           type="button"
                           onClick={() => removeImage(index)}
                           className="absolute top-2 right-2 w-6 h-6 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                          style={{ background: 'var(--s-hot)' }}
+                          style={{ background: 'var(--error)' }}
                         >
                           <X size={14} />
                         </button>

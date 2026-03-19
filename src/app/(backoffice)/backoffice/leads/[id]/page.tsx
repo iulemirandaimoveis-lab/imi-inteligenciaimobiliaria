@@ -279,9 +279,9 @@ export default function LeadDetailPage() {
                     Temperatura
                   </p>
                   {[
-                    { key: 'hot',  emoji: '🔥', label: 'Hot',  color: 'var(--s-hot)' },
-                    { key: 'warm', emoji: '🌡',  label: 'Warm', color: 'var(--s-warm)' },
-                    { key: 'cold', emoji: '❄️', label: 'Cold', color: 'var(--s-cold)' },
+                    { key: 'hot',  emoji: '🔥', label: 'Hot',  color: 'var(--error)' },
+                    { key: 'warm', emoji: '🌡',  label: 'Warm', color: 'var(--warning)' },
+                    { key: 'cold', emoji: '❄️', label: 'Cold', color: 'var(--info)' },
                   ].map(s => (
                     <button
                       key={s.key}
@@ -323,12 +323,12 @@ export default function LeadDetailPage() {
                         background: leadStatus === s.key ? 'var(--bg-hover)' : 'transparent',
                         border: 'none', cursor: 'pointer', fontSize: '13px',
                         fontWeight: leadStatus === s.key ? 700 : 500,
-                        color: leadStatus === s.key ? 'var(--bo-accent)' : 'var(--text-primary)',
+                        color: leadStatus === s.key ? 'var(--imi-gold-500)' : 'var(--text-primary)',
                         textAlign: 'left',
                       }}
                     >
                       <span>{s.label}</span>
-                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '11px', color: 'var(--bo-accent)' }}>✓</span>}
+                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '11px', color: 'var(--imi-gold-500)' }}>✓</span>}
                     </button>
                   ))}
                 </motion.div>
@@ -683,7 +683,7 @@ export default function LeadDetailPage() {
                             </p>
                           )}
                           {event.trending && (
-                            <div className="flex items-center gap-1" style={{ fontSize: '11px', fontWeight: 700, color: 'var(--s-done)' }}>
+                            <div className="flex items-center gap-1" style={{ fontSize: '11px', fontWeight: 700, color: 'var(--success)' }}>
                               <TrendingUp size={10} />
                               Evento mais recente
                             </div>
@@ -772,7 +772,7 @@ export default function LeadDetailPage() {
                   }}
                   style={{
                     width: '44px', height: '44px', borderRadius: '6px',
-                    background: note.trim() ? 'var(--bo-accent)' : 'var(--bg-elevated)',
+                    background: note.trim() ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
                     border: 'none', cursor: note.trim() ? 'pointer' : 'default',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     opacity: note.trim() ? 1 : 0.4,

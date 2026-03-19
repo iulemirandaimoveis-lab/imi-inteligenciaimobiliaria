@@ -20,7 +20,7 @@ import { T } from '../../lib/theme'
 export const dynamic = 'force-dynamic'
 
 const FUNNEL_STAGES = [
-    { key: 'new', label: 'Novos', color: 'var(--bo-accent)' },
+    { key: 'new', label: 'Novos', color: 'var(--imi-gold-500)' },
     { key: 'contacted', label: 'Contatados', color: '#5B7A9C' },
     { key: 'visit_scheduled', label: 'Visita Agendada', color: '#6B8FAF' },
     { key: 'proposal', label: 'Proposta', color: '#7BA3C2' },
@@ -91,9 +91,9 @@ const RELATORIOS = [
 
 const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
     avaliacoes: { label: 'Avaliações', text: 'var(--text-secondary)', bg: 'rgba(168,158,196,0.12)' },
-    financeiro: { label: 'Financeiro', text: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)' },
+    financeiro: { label: 'Financeiro', text: 'var(--success)', bg: 'rgba(107,184,123,0.12)' },
     crm: { label: 'CRM', text: 'var(--info)', bg: 'rgba(123,158,196,0.12)' },
-    imoveis: { label: 'Imóveis', text: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
+    imoveis: { label: 'Imóveis', text: 'var(--imi-gold-500)', bg: 'rgba(72,101,129,0.12)' },
     consultorias: { label: 'Consultorias', text: 'var(--warning)', bg: 'rgba(232,168,124,0.12)' },
 }
 
@@ -118,7 +118,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
     if (!active || !payload?.length) return null
     return (
         <div className="rounded-lg px-3 py-2 text-xs shadow-lg"
-            style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }}>
+            style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', color: 'var(--text-primary)' }}>
             <p className="font-semibold mb-1">{label}</p>
             {payload.map((p, i) => (
                 <p key={i} style={{ color: p.color }}>{p.name}: <strong>{p.value}</strong></p>
@@ -187,7 +187,7 @@ export default function RelatoriosPage() {
                         onClick={() => setTab(t.key as 'analytics' | 'relatorios')}
                         className="flex items-center gap-2 px-4 h-9 rounded-[6px] text-sm font-medium transition-all"
                         style={{
-                            background: tab === t.key ? 'var(--bo-accent)' : 'transparent',
+                            background: tab === t.key ? 'var(--imi-gold-500)' : 'transparent',
                             color: tab === t.key ? 'white' : T.textDim,
                         }}
                     >
@@ -204,7 +204,7 @@ export default function RelatoriosPage() {
                     {/* KPI strip */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {[
-                            { label: 'Total Leads', value: funnel?.reduce((s, f) => s + f.value, 0) || 0, color: 'var(--bo-accent)' },
+                            { label: 'Total Leads', value: funnel?.reduce((s, f) => s + f.value, 0) || 0, color: 'var(--imi-gold-500)' },
                             { label: 'Fechados', value: won, color: '#4CAF7D' },
                             { label: 'Taxa Conversão', value: `${conversionRate}%`, color: 'var(--text-secondary)' },
                             { label: 'Empreendimentos', value: byDev?.length || 0, color: 'var(--warning)' },
@@ -226,9 +226,9 @@ export default function RelatoriosPage() {
                         ) : (
                             <ResponsiveContainer width="100%" height={200}>
                                 <BarChart data={funnel} layout="vertical" margin={{ left: 8, right: 24, top: 0, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--bo-border)" horizontal={false} />
-                                    <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
-                                    <YAxis dataKey="label" type="category" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} width={110} axisLine={false} tickLine={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" horizontal={false} />
+                                    <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
+                                    <YAxis dataKey="label" type="category" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} width={110} axisLine={false} tickLine={false} />
                                     <Tooltip content={<CustomTooltip />} />
                                     <Bar dataKey="value" name="Leads" radius={[0, 4, 4, 0]} maxBarSize={20}>
                                         {funnel?.map((f, i) => <Cell key={i} fill={f.color} />)}
@@ -249,11 +249,11 @@ export default function RelatoriosPage() {
                             ) : (
                                 <ResponsiveContainer width="100%" height={160}>
                                     <LineChart data={temporal} margin={{ left: -10, right: 10, top: 4, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--bo-border)" />
-                                        <XAxis dataKey="semana" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
-                                        <YAxis tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" />
+                                        <XAxis dataKey="semana" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
+                                        <YAxis tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
-                                        <Line type="monotone" dataKey="leads" name="Leads" stroke="var(--bo-accent)" strokeWidth={2} dot={{ fill: 'var(--bo-accent)', r: 3 }} />
+                                        <Line type="monotone" dataKey="leads" name="Leads" stroke="var(--imi-gold-500)" strokeWidth={2} dot={{ fill: 'var(--imi-gold-500)', r: 3 }} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             )}
@@ -269,11 +269,11 @@ export default function RelatoriosPage() {
                             ) : (
                                 <ResponsiveContainer width="100%" height={160}>
                                     <BarChart data={byDev} layout="vertical" margin={{ left: 0, right: 20, top: 0, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--bo-border)" horizontal={false} />
-                                        <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
-                                        <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} width={95} axisLine={false} tickLine={false} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" horizontal={false} />
+                                        <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
+                                        <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} width={95} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
-                                        <Bar dataKey="leads" name="Leads" fill="var(--bo-accent)" radius={[0, 4, 4, 0]} maxBarSize={16} />
+                                        <Bar dataKey="leads" name="Leads" fill="var(--imi-gold-500)" radius={[0, 4, 4, 0]} maxBarSize={16} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             )}
@@ -310,7 +310,7 @@ export default function RelatoriosPage() {
                                 >
                                     <div className="flex items-start gap-4">
                                         <div className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
-                                            style={{ background: cat?.bg || 'var(--bo-active-bg)' }}>
+                                            style={{ background: cat?.bg || 'var(--bg-active)' }}>
                                             <r.icon size={20} style={{ color: cat?.text || T.accent }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -332,7 +332,7 @@ export default function RelatoriosPage() {
                                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                                     {f === 'PDF'
                                                         ? <File size={11} style={{ color: 'var(--warning)' }} />
-                                                        : <FileSpreadsheet size={11} style={{ color: 'var(--bo-success)' }} />}
+                                                        : <FileSpreadsheet size={11} style={{ color: 'var(--success)' }} />}
                                                     <span className="text-[11px] font-semibold" style={{ color: T.textDim }}>{f}</span>
                                                 </div>
                                             ))}
@@ -340,7 +340,7 @@ export default function RelatoriosPage() {
                                         <motion.button whileTap={{ scale: 0.95 }}
                                             onClick={() => handleGerar(r.id)} disabled={loading}
                                             className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-xs font-semibold text-white transition-all"
-                                            style={{ background: loading ? 'var(--bo-elevated)' : 'var(--bo-accent)', opacity: loading ? 0.7 : 1 }}>
+                                            style={{ background: loading ? 'var(--bg-elevated)' : 'var(--imi-gold-500)', opacity: loading ? 0.7 : 1 }}>
                                             {loading ? (
                                                 <>
                                                     <motion.span animate={{ rotate: 360 }}

@@ -312,7 +312,7 @@ export default function LeadsInboxPage() {
                                         className="flex items-start gap-2 pt-2"
                                         style={{ borderTop: `1px solid ${T.border}` }}
                                     >
-                                        <Zap size={11} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--bo-success)' }} />
+                                        <Zap size={11} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--success)' }} />
                                         <p className="text-[11px] leading-[1.55]" style={{ color: T.textMuted }}>
                                             {reasoning}
                                         </p>
@@ -327,7 +327,7 @@ export default function LeadsInboxPage() {
                                                         className="h-full rounded-full transition-all"
                                                         style={{
                                                             width: `${Math.min(lead.score, 100)}%`,
-                                                            background: lead.score >= 75 ? tc.text : lead.score >= 45 ? 'var(--bo-warning)' : 'var(--text-tertiary)',
+                                                            background: lead.score >= 75 ? tc.text : lead.score >= 45 ? 'var(--warning)' : 'var(--text-tertiary)',
                                                         }}
                                                     />
                                                 </div>

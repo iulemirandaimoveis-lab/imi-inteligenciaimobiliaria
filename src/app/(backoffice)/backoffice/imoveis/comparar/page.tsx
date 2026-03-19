@@ -88,7 +88,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
     <span style={{
       fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase',
-      color: 'var(--bo-accent, var(--imi-gold-500))', fontFamily: 'var(--font-outfit, sans-serif)',
+      color: 'var(--imi-gold-500)', fontFamily: 'var(--font-outfit, sans-serif)',
       fontWeight: 700,
     }}>
       {children}
@@ -100,7 +100,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 function EmptyState() {
   return (
     <div style={{
-      minHeight: '100vh', background: 'var(--bo-bg, #0B1120)',
+      minHeight: '100vh', background: 'var(--bg-base, #0B1120)',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       justifyContent: 'center', padding: '40px 24px', gap: 24, textAlign: 'center',
     }}>
@@ -116,12 +116,12 @@ function EmptyState() {
         <p style={{
           fontFamily: 'var(--font-playfair, "Libre Baskerville", serif)',
           fontSize: '22px', fontWeight: 600,
-          color: 'var(--bo-text, #EBE7E0)', marginBottom: 8,
+          color: 'var(--text-primary, #EBE7E0)', marginBottom: 8,
         }}>
           Nenhum imóvel selecionado
         </p>
         <p style={{
-          fontSize: '12px', color: 'var(--bo-text-muted, #9FAAB8)',
+          fontSize: '12px', color: 'var(--text-secondary, #9FAAB8)',
           fontFamily: 'var(--font-outfit, sans-serif)',
           maxWidth: 380, lineHeight: 1.6,
         }}>
@@ -692,14 +692,14 @@ function DesktopComparar() {
   return (
     <div className="comparar-wrap" style={{
       minHeight: '100vh',
-      background: 'var(--bo-bg, #0B1120)',
+      background: 'var(--bg-base, #0B1120)',
       display: 'flex', flexDirection: 'column',
     }}>
       {/* ── Header ───────────────────────────────────────── */}
       <header className="comparar-header" style={{
         padding: '20px 28px',
         borderBottom: '1px solid rgba(184,148,58,0.12)',
-        background: 'var(--bo-card, #162040)',
+        background: 'var(--bg-surface, #162040)',
         position: 'relative', overflow: 'hidden',
       }}>
         <div style={{
@@ -717,7 +717,7 @@ function DesktopComparar() {
             <Link href="/backoffice/imoveis">
               <span style={{
                 fontSize: '11px', fontWeight: 500, letterSpacing: '2px',
-                textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
+                textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)',
                 fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
               }}>Imóveis</span>
             </Link>
@@ -730,12 +730,12 @@ function DesktopComparar() {
               <h1 style={{
                 fontFamily: 'var(--font-playfair, "Libre Baskerville", serif)',
                 fontSize: '26px', fontWeight: 600,
-                color: 'var(--bo-text, #EBE7E0)', marginBottom: 4, lineHeight: 1.1,
+                color: 'var(--text-primary, #EBE7E0)', marginBottom: 4, lineHeight: 1.1,
               }}>
-                Comparativo de <em style={{ fontStyle: 'italic', color: 'var(--bo-accent, var(--imi-gold-500))' }}>Imóveis</em>
+                Comparativo de <em style={{ fontStyle: 'italic', color: 'var(--imi-gold-500)' }}>Imóveis</em>
               </h1>
               <p style={{
-                fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)',
+                fontSize: '11px', color: 'var(--text-tertiary, #5C6B7D)',
                 fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 300,
               }}>
                 {properties.length} de 5 imóveis · análise comparativa IMI Intelligence
@@ -783,7 +783,7 @@ function DesktopComparar() {
         {loading ? (
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '80px', gap: 12, color: 'var(--bo-text-muted, #9FAAB8)',
+            padding: '80px', gap: 12, color: 'var(--text-secondary, #9FAAB8)',
           }}>
             <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
             <span style={{ fontFamily: 'var(--font-outfit, sans-serif)', fontSize: '12px' }}>
@@ -799,7 +799,7 @@ function DesktopComparar() {
           </div>
         ) : (
           <div style={{
-            background: 'var(--bo-card, #162040)',
+            background: 'var(--bg-surface, #162040)',
             border: '1px solid rgba(184,148,58,0.18)',
             borderRadius: 6, overflow: 'hidden',
             minWidth: 640,
@@ -872,7 +872,7 @@ function DesktopComparar() {
                       <p style={{
                         fontFamily: 'var(--font-playfair, serif)',
                         fontSize: '13px', fontWeight: 600,
-                        color: 'var(--bo-text, #EBE7E0)',
+                        color: 'var(--text-primary, #EBE7E0)',
                         lineHeight: 1.3, marginBottom: 2,
                         paddingRight: 24,
                       }}>
@@ -880,7 +880,7 @@ function DesktopComparar() {
                       </p>
                       {p.developer?.name && (
                         <p style={{
-                          fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)',
+                          fontSize: '11px', color: 'var(--text-tertiary, #5C6B7D)',
                           fontFamily: 'var(--font-outfit, sans-serif)',
                         }}>
                           {p.developer.name}
@@ -953,7 +953,7 @@ function DesktopComparar() {
                           display: 'flex', alignItems: 'center',
                         }}>
                           <span style={{
-                            fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)',
+                            fontSize: '11px', color: 'var(--text-secondary, #9FAAB8)',
                             fontFamily: 'var(--font-outfit, sans-serif)',
                           }}>
                             {row.label}
@@ -986,7 +986,7 @@ function DesktopComparar() {
                               }}
                             >
                               {isBest && (
-                                <Star size={9} style={{ color: 'var(--bo-accent, var(--imi-gold-500))', flexShrink: 0 }} />
+                                <Star size={9} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
                               )}
                               <span style={{
                                 fontFamily: row.type === 'numeric'
@@ -994,8 +994,8 @@ function DesktopComparar() {
                                   : 'var(--font-outfit, sans-serif)',
                                 fontSize: row.type === 'numeric' ? '12px' : '11px',
                                 color: isBest
-                                  ? 'var(--bo-accent, var(--imi-gold-500))'
-                                  : 'var(--bo-text, #EBE7E0)',
+                                  ? 'var(--imi-gold-500)'
+                                  : 'var(--text-primary, #EBE7E0)',
                                 fontWeight: isBest ? 600 : 400,
                               }}>
                                 {displayVal}

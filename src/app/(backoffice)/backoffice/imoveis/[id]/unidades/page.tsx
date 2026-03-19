@@ -220,7 +220,7 @@ function MobileUnidades({
                             onClick={() => setSearchTerm('')}
                             className="mob-btn-tap"
                             style={{
-                                width: 20, height: 20, borderRadius: 999,
+                                width: 20, height: 20, borderRadius: 6,
                                 background: '#5C6B7D', border: 'none', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 padding: 0,

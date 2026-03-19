@@ -237,7 +237,7 @@ export function DesktopImovelDetail({
         {/* LEFT COLUMN */}
         <div>
           {/* Sticky tab bar */}
-          <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--bo-bg, var(--navy, #0B1120))', borderBottom: '1px solid rgba(184,148,58,0.14)', marginBottom: 20 }}>
+          <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--bg-base, var(--navy, #0B1120))', borderBottom: '1px solid rgba(184,148,58,0.14)', marginBottom: 20 }}>
             <div className="imovel-tabs" style={{ display: 'flex', gap: 0, overflowX: 'auto', scrollbarWidth: 'none' }}>
               {TABS.map(tab => (
                 <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ padding: '12px 20px', background: 'transparent', border: 'none', borderBottom: `2px solid ${activeTab === tab.key ? 'var(--gold, var(--imi-gold-500))' : 'transparent'}`, color: activeTab === tab.key ? 'var(--gold, var(--imi-gold-500))' : T.textMuted, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 200ms ease', marginBottom: '-1px' }}>
@@ -271,7 +271,7 @@ export function DesktopImovelDetail({
                     { icon: MapPin, label: 'Bairro', value: dev.neighborhood ?? '—' },
                     { icon: Home, label: 'CEP', value: dev.cep ?? '—' },
                   ].map(({ icon: Icon, label, value }) => (
-                    <div key={label} style={{ background: 'var(--bo-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '12px 14px' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '12px 14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
                         <Icon size={12} style={{ color: 'var(--gold, var(--imi-gold-500))', flexShrink: 0 }} />
                         <span style={{ ...EYEBROW, fontSize: '8px' }}>{label}</span>
@@ -293,7 +293,7 @@ export function DesktopImovelDetail({
               )}
               <div style={{ ...CARD, padding: 24 }}>
                 <p style={{ ...EYEBROW, marginBottom: 16 }}>Localização</p>
-                <div style={{ background: 'var(--bo-surface)', borderRadius: 8, overflow: 'hidden', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(184,148,58,0.1)', flexDirection: 'column', gap: 8, color: T.textDim }}>
+                <div style={{ background: 'var(--bg-surface)', borderRadius: 8, overflow: 'hidden', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(184,148,58,0.1)', flexDirection: 'column', gap: 8, color: T.textDim }}>
                   <MapPin size={28} style={{ opacity: 0.3 }} />
                   <span style={{ fontSize: 12 }}>{fullAddress || 'Endereço não informado'}</span>
                   {dev.latitude && dev.longitude && (
@@ -364,7 +364,7 @@ export function DesktopImovelDetail({
                     { label: 'ROI 12m Estimado', value: `${enriched.roi_12m?.toFixed(1) ?? '—'}%`, unit: '', color: '#D4B86A' },
                     { label: 'Preço/m²', value: priceSqm ? `R$ ${fmtNum(priceSqm)}` : '—', unit: '', color: T.text as string },
                   ].map(({ label, value, unit, color }) => (
-                    <div key={label} style={{ background: 'var(--bo-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '16px 18px' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '16px 18px' }}>
                       <p style={{ ...EYEBROW, fontSize: '8px', marginBottom: 8 }}>{label}</p>
                       <p style={{ ...MONO, fontSize: 24, fontWeight: 400, color, lineHeight: 1, margin: 0 }}>
                         {value}
@@ -403,7 +403,7 @@ export function DesktopImovelDetail({
                   ].map(({ label, value, onChange }) => (
                     <div key={label}>
                       <label style={{ ...EYEBROW, fontSize: '8px', display: 'block', marginBottom: 6 }}>{label}</label>
-                      <input type="number" value={value} onChange={e => onChange(Number(e.target.value))} min={0} max={label.includes('%') ? 100 : undefined} style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'var(--bo-surface)', border: '1px solid rgba(184,148,58,0.2)', color: T.text, outline: 'none', ...MONO, fontSize: 14, boxSizing: 'border-box' }} />
+                      <input type="number" value={value} onChange={e => onChange(Number(e.target.value))} min={0} max={label.includes('%') ? 100 : undefined} style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.2)', color: T.text, outline: 'none', ...MONO, fontSize: 14, boxSizing: 'border-box' }} />
                     </div>
                   ))}
                 </div>
@@ -413,7 +413,7 @@ export function DesktopImovelDetail({
                     { label: 'Yield Líquido', value: `${netYield.toFixed(2)}%`, color: '#5B9BD5' },
                     { label: 'Cashflow Mensal', value: fmtCurrency(monthlyCashflow), color: 'var(--gold, var(--imi-gold-500))' },
                   ].map(({ label, value, color }) => (
-                    <div key={label} style={{ background: 'var(--bo-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '14px 16px', textAlign: 'center' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '14px 16px', textAlign: 'center' }}>
                       <div style={{ ...EYEBROW, fontSize: '8px', marginBottom: 6 }}>{label}</div>
                       <div style={{ ...MONO, fontSize: 20, color, fontWeight: 400 }}>{value}</div>
                     </div>
@@ -433,8 +433,8 @@ export function DesktopImovelDetail({
                         <span style={{ fontSize: 13, color: T.textMuted, fontFamily: 'var(--font-outfit, sans-serif)' }}>{label}</span>
                         <span style={{ ...MONO, fontSize: 13, color, fontWeight: 500 }}>+{roi.toFixed(1)}%</span>
                       </div>
-                      <div style={{ height: 6, background: 'rgba(184,148,58,0.1)', borderRadius: 999, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${Math.min(100, (roi / 30) * 100)}%`, background: color, borderRadius: 999, transition: 'width 1s cubic-bezier(0.16,1,0.3,1)' }} />
+                      <div style={{ height: 6, background: 'rgba(184,148,58,0.1)', borderRadius: 6, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${Math.min(100, (roi / 30) * 100)}%`, background: color, borderRadius: 6, transition: 'width 1s cubic-bezier(0.16,1,0.3,1)' }} />
                       </div>
                       <div style={{ fontSize: 11, color: T.textDim, marginTop: 3 }}>Estimativa acumulada com apreciação</div>
                     </div>

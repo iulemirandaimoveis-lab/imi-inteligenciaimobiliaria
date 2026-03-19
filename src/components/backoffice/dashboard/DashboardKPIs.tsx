@@ -55,17 +55,17 @@ interface KPICardProps {
 function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color = 'text-imi-600', bgColor = 'bg-imi-50' }: KPICardProps) {
     return (
         <div className="rounded-2xl p-8 transition-all duration-300 group flex flex-col h-full"
-            style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+            style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
             <div className="flex items-center justify-between mb-8">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                    style={{ background: 'var(--bo-active-bg)' }}>
+                    style={{ background: 'var(--bg-active)' }}>
                     <Icon size={22} className={color} strokeWidth={1.5} />
                 </div>
                 {trend && trendValue && (
                     <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold tracking-tight"
                         style={{
-                            background: trend === 'up' ? 'var(--s-done-bg)' : trend === 'down' ? 'var(--s-cancel-bg)' : 'var(--bo-active-bg)',
-                            color: trend === 'up' ? 'var(--s-done)' : trend === 'down' ? 'var(--s-cancel)' : 'var(--bo-text-muted)',
+                            background: trend === 'up' ? 'var(--success-bg)' : trend === 'down' ? 'var(--error-bg)' : 'var(--bg-active)',
+                            color: trend === 'up' ? 'var(--success)' : trend === 'down' ? 'var(--text-tertiary)' : 'var(--text-secondary)',
                         }}>
                         {trend === 'up' && <ArrowUp size={12} strokeWidth={3} />}
                         {trend === 'down' && <ArrowDown size={12} strokeWidth={3} />}
@@ -75,16 +75,16 @@ function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color 
                 )}
             </div>
             <div className="flex-1">
-                <div className="text-sm font-bold uppercase tracking-[0.15em] mb-2 leading-none" style={{ color: 'var(--bo-text-muted)' }}>
+                <div className="text-sm font-bold uppercase tracking-[0.15em] mb-2 leading-none" style={{ color: 'var(--text-secondary)' }}>
                     {title}
                 </div>
-                <div className="text-4xl font-display font-bold tracking-tighter tabular-nums" style={{ color: 'var(--bo-text)' }}>
+                <div className="text-4xl font-display font-bold tracking-tighter tabular-nums" style={{ color: 'var(--text-primary)' }}>
                     {value}
                 </div>
             </div>
             {(subtitle) && (
-                <div className="mt-8 pt-6 flex items-center justify-between" style={{ borderTop: '1px solid var(--bo-border)' }}>
-                    <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--bo-text-muted)' }}>{subtitle}</span>
+                <div className="mt-8 pt-6 flex items-center justify-between" style={{ borderTop: '1px solid var(--border-default)' }}>
+                    <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>{subtitle}</span>
                 </div>
             )}
         </div>
@@ -280,10 +280,10 @@ export default function DashboardKPIs() {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[...Array(8)].map((_, i) => (
-                    <div key={i} className="rounded-2xl p-6 animate-pulse" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
-                        <div className="w-12 h-12 rounded-xl mb-4" style={{ background: 'var(--bo-active-bg)' }} />
-                        <div className="h-8 rounded mb-2 w-20" style={{ background: 'var(--bo-active-bg)' }} />
-                        <div className="h-4 rounded w-32" style={{ background: 'var(--bo-active-bg)' }} />
+                    <div key={i} className="rounded-2xl p-6 animate-pulse" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
+                        <div className="w-12 h-12 rounded-xl mb-4" style={{ background: 'var(--bg-active)' }} />
+                        <div className="h-8 rounded mb-2 w-20" style={{ background: 'var(--bg-active)' }} />
+                        <div className="h-4 rounded w-32" style={{ background: 'var(--bg-active)' }} />
                     </div>
                 ))}
             </div>
@@ -301,15 +301,15 @@ export default function DashboardKPIs() {
                             key={index}
                             className="rounded-xl p-4 flex items-center gap-3"
                             style={{
-                                background: alert.severity === 'high' ? 'var(--s-cancel-bg)' : alert.severity === 'medium' ? 'var(--s-warm-bg)' : 'var(--s-cold-bg)',
+                                background: alert.severity === 'high' ? 'var(--error-bg)' : alert.severity === 'medium' ? 'var(--warning-bg)' : 'var(--info-bg)',
                                 border: `1px solid ${alert.severity === 'high' ? 'rgba(229,115,115,0.22)' : alert.severity === 'medium' ? 'rgba(26,26,46,0.22)' : 'rgba(123,158,196,0.22)'}`,
                             }}
                         >
                             <AlertCircle size={20} style={{
-                                color: alert.severity === 'high' ? 'var(--s-cancel)' : alert.severity === 'medium' ? 'var(--s-warm)' : 'var(--s-cold)',
+                                color: alert.severity === 'high' ? 'var(--text-tertiary)' : alert.severity === 'medium' ? 'var(--warning)' : 'var(--info)',
                             }} />
                             <span className="text-sm font-medium" style={{
-                                color: alert.severity === 'high' ? 'var(--s-cancel)' : alert.severity === 'medium' ? 'var(--s-warm)' : 'var(--s-cold)',
+                                color: alert.severity === 'high' ? 'var(--text-tertiary)' : alert.severity === 'medium' ? 'var(--warning)' : 'var(--info)',
                             }}>
                                 {alert.message}
                             </span>
@@ -355,14 +355,14 @@ export default function DashboardKPIs() {
                 />
             </div>
             {/* Performance por Jurisdição - Structured & Precise */}
-            <div className="rounded-3xl p-8 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+            <div className="rounded-3xl p-8 shadow-sm" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
                 <div className="flex items-center justify-between mb-10">
-                    <h3 className="text-xl font-bold flex items-center gap-3" style={{ color: 'var(--bo-text)' }}>
+                    <h3 className="text-xl font-bold flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
                         <Globe size={22} style={{ color: 'var(--accent-500)' }} strokeWidth={1.5} />
                         Performance por Jurisdição
                     </h3>
                     <div className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full"
-                        style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-active-bg)', border: '1px solid var(--bo-border)' }}>
+                        style={{ color: 'var(--text-secondary)', background: 'var(--bg-active)', border: '1px solid var(--border-default)' }}>
                         Consolidado Global
                     </div>
                 </div>
@@ -373,25 +373,25 @@ export default function DashboardKPIs() {
                         const avgTicketCountry = ticket > 0 ? ticket / (devCount || 1) : 0
                         return (
                             <div key={country} className="rounded-3xl p-6 transition-colors group"
-                                style={{ border: '1px solid var(--bo-border)' }}
-                                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                style={{ border: '1px solid var(--border-default)' }}
+                                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-12 h-12 rounded-2xl shadow-sm flex items-center justify-center text-2xl grayscale group-hover:grayscale-0 transition-all duration-300"
-                                        style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
+                                        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
                                         {country === 'Brasil' && '🇧🇷'}
                                         {country === 'EUA' && '🇺🇸'}
                                         {country === 'Dubai' && '🇦🇪'}
                                     </div>
                                     <div>
-                                        <div className="font-bold text-lg leading-none" style={{ color: 'var(--bo-text)' }}>{country}</div>
-                                        <div className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: 'var(--bo-text-muted)' }}>{devCount} Unidades</div>
+                                        <div className="font-bold text-lg leading-none" style={{ color: 'var(--text-primary)' }}>{country}</div>
+                                        <div className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: 'var(--text-secondary)' }}>{devCount} Unidades</div>
                                     </div>
                                 </div>
-                                <div className="pt-6 space-y-4" style={{ borderTop: '1px solid var(--bo-border)' }}>
+                                <div className="pt-6 space-y-4" style={{ borderTop: '1px solid var(--border-default)' }}>
                                     <div className="flex justify-between items-end">
-                                        <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-text-muted)' }}>Investimento Médio</span>
-                                        <span className="font-display font-bold text-lg tabular-nums" style={{ color: 'var(--bo-text)' }}>
+                                        <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Investimento Médio</span>
+                                        <span className="font-display font-bold text-lg tabular-nums" style={{ color: 'var(--text-primary)' }}>
                                             {avgTicketCountry > 0 ? new Intl.NumberFormat('pt-BR', {
                                                 style: 'currency',
                                                 currency: 'BRL',
@@ -399,7 +399,7 @@ export default function DashboardKPIs() {
                                             }).format(avgTicketCountry) : '—'}
                                         </span>
                                     </div>
-                                    <div className="h-1 w-full rounded-full overflow-hidden" style={{ background: 'var(--bo-active-bg)' }}>
+                                    <div className="h-1 w-full rounded-full overflow-hidden" style={{ background: 'var(--bg-active)' }}>
                                         <div
                                             className="h-full rounded-full"
                                             style={{ background: 'var(--accent-500)', width: country === 'Brasil' ? '100%' : country === 'EUA' ? '65%' : '40%' }}
@@ -447,14 +447,14 @@ export default function DashboardKPIs() {
                     </div>
                     <p className="text-xs text-imi-500 font-medium tracking-tight">Projeção conservadora baseada em conversão</p>
                 </div>
-                <div className="rounded-3xl p-8 shadow-sm group" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                <div className="rounded-3xl p-8 shadow-sm group" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
                     <div className="flex items-center gap-4 mb-10">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--bo-active-bg)', border: '1px solid var(--bo-border)' }}>
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--bg-active)', border: '1px solid var(--border-default)' }}>
                             <Award size={20} style={{ color: 'var(--accent-500)' }} />
                         </div>
                         <div className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--accent-500)' }}>Ticket Médio Institucional</div>
                     </div>
-                    <div className="text-4xl font-display font-bold tracking-tighter tabular-nums mb-3" style={{ color: 'var(--bo-text)' }}>
+                    <div className="text-4xl font-display font-bold tracking-tighter tabular-nums mb-3" style={{ color: 'var(--text-primary)' }}>
                         {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',

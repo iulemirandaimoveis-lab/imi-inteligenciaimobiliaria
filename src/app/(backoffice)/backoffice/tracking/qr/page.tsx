@@ -236,7 +236,7 @@ export default function QRGeneratorPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                         { label: 'Links Ativos', value: activeLinks, icon: <QrCode size={13} />, color: 'var(--info)' },
-                        { label: 'Total Cliques', value: totalClicks, icon: <MousePointer size={13} />, color: 'var(--bo-success)' },
+                        { label: 'Total Cliques', value: totalClicks, icon: <MousePointer size={13} />, color: 'var(--success)' },
                         { label: 'Melhor Canal', value: topSourceLink ? (srcInfo(topSourceLink.utm_source).label || '—') : '—', icon: <TrendingUp size={13} />, color: 'var(--warning)' },
                     ].map(s => (
                         <div key={s.label} className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
@@ -293,7 +293,7 @@ export default function QRGeneratorPage() {
                                     {developments.map(dev => (
                                         <button key={dev.id}
                                             onClick={() => { setSelectedDev(dev); setShowDevDD(false) }}
-                                            className="w-full text-left px-4 py-2.5 text-sm font-medium transition-colors hover:bg-[var(--bo-hover)]"
+                                            className="w-full text-left px-4 py-2.5 text-sm font-medium transition-colors hover:bg-[var(--bg-hover)]"
                                             style={{ color: selectedDev?.id === dev.id ? T.accent : T.text }}
                                         >
                                             {dev.name}
@@ -374,13 +374,13 @@ export default function QRGeneratorPage() {
                                     >
                                         <button
                                             onClick={() => { setSelectedBroker(null); setShowBrokerDD(false) }}
-                                            className="w-full text-left px-3 py-2.5 text-xs font-medium transition-colors hover:bg-[var(--bo-hover)]"
+                                            className="w-full text-left px-3 py-2.5 text-xs font-medium transition-colors hover:bg-[var(--bg-hover)]"
                                             style={{ color: T.textMuted }}
                                         >Nenhum (geral)</button>
                                         {brokers.map(b => (
                                             <button key={b.id}
                                                 onClick={() => { setSelectedBroker(b); setShowBrokerDD(false) }}
-                                                className="w-full text-left px-3 py-2 text-xs font-medium transition-colors hover:bg-[var(--bo-hover)]"
+                                                className="w-full text-left px-3 py-2 text-xs font-medium transition-colors hover:bg-[var(--bg-hover)]"
                                                 style={{ color: selectedBroker?.id === b.id ? T.accent : T.text }}
                                             >{b.name}</button>
                                         ))}
@@ -605,8 +605,8 @@ export default function QRGeneratorPage() {
                                             <div className="flex items-center gap-1.5 flex-shrink-0">
                                                 <div className="text-center mr-1">
                                                     <div className="flex items-center gap-1">
-                                                        <BarChart2 size={10} style={{ color: (link.clicks || 0) > 0 ? 'var(--bo-success)' : T.textMuted }} />
-                                                        <p className="text-sm font-bold" style={{ color: (link.clicks || 0) > 0 ? 'var(--bo-success)' : T.text }}>{link.clicks ?? 0}</p>
+                                                        <BarChart2 size={10} style={{ color: (link.clicks || 0) > 0 ? 'var(--success)' : T.textMuted }} />
+                                                        <p className="text-sm font-bold" style={{ color: (link.clicks || 0) > 0 ? 'var(--success)' : T.text }}>{link.clicks ?? 0}</p>
                                                     </div>
                                                     <p className="text-[9px]" style={{ color: T.textMuted }}>cliques</p>
                                                 </div>
@@ -662,7 +662,7 @@ export default function QRGeneratorPage() {
                                                     <div className="px-4 pb-4 pt-1" style={{ borderTop: `1px solid ${T.border}` }}>
                                                         <div className="grid grid-cols-3 gap-2 mt-3">
                                                             {[
-                                                                { label: 'Total cliques', value: link.clicks ?? 0, color: 'var(--bo-success)' },
+                                                                { label: 'Total cliques', value: link.clicks ?? 0, color: 'var(--success)' },
                                                                 { label: 'Cliques únicos', value: link.unique_clicks ?? 0, color: 'var(--info)' },
                                                                 { label: 'Criado', value: link.created_at ? new Date(link.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : '—', color: T.textMuted as string },
                                                             ].map(s => (

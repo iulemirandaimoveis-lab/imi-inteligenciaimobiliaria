@@ -30,10 +30,10 @@ const supabase = createClient()
 
 const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: LucideIcon }> = {
     creation:       { color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Plus },
-    price_change:   { color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
+    price_change:   { color: 'var(--success)', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
     campaign_start: { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: Activity },
     sold:           { color: 'var(--warning)', bg: 'rgba(245,158,11,0.12)', icon: CheckCircle2 },
-    visit:          { color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Users },
+    visit:          { color: 'var(--imi-gold-500)', bg: 'var(--bg-active)', icon: Users },
     lead_gen:       { color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
 }
 
@@ -74,10 +74,10 @@ function MobileTimelineLoading() {
 function DesktopTimelineLoading() {
     return (
         <div className="max-w-4xl mx-auto pb-20 space-y-4 animate-pulse">
-            <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 6, width: '40%', opacity: 0.5 }} />
-            <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 6, opacity: 0.4 }} />
+            <div style={{ height: 36, background: 'var(--bg-surface)', borderRadius: 6, width: '40%', opacity: 0.5 }} />
+            <div style={{ height: 80, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.4 }} />
             {[1, 2, 3].map(i => (
-                <div key={i} style={{ height: 120, background: 'var(--bo-card)', borderRadius: 6, opacity: 0.3 }} />
+                <div key={i} style={{ height: 120, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.3 }} />
             ))}
         </div>
     )

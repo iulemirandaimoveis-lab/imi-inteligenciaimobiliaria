@@ -300,7 +300,7 @@ export default function CampanhasROIPage() {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-base font-bold"
-                                                        style={{ color: isPositive ? 'var(--bo-success)' : 'var(--bo-error)' }}>
+                                                        style={{ color: isPositive ? 'var(--success)' : 'var(--error)' }}>
                                                         {fmtROI(canal.avgRoi)}
                                                     </p>
                                                     <p className="text-xs" style={{ color: T.textMuted }}>{canal.conversions} conv.</p>
@@ -309,7 +309,7 @@ export default function CampanhasROIPage() {
                                             <div className="h-2 rounded-full overflow-hidden" style={{ background: T.surface }}>
                                                 <div
                                                     className="h-full rounded-full transition-all duration-500"
-                                                    style={{ width: `${barW}%`, background: isPositive ? 'var(--bo-success)' : 'var(--bo-error)' }}
+                                                    style={{ width: `${barW}%`, background: isPositive ? 'var(--success)' : 'var(--error)' }}
                                                 />
                                             </div>
                                         </div>
@@ -324,7 +324,7 @@ export default function CampanhasROIPage() {
                         {/* Top performers */}
                         <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-2 mb-4">
-                                <Award size={18} style={{ color: 'var(--bo-success)' }} />
+                                <Award size={18} style={{ color: 'var(--success)' }} />
                                 <h2 className="text-base font-bold" style={{ color: T.text }}>Top Performers</h2>
                             </div>
                             {topPerformers.length === 0 ? (
@@ -335,12 +335,12 @@ export default function CampanhasROIPage() {
                                         <div key={camp.id} className="p-3 rounded-lg" style={{ background: 'rgba(107,184,123,0.06)', border: '1px solid rgba(107,184,123,0.15)' }}>
                                             <div className="flex items-start justify-between mb-1">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: 'var(--bo-success)', color: '#0F0F1E' }}>
+                                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: 'var(--success)', color: '#0F0F1E' }}>
                                                         {idx + 1}
                                                     </div>
                                                     <p className="text-sm font-semibold line-clamp-1" style={{ color: T.text }}>{camp.name}</p>
                                                 </div>
-                                                <p className="text-sm font-bold ml-2 shrink-0" style={{ color: 'var(--bo-success)' }}>{fmtROI(camp.roi)}</p>
+                                                <p className="text-sm font-bold ml-2 shrink-0" style={{ color: 'var(--success)' }}>{fmtROI(camp.roi)}</p>
                                             </div>
                                             <p className="text-xs pl-7" style={{ color: T.textMuted }}>
                                                 {fmtBRL(Number(camp.spent))} investido · {camp.leads || 0} leads · {camp.conversions || 0} conv.
@@ -366,7 +366,7 @@ export default function CampanhasROIPage() {
                                             <div className="flex items-start justify-between mb-1">
                                                 <p className="text-sm font-semibold line-clamp-1" style={{ color: T.text }}>{camp.name}</p>
                                                 <p className="text-sm font-bold ml-2 shrink-0"
-                                                    style={{ color: camp.roi < 0 ? 'var(--bo-error)' : 'var(--warning)' }}>
+                                                    style={{ color: camp.roi < 0 ? 'var(--error)' : 'var(--warning)' }}>
                                                     {fmtROI(camp.roi)}
                                                 </p>
                                             </div>
@@ -398,10 +398,10 @@ export default function CampanhasROIPage() {
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-sm font-semibold w-16" style={{ color: T.text }}>{m.month}</span>
                                                     {trend
-                                                        ? <TrendingUp size={12} style={{ color: 'var(--bo-success)' }} />
-                                                        : <TrendingDown size={12} style={{ color: 'var(--bo-error)' }} />}
+                                                        ? <TrendingUp size={12} style={{ color: 'var(--success)' }} />
+                                                        : <TrendingDown size={12} style={{ color: 'var(--error)' }} />}
                                                     <span className="text-xs font-medium"
-                                                        style={{ color: isPositive ? 'var(--bo-success)' : 'var(--bo-error)' }}>
+                                                        style={{ color: isPositive ? 'var(--success)' : 'var(--error)' }}>
                                                         {fmtROI(m.avgRoi)}
                                                     </span>
                                                 </div>
@@ -412,7 +412,7 @@ export default function CampanhasROIPage() {
                                             <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.surface }}>
                                                 <div
                                                     className="h-full rounded-full transition-all duration-500"
-                                                    style={{ width: `${barW}%`, background: isPositive ? 'var(--bo-success)' : 'var(--bo-error)' }}
+                                                    style={{ width: `${barW}%`, background: isPositive ? 'var(--success)' : 'var(--error)' }}
                                                 />
                                             </div>
                                         </div>

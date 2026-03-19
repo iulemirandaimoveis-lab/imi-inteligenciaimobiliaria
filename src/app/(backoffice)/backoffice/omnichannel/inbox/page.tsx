@@ -81,12 +81,12 @@ function MessageCard({
         <motion.button
             className="w-full text-left px-4 py-3.5 flex gap-3 items-start relative"
             style={{
-                background: selected ? 'var(--bo-active-bg)' : 'transparent',
+                background: selected ? 'var(--bg-active)' : 'transparent',
                 borderLeft: selected ? `3px solid ${cfg.color}` : '3px solid transparent',
                 borderBottom: `1px solid ${T.border}`,
             }}
             onClick={onClick}
-            whileHover={{ backgroundColor: 'var(--bo-hover)' }}
+            whileHover={{ backgroundColor: 'var(--bg-hover)' }}
             transition={{ duration: 0.1 }}
         >
             {/* Avatar */}
@@ -285,8 +285,8 @@ export default function SocialInboxPage() {
                     onClick={() => setChannel('all')}
                     className="flex-shrink-0 px-3 py-1.5 rounded-[6px] text-[11px] font-semibold transition-all"
                     style={{
-                        background: channel === 'all' ? 'var(--bo-active-bg)' : 'rgba(255,255,255,0.04)',
-                        color: channel === 'all' ? 'var(--bo-accent)' : T.textMuted,
+                        background: channel === 'all' ? 'var(--bg-active)' : 'rgba(255,255,255,0.04)',
+                        color: channel === 'all' ? 'var(--imi-gold-500)' : T.textMuted,
                     }}>
                     Todos {messages.length > 0 && `(${messages.length})`}
                 </button>

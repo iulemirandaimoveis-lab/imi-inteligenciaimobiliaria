@@ -612,10 +612,10 @@ export default function ImovelAnalyticsPage() {
     const location = [development.neighborhood, development.city, development.state].filter(Boolean).join(', ') || '—'
     const KPI_CARDS = [
         { label: 'Total Cliques', value: kpis.totalClicks.toLocaleString('pt-BR'), icon: MousePointer, color: '#A89EC4' },
-        { label: 'Links Ativos', value: kpis.trackedLinksCount, icon: Link2, color: 'var(--bo-accent)' },
+        { label: 'Links Ativos', value: kpis.trackedLinksCount, icon: Link2, color: 'var(--imi-gold-500)' },
         { label: 'Leads Gerados', value: kpis.totalLeads, icon: Users, color: '#E8A87C' },
-        { label: 'Conversões', value: kpis.convertedLeads, icon: Target, color: 'var(--bo-success)' },
-        { label: 'Taxa Conversão', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--bo-accent)' },
+        { label: 'Conversões', value: kpis.convertedLeads, icon: Target, color: 'var(--success)' },
+        { label: 'Taxa Conversão', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--imi-gold-500)' },
         { label: 'Eventos', value: kpis.totalEvents, icon: BarChart3, color: '#A89EC4' },
     ]
     // Device totals
@@ -700,7 +700,7 @@ export default function ImovelAnalyticsPage() {
                             <span style={{ color: T.textDim }}>Cliques</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--bo-success)' }} />
+                            <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--success)' }} />
                             <span style={{ color: T.textDim }}>Leads</span>
                         </div>
                     </div>
@@ -879,7 +879,7 @@ export default function ImovelAnalyticsPage() {
                                             <div className="text-[10px]" style={{ color: T.textDim }}>cliques</div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-xs font-bold" style={{ color: 'var(--bo-success)' }}>{c.leads}</div>
+                                            <div className="text-xs font-bold" style={{ color: 'var(--success)' }}>{c.leads}</div>
                                             <div className="text-[10px]" style={{ color: T.textDim }}>leads</div>
                                         </div>
                                     </div>

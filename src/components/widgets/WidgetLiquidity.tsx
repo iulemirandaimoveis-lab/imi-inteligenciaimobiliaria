@@ -11,8 +11,8 @@ const SEGMENTS = [
 ]
 
 function getLiquidityLabel(score: number): { text: string; color: string } {
-    if (score >= 70) return { text: 'Alta Liquidez', color: 'var(--bo-success,#2D8F5C)' }
-    if (score >= 45) return { text: 'Liquidez Média', color: 'var(--bo-accent,#C8A44A)' }
+    if (score >= 70) return { text: 'Alta Liquidez', color: 'var(--success,#2D8F5C)' }
+    if (score >= 45) return { text: 'Liquidez Média', color: 'var(--imi-gold-500,#C8A44A)' }
     return { text: 'Baixa Liquidez', color: '#E05A5A' }
 }
 
@@ -46,8 +46,8 @@ function GaugeArc({ value }: { value: number }) {
     // We'll draw three arc segments
     const zoneArcs = [
         { from: 210, to: 210 - 96, color: '#E05A5A', label: '' },   // 0–40: 96°
-        { from: 210 - 96, to: 210 - 168, color: 'var(--bo-accent,#C8A44A)', label: '' }, // 40–70: 72°
-        { from: 210 - 168, to: 210 - 240, color: 'var(--bo-success,#2D8F5C)', label: '' }, // 70–100: 72°
+        { from: 210 - 96, to: 210 - 168, color: 'var(--imi-gold-500,#C8A44A)', label: '' }, // 40–70: 72°
+        { from: 210 - 168, to: 210 - 240, color: 'var(--success,#2D8F5C)', label: '' }, // 70–100: 72°
     ]
 
     const arcPath = (from: number, to: number) => {
@@ -61,8 +61,8 @@ function GaugeArc({ value }: { value: number }) {
         <svg width="160" height="110" viewBox="0 0 160 110">
             <defs>
                 <linearGradient id="valueGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="var(--bo-accent,#C8A44A)" />
-                    <stop offset="100%" stopColor="var(--bo-success,#2D8F5C)" />
+                    <stop offset="0%" stopColor="var(--imi-gold-500,#C8A44A)" />
+                    <stop offset="100%" stopColor="var(--success,#2D8F5C)" />
                 </linearGradient>
             </defs>
 
@@ -83,9 +83,9 @@ function GaugeArc({ value }: { value: number }) {
 
             {/* Needle */}
             <line x1={cx} y1={cy} x2={needleX} y2={needleY}
-                stroke="var(--bo-text)" strokeWidth="2.5" strokeLinecap="round" />
-            <circle cx={cx} cy={cy} r="5" fill="var(--bo-text)" />
-            <circle cx={cx} cy={cy} r="2.5" fill="var(--bo-bg)" />
+                stroke="var(--text-primary)" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx={cx} cy={cy} r="5" fill="var(--text-primary)" />
+            <circle cx={cx} cy={cy} r="2.5" fill="var(--bg-base)" />
 
             {/* Tick marks */}
             {[0, 25, 50, 75, 100].map(v => {
@@ -95,15 +95,15 @@ function GaugeArc({ value }: { value: number }) {
                     <line key={v}
                         x1={cx + r1 * Math.cos(a)} y1={cy - r1 * Math.sin(a)}
                         x2={cx + r2 * Math.cos(a)} y2={cy - r2 * Math.sin(a)}
-                        stroke="var(--bo-border)" strokeWidth="1.5" />
+                        stroke="var(--border-default)" strokeWidth="1.5" />
                 )
             })}
 
             {/* Labels */}
             <text x={cx + (r + 18) * Math.cos(toRad(210))} y={cy - (r + 18) * Math.sin(toRad(210))}
-                fontSize="8" fill="var(--bo-text-muted)" textAnchor="middle">0</text>
+                fontSize="8" fill="var(--text-secondary)" textAnchor="middle">0</text>
             <text x={cx + (r + 18) * Math.cos(toRad(-30))} y={cy - (r + 18) * Math.sin(toRad(-30))}
-                fontSize="8" fill="var(--bo-text-muted)" textAnchor="middle">100</text>
+                fontSize="8" fill="var(--text-secondary)" textAnchor="middle">100</text>
         </svg>
     )
 }
@@ -115,10 +115,10 @@ export function WidgetLiquidity() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Title */}
             <div>
-                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
                     Mercado Recife
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
                     Índice de Liquidez
                 </div>
             </div>
@@ -143,42 +143,42 @@ export function WidgetLiquidity() {
 
             {/* Stats */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: 8, padding: '10px 12px' }}>
-                    <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Tempo Médio de Venda</div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>47</div>
-                    <div style={{ fontSize: 10, color: 'var(--bo-text-muted)', marginTop: 2 }}>dias</div>
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '10px 12px' }}>
+                    <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Tempo Médio de Venda</div>
+                    <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>47</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 2 }}>dias</div>
                 </div>
-                <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: 8, padding: '10px 12px' }}>
-                    <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Absorção Mensal</div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>12.4%</div>
-                    <div style={{ fontSize: 10, color: 'var(--bo-text-muted)', marginTop: 2 }}>do estoque</div>
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '10px 12px' }}>
+                    <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Absorção Mensal</div>
+                    <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>12.4%</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 2 }}>do estoque</div>
                 </div>
             </div>
 
             {/* By segment */}
             <div>
-                <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', marginBottom: 8 }}>
+                <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 8 }}>
                     Por Segmento
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
                     {SEGMENTS.map(seg => (
                         <div key={seg.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <div style={{ width: 110, fontSize: 11, color: 'var(--bo-text)', flexShrink: 0 }}>{seg.name}</div>
-                            <div style={{ flex: 1, height: 7, background: 'var(--bo-border)', borderRadius: 6, overflow: 'hidden' }}>
+                            <div style={{ width: 110, fontSize: 11, color: 'var(--text-primary)', flexShrink: 0 }}>{seg.name}</div>
+                            <div style={{ flex: 1, height: 7, background: 'var(--border-default)', borderRadius: 6, overflow: 'hidden' }}>
                                 <div style={{
                                     height: '100%',
                                     width: `${seg.score}%`,
                                     background: seg.score >= 70
-                                        ? 'var(--bo-success,#2D8F5C)'
+                                        ? 'var(--success,#2D8F5C)'
                                         : seg.score >= 45
-                                            ? 'var(--bo-accent,#C8A44A)'
+                                            ? 'var(--imi-gold-500,#C8A44A)'
                                             : '#E05A5A',
                                     borderRadius: 6,
                                     opacity: 0.8,
                                     transition: 'width 0.4s ease',
                                 }} />
                             </div>
-                            <div style={{ width: 42, textAlign: 'right', fontSize: 11, fontWeight: 600, color: 'var(--bo-text-muted)' }}>
+                            <div style={{ width: 42, textAlign: 'right', fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)' }}>
                                 {seg.label}
                             </div>
                         </div>
@@ -194,8 +194,8 @@ export function WidgetLiquidity() {
                 background: 'rgba(45,143,92,0.10)',
                 border: '1px solid rgba(45,143,92,0.25)',
             }}>
-                <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--bo-success,#2D8F5C)' }} />
-                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--bo-success,#2D8F5C)' }}>
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--success,#2D8F5C)' }} />
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--success,#2D8F5C)' }}>
                     Mercado em expansão
                 </span>
             </div>

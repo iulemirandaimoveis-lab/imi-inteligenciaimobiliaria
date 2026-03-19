@@ -196,7 +196,7 @@ export default function AvaliacoesAnalyticsPage() {
                 {[
                     { label: 'Volume de Laudos', value: data.total.toString(), icon: FileText, color: 'var(--info)', bg: 'color-mix(in srgb, var(--info) 12%, transparent)' },
                     { label: 'Taxa de Entrega', value: `${completionRate}%`, icon: CheckCircle, color: 'var(--success)', bg: 'color-mix(in srgb, var(--success) 12%, transparent)' },
-                    { label: 'SLA Médio', value: `${data.avgTime.toFixed(1)} dias`, icon: Clock, color: 'var(--bo-accent)', bg: 'color-mix(in srgb, var(--bo-accent) 12%, transparent)' },
+                    { label: 'SLA Médio', value: `${data.avgTime.toFixed(1)} dias`, icon: Clock, color: 'var(--imi-gold-500)', bg: 'color-mix(in srgb, var(--imi-gold-500) 12%, transparent)' },
                     { label: 'Billing Total', value: formatCurrency(data.totalRevenue), icon: DollarSign, color: 'var(--warning)', bg: 'color-mix(in srgb, var(--warning) 12%, transparent)' },
                 ].map(({ label, value, icon: Icon, color, bg }) => (
                     <div key={label} className="rounded-lg p-5 relative overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>

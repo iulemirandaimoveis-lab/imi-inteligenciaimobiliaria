@@ -32,14 +32,14 @@ function formatVar(v: number | null) {
 }
 
 function varColor(v: number | null) {
-    if (v === null) return 'var(--bo-text-muted)'
+    if (v === null) return 'var(--text-secondary)'
     if (v > 0) return getStatusConfig('convertido').dot
     if (v < 0) return getStatusConfig('perdido').dot
     return getStatusConfig('morno').dot
 }
 
 function VarIcon({ v }: { v: number | null }) {
-    if (v === null) return <Minus size={11} style={{ color: 'var(--bo-text-muted)' }} />
+    if (v === null) return <Minus size={11} style={{ color: 'var(--text-secondary)' }} />
     if (v > 0) return <TrendingUp size={11} style={{ color: getStatusConfig('convertido').dot }} />
     if (v < 0) return <TrendingDown size={11} style={{ color: getStatusConfig('perdido').dot }} />
     return <Minus size={11} style={{ color: getStatusConfig('morno').dot }} />
@@ -168,15 +168,15 @@ export default function IndicesBackofficePage() {
                         {Array.from({ length: 3 }).map((_, i) => (
                             <div key={i} className="rounded-lg p-5 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-9 h-9 rounded-lg" style={{ background: 'var(--bo-hover)' }} />
+                                    <div className="w-9 h-9 rounded-lg" style={{ background: 'var(--bg-hover)' }} />
                                     <div>
-                                        <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: 120 }} />
-                                        <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: 80 }} />
+                                        <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bg-hover)', width: 120 }} />
+                                        <div className="h-2.5 rounded" style={{ background: 'var(--bg-hover)', width: 80 }} />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     {[...Array(4)].map((_, j) => (
-                                        <div key={j} className="h-12 rounded-lg" style={{ background: 'var(--bo-hover)' }} />
+                                        <div key={j} className="h-12 rounded-lg" style={{ background: 'var(--bg-hover)' }} />
                                     ))}
                                 </div>
                             </div>
@@ -194,8 +194,8 @@ export default function IndicesBackofficePage() {
                             {/* Header row */}
                             <div className="p-5 flex items-center justify-between" style={{ borderBottom: `1px solid ${T.border}` }}>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'var(--bo-info-bg)' }}>
-                                        <TrendingUp size={15} style={{ color: 'var(--bo-info)' }} />
+                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.1)' }}>
+                                        <TrendingUp size={15} style={{ color: 'var(--info)' }} />
                                     </div>
                                     <div>
                                         <p className="font-semibold text-sm" style={{ color: T.text }}>{idx.name}</p>
@@ -211,22 +211,22 @@ export default function IndicesBackofficePage() {
                                     >
                                         {idx.is_published
                                             ? <EyeOff size={14} style={{ color: T.textMuted }} />
-                                            : <Eye size={14} style={{ color: 'var(--bo-accent)' }} />
+                                            : <Eye size={14} style={{ color: 'var(--imi-gold-500)' }} />
                                         }
                                     </button>
                                     <button
                                         onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }}
                                         className="w-9 h-9 rounded-[6px] flex items-center justify-center hover:opacity-70 transition-opacity"
-                                        style={{ background: editingId === idx.id ? 'var(--bo-info-bg)' : 'rgba(255,255,255,0.04)', border: `1px solid ${editingId === idx.id ? 'var(--bo-info)' : T.border}` }}
+                                        style={{ background: editingId === idx.id ? 'rgba(59,130,246,0.1)' : 'rgba(255,255,255,0.04)', border: `1px solid ${editingId === idx.id ? 'var(--info)' : T.border}` }}
                                     >
-                                        <Save size={14} style={{ color: editingId === idx.id ? 'var(--bo-info)' : T.textMuted }} />
+                                        <Save size={14} style={{ color: editingId === idx.id ? 'var(--info)' : T.textMuted }} />
                                     </button>
                                     <button
                                         onClick={() => deleteIndex(idx.id)}
                                         className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-red-500/10 transition-colors"
                                         style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                     >
-                                        <Trash2 size={14} style={{ color: 'var(--bo-error)' }} />
+                                        <Trash2 size={14} style={{ color: 'var(--error)' }} />
                                     </button>
                                 </div>
                             </div>
@@ -251,7 +251,7 @@ export default function IndicesBackofficePage() {
 
                             {/* Edit form */}
                             {editingId === idx.id && (
-                                <div className="p-5 space-y-4" style={{ borderTop: `1px solid ${T.border}`, background: 'var(--bo-active-bg)' }}>
+                                <div className="p-5 space-y-4" style={{ borderTop: `1px solid ${T.border}`, background: 'var(--bg-active)' }}>
                                     <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Editar Índice</p>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>

@@ -24,7 +24,7 @@ import { usePathname } from 'next/navigation'
 
 // ─── Design Tokens (DS3) ─────────────────────────────────────────────────────
 // NOTE: These tokens map to the global CSS variables.
-// Canonical system: Token T in lib/theme.ts uses --bo-* variables.
+// Canonical system: Token T in lib/theme.ts uses DS3 variables.
 // This local T uses --bg-* / --text-* which are aliased in globals.css.
 
 export const T = {

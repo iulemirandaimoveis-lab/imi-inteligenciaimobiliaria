@@ -81,14 +81,14 @@ export default function EditarEbookPage() {
 
     const inputClass = "w-full h-10 px-3 rounded-[6px] text-sm outline-none transition-all"
     const inputStyle = {
-        background: 'var(--bo-elevated)',
-        border: '1px solid var(--bo-border)',
-        color: 'var(--bo-text)',
+        background: 'var(--bg-elevated)',
+        border: '1px solid var(--border-default)',
+        color: 'var(--text-primary)',
     }
 
     if (loading) return (
         <div className="flex items-center justify-center py-20">
-            <Loader2 className="animate-spin" size={22} style={{ color: 'var(--bo-text-muted)' }} />
+            <Loader2 className="animate-spin" size={22} style={{ color: 'var(--text-secondary)' }} />
         </div>
     )
 
@@ -106,61 +106,61 @@ export default function EditarEbookPage() {
             />
 
             <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
-                    <h2 className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Informações Básicas</h2>
+                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+                    <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Informações Básicas</h2>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Título *</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Título *</label>
                         <input required type="text" value={form.title} onChange={e => set('title', e.target.value)} className={inputClass} style={inputStyle} />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Subtítulo</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Subtítulo</label>
                         <input type="text" value={form.subtitle} onChange={e => set('subtitle', e.target.value)} className={inputClass} style={inputStyle} />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Descrição</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Descrição</label>
                         <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={4} className="w-full px-3 py-2 rounded-[6px] text-sm outline-none transition-all resize-none" style={inputStyle} />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Slug</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Slug</label>
                         <input type="text" value={form.slug} onChange={e => set('slug', e.target.value)} className={inputClass} style={inputStyle} />
                     </div>
                 </div>
 
-                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
-                    <h2 className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Mídia & Links</h2>
+                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+                    <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Mídia & Links</h2>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>URL da Capa</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>URL da Capa</label>
                         <input type="url" value={form.cover_image} onChange={e => set('cover_image', e.target.value)} className={inputClass} style={inputStyle} placeholder="https://..." />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>URL Contracapa</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>URL Contracapa</label>
                         <input type="url" value={form.back_cover_image} onChange={e => set('back_cover_image', e.target.value)} className={inputClass} style={inputStyle} placeholder="https://..." />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Link Amazon</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Link Amazon</label>
                         <input type="url" value={form.amazon_url} onChange={e => set('amazon_url', e.target.value)} className={inputClass} style={inputStyle} placeholder="https://amazon.com.br/dp/..." />
                     </div>
                 </div>
 
-                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
-                    <h2 className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Publicação</h2>
+                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+                    <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Publicação</h2>
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium" style={{ color: 'var(--bo-text)' }}>Publicar na biblioteca</p>
-                            <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>Exibe no site público</p>
+                            <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Publicar na biblioteca</p>
+                            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Exibe no site público</p>
                         </div>
-                        <button type="button" onClick={() => set('is_published', !form.is_published)} className="w-10 h-5 rounded-full relative transition-colors" style={{ background: form.is_published ? 'var(--accent-500)' : 'var(--bo-border)' }}>
+                        <button type="button" onClick={() => set('is_published', !form.is_published)} className="w-10 h-5 rounded-full relative transition-colors" style={{ background: form.is_published ? 'var(--accent-500)' : 'var(--border-default)' }}>
                             <span className="absolute top-0.5 w-4 h-4 rounded-full shadow transition-all" style={{ left: form.is_published ? '22px' : '2px', background: '#E8EDF2' }} />
                         </button>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Ordem de exibição</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Ordem de exibição</label>
                         <input type="number" min={0} value={form.sort_order} onChange={e => set('sort_order', parseInt(e.target.value) || 0)} className={inputClass} style={inputStyle} />
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3 justify-end">
-                    <Link href="/backoffice/inteligencia/ebooks" className="h-9 px-5 rounded-[6px] text-sm font-medium transition-colors" style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }}>Cancelar</Link>
+                    <Link href="/backoffice/inteligencia/ebooks" className="h-9 px-5 rounded-[6px] text-sm font-medium transition-colors" style={{ color: 'var(--text-secondary)', background: 'var(--bg-elevated)' }}>Cancelar</Link>
                     <button type="submit" disabled={saving} className="bo-btn bo-btn-primary" style={{ background: 'var(--accent-500)' }}>
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                         Salvar

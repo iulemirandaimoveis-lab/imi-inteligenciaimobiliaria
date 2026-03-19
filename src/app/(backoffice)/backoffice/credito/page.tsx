@@ -108,12 +108,12 @@ function SimuladorCredito() {
       : netYield >= 4 ? 'B'
       : netYield >= 3 ? 'C' : 'D'
   const gradeMeta = investGrade === 'A'
-      ? { label: 'Excelente', color: 'var(--s-done)', bg: 'var(--s-done-bg)', desc: 'Ótimo retorno com baixo risco de exposição' }
+      ? { label: 'Excelente', color: 'var(--success)', bg: 'var(--success-bg)', desc: 'Ótimo retorno com baixo risco de exposição' }
       : investGrade === 'B'
-      ? { label: 'Bom', color: 'var(--s-cold)', bg: 'var(--s-cold-bg)', desc: 'Retorno atrativo dentro da média de mercado' }
+      ? { label: 'Bom', color: 'var(--info)', bg: 'var(--info-bg)', desc: 'Retorno atrativo dentro da média de mercado' }
       : investGrade === 'C'
-      ? { label: 'Moderado', color: 'var(--s-warm)', bg: 'var(--s-warm-bg)', desc: 'Retorno abaixo da média — avaliar viabilidade' }
-      : { label: 'Alto Risco', color: 'var(--s-hot)', bg: 'var(--s-hot-bg)', desc: 'Yield insuficiente — revisar parâmetros' }
+      ? { label: 'Moderado', color: 'var(--warning)', bg: 'var(--warning-bg)', desc: 'Retorno abaixo da média — avaliar viabilidade' }
+      : { label: 'Alto Risco', color: 'var(--error)', bg: 'var(--error-bg)', desc: 'Yield insuficiente — revisar parâmetros' }
 
   const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
@@ -176,7 +176,7 @@ function SimuladorCredito() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { l: 'Valor Financiado', v: fmt(valorFinanciado), color: T.text },
-          { l: 'LTV', v: `${ltv.toFixed(0)}%`, color: ltv > 80 ? 'var(--s-hot)' : 'var(--s-done)' },
+          { l: 'LTV', v: `${ltv.toFixed(0)}%`, color: ltv > 80 ? 'var(--error)' : 'var(--success)' },
           { l: sistema === 'PRICE' ? 'Parcela Fixa' : '1ª Parcela', v: fmt(primeiraParcela), color: T.accent },
           { l: sistema === 'SAC' ? 'Última Parcela' : 'Total Juros', v: sistema === 'SAC' ? fmt(ultimaParcela) : fmt(totalJuros), color: T.text },
         ].map(item => (
@@ -187,16 +187,16 @@ function SimuladorCredito() {
         ))}
       </div>
 
-      <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'var(--s-warm-bg)', border: '1px solid var(--border-subtle)' }}>
-        <User size={14} style={{ color: 'var(--s-warm)' }} className="flex-shrink-0" />
-        <p className="text-xs" style={{ color: 'var(--s-warm)' }}>
+      <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'var(--warning-bg)', border: '1px solid var(--border-subtle)' }}>
+        <User size={14} style={{ color: 'var(--warning)' }} className="flex-shrink-0" />
+        <p className="text-xs" style={{ color: 'var(--warning)' }}>
           Renda mínima estimada: <strong>{fmt(primeiraParcela * 3)}/mês</strong> (comprometimento máx. 30%)
         </p>
       </div>
 
       <Link href="/backoffice/credito/novo"
         className="flex items-center justify-center gap-2 w-full rounded-[6px] text-sm font-bold text-white transition-all hover:opacity-90"
-        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 22%, transparent)' }}>
+        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--imi-gold-500) 22%, transparent)' }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
 
@@ -240,12 +240,12 @@ function SimuladorCredito() {
             {
               l: 'Cash Flow Mensal',
               v: (cashFlow >= 0 ? '+' : '') + fmt(cashFlow) + '/mês',
-              color: cashFlow >= 0 ? 'var(--s-done)' : 'var(--s-hot)',
+              color: cashFlow >= 0 ? 'var(--success)' : 'var(--error)',
             },
             {
               l: 'Yield Líquido',
               v: `${netYield.toFixed(2)}% a.a.`,
-              color: netYield >= 4 ? 'var(--s-done)' : netYield >= 3 ? T.accent : 'var(--s-hot)',
+              color: netYield >= 4 ? 'var(--success)' : netYield >= 3 ? T.accent : 'var(--error)',
             },
             {
               l: 'Payback',
@@ -308,7 +308,7 @@ export default function CreditoPage() {
             whileTap={{ scale: 0.96 }}
             onClick={() => window.location.href = '/backoffice/credito/novo'}
             className="flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white flex-shrink-0"
-            style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 22%, transparent)', border: 'none' }}
+            style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--imi-gold-500) 22%, transparent)', border: 'none' }}
           >
             <Plus size={16} /> <span className="hidden sm:inline">Nova Operação</span>
           </motion.button>

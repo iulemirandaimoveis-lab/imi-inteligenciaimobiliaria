@@ -67,7 +67,7 @@ export function FeatureGate({ tier, children, featureName }: FeatureGateProps) {
                 backdropFilter: 'blur(2px)',
             }}>
                 <div style={{
-                    background: 'var(--bo-card, #1a1a1a)',
+                    background: 'var(--bg-surface, #1a1a1a)',
                     border: '1px solid rgba(184,148,58,0.25)',
                     borderRadius: '16px', padding: '20px 24px',
                     textAlign: 'center', maxWidth: '280px',

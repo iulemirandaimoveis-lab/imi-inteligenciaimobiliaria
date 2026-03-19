@@ -38,12 +38,12 @@ export function WidgetYield() {
 
     const inputStyle: React.CSSProperties = {
         width: '100%',
-        background: 'var(--bo-bg)',
-        border: '1px solid var(--bo-border)',
+        background: 'var(--bg-base)',
+        border: '1px solid var(--border-default)',
         borderRadius: 6,
         padding: '7px 10px',
         fontSize: 13,
-        color: 'var(--bo-text)',
+        color: 'var(--text-primary)',
         fontFamily: 'var(--font-ui)',
         outline: 'none',
         boxSizing: 'border-box',
@@ -54,7 +54,7 @@ export function WidgetYield() {
         fontWeight: 600,
         letterSpacing: '0.1em',
         textTransform: 'uppercase',
-        color: 'var(--bo-text-muted)',
+        color: 'var(--text-secondary)',
         fontFamily: 'var(--font-ui)',
         marginBottom: 4,
         display: 'block',
@@ -64,10 +64,10 @@ export function WidgetYield() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Title */}
             <div>
-                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
                     Calculadora de Yield
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
                     Retorno sobre Aluguel
                 </div>
             </div>
@@ -115,14 +115,14 @@ export function WidgetYield() {
             {/* Results */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.25)', borderRadius: 8, padding: '10px 12px' }}>
-                    <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Yield Bruto a.a.</div>
-                    <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--bo-accent,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
+                    <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Yield Bruto a.a.</div>
+                    <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--imi-gold-500,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
                         {yieldBruto.toFixed(2)}%
                     </div>
                 </div>
                 <div style={{ background: 'rgba(45,143,92,0.08)', border: '1px solid rgba(45,143,92,0.20)', borderRadius: 8, padding: '10px 12px' }}>
-                    <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Yield Líquido a.a.</div>
-                    <div style={{ fontSize: 26, fontWeight: 700, color: yieldLiquido >= BENCHMARK ? 'var(--bo-success,#2D8F5C)' : 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
+                    <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Yield Líquido a.a.</div>
+                    <div style={{ fontSize: 26, fontWeight: 700, color: yieldLiquido >= BENCHMARK ? 'var(--success,#2D8F5C)' : 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
                         {yieldLiquido.toFixed(2)}%
                     </div>
                 </div>
@@ -131,15 +131,15 @@ export function WidgetYield() {
             {/* Benchmark bar */}
             <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <span style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Seu yield vs média Recife</span>
-                    <span style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}>Benchmark: {BENCHMARK}% a.a.</span>
+                    <span style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Seu yield vs média Recife</span>
+                    <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>Benchmark: {BENCHMARK}% a.a.</span>
                 </div>
-                <div style={{ position: 'relative', height: 10, background: 'var(--bo-border)', borderRadius: 5, overflow: 'visible' }}>
+                <div style={{ position: 'relative', height: 10, background: 'var(--border-default)', borderRadius: 5, overflow: 'visible' }}>
                     {/* Your yield bar */}
                     <div style={{
                         position: 'absolute', left: 0, top: 0, height: '100%',
                         width: `${barWidth}%`,
-                        background: 'linear-gradient(90deg, var(--bo-accent,#C8A44A), rgba(200,164,74,0.6))',
+                        background: 'linear-gradient(90deg, var(--imi-gold-500,#C8A44A), rgba(200,164,74,0.6))',
                         borderRadius: 5,
                         transition: 'width 0.4s ease',
                     }} />
@@ -147,7 +147,7 @@ export function WidgetYield() {
                     <div style={{
                         position: 'absolute', top: -3, bottom: -3,
                         left: `${benchmarkPos}%`,
-                        width: 2, background: 'var(--bo-text)', borderRadius: 1,
+                        width: 2, background: 'var(--text-primary)', borderRadius: 1,
                         opacity: 0.5,
                     }} />
                 </div>
@@ -155,26 +155,26 @@ export function WidgetYield() {
 
             {/* Neighborhood comparison */}
             <div>
-                <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', marginBottom: 8 }}>
+                <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 8 }}>
                     Comparativo por Bairro
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {NEIGHBORHOODS.map(n => (
                         <div key={n.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <div style={{ width: 90, fontSize: 11, color: 'var(--bo-text)', flexShrink: 0, fontFamily: 'var(--font-ui)' }}>{n.name}</div>
-                            <div style={{ flex: 1, height: 6, background: 'var(--bo-border)', borderRadius: 3, overflow: 'hidden' }}>
+                            <div style={{ width: 90, fontSize: 11, color: 'var(--text-primary)', flexShrink: 0, fontFamily: 'var(--font-ui)' }}>{n.name}</div>
+                            <div style={{ flex: 1, height: 6, background: 'var(--border-default)', borderRadius: 3, overflow: 'hidden' }}>
                                 <div style={{
                                     height: '100%',
                                     width: `${(n.yield / 10) * 100}%`,
                                     background: n.yield >= BENCHMARK
-                                        ? 'linear-gradient(90deg, var(--bo-accent,#C8A44A), rgba(200,164,74,0.7))'
+                                        ? 'linear-gradient(90deg, var(--imi-gold-500,#C8A44A), rgba(200,164,74,0.7))'
                                         : 'linear-gradient(90deg, rgba(200,164,74,0.5), rgba(200,164,74,0.3))',
                                     borderRadius: 3,
                                 }} />
                             </div>
                             <div style={{
                                 width: 38, textAlign: 'right', fontSize: 11, fontWeight: 600,
-                                color: n.yield >= BENCHMARK ? 'var(--bo-accent,#C8A44A)' : 'var(--bo-text-muted)',
+                                color: n.yield >= BENCHMARK ? 'var(--imi-gold-500,#C8A44A)' : 'var(--text-secondary)',
                                 fontFamily: 'var(--font-ui)',
                             }}>
                                 {n.yield.toFixed(1)}%
@@ -185,7 +185,7 @@ export function WidgetYield() {
             </div>
 
             {/* Footer */}
-            <p style={{ fontSize: 9, color: 'var(--bo-text-muted)', margin: 0, lineHeight: 1.4, borderTop: '1px solid var(--bo-border)', paddingTop: 8 }}>
+            <p style={{ fontSize: 9, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4, borderTop: '1px solid var(--border-default)', paddingTop: 8 }}>
                 Yield líquido calculado após IPTU e condomínio. Não inclui IR, vacância ou manutenção.
             </p>
         </div>

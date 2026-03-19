@@ -28,9 +28,9 @@ const STEPS = [
 ]
 const PLATAFORMAS = [
     { id: 'sem_assinatura', label: 'Sem assinatura digital', sub: 'Gera e baixa — assine fisicamente ou via outro meio', icon: FileText, cor: '#4E5669', gratuito: true, env: '' },
-    { id: 'clicksign', label: 'ClickSign', sub: 'Juridicamente válido BR · WhatsApp integrado · ~R$99/mês', icon: FileSignature, cor: 'var(--bo-accent)', gratuito: false, env: 'CLICKSIGN_ACCESS_TOKEN' },
+    { id: 'clicksign', label: 'ClickSign', sub: 'Juridicamente válido BR · WhatsApp integrado · ~R$99/mês', icon: FileSignature, cor: 'var(--imi-gold-500)', gratuito: false, env: 'CLICKSIGN_ACCESS_TOKEN' },
     { id: 'docusign', label: 'DocuSign', sub: 'Aceito globalmente · maior plataforma de assinatura do mundo', icon: Shield, cor: 'var(--info)', gratuito: false, env: 'DOCUSIGN_ACCESS_TOKEN' },
-    { id: 'govbr', label: 'Gov.br Assinatura', sub: 'Gratuito · válido no Brasil · exige CPF autenticado via Gov.br', icon: Lock, cor: 'var(--bo-success)', gratuito: true, env: 'GOVBR_CLIENT_ID' },
+    { id: 'govbr', label: 'Gov.br Assinatura', sub: 'Gratuito · válido no Brasil · exige CPF autenticado via Gov.br', icon: Lock, cor: 'var(--success)', gratuito: true, env: 'GOVBR_CLIENT_ID' },
 ]
 const SEC_LABELS: Record<string, string> = {
     objeto: '📦 Objeto', valores: '💰 Valores', prazos: '📅 Prazos',
@@ -97,14 +97,14 @@ function FormParte({ titulo, parte, onChange }: { titulo: string; parte: ParteDa
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--bo-active-bg)' }}><User size={15} style={{ color: T.accent }} /></div>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--bg-active)' }}><User size={15} style={{ color: T.accent }} /></div>
                 <h3 className="text-sm font-bold" style={{ color: T.text }}>{titulo}</h3>
             </div>
             <div className="flex gap-2">
                 {(['pessoa_fisica', 'pessoa_juridica'] as const).map(t => (
                     <button key={t} onClick={() => onChange({ ...parte, tipo: t })}
                         className="flex-1 h-10 rounded-[6px] text-xs font-semibold transition-all"
-                        style={{ background: parte.tipo === t ? 'var(--bo-accent)' : T.elevated, color: parte.tipo === t ? 'white' : T.textDim, border: `1px solid ${parte.tipo === t ? T.borderGold : T.border}` }}>
+                        style={{ background: parte.tipo === t ? 'var(--imi-gold-500)' : T.elevated, color: parte.tipo === t ? 'white' : T.textDim, border: `1px solid ${parte.tipo === t ? T.borderGold : T.border}` }}>
                         {t === 'pessoa_fisica' ? '👤 Pessoa Física' : '🏢 Pessoa Jurídica'}
                     </button>
                 ))}
@@ -237,12 +237,12 @@ function NovoContratoInner() {
                         <div key={s.id} className="flex items-center flex-shrink-0">
                             <div className="flex flex-col items-center">
                                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                                    style={{ background: i < step ? 'var(--bo-success)' : i === step ? 'var(--bo-accent)' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
+                                    style={{ background: i < step ? 'var(--success)' : i === step ? 'var(--imi-gold-500)' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
                                     {i < step ? '✓' : i + 1}
                                 </div>
                                 <span className="text-[10px] mt-1 hidden sm:block" style={{ color: i === step ? T.accent : T.textDim }}>{s.label}</span>
                             </div>
-                            {i < STEPS.length - 1 && <div className="w-6 sm:w-8 h-px mx-1" style={{ background: i < step ? 'var(--bo-success)' : T.border }} />}
+                            {i < STEPS.length - 1 && <div className="w-6 sm:w-8 h-px mx-1" style={{ background: i < step ? 'var(--success)' : T.border }} />}
                         </div>
                     ))}
                 </div>
@@ -256,7 +256,7 @@ function NovoContratoInner() {
                             <div className="flex gap-2 overflow-x-auto pb-0.5">
                                 {['todos', ...Object.keys(CATEGORIAS_LABEL)].map(cat => (
                                     <button key={cat} onClick={() => setCatF(cat)} className="px-3 h-8 rounded text-xs font-semibold flex-shrink-0 transition-all"
-                                        style={{ background: catF === cat ? 'var(--bo-accent)' : T.elevated, color: catF === cat ? 'white' : T.textDim, border: `1px solid ${catF === cat ? T.borderGold : T.border}` }}>
+                                        style={{ background: catF === cat ? 'var(--imi-gold-500)' : T.elevated, color: catF === cat ? 'white' : T.textDim, border: `1px solid ${catF === cat ? T.borderGold : T.border}` }}>
                                         {cat === 'todos' ? 'Todos' : `${ICONES_CAT[cat] || ''} ${(CATEGORIAS_LABEL as Record<string, string>)[cat]}`}
                                     </button>
                                 ))}
@@ -268,13 +268,13 @@ function NovoContratoInner() {
                                 return (
                                     <motion.button key={m.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
                                         onClick={() => setModelo(m)} className="text-left rounded-lg p-4 transition-all"
-                                        style={{ background: sel ? 'var(--bo-active-bg)' : T.surface, border: `1px solid ${sel ? T.borderGold : T.border}` }}>
+                                        style={{ background: sel ? 'var(--bg-active)' : T.surface, border: `1px solid ${sel ? T.borderGold : T.border}` }}>
                                         <div className="flex items-start gap-3">
                                             <div className="text-2xl w-10 h-10 flex items-center justify-center flex-shrink-0">{ICONES_CAT[m.categoria]}</div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
                                                     <p className="text-xs font-semibold" style={{ color: sel ? T.accent : T.text }}>{m.nome}</p>
-                                                    {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[6px]" style={{ background: 'var(--bo-hover)', color: T.accent }}>★</span>}
+                                                    {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[6px]" style={{ background: 'var(--bg-hover)', color: T.accent }}>★</span>}
                                                     {m.internacional && <span className="text-[9px]" style={{ color: 'var(--warning)' }}>🌐</span>}
                                                 </div>
                                                 <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>
@@ -302,7 +302,7 @@ function NovoContratoInner() {
                                         <button key={lang} disabled={!disp || obrig}
                                             onClick={() => { if (obrig) return; setIdiomasSel(p => p.includes(lang) ? p.filter(l => l !== lang) : [...p, lang]) }}
                                             className="flex items-center gap-2 p-3 rounded-lg text-left transition-all"
-                                            style={{ background: sel ? 'var(--bo-active-bg)' : T.elevated, border: `1px solid ${sel ? T.borderGold : T.border}`, opacity: disp ? 1 : 0.3, cursor: disp && !obrig ? 'pointer' : 'default' }}>
+                                            style={{ background: sel ? 'var(--bg-active)' : T.elevated, border: `1px solid ${sel ? T.borderGold : T.border}`, opacity: disp ? 1 : 0.3, cursor: disp && !obrig ? 'pointer' : 'default' }}>
                                             <span className="text-xl">{cfg.flag}</span>
                                             <div>
                                                 <p className="text-xs font-semibold" style={{ color: sel ? T.accent : T.text }}>{cfg.label}</p>
@@ -318,7 +318,7 @@ function NovoContratoInner() {
                                     <div className="flex gap-2 flex-wrap">
                                         {idiomasSel.map(l => (
                                             <button key={l} onClick={() => setIdiomaPrim(l)} className="flex items-center gap-1.5 px-3 h-8 rounded text-xs font-semibold transition-all"
-                                                style={{ background: idiomaPrim === l ? 'var(--bo-accent)' : T.elevated, color: idiomaPrim === l ? 'white' : T.textDim, border: `1px solid ${idiomaPrim === l ? T.borderGold : T.border}` }}>
+                                                style={{ background: idiomaPrim === l ? 'var(--imi-gold-500)' : T.elevated, color: idiomaPrim === l ? 'white' : T.textDim, border: `1px solid ${idiomaPrim === l ? T.borderGold : T.border}` }}>
                                                 {(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[l]?.flag} {(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[l]?.label}
                                             </button>
                                         ))}
@@ -341,7 +341,7 @@ function NovoContratoInner() {
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2">
                                                     <p className="text-sm font-semibold" style={{ color: sel ? p.cor : T.text }}>{p.label}</p>
-                                                    {p.gratuito && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[6px]" style={{ background: 'rgba(107,184,123,0.15)', color: 'var(--bo-success)' }}>GRATUITO</span>}
+                                                    {p.gratuito && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[6px]" style={{ background: 'rgba(107,184,123,0.15)', color: 'var(--success)' }}>GRATUITO</span>}
                                                 </div>
                                                 <p className="text-[10px] mt-0.5" style={{ color: T.textDim }}>{p.sub}</p>
                                                 {p.env && <p className="text-[9px] mt-0.5 font-mono" style={{ color: T.textDim }}>{p.env}</p>}
@@ -378,7 +378,7 @@ function NovoContratoInner() {
                                         {campos.map((c: CampoConfig) => (
                                             <div key={c.key} className={c.width === 'full' ? 'sm:col-span-2' : ''}>
                                                 <label className="text-[11px] font-semibold mb-1.5 block" style={{ color: T.textDim }}>
-                                                    {c.label}{c.required && <span style={{ color: 'var(--bo-error)' }}> *</span>}
+                                                    {c.label}{c.required && <span style={{ color: 'var(--error)' }}> *</span>}
                                                 </label>
                                                 <Campo campo={c} value={dados[c.key]} onChange={(v: string | number) => setDados(p => ({ ...p, [c.key]: v }))} />
                                             </div>
@@ -411,18 +411,18 @@ function NovoContratoInner() {
                             </div>
                         </div>
                         {erro && <div className="flex items-start gap-3 p-4 rounded-lg" style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.20)' }}>
-                            <AlertCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--bo-error)' }} />
+                            <AlertCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--error)' }} />
                             <div className="flex-1 min-w-0">
-                                <p className="text-xs font-semibold mb-1" style={{ color: 'var(--bo-error)' }}>Erro ao gerar contrato</p>
-                                <p className="text-xs" style={{ color: 'var(--bo-error)' }}>{erro}</p>
-                                <button onClick={() => setErro(null)} className="text-[11px] font-semibold mt-2 underline" style={{ color: 'var(--bo-error)' }}>Tentar novamente</button>
+                                <p className="text-xs font-semibold mb-1" style={{ color: 'var(--error)' }}>Erro ao gerar contrato</p>
+                                <p className="text-xs" style={{ color: 'var(--error)' }}>{erro}</p>
+                                <button onClick={() => setErro(null)} className="text-[11px] font-semibold mt-2 underline" style={{ color: 'var(--error)' }}>Tentar novamente</button>
                             </div>
                         </div>}
                         <div className="space-y-2">
                             {idiomasSel.map(lang => (
                                 <motion.button key={lang} whileTap={{ scale: 0.97 }} onClick={() => gerar(lang)} disabled={gerando}
                                     className="w-full flex items-center justify-between h-14 px-6 rounded-[6px] font-semibold text-sm text-white"
-                                    style={{ background: gerando ? 'var(--bo-hover)' : 'var(--bo-accent)', boxShadow: gerando ? 'none' : '0 1px 2px rgba(0,0,0,0.1)' }}>
+                                    style={{ background: gerando ? 'var(--bg-hover)' : 'var(--imi-gold-500)', boxShadow: gerando ? 'none' : '0 1px 2px rgba(0,0,0,0.1)' }}>
                                     <div className="flex items-center gap-3">
                                         {gerando ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
                                         <span>Gerar em {(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[lang]?.flag} {(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[lang]?.label}</span>
@@ -437,8 +437,8 @@ function NovoContratoInner() {
                 {gerado && resultado && (
                     <motion.div key="result" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="space-y-4">
                         <div className="flex items-center gap-3 p-4 rounded-lg" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.22)' }}>
-                            <CheckCircle size={20} style={{ color: 'var(--bo-success)' }} />
-                            <div><p className="text-sm font-bold" style={{ color: 'var(--bo-success)' }}>Contrato gerado com sucesso!</p><p className="text-xs mt-0.5" style={{ color: T.textDim }}>{resultado.numero} · salvo automaticamente</p></div>
+                            <CheckCircle size={20} style={{ color: 'var(--success)' }} />
+                            <div><p className="text-sm font-bold" style={{ color: 'var(--success)' }}>Contrato gerado com sucesso!</p><p className="text-xs mt-0.5" style={{ color: T.textDim }}>{resultado.numero} · salvo automaticamente</p></div>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             {[
@@ -460,13 +460,13 @@ function NovoContratoInner() {
                             <div className="flex gap-2">
                                 {(['email', 'whatsapp', 'ambos'] as const).map(c => (
                                     <button key={c} onClick={() => setCanal(c)} className="flex-1 flex items-center justify-center gap-2 h-10 rounded text-xs font-semibold transition-all"
-                                        style={{ background: canal === c ? 'var(--bo-accent)' : T.elevated, color: canal === c ? 'white' : T.textDim, border: `1px solid ${canal === c ? T.borderGold : T.border}` }}>
+                                        style={{ background: canal === c ? 'var(--imi-gold-500)' : T.elevated, color: canal === c ? 'white' : T.textDim, border: `1px solid ${canal === c ? T.borderGold : T.border}` }}>
                                         {c === 'email' ? <><Mail size={12} />Email</> : c === 'whatsapp' ? <><MessageSquare size={12} />WhatsApp</> : '📤 Ambos'}
                                     </button>
                                 ))}
                             </div>
                             {envioOk
-                                ? <div className="flex items-center gap-2 p-3 rounded-lg" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: 'var(--bo-success)' }} /><p className="text-xs font-semibold" style={{ color: 'var(--bo-success)' }}>Enviado com sucesso!</p></div>
+                                ? <div className="flex items-center gap-2 p-3 rounded-lg" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: 'var(--success)' }} /><p className="text-xs font-semibold" style={{ color: 'var(--success)' }}>Enviado com sucesso!</p></div>
                                 : <button onClick={enviar} disabled={enviando} className="w-full rounded text-sm font-bold text-white flex items-center justify-center gap-2" style={{ height: '44px', background: 'var(--btn-primary-bg)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}>
                                     {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                                     {enviando ? 'Enviando...' : `Enviar via ${canal}`}
@@ -477,7 +477,7 @@ function NovoContratoInner() {
                             <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
                                 <div className="flex items-center gap-2 mb-2"><FileSignature size={16} style={{ color: T.accent }} /><h3 className="text-sm font-bold" style={{ color: T.text }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</h3></div>
                                 <p className="text-xs mb-3" style={{ color: T.textDim }}>Envie para assinatura digital juridicamente válida. Configure a variável de ambiente antes de ativar.</p>
-                                <button className="w-full h-11 rounded text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'var(--bo-active-bg)', border: `1px solid ${T.borderGold}`, color: T.accent }}>
+                                <button className="w-full h-11 rounded text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'var(--bg-active)', border: `1px solid ${T.borderGold}`, color: T.accent }}>
                                     <Shield size={15} /> Enviar para Assinatura Digital
                                 </button>
                                 <p className="text-[9px] text-center mt-2 font-mono" style={{ color: T.textDim }}>{PLATAFORMAS.find(p => p.id === plat)?.env}</p>
@@ -510,7 +510,7 @@ function NovoContratoInner() {
                     </button>
                     {step < STEPS.length - 1 && (
                         <button onClick={() => setStep(s => s + 1)} disabled={!ok()} className="flex items-center gap-2 px-6 rounded text-sm font-bold text-white transition-all"
-                            style={{ height: '44px', background: ok() ? 'var(--bo-accent)' : 'var(--bo-hover)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 4px 14px rgba(37,99,235,0.22)' : 'none', border: 'none' }}>
+                            style={{ height: '44px', background: ok() ? 'var(--imi-gold-500)' : 'var(--bg-hover)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 4px 14px rgba(37,99,235,0.22)' : 'none', border: 'none' }}>
                             Avançar <ChevronRight size={16} />
                         </button>
                     )}
@@ -522,7 +522,7 @@ function NovoContratoInner() {
 
 export default function NovoContratoPage() {
     return (
-        <Suspense fallback={<div className="flex h-64 items-center justify-center"><Loader2 size={24} className="animate-spin" style={{ color: 'var(--bo-accent)' }} /></div>}>
+        <Suspense fallback={<div className="flex h-64 items-center justify-center"><Loader2 size={24} className="animate-spin" style={{ color: 'var(--imi-gold-500)' }} /></div>}>
             <NovoContratoInner />
         </Suspense>
     )

@@ -176,26 +176,26 @@ export default function ReceberPage() {
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
 >
                                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                                    style={{ background: 'var(--bo-success-bg)' }}>
-                                    <ArrowUpCircle size={18} style={{ color: 'var(--bo-success)' }} />
+                                    style={{ background: 'rgba(107,184,123,0.12)' }}>
+                                    <ArrowUpCircle size={18} style={{ color: 'var(--success)' }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{t.description}</p>
                                     <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                                         <span className="text-[11px] font-medium" style={{ color: T.textMuted }}>{t.category}</span>
                                         <span className="text-[11px]" style={{ color: T.textMuted }}>·</span>
-                                        <span className="text-[11px]" style={{ color: isOverdue ? 'var(--bo-error)' : T.textMuted }}>
+                                        <span className="text-[11px]" style={{ color: isOverdue ? 'var(--error)' : T.textMuted }}>
                                             Vence {fmtDate(t.due_date)}
                                         </span>
                                         <span
                                             className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-[6px]"
-                                            style={{ color: isOverdue ? 'var(--bo-error)' : sc.text, background: isOverdue ? 'var(--error-bg, rgba(229,115,115,0.12))' : sc.bg }}>
+                                            style={{ color: isOverdue ? 'var(--error)' : sc.text, background: isOverdue ? 'var(--error-bg, rgba(229,115,115,0.12))' : sc.bg }}>
                                             <Icon size={9} /> {isOverdue ? 'Atrasado' : sc.label}
                                         </span>
                                     </div>
                                 </div>
                                 <div className="text-right flex-shrink-0">
-                                    <p className="text-base font-bold" style={{ color: 'var(--bo-success)' }}>{fmt(Number(t.amount))}</p>
+                                    <p className="text-base font-bold" style={{ color: 'var(--success)' }}>{fmt(Number(t.amount))}</p>
                                 </div>
                                 <ActionMenu items={[
                                     ...(t.status === 'pendente' ? [{ label: 'Marcar Recebido', icon: <CheckCircle size={14} />, onClick: () => markReceived(t.id) }] : []),

@@ -17,9 +17,9 @@ const STEPS = [
     { id: 3, name: 'Engenharia de Crédito', description: 'Análise de capacidade', icon: Calculator },
     { id: 4, name: 'Dossiê', description: 'Instruções finais', icon: FileText },
 ]
-const inputClass = 'w-full h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all'
-const inputStyle = { background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }
-const inputErrorStyle = { background: 'var(--bo-elevated)', border: `1px solid ${T.error}`, color: 'var(--bo-text)' }
+const inputClass = 'w-full h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--imi-gold-500)] transition-all'
+const inputStyle = { background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', color: 'var(--text-primary)' }
+const inputErrorStyle = { background: 'var(--bg-elevated)', border: `1px solid ${T.error}`, color: 'var(--text-primary)' }
 function Label({ children }: { children: React.ReactNode }) {
     return (
         <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: T.textMuted }}>
@@ -398,7 +398,7 @@ export default function CreditoNovoPage() {
                                     onChange={handleChange}
                                     rows={6}
                                     placeholder="Insira aqui detalhes sobre a composição de renda, outros proponentes ou particularidades do imóvel..."
-                                    className="w-full px-4 py-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all resize-none"
+                                    className="w-full px-4 py-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--imi-gold-500)] transition-all resize-none"
                                     style={inputStyle}
                                 />
                             </div>

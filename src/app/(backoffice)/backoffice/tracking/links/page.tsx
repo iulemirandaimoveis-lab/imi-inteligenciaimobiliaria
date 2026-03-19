@@ -232,7 +232,7 @@ export default function TrackingLinksPage() {
                                             title="Copiar link"
                                         >
                                             {copiedId === link.id ? (
-                                                <Check size={14} style={{ color: 'var(--s-done, #34d399)' }} />
+                                                <Check size={14} style={{ color: 'var(--success)' }} />
                                             ) : (
                                                 <Copy size={14} style={{ color: T.textMuted }} />
                                             )}
@@ -261,7 +261,7 @@ export default function TrackingLinksPage() {
                                             style={{ background: T.hover }}
                                             title="Excluir"
                                         >
-                                            <Trash2 size={14} style={{ color: 'var(--s-cancel, #ef4444)' }} />
+                                            <Trash2 size={14} style={{ color: 'var(--text-tertiary)' }} />
                                         </button>
                                     </div>
                                 </div>

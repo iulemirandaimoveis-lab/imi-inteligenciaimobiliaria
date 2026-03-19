@@ -9,32 +9,32 @@ export default function ReportsCharts({ leadsData, consData }: { leadsData: Reco
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="rounded-2xl p-6 shadow-sm"
                 style={{
-                    background: 'var(--bo-elevated)',
-                    border: '1px solid var(--bo-border)',
+                    background: 'var(--bg-elevated)',
+                    border: '1px solid var(--border-default)',
                 }}>
-                <h2 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Leads por Estágio</h2>
+                <h2 className="text-lg font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Leads por Estágio</h2>
                 <div className="h-[300px] w-full">
                     {leadsData.length > 0 ? (
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={leadsData}>
-                                <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} tick={{ fill: 'var(--bo-text-muted)' }} />
-                                <YAxis fontSize={12} tickLine={false} axisLine={false} tick={{ fill: 'var(--bo-text-muted)' }} />
-                                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '10px', color: 'var(--bo-text)' }} />
+                                <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} tick={{ fill: 'var(--text-secondary)' }} />
+                                <YAxis fontSize={12} tickLine={false} axisLine={false} tick={{ fill: 'var(--text-secondary)' }} />
+                                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '10px', color: 'var(--text-primary)' }} />
                                 <Bar dataKey="count" fill="#486581" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     ) : (
-                        <div className="h-full flex items-center justify-center text-sm" style={{ color: 'var(--bo-text-muted)' }}>Sem dados suficientes</div>
+                        <div className="h-full flex items-center justify-center text-sm" style={{ color: 'var(--text-secondary)' }}>Sem dados suficientes</div>
                     )}
                 </div>
             </div>
 
             <div className="rounded-2xl p-6 shadow-sm"
                 style={{
-                    background: 'var(--bo-elevated)',
-                    border: '1px solid var(--bo-border)',
+                    background: 'var(--bg-elevated)',
+                    border: '1px solid var(--border-default)',
                 }}>
-                <h2 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Consultorias por Status</h2>
+                <h2 className="text-lg font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Consultorias por Status</h2>
                 <div className="h-[300px] w-full">
                     {consData.length > 0 ? (
                         <ResponsiveContainer width="100%" height="100%">
@@ -52,12 +52,12 @@ export default function ReportsCharts({ leadsData, consData }: { leadsData: Reco
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip contentStyle={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '10px', color: 'var(--bo-text)' }} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '10px', color: 'var(--text-primary)' }} />
                                 <Legend />
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (
-                        <div className="h-full flex items-center justify-center text-sm" style={{ color: 'var(--bo-text-muted)' }}>Sem dados suficientes</div>
+                        <div className="h-full flex items-center justify-center text-sm" style={{ color: 'var(--text-secondary)' }}>Sem dados suficientes</div>
                     )}
                 </div>
             </div>

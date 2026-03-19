@@ -396,7 +396,7 @@ export default function EbookPage() {
                                             type="range" min={3} max={10} step={1}
                                             value={config.num_capitulos}
                                             onChange={e => set('num_capitulos', Number(e.target.value))}
-                                            className="flex-1 accent-[var(--bo-accent)]"
+                                            className="flex-1 accent-[var(--imi-gold-500)]"
                                         />
                                         <span className="text-2xl font-black tabular-nums w-8 text-center" style={{ color: T.text }}>
                                             {config.num_capitulos}

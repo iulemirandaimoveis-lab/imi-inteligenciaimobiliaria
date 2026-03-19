@@ -156,10 +156,10 @@ export default function UsuariosPage() {
   }
   const getRoleBadge = (role: string) => {
     const r = role?.toUpperCase()
-    if (r === 'ADMIN') return { bg: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)', border: 'rgba(229,115,115,0.2)' }
+    if (r === 'ADMIN') return { bg: 'rgba(229,115,115,0.12)', color: 'var(--error)', border: 'rgba(229,115,115,0.2)' }
     if (r === 'GESTOR') return { bg: 'rgba(232,168,124,0.12)', color: 'var(--warning)', border: 'rgba(232,168,124,0.2)' }
     if (r === 'AVALIADOR') return { bg: 'rgba(167,139,250,0.12)', color: 'var(--imi-gold-400)', border: 'rgba(167,139,250,0.2)' }
-    if (r === 'MARKETING') return { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)', border: 'rgba(107,184,123,0.2)' }
+    if (r === 'MARKETING') return { bg: 'rgba(107,184,123,0.12)', color: 'var(--success)', border: 'rgba(107,184,123,0.2)' }
     return { bg: 'rgba(72,101,129,0.12)', color: 'var(--text-secondary)', border: 'rgba(72,101,129,0.2)' }
   }
   const getTimeAgo = (dateStr: string) => {
@@ -315,7 +315,7 @@ export default function UsuariosPage() {
                               onClick={() => openDeactivate(user)}
                               title="Desativar usuário"
                               className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
-                              style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.2)', color: 'var(--bo-error, #e57373)' }}
+                              style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.2)', color: 'var(--error)' }}
                             >
                               <UserX size={13} />
                               <span className="hidden sm:inline">Desativar</span>
@@ -336,7 +336,7 @@ export default function UsuariosPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div
             className="w-full max-w-md rounded-xl p-6 space-y-5"
-            style={{ background: 'var(--bo-elevated, var(--bg-elevated))', border: `1px solid ${T.border}` }}
+            style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}
           >
             {/* Header */}
             <div className="flex items-center justify-between">
@@ -391,7 +391,7 @@ export default function UsuariosPage() {
                 onClick={handleSaveEdit}
                 disabled={editModal.saving}
                 className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
-                style={{ background: 'var(--btn-primary-bg, var(--bo-accent))' }}
+                style={{ background: 'var(--btn-primary-bg, var(--imi-gold-500))' }}
               >
                 {editModal.saving && <Loader2 size={14} className="animate-spin" />}
                 {editModal.saving ? 'Salvando...' : 'Salvar'}
@@ -405,7 +405,7 @@ export default function UsuariosPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div
             className="w-full max-w-sm rounded-xl p-6 space-y-5"
-            style={{ background: 'var(--bo-elevated, var(--bg-elevated))', border: `1px solid ${T.border}` }}
+            style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}
           >
             {/* Icon + Title */}
             <div className="flex flex-col items-center text-center gap-3">
@@ -413,7 +413,7 @@ export default function UsuariosPage() {
                 className="w-12 h-12 rounded-lg flex items-center justify-center"
                 style={{ background: 'rgba(229,115,115,0.12)', border: '1px solid rgba(229,115,115,0.25)' }}
               >
-                <UserX size={22} style={{ color: 'var(--bo-error, #e57373)' }} />
+                <UserX size={22} style={{ color: 'var(--error)' }} />
               </div>
               <div>
                 <h2 className="font-semibold text-base" style={{ color: T.text }}>Desativar Usuário</h2>

@@ -80,7 +80,7 @@ const AGENTS = [
         name: 'Agente Follow-up',
         description: 'Detecta leads sem resposta há mais de 48h e envia mensagens personalizadas de reengajamento no momento certo.',
         icon: MessageSquare,
-        color: 'var(--bo-error)',
+        color: 'var(--error)',
         colorRaw: '239,68,68',
         status: 'idle' as const,
         model: 'Claude Haiku',
@@ -409,10 +409,10 @@ export default function AgentesIAPage() {
                     <Brain size={20} style={{ color: '#A78BFA' }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bo-text)', marginBottom: 2 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>
                         Infraestrutura Agno
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--bo-text-muted)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
                         Agentes com memória persistente, ferramentas externas, raciocínio step-by-step e execução paralela.
                         Cada agente tem seu próprio contexto, histórico de sessão e capacidade de chamar APIs em cadeia.
                     </div>
@@ -441,9 +441,9 @@ export default function AgentesIAPage() {
                         style={{
                             padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                             cursor: 'pointer', transition: 'all 0.15s',
-                            background: category === cat.id ? 'var(--bo-accent)' : 'var(--bo-elevated)',
-                            color: category === cat.id ? '#fff' : 'var(--bo-text-muted)',
-                            border: `1px solid ${category === cat.id ? 'transparent' : 'var(--bo-border)'}`,
+                            background: category === cat.id ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
+                            color: category === cat.id ? '#fff' : 'var(--text-secondary)',
+                            border: `1px solid ${category === cat.id ? 'transparent' : 'var(--border-default)'}`,
                         }}
                     >
                         {cat.label}
@@ -463,9 +463,9 @@ export default function AgentesIAPage() {
                             key={agent.id}
                             className="rounded-lg overflow-hidden transition-all duration-200"
                             style={{
-                                background: 'var(--bo-elevated)',
-                                border: `1px solid var(--bo-border)`,
-                                boxShadow: 'var(--bo-card-shadow)',
+                                background: 'var(--bg-elevated)',
+                                border: `1px solid var(--border-default)`,
+                                boxShadow: 'none',
                             }}
                         >
                             {/* Card header */}
@@ -473,7 +473,7 @@ export default function AgentesIAPage() {
                                 className="p-4"
                                 style={{
                                     background: `linear-gradient(135deg, rgba(${agent.colorRaw},0.10) 0%, rgba(${agent.colorRaw},0.03) 100%)`,
-                                    borderBottom: '1px solid var(--bo-border)',
+                                    borderBottom: '1px solid var(--border-default)',
                                 }}
                             >
                                 <div className="flex items-start justify-between mb-3">
@@ -502,37 +502,37 @@ export default function AgentesIAPage() {
                                     </span>
                                 </div>
 
-                                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--bo-text)', marginBottom: 4 }}>
+                                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
                                     {agent.name}
                                 </div>
-                                <div style={{ fontSize: 12, color: 'var(--bo-text-muted)', lineHeight: 1.5 }}>
+                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                                     {agent.description}
                                 </div>
                             </div>
 
                             {/* Stats row */}
-                            <div className="px-4 py-3 flex items-center gap-4" style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                            <div className="px-4 py-3 flex items-center gap-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Tarefas hoje
                                     </div>
-                                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--bo-text)' }}>
+                                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
                                         {agent.tasksToday + (agentStats[agent.id]?.tasksToday || 0)}
                                     </div>
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Sucesso
                                     </div>
-                                    <div style={{ fontSize: 20, fontWeight: 800, color: agent.successRate >= 90 ? 'var(--bo-success)' : agent.successRate >= 70 ? 'var(--bo-warning)' : 'var(--bo-error)' }}>
+                                    <div style={{ fontSize: 20, fontWeight: 800, color: agent.successRate >= 90 ? 'var(--success)' : agent.successRate >= 70 ? 'var(--warning)' : 'var(--error)' }}>
                                         {agent.successRate}%
                                     </div>
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Modelo
                                     </div>
-                                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--bo-text)' }}>
+                                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>
                                         {agent.model}
                                     </div>
                                 </div>
@@ -547,8 +547,8 @@ export default function AgentesIAPage() {
                                             key={tool}
                                             style={{
                                                 fontSize: 9, fontWeight: 600, padding: '2px 6px',
-                                                borderRadius: 6, background: 'var(--bo-hover)',
-                                                color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)',
+                                                borderRadius: 6, background: 'var(--bg-hover)',
+                                                color: 'var(--text-secondary)', border: '1px solid var(--border-default)',
                                             }}
                                         >
                                             {tool}
@@ -564,8 +564,8 @@ export default function AgentesIAPage() {
                                     style={{
                                         padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700,
                                         cursor: isRunning ? 'not-allowed' : 'pointer',
-                                        background: isRunning ? 'var(--bo-hover)' : `rgba(${agent.colorRaw},0.15)`,
-                                        color: isRunning ? 'var(--bo-text-muted)' : agent.color,
+                                        background: isRunning ? 'var(--bg-hover)' : `rgba(${agent.colorRaw},0.15)`,
+                                        color: isRunning ? 'var(--text-secondary)' : agent.color,
                                         border: `1px solid rgba(${agent.colorRaw},0.25)`,
                                         transition: 'all 0.15s',
                                     }}
@@ -587,7 +587,7 @@ export default function AgentesIAPage() {
                             {/* Last run */}
                             <div
                                 className="px-4 pb-3"
-                                style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}
+                                style={{ fontSize: 10, color: 'var(--text-secondary)' }}
                             >
                                 Última execução: {agent.lastRun}
                             </div>
@@ -613,10 +613,10 @@ export default function AgentesIAPage() {
                         <Zap size={20} style={{ color: '#F59E0B' }} />
                     </div>
                     <div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bo-text)', marginBottom: 2 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>
                             Hormozi Squad · 8 Agentes Especialistas
                         </div>
-                        <div style={{ fontSize: 12, color: 'var(--bo-text-muted)' }}>
+                        <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
                             Frameworks de Alex Hormozi: Grand Slam Offers, $100M Leads, CLOSER, Value Equation.
                             Cada agente implementa uma parte do sistema Hormozi para escalar a IMI.
                         </div>
@@ -628,15 +628,15 @@ export default function AgentesIAPage() {
             <div
                 className="mt-6 rounded-lg p-6 text-center"
                 style={{
-                    background: 'var(--bo-elevated)',
-                    border: '1px dashed var(--bo-border)',
+                    background: 'var(--bg-elevated)',
+                    border: '1px dashed var(--border-default)',
                 }}
             >
-                <Sparkles size={24} style={{ color: 'var(--bo-text-muted)', margin: '0 auto 8px' }} />
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--bo-text)', marginBottom: 4 }}>
+                <Sparkles size={24} style={{ color: 'var(--text-secondary)', margin: '0 auto 8px' }} />
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
                     Crie seu próprio agente
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--bo-text-muted)', maxWidth: 320, margin: '0 auto 16px' }}>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary)', maxWidth: 320, margin: '0 auto 16px' }}>
                     Defina ferramentas, memória, instruções e integrações. O agente opera 24h com lógica personalizada.
                 </div>
                 <button

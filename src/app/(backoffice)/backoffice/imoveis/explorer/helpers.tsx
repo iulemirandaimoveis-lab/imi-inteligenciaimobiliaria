@@ -86,22 +86,22 @@ export const DEFAULT_FILTERS: ActiveFilters = {
 /* ─── UI helpers ──────────────────────────────────────────────────── */
 export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--bo-accent, var(--imi-gold-500))', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>{children}</span>
+    <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>{children}</span>
   )
 }
 
 export function TabBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button onClick={onClick} style={{ padding: '8px 18px', borderRadius: 6, background: active ? 'rgba(184,148,58,0.12)' : 'transparent', border: active ? '1px solid rgba(184,148,58,0.35)' : '1px solid transparent', color: active ? 'var(--bo-accent, var(--imi-gold-500))' : 'var(--bo-text-muted, #9FAAB8)', fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.2s' }}>{children}</button>
+    <button onClick={onClick} style={{ padding: '8px 18px', borderRadius: 6, background: active ? 'rgba(184,148,58,0.12)' : 'transparent', border: active ? '1px solid rgba(184,148,58,0.35)' : '1px solid transparent', color: active ? 'var(--imi-gold-500)' : 'var(--text-secondary, #9FAAB8)', fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.2s' }}>{children}</button>
   )
 }
 
 export function StatCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color: string }) {
   return (
-    <div style={{ background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, padding: '20px', flex: 1 }}>
+    <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, padding: '20px', flex: 1 }}>
       <div style={{ marginBottom: 10 }}><Eyebrow>{label}</Eyebrow></div>
       <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '22px', fontWeight: 400, color, letterSpacing: '-0.5px', lineHeight: 1, display: 'block', marginBottom: sub ? 6 : 0 }}>{value}</span>
-      {sub && <span style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{sub}</span>}
+      {sub && <span style={{ fontSize: '11px', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{sub}</span>}
     </div>
   )
 }

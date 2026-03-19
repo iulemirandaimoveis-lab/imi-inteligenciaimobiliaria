@@ -37,9 +37,9 @@ export function WidgetPriceTrend() {
                         style={{
                             padding: '4px 12px', borderRadius: 6, fontSize: 11, cursor: 'pointer',
                             fontFamily: 'inherit', transition: 'all 150ms',
-                            background: active === i ? 'var(--bo-active-bg)' : 'var(--bo-surface)',
-                            border: `1px solid ${active === i ? 'var(--bo-accent)' : 'var(--bo-border)'}`,
-                            color: active === i ? 'var(--bo-accent)' : 'var(--bo-text-muted)',
+                            background: active === i ? 'var(--bg-active)' : 'var(--bg-surface)',
+                            border: `1px solid ${active === i ? 'var(--imi-gold-500)' : 'var(--border-default)'}`,
+                            color: active === i ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
                             fontWeight: active === i ? 700 : 400,
                         }}
                     >{nb.name}</button>
@@ -49,15 +49,15 @@ export function WidgetPriceTrend() {
             {/* Value */}
             <div>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
-                    <span style={{ fontFamily: 'var(--font-display,"Playfair Display",serif)', fontSize: 36, color: 'var(--bo-text)', letterSpacing: '-1.5px', lineHeight: 1 }}>
+                    <span style={{ fontFamily: 'var(--font-display,"Playfair Display",serif)', fontSize: 36, color: 'var(--text-primary)', letterSpacing: '-1.5px', lineHeight: 1 }}>
                         R$&nbsp;{b.price.toLocaleString('pt-BR')}
                     </span>
-                    <span style={{ fontSize: 14, color: 'var(--bo-text-muted)', paddingBottom: 4 }}>/m²</span>
+                    <span style={{ fontSize: 14, color: 'var(--text-secondary)', paddingBottom: 4 }}>/m²</span>
                 </div>
                 <div style={{
                     display: 'inline-flex', alignItems: 'center', gap: 4,
                     padding: '3px 10px', borderRadius: 6, marginTop: 6,
-                    background: 'rgba(45,143,92,0.10)', color: 'var(--bo-success,#2D8F5C)',
+                    background: 'rgba(45,143,92,0.10)', color: 'var(--success,#2D8F5C)',
                     fontSize: 11, fontWeight: 600,
                 }}>
                     ↑ +{b.pct}% nos últimos 12 meses
@@ -73,10 +73,10 @@ export function WidgetPriceTrend() {
                     </linearGradient>
                 </defs>
                 <polyline points={`${pts} ${w},${h} 0,${h}`} fill="url(#tg)" stroke="none" />
-                <polyline points={pts} fill="none" stroke="var(--bo-accent,#C8A44A)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points={pts} fill="none" stroke="var(--imi-gold-500,#C8A44A)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--bo-text-muted)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-secondary)' }}>
                 {['Mar','Mai','Jul','Set','Nov','Jan','Mar'].map(m => <span key={m}>{m}</span>)}
             </div>
         </div>

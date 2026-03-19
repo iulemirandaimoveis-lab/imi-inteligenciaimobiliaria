@@ -33,14 +33,14 @@ function FilterGroup({ title, children, defaultOpen = true }: {
       >
         <span style={{
           fontSize: '8.5px', fontWeight: 700, letterSpacing: '2.5px',
-          textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
+          textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)',
           fontFamily: 'var(--font-outfit, sans-serif)',
         }}>
           {title}
         </span>
         {open
-          ? <ChevronUp size={12} style={{ color: 'var(--bo-text-dim, #5C6B7D)' }} />
-          : <ChevronDown size={12} style={{ color: 'var(--bo-text-dim, #5C6B7D)' }} />
+          ? <ChevronUp size={12} style={{ color: 'var(--text-tertiary, #5C6B7D)' }} />
+          : <ChevronDown size={12} style={{ color: 'var(--text-tertiary, #5C6B7D)' }} />
         }
       </button>
       {open && <div style={{ paddingBottom: 14 }}>{children}</div>}
@@ -71,9 +71,9 @@ function ChipSelect({ options, value, onChange, multi = true }: {
             onClick={() => toggle(o.value)}
             style={{
               padding: '6px 12px', borderRadius: 6,
-              background: active ? 'rgba(200,164,74,0.12)' : 'var(--bo-surface, rgba(255,255,255,0.04))',
+              background: active ? 'rgba(200,164,74,0.12)' : 'var(--bg-surface, rgba(255,255,255,0.04))',
               border: `1px solid ${active ? 'rgba(200,164,74,0.40)' : 'rgba(255,255,255,0.08)'}`,
-              color: active ? '#C8A44A' : 'var(--bo-text-muted, #9FAAB8)',
+              color: active ? '#C8A44A' : 'var(--text-secondary, #9FAAB8)',
               fontSize: '12px', fontWeight: active ? 600 : 400,
               fontFamily: 'var(--font-outfit, sans-serif)',
               cursor: 'pointer',
@@ -101,7 +101,7 @@ function RangeRow({ labelMin, labelMax, min, max, onMin, onMax, prefix = '' }: {
       <div>
         <label style={{
           display: 'block', fontSize: '8px', letterSpacing: '1.5px',
-          textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
+          textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)',
           marginBottom: 3, fontFamily: 'var(--font-outfit, sans-serif)',
         }}>
           {labelMin}
@@ -113,9 +113,9 @@ function RangeRow({ labelMin, labelMax, min, max, onMin, onMax, prefix = '' }: {
           onChange={e => onMin(e.target.value ? Number(e.target.value) : null)}
           style={{
             width: '100%', padding: '9px 8px',
-            background: 'var(--bo-surface, rgba(255,255,255,0.04))',
+            background: 'var(--bg-surface, rgba(255,255,255,0.04))',
             border: '1px solid rgba(200,164,74,0.18)',
-            borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
+            borderRadius: 6, color: 'var(--text-primary, #EBE7E0)',
             fontSize: '13px', fontFamily: 'var(--font-dm-mono, monospace)',
             outline: 'none', minHeight: 40,
           }}
@@ -124,7 +124,7 @@ function RangeRow({ labelMin, labelMax, min, max, onMin, onMax, prefix = '' }: {
       <div>
         <label style={{
           display: 'block', fontSize: '8px', letterSpacing: '1.5px',
-          textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
+          textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)',
           marginBottom: 3, fontFamily: 'var(--font-outfit, sans-serif)',
         }}>
           {labelMax}
@@ -136,9 +136,9 @@ function RangeRow({ labelMin, labelMax, min, max, onMin, onMax, prefix = '' }: {
           onChange={e => onMax(e.target.value ? Number(e.target.value) : null)}
           style={{
             width: '100%', padding: '9px 8px',
-            background: 'var(--bo-surface, rgba(255,255,255,0.04))',
+            background: 'var(--bg-surface, rgba(255,255,255,0.04))',
             border: '1px solid rgba(200,164,74,0.18)',
-            borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
+            borderRadius: 6, color: 'var(--text-primary, #EBE7E0)',
             fontSize: '13px', fontFamily: 'var(--font-dm-mono, monospace)',
             outline: 'none', minHeight: 40,
           }}
@@ -154,7 +154,7 @@ function ScoreSlider({ value, onChange }: { value: number | null; onChange: (v: 
   return (
     <div style={{ marginTop: 8 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-        <span style={{ fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
+        <span style={{ fontSize: '9px', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
           Score mínimo
         </span>
         <span style={{
@@ -171,8 +171,8 @@ function ScoreSlider({ value, onChange }: { value: number | null; onChange: (v: 
         style={{ width: '100%', accentColor: color }}
       />
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
-        <span style={{ fontSize: '8px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>0</span>
-        <span style={{ fontSize: '8px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>100</span>
+        <span style={{ fontSize: '8px', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>0</span>
+        <span style={{ fontSize: '8px', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>100</span>
       </div>
     </div>
   )
@@ -223,14 +223,14 @@ export function AdvancedFilterPanel({
           <SlidersHorizontal size={13} style={{ color: '#C8A44A' }} />
           <span style={{
             fontSize: '9px', fontWeight: 700, letterSpacing: '2px',
-            textTransform: 'uppercase', color: 'var(--bo-text, #EBE7E0)',
+            textTransform: 'uppercase', color: 'var(--text-primary, #EBE7E0)',
             fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             Filtros
           </span>
           {activeCount > 0 && (
             <span style={{
-              width: 16, height: 16, borderRadius: 999,
+              width: 16, height: 16, borderRadius: 6,
               background: 'rgba(200,164,74,0.20)',
               border: '1px solid rgba(200,164,74,0.40)',
               fontSize: '9px', fontFamily: 'var(--font-dm-mono, monospace)',
@@ -245,7 +245,7 @@ export function AdvancedFilterPanel({
             onClick={reset}
             style={{
               display: 'flex', alignItems: 'center', gap: 3,
-              fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)',
+              fontSize: '9px', color: 'var(--text-tertiary, #5C6B7D)',
               background: 'none', border: 'none', cursor: 'pointer',
               fontFamily: 'var(--font-outfit, sans-serif)',
             }}
@@ -262,7 +262,7 @@ export function AdvancedFilterPanel({
         border: '1px solid rgba(200,164,74,0.12)',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        <span style={{ fontSize: '10px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
+        <span style={{ fontSize: '10px', color: 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
           Resultados
         </span>
         <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: '#C8A44A' }}>
@@ -297,9 +297,9 @@ export function AdvancedFilterPanel({
               onChange={e => update({ city: e.target.value })}
               style={{
                 padding: '9px 10px',
-                background: 'var(--bo-surface, rgba(255,255,255,0.04))',
+                background: 'var(--bg-surface, rgba(255,255,255,0.04))',
                 border: '1px solid rgba(200,164,74,0.18)',
-                borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
+                borderRadius: 6, color: 'var(--text-primary, #EBE7E0)',
                 fontSize: '13px', fontFamily: 'var(--font-outfit, sans-serif)',
                 outline: 'none', minHeight: 40, width: '100%',
               }}
@@ -311,9 +311,9 @@ export function AdvancedFilterPanel({
               onChange={e => update({ neighborhood: e.target.value })}
               style={{
                 padding: '9px 10px',
-                background: 'var(--bo-surface, rgba(255,255,255,0.04))',
+                background: 'var(--bg-surface, rgba(255,255,255,0.04))',
                 border: '1px solid rgba(200,164,74,0.18)',
-                borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
+                borderRadius: 6, color: 'var(--text-primary, #EBE7E0)',
                 fontSize: '13px', fontFamily: 'var(--font-outfit, sans-serif)',
                 outline: 'none', minHeight: 40, width: '100%',
               }}
@@ -354,7 +354,7 @@ export function AdvancedFilterPanel({
 
           <div style={{ marginTop: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span style={{ fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
+              <span style={{ fontSize: '9px', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
                 Yield mínimo (%)
               </span>
               <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: '#5DB887' }}>
@@ -384,14 +384,14 @@ export function AdvancedFilterPanel({
               <TrendingDown size={12} style={{ color: filters.belowMarket ? '#5DB887' : '#9FAAB8' }} />
               <span style={{
                 fontSize: '10px', fontWeight: 500,
-                color: filters.belowMarket ? '#5DB887' : 'var(--bo-text-muted, #9FAAB8)',
+                color: filters.belowMarket ? '#5DB887' : 'var(--text-secondary, #9FAAB8)',
                 fontFamily: 'var(--font-outfit, sans-serif)',
               }}>
                 Abaixo do mercado
               </span>
             </div>
             <div style={{
-              width: 32, height: 18, borderRadius: 999,
+              width: 32, height: 18, borderRadius: 6,
               background: filters.belowMarket ? '#5DB887' : 'rgba(255,255,255,0.1)',
               position: 'relative', transition: 'background 150ms',
             }}>

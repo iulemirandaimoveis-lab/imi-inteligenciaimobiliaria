@@ -44,8 +44,8 @@ const WIDGET_MAP: Record<string, React.ComponentType> = {
 function SkeletonCard() {
   return (
     <div style={{
-      background: 'var(--bo-surface, rgba(255,255,255,0.04))',
-      border: '1px solid var(--bo-border, rgba(200,164,74,0.12))',
+      background: 'var(--bg-surface, rgba(255,255,255,0.04))',
+      border: '1px solid var(--border-default, rgba(200,164,74,0.12))',
       borderRadius: 'var(--r-sm, 4px)',
       padding: '20px 20px 16px',
       breakInside: 'avoid',
@@ -89,8 +89,8 @@ function WidgetCard({ config }: WidgetCardProps) {
 
   return (
     <div style={{
-      background: 'var(--bo-surface, rgba(255,255,255,0.04))',
-      border: '1px solid var(--bo-border, rgba(200,164,74,0.12))',
+      background: 'var(--bg-surface, rgba(255,255,255,0.04))',
+      border: '1px solid var(--border-default, rgba(200,164,74,0.12))',
       borderRadius: 'var(--r-sm, 4px)',
       padding: '20px 20px 16px',
       breakInside: 'avoid',
@@ -101,14 +101,14 @@ function WidgetCard({ config }: WidgetCardProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: config.description ? 4 : 0 }}>
           <span style={{
             display: 'inline-block', width: 3, height: 12, borderRadius: 2,
-            background: 'var(--bo-accent, #C8A44A)', flexShrink: 0,
+            background: 'var(--imi-gold-500, #C8A44A)', flexShrink: 0,
           }} />
           <span style={{
             fontSize: 11,
             fontWeight: 700,
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            color: 'var(--bo-text-muted, rgba(232,224,208,0.5))',
+            color: 'var(--text-secondary, rgba(232,224,208,0.5))',
           }}>
             {config.name}
           </span>
@@ -119,7 +119,7 @@ function WidgetCard({ config }: WidgetCardProps) {
               fontWeight: 600,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: 'var(--bo-accent, #C8A44A)',
+              color: 'var(--imi-gold-500, #C8A44A)',
               opacity: 0.6,
             }}>
               {config.category}
@@ -129,7 +129,7 @@ function WidgetCard({ config }: WidgetCardProps) {
         {config.description && (
           <p style={{
             fontSize: 11,
-            color: 'var(--bo-text-muted, rgba(232,224,208,0.4))',
+            color: 'var(--text-secondary, rgba(232,224,208,0.4))',
             margin: '2px 0 0 11px',
             lineHeight: 1.5,
           }}>
@@ -141,7 +141,7 @@ function WidgetCard({ config }: WidgetCardProps) {
       {/* divider */}
       <div style={{
         height: 1,
-        background: 'var(--bo-border, rgba(200,164,74,0.12))',
+        background: 'var(--border-default, rgba(200,164,74,0.12))',
         marginBottom: 16,
       }} />
 
@@ -174,7 +174,7 @@ export default function InteligenciaPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'var(--bo-bg, #0B1928)',
+      background: 'var(--bg-base, #0B1928)',
     }}>
       <div style={{
         maxWidth: 1400,
@@ -188,7 +188,7 @@ export default function InteligenciaPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
             <div style={{
               width: 32, height: 2,
-              background: 'var(--bo-accent, #C8A44A)',
+              background: 'var(--imi-gold-500, #C8A44A)',
               borderRadius: 2,
             }} />
             <span style={{
@@ -196,7 +196,7 @@ export default function InteligenciaPage() {
               fontWeight: 700,
               letterSpacing: '0.25em',
               textTransform: 'uppercase',
-              color: 'var(--bo-accent, #C8A44A)',
+              color: 'var(--imi-gold-500, #C8A44A)',
             }}>
               Inteligência de Mercado
             </span>
@@ -207,7 +207,7 @@ export default function InteligenciaPage() {
             fontFamily: 'var(--font-display, "Playfair Display", serif)',
             fontSize: 'clamp(36px, 5vw, 56px)',
             fontWeight: 700,
-            color: 'var(--bo-text, #e8e0d0)',
+            color: 'var(--text-primary, #e8e0d0)',
             letterSpacing: '-1.5px',
             lineHeight: 1.08,
             margin: 0,
@@ -225,7 +225,7 @@ export default function InteligenciaPage() {
           }}>
             <p style={{
               fontSize: 15,
-              color: 'var(--bo-text-muted, rgba(232,224,208,0.55))',
+              color: 'var(--text-secondary, rgba(232,224,208,0.55))',
               margin: 0,
               lineHeight: 1.5,
             }}>
@@ -241,13 +241,13 @@ export default function InteligenciaPage() {
               border: '1px solid rgba(200,164,74,0.22)',
               fontSize: 11,
               fontWeight: 600,
-              color: 'var(--bo-accent, #C8A44A)',
+              color: 'var(--imi-gold-500, #C8A44A)',
               letterSpacing: '0.06em',
             }}>
               {/* dot */}
               <span style={{
                 width: 6, height: 6, borderRadius: '50%',
-                background: 'var(--bo-accent, #C8A44A)',
+                background: 'var(--imi-gold-500, #C8A44A)',
                 boxShadow: '0 0 6px rgba(200,164,74,0.6)',
                 flexShrink: 0,
               }} />
@@ -295,7 +295,7 @@ export default function InteligenciaPage() {
           <div style={{
             textAlign: 'center',
             padding: '64px 24px',
-            color: 'var(--bo-text-muted, rgba(232,224,208,0.4))',
+            color: 'var(--text-secondary, rgba(232,224,208,0.4))',
           }}>
             <div style={{
               fontSize: 32,
@@ -331,7 +331,7 @@ export default function InteligenciaPage() {
         }}>
           <p style={{
             fontSize: 11,
-            color: 'var(--bo-text-muted, rgba(232,224,208,0.3))',
+            color: 'var(--text-secondary, rgba(232,224,208,0.3))',
             margin: 0,
           }}>
             Dados atualizados em tempo real · IMI Analytics Platform

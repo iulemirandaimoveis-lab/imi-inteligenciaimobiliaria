@@ -70,7 +70,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="pt-BR" suppressHydrationWarning className={`${cormorant.variable} ${outfit.variable} ${dmMono.variable}`}>
-            <body className={`${outfit.className} min-h-screen bg-[var(--bo-bg,#0B1120)] relative`}>
+            <body className={`${outfit.className} min-h-screen bg-[var(--bg-base,#0B1120)] relative`}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="dark"

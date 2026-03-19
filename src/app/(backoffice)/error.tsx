@@ -20,14 +20,14 @@ export default function Error({
                 className="w-16 h-16 rounded-lg flex items-center justify-center mb-5"
                 style={{ background: 'rgba(229,115,115,0.10)' }}
             >
-                <AlertTriangle size={28} style={{ color: 'var(--bo-error)' }} />
+                <AlertTriangle size={28} style={{ color: 'var(--error)' }} />
             </div>
             {/* Title */}
-            <h2 className="text-lg font-bold mb-2" style={{ color: 'var(--bo-text)' }}>
+            <h2 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
                 Erro ao carregar
             </h2>
             {/* Description — NO stack trace, NO technical details */}
-            <p className="text-sm mb-8 max-w-sm leading-relaxed" style={{ color: 'var(--bo-text-muted)' }}>
+            <p className="text-sm mb-8 max-w-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 Ocorreu um erro inesperado. Tente recarregar a pagina.
                 Se o problema persistir, entre em contato com o suporte.
             </p>
@@ -48,8 +48,8 @@ export default function Error({
                     className="flex items-center gap-2 h-11 px-6 rounded-[6px] text-sm font-medium transition-all active:scale-95"
                     style={{
                         background: 'var(--bg-elevated)',
-                        border: '1px solid var(--bo-border)',
-                        color: 'var(--bo-text-muted)',
+                        border: '1px solid var(--border-default)',
+                        color: 'var(--text-secondary)',
                     }}
                 >
                     <Home size={15} />
@@ -58,7 +58,7 @@ export default function Error({
             </div>
             {/* Error digest for support — minimal, no stack */}
             {error.digest && (
-                <p className="mt-6 text-[10px] font-mono" style={{ color: 'var(--bo-text-muted)', opacity: 0.5 }}>
+                <p className="mt-6 text-[10px] font-mono" style={{ color: 'var(--text-secondary)', opacity: 0.5 }}>
                     Ref: {error.digest}
                 </p>
             )}

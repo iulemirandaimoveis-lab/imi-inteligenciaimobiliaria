@@ -88,7 +88,7 @@ function SingleAvatar({
                     style={{
                         width: size,
                         height: size,
-                        border: '2px solid var(--bo-drawer-bg, #111827)',
+                        border: '2px solid var(--bg-base, #111827)',
                     }}
                 />
             ) : (
@@ -98,7 +98,7 @@ function SingleAvatar({
                         width: size,
                         height: size,
                         background: bg,
-                        border: '2px solid var(--bo-drawer-bg, #111827)',
+                        border: '2px solid var(--bg-base, #111827)',
                         color,
                         fontSize: size * 0.32,
                     }}
@@ -115,7 +115,7 @@ function SingleAvatar({
                         width: size * 0.28,
                         height: size * 0.28,
                         background: '#4ADE80',
-                        border: '1.5px solid var(--bo-drawer-bg, #111827)',
+                        border: '1.5px solid var(--bg-base, #111827)',
                         bottom: 0,
                         right: 0,
                         boxShadow: '0 0 5px rgba(74,222,128,0.6)',
@@ -137,16 +137,16 @@ function SingleAvatar({
                         <div
                             className="rounded-xl px-2.5 py-1.5 text-center whitespace-nowrap"
                             style={{
-                                background: 'var(--bo-surface, #1a1f2e)',
-                                border: '1px solid var(--bo-border)',
+                                background: 'var(--bg-surface, #1a1f2e)',
+                                border: '1px solid var(--border-default)',
                                 boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
                             }}
                         >
-                            <p className="text-[11px] font-semibold" style={{ color: 'var(--bo-text)' }}>
+                            <p className="text-[11px] font-semibold" style={{ color: 'var(--text-primary)' }}>
                                 {broker.name.split(' ').slice(0, 2).join(' ')}
                             </p>
                             {broker.role && (
-                                <p className="text-[10px] mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>
+                                <p className="text-[10px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>
                                     {broker.role}
                                 </p>
                             )}
@@ -160,8 +160,8 @@ function SingleAvatar({
                         <div
                             className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-2 h-2 rotate-45"
                             style={{
-                                background: 'var(--bo-surface, #1a1f2e)',
-                                border: '1px solid var(--bo-border)',
+                                background: 'var(--bg-surface, #1a1f2e)',
+                                border: '1px solid var(--border-default)',
                                 borderTop: 'none',
                                 borderLeft: 'none',
                             }}
@@ -200,9 +200,9 @@ export function AvatarGroup({ brokers, max = 5, size = 32, href, label }: Props)
                         style={{
                             width: size,
                             height: size,
-                            background: 'var(--bo-icon-bg)',
-                            border: '2px solid var(--bo-drawer-bg, #111827)',
-                            color: 'var(--bo-text-muted)',
+                            background: 'var(--bg-muted)',
+                            border: '2px solid var(--bg-base, #111827)',
+                            color: 'var(--text-secondary)',
                             fontSize: size * 0.3,
                             marginLeft: -overlap,
                             zIndex: 0,
@@ -216,7 +216,7 @@ export function AvatarGroup({ brokers, max = 5, size = 32, href, label }: Props)
             {/* Label */}
             {label && (
                 <div className="flex flex-col">
-                    <span className="text-[11px] font-semibold leading-tight" style={{ color: 'var(--bo-text)' }}>
+                    <span className="text-[11px] font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
                         {label}
                     </span>
                     {activeCount > 0 && (

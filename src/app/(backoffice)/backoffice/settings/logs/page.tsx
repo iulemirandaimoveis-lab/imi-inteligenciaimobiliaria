@@ -133,10 +133,10 @@ export default function LogsPage() {
   }
 
   const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
-    success: { label: 'Sucesso', color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    error: { label: 'Erro', color: 'var(--bo-error)', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
+    success: { label: 'Sucesso', color: 'var(--success)', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
+    error: { label: 'Erro', color: 'var(--error)', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
     warning: { label: 'Aviso', color: 'var(--warning)', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
-    info: { label: 'Info', color: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)', icon: Info },
+    info: { label: 'Info', color: 'var(--imi-gold-500)', bg: 'rgba(72,101,129,0.12)', icon: Info },
   }
 
   const inputBase: React.CSSProperties = {
@@ -222,13 +222,13 @@ export default function LogsPage() {
             />
           </div>
           <select value={moduleFilter} onChange={e => setModuleFilter(e.target.value)} style={inputBase}>
-            {selectOptions.module.map(o => <option key={o.value} value={o.value} style={{ background: 'var(--bo-elevated)' }}>{o.label}</option>)}
+            {selectOptions.module.map(o => <option key={o.value} value={o.value} style={{ background: 'var(--bg-elevated)' }}>{o.label}</option>)}
           </select>
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputBase}>
-            {selectOptions.status.map(o => <option key={o.value} value={o.value} style={{ background: 'var(--bo-elevated)' }}>{o.label}</option>)}
+            {selectOptions.status.map(o => <option key={o.value} value={o.value} style={{ background: 'var(--bg-elevated)' }}>{o.label}</option>)}
           </select>
           <select value={actionFilter} onChange={e => setActionFilter(e.target.value)} style={inputBase}>
-            {selectOptions.action.map(o => <option key={o.value} value={o.value} style={{ background: 'var(--bo-elevated)' }}>{o.label}</option>)}
+            {selectOptions.action.map(o => <option key={o.value} value={o.value} style={{ background: 'var(--bg-elevated)' }}>{o.label}</option>)}
           </select>
         </div>
       </div>

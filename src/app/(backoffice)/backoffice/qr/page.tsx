@@ -12,7 +12,7 @@ export default function QRLegacyRedirect() {
     }, [router])
     return (
         <div className="flex items-center justify-center h-64">
-            <Loader2 size={28} className="animate-spin" style={{ color: 'var(--bo-text-muted)' }} />
+            <Loader2 size={28} className="animate-spin" style={{ color: 'var(--text-secondary)' }} />
         </div>
     )
 }

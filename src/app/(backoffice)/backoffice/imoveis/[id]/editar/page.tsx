@@ -115,7 +115,7 @@ function getYoutubeEmbedUrl(url: string): string | null {
 /* ── Field error message ── */
 function ErrMsg({ msg }: { msg?: string }) {
   if (!msg) return null
-  return <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error, #f87171)' }}><AlertCircle size={11} />{msg}</p>
+  return <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--error, #f87171)' }}><AlertCircle size={11} />{msg}</p>
 }
 
 const TABS = [
@@ -352,7 +352,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
               <a href={formData.existingBrochure} target="_blank" rel="noopener" className="text-xs underline" style={{ color: T.accent }}>Ver PDF</a>
             </div>
             <button type="button" onClick={() => set('existingBrochure', '')} className="text-xs px-3 py-1.5 rounded"
-              style={{ background: '#EF444415', color: 'var(--bo-error)', border: '1px solid #EF444430' }}>
+              style={{ background: '#EF444415', color: 'var(--error)', border: '1px solid #EF444430' }}>
               Remover
             </button>
           </div>
@@ -850,7 +850,7 @@ export default function EditarImovelPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium flex items-center gap-1.5" style={{ color: T.text }}>
-                        <Star size={14} style={{ color: 'var(--bo-warning)', fill: formData.is_highlighted ? 'var(--bo-warning)' : 'none' }} />
+                        <Star size={14} style={{ color: 'var(--warning)', fill: formData.is_highlighted ? 'var(--warning)' : 'none' }} />
                         Destaque na página inicial
                       </p>
                       <p className="text-xs mt-0.5" style={{ color: T.textDim }}>Aparece na seção de imóveis em destaque</p>
@@ -875,7 +875,7 @@ export default function EditarImovelPage() {
                   <div key={field}>
                     <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{label}</label>
                     <div className="relative">
-                      <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: validationErrors[field] ? 'var(--bo-error,#f87171)' : T.textDim }} />
+                      <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: validationErrors[field] ? 'var(--error,#f87171)' : T.textDim }} />
                       <input
                         type="number" min="0"
                         value={formData[field as keyof FormData] as string}
@@ -932,7 +932,7 @@ export default function EditarImovelPage() {
                   <div key={field}>
                     <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{label}</label>
                     <div className="relative">
-                      <FieldIcon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: validationErrors[field] ? 'var(--bo-error,#f87171)' : T.textDim }} />
+                      <FieldIcon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: validationErrors[field] ? 'var(--error,#f87171)' : T.textDim }} />
                       <input
                         type="number" min="0"
                         placeholder={placeholder}
@@ -970,11 +970,11 @@ export default function EditarImovelPage() {
                     background: isInverted ? 'rgba(248,113,113,0.08)' : `${T.accent}10`,
                     border: `1px solid ${isInverted ? 'rgba(248,113,113,0.35)' : T.accent + '30'}`,
                   }}>
-                    <p className="text-xs uppercase tracking-wider mb-1" style={{ color: isInverted ? 'var(--bo-error,#f87171)' : T.accent }}>
+                    <p className="text-xs uppercase tracking-wider mb-1" style={{ color: isInverted ? 'var(--error,#f87171)' : T.accent }}>
                       {isInverted ? '⚠ Faixa de preço inválida' : 'Preview de Preço'}
                     </p>
                     {isInverted ? (
-                      <p className="text-sm font-medium" style={{ color: 'var(--bo-error,#f87171)' }}>
+                      <p className="text-sm font-medium" style={{ color: 'var(--error,#f87171)' }}>
                         Preço mínimo (R$ {pMin.toLocaleString('pt-BR')}) é maior que o máximo (R$ {pMax.toLocaleString('pt-BR')}). Corrija antes de salvar.
                       </p>
                     ) : (

@@ -150,7 +150,7 @@ export default function MetasPage() {
                     <button
                         onClick={() => setEditing(!editing)}
                         className="flex items-center gap-2 h-10 px-5 rounded-[6px] text-sm font-semibold flex-shrink-0 transition-all"
-                        style={{ background: editing ? 'rgba(229,115,115,0.12)' : T.accent, color: editing ? 'var(--bo-error)' : 'white', border: editing ? '1px solid rgba(229,115,115,0.3)' : 'none' }}
+                        style={{ background: editing ? 'rgba(229,115,115,0.12)' : T.accent, color: editing ? 'var(--error)' : 'white', border: editing ? '1px solid rgba(229,115,115,0.3)' : 'none' }}
                     >
                         {editing ? <><X size={15} /> Cancelar</> : <><Pencil size={15} /> Editar Metas</>}
                     </button>
@@ -179,7 +179,7 @@ export default function MetasPage() {
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <DollarSign size={15} style={{ color: 'var(--bo-success)' }} />
+                                        <DollarSign size={15} style={{ color: 'var(--success)' }} />
                                         <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Receita do Mês</span>
                                     </div>
                                     <p className="text-2xl font-bold" style={{ color: T.text }}>{fmt(actuals.revenue)}</p>
@@ -187,7 +187,7 @@ export default function MetasPage() {
                                 {revPct >= 100 && (
                                     <div className="w-8 h-8 rounded-full flex items-center justify-center"
                                         style={{ background: 'rgba(107,184,123,0.15)' }}>
-                                        <CheckCircle size={16} style={{ color: 'var(--bo-success)' }} />
+                                        <CheckCircle size={16} style={{ color: 'var(--success)' }} />
                                     </div>
                                 )}
                             </div>
@@ -205,12 +205,12 @@ export default function MetasPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <ProgressBar pct={revPct} color={revPct >= 100 ? 'var(--bo-success)' : revPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
+                                    <ProgressBar pct={revPct} color={revPct >= 100 ? 'var(--success)' : revPct >= 60 ? 'var(--imi-gold-500)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs" style={{ color: T.textMuted }}>
                                             Meta: {revTarget > 0 ? fmt(revTarget) : 'não definida'}
                                         </span>
-                                        <span className="text-xs font-bold" style={{ color: revPct >= 100 ? 'var(--bo-success)' : T.textMuted }}>
+                                        <span className="text-xs font-bold" style={{ color: revPct >= 100 ? 'var(--success)' : T.textMuted }}>
                                             {revTarget > 0 ? `${revPct}%` : '—'}
                                         </span>
                                     </div>
@@ -224,7 +224,7 @@ export default function MetasPage() {
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Scale size={15} style={{ color: 'var(--bo-accent)' }} />
+                                        <Scale size={15} style={{ color: 'var(--imi-gold-500)' }} />
                                         <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Avaliações/Honorários</span>
                                     </div>
                                     <p className="text-2xl font-bold" style={{ color: T.text }}>{actuals.avaliacoes}</p>
@@ -232,7 +232,7 @@ export default function MetasPage() {
                                 {avalPct >= 100 && (
                                     <div className="w-8 h-8 rounded-full flex items-center justify-center"
                                         style={{ background: 'rgba(107,184,123,0.15)' }}>
-                                        <CheckCircle size={16} style={{ color: 'var(--bo-success)' }} />
+                                        <CheckCircle size={16} style={{ color: 'var(--success)' }} />
                                     </div>
                                 )}
                             </div>
@@ -250,12 +250,12 @@ export default function MetasPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? 'var(--bo-success)' : avalPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
+                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? 'var(--success)' : avalPct >= 60 ? 'var(--imi-gold-500)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs" style={{ color: T.textMuted }}>
                                             Meta: {avalTarget > 0 ? `${avalTarget} lançamentos` : 'não definida'}
                                         </span>
-                                        <span className="text-xs font-bold" style={{ color: avalPct >= 100 ? 'var(--bo-success)' : T.textMuted }}>
+                                        <span className="text-xs font-bold" style={{ color: avalPct >= 100 ? 'var(--success)' : T.textMuted }}>
                                             {avalTarget > 0 ? `${avalPct}%` : '—'}
                                         </span>
                                     </div>
@@ -269,7 +269,7 @@ export default function MetasPage() {
                         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                             <button onClick={saveGoal} disabled={saving}
                                 className="bo-btn bo-btn-primary"
-                                style={{ background: 'var(--bo-success)', opacity: saving ? 0.7 : 1 }}>
+                                style={{ background: 'var(--success)', opacity: saving ? 0.7 : 1 }}>
                                 {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
                                 {saving ? 'Salvando...' : 'Salvar Metas'}
                             </button>

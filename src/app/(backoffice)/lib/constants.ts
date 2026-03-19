@@ -16,7 +16,7 @@ export const STATUS_CONFIG = {
   // ── Lead Status (English DB values) ───────────────────────
   hot:         { label: 'Qualificando',     color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#4ade80' },
   warm:        { label: 'Warm',             color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#fbbf24' },
-  cold:        { label: 'Em Análise',       color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#94a3b8' },
+  cold:        { label: 'Em Análise',       color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#94a3b8' },
   contacted:   { label: 'Em Contato',       color: 'var(--info)',      bg: 'var(--info-bg)',      dot: '#60a5fa' },
   qualified:   { label: 'Qualificado',      color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#4ade80' },
   proposal:    { label: 'Proposta Enviada', color: '#a78bfa',             bg: 'rgba(167,139,250,0.14)', dot: '#a78bfa' },
@@ -33,9 +33,9 @@ export const STATUS_CONFIG = {
 
   // ── Imóveis / Empreendimentos ──────────────────────────
   publicado:  { label: 'Publicado',  color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#34d399' },
-  rascunho:   { label: 'Rascunho',   color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
+  rascunho:   { label: 'Rascunho',   color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#9ca3af' },
   vendido:    { label: 'Vendido',    color: '#fbbf24',             bg: 'rgba(251,191,36,0.12)',  dot: '#fbbf24' },
-  privado:    { label: 'Privado',    color: 'var(--bo-text-dim)',  bg: 'var(--bo-hover)',        dot: '#6b7280' },
+  privado:    { label: 'Privado',    color: 'var(--text-tertiary)',  bg: 'var(--bg-hover)',        dot: '#6b7280' },
   campanha:   { label: 'Campanha',   color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#fbbf24' },
   disponivel:    { label: 'Disponível',    color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#34d399' },
   em_negociacao: { label: 'Negociação',    color: 'var(--info)',      bg: 'var(--info-bg)',      dot: '#60a5fa' },
@@ -49,7 +49,7 @@ export const STATUS_CONFIG = {
   vencido:    { label: 'Vencido',    color: 'var(--error)',     bg: 'var(--error-bg)',     dot: '#f87171' },
   em_revisao: { label: 'Em Revisão', color: 'var(--info)',      bg: 'var(--info-bg)',      dot: '#60a5fa' },
   gerado:     { label: 'Gerado',     color: '#7b9ec4',            bg: 'rgba(123,158,196,0.12)', dot: '#7b9ec4' },
-  aguardando_assinatura: { label: 'Aguard. Assinatura', color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', dot: '#3b82f6' },
+  aguardando_assinatura: { label: 'Aguard. Assinatura', color: 'var(--imi-gold-500)', bg: 'var(--bg-active)', dot: '#3b82f6' },
   assinado_parcial:      { label: 'Parcial. Assinado',  color: '#e8a87c',          bg: 'rgba(232,168,124,0.12)', dot: '#e8a87c' },
 
   // ── Financeiro ─────────────────────────────────────────
@@ -64,7 +64,7 @@ export const STATUS_CONFIG = {
   documentacao: { label: 'Documentação', color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#fbbf24' },
   recusado:     { label: 'Recusado',     color: 'var(--error)',     bg: 'var(--error-bg)',     dot: '#f87171' },
   // English aliases for credit
-  pending:      { label: 'Pendente',     color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#94a3b8' },
+  pending:      { label: 'Pendente',     color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#94a3b8' },
   under_review: { label: 'Em Análise',   color: 'var(--info)',      bg: 'var(--info-bg)',      dot: '#60a5fa' },
   documents:    { label: 'Documentação', color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#fbbf24' },
   approved:     { label: 'Aprovado',     color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#34d399' },
@@ -75,8 +75,8 @@ export const STATUS_CONFIG = {
   planejamento:{ label: 'Planejamento', color: 'var(--info)',      bg: 'var(--info-bg)',      dot: '#60a5fa' },
   em_andamento:{ label: 'Em Andamento', color: 'var(--info)',      bg: 'var(--info-bg)',      dot: '#60a5fa' },
   concluido:  { label: 'Concluído',  color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#34d399' },
-  arquivado:  { label: 'Arquivado',  color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
-  estruturacao: { label: 'Estruturação', color: 'var(--bo-accent)',    bg: 'var(--bo-active-bg)',    dot: '#3b82f6' },
+  arquivado:  { label: 'Arquivado',  color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#9ca3af' },
+  estruturacao: { label: 'Estruturação', color: 'var(--imi-gold-500)',    bg: 'var(--bg-active)',    dot: '#3b82f6' },
   obras:        { label: 'Em Obras',     color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#f59e0b' },
   pronto:       { label: 'Pronto',       color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#22c55e' },
 
@@ -91,9 +91,9 @@ export const STATUS_CONFIG = {
 
   // ── Integrações ───────────────────────────────────────
   conectado:        { label: 'Conectado',       color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#34d399' },
-  desconectado:     { label: 'Desconectado',    color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
+  desconectado:     { label: 'Desconectado',    color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#9ca3af' },
   erro:             { label: 'Erro',            color: 'var(--error)',     bg: 'var(--error-bg)',     dot: '#f87171' },
-  nao_configurado:  { label: 'Não Configurado', color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#6b7280' },
+  nao_configurado:  { label: 'Não Configurado', color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#6b7280' },
 
   // ── IA Agentes ────────────────────────────────────────
   idle:       { label: 'Ocioso',     color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#fbbf24' },
@@ -102,23 +102,23 @@ export const STATUS_CONFIG = {
 
   // ── Genérico ───────────────────────────────────────────
   ativo:      { label: 'Ativo',      color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#34d399' },
-  inativo:    { label: 'Inativo',    color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
+  inativo:    { label: 'Inativo',    color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#9ca3af' },
   cancelado:  { label: 'Cancelado',  color: 'var(--error)',     bg: 'var(--error-bg)',     dot: '#f87171' },
 
   // ── English aliases (generic + campanhas + equipe) ────
   active:     { label: 'Ativo',      color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#4CAF7D' },
-  inactive:   { label: 'Inativo',    color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
+  inactive:   { label: 'Inativo',    color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#9ca3af' },
   paused:     { label: 'Pausado',    color: '#e8a87c',            bg: 'rgba(232,168,124,0.12)', dot: '#e8a87c' },
   completed:  { label: 'Concluído',  color: '#7b9ec4',            bg: 'rgba(123,158,196,0.12)', dot: '#7b9ec4' },
-  archived:   { label: 'Arquivado',  color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#6b7280' },
+  archived:   { label: 'Arquivado',  color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#6b7280' },
   ended:      { label: 'Encerrado',  color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#f59e0b' },
   learning:   { label: 'Aprendendo', color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#f59e0b' },
 
   // ── English aliases (for DB status_commercial) ─────────
   published:  { label: 'Publicado',  color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#34d399' },
-  draft:      { label: 'Rascunho',   color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
+  draft:      { label: 'Rascunho',   color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#9ca3af' },
   sold:       { label: 'Vendido',    color: '#fbbf24',             bg: 'rgba(251,191,36,0.12)',  dot: '#fbbf24' },
-  private:    { label: 'Privado',    color: 'var(--bo-text-dim)',  bg: 'var(--bo-hover)',        dot: '#6b7280' },
+  private:    { label: 'Privado',    color: 'var(--text-tertiary)',  bg: 'var(--bg-hover)',        dot: '#6b7280' },
 } as const
 
 export type StatusKey = keyof typeof STATUS_CONFIG
@@ -130,8 +130,8 @@ export function getStatusConfig(key: string) {
   const normalized = key.toLowerCase().replace(/\s+/g, '_') as StatusKey
   return STATUS_CONFIG[normalized] ?? {
     label: key,
-    color: 'var(--bo-text-muted)',
-    bg: 'var(--bo-hover)',
+    color: 'var(--text-secondary)',
+    bg: 'var(--bg-hover)',
     dot: '#9ca3af',
   }
 }

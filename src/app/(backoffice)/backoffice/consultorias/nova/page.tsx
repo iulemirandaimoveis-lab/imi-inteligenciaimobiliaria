@@ -62,7 +62,7 @@ export default function NovaConsultoriaPage() {
 
   const steps = ['Cliente', 'Tipo & Escopo', 'Honorários']
 
-  const inputClass = 'w-full h-11 px-3 rounded-[6px] text-sm focus:outline-none focus:border-[var(--bo-border-gold)]'
+  const inputClass = 'w-full h-11 px-3 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(184,148,58,0.25)]'
   const inputStyle = { background: T.bg, border: `1px solid ${T.border}`, color: T.text }
 
   return (
@@ -84,7 +84,7 @@ export default function NovaConsultoriaPage() {
             <div className={`flex items-center gap-2 flex-1 ${i < steps.length - 1 ? 'mr-0' : ''}`}>
               <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors"
                 style={{
-                  background: step > i + 1 ? 'var(--s-done)' : step === i + 1 ? 'var(--bo-accent)' : 'var(--bo-elevated)',
+                  background: step > i + 1 ? 'var(--success)' : step === i + 1 ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
                   color: step > i + 1 || step === i + 1 ? '#fff' : T.sub,
                 }}>
                 {step > i + 1 ? '✓' : i + 1}
@@ -94,7 +94,7 @@ export default function NovaConsultoriaPage() {
             </div>
             {i < steps.length - 1 && (
               <div className="h-px flex-1 mx-3"
-                style={{ background: step > i + 1 ? 'var(--s-done)' : T.border }} />
+                style={{ background: step > i + 1 ? 'var(--success)' : T.border }} />
             )}
           </div>
         ))}
@@ -106,7 +106,7 @@ export default function NovaConsultoriaPage() {
         {step === 1 && (
           <>
             <div className="flex items-center gap-2 mb-4">
-              <User size={16} className="text-[var(--bo-accent)]" />
+              <User size={16} className="text-[var(--imi-gold-500)]" />
               <h2 className="text-sm font-bold" style={{ color: T.text }}>Dados do Cliente</h2>
             </div>
 
@@ -165,7 +165,7 @@ export default function NovaConsultoriaPage() {
         {step === 2 && (
           <>
             <div className="flex items-center gap-2 mb-4">
-              <Briefcase size={16} className="text-[var(--bo-accent)]" />
+              <Briefcase size={16} className="text-[var(--imi-gold-500)]" />
               <h2 className="text-sm font-bold" style={{ color: T.text }}>Tipo e Escopo</h2>
             </div>
 
@@ -188,7 +188,7 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Descrição do Projeto</label>
               <textarea value={form.descricao} onChange={e => set('descricao', e.target.value)}
                 rows={3} placeholder="Descreva o contexto, o imóvel ou empreendimento envolvido, e o escopo esperado…"
-                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(184,148,58,0.25)] resize-none"
                 style={inputStyle} />
             </div>
 
@@ -196,7 +196,7 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Objetivo Principal do Cliente</label>
               <textarea value={form.objetivo} onChange={e => set('objetivo', e.target.value)}
                 rows={2} placeholder="O que o cliente precisa resolver ou decidir com esta consultoria?"
-                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(184,148,58,0.25)] resize-none"
                 style={inputStyle} />
             </div>
           </>
@@ -206,7 +206,7 @@ export default function NovaConsultoriaPage() {
         {step === 3 && (
           <>
             <div className="flex items-center gap-2 mb-4">
-              <DollarSign size={16} className="text-[var(--bo-accent)]" />
+              <DollarSign size={16} className="text-[var(--imi-gold-500)]" />
               <h2 className="text-sm font-bold" style={{ color: T.text }}>Honorários e Prazos</h2>
             </div>
 
@@ -261,7 +261,7 @@ export default function NovaConsultoriaPage() {
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Observações Internas</label>
                 <textarea value={form.observacoes} onChange={e => set('observacoes', e.target.value)}
                   rows={3} placeholder="Notas sobre o cliente, contexto sensível, histórico de negociação…"
-                  className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                  className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(184,148,58,0.25)] resize-none"
                   style={inputStyle} />
               </div>
             </div>
@@ -279,7 +279,7 @@ export default function NovaConsultoriaPage() {
               </div>
               <div className="flex justify-between">
                 <span style={{ color: T.sub }}>Honorários</span>
-                <span className="font-bold text-[var(--bo-accent)]">
+                <span className="font-bold text-[var(--imi-gold-500)]">
                   {form.honorarios ? `R$ ${Number(form.honorarios).toLocaleString('pt-BR')}` : '—'}
                 </span>
               </div>

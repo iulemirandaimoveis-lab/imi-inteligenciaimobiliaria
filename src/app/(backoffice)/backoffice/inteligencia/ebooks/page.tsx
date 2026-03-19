@@ -117,12 +117,12 @@ export default function EbooksPage() {
                         {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="px-5 py-4 flex items-center gap-4 animate-pulse"
                                 style={{ borderBottom: i < 3 ? `1px solid ${T.border}` : 'none' }}>
-                                <div className="w-8 h-8 rounded-lg flex-shrink-0" style={{ background: 'var(--bo-hover)' }} />
+                                <div className="w-8 h-8 rounded-lg flex-shrink-0" style={{ background: 'var(--bg-hover)' }} />
                                 <div className="flex-1">
-                                    <div className="h-3 rounded mb-2" style={{ background: 'var(--bo-hover)', width: '40%' }} />
-                                    <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: '25%' }} />
+                                    <div className="h-3 rounded mb-2" style={{ background: 'var(--bg-hover)', width: '40%' }} />
+                                    <div className="h-2.5 rounded" style={{ background: 'var(--bg-hover)', width: '25%' }} />
                                 </div>
-                                <div className="h-5 w-16 rounded-[6px]" style={{ background: 'var(--bo-hover)' }} />
+                                <div className="h-5 w-16 rounded-[6px]" style={{ background: 'var(--bg-hover)' }} />
                             </div>
                         ))}
                     </div>
@@ -168,7 +168,7 @@ export default function EbooksPage() {
                                                     className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                                                     style={{ background: 'rgba(72,101,129,0.18)' }}
                                                 >
-                                                    <BookOpen size={14} style={{ color: 'var(--bo-accent)' }} />
+                                                    <BookOpen size={14} style={{ color: 'var(--imi-gold-500)' }} />
                                                 </div>
                                                 <div>
                                                     <p className="font-semibold text-sm" style={{ color: T.text }}>{e.title}</p>
@@ -191,7 +191,7 @@ export default function EbooksPage() {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex items-center gap-1 text-xs font-semibold"
-                                                    style={{ color: 'var(--bo-accent)' }}
+                                                    style={{ color: 'var(--imi-gold-500)' }}
                                                 >
                                                     <ExternalLink size={12} /> Link
                                                 </a>
@@ -209,7 +209,7 @@ export default function EbooksPage() {
                                                 >
                                                     {e.is_published
                                                         ? <EyeOff size={13} style={{ color: T.textMuted }} />
-                                                        : <Eye size={13} style={{ color: 'var(--bo-accent)' }} />
+                                                        : <Eye size={13} style={{ color: 'var(--imi-gold-500)' }} />
                                                     }
                                                 </button>
                                                 <Link
@@ -224,7 +224,7 @@ export default function EbooksPage() {
                                                     className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-red-500/10"
                                                     style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                                 >
-                                                    <Trash2 size={13} style={{ color: 'var(--bo-error)' }} />
+                                                    <Trash2 size={13} style={{ color: 'var(--error)' }} />
                                                 </button>
                                             </div>
                                         </td>

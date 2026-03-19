@@ -48,8 +48,8 @@ export default function OmniChannelPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {[...Array(4)].map((_, i) => (
                     <div key={i} className="rounded-lg p-4 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, animationDelay: `${i * 100}ms`, height: 88 }}>
-                        <div className="h-2.5 rounded mb-3" style={{ background: 'var(--bo-hover)', width: '60%' }} />
-                        <div className="h-7 rounded" style={{ background: 'var(--bo-hover)', width: '40%' }} />
+                        <div className="h-2.5 rounded mb-3" style={{ background: 'var(--bg-hover)', width: '60%' }} />
+                        <div className="h-7 rounded" style={{ background: 'var(--bg-hover)', width: '40%' }} />
                     </div>
                 ))}
             </div>
@@ -57,10 +57,10 @@ export default function OmniChannelPage() {
                 {[...Array(4)].map((_, i) => (
                     <div key={i} className="rounded-lg p-5 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, animationDelay: `${i * 80}ms`, height: 76 }}>
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-lg" style={{ background: 'var(--bo-hover)' }} />
+                            <div className="w-12 h-12 rounded-lg" style={{ background: 'var(--bg-hover)' }} />
                             <div>
-                                <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: 96 }} />
-                                <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: 64 }} />
+                                <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bg-hover)', width: 96 }} />
+                                <div className="h-2.5 rounded" style={{ background: 'var(--bg-hover)', width: 64 }} />
                             </div>
                         </div>
                     </div>
@@ -146,8 +146,8 @@ export default function OmniChannelPage() {
                                     <span
                                         className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-[6px]"
                                         style={{
-                                            background: ch.status === 'Ativo' ? 'var(--s-done-bg)' : ch.status === 'Configurar' ? 'rgba(251,191,36,0.10)' : T.hover,
-                                            color: ch.status === 'Ativo' ? 'var(--s-done)' : ch.status === 'Configurar' ? 'var(--warning)' : T.textMuted,
+                                            background: ch.status === 'Ativo' ? 'var(--success-bg)' : ch.status === 'Configurar' ? 'rgba(251,191,36,0.10)' : T.hover,
+                                            color: ch.status === 'Ativo' ? 'var(--success)' : ch.status === 'Configurar' ? 'var(--warning)' : T.textMuted,
                                         }}
                                     >
                                         {ch.status}
@@ -167,7 +167,7 @@ export default function OmniChannelPage() {
                     <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                             <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                                style={{ background: 'var(--bo-active-bg)' }}>
+                                style={{ background: 'var(--bg-active)' }}>
                                 <Layers size={24} style={{ color: T.accent }} />
                             </div>
                             <div className="flex-1">
@@ -183,12 +183,12 @@ export default function OmniChannelPage() {
                             </div>
                             {hasChatwoot ? (
                                 <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-[6px] flex-shrink-0"
-                                    style={{ background: 'var(--s-done-bg)', color: 'var(--s-done)' }}>
+                                    style={{ background: 'var(--success-bg)', color: 'var(--success)' }}>
                                     Conectado
                                 </span>
                             ) : (
                                 <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-[6px] flex-shrink-0"
-                                    style={{ background: 'var(--s-warm-bg)', color: 'var(--s-warm)' }}>
+                                    style={{ background: 'var(--warning-bg)', color: 'var(--warning)' }}>
                                     Aguardando Config
                                 </span>
                             )}

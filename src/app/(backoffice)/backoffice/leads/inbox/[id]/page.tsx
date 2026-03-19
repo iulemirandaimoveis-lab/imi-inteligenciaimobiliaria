@@ -44,8 +44,8 @@ function getScore(lead: LeadData): number {
 }
 
 function getUrgency(lead: LeadData, score: number): { label: string; dots: number; color: string } {
-    if (score >= 80 || lead.status === 'hot') return { label: 'Alta', dots: 3, color: 'var(--bo-success)' }
-    if (score >= 60 || lead.status === 'warm' || lead.status === 'contacted') return { label: 'Média', dots: 2, color: 'var(--bo-warning)' }
+    if (score >= 80 || lead.status === 'hot') return { label: 'Alta', dots: 3, color: 'var(--success)' }
+    if (score >= 60 || lead.status === 'warm' || lead.status === 'contacted') return { label: 'Média', dots: 2, color: 'var(--warning)' }
     return { label: 'Baixa', dots: 1, color: '#94A3B8' }
 }
 
@@ -268,7 +268,7 @@ export default function LeadInboxDetailPage() {
     const urgency = getUrgency(lead, score)
     const budgetLabel = getBudgetLabel(lead)
     const abordagem = getAbordagem(lead, score)
-    const scoreColor = score >= 80 ? 'var(--bo-success)' : score >= 60 ? 'var(--bo-warning)' : '#94A3B8'
+    const scoreColor = score >= 80 ? 'var(--success)' : score >= 60 ? 'var(--warning)' : '#94A3B8'
     const initials = lead.name?.split(' ').map((n: string) => n[0]).slice(0, 2).join('') || 'LD'
 
     return (
@@ -287,11 +287,11 @@ export default function LeadInboxDetailPage() {
                         display: 'flex', alignItems: 'center', gap: 6,
                         padding: '6px 12px', borderRadius: 20,
                         background: assumed ? 'rgba(74,222,128,0.12)' : 'rgba(74,222,128,0.1)',
-                        border: `1px solid ${assumed ? 'var(--bo-success)' : 'rgba(74,222,128,0.3)'}`,
+                        border: `1px solid ${assumed ? 'var(--success)' : 'rgba(74,222,128,0.3)'}`,
                         flexShrink: 0,
                     }}>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--bo-success)', animation: 'pulse 2s infinite' }} />
-                        <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '0.1em', color: 'var(--bo-success)', textTransform: 'uppercase' }}>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--success)', animation: 'pulse 2s infinite' }} />
+                        <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '0.1em', color: 'var(--success)', textTransform: 'uppercase' }}>
                             {assumed ? 'EM ATENDIMENTO' : 'IA ATIVA · QUALIFICANDO'}
                         </span>
                     </div>
@@ -306,7 +306,7 @@ export default function LeadInboxDetailPage() {
                     borderRadius: 20, padding: 18, marginBottom: 16,
                     background: T.elevated,
                     border: `1px solid ${T.border}`,
-                    boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)',
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.06)',
                     backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.05) 0%, transparent 60%)',
                 }}
             >
@@ -469,7 +469,7 @@ export default function LeadInboxDetailPage() {
                     background: T.elevated,
                     border: `1px solid ${T.border}`,
                     marginBottom: 16,
-                    boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)',
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.06)',
                 }}
             >
                 {/* Chat header */}
@@ -478,12 +478,12 @@ export default function LeadInboxDetailPage() {
                     padding: '14px 16px',
                     borderBottom: `1px solid ${T.border}`,
                 }}>
-                    <Bot size={14} style={{ color: 'var(--bo-success)' }} />
+                    <Bot size={14} style={{ color: 'var(--success)' }} />
                     <span style={{ fontSize: 12, fontWeight: 700, color: T.text }}>Conversa de Qualificação IA</span>
                     <span style={{
                         marginLeft: 'auto', fontSize: 9, fontWeight: 800,
                         padding: '3px 8px', borderRadius: 20,
-                        background: 'rgba(74,222,128,0.12)', color: 'var(--bo-success)',
+                        background: 'rgba(74,222,128,0.12)', color: 'var(--success)',
                     }}>
                         {messages.length} mensagens
                     </span>
@@ -526,7 +526,7 @@ export default function LeadInboxDetailPage() {
                                     background: isBot ? 'rgba(74,222,128,0.15)' : 'rgba(59,130,246,0.15)',
                                 }}>
                                     {isBot ? (
-                                        <Bot size={13} style={{ color: 'var(--bo-success)' }} />
+                                        <Bot size={13} style={{ color: 'var(--success)' }} />
                                     ) : (
                                         <span style={{ fontSize: 9, fontWeight: 800, color: '#60A5FA' }}>{initials}</span>
                                     )}
@@ -542,7 +542,7 @@ export default function LeadInboxDetailPage() {
                                         borderRadius: isBot ? '4px 16px 16px 16px' : '16px 4px 16px 16px',
                                         background: isBot
                                             ? 'rgba(255,255,255,0.05)'
-                                            : 'var(--bo-accent)',
+                                            : 'var(--imi-gold-500)',
                                     }}>
                                         <p style={{
                                             fontSize: 13, lineHeight: 1.6,
@@ -572,7 +572,7 @@ export default function LeadInboxDetailPage() {
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     background: 'rgba(74,222,128,0.15)', flexShrink: 0,
                                 }}>
-                                    <Bot size={13} style={{ color: 'var(--bo-success)' }} />
+                                    <Bot size={13} style={{ color: 'var(--success)' }} />
                                 </div>
                                 <div style={{
                                     padding: '10px 16px', borderRadius: '4px 16px 16px 16px',
@@ -655,8 +655,8 @@ export default function LeadInboxDetailPage() {
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                             fontSize: 14, fontWeight: 600, cursor: 'pointer',
                             background: assumed ? 'rgba(74,222,128,0.12)' : T.elevated,
-                            border: `1.5px solid ${assumed ? 'var(--bo-success)' : T.border}`,
-                            color: assumed ? 'var(--bo-success)' : T.text,
+                            border: `1.5px solid ${assumed ? 'var(--success)' : T.border}`,
+                            color: assumed ? 'var(--success)' : T.text,
                             boxShadow: assumed ? '0 0 16px rgba(74,222,128,0.2), inset 0 1px 0 rgba(255,255,255,0.06)' : 'inset 0 1px 0 rgba(255,255,255,0.06)',
                             transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
                         }}

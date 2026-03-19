@@ -32,7 +32,7 @@ function priceColor(value: number, min: number, max: number): string {
 
 function textColor(value: number, min: number, max: number): string {
   const t = (value - min) / (max - min)
-  return t > 0.65 ? 'rgba(11,25,40,0.95)' : 'var(--bo-text,#e8e0d0)'
+  return t > 0.65 ? 'rgba(11,25,40,0.95)' : 'var(--text-primary,#e8e0d0)'
 }
 
 export function WidgetHeatmap() {
@@ -61,9 +61,9 @@ export function WidgetHeatmap() {
             style={{
               padding: '4px 14px', borderRadius: 6, fontSize: 11, cursor: 'pointer',
               fontFamily: 'inherit', transition: 'all 150ms',
-              background: view === v ? 'var(--bo-active-bg,rgba(200,164,74,0.12))' : 'var(--bo-surface,rgba(255,255,255,0.04))',
-              border: `1px solid ${view === v ? 'var(--bo-accent,#C8A44A)' : 'var(--bo-border,rgba(200,164,74,0.12))'}`,
-              color: view === v ? 'var(--bo-accent,#C8A44A)' : 'var(--bo-text-muted,rgba(232,224,208,0.5))',
+              background: view === v ? 'var(--bg-active,rgba(200,164,74,0.12))' : 'var(--bg-surface,rgba(255,255,255,0.04))',
+              border: `1px solid ${view === v ? 'var(--imi-gold-500,#C8A44A)' : 'var(--border-default,rgba(200,164,74,0.12))'}`,
+              color: view === v ? 'var(--imi-gold-500,#C8A44A)' : 'var(--text-secondary,rgba(232,224,208,0.5))',
               fontWeight: view === v ? 700 : 400,
             }}
           >
@@ -140,13 +140,13 @@ export function WidgetHeatmap() {
           background: 'linear-gradient(90deg, rgba(200,164,74,0.08) 0%, rgba(200,164,74,0.30) 40%, rgba(200,164,74,0.80) 100%)',
           border: '1px solid rgba(200,164,74,0.14)',
         }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--bo-text-muted,rgba(232,224,208,0.5))' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-secondary,rgba(232,224,208,0.5))' }}>
           <span>
             {view === 'price'
               ? `R$${(MIN_PRICE / 1000).toFixed(1)}k/m²`
               : `+${MIN_VAL.toFixed(1)}%`}
           </span>
-          <span style={{ color: 'var(--bo-text-muted)', opacity: 0.6 }}>— escala de preço/intensidade —</span>
+          <span style={{ color: 'var(--text-secondary)', opacity: 0.6 }}>— escala de preço/intensidade —</span>
           <span>
             {view === 'price'
               ? `R$${(MAX_PRICE / 1000).toFixed(1)}k/m²`
@@ -157,7 +157,7 @@ export function WidgetHeatmap() {
 
       {/* Ranking list */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 2 }}>
-        <p style={{ fontSize: 10, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--bo-text-muted)', marginBottom: 2 }}>
+        <p style={{ fontSize: 10, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 2 }}>
           Ranking — {view === 'price' ? 'Preço/m²' : 'Valorização 12m'}
         </p>
         {sorted.slice(0, 5).map((nb, i) => {
@@ -165,16 +165,16 @@ export function WidgetHeatmap() {
           const t   = (val - getMin()) / (getMax() - getMin())
           return (
             <div key={nb.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 10, color: 'var(--bo-text-muted)', width: 14, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
-              <span style={{ fontSize: 11, color: 'var(--bo-text,#e8e0d0)', flex: 1, minWidth: 0 }}>{nb.name}</span>
+              <span style={{ fontSize: 10, color: 'var(--text-secondary)', width: 14, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-primary,#e8e0d0)', flex: 1, minWidth: 0 }}>{nb.name}</span>
               <div style={{ width: 80, height: 4, background: 'rgba(255,255,255,0.07)', borderRadius: 99, flexShrink: 0 }}>
                 <div style={{
                   height: '100%', width: `${Math.round(t * 100)}%`,
-                  background: 'var(--bo-accent,#C8A44A)', borderRadius: 99,
+                  background: 'var(--imi-gold-500,#C8A44A)', borderRadius: 99,
                   transition: 'width 400ms ease',
                 }} />
               </div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--bo-accent,#C8A44A)', width: 72, textAlign: 'right', flexShrink: 0 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--imi-gold-500,#C8A44A)', width: 72, textAlign: 'right', flexShrink: 0 }}>
                 {view === 'price'
                   ? `R$${(nb.price / 1000).toFixed(1)}k`
                   : `+${nb.val12m.toFixed(1)}%`}

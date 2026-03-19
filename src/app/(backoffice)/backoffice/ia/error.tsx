@@ -27,10 +27,10 @@ export default function Error({
     }}>
       <AlertTriangle
         size={40}
-        style={{ color: 'var(--bo-warning, #F59E0B)', opacity: 0.6 }}
+        style={{ color: 'var(--warning, #F59E0B)', opacity: 0.6 }}
       />
       <h2 style={{
-        color: 'var(--bo-text, #F0ECE4)',
+        color: 'var(--text-primary, #F0ECE4)',
         fontSize: 18,
         fontWeight: 600,
         fontFamily: 'var(--font-outfit, sans-serif)',
@@ -39,7 +39,7 @@ export default function Error({
         Algo deu errado
       </h2>
       <p style={{
-        color: 'var(--bo-text-muted, #8A95A5)',
+        color: 'var(--text-secondary, #8A95A5)',
         fontSize: 14,
         fontFamily: 'var(--font-outfit, sans-serif)',
         margin: 0,
@@ -50,7 +50,7 @@ export default function Error({
       <button
         onClick={reset}
         style={{
-          background: 'var(--bo-accent, #C8A44A)',
+          background: 'var(--imi-gold-500, #C8A44A)',
           color: '#0B1928',
           border: 'none',
           borderRadius: 6,

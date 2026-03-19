@@ -27,14 +27,14 @@ const TIPO_CONFIG: Record<string, { icon: React.ElementType; label: string; colo
     linkedin:  { icon: Linkedin,  label: 'LinkedIn',  color: 'var(--info)', bg: 'rgba(59,130,246,0.12)' },
     facebook:  { icon: Facebook,  label: 'Facebook',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
     email:     { icon: Mail,      label: 'E-mail',    color: 'var(--success)', bg: 'rgba(16,185,129,0.12)' },
-    blog:      { icon: Globe,     label: 'Blog',      color: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
-    youtube:   { icon: Youtube,   label: 'YouTube',   color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' },
+    blog:      { icon: Globe,     label: 'Blog',      color: 'var(--imi-gold-500)', bg: 'rgba(72,101,129,0.12)' },
+    youtube:   { icon: Youtube,   label: 'YouTube',   color: 'var(--error)', bg: 'rgba(239,68,68,0.12)' },
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
     publicado: { label: 'Publicado', color: 'var(--success)', bg: 'rgba(16,185,129,0.12)', icon: CheckCircle },
     agendado:  { label: 'Agendado',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)', icon: Clock },
-    rascunho:  { label: 'Rascunho',  color: 'var(--bo-text-muted)', bg: 'var(--bo-elevated)', icon: AlertCircle },
+    rascunho:  { label: 'Rascunho',  color: 'var(--text-secondary)', bg: 'var(--bg-elevated)', icon: AlertCircle },
 }
 
 const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -251,7 +251,7 @@ export default function CalendarioPage() {
                     {view === 'mes' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* Calendário */}
-                            <div className="lg:col-span-2 rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 50%)' }}>
+                            <div className="lg:col-span-2 rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-md, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 50%)' }}>
                                 <div className="flex items-center justify-between mb-6">
                                     <button onClick={mesAnterior} className="w-9 h-9 flex items-center justify-center rounded-[6px]" style={{ color: T.textMuted }}>
                                         <ChevronLeft size={18} />
@@ -301,7 +301,7 @@ export default function CalendarioPage() {
                             </div>
 
                             {/* Painel lateral */}
-                            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
+                            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-md, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
                                 {diaSelecionado ? (
                                     <>
                                         <div className="flex items-center justify-between mb-4">
@@ -404,7 +404,7 @@ export default function CalendarioPage() {
                     )}
 
                     {view === 'lista' && (
-                        <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 40%)' }}>
+                        <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-md, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 40%)' }}>
                             {conteudosFiltrados.length === 0 ? (
                                 <div className="text-center py-12">
                                     <Calendar size={40} className="mx-auto mb-3" style={{ color: T.border }} />

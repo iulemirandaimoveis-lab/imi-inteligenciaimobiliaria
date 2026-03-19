@@ -1790,7 +1790,7 @@
 
 .backoffice-root .btn-danger {
   background: var(--s-cancel-bg);
-  color: var(--s-cancel);
+  color: var(--text-tertiary);
   border-color: rgba(229,115,115,0.20);
 }
 

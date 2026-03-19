@@ -231,7 +231,7 @@ export default function ProjetosPage() {
                                                 <div className="h-full rounded-full transition-all"
                                                     style={{
                                                         width: `${pct}%`,
-                                                        backgroundColor: pct >= 75 ? getStatusConfig('pronto').dot : 'var(--bo-accent)',
+                                                        backgroundColor: pct >= 75 ? getStatusConfig('pronto').dot : 'var(--imi-gold-500)',
                                                     }} />
                                             </div>
                                         </div>

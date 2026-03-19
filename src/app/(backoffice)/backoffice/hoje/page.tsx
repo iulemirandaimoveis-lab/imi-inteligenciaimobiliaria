@@ -236,7 +236,7 @@ export default function HojePage() {
                 display: 'inline-block', marginTop: 6,
                 fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
                 padding: '2px 8px', borderRadius: 6,
-                background: 'var(--bo-active-bg)', color: 'var(--imi-gold-500)',
+                background: 'var(--bg-active)', color: 'var(--imi-gold-500)',
                 border: '1px solid var(--border-default)',
               }}>
                 {userRole}
@@ -260,7 +260,7 @@ export default function HojePage() {
                 width: 56, height: 56, borderRadius: '50%',
                 overflow: 'hidden', position: 'relative',
                 border: `2px solid rgba(184,148,58,0.4)`,
-                background: 'var(--bo-elevated)',
+                background: 'var(--bg-elevated)',
                 cursor: 'pointer', padding: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
@@ -696,7 +696,7 @@ export default function HojePage() {
               style={{
                 fontSize: '11px', fontWeight: 600,
                 color: 'var(--error)',
-                background: 'var(--s-hot-bg)',
+                background: 'var(--error-bg)',
                 border: '1px solid rgba(248,113,113,0.25)',
                 padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
               }}
@@ -837,7 +837,7 @@ export default function HojePage() {
                     <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{item.label}</span>
                     <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)' }}>{item.value}</span>
                   </div>
-                  <div style={{ height: 4, borderRadius: 2, background: 'var(--bo-hover)' }}>
+                  <div style={{ height: 4, borderRadius: 2, background: 'var(--bg-hover)' }}>
                     <div style={{
                       height: '100%', borderRadius: 2,
                       background: item.color,

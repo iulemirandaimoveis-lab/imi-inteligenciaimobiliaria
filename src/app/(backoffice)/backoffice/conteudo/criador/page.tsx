@@ -300,7 +300,7 @@ export default function CriadorIAPage() {
                 disabled={generating}
                 style={{
                     width: '100%', height: 52, borderRadius: 16,
-                    background: generating ? 'rgba(59,130,246,0.4)' : 'var(--bo-accent)',
+                    background: generating ? 'rgba(59,130,246,0.4)' : 'var(--imi-gold-500)',
                     color: '#fff', fontSize: 15, fontWeight: 600,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
                     border: generating ? 'none' : '1px solid rgba(255,255,255,0.12)',

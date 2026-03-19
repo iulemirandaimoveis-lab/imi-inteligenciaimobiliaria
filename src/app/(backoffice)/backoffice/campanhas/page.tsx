@@ -75,7 +75,7 @@ const CHANNEL_MAP: Record<string, { label: string; icon: React.ElementType; colo
   facebook: { label: 'Facebook', icon: Facebook, color: '#6366F1' },
   instagram: { label: 'Instagram', icon: Instagram, color: '#F472B6' },
   email: { label: 'Email', icon: Mail, color: '#22D3EE' },
-  whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'var(--bo-success)' },
+  whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'var(--success)' },
   site: { label: 'Site', icon: Globe, color: '#34D399' },
   // Legacy keys for backward compat
   google_ads: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
@@ -126,7 +126,7 @@ function CampaignCard({ c, index, onClick }: { c: Campaign; index: number; onCli
   const budgetPct = c.budget ? Math.min(100, Math.round((c.spent / c.budget) * 100)) : 0
   const convPct = c.leads ? Math.min(100, Math.round((c.conversions / c.leads) * 100)) : 0
   const statusCfg = STATUS_MAP[c.status] ?? STATUS_MAP.draft
-  const budgetColor = budgetPct >= 90 ? 'var(--s-hot)' : budgetPct >= 70 ? 'var(--s-warm)' : 'var(--imi-gold-500)'
+  const budgetColor = budgetPct >= 90 ? 'var(--error)' : budgetPct >= 70 ? 'var(--warning)' : 'var(--imi-gold-500)'
 
   return (
     <motion.div
@@ -140,7 +140,7 @@ function CampaignCard({ c, index, onClick }: { c: Campaign; index: number; onCli
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
-            fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)',
+            fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)',
             marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>{c.name}</p>
           <ChannelBadge channel={c.channel} />
@@ -152,19 +152,19 @@ function CampaignCard({ c, index, onClick }: { c: Campaign; index: number; onCli
         <MetricBar label="Orçamento utilizado" value={budgetPct} valueLabel={`${formatBRL(c.spent)} / ${formatBRL(c.budget)}`} color={budgetColor} />
       </div>
       <div style={{ marginBottom: '12px' }}>
-        <MetricBar label="Taxa de conversão" value={convPct} valueLabel={`${convPct}%`} color="var(--s-done)" />
+        <MetricBar label="Taxa de conversão" value={convPct} valueLabel={`${convPct}%`} color="var(--success)" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '8px', paddingTop: '10px', borderTop: '1px solid var(--bo-border)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '8px', paddingTop: '10px', borderTop: '1px solid var(--border-default)' }}>
         {[
           { label: 'Leads', value: fmtNum(c.leads), Icon: Users },
           { label: 'Cliques', value: fmtNum(c.clicks), Icon: MousePointer },
           { label: 'CAC', value: formatBRL(c.cost_per_lead), Icon: DollarSign },
         ].map(({ label, value, Icon }) => (
           <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' }}>
-            <Icon size={12} color="var(--bo-text-muted)" />
-            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>{value}</span>
-            <span style={{ fontSize: '9px', color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
+            <Icon size={12} color="var(--text-secondary)" />
+            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{value}</span>
+            <span style={{ fontSize: '9px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
           </div>
         ))}
       </div>
@@ -229,9 +229,9 @@ export default function CampanhasPage() {
 
   const statusTabs: FilterTab[] = [
     { id: 'all', label: 'Todas', count: campanhas?.length },
-    { id: 'active', label: 'Ativas', count: campanhas?.filter(c => c.status === 'active').length, dotColor: 'var(--s-done)' },
-    { id: 'paused', label: 'Pausadas', count: campanhas?.filter(c => c.status === 'paused').length, dotColor: 'var(--s-warm)' },
-    { id: 'completed', label: 'Concluídas', count: campanhas?.filter(c => c.status === 'completed').length, dotColor: 'var(--s-cold)' },
+    { id: 'active', label: 'Ativas', count: campanhas?.filter(c => c.status === 'active').length, dotColor: 'var(--success)' },
+    { id: 'paused', label: 'Pausadas', count: campanhas?.filter(c => c.status === 'paused').length, dotColor: 'var(--warning)' },
+    { id: 'completed', label: 'Concluídas', count: campanhas?.filter(c => c.status === 'completed').length, dotColor: 'var(--info)' },
     { id: 'draft', label: 'Rascunho', count: campanhas?.filter(c => c.status === 'draft').length },
   ]
 
@@ -263,8 +263,8 @@ export default function CampanhasPage() {
                   fontSize: '10px', fontWeight: 700, padding: '4px 10px',
                   borderRadius: '8px',
                   background: metaStatus.connected ? 'rgba(0,178,127,0.1)' : 'rgba(148,163,184,0.08)',
-                  color: metaStatus.connected ? 'var(--s-done)' : 'var(--bo-text-muted)',
-                  border: `1px solid ${metaStatus.connected ? 'rgba(0,178,127,0.25)' : 'var(--bo-border)'}`,
+                  color: metaStatus.connected ? 'var(--success)' : 'var(--text-secondary)',
+                  border: `1px solid ${metaStatus.connected ? 'rgba(0,178,127,0.25)' : 'var(--border-default)'}`,
                 }}>
                   <Wifi size={10} />
                   {metaStatus.connected ? `Meta · ${metaStatus.count ?? 0} camps.` : 'Meta desconectado'}
@@ -280,9 +280,9 @@ export default function CampanhasPage() {
                     display: 'flex', alignItems: 'center', gap: '5px',
                     height: '38px', padding: '0 14px', borderRadius: '12px',
                     fontSize: '12px', fontWeight: 700,
-                    color: syncing ? 'var(--bo-text-muted)' : 'var(--bo-text)',
-                    background: 'var(--bo-elevated)',
-                    border: '1px solid var(--bo-border)',
+                    color: syncing ? 'var(--text-secondary)' : 'var(--text-primary)',
+                    background: 'var(--bg-elevated)',
+                    border: '1px solid var(--border-default)',
                     cursor: syncing ? 'not-allowed' : 'pointer',
                     opacity: syncing ? 0.75 : 1,
                     flexShrink: 0,
@@ -328,10 +328,10 @@ export default function CampanhasPage() {
             }}
           >
             {syncResult.success
-              ? <CheckCircle2 size={15} style={{ color: 'var(--s-done)', flexShrink: 0 }} />
-              : <AlertCircle size={15} style={{ color: 'var(--s-hot)', flexShrink: 0 }} />
+              ? <CheckCircle2 size={15} style={{ color: 'var(--success)', flexShrink: 0 }} />
+              : <AlertCircle size={15} style={{ color: 'var(--error)', flexShrink: 0 }} />
             }
-            <p style={{ fontSize: '12px', fontWeight: 600, color: syncResult.success ? 'var(--s-done)' : 'var(--s-hot)' }}>
+            <p style={{ fontSize: '12px', fontWeight: 600, color: syncResult.success ? 'var(--success)' : 'var(--error)' }}>
               {syncResult.success
                 ? `✓ ${syncResult.synced} campanha(s) sincronizada(s) do Meta Ads`
                 : `Erro: ${syncResult.error}`
@@ -362,14 +362,14 @@ export default function CampanhasPage() {
         style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}
       >
         <div style={{ position: 'relative' }}>
-          <Search size={13} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--bo-text-muted)', pointerEvents: 'none' }} />
+          <Search size={13} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)', pointerEvents: 'none' }} />
           <input
             type="text" placeholder="Buscar campanhas..." value={search}
             onChange={e => setSearch(e.target.value)}
             style={{
               width: '100%', height: '38px', paddingLeft: '34px', paddingRight: '14px',
-              borderRadius: '10px', fontSize: '13px', color: 'var(--bo-text)',
-              background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+              borderRadius: '10px', fontSize: '13px', color: 'var(--text-primary)',
+              background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
               outline: 'none', boxSizing: 'border-box',
             }}
           />
@@ -381,7 +381,7 @@ export default function CampanhasPage() {
       {isLoading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,280px),1fr))', gap: '12px' }}>
           {[1, 2, 3, 4].map(i => (
-            <div key={i} style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', padding: '14px', height: '180px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '14px', height: '180px', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))}
         </div>
       ) : campanhas && campanhas.length > 0 ? (
@@ -397,14 +397,14 @@ export default function CampanhasPage() {
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           style={{
-            background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
+            background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
             borderRadius: '16px', padding: '48px 24px',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', textAlign: 'center',
           }}
         >
-          <BarChart3 size={32} color="var(--bo-text-muted)" />
-          <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--bo-text)' }}>Nenhuma campanha encontrada</p>
-          <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)', maxWidth: '320px' }}>
+          <BarChart3 size={32} color="var(--text-secondary)" />
+          <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Nenhuma campanha encontrada</p>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '320px' }}>
             Crie sua primeira campanha para começar a rastrear performance de marketing.
           </p>
           <button
@@ -427,7 +427,7 @@ export default function CampanhasPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.35 }}
-          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', padding: '14px' }}
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '14px' }}
         >
           <SectionHeader title="Performance por Canal" />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

@@ -307,8 +307,8 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
               <div>
                 <div style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 2 }}>IMI Score</div>
                 <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>/100 · Índice de Oportunidade</div>
-                <div style={{ height: 4, width: 120, background: 'rgba(184,148,58,0.1)', borderRadius: 999, marginTop: 6, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${score}%`, background: mobileScoreColor, borderRadius: 999 }} />
+                <div style={{ height: 4, width: 120, background: 'rgba(184,148,58,0.1)', borderRadius: 6, marginTop: 6, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${score}%`, background: mobileScoreColor, borderRadius: 6 }} />
                 </div>
               </div>
             </div>

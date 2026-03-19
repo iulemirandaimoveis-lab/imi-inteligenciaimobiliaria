@@ -31,8 +31,8 @@ const DATA: Record<Segment, { name: string; score: number; trend: '↑' | '→' 
 }
 
 const TREND_COLORS: Record<string, string> = {
-    '↑': 'var(--bo-success,#2D8F5C)',
-    '→': 'var(--bo-text-muted)',
+    '↑': 'var(--success,#2D8F5C)',
+    '→': 'var(--text-secondary)',
     '↓': '#E05A5A',
 }
 
@@ -46,13 +46,13 @@ export function WidgetDemandTrend() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Title */}
             <div>
-                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
                     Demanda Imobiliária
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
                     Demanda por Segmento
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--bo-text-muted)', marginTop: 3 }}>
+                <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 3 }}>
                     Índice de busca ativa nos últimos 30 dias
                 </div>
             </div>
@@ -67,14 +67,14 @@ export function WidgetDemandTrend() {
                             padding: '5px 14px',
                             borderRadius: 6,
                             border: activeSegment === seg
-                                ? '1px solid var(--bo-accent,#C8A44A)'
-                                : '1px solid var(--bo-border)',
+                                ? '1px solid var(--imi-gold-500,#C8A44A)'
+                                : '1px solid var(--border-default)',
                             background: activeSegment === seg
                                 ? 'rgba(200,164,74,0.12)'
                                 : 'transparent',
                             color: activeSegment === seg
-                                ? 'var(--bo-accent,#C8A44A)'
-                                : 'var(--bo-text-muted)',
+                                ? 'var(--imi-gold-500,#C8A44A)'
+                                : 'var(--text-secondary)',
                             fontSize: 10,
                             fontWeight: 600,
                             fontFamily: 'var(--font-ui)',
@@ -93,19 +93,19 @@ export function WidgetDemandTrend() {
                 {rows.map((row, i) => (
                     <div key={row.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         {/* Rank */}
-                        <div style={{ width: 14, fontSize: 9, color: 'var(--bo-text-muted)', textAlign: 'center', flexShrink: 0 }}>
+                        <div style={{ width: 14, fontSize: 9, color: 'var(--text-secondary)', textAlign: 'center', flexShrink: 0 }}>
                             {i + 1}
                         </div>
                         {/* Name */}
-                        <div style={{ width: 96, fontSize: 11, color: 'var(--bo-text)', flexShrink: 0, fontFamily: 'var(--font-ui)' }}>
+                        <div style={{ width: 96, fontSize: 11, color: 'var(--text-primary)', flexShrink: 0, fontFamily: 'var(--font-ui)' }}>
                             {row.name}
                         </div>
                         {/* Bar */}
-                        <div style={{ flex: 1, height: 20, background: 'var(--bo-border)', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
+                        <div style={{ flex: 1, height: 20, background: 'var(--border-default)', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
                             <div style={{
                                 height: '100%',
                                 width: `${row.score}%`,
-                                background: `linear-gradient(90deg, var(--bo-accent,#C8A44A), rgba(200,164,74,0.55))`,
+                                background: `linear-gradient(90deg, var(--imi-gold-500,#C8A44A), rgba(200,164,74,0.55))`,
                                 borderRadius: 6,
                                 transition: 'width 0.5s cubic-bezier(0.4,0,0.2,1)',
                                 display: 'flex', alignItems: 'center', paddingLeft: 8,
@@ -117,7 +117,7 @@ export function WidgetDemandTrend() {
                                 )}
                             </div>
                             {row.score <= 20 && (
-                                <span style={{ position: 'absolute', left: `${row.score + 2}%`, top: '50%', transform: 'translateY(-50%)', fontSize: 10, fontWeight: 700, color: 'var(--bo-text)' }}>
+                                <span style={{ position: 'absolute', left: `${row.score + 2}%`, top: '50%', transform: 'translateY(-50%)', fontSize: 10, fontWeight: 700, color: 'var(--text-primary)' }}>
                                     {row.score}
                                 </span>
                             )}
@@ -133,7 +133,7 @@ export function WidgetDemandTrend() {
             {/* Legend */}
             <div style={{
                 display: 'flex', gap: 16, paddingTop: 8,
-                borderTop: '1px solid var(--bo-border)',
+                borderTop: '1px solid var(--border-default)',
             }}>
                 {([
                     { symbol: '↑', label: 'Alta', color: TREND_COLORS['↑'] },
@@ -142,10 +142,10 @@ export function WidgetDemandTrend() {
                 ] as const).map(t => (
                     <div key={t.label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                         <span style={{ fontSize: 11, color: t.color }}>{t.symbol}</span>
-                        <span style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t.label}</span>
+                        <span style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t.label}</span>
                     </div>
                 ))}
-                <div style={{ marginLeft: 'auto', fontSize: 9, color: 'var(--bo-text-muted)' }}>
+                <div style={{ marginLeft: 'auto', fontSize: 9, color: 'var(--text-secondary)' }}>
                     Score 0–100
                 </div>
             </div>

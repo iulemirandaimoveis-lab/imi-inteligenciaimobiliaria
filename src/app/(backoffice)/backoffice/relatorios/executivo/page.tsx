@@ -13,8 +13,8 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeade
 type Period = 'monthly' | 'quarterly' | 'yearly'
 
 const MONTHS_SHORT = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-const CHANNEL_COLORS = ['var(--info)', 'var(--imi-gold-500)', 'var(--bo-success)', 'var(--bo-warning)', 'var(--bo-error)']
-const AGENT_COLORS   = ['var(--info)', 'var(--imi-gold-400)', 'var(--bo-success)', 'var(--bo-warning)']
+const CHANNEL_COLORS = ['var(--info)', 'var(--imi-gold-500)', 'var(--success)', 'var(--warning)', 'var(--error)']
+const AGENT_COLORS   = ['var(--info)', 'var(--imi-gold-400)', 'var(--success)', 'var(--warning)']
 
 type VelocityData = Record<Period, number[]>
 type ChannelItem  = { label: string; pct: number; color: string }
@@ -165,8 +165,8 @@ export default function RelatoriosExecutivoPage() {
   const currentChannels = channelData.length > 0 ? channelData : [
     { label: 'Meta Ads', pct: 42, color: 'var(--info)' },
     { label: 'Google Search', pct: 31, color: 'var(--imi-gold-500)' },
-    { label: 'Direct Link', pct: 18, color: 'var(--bo-success)' },
-    { label: 'Referral', pct: 9, color: 'var(--bo-warning)' },
+    { label: 'Direct Link', pct: 18, color: 'var(--success)' },
+    { label: 'Referral', pct: 9, color: 'var(--warning)' },
   ]
   const currentAgents = topAgents.length > 0 ? topAgents : []
 
@@ -185,17 +185,17 @@ export default function RelatoriosExecutivoPage() {
               <button style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
                 height: '44px', padding: '0 16px', borderRadius: '6px',
-                fontSize: '13px', fontWeight: 700, color: 'var(--bo-text-muted)',
-                background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer',
+                fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)',
+                background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', cursor: 'pointer',
               }}>
                 <Download size={14} />
                 Exportar
               </button>
               <button style={{
                 width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: '6px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer',
+                borderRadius: '6px', background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', cursor: 'pointer',
               }}>
-                <RefreshCw size={14} color="var(--bo-text-muted)" />
+                <RefreshCw size={14} color="var(--text-secondary)" />
               </button>
             </div>
           }
@@ -204,7 +204,7 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Period Tabs ──────────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}>
-        <div style={{ display: 'inline-flex', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '4px', gap: '2px' }}>
+        <div style={{ display: 'inline-flex', background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '4px', gap: '2px' }}>
           {(['monthly', 'quarterly', 'yearly'] as Period[]).map(p => (
             <button
               key={p}
@@ -214,7 +214,7 @@ export default function RelatoriosExecutivoPage() {
                 fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: 'none',
                 transition: 'all 0.2s',
                 background: period === p ? 'var(--info)' : 'transparent',
-                color: period === p ? '#fff' : 'var(--bo-text-muted)',
+                color: period === p ? '#fff' : 'var(--text-secondary)',
               }}
             >
               {p === 'monthly' ? 'Mensal' : p === 'quarterly' ? 'Trimestral' : 'Anual'}
@@ -227,80 +227,80 @@ export default function RelatoriosExecutivoPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
           {/* Pipeline */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Target size={15} color="#3B82F6" />
               </div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Est. Pipeline
               </span>
             </div>
-            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
               {loading ? '—' : pipeline === '—' ? '—' : `R$ ${pipeline}${pipeline.includes('k') ? '' : 'M'}`}
             </p>
-            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Leads quentes em negociação</p>
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Leads quentes em negociação</p>
             <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
               <Target size={52} color="#3B82F6" />
             </div>
           </div>
 
           {/* Conversion */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(167,139,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <BarChart3 size={15} color="#A78BFA" />
               </div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Conversão
               </span>
             </div>
-            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
               {loading ? '—' : conversion === '—' ? '—' : `${conversion}%`}
             </p>
-            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{wonLeads} fechamentos de {totalLeads} leads</p>
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{wonLeads} fechamentos de {totalLeads} leads</p>
             <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
               <BarChart3 size={52} color="#A78BFA" />
             </div>
           </div>
 
           {/* Total Leads */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Users size={15} color="var(--bo-success)" />
+                <Users size={15} color="var(--success)" />
               </div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Total Leads
               </span>
             </div>
-            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
               {loading ? '—' : totalLeads.toLocaleString('pt-BR')}
             </p>
-            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Base total da plataforma</p>
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Base total da plataforma</p>
             <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
-              <Users size={52} color="var(--bo-success)" />
+              <Users size={52} color="var(--success)" />
             </div>
           </div>
 
           {/* Receita do Mês */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendingUp size={15} color="var(--bo-warning)" />
+                <TrendingUp size={15} color="var(--warning)" />
               </div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Receita / Mês
               </span>
             </div>
-            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
               {loading ? '—' : monthRevenue > 0
                 ? `R$ ${monthRevenue >= 1000 ? (monthRevenue / 1000).toFixed(0) + 'k' : monthRevenue.toLocaleString('pt-BR')}`
                 : '—'}
             </p>
-            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{totalProperties} imóveis no portfólio</p>
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{totalProperties} imóveis no portfólio</p>
             <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
-              <TrendingUp size={52} color="var(--bo-warning)" />
+              <TrendingUp size={52} color="var(--warning)" />
             </div>
           </div>
         </div>
@@ -308,9 +308,9 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Sales Velocity Trend ─────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
-        <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px' }}>
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-            <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>Sales Velocity Trend</p>
+            <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>Sales Velocity Trend</p>
             <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--info)' }}>
               {period === 'monthly' ? 'Units / Mês' : period === 'quarterly' ? 'Units / Trimestre' : 'Units / Ano'}
             </span>
@@ -352,9 +352,9 @@ export default function RelatoriosExecutivoPage() {
           </div>
 
           {/* X-axis labels */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--bo-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--border-default)' }}>
             {periodLabels.map((label, i) => (
-              <span key={i} style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', letterSpacing: '0.04em' }}>{label}</span>
+              <span key={i} style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.04em' }}>{label}</span>
             ))}
           </div>
         </div>
@@ -364,15 +364,15 @@ export default function RelatoriosExecutivoPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           {/* Property Category */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px' }}>
-            <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '16px' }}>Property Category</p>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '20px' }}>
+            <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>Property Category</p>
 
             {/* Donut chart */}
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
               <div style={{ position: 'relative', width: '80px', height: '80px' }}>
                 <svg viewBox="0 0 80 80" width="80" height="80">
                   {/* Background circle */}
-                  <circle cx="40" cy="40" r="32" fill="none" stroke="var(--bo-elevated)" strokeWidth="10" />
+                  <circle cx="40" cy="40" r="32" fill="none" stroke="var(--bg-elevated)" strokeWidth="10" />
                   {/* Residential 75% */}
                   <circle
                     cx="40" cy="40" r="32" fill="none"
@@ -392,7 +392,7 @@ export default function RelatoriosExecutivoPage() {
                   />
                 </svg>
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--bo-text)' }}>75%</span>
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>75%</span>
                 </div>
               </div>
             </div>
@@ -400,28 +400,28 @@ export default function RelatoriosExecutivoPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--info)', flexShrink: 0 }} />
-                <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)', flex: 1 }}>Residencial</span>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)' }}>75%</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', flex: 1 }}>Residencial</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>75%</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--imi-gold-500)', flexShrink: 0 }} />
-                <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)', flex: 1 }}>Comercial</span>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)' }}>25%</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', flex: 1 }}>Comercial</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>25%</span>
               </div>
             </div>
           </div>
 
           {/* Leads by Channel */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', padding: '20px' }}>
-            <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '16px' }}>Leads por Canal</p>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '20px' }}>
+            <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>Leads por Canal</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {currentChannels.map(ch => (
                 <div key={ch.label}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{ch.label}</span>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)' }}>{ch.pct}%</span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{ch.label}</span>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>{ch.pct}%</span>
                   </div>
-                  <div style={{ height: '6px', borderRadius: '6px', background: 'var(--bo-elevated)', overflow: 'hidden' }}>
+                  <div style={{ height: '6px', borderRadius: '6px', background: 'var(--bg-elevated)', overflow: 'hidden' }}>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${ch.pct}%` }}
@@ -438,26 +438,26 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Top Performance ──────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.20 }}>
-        <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '6px', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', overflow: 'hidden' }}>
           {/* Header */}
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>Top Performance (Agente)</span>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>Top Performance (Agente)</span>
             <button style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--info)', background: 'none', border: 'none', cursor: 'pointer' }}>
               Full List <ChevronRight size={13} />
             </button>
           </div>
 
           {/* Column headers */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 70px', gap: '12px', padding: '10px 20px', borderBottom: '1px solid var(--bo-border)' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Consultor</span>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>Leads</span>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>Conv.%</span>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Volume</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 70px', gap: '12px', padding: '10px 20px', borderBottom: '1px solid var(--border-default)' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Consultor</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>Leads</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>Conv.%</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Volume</span>
           </div>
 
           {/* Rows */}
           {currentAgents.length === 0 ? (
-            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--bo-text-muted)', fontSize: '12px' }}>
+            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '12px' }}>
               Sem dados de agentes disponíveis
             </div>
           ) : currentAgents.map((agent, idx) => (
@@ -466,16 +466,16 @@ export default function RelatoriosExecutivoPage() {
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.25 + idx * 0.06 }}
-              style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 70px', gap: '12px', padding: '14px 20px', borderBottom: idx < currentAgents.length - 1 ? '1px solid var(--bo-border)' : 'none', alignItems: 'center' }}
+              style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 70px', gap: '12px', padding: '14px 20px', borderBottom: idx < currentAgents.length - 1 ? '1px solid var(--border-default)' : 'none', alignItems: 'center' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: `${agent.color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <span style={{ fontSize: '11px', fontWeight: 800, color: agent.color }}>{agent.initials}</span>
                 </div>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text)' }}>{agent.name}</span>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{agent.name}</span>
               </div>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.leads}</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-success)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.conv}%</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.leads}</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--success)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.conv}%</span>
               <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--info)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>R${agent.volume}M</span>
             </motion.div>
           ))}

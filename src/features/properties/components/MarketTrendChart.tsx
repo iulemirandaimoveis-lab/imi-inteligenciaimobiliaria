@@ -91,13 +91,13 @@ export function MarketTrendChart({
           marginTop: 4,
         }}>
           <span style={{
-            fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)',
+            fontSize: '9px', color: 'var(--text-tertiary, #5C6B7D)',
             fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             {data[0].label}
           </span>
           <span style={{
-            fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)',
+            fontSize: '9px', color: 'var(--text-tertiary, #5C6B7D)',
             fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             {data[data.length - 1].label}
@@ -149,7 +149,7 @@ export function NeighborhoodBars({ data, metric }: {
         <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{
             width: 90, fontSize: '10px',
-            color: 'var(--bo-text-muted, #9FAAB8)',
+            color: 'var(--text-secondary, #9FAAB8)',
             fontFamily: 'var(--font-outfit, sans-serif)',
             textAlign: 'right', flexShrink: 0,
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
@@ -157,7 +157,7 @@ export function NeighborhoodBars({ data, metric }: {
             {d.name}
           </span>
           <div style={{
-            flex: 1, height: 6, borderRadius: 999,
+            flex: 1, height: 6, borderRadius: 6,
             background: 'rgba(255,255,255,0.06)',
             overflow: 'hidden',
           }}>
@@ -167,14 +167,14 @@ export function NeighborhoodBars({ data, metric }: {
               background: i === 0
                 ? 'linear-gradient(90deg, #A8842A, #C8A44A)'
                 : 'linear-gradient(90deg, rgba(200,164,74,0.3), rgba(200,164,74,0.6))',
-              borderRadius: 999,
+              borderRadius: 6,
               transition: `width ${600 + i * 80}ms cubic-bezier(0.16, 1, 0.3, 1)`,
             }} />
           </div>
           <span style={{
             width: 68, fontSize: '10px',
             fontFamily: 'var(--font-dm-mono, monospace)',
-            color: 'var(--bo-text, #EBE7E0)',
+            color: 'var(--text-primary, #EBE7E0)',
             flexShrink: 0,
           }}>
             {metric === 'price' ? `R$${(d.value / 1000).toFixed(1)}k` : `${d.value}%`}

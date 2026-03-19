@@ -286,7 +286,7 @@ export default function EditarConstrutoraPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
               />
             </div>
@@ -297,7 +297,7 @@ export default function EditarConstrutoraPage() {
                 name="legal_name"
                 value={formData.legal_name}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
               />
             </div>
@@ -308,7 +308,7 @@ export default function EditarConstrutoraPage() {
                 name="cnpj"
                 value={formData.cnpj}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
               />
             </div>
@@ -321,7 +321,7 @@ export default function EditarConstrutoraPage() {
                     name="is_active"
                     checked={formData.is_active}
                     onChange={handleChange}
-                    className="w-5 h-5 rounded accent-[var(--bo-accent)]"
+                    className="w-5 h-5 rounded accent-[var(--imi-gold-500)]"
                   />
                   <span className="text-sm" style={{ color: T.text }}>
                     {formData.is_active ? 'Ativa' : 'Inativa'}
@@ -335,7 +335,7 @@ export default function EditarConstrutoraPage() {
                   name="display_order"
                   value={formData.display_order}
                   onChange={handleChange}
-                  className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                  className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                   style={inputStyle}
                 />
               </div>
@@ -357,7 +357,7 @@ export default function EditarConstrutoraPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
               />
             </div>
@@ -368,7 +368,7 @@ export default function EditarConstrutoraPage() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
               />
             </div>
@@ -379,7 +379,7 @@ export default function EditarConstrutoraPage() {
                 name="website"
                 value={formData.website}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
                 placeholder="https://..."
               />
@@ -401,7 +401,7 @@ export default function EditarConstrutoraPage() {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
               />
             </div>
@@ -412,7 +412,7 @@ export default function EditarConstrutoraPage() {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
               />
             </div>
@@ -423,7 +423,7 @@ export default function EditarConstrutoraPage() {
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
                 maxLength={2}
               />
@@ -445,7 +445,7 @@ export default function EditarConstrutoraPage() {
                 name="instagram"
                 value={formData.instagram}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
                 placeholder="@construtora"
               />
@@ -457,7 +457,7 @@ export default function EditarConstrutoraPage() {
                 name="linkedin"
                 value={formData.linkedin}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]"
                 style={inputStyle}
                 placeholder="URL ou nome da página"
               />
@@ -479,7 +479,7 @@ export default function EditarConstrutoraPage() {
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-4 py-3 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)] resize-none"
+                className="w-full px-4 py-3 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)] resize-none"
                 style={inputStyle}
                 placeholder="Descrição da construtora para exibição pública..."
               />
@@ -491,7 +491,7 @@ export default function EditarConstrutoraPage() {
                 value={formData.notes}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-4 py-3 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)] resize-none"
+                className="w-full px-4 py-3 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)] resize-none"
                 style={inputStyle}
                 placeholder="Notas internas sobre a construtora..."
               />

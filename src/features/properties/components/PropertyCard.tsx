@@ -84,7 +84,7 @@ export function PropertyCard({
         onClick={bulkMode && onSelect ? (e) => { e.preventDefault(); onSelect(p.id) } : undefined}
         className="prop-card"
         style={{
-          background: 'var(--bo-card, var(--navy-card, #142840))',
+          background: 'var(--bg-surface, var(--navy-card, #142840))',
           border: `1px solid ${isSelected
             ? 'rgba(200,164,74,0.75)'
             : hovered || isComparing
@@ -237,7 +237,7 @@ export function PropertyCard({
                 fontFamily: 'var(--font-dm-mono, monospace)',
                 fontSize: size === 'sm' ? '16px' : '19px',
                 fontWeight: 400,
-                color: 'var(--bo-text, #EBE7E0)',
+                color: 'var(--text-primary, #EBE7E0)',
                 letterSpacing: '-0.3px',
                 lineHeight: 1.1,
               }}>
@@ -247,7 +247,7 @@ export function PropertyCard({
                 <div style={{
                   fontFamily: 'var(--font-dm-mono, monospace)',
                   fontSize: '10px',
-                  color: 'var(--bo-text-dim, #5C6B7D)',
+                  color: 'var(--text-tertiary, #5C6B7D)',
                   marginTop: 2,
                 }}>
                   {fmtSqm(p.price_per_sqm)}
@@ -283,7 +283,7 @@ export function PropertyCard({
             <div style={{
               fontSize: '12px',
               fontWeight: 600,
-              color: 'var(--bo-text, #EBE7E0)',
+              color: 'var(--text-primary, #EBE7E0)',
               fontFamily: 'var(--font-outfit, sans-serif)',
               lineHeight: 1.3,
               marginBottom: 3,
@@ -296,7 +296,7 @@ export function PropertyCard({
             <div style={{
               display: 'flex', alignItems: 'center', gap: 4,
               fontSize: '10px',
-              color: 'var(--bo-text-muted, #9FAAB8)',
+              color: 'var(--text-secondary, #9FAAB8)',
               fontFamily: 'var(--font-outfit, sans-serif)',
             }}>
               <MapPin size={9} style={{ flexShrink: 0 }} />
@@ -335,14 +335,14 @@ export function PropertyCard({
               <div style={{
                 height: 3,
                 background: 'rgba(255,255,255,0.08)',
-                borderRadius: 999,
+                borderRadius: 6,
                 overflow: 'hidden',
               }}>
                 <div style={{
                   height: '100%',
                   width: `${score}%`,
                   background: `linear-gradient(90deg, ${score >= 75 ? '#5DB887' : score >= 60 ? '#5B9BD5' : '#D4913A'}88, ${score >= 75 ? '#5DB887' : score >= 60 ? '#5B9BD5' : '#D4913A'})`,
-                  borderRadius: 999,
+                  borderRadius: 6,
                 }} />
               </div>
             </div>
@@ -427,10 +427,10 @@ function Chip({ icon, label }: { icon: React.ReactNode; label: string }) {
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 3,
       padding: '3px 7px', borderRadius: 6,
-      background: 'var(--bo-surface, rgba(255,255,255,0.04))',
-      border: '1px solid var(--bo-border, rgba(200,164,74,0.12))',
+      background: 'var(--bg-surface, rgba(255,255,255,0.04))',
+      border: '1px solid var(--border-default, rgba(200,164,74,0.12))',
       fontSize: '10px',
-      color: 'var(--bo-text-muted, #9FAAB8)',
+      color: 'var(--text-secondary, #9FAAB8)',
       fontFamily: 'var(--font-outfit, sans-serif)',
     }}>
       {icon}
@@ -448,7 +448,7 @@ function MetricPill({ label, value, color }: { label: string; value: string; col
         fontWeight: 600,
         letterSpacing: '1.5px',
         textTransform: 'uppercase',
-        color: 'var(--bo-text-dim, #5C6B7D)',
+        color: 'var(--text-tertiary, #5C6B7D)',
       }}>
         {label}
       </span>
@@ -507,14 +507,14 @@ export function PropertyListRow({
         <div style={{ minWidth: 0, padding: '12px 16px', cursor: 'pointer' }}>
           <div style={{
             fontSize: '12px', fontWeight: 600,
-            color: 'var(--bo-text, #EBE7E0)',
+            color: 'var(--text-primary, #EBE7E0)',
             fontFamily: 'var(--font-outfit, sans-serif)',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>
             {p.name}
           </div>
           <div style={{
-            fontSize: '10px', color: 'var(--bo-text-dim, #5C6B7D)',
+            fontSize: '10px', color: 'var(--text-tertiary, #5C6B7D)',
             fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             {[p.neighborhood, p.city].filter(Boolean).join(' · ') || '—'}
@@ -525,7 +525,7 @@ export function PropertyListRow({
         <div style={{
           fontFamily: 'var(--font-dm-mono, monospace)',
           fontSize: '12px',
-          color: 'var(--bo-text, #EBE7E0)',
+          color: 'var(--text-primary, #EBE7E0)',
           padding: '12px 4px',
         }}>
           {fmt(p.price)}
@@ -535,7 +535,7 @@ export function PropertyListRow({
         <div style={{
           fontFamily: 'var(--font-dm-mono, monospace)',
           fontSize: '11px',
-          color: 'var(--bo-text-muted, #9FAAB8)',
+          color: 'var(--text-secondary, #9FAAB8)',
           padding: '12px 4px',
         }}>
           {p.price_per_sqm ? `R$${(p.price_per_sqm / 1000).toFixed(1)}k` : '—'}
@@ -571,7 +571,7 @@ export function PropertyListRow({
         <div style={{
           fontFamily: 'var(--font-dm-mono, monospace)',
           fontSize: '11px',
-          color: 'var(--bo-text-muted, #9FAAB8)',
+          color: 'var(--text-secondary, #9FAAB8)',
           padding: '12px 4px',
         }}>
           {p.area ? `${p.area}m²` : '—'}

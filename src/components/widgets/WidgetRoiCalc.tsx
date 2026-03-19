@@ -55,17 +55,17 @@ function DonutChart({ capitalPct, rentalPct, size = 110 }: DonutProps) {
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
             <defs>
                 <linearGradient id="capGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="var(--bo-accent,#C8A44A)" />
+                    <stop offset="0%" stopColor="var(--imi-gold-500,#C8A44A)" />
                     <stop offset="100%" stopColor="rgba(200,164,74,0.6)" />
                 </linearGradient>
                 <linearGradient id="renGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="var(--bo-success,#2D8F5C)" />
+                    <stop offset="0%" stopColor="var(--success,#2D8F5C)" />
                     <stop offset="100%" stopColor="rgba(45,143,92,0.6)" />
                 </linearGradient>
             </defs>
 
             {/* Background ring */}
-            <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--bo-border)" strokeWidth={stroke} />
+            <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--border-default)" strokeWidth={stroke} />
 
             {/* Capital arc */}
             {capAngle > 0 && capAngle < 360 && (
@@ -84,11 +84,11 @@ function DonutChart({ capitalPct, rentalPct, size = 110 }: DonutProps) {
 
             {/* Center text */}
             <text x={cx} y={cy - 6} textAnchor="middle" fontSize={size * 0.16} fontWeight="700"
-                fill="var(--bo-text)" fontFamily="Playfair Display, serif">
+                fill="var(--text-primary)" fontFamily="Playfair Display, serif">
                 ROI
             </text>
             <text x={cx} y={cy + size * 0.12} textAnchor="middle" fontSize={size * 0.11}
-                fill="var(--bo-text-muted)" fontFamily="var(--font-outfit, sans-serif)">
+                fill="var(--text-secondary)" fontFamily="var(--font-outfit, sans-serif)">
                 total
             </text>
         </svg>
@@ -121,12 +121,12 @@ export function WidgetRoiCalc() {
 
     const inputStyle: React.CSSProperties = {
         width: '100%',
-        background: 'var(--bo-bg)',
-        border: '1px solid var(--bo-border)',
+        background: 'var(--bg-base)',
+        border: '1px solid var(--border-default)',
         borderRadius: 6,
         padding: '7px 10px',
         fontSize: 13,
-        color: 'var(--bo-text)',
+        color: 'var(--text-primary)',
         fontFamily: 'var(--font-ui)',
         outline: 'none',
         boxSizing: 'border-box',
@@ -137,7 +137,7 @@ export function WidgetRoiCalc() {
         fontWeight: 600,
         letterSpacing: '0.1em',
         textTransform: 'uppercase' as const,
-        color: 'var(--bo-text-muted)',
+        color: 'var(--text-secondary)',
         fontFamily: 'var(--font-ui)',
         marginBottom: 4,
         display: 'block',
@@ -147,10 +147,10 @@ export function WidgetRoiCalc() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Title */}
             <div>
-                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
                     Análise de Investimento
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
                     Calculadora de ROI
                 </div>
             </div>
@@ -185,14 +185,14 @@ export function WidgetRoiCalc() {
 
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <div>
-                        <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>ROI Total</div>
-                        <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--bo-accent,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
+                        <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>ROI Total</div>
+                        <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--imi-gold-500,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
                             {formatPct(roiTotal)}
                         </div>
                     </div>
                     <div>
-                        <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>ROI Anualizado</div>
-                        <div style={{ fontSize: 18, fontWeight: 700, color: roiAnual > CDI_RATE ? 'var(--bo-success,#2D8F5C)' : 'var(--bo-text)', fontFamily: 'var(--font-ui)' }}>
+                        <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>ROI Anualizado</div>
+                        <div style={{ fontSize: 18, fontWeight: 700, color: roiAnual > CDI_RATE ? 'var(--success,#2D8F5C)' : 'var(--text-primary)', fontFamily: 'var(--font-ui)' }}>
                             {formatPct(roiAnual)} a.a.
                         </div>
                     </div>
@@ -202,23 +202,23 @@ export function WidgetRoiCalc() {
             {/* Legend */}
             <div style={{ display: 'flex', gap: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: 2, background: 'var(--bo-accent,#C8A44A)' }} />
-                    <span style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}>Ganho de capital</span>
+                    <div style={{ width: 10, height: 10, borderRadius: 2, background: 'var(--imi-gold-500,#C8A44A)' }} />
+                    <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>Ganho de capital</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: 2, background: 'var(--bo-success,#2D8F5C)' }} />
-                    <span style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}>Renda de aluguel</span>
+                    <div style={{ width: 10, height: 10, borderRadius: 2, background: 'var(--success,#2D8F5C)' }} />
+                    <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>Renda de aluguel</span>
                 </div>
             </div>
 
             {/* Breakdown */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {[
-                    { label: 'Ganho Capital', value: formatBRL(ganhoCapital), color: 'var(--bo-accent,#C8A44A)' },
-                    { label: `Renda Aluguel (${anos}a)`, value: formatBRL(rendaTotal), color: 'var(--bo-success,#2D8F5C)' },
+                    { label: 'Ganho Capital', value: formatBRL(ganhoCapital), color: 'var(--imi-gold-500,#C8A44A)' },
+                    { label: `Renda Aluguel (${anos}a)`, value: formatBRL(rendaTotal), color: 'var(--success,#2D8F5C)' },
                 ].map(s => (
-                    <div key={s.label} style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: 8, padding: '8px 12px' }}>
-                        <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{s.label}</div>
+                    <div key={s.label} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '8px 12px' }}>
+                        <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{s.label}</div>
                         <div style={{ fontSize: 14, fontWeight: 700, color: s.color, fontFamily: 'var(--font-ui)' }}>{s.value}</div>
                     </div>
                 ))}
@@ -228,25 +228,25 @@ export function WidgetRoiCalc() {
             <div style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 padding: '10px 14px',
-                background: 'var(--bo-surface)',
-                border: '1px solid var(--bo-border)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-default)',
                 borderRadius: 8,
             }}>
                 <div>
-                    <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>
+                    <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>
                         CDI no mesmo período
                     </div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--bo-text-muted)', fontFamily: 'var(--font-ui)' }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)' }}>
                         {CDI_RATE}% a.a. × {anos} anos
                     </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--bo-text-muted)', fontFamily: 'var(--font-ui)' }}>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)' }}>
                         {formatBRL(cdiEquiv)}
                     </div>
                     <div style={{
                         fontSize: 10, fontWeight: 600, marginTop: 2,
-                        color: ganhoCapital + rendaTotal > cdiEquiv ? 'var(--bo-success,#2D8F5C)' : '#E05A5A',
+                        color: ganhoCapital + rendaTotal > cdiEquiv ? 'var(--success,#2D8F5C)' : '#E05A5A',
                     }}>
                         {ganhoCapital + rendaTotal > cdiEquiv
                             ? `▲ Imóvel supera CDI em ${formatBRL(ganhoCapital + rendaTotal - cdiEquiv)}`
@@ -259,10 +259,10 @@ export function WidgetRoiCalc() {
             {/* CTA */}
             <button style={{
                 background: 'transparent',
-                border: '1px solid var(--bo-accent,#C8A44A)',
+                border: '1px solid var(--imi-gold-500,#C8A44A)',
                 borderRadius: 7,
                 padding: '9px 16px',
-                color: 'var(--bo-accent,#C8A44A)',
+                color: 'var(--imi-gold-500,#C8A44A)',
                 fontSize: 11,
                 fontWeight: 600,
                 fontFamily: 'var(--font-ui)',

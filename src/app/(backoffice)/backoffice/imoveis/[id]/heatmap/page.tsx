@@ -17,9 +17,9 @@ import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-
 
 // Section heatmap segments — in real production these would come from page_views/tracking
 const SECTIONS_DEFAULT = [
-    { key: 'gallery',   label: 'Fotos & Galeria',      icon: ImageIcon,    retention: 92, trend: 'up',   color: 'var(--bo-success)', detail: 'Seção com maior engajamento' },
-    { key: 'pricing',   label: 'Preços & Financeiro',   icon: DollarSign,   retention: 68, trend: 'down', color: 'var(--bo-error)', detail: 'Drop-off crítico — usuários saem ao ver preços' },
-    { key: 'video',     label: 'Vídeo / Tour Virtual',  icon: Video,        retention: 76, trend: 'up',   color: 'var(--bo-warning)', detail: 'Boa retenção após galeria' },
+    { key: 'gallery',   label: 'Fotos & Galeria',      icon: ImageIcon,    retention: 92, trend: 'up',   color: 'var(--success)', detail: 'Seção com maior engajamento' },
+    { key: 'pricing',   label: 'Preços & Financeiro',   icon: DollarSign,   retention: 68, trend: 'down', color: 'var(--error)', detail: 'Drop-off crítico — usuários saem ao ver preços' },
+    { key: 'video',     label: 'Vídeo / Tour Virtual',  icon: Video,        retention: 76, trend: 'up',   color: 'var(--warning)', detail: 'Boa retenção após galeria' },
     { key: 'floorplan', label: 'Plantas & Unidades',    icon: Map,          retention: 88, trend: 'up',   color: '#60A5FA', detail: 'Alta retenção — leads qualificados chegam aqui' },
 ]
 
@@ -313,10 +313,10 @@ export default function ImovelHeatmapPage() {
     if (loading) {
         return (
             <div className="max-w-3xl mx-auto pb-24 space-y-4 animate-pulse">
-                <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 6, width: '40%', opacity: 0.5 }} />
-                <div style={{ height: 160, background: 'var(--bo-card)', borderRadius: 6, opacity: 0.4 }} />
+                <div style={{ height: 36, background: 'var(--bg-surface)', borderRadius: 6, width: '40%', opacity: 0.5 }} />
+                <div style={{ height: 160, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.4 }} />
                 {[1, 2, 3, 4].map(i => (
-                    <div key={i} style={{ height: 56, background: 'var(--bo-card)', borderRadius: 6, opacity: 0.3 }} />
+                    <div key={i} style={{ height: 56, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.3 }} />
                 ))}
             </div>
         )
@@ -421,7 +421,7 @@ export default function ImovelHeatmapPage() {
                             </div>
                             <span
                                 className="px-2.5 py-1 rounded-[6px] text-[10px] font-bold uppercase"
-                                style={{ background: 'rgba(74,222,128,0.15)', color: 'var(--bo-success)', border: '1px solid rgba(74,222,128,0.3)' }}
+                                style={{ background: 'rgba(74,222,128,0.15)', color: 'var(--success)', border: '1px solid rgba(74,222,128,0.3)' }}
                             >
                                 ATIVO
                             </span>
@@ -433,8 +433,8 @@ export default function ImovelHeatmapPage() {
                 <div className="grid grid-cols-3" style={{ borderTop: `1px solid ${T.border}` }}>
                     {[
                         { label: 'Tempo Médio', value: avgDuration > 0 ? `${Math.floor(avgDuration / 60)}:${String(avgDuration % 60).padStart(2, '0')}m` : '—', icon: Clock, color: '#60A5FA' },
-                        { label: 'Bounce Rate', value: '24.8%', icon: TrendingDown, color: 'var(--bo-error)', sub: '-4%' },
-                        { label: 'Velocidade', value: 'Alta', icon: TrendingUp, color: 'var(--bo-success)', sub: 'Top 5%' },
+                        { label: 'Bounce Rate', value: '24.8%', icon: TrendingDown, color: 'var(--error)', sub: '-4%' },
+                        { label: 'Velocidade', value: 'Alta', icon: TrendingUp, color: 'var(--success)', sub: 'Top 5%' },
                     ].map((kpi, i) => (
                         <div
                             key={i}
@@ -467,11 +467,11 @@ export default function ImovelHeatmapPage() {
                     </div>
                     <div className="flex items-center gap-3 text-[10px]">
                         <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full" style={{ background: 'var(--bo-success)' }} />
+                            <div className="w-2 h-2 rounded-full" style={{ background: 'var(--success)' }} />
                             <span style={{ color: T.textMuted }}>Retenção</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full" style={{ background: 'var(--bo-error)' }} />
+                            <div className="w-2 h-2 rounded-full" style={{ background: 'var(--error)' }} />
                             <span style={{ color: T.textMuted }}>Drop-off</span>
                         </div>
                     </div>
@@ -499,7 +499,7 @@ export default function ImovelHeatmapPage() {
                                         className="text-[10px] font-bold px-2 py-0.5 rounded-[6px] flex-shrink-0 ml-2"
                                         style={{
                                             background: isDropOff ? 'rgba(248,113,113,0.12)' : 'rgba(74,222,128,0.12)',
-                                            color: isDropOff ? 'var(--bo-error)' : 'var(--bo-success)',
+                                            color: isDropOff ? 'var(--error)' : 'var(--success)',
                                         }}
                                     >
                                         {section.retention}% {isDropOff ? 'Drop-off' : 'Retenção'}
@@ -523,10 +523,10 @@ export default function ImovelHeatmapPage() {
                 <div className="mt-5 pt-4 flex items-start gap-3" style={{ borderTop: `1px solid ${T.border}` }}>
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.2)' }}>
-                        <Zap size={14} style={{ color: 'var(--bo-warning)' }} />
+                        <Zap size={14} style={{ color: 'var(--warning)' }} />
                     </div>
                     <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--bo-warning)' }}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--warning)' }}>
                             Insight IA
                         </p>
                         <p className="text-xs leading-relaxed" style={{ color: T.textMuted }}>
@@ -553,7 +553,7 @@ export default function ImovelHeatmapPage() {
                     </div>
                     <span
                         className="text-sm font-bold px-3 py-1 rounded-[6px]"
-                        style={{ background: 'rgba(74,222,128,0.12)', color: 'var(--bo-success)' }}
+                        style={{ background: 'rgba(74,222,128,0.12)', color: 'var(--success)' }}
                     >
                         +{totalTrend} vis.
                     </span>

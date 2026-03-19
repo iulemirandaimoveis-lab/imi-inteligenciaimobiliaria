@@ -30,8 +30,8 @@ interface TeamMember {
 const ROLE_CFG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
     admin:    { label: 'Administrador', color: 'var(--text-secondary)', bg: 'rgba(168,158,196,0.12)', icon: Shield },
     manager:  { label: 'Gerente',       color: 'var(--info)', bg: 'rgba(123,158,196,0.12)', icon: Award },
-    agent:    { label: 'Corretor',      color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Users },
-    corretor: { label: 'Corretor',      color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Users },
+    agent:    { label: 'Corretor',      color: 'var(--success)', bg: 'rgba(107,184,123,0.12)', icon: Users },
+    corretor: { label: 'Corretor',      color: 'var(--success)', bg: 'rgba(107,184,123,0.12)', icon: Users },
     viewer:   { label: 'Visualizador',  color: '#8B93A7', bg: 'rgba(139,147,167,0.12)', icon: Users },
 }
 
@@ -186,7 +186,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
 
     const KPIS = [
         { label: 'Membros', value: team.length, icon: Users, color: 'var(--info)' },
-        { label: `Ativos`, value: team.filter(m => m.status === 'active').length, icon: CheckCircle, color: 'var(--bo-success)' },
+        { label: `Ativos`, value: team.filter(m => m.status === 'active').length, icon: CheckCircle, color: 'var(--success)' },
         { label: 'Leads Total', value: totalStats.leads, icon: TrendingUp, color: 'var(--warning)' },
     ]
 
@@ -341,7 +341,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                 {/* Avatar */}
                                 <div
                                     className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 uppercase"
-                                    style={{ background: 'var(--bo-elevated)', color: 'var(--bo-text-muted)' }}>
+                                    style={{ background: 'var(--bg-elevated)', color: 'var(--text-secondary)' }}>
                                     {member.name
                                         ? member.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)
                                         : '??'}
@@ -395,7 +395,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                     <button
                                         onClick={() => openEdit(member)}
                                         disabled={isBeingDeleted}
-                                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bg-hover)]"
                                         style={{ color: T.textDim }}
                                         title="Editar membro">
                                         <Edit size={14} />
@@ -403,7 +403,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                     <button
                                         onClick={() => setMenuOpen(menuOpen === member.id ? null : member.id)}
                                         disabled={isBeingDeleted}
-                                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bg-hover)]"
                                         style={{ color: T.textDim }}>
                                         {isBeingDeleted
                                             ? <Loader2 size={14} className="animate-spin" />
@@ -422,7 +422,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, minWidth: '150px' }}>
                                                 <button
                                                     onClick={() => openEdit(member)}
-                                                    className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-left transition-colors hover:bg-[var(--bo-hover)]">
+                                                    className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-left transition-colors hover:bg-[var(--bg-hover)]">
                                                     <Edit size={13} style={{ color: T.textDim }} />
                                                     <span style={{ color: T.text }}>Editar</span>
                                                 </button>
@@ -486,7 +486,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                         </div>
                                         <button
                                             onClick={closeModal}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bg-hover)]"
                                             style={{ color: T.textDim }}>
                                             <X size={16} />
                                         </button>
@@ -576,7 +576,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                             disabled={saving}
                                             className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all"
                                             style={{
-                                                background: saving ? 'var(--bo-elevated)' : 'var(--bo-accent)',
+                                                background: saving ? 'var(--bg-elevated)' : 'var(--imi-gold-500)',
                                                 boxShadow: saving ? 'none' : '0 2px 8px rgba(30,58,95,0.4)',
                                             }}>
                                             {saving && <Loader2 size={15} className="animate-spin" />}

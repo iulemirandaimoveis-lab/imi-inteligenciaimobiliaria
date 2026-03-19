@@ -43,33 +43,33 @@ export function AIInsightsModal({ property, onClose }: { property: IMIProperty; 
   const scoreColor = getScoreColor(insight.investmentScore)
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, backdropFilter: 'blur(4px)' }} onClick={onClose}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.3)', borderRadius: 8, width: '100%', maxWidth: 560, overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(184,148,58,0.3)', borderRadius: 8, width: '100%', maxWidth: 560, overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(184,148,58,0.12)', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(184,148,58,0.04)' }}>
           <Sparkles size={16} style={{ color: 'var(--imi-gold-500)' }} />
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Análise IA — {property.name}</p>
-            <p style={{ fontSize: 11, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{property.neighborhood ?? ''} · {fmt(property.price)}</p>
+            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Análise IA — {property.name}</p>
+            <p style={{ fontSize: 11, color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{property.neighborhood ?? ''} · {fmt(property.price)}</p>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}><X size={16} style={{ color: 'var(--bo-text-dim, #5C6B7D)' }} /></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}><X size={16} style={{ color: 'var(--text-tertiary, #5C6B7D)' }} /></button>
         </div>
         <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
           {insight.loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '32px 0' }}>
               <div style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid rgba(184,148,58,0.2)', borderTopColor: 'var(--imi-gold-500)', animation: 'ai-spin 0.8s linear infinite' }} />
-              <p style={{ fontSize: 12, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Analisando com IA…</p>
+              <p style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Analisando com IA…</p>
             </div>
           ) : (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 16px', borderRadius: 6, background: 'rgba(184,148,58,0.05)', border: '1px solid rgba(184,148,58,0.15)' }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 32, fontWeight: 700, color: scoreColor, fontFamily: 'var(--font-dm-mono, monospace)', lineHeight: 1 }}>{insight.investmentScore}</div>
-                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 4 }}>IMI Score</div>
+                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 4 }}>IMI Score</div>
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ height: 6, borderRadius: 6, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
                     <div style={{ height: '100%', borderRadius: 6, width: `${insight.investmentScore}%`, background: `linear-gradient(90deg, ${scoreColor}80, ${scoreColor})`, transition: 'width 1s ease' }} />
                   </div>
-                  <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 6 }}>Potencial de investimento {insight.investmentScore >= 80 ? 'excelente' : insight.investmentScore >= 65 ? 'bom' : 'moderado'}</p>
+                  <p style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 6 }}>Potencial de investimento {insight.investmentScore >= 80 ? 'excelente' : insight.investmentScore >= 65 ? 'bom' : 'moderado'}</p>
                 </div>
               </div>
               {[
@@ -79,7 +79,7 @@ export function AIInsightsModal({ property, onClose }: { property: IMIProperty; 
               ].map(item => (
                 <div key={item.label} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <div style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: item.color, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>{item.label}</div>
-                  <p style={{ fontSize: 12, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', lineHeight: 1.6 }}>{item.value}</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', lineHeight: 1.6 }}>{item.value}</p>
                 </div>
               ))}
               <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
@@ -119,12 +119,12 @@ export function MarketPanel({ properties, activeNeighborhoods }: { properties: I
     { label: 'Absorção de Mercado', value: `${avgAbsorption}%`, sub: avgAbsorption >= 80 ? 'Alta demanda' : avgAbsorption >= 65 ? 'Demanda moderada' : 'Baixa demanda', color: avgAbsorption >= 80 ? 'var(--success)' : avgAbsorption >= 65 ? '#D4913A' : 'var(--error)' },
   ]
   return (
-    <div style={{ display: 'flex', gap: 10, padding: '14px 28px', background: 'var(--bo-card, #162040)', borderBottom: '1px solid rgba(184,148,58,0.10)', overflowX: 'auto' }}>
+    <div style={{ display: 'flex', gap: 10, padding: '14px 28px', background: 'var(--bg-surface, #162040)', borderBottom: '1px solid rgba(184,148,58,0.10)', overflowX: 'auto' }}>
       {stats.map(s => (
         <div key={s.label} style={{ flex: '0 0 auto', minWidth: 140, background: 'rgba(184,148,58,0.04)', border: '1px solid rgba(184,148,58,0.12)', borderRadius: 6, padding: '12px 14px' }}>
-          <div style={{ fontSize: 8.5, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, marginBottom: 6 }}>{s.label}</div>
+          <div style={{ fontSize: 8.5, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, marginBottom: 6 }}>{s.label}</div>
           <div style={{ fontSize: 20, fontFamily: 'var(--font-dm-mono, monospace)', color: s.color, lineHeight: 1, marginBottom: 4 }}>{s.value}</div>
-          <div style={{ fontSize: 10, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{s.sub}</div>
+          <div style={{ fontSize: 10, color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{s.sub}</div>
         </div>
       ))}
     </div>
@@ -140,34 +140,34 @@ export function FiltersPanel({ filters, onChange, properties }: { filters: Activ
   const activeCount = [filters.neighborhoods.length > 0, filters.minPrice != null || filters.maxPrice != null, filters.bedrooms != null, filters.types.length > 0, filters.statuses.length > 0, filters.destaque].filter(Boolean).length
 
   return (
-    <div style={{ padding: '12px 28px', borderBottom: '1px solid rgba(184,148,58,0.08)', background: 'var(--bo-bg, #0B1120)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ padding: '12px 28px', borderBottom: '1px solid rgba(184,148,58,0.08)', background: 'var(--bg-base, #0B1120)', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <div style={{ position: 'relative', flex: 1, maxWidth: 320 }}>
-          <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--bo-text-dim)' }} />
-          <input value={filters.search} onChange={e => onChange({ ...filters, search: e.target.value })} placeholder="Buscar imóvel, bairro, endereço…" style={{ width: '100%', paddingLeft: 32, paddingRight: 10, height: 34, borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--bo-text, #EBE7E0)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', outline: 'none' }} />
+          <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
+          <input value={filters.search} onChange={e => onChange({ ...filters, search: e.target.value })} placeholder="Buscar imóvel, bairro, endereço…" style={{ width: '100%', paddingLeft: 32, paddingRight: 10, height: 34, borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--text-primary, #EBE7E0)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', outline: 'none' }} />
         </div>
         {activeCount > 0 && <button onClick={() => onChange(DEFAULT_FILTERS)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'rgba(224,107,107,0.1)', border: '1px solid rgba(224,107,107,0.25)', color: 'var(--error)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><X size={11} /> Limpar ({activeCount})</button>}
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', alignSelf: 'center', marginRight: 2 }}>Bairro:</span>
-          {allNeighborhoods.slice(0, 8).map(n => <button key={n} onClick={() => onChange({ ...filters, neighborhoods: toggle(filters.neighborhoods, n) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.neighborhoods.includes(n) ? 'rgba(184,148,58,0.18)' : 'rgba(255,255,255,0.04)', border: filters.neighborhoods.includes(n) ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.neighborhoods.includes(n) ? 'var(--imi-gold-500)' : 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{n}</button>)}
+          <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', alignSelf: 'center', marginRight: 2 }}>Bairro:</span>
+          {allNeighborhoods.slice(0, 8).map(n => <button key={n} onClick={() => onChange({ ...filters, neighborhoods: toggle(filters.neighborhoods, n) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.neighborhoods.includes(n) ? 'rgba(184,148,58,0.18)' : 'rgba(255,255,255,0.04)', border: filters.neighborhoods.includes(n) ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.neighborhoods.includes(n) ? 'var(--imi-gold-500)' : 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{n}</button>)}
         </div>
         <div style={{ width: 1, height: 20, background: 'rgba(184,148,58,0.12)' }} />
         <div style={{ display: 'flex', gap: 4 }}>
-          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', alignSelf: 'center', marginRight: 2 }}>Tipo:</span>
-          {types.map(t => <button key={t} onClick={() => onChange({ ...filters, types: toggle(filters.types, t.toLowerCase()) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.types.includes(t.toLowerCase()) ? 'rgba(91,155,213,0.15)' : 'rgba(255,255,255,0.04)', border: filters.types.includes(t.toLowerCase()) ? '1px solid rgba(91,155,213,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.types.includes(t.toLowerCase()) ? '#5B9BD5' : 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{t}</button>)}
+          <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', alignSelf: 'center', marginRight: 2 }}>Tipo:</span>
+          {types.map(t => <button key={t} onClick={() => onChange({ ...filters, types: toggle(filters.types, t.toLowerCase()) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.types.includes(t.toLowerCase()) ? 'rgba(91,155,213,0.15)' : 'rgba(255,255,255,0.04)', border: filters.types.includes(t.toLowerCase()) ? '1px solid rgba(91,155,213,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.types.includes(t.toLowerCase()) ? '#5B9BD5' : 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{t}</button>)}
         </div>
         <div style={{ width: 1, height: 20, background: 'rgba(184,148,58,0.12)' }} />
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Quartos:</span>
-          {[1, 2, 3, 4, 5].map(b => <button key={b} onClick={() => onChange({ ...filters, bedrooms: filters.bedrooms === b ? null : b })} style={{ width: 30, height: 26, borderRadius: 6, fontSize: 12, background: filters.bedrooms === b ? 'rgba(184,148,58,0.18)' : 'rgba(255,255,255,0.04)', border: filters.bedrooms === b ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.bedrooms === b ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)', fontFamily: 'var(--font-dm-mono, monospace)', cursor: 'pointer' }}>{b === 5 ? '5+' : b}</button>)}
+          <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Quartos:</span>
+          {[1, 2, 3, 4, 5].map(b => <button key={b} onClick={() => onChange({ ...filters, bedrooms: filters.bedrooms === b ? null : b })} style={{ width: 30, height: 26, borderRadius: 6, fontSize: 12, background: filters.bedrooms === b ? 'rgba(184,148,58,0.18)' : 'rgba(255,255,255,0.04)', border: filters.bedrooms === b ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.bedrooms === b ? 'var(--imi-gold-500)' : 'var(--text-secondary)', fontFamily: 'var(--font-dm-mono, monospace)', cursor: 'pointer' }}>{b === 5 ? '5+' : b}</button>)}
         </div>
         <div style={{ width: 1, height: 20, background: 'rgba(184,148,58,0.12)' }} />
         <div style={{ display: 'flex', gap: 4 }}>
-          {statusOptions.map(s => <button key={s.value} onClick={() => onChange({ ...filters, statuses: toggle(filters.statuses, s.value) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.statuses.includes(s.value) ? `${STATUS_COLORS[s.value]}18` : 'rgba(255,255,255,0.04)', border: filters.statuses.includes(s.value) ? `1px solid ${STATUS_COLORS[s.value]}40` : '1px solid rgba(255,255,255,0.08)', color: filters.statuses.includes(s.value) ? STATUS_COLORS[s.value] : 'var(--bo-text-muted)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{s.label}</button>)}
+          {statusOptions.map(s => <button key={s.value} onClick={() => onChange({ ...filters, statuses: toggle(filters.statuses, s.value) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.statuses.includes(s.value) ? `${STATUS_COLORS[s.value]}18` : 'rgba(255,255,255,0.04)', border: filters.statuses.includes(s.value) ? `1px solid ${STATUS_COLORS[s.value]}40` : '1px solid rgba(255,255,255,0.08)', color: filters.statuses.includes(s.value) ? STATUS_COLORS[s.value] : 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{s.label}</button>)}
         </div>
-        <button onClick={() => onChange({ ...filters, destaque: !filters.destaque })} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 20, fontSize: 11, background: filters.destaque ? 'rgba(184,148,58,0.18)' : 'rgba(255,255,255,0.04)', border: filters.destaque ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.destaque ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>
+        <button onClick={() => onChange({ ...filters, destaque: !filters.destaque })} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 20, fontSize: 11, background: filters.destaque ? 'rgba(184,148,58,0.18)' : 'rgba(255,255,255,0.04)', border: filters.destaque ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.destaque ? 'var(--imi-gold-500)' : 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>
           <Star size={11} fill={filters.destaque ? 'currentColor' : 'none'} /> Destaques
         </button>
       </div>
@@ -191,8 +191,8 @@ export function PropertyCard({ property, view, onAIClick, selected, onSelect }: 
             {property.cover_image_url ? <img src={property.cover_image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Building2 size={18} style={{ color: 'rgba(184,148,58,0.3)' }} />}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{property.name}</p>
-            <p style={{ fontSize: 11, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{[property.neighborhood, property.type].filter(Boolean).join(' · ')}</p>
+            <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{property.name}</p>
+            <p style={{ fontSize: 11, color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{[property.neighborhood, property.type].filter(Boolean).join(' · ')}</p>
           </div>
           <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: 12, color: 'var(--imi-gold-500)', flexShrink: 0 }}>{fmt(property.price)}</span>
           <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: 13, fontWeight: 700, color: scColor, flexShrink: 0, width: 32, textAlign: 'center' }}>{sc}</span>
@@ -204,7 +204,7 @@ export function PropertyCard({ property, view, onAIClick, selected, onSelect }: 
   }
 
   return (
-    <div style={{ background: 'var(--bo-card, #162040)', border: selected ? '1px solid rgba(184,148,58,0.5)' : '1px solid rgba(184,148,58,0.12)', borderRadius: 6, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'border-color 0.15s, box-shadow 0.15s', boxShadow: selected ? '0 0 0 2px rgba(184,148,58,0.15)' : 'none' }}>
+    <div style={{ background: 'var(--bg-surface, #162040)', border: selected ? '1px solid rgba(184,148,58,0.5)' : '1px solid rgba(184,148,58,0.12)', borderRadius: 6, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'border-color 0.15s, box-shadow 0.15s', boxShadow: selected ? '0 0 0 2px rgba(184,148,58,0.15)' : 'none' }}>
       <div style={{ position: 'relative', height: 140, background: 'rgba(184,148,58,0.06)', flexShrink: 0 }}>
         {property.cover_image_url ? <img src={property.cover_image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><Building2 size={36} style={{ color: 'rgba(184,148,58,0.2)' }} /></div>}
         <button onClick={() => onSelect(property.id)} style={{ position: 'absolute', top: 8, left: 8, width: 22, height: 22, borderRadius: 6, background: selected ? 'var(--imi-gold-500)' : 'rgba(0,0,0,0.5)', border: selected ? 'none' : '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>{selected && <Check size={12} color="#0B1120" />}</button>
@@ -213,19 +213,19 @@ export function PropertyCard({ property, view, onAIClick, selected, onSelect }: 
       </div>
       <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div>
-          <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{property.name}</p>
-          <p style={{ fontSize: 11, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 2 }}>{property.neighborhood ?? '—'} · {property.type ?? '—'}</p>
+          <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{property.name}</p>
+          <p style={{ fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 2 }}>{property.neighborhood ?? '—'} · {property.type ?? '—'}</p>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>
             <div style={{ fontSize: 16, fontFamily: 'var(--font-dm-mono)', color: 'var(--imi-gold-500)', fontWeight: 400 }}>{fmt(property.price)}</div>
             {property.yield_est && <div style={{ fontSize: 10, color: 'var(--success)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 2 }}>Yield: {property.yield_est.toFixed(1)}% a.a.</div>}
           </div>
-          {property.area && <div style={{ fontSize: 11, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{property.area}m²</div>}
+          {property.area && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{property.area}m²</div>}
         </div>
         <div style={{ display: 'flex', gap: 6, marginTop: 'auto', paddingTop: 4 }}>
           <button onClick={() => onAIClick(property)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '6px 8px', borderRadius: 6, background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--imi-gold-500)', fontSize: 10, fontWeight: 700, letterSpacing: 1, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Sparkles size={10} /> Ver análise IA</button>
-          <Link href={`/backoffice/imoveis/${property.id}`}><button style={{ padding: '6px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.15)', color: 'var(--bo-text-muted)', fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><ChevronRight size={12} /></button></Link>
+          <Link href={`/backoffice/imoveis/${property.id}`}><button style={{ padding: '6px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.15)', color: 'var(--text-secondary)', fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><ChevronRight size={12} /></button></Link>
         </div>
       </div>
     </div>
@@ -271,35 +271,35 @@ export function SearchTab({ properties, loading }: { properties: IMIProperty[]; 
       <FiltersPanel filters={filters} onChange={setFilters} properties={properties} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 28px', borderBottom: '1px solid rgba(184,148,58,0.08)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: 'var(--bo-text-muted)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{loading ? 'Carregando…' : `${filtered.length} imóveis`}{selected.length > 0 && ` · ${selected.length} selecionados`}</span>
-          {selected.length > 0 && <button onClick={() => setSelected([])} style={{ fontSize: 10, color: 'var(--bo-text-dim)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-outfit, sans-serif)' }}>limpar seleção</button>}
+          <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{loading ? 'Carregando…' : `${filtered.length} imóveis`}{selected.length > 0 && ` · ${selected.length} selecionados`}</span>
+          {selected.length > 0 && <button onClick={() => setSelected([])} style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-outfit, sans-serif)' }}>limpar seleção</button>}
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
-          <button onClick={() => showToast('Visualização em mapa — Em breve')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--bo-text-muted)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Map size={12} /> Mapa</button>
+          <button onClick={() => showToast('Visualização em mapa — Em breve')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Map size={12} /> Mapa</button>
           <div style={{ display: 'flex', border: '1px solid rgba(184,148,58,0.2)', borderRadius: 6, overflow: 'hidden' }}>
-            {(['grid', 'list'] as ViewMode[]).map(v => <button key={v} onClick={() => setView(v)} style={{ padding: '5px 10px', background: view === v ? 'rgba(184,148,58,0.12)' : 'transparent', border: 'none', cursor: 'pointer', color: view === v ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }}>{v === 'grid' ? '⊞' : '☰'}</button>)}
+            {(['grid', 'list'] as ViewMode[]).map(v => <button key={v} onClick={() => setView(v)} style={{ padding: '5px 10px', background: view === v ? 'rgba(184,148,58,0.12)' : 'transparent', border: 'none', cursor: 'pointer', color: view === v ? 'var(--imi-gold-500)' : 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }}>{v === 'grid' ? '⊞' : '☰'}</button>)}
           </div>
-          <button onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--bo-text-muted)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Download size={12} /> Exportar CSV</button>
-          <button onClick={handleShareSelection} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--bo-text-muted)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Share2 size={12} /> Compartilhar</button>
+          <button onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Download size={12} /> Exportar CSV</button>
+          <button onClick={handleShareSelection} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Share2 size={12} /> Compartilhar</button>
           <button onClick={handleGerarConteudo} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--imi-gold-500))', border: 'none', color: '#0B1120', fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Wand2 size={12} /> Gerar conteúdo</button>
         </div>
       </div>
       {loading ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', gap: 12 }}>
           <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid rgba(184,148,58,0.2)', borderTopColor: 'var(--imi-gold-500)', animation: 'spin 0.8s linear infinite' }} />
-          <span style={{ color: 'var(--bo-text-muted)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)' }}>Carregando imóveis…</span>
+          <span style={{ color: 'var(--text-secondary)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)' }}>Carregando imóveis…</span>
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center' }}>
           <Building2 size={40} style={{ color: 'rgba(184,148,58,0.2)' }} />
-          <p style={{ fontSize: 16, color: 'var(--bo-text)', fontFamily: 'var(--font-playfair, serif)' }}>Nenhum imóvel encontrado</p>
-          <p style={{ fontSize: 12, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Ajuste os filtros para ver mais resultados.</p>
+          <p style={{ fontSize: 16, color: 'var(--text-primary)', fontFamily: 'var(--font-playfair, serif)' }}>Nenhum imóvel encontrado</p>
+          <p style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Ajuste os filtros para ver mais resultados.</p>
         </div>
       ) : view === 'list' ? (
-        <div style={{ background: 'var(--bo-card, #162040)', flex: 1 }}>
+        <div style={{ background: 'var(--bg-surface, #162040)', flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '8px 16px', borderBottom: '1px solid rgba(184,148,58,0.08)', background: 'rgba(184,148,58,0.03)' }}>
             <div style={{ width: 18 }} /><div style={{ width: 48 }} />
-            {['Imóvel', 'Preço', 'Score', 'Status'].map((h, i) => <div key={h} style={{ flex: i === 0 ? 1 : undefined, width: i === 1 ? 80 : i === 2 ? 32 : i === 3 ? 76 : undefined, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', textAlign: i === 2 ? 'center' : undefined }}>{h}</div>)}
+            {['Imóvel', 'Preço', 'Score', 'Status'].map((h, i) => <div key={h} style={{ flex: i === 0 ? 1 : undefined, width: i === 1 ? 80 : i === 2 ? 32 : i === 3 ? 76 : undefined, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', textAlign: i === 2 ? 'center' : undefined }}>{h}</div>)}
             <div style={{ width: 100 }} />
           </div>
           {filtered.map(p => <PropertyCard key={p.id} property={p} view="list" onAIClick={setAiProperty} selected={selected.includes(p.id)} onSelect={toggleSelect} />)}
@@ -310,7 +310,7 @@ export function SearchTab({ properties, loading }: { properties: IMIProperty[]; 
         </div>
       )}
       {aiProperty && <AIInsightsModal property={aiProperty} onClose={() => setAiProperty(null)} />}
-      {toastMsg && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2000, background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.3)', borderRadius: 6, padding: '10px 16px', fontSize: 12, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>{toastMsg}</div>}
+      {toastMsg && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2000, background: 'var(--bg-surface, #162040)', border: '1px solid rgba(184,148,58,0.3)', borderRadius: 6, padding: '10px 16px', fontSize: 12, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>{toastMsg}</div>}
     </>
   )
 }
@@ -327,18 +327,18 @@ export function RankingTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{neighborhoods.length} bairros · dados de benchmark IMI</p>
+        <p style={{ fontSize: '11px', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{neighborhoods.length} bairros · dados de benchmark IMI</p>
         <div style={{ display: 'flex', gap: 6 }}><TabBtn active={sortBy === 'yield'} onClick={() => setSortBy('yield')}>Yield</TabBtn><TabBtn active={sortBy === 'price'} onClick={() => setSortBy('price')}>Preço/m²</TabBtn></div>
       </div>
-      <div style={{ background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, overflow: 'hidden' }}>
+      <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, overflow: 'hidden' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr', padding: '10px 20px', background: 'rgba(184,148,58,0.04)', borderBottom: '1px solid rgba(184,148,58,0.10)', gap: 12 }}>
-          {['#', 'Bairro', 'Preço Médio/m²', 'Yield Est.', 'Tendência 12m', 'Distribuição'].map(h => <span key={h} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{h}</span>)}
+          {['#', 'Bairro', 'Preço Médio/m²', 'Yield Est.', 'Tendência 12m', 'Distribuição'].map(h => <span key={h} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{h}</span>)}
         </div>
         {sorted.map((d, i) => (
           <div key={d.name} style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr', padding: '12px 20px', borderBottom: i < sorted.length - 1 ? '1px solid rgba(184,148,58,0.05)' : 'none', gap: 12, alignItems: 'center' }}>
-            <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: i === 0 ? 'var(--imi-gold-500)' : i === 1 ? 'var(--text-tertiary)' : i === 2 ? '#D4913A' : 'var(--bo-text-dim, #5C6B7D)', fontWeight: i < 3 ? 600 : 400 }}>{i + 1}</span>
-            <span style={{ fontSize: '12px', color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 500 }}>{d.name}</span>
-            <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', color: 'var(--bo-accent, var(--imi-gold-500))', fontWeight: 400 }}>R$ {d.avgSqm.toLocaleString('pt-BR')}/m²</span>
+            <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: i === 0 ? 'var(--imi-gold-500)' : i === 1 ? 'var(--text-tertiary)' : i === 2 ? '#D4913A' : 'var(--text-tertiary, #5C6B7D)', fontWeight: i < 3 ? 600 : 400 }}>{i + 1}</span>
+            <span style={{ fontSize: '12px', color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 500 }}>{d.name}</span>
+            <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', color: 'var(--imi-gold-500)', fontWeight: 400 }}>R$ {d.avgSqm.toLocaleString('pt-BR')}/m²</span>
             <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', color: 'var(--success)' }}>{d.yield.toFixed(1)}% a.a.</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               {d.trend >= 0 ? <ChevronUp size={12} style={{ color: 'var(--success)', flexShrink: 0 }} /> : <ChevronDown size={12} style={{ color: 'var(--error)', flexShrink: 0 }} />}
@@ -387,7 +387,7 @@ export function AnaliseTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', gap: 12 }}>
-        <StatCard label="Preço Médio Mercado" value={`R$ ${avgPrice.toLocaleString('pt-BR')}/m²`} sub="média ponderada dos bairros" color="var(--bo-accent, var(--imi-gold-500))" />
+        <StatCard label="Preço Médio Mercado" value={`R$ ${avgPrice.toLocaleString('pt-BR')}/m²`} sub="média ponderada dos bairros" color="var(--imi-gold-500)" />
         <StatCard label="Yield Médio" value={`${avgYield}%`} sub="estimativa de retorno anual" color="#5DB887" />
         <StatCard label="Melhor Yield" value={bestYieldNeigh[0]} sub={`${bestYieldNeigh[1]}% a.a. estimado`} color="#5B9BD5" />
         <StatCard label="Melhor Preço/m²" value={bestPriceNeigh[0]} sub={`R$ ${bestPriceNeigh[1].toLocaleString('pt-BR')}/m²`} color="#D4913A" />
@@ -400,10 +400,10 @@ export function AnaliseTab() {
             const trend12m = NEIGHBORHOOD_TREND_12M[n] ?? 0
             const curPrice = NEIGHBORHOOD_AVG_SQM[n] ?? 0
             return (
-              <div key={n} style={{ flex: 1, background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, padding: '20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div key={n} style={{ flex: 1, background: 'var(--bg-surface, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, padding: '20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', marginBottom: 2 }}>{n}</p>
+                    <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', marginBottom: 2 }}>{n}</p>
                     <p style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: chartColors[i] }}>R$ {curPrice.toLocaleString('pt-BR')}/m²</p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 3, padding: '4px 8px', borderRadius: 6, background: trend12m >= 0 ? 'rgba(93,184,135,0.12)' : 'rgba(224,107,107,0.12)', border: `1px solid ${trend12m >= 0 ? 'rgba(93,184,135,0.3)' : 'rgba(224,107,107,0.3)'}` }}>
@@ -419,15 +419,15 @@ export function AnaliseTab() {
       </div>
       <div>
         <div style={{ marginBottom: 14 }}><Eyebrow>Heatmap de Indicadores por Bairro</Eyebrow></div>
-        <div style={{ background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, overflow: 'hidden' }}>
           <div style={{ display: 'grid', gridTemplateColumns: `160px repeat(${metrics.length}, 1fr)`, padding: '10px 16px', background: 'rgba(184,148,58,0.04)', borderBottom: '1px solid rgba(184,148,58,0.10)', gap: 8 }}>
-            <span style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Bairro</span>
-            {metrics.map(m => <span key={m} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{m}</span>)}
+            <span style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Bairro</span>
+            {metrics.map(m => <span key={m} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{m}</span>)}
           </div>
           {heatmapNeighs.map((n, ri) => (
             <div key={n} style={{ display: 'grid', gridTemplateColumns: `160px repeat(${metrics.length}, 1fr)`, padding: '10px 16px', borderBottom: ri < heatmapNeighs.length - 1 ? '1px solid rgba(184,148,58,0.05)' : 'none', gap: 8, alignItems: 'center' }}>
-              <span style={{ fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n}</span>
-              {metrics.map((m, mi) => { const val = getMetricValue(n, m); const { min, max } = metricRanges[mi]; const display = m === 'Preço/m²' ? `R$${(val / 1000).toFixed(1)}k` : m === 'Yield' ? `${val.toFixed(1)}%` : m === 'Tendência' ? `${val >= 0 ? '+' : ''}${val}%` : `${val}`; return (<div key={m} style={{ padding: '4px 8px', borderRadius: 6, background: heatColor(val, min, max), textAlign: 'center' }}><span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: m === 'Tendência' && val < 0 ? 'var(--error)' : 'var(--bo-text, #EBE7E0)' }}>{display}</span></div>) })}
+              <span style={{ fontSize: '11px', color: 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n}</span>
+              {metrics.map((m, mi) => { const val = getMetricValue(n, m); const { min, max } = metricRanges[mi]; const display = m === 'Preço/m²' ? `R$${(val / 1000).toFixed(1)}k` : m === 'Yield' ? `${val.toFixed(1)}%` : m === 'Tendência' ? `${val >= 0 ? '+' : ''}${val}%` : `${val}`; return (<div key={m} style={{ padding: '4px 8px', borderRadius: 6, background: heatColor(val, min, max), textAlign: 'center' }}><span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: m === 'Tendência' && val < 0 ? 'var(--error)' : 'var(--text-primary, #EBE7E0)' }}>{display}</span></div>) })}
             </div>
           ))}
         </div>
@@ -444,7 +444,7 @@ export function OportunidadesTab({ properties }: { properties: IMIProperty[] }) 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center' }}>
         <div style={{ width: 64, height: 64, borderRadius: 6, background: 'rgba(184,148,58,0.06)', border: '1px solid rgba(184,148,58,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Building2 size={28} style={{ color: 'rgba(184,148,58,0.35)' }} /></div>
-        <p style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '18px', color: 'var(--bo-text, #EBE7E0)' }}>Sem imóveis cadastrados</p>
+        <p style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '18px', color: 'var(--text-primary, #EBE7E0)' }}>Sem imóveis cadastrados</p>
         <Link href="/backoffice/imoveis/novo"><button style={{ padding: '8px 16px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--imi-gold-500))', border: 'none', color: '#0B1120', fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Cadastrar Imóvel</button></Link>
       </div>
     )
@@ -458,14 +458,14 @@ export function OportunidadesTab({ properties }: { properties: IMIProperty[] }) 
     const sc = p.imi_score ?? 0; const scColor = getScoreColor(sc); const stColor = STATUS_COLORS[p.status] ?? 'var(--text-tertiary)'
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderBottom: '1px solid rgba(184,148,58,0.05)' }}>
-        <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', width: 24, flexShrink: 0, textAlign: 'center', color: rank <= 3 ? 'var(--imi-gold-500)' : 'var(--bo-text-dim, #5C6B7D)', fontWeight: rank <= 3 ? 600 : 400 }}>{rank}</span>
+        <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', width: 24, flexShrink: 0, textAlign: 'center', color: rank <= 3 ? 'var(--imi-gold-500)' : 'var(--text-tertiary, #5C6B7D)', fontWeight: rank <= 3 ? 600 : 400 }}>{rank}</span>
         <Link href={`/backoffice/imoveis/${p.id}`} style={{ flex: 1, minWidth: 0 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: '11px', fontWeight: 500, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
-            <p style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{[p.neighborhood, p.city].filter(Boolean).join(', ')}</p>
+            <p style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
+            <p style={{ fontSize: '11px', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{[p.neighborhood, p.city].filter(Boolean).join(', ')}</p>
           </div>
         </Link>
-        <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)', flexShrink: 0 }}>{fmt(p.price)}</span>
+        <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--text-secondary, #9FAAB8)', flexShrink: 0 }}>{fmt(p.price)}</span>
         {metric === 'score' && <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', fontWeight: 600, color: scColor, flexShrink: 0, width: 40, textAlign: 'right' }}>{sc}</span>}
         {metric === 'delta' && <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--success)', flexShrink: 0, width: 52, textAlign: 'right' }}>+{(p.market_delta_pct ?? 0).toFixed(1)}%</span>}
         {metric === 'yield' && <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--success)', flexShrink: 0, width: 56, textAlign: 'right' }}>{(p.yield_est ?? 0).toFixed(2)}%</span>}
@@ -477,11 +477,11 @@ export function OportunidadesTab({ properties }: { properties: IMIProperty[] }) 
 
   function OppSection({ title, eyebrow, items, metric, emptyMsg }: { title: string; eyebrow: string; items: IMIProperty[]; metric: 'score' | 'delta' | 'yield'; emptyMsg: string }) {
     return (
-      <div style={{ background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, overflow: 'hidden' }}>
+      <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, overflow: 'hidden' }}>
         <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(184,148,58,0.10)', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Eyebrow>{eyebrow}</Eyebrow><span style={{ width: 1, height: 12, background: 'rgba(184,148,58,0.2)', display: 'inline-block' }} /><span style={{ fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{title}</span>
+          <Eyebrow>{eyebrow}</Eyebrow><span style={{ width: 1, height: 12, background: 'rgba(184,148,58,0.2)', display: 'inline-block' }} /><span style={{ fontSize: '11px', color: 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{title}</span>
         </div>
-        {items.length === 0 ? <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontSize: '11px' }}>{emptyMsg}</div> : items.map((p, i) => <PropertyRow key={p.id} p={p} rank={i + 1} metric={metric} />)}
+        {items.length === 0 ? <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontSize: '11px' }}>{emptyMsg}</div> : items.map((p, i) => <PropertyRow key={p.id} p={p} rank={i + 1} metric={metric} />)}
       </div>
     )
   }

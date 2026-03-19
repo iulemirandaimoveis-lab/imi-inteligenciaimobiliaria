@@ -112,7 +112,7 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                 {/* Track bg */}
                 <div style={{
                     position: 'absolute', top: '50%', left: 0, right: 0,
-                    height: 4, borderRadius: 9999,
+                    height: 4, borderRadius: 6,
                     background: 'rgba(255,255,255,0.1)',
                     transform: 'translateY(-50%)',
                     pointerEvents: 'none',
@@ -122,7 +122,7 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                     position: 'absolute', top: '50%',
                     left: `${toPercent(value[0])}%`,
                     right: `${100 - toPercent(value[1])}%`,
-                    height: 4, borderRadius: 9999,
+                    height: 4, borderRadius: 6,
                     background: 'linear-gradient(90deg, #334E68, #486581)',
                     transform: 'translateY(-50%)',
                     pointerEvents: 'none',

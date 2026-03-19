@@ -273,7 +273,7 @@ export default function ProjetoDetalhePage() {
                                     </span>
                                 </div>
                                 <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                                    <div className="h-full rounded-full transition-all" style={{ width: `${progressVendas}%`, background: 'var(--bo-success)' }} />
+                                    <div className="h-full rounded-full transition-all" style={{ width: `${progressVendas}%`, background: 'var(--success)' }} />
                                 </div>
                             </div>
                         )}

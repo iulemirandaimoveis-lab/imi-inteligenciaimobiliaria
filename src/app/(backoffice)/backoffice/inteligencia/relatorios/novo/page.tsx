@@ -58,7 +58,7 @@ export default function NovoRelatorioPage() {
     }
 
     const inputClass = "w-full h-10 px-3 rounded-[6px] text-sm outline-none transition-all"
-    const inputStyle = { background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }
+    const inputStyle = { background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', color: 'var(--text-primary)' }
 
     return (
         <div className="space-y-5 max-w-2xl">
@@ -74,51 +74,51 @@ export default function NovoRelatorioPage() {
             />
 
             <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
-                    <h2 className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Informações</h2>
+                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+                    <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Informações</h2>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Título *</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Título *</label>
                         <input required type="text" value={form.title} onChange={e => { set('title', e.target.value); if (!form.slug) set('slug', autoSlug(e.target.value)) }} className={inputClass} style={inputStyle} placeholder="Ex: Panorama do Alto Padrão 2024" />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Categoria</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Categoria</label>
                         <select value={form.category} onChange={e => set('category', e.target.value)} className={inputClass} style={inputStyle}>
                             <option value="">Selecionar categoria</option>
                             {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Resumo</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Resumo</label>
                         <textarea value={form.summary} onChange={e => set('summary', e.target.value)} rows={4} className="w-full px-3 py-2 rounded-[6px] text-sm outline-none transition-all resize-none" style={inputStyle} placeholder="Descrição do conteúdo do relatório..." />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>URL do PDF</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>URL do PDF</label>
                         <input type="url" value={form.pdf_url} onChange={e => set('pdf_url', e.target.value)} className={inputClass} style={inputStyle} placeholder="https://..." />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Data de Publicação</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Data de Publicação</label>
                         <input type="date" value={form.published_at} onChange={e => set('published_at', e.target.value)} className={inputClass} style={inputStyle} />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Slug</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-secondary)' }}>Slug</label>
                         <input type="text" value={form.slug} onChange={e => set('slug', e.target.value)} className={inputClass} style={inputStyle} placeholder="panorama-alto-padrao-2024" />
                     </div>
                 </div>
 
-                <div className="p-6 rounded-lg" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
+                <div className="p-6 rounded-lg" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium" style={{ color: 'var(--bo-text)' }}>Publicar</p>
-                            <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>Exibe na página pública de relatórios</p>
+                            <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Publicar</p>
+                            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Exibe na página pública de relatórios</p>
                         </div>
-                        <button type="button" onClick={() => set('is_published', !form.is_published)} className="w-10 h-5 rounded-full relative transition-colors" style={{ background: form.is_published ? 'var(--accent-500)' : 'var(--bo-border)' }}>
+                        <button type="button" onClick={() => set('is_published', !form.is_published)} className="w-10 h-5 rounded-full relative transition-colors" style={{ background: form.is_published ? 'var(--accent-500)' : 'var(--border-default)' }}>
                             <span className="absolute top-0.5 w-4 h-4 rounded-full shadow transition-all" style={{ left: form.is_published ? '22px' : '2px', background: '#E8EDF2' }} />
                         </button>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3 justify-end">
-                    <Link href="/backoffice/inteligencia/relatorios" className="h-9 px-5 rounded-[6px] text-sm font-medium" style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }}>Cancelar</Link>
+                    <Link href="/backoffice/inteligencia/relatorios" className="h-9 px-5 rounded-[6px] text-sm font-medium" style={{ color: 'var(--text-secondary)', background: 'var(--bg-elevated)' }}>Cancelar</Link>
                     <button type="submit" disabled={saving} className="bo-btn bo-btn-primary" style={{ background: 'var(--accent-500)' }}>
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                         Salvar

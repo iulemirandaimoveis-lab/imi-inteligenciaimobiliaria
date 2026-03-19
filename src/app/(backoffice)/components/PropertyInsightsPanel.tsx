@@ -66,7 +66,7 @@ function setCachedInsights(id: string, insights: PropertyInsights) {
 
 function ScoreBar({ score, label }: { score: number; label: string }) {
     const pct = (score / 10) * 100
-    const color = score >= 7 ? 'var(--bo-success)' : score >= 5 ? 'var(--bo-warning)' : 'var(--bo-error)'
+    const color = score >= 7 ? 'var(--success)' : score >= 5 ? 'var(--warning)' : 'var(--error)'
     return (
         <div>
             <div className="flex justify-between mb-1">
@@ -87,9 +87,9 @@ function ScoreBar({ score, label }: { score: number; label: string }) {
 }
 
 const ActionIcon = ({ action }: { action: string }) => {
-    if (action === 'aumentar') return <ArrowUp size={12} style={{ color: 'var(--bo-success)' }} />
-    if (action === 'reduzir') return <ArrowDown size={12} style={{ color: 'var(--bo-error)' }} />
-    return <Minus size={12} style={{ color: 'var(--bo-warning)' }} />
+    if (action === 'aumentar') return <ArrowUp size={12} style={{ color: 'var(--success)' }} />
+    if (action === 'reduzir') return <ArrowDown size={12} style={{ color: 'var(--error)' }} />
+    return <Minus size={12} style={{ color: 'var(--warning)' }} />
 }
 
 const actionLabel: Record<string, string> = {
@@ -223,7 +223,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                             {/* Error */}
                             {error && !loading && (
                                 <div className="text-center py-6">
-                                    <p className="text-xs mb-3" style={{ color: 'var(--bo-error)' }}>{error}</p>
+                                    <p className="text-xs mb-3" style={{ color: 'var(--error)' }}>{error}</p>
                                     <button
                                         onClick={() => fetchInsights(true)}
                                         className="text-xs font-semibold flex items-center gap-1.5 mx-auto px-4 py-2 rounded-lg"
@@ -262,8 +262,8 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     {/* Price Recommendation */}
                                     <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
-                                            <DollarSign size={11} style={{ color: 'var(--bo-warning)' }} />
-                                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-warning)' }}>
+                                            <DollarSign size={11} style={{ color: 'var(--warning)' }} />
+                                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--warning)' }}>
                                                 Recomendação de Preço
                                             </span>
                                         </div>
@@ -281,15 +281,15 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     {/* Listing Optimization */}
                                     <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
-                                            <Target size={11} style={{ color: 'var(--bo-success)' }} />
-                                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-success)' }}>
+                                            <Target size={11} style={{ color: 'var(--success)' }} />
+                                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--success)' }}>
                                                 Otimização do Anúncio
                                             </span>
                                         </div>
                                         <ul className="space-y-1.5">
                                             {insights.listing_optimization.suggestions.map((s, i) => (
                                                 <li key={i} className="flex items-start gap-2 text-[11px]" style={{ color: T.textMuted }}>
-                                                    <Sparkles size={10} className="mt-0.5 flex-shrink-0" style={{ color: 'var(--bo-success)' }} />
+                                                    <Sparkles size={10} className="mt-0.5 flex-shrink-0" style={{ color: 'var(--success)' }} />
                                                     {s}
                                                 </li>
                                             ))}
@@ -299,20 +299,20 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     {/* Competitive Analysis */}
                                     <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
-                                            <Shield size={11} style={{ color: 'var(--bo-info, #60a5fa)' }} />
-                                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-info, #60a5fa)' }}>
+                                            <Shield size={11} style={{ color: 'var(--info, #60a5fa)' }} />
+                                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--info, #60a5fa)' }}>
                                                 Análise Competitiva
                                             </span>
                                         </div>
                                         <div className="grid grid-cols-2 gap-2 mb-2">
                                             <div>
-                                                <p className="text-[9px] font-bold uppercase mb-1" style={{ color: 'var(--bo-success)' }}>Pontos Fortes</p>
+                                                <p className="text-[9px] font-bold uppercase mb-1" style={{ color: 'var(--success)' }}>Pontos Fortes</p>
                                                 {insights.competitive_analysis.strengths.map((s, i) => (
                                                     <p key={i} className="text-[10px] mb-0.5" style={{ color: T.textMuted }}>+ {s}</p>
                                                 ))}
                                             </div>
                                             <div>
-                                                <p className="text-[9px] font-bold uppercase mb-1" style={{ color: 'var(--bo-error)' }}>Pontos Fracos</p>
+                                                <p className="text-[9px] font-bold uppercase mb-1" style={{ color: 'var(--error)' }}>Pontos Fracos</p>
                                                 {insights.competitive_analysis.weaknesses.map((s, i) => (
                                                     <p key={i} className="text-[10px] mb-0.5" style={{ color: T.textMuted }}>- {s}</p>
                                                 ))}
@@ -326,7 +326,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     {/* Lead Strategy */}
                                     <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
-                                            <Users size={11} style={{ color: 'var(--bo-accent)' }} />
+                                            <Users size={11} style={{ color: 'var(--imi-gold-500)' }} />
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.accent }}>
                                                 Estratégia de Leads
                                             </span>

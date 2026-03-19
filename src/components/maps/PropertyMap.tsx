@@ -182,7 +182,7 @@ export default function PropertyMap({
                         ${dev.images.main
                             ? `<div style="position:relative;">
                                 <img src="${dev.images.main}" alt="${dev.name}" style="width:100%;height:130px;object-fit:cover;display:block;"/>
-                                <div style="position:absolute;top:8px;left:8px;background:${statusColor}22;color:${statusColor};font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;padding:3px 8px;border-radius:999px;border:1px solid ${statusColor}44;backdrop-filter:blur(4px);">
+                                <div style="position:absolute;top:8px;left:8px;background:${statusColor}22;color:${statusColor};font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;padding:3px 8px;border-radius:6px;border:1px solid ${statusColor}44;backdrop-filter:blur(4px);">
                                     ${STATUS_LABELS[dev.status] || dev.status}
                                 </div>
                             </div>`

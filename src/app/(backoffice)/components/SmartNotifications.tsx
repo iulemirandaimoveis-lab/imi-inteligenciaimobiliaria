@@ -192,7 +192,7 @@ export default function SmartNotifications() {
           width: '380px',
           maxWidth: '100vw',
           transform: open ? 'translateX(0)' : 'translateX(100%)',
-          background: 'var(--bo-elevated, var(--bg-elevated))',
+          background: 'var(--bg-elevated)',
           borderLeft: '1px solid var(--border-default)',
           boxShadow: open ? '-8px 0 40px rgba(0,0,0,0.25)' : 'none',
         }}
@@ -305,7 +305,7 @@ export default function SmartNotifications() {
                 disabled={actionLoading === 'qualify'}
                 className="w-full flex items-center justify-between rounded-lg px-4 py-3 transition-all hover:brightness-105 disabled:opacity-60"
                 style={{
-                  background: 'var(--bo-elevated, var(--bg-elevated))',
+                  background: 'var(--bg-elevated)',
                   border: '1px solid var(--border-default)',
                   color: 'var(--text-primary)',
                 }}
@@ -331,7 +331,7 @@ export default function SmartNotifications() {
                 disabled={actionLoading === 'summary' || dailySummary.loading}
                 className="w-full flex items-center justify-between rounded-lg px-4 py-3 transition-all hover:brightness-105 disabled:opacity-60"
                 style={{
-                  background: 'var(--bo-elevated, var(--bg-elevated))',
+                  background: 'var(--bg-elevated)',
                   border: '1px solid var(--border-default)',
                   color: 'var(--text-primary)',
                 }}

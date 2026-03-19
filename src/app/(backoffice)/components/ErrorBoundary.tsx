@@ -43,26 +43,26 @@ export class ErrorBoundary extends Component<Props, State> {
                 <div
                     className="flex flex-col items-center justify-center min-h-[400px] gap-4 rounded-lg p-8"
                     style={{
-                        background: 'var(--bo-surface)',
-                        border: '1px solid var(--bo-border)',
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-default)',
                     }}
                 >
                     <div
                         className="flex items-center justify-center w-14 h-14 rounded-full"
                         style={{ background: 'rgba(239,68,68,0.1)' }}
                     >
-                        <AlertTriangle size={28} style={{ color: 'var(--bo-error)' }} />
+                        <AlertTriangle size={28} style={{ color: 'var(--error)' }} />
                     </div>
                     <div className="text-center max-w-md">
                         <p
                             className="text-lg font-bold mb-1"
-                            style={{ color: 'var(--bo-text)' }}
+                            style={{ color: 'var(--text-primary)' }}
                         >
                             Algo deu errado
                         </p>
                         <p
                             className="text-sm"
-                            style={{ color: 'var(--bo-text-muted)' }}
+                            style={{ color: 'var(--text-secondary)' }}
                         >
                             {this.state.error?.message || 'Erro inesperado no componente.'}
                         </p>
@@ -81,8 +81,8 @@ export class ErrorBoundary extends Component<Props, State> {
                             className="flex items-center gap-2 px-5 h-10 rounded-[6px] text-sm font-semibold transition-colors"
                             style={{
                                 background: 'var(--bg-elevated)',
-                                border: '1px solid var(--bo-border)',
-                                color: 'var(--bo-text)',
+                                border: '1px solid var(--border-default)',
+                                color: 'var(--text-primary)',
                             }}
                         >
                             Recarregar página

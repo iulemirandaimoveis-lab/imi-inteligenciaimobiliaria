@@ -126,7 +126,7 @@ function ConfigModal({
                 {/* Campos */}
                 <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
                     {integracao.id === 'supabase_storage' ? (
-                        <div className="rounded-lg p-4 text-sm" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: 'var(--bo-success)' }}>
+                        <div className="rounded-lg p-4 text-sm" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: 'var(--success)' }}>
                             ✓ Supabase Storage é o armazenamento interno do projeto. Já está configurado automaticamente via variáveis de ambiente NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.
                         </div>
                     ) : integracao.campos_config.length === 0 ? (
@@ -193,7 +193,7 @@ function ConfigModal({
                             style={{
                                 background: testResult.ok ? 'rgba(107,184,123,0.10)' : 'rgba(229,115,115,0.10)',
                                 border: `1px solid ${testResult.ok ? 'rgba(107,184,123,0.25)' : 'rgba(229,115,115,0.25)'}`,
-                                color: testResult.ok ? 'var(--bo-success)' : 'var(--bo-error)',
+                                color: testResult.ok ? 'var(--success)' : 'var(--error)',
                             }}>
                             {testResult.ok ? '✓' : '⚠'} {testResult.msg}
                         </div>
@@ -317,7 +317,7 @@ export default function IntegracoesPage() {
                         <button key={cat.key} onClick={() => setCategoriaAtiva(cat.key)}
                             className="px-3.5 h-9 rounded-[6px] text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: categoriaAtiva === cat.key ? 'var(--bo-accent)' : T.surface,
+                                background: categoriaAtiva === cat.key ? 'var(--imi-gold-500)' : T.surface,
                                 color: categoriaAtiva === cat.key ? 'white' : T.textDim,
                                 border: `1px solid ${categoriaAtiva === cat.key ? T.borderGold : T.border}`,
                             }}>
@@ -360,7 +360,7 @@ export default function IntegracoesPage() {
                                     <div className="flex items-center gap-1.5">
                                         {integ.gratuito && (
                                             <span className="text-[9px] font-bold px-2 py-0.5 rounded-[6px]"
-                                                style={{ background: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' }}>
+                                                style={{ background: 'rgba(107,184,123,0.12)', color: 'var(--success)' }}>
                                                 Grátis
                                             </span>
                                         )}
@@ -376,9 +376,9 @@ export default function IntegracoesPage() {
                                     onClick={() => setIntegracaoAberta(integ)}
                                     className="mt-3 w-full h-9 rounded-[6px] text-xs font-semibold transition-all"
                                     style={{
-                                        background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bo-active-bg)',
+                                        background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bg-active)',
                                         border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
-                                        color: connected ? 'var(--bo-success)' : T.accent,
+                                        color: connected ? 'var(--success)' : T.accent,
                                     }}
                                 >
                                     {connected ? '⚙ Gerenciar' : '+ Configurar'}
@@ -396,7 +396,7 @@ export default function IntegracoesPage() {
                         As configurações salvas aqui são armazenadas criptografadas no Supabase. Para produção, adicione também ao Vercel → Settings → Environment Variables.
                     </p>
                     <div className="rounded-lg p-3 font-mono text-[10px] leading-relaxed overflow-x-auto"
-                        style={{ background: 'var(--bo-surface)', border: `1px solid ${T.border}`, color: 'var(--s-done)' }}>
+                        style={{ background: 'var(--bg-surface)', border: `1px solid ${T.border}`, color: 'var(--success)' }}>
                         {[
                             '# Assinatura Digital',
                             'GOVBR_CLIENT_ID=',
@@ -419,7 +419,7 @@ export default function IntegracoesPage() {
                             'GDRIVE_FOLDER_ID=',
                             'GDRIVE_SERVICE_ACCOUNT_JSON=',
                         ].map((line, i) => (
-                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? 'var(--bo-accent)' : 'var(--bo-success)' }}>
+                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? 'var(--imi-gold-500)' : 'var(--success)' }}>
                                 {line || '\u00A0'}
                             </div>
                         ))}

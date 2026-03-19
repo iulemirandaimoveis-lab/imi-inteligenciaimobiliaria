@@ -28,7 +28,7 @@ import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
-// Design tokens using --bo-* CSS variables
+// Design tokens using DS3 CSS variables
 interface Development {
   id: string
   name: string
@@ -116,7 +116,7 @@ export default function ConstrutoraDetalhesPage() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      lancamento: 'var(--bo-accent)',
+      lancamento: 'var(--imi-gold-500)',
       em_construcao: 'var(--warning)',
       pronto: 'var(--success)',
       em_obras: 'var(--warning)',
@@ -199,7 +199,7 @@ export default function ConstrutoraDetalhesPage() {
             <button
               onClick={() => setShowDeleteConfirm(true)}
               className="flex items-center gap-2 h-10 px-4 rounded-[6px] text-sm font-medium transition-colors"
-              style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--bo-error)', background: 'rgba(239,68,68,0.06)' }}
+              style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--error)', background: 'rgba(239,68,68,0.06)' }}
             >
               <Trash2 size={16} />
             </button>
@@ -266,7 +266,7 @@ export default function ConstrutoraDetalhesPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="rounded-lg p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Empreendimentos</p>
-          <p className="text-2xl font-bold" style={{ color: 'var(--bo-accent)' }}>{activeDevelopments.length}</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--imi-gold-500)' }}>{activeDevelopments.length}</p>
         </div>
         <div className="rounded-lg p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Total Unidades</p>

@@ -7,15 +7,15 @@ export const dynamic = 'force-dynamic'
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const T = {
-  bg:         'var(--bo-bg,       #0B1120)',
-  surface:    'var(--bo-surface,  #101830)',
-  elevated:   'var(--bo-elevated, #162040)',
-  border:     'var(--bo-border,   rgba(184,148,58,0.15))',
+  bg:         'var(--bg-base)',
+  surface:    'var(--bg-surface)',
+  elevated:   'var(--bg-elevated)',
+  border:     'var(--border-default)',
   borderHi:   'rgba(184,148,58,0.35)',
-  gold:       'var(--bo-accent,   var(--imi-gold-500))',
+  gold:       'var(--imi-gold-500)',
   goldBg:     'rgba(184,148,58,0.08)',
-  text:       'var(--bo-text,     #EBE7E0)',
-  textSub:    'var(--bo-text-muted, #9FAAB8)',
+  text:       'var(--text-primary)',
+  textSub:    'var(--text-secondary)',
   textDim:    'var(--text-secondary)',
   navy:       'var(--imi-navy-900)',
   success:    'var(--success)',
@@ -43,7 +43,7 @@ interface Message {
 type Tab = 'consultar' | 'base' | 'processar'
 
 const CATEGORIES = [
-  { value: 'all',         label: 'Todas',       color: 'var(--bo-accent,var(--imi-gold-500))' },
+  { value: 'all',         label: 'Todas',       color: 'var(--imi-gold-500)' },
   { value: 'metodologia', label: 'Metodologia', color: 'var(--info)' },
   { value: 'norma',       label: 'Normas NBR',  color: 'var(--imi-gold-400)' },
   { value: 'definicao',   label: 'Definições',  color: 'var(--success)' },

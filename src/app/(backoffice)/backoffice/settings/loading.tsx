@@ -12,18 +12,18 @@ export default function Loading() {
       <Loader2
         size={24}
         style={{
-          color: 'var(--bo-accent, #C8A44A)',
+          color: 'var(--imi-gold-500, #C8A44A)',
           animation: 'spin 1s linear infinite',
         }}
       />
       <span style={{
-        color: 'var(--bo-text-muted, #8A95A5)',
+        color: 'var(--text-secondary, #8A95A5)',
         fontSize: 14,
         fontFamily: 'var(--font-outfit, sans-serif)',
       }}>
         Carregando...
       </span>
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <style>{String.raw`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }

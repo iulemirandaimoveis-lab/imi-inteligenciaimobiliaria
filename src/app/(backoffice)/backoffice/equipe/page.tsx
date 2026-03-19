@@ -23,7 +23,7 @@ export const dynamic = 'force-dynamic'
 /* ─── ROLE CONFIG ──────────────────────────────────────────────── */
 const ROLE_CFG: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
     broker:         { label: 'Corretor',  icon: User,   color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
-    broker_manager: { label: 'Gerente',   icon: Crown,  color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.12)' },
+    broker_manager: { label: 'Gerente',   icon: Crown,  color: 'var(--warning)', bg: 'rgba(251,191,36,0.12)' },
     admin:          { label: 'Admin',     icon: Shield, color: 'var(--imi-gold-400)', bg: 'rgba(167,139,250,0.12)' },
 }
 
@@ -159,14 +159,14 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                                         <Link
                                             href={`/backoffice/settings/corretores/${broker.id}/editar`}
                                             onClick={() => setMenuOpen(false)}
-                                            className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium hover:bg-[var(--bo-hover)] transition-colors"
+                                            className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium hover:bg-[var(--bg-hover)] transition-colors"
                                             style={{ color: T.text }}
                                         >
                                             <Edit size={11} /> Editar Perfil
                                         </Link>
                                         <button
                                             onClick={() => { setMenuOpen(false); onToggleStatus(broker.id, broker.status) }}
-                                            className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium hover:bg-[var(--bo-hover)] transition-colors"
+                                            className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium hover:bg-[var(--bg-hover)] transition-colors"
                                             style={{ color: isActive ? T.error : T.success }}
                                         >
                                             {isActive ? <XCircle size={11} /> : <CheckCircle size={11} />}

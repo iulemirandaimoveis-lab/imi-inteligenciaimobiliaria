@@ -353,7 +353,7 @@ export default function ExerciciosPage() {
   if (mode === 'resultado') {
     return (
       <div className="max-w-2xl mx-auto space-y-6 pb-20">
-        <div className="text-center py-8 rounded-lg px-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
+        <div className="text-center py-8 rounded-lg px-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-xs)' }}>
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(245,158,11,0.12)' }}>
             <Trophy size={36} style={{ color: 'var(--warning)' }} />
           </div>
@@ -362,8 +362,8 @@ export default function ExerciciosPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
             {[
-              { label: 'Aproveitamento', value: `${pct}%`, color: pct >= 70 ? 'var(--bo-success)' : 'var(--bo-error)' },
-              { label: 'Corretas', value: score.corretas, color: 'var(--bo-success)' },
+              { label: 'Aproveitamento', value: `${pct}%`, color: pct >= 70 ? 'var(--success)' : 'var(--error)' },
+              { label: 'Corretas', value: score.corretas, color: 'var(--success)' },
               { label: 'Sequência max.', value: score.maxStreak, color: 'var(--warning)' },
             ].map(item => (
               <div key={item.label} className="rounded-lg p-3" style={{ background: T.elevated }}>
@@ -423,12 +423,12 @@ export default function ExerciciosPage() {
           <div className="h-full rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%`, background: 'var(--btn-primary-bg)' }} />
         </div>
 
-        <div className="rounded-lg p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
+        <div className="rounded-lg p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-xs)' }}>
           {/* Meta */}
           <div className="flex items-center gap-2">
             <span className="text-xs px-2 py-0.5 rounded-[6px]" style={{ background: T.elevated, color: T.textMuted }}>{current.categoria}</span>
             <span className="text-xs px-2 py-0.5 rounded-[6px]" style={{ background: T.elevated, color: T.textMuted }}>{NIVEIS[current.nivel]}</span>
-            {current.normaRef && <span className="text-xs px-2 py-0.5 rounded-[6px] font-mono" style={{ background: 'rgba(72,101,129,0.15)', color: 'var(--bo-accent)' }}>{current.normaRef}</span>}
+            {current.normaRef && <span className="text-xs px-2 py-0.5 rounded-[6px] font-mono" style={{ background: 'rgba(72,101,129,0.15)', color: 'var(--imi-gold-500)' }}>{current.normaRef}</span>}
           </div>
 
           <p className="text-base font-semibold leading-relaxed" style={{ color: T.text }}>{current.pergunta}</p>
@@ -443,7 +443,7 @@ export default function ExerciciosPage() {
             {current.opcoes.map((opt, idx) => {
               let inlineStyle: React.CSSProperties = { border: `1px solid ${T.border}`, color: T.text }
               if (revealed) {
-                if (idx === current.correta) { inlineStyle = { border: '1px solid rgba(107,184,123,0.5)', background: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' } }
+                if (idx === current.correta) { inlineStyle = { border: '1px solid rgba(107,184,123,0.5)', background: 'rgba(107,184,123,0.12)', color: 'var(--success)' } }
                 else if (idx === selected && idx !== current.correta) { inlineStyle = { border: '1px solid rgba(227,87,87,0.5)', background: 'rgba(227,87,87,0.12)', color: '#E35757' } }
                 else { inlineStyle = { border: `1px solid ${T.border}`, color: T.textMuted } }
               }
@@ -454,16 +454,16 @@ export default function ExerciciosPage() {
                   <div
                     className="w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0"
                     style={
-                      revealed && idx === current.correta ? { background: 'var(--bo-success)', borderColor: 'var(--bo-success)', color: 'white' }
-                      : revealed && idx === selected ? { background: 'var(--bo-error)', borderColor: 'var(--bo-error)', color: 'white' }
+                      revealed && idx === current.correta ? { background: 'var(--success)', borderColor: 'var(--success)', color: 'white' }
+                      : revealed && idx === selected ? { background: 'var(--error)', borderColor: 'var(--error)', color: 'white' }
                       : { borderColor: T.border, color: T.textMuted }
                     }
                   >
                     {String.fromCharCode(65 + idx)}
                   </div>
                   {opt}
-                  {revealed && idx === current.correta && <CheckCircle size={16} className="ml-auto" style={{ color: 'var(--bo-success)' }} />}
-                  {revealed && idx === selected && idx !== current.correta && <XCircle size={16} className="ml-auto" style={{ color: 'var(--bo-error)' }} />}
+                  {revealed && idx === current.correta && <CheckCircle size={16} className="ml-auto" style={{ color: 'var(--success)' }} />}
+                  {revealed && idx === selected && idx !== current.correta && <XCircle size={16} className="ml-auto" style={{ color: 'var(--error)' }} />}
                 </button>
               )
             })}
@@ -471,7 +471,7 @@ export default function ExerciciosPage() {
 
           {revealed && (
             <div className="p-4 rounded-lg text-sm" style={{ background: 'rgba(72,101,129,0.12)', border: '1px solid rgba(72,101,129,0.25)' }}>
-              <p className="font-semibold mb-1" style={{ color: 'var(--bo-accent)' }}>Explicação</p>
+              <p className="font-semibold mb-1" style={{ color: 'var(--imi-gold-500)' }}>Explicação</p>
               <p style={{ color: T.textMuted }}>{current.explicacao}</p>
             </div>
           )}
@@ -507,7 +507,7 @@ export default function ExerciciosPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, bg: 'rgba(72,101,129,0.12)', color: 'var(--bo-accent)' },
+          { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, bg: 'rgba(72,101,129,0.12)', color: 'var(--imi-gold-500)' },
           { label: 'Categorias', value: CATEGORIAS.length, icon: Target, bg: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)' },
           { label: 'Geradas por IA', value: '∞', icon: Sparkles, bg: 'rgba(245,158,11,0.12)', color: 'var(--warning)' },
         ].map(item => {
@@ -543,7 +543,7 @@ export default function ExerciciosPage() {
         <div className="flex flex-wrap gap-2">
           {['Todos', 'basico', 'intermediario', 'avancado'].map(nv => (
             <button key={nv} onClick={() => setSelectedNivel(nv)}
-              className={`px-3 py-1.5 rounded-[6px] text-xs font-medium border transition-all ${selectedNivel === nv ? 'bg-[var(--bo-accent)] text-white border-transparent' : ''}`}
+              className={`px-3 py-1.5 rounded-[6px] text-xs font-medium border transition-all ${selectedNivel === nv ? 'bg-[var(--imi-gold-500)] text-white border-transparent' : ''}`}
               style={selectedNivel !== nv ? { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` } : undefined}>
               {nv === 'Todos' ? 'Todos os níveis' : NIVEIS[nv as keyof typeof NIVEIS]}
             </button>
@@ -595,7 +595,7 @@ export default function ExerciciosPage() {
                         <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ background: T.border, color: T.text }}>
                           {String.fromCharCode(65 + i)}
                         </span>
-                        <span style={{ fontWeight: i === parsed.correta ? 700 : undefined, color: i === parsed.correta ? 'var(--bo-success)' : T.textMuted }}>{opt}</span>
+                        <span style={{ fontWeight: i === parsed.correta ? 700 : undefined, color: i === parsed.correta ? 'var(--success)' : T.textMuted }}>{opt}</span>
                         {i === parsed.correta && <CheckCircle size={12} className="text-emerald-500" />}
                       </div>
                     ))}

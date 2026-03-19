@@ -117,8 +117,8 @@ export default function PixChargeModal({
                 exit={{ opacity: 0, scale: 0.95, y: 12 }}
                 style={{
                     width: '100%', maxWidth: '420px',
-                    background: 'var(--bo-card)',
-                    border: '1px solid var(--bo-border)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-default)',
                     borderRadius: '6px',
                     overflow: 'hidden',
                 }}
@@ -127,8 +127,8 @@ export default function PixChargeModal({
                 <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '16px 20px',
-                    borderBottom: '1px solid var(--bo-border)',
-                    background: 'var(--bo-elevated)',
+                    borderBottom: '1px solid var(--border-default)',
+                    background: 'var(--bg-elevated)',
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{
@@ -139,13 +139,13 @@ export default function PixChargeModal({
                             <Zap size={16} style={{ color: 'var(--success)' }} />
                         </div>
                         <div>
-                            <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)' }}>Cobrança Pix</p>
-                            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>
+                            <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>Cobrança Pix</p>
+                            <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                                 {step === 'form' ? 'Gerar QR Code' : step === 'qr' ? 'Aguardando pagamento' : 'Pagamento confirmado!'}
                             </p>
                         </div>
                     </div>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--bo-text-muted)' }}>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-secondary)' }}>
                         <X size={18} />
                     </button>
                 </div>
@@ -164,20 +164,20 @@ export default function PixChargeModal({
                                 padding: '16px', borderRadius: '6px', textAlign: 'center',
                                 background: 'rgba(0,178,127,0.08)', border: '1px solid rgba(0,178,127,0.18)',
                             }}>
-                                <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginBottom: '4px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                                <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                                     Valor a cobrar
                                 </p>
                                 <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--success)' }}>
                                     {formatCurrency(amount)}
                                 </p>
                                 {description && (
-                                    <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginTop: '4px' }}>{description}</p>
+                                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{description}</p>
                                 )}
                             </div>
 
                             {/* Debtor name (optional) */}
                             <div>
-                                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                                     Nome do pagador (opcional)
                                 </label>
                                 <input
@@ -187,9 +187,9 @@ export default function PixChargeModal({
                                     style={{
                                         width: '100%', height: '44px', padding: '0 12px',
                                         borderRadius: '6px', fontSize: '13px',
-                                        color: 'var(--bo-text)',
-                                        background: 'var(--bo-surface)',
-                                        border: '1px solid var(--bo-border)',
+                                        color: 'var(--text-primary)',
+                                        background: 'var(--bg-surface)',
+                                        border: '1px solid var(--border-default)',
                                         outline: 'none', boxSizing: 'border-box',
                                     }}
                                 />
@@ -198,18 +198,18 @@ export default function PixChargeModal({
                             {/* Info */}
                             <div style={{
                                 display: 'flex', gap: '8px', padding: '10px 12px', borderRadius: '6px',
-                                background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+                                background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
                                 alignItems: 'flex-start',
                             }}>
-                                <Info size={13} style={{ color: 'var(--bo-text-muted)', flexShrink: 0, marginTop: '1px' }} />
-                                <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', lineHeight: '1.5' }}>
-                                    O QR Code expira em <strong style={{ color: 'var(--bo-text)' }}>24 horas</strong>.
+                                <Info size={13} style={{ color: 'var(--text-secondary)', flexShrink: 0, marginTop: '1px' }} />
+                                <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                                    O QR Code expira em <strong style={{ color: 'var(--text-primary)' }}>24 horas</strong>.
                                     Após o pagamento, o lançamento será marcado como pago automaticamente.
                                 </p>
                             </div>
 
                             {error && (
-                                <p style={{ fontSize: '12px', color: 'var(--s-hot)', textAlign: 'center' }}>{error}</p>
+                                <p style={{ fontSize: '12px', color: 'var(--error)', textAlign: 'center' }}>{error}</p>
                             )}
 
                             {/* Actions */}
@@ -219,8 +219,8 @@ export default function PixChargeModal({
                                     style={{
                                         flex: 1, height: '44px', borderRadius: '6px',
                                         fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                                        background: 'var(--bo-surface)', color: 'var(--bo-text-muted)',
-                                        border: '1px solid var(--bo-border)',
+                                        background: 'var(--bg-surface)', color: 'var(--text-secondary)',
+                                        border: '1px solid var(--border-default)',
                                     }}
                                 >
                                     Cancelar
@@ -282,10 +282,10 @@ export default function PixChargeModal({
                                         width: '6px', height: '6px', borderRadius: '50%',
                                         background: '#00B27F', animation: 'pulse 1.5s ease-in-out infinite',
                                     }} />
-                                    <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', fontWeight: 600 }}>
+                                    <p style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>
                                         Aguardando pagamento{polling ? '...' : ''}
                                     </p>
-                                    {polling && <RefreshCw size={10} style={{ color: 'var(--bo-text-muted)', animation: 'spin 2s linear infinite' }} />}
+                                    {polling && <RefreshCw size={10} style={{ color: 'var(--text-secondary)', animation: 'spin 2s linear infinite' }} />}
                                 </div>
                             </div>
 
@@ -294,10 +294,10 @@ export default function PixChargeModal({
                                 <div style={{
                                     display: 'flex', alignItems: 'center', gap: '6px',
                                     padding: '6px 12px', borderRadius: '6px',
-                                    background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+                                    background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
                                 }}>
-                                    <Clock size={11} style={{ color: 'var(--bo-text-muted)' }} />
-                                    <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>
+                                    <Clock size={11} style={{ color: 'var(--text-secondary)' }} />
+                                    <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                                         Expira em {new Date(charge.expiresAt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                                     </p>
                                 </div>
@@ -309,9 +309,9 @@ export default function PixChargeModal({
                                 style={{
                                     width: '100%', height: '44px', borderRadius: '6px',
                                     fontSize: '13px', fontWeight: 700, cursor: 'pointer',
-                                    color: copied ? '#00B27F' : 'var(--bo-text)',
-                                    background: copied ? 'rgba(0,178,127,0.1)' : 'var(--bo-elevated)',
-                                    border: `1px solid ${copied ? 'rgba(0,178,127,0.35)' : 'var(--bo-border)'}`,
+                                    color: copied ? '#00B27F' : 'var(--text-primary)',
+                                    background: copied ? 'rgba(0,178,127,0.1)' : 'var(--bg-elevated)',
+                                    border: `1px solid ${copied ? 'rgba(0,178,127,0.35)' : 'var(--border-default)'}`,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                                     transition: 'all 0.2s ease',
                                 }}
@@ -324,7 +324,7 @@ export default function PixChargeModal({
                             </button>
 
                             {/* Provider badge */}
-                            <p style={{ fontSize: '11px', color: 'var(--bo-text-dim)', textAlign: 'center' }}>
+                            <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', textAlign: 'center' }}>
                                 Provedor: {providerLabel} · TXID: {charge.txid.slice(0, 12)}…
                             </p>
                         </motion.div>
@@ -349,10 +349,10 @@ export default function PixChargeModal({
                                 <CheckCircle2 size={36} style={{ color: 'var(--success)' }} />
                             </motion.div>
                             <div>
-                                <p style={{ fontSize: '18px', fontWeight: 800, color: 'var(--bo-text)', marginBottom: '6px' }}>
+                                <p style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '6px' }}>
                                     Pagamento Recebido!
                                 </p>
-                                <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)' }}>
+                                <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
                                     {charge ? formatCurrency(charge.amount) : ''} confirmado via Pix
                                 </p>
                             </div>

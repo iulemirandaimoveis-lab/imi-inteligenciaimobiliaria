@@ -13,14 +13,14 @@ export const T = {
     subtle: 'var(--bg-subtle)',
     muted: 'var(--bg-muted)',
     overlay: 'var(--bg-overlay)',
-    card: 'var(--bo-card)',
+    card: 'var(--bg-surface)',
     // Borders
     border: 'var(--border-default)',
     borderLight: 'var(--border-subtle)',
     borderSubtle: 'var(--border-subtle)',
     borderStrong: 'var(--border-strong)',
-    borderGold: 'var(--bo-border-gold)',
-    borderActive: 'var(--bo-border-gold)',
+    borderGold: 'rgba(184,148,58,0.25)',
+    borderActive: 'rgba(184,148,58,0.25)',
     borderFocus: 'var(--border-focus)',
     // Text — DS3 semantic
     text: 'var(--text-primary)',
@@ -33,8 +33,8 @@ export const T = {
     // Aliases (for legacy compat)
     sub: 'var(--text-secondary)',
     // Accent
-    accent: 'var(--bo-accent)',
-    accentDim: 'var(--bo-accent-dim)',
+    accent: 'var(--imi-gold-500)',
+    accentDim: 'rgba(184,148,58,0.6)',
     accentBg: 'var(--bg-active)',
     activeBg: 'var(--bg-active)',
     gold: 'var(--imi-gold-500)',

@@ -143,7 +143,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'produto',
         icone: Star,
-        color: 'var(--bo-accent)',
+        color: 'var(--imi-gold-500)',
         execucoes: 78,
     },
     {

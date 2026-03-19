@@ -121,22 +121,22 @@ export function IMIScoreDisplay({ score }: { score: number }) {
       </div>
       <div style={{
         height: 3,
-        background: 'var(--bo-border, rgba(255,255,255,0.08))',
-        borderRadius: 999,
+        background: 'var(--border-default, rgba(255,255,255,0.08))',
+        borderRadius: 6,
         overflow: 'hidden',
       }}>
         <div style={{
           height: '100%',
           width: `${score}%`,
           background: `linear-gradient(90deg, ${color}88, ${color})`,
-          borderRadius: 999,
+          borderRadius: 6,
           transition: 'width 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
         }} />
       </div>
       <span style={{
         fontSize: '9px',
         fontFamily: 'var(--font-outfit, sans-serif)',
-        color: 'var(--bo-text-dim, #5C6B7D)',
+        color: 'var(--text-tertiary, #5C6B7D)',
         letterSpacing: '0.3px',
       }}>
         /100 · Índice de Oportunidade

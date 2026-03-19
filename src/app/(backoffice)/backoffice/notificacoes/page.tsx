@@ -24,9 +24,9 @@ const TYPE_ICONS: Record<string, any> = {
     update: Rocket,
 }
 const TYPE_COLORS: Record<string, string> = {
-    lead: 'var(--info)', imovel: 'var(--bo-success)', financeiro: 'var(--bo-accent)', contrato: 'var(--text-secondary)',
-    alerta: 'var(--bo-error)', info: 'var(--info)', sucesso: 'var(--bo-success)',
-    system: 'var(--imi-gold-500)', development: 'var(--bo-success)', evaluation: 'var(--warning)', comment: 'var(--bo-text-muted)',
+    lead: 'var(--info)', imovel: 'var(--success)', financeiro: 'var(--imi-gold-500)', contrato: 'var(--text-secondary)',
+    alerta: 'var(--error)', info: 'var(--info)', sucesso: 'var(--success)',
+    system: 'var(--imi-gold-500)', development: 'var(--success)', evaluation: 'var(--warning)', comment: 'var(--text-secondary)',
     update: 'var(--success)',
 }
 const timeAgo = (d: string) => {
@@ -173,7 +173,7 @@ export default function NotificacoesPage() {
                                 </div>
                                 {!n.read && (
                                     <button className="flex-shrink-0 w-7 h-7 rounded-[6px] flex items-center justify-center"
-                                        style={{ background: 'var(--bo-active-bg)' }} onClick={e => { e.stopPropagation(); markRead(n.id) }}>
+                                        style={{ background: 'var(--bg-active)' }} onClick={e => { e.stopPropagation(); markRead(n.id) }}>
                                         <Check size={12} style={{ color: T.accent }} />
                                     </button>
                                 )}

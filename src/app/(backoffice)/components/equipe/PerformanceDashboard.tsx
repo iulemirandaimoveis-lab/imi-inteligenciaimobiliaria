@@ -57,7 +57,7 @@ function ProgressBar({ pct, color }: { pct: number | null; color: string }) {
                     transition={{ duration: 0.6 }}
                 />
             </div>
-            <span className="text-[10px] font-bold w-8 text-right" style={{ color: pct >= 100 ? 'var(--bo-success)' : T.text }}>
+            <span className="text-[10px] font-bold w-8 text-right" style={{ color: pct >= 100 ? 'var(--success)' : T.text }}>
                 {pct}%
             </span>
         </div>
@@ -121,8 +121,8 @@ export default function PerformanceDashboard() {
     }
 
     const healthColor = aiInsights?.overall_health === 'boa'
-        ? 'var(--bo-success)'
-        : aiInsights?.overall_health === 'preocupante' ? 'var(--bo-error)' : 'var(--bo-warning)'
+        ? 'var(--success)'
+        : aiInsights?.overall_health === 'preocupante' ? 'var(--error)' : 'var(--warning)'
 
     return (
         <div className="space-y-6" data-tour="performance">
@@ -131,8 +131,8 @@ export default function PerformanceDashboard() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     {[
                         { icon: Users, label: 'Leads Totais', value: totals.totalLeads, color: T.accent },
-                        { icon: Target, label: 'Vendas Totais', value: totals.totalSales, color: 'var(--bo-success)' },
-                        { icon: DollarSign, label: 'Receita Total', value: fmtCurrency(totals.totalRevenue), color: 'var(--bo-warning)' },
+                        { icon: Target, label: 'Vendas Totais', value: totals.totalSales, color: 'var(--success)' },
+                        { icon: DollarSign, label: 'Receita Total', value: fmtCurrency(totals.totalRevenue), color: 'var(--warning)' },
                         { icon: TrendingUp, label: 'Taxa Conversão', value: `${totals.avgConversion}%`, color: T.accent },
                     ].map((kpi, i) => (
                         <div key={i} className="rounded-lg p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
@@ -177,7 +177,7 @@ export default function PerformanceDashboard() {
                         {/* Top performer */}
                         {aiInsights.top_performer && (
                             <div className="flex items-start gap-2 p-2 rounded-lg" style={{ background: 'rgba(74,222,128,0.06)' }}>
-                                <Award size={12} className="mt-0.5" style={{ color: 'var(--bo-success)' }} />
+                                <Award size={12} className="mt-0.5" style={{ color: 'var(--success)' }} />
                                 <div>
                                     <span className="text-xs font-bold" style={{ color: T.text }}>{aiInsights.top_performer.name}</span>
                                     <p className="text-[10px]" style={{ color: T.textMuted }}>{aiInsights.top_performer.highlight}</p>
@@ -188,7 +188,7 @@ export default function PerformanceDashboard() {
                         {/* Needs attention */}
                         {aiInsights.needs_attention?.map((item, i) => (
                             <div key={i} className="flex items-start gap-2 p-2 rounded-lg" style={{ background: 'rgba(234,179,8,0.06)' }}>
-                                <AlertTriangle size={12} className="mt-0.5" style={{ color: 'var(--bo-warning)' }} />
+                                <AlertTriangle size={12} className="mt-0.5" style={{ color: 'var(--warning)' }} />
                                 <div>
                                     <span className="text-xs font-bold" style={{ color: T.text }}>{item.name}: </span>
                                     <span className="text-[10px]" style={{ color: T.textMuted }}>{item.issue}</span>
@@ -246,18 +246,18 @@ export default function PerformanceDashboard() {
                                 <div>
                                     <p className="text-[9px] uppercase tracking-wider" style={{ color: T.textDim }}>Vendas</p>
                                     <p className="text-xs font-bold" style={{ color: T.text }}>{m.sales}</p>
-                                    <ProgressBar pct={m.pct_vendas} color="var(--bo-success)" />
+                                    <ProgressBar pct={m.pct_vendas} color="var(--success)" />
                                 </div>
                                 <div>
                                     <p className="text-[9px] uppercase tracking-wider" style={{ color: T.textDim }}>Receita</p>
                                     <p className="text-xs font-bold" style={{ color: T.text }}>{fmtCurrency(m.revenue)}</p>
-                                    <ProgressBar pct={m.pct_receita} color="var(--bo-warning)" />
+                                    <ProgressBar pct={m.pct_receita} color="var(--warning)" />
                                 </div>
                             </div>
 
                             {/* Conversion rate */}
                             <div className="text-right flex-shrink-0">
-                                <p className="text-sm font-bold" style={{ color: m.conversion_rate >= 30 ? 'var(--bo-success)' : T.text }}>
+                                <p className="text-sm font-bold" style={{ color: m.conversion_rate >= 30 ? 'var(--success)' : T.text }}>
                                     {m.conversion_rate}%
                                 </p>
                                 <p className="text-[9px]" style={{ color: T.textDim }}>conversão</p>

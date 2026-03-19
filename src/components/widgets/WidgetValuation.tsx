@@ -86,13 +86,13 @@ export function WidgetValuation() {
 }
 
 const S = {
-    label: { fontSize: 10, fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' as const, color: 'var(--bo-text-muted)' },
+    label: { fontSize: 10, fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' as const, color: 'var(--text-secondary)' },
     input: {
-        background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: 'var(--r-sm,4px)',
-        padding: '9px 12px', fontSize: 13, color: 'var(--bo-text)', fontFamily: 'inherit', outline: 'none', width: '100%',
+        background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: 'var(--r-sm,4px)',
+        padding: '9px 12px', fontSize: 13, color: 'var(--text-primary)', fontFamily: 'inherit', outline: 'none', width: '100%',
     },
     btn: {
-        width: '100%', padding: '11px', background: 'var(--bo-accent)', color: 'var(--navy,#0B1928)',
+        width: '100%', padding: '11px', background: 'var(--imi-gold-500)', color: 'var(--navy,#0B1928)',
         border: 'none', borderRadius: 'var(--r-sm,4px)', fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
         cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase' as const,
     },

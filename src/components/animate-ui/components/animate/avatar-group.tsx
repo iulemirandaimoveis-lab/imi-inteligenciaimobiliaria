@@ -7,7 +7,7 @@
  * Usage:
  *   <AvatarGroup>
  *     {users.map(u => (
- *       <Avatar key={u.id} className="size-10 border-2" style={{ borderColor: 'var(--bo-surface)' }}>
+ *       <Avatar key={u.id} className="size-10 border-2" style={{ borderColor: 'var(--bg-surface)' }}>
  *         <AvatarImage src={u.avatar_url} />
  *         <AvatarFallback>{initials(u.name)}</AvatarFallback>
  *         <AvatarGroupTooltip>{u.name}</AvatarGroupTooltip>

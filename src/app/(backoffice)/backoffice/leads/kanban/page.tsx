@@ -72,7 +72,7 @@ function timeAgo(iso: string | null): string {
 function urgencyBadge(lead: Record<string, any>): { label: string; color: string; bg: string } | null {
     const score = lead.score || 0
     const status = (lead.status || '').toLowerCase()
-    if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' }
+    if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: 'var(--error)', bg: 'rgba(239,68,68,0.12)' }
     if (score >= 60 || status === 'warm') return { label: 'QUENTE', color: 'var(--warning)', bg: 'rgba(245,158,11,0.12)' }
     return { label: 'NORMAL', color: 'var(--text-secondary)', bg: 'var(--bg-elevated)' }
 }
@@ -141,11 +141,11 @@ function LeadCard({ lead, stageColor }: { lead: Record<string, any>; stageColor:
                 animate={{ opacity: 1, y: 0 }}
                 whileHover={{ scale: 1.01 }}
                 style={{
-                    background: 'var(--bo-elevated)',
+                    background: 'var(--bg-elevated)',
                     borderRadius: 16,
                     padding: '14px 14px 12px',
                     borderLeft: `3px solid ${stageColor}`,
-                    border: `1px solid var(--bo-border)`,
+                    border: `1px solid var(--border-default)`,
                     borderLeftWidth: 3,
                     borderLeftColor: stageColor,
                     cursor: 'pointer',
@@ -154,7 +154,7 @@ function LeadCard({ lead, stageColor }: { lead: Record<string, any>; stageColor:
             >
                 {/* Name + urgency */}
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--bo-text)', lineHeight: 1.2 }}>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
                         {lead.name}
                     </p>
                     {badge && (
@@ -171,7 +171,7 @@ function LeadCard({ lead, stageColor }: { lead: Record<string, any>; stageColor:
 
                 {/* Interest */}
                 {(lead.interest || lead.development?.name) && (
-                    <p style={{ fontSize: 11, fontStyle: 'italic', color: 'var(--bo-text-muted)', marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontSize: 11, fontStyle: 'italic', color: 'var(--text-secondary)', marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {lead.interest || lead.development?.name}
                     </p>
                 )}
@@ -186,8 +186,8 @@ function LeadCard({ lead, stageColor }: { lead: Record<string, any>; stageColor:
                 {/* Footer: time + avatar */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <Clock size={11} style={{ color: 'var(--bo-text-muted)' }} />
-                        <span style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}>
+                        <Clock size={11} style={{ color: 'var(--text-secondary)' }} />
+                        <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
                             {timeAgo(lead.created_at)}
                         </span>
                     </div>
@@ -297,8 +297,8 @@ export default function PipelineKanbanPage() {
                             <Link href="/backoffice/campanhas/ads" style={{
                                 display: 'flex', alignItems: 'center', gap: 6,
                                 height: 36, padding: '0 14px', borderRadius: 10,
-                                background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
-                                color: 'var(--bo-text-muted)', fontSize: 12, fontWeight: 600, textDecoration: 'none',
+                                background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
+                                color: 'var(--text-secondary)', fontSize: 12, fontWeight: 600, textDecoration: 'none',
                             }}>
                                 <BarChart3 size={13} /> Ads
                             </Link>
@@ -323,19 +323,19 @@ export default function PipelineKanbanPage() {
 
                 {/* Search */}
                 <div style={{ position: 'relative' }}>
-                    <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--bo-text-muted)' }} />
+                    <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                     <input
                         value={busca}
                         onChange={e => setBusca(e.target.value)}
                         placeholder="Buscar lead no pipeline..."
                         style={{
                             width: '100%', height: 42, paddingLeft: 36, paddingRight: 40,
-                            borderRadius: 12, background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
-                            color: 'var(--bo-text)', fontSize: 13, outline: 'none', boxSizing: 'border-box',
+                            borderRadius: 12, background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
+                            color: 'var(--text-primary)', fontSize: 13, outline: 'none', boxSizing: 'border-box',
                         }}
                     />
                     <button style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                        <Filter size={14} style={{ color: 'var(--bo-text-muted)' }} />
+                        <Filter size={14} style={{ color: 'var(--text-secondary)' }} />
                     </button>
                 </div>
             </motion.div>
@@ -371,7 +371,7 @@ export default function PipelineKanbanPage() {
                                 padding: '8px 4px',
                             }}>
                                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: stage.dot, flexShrink: 0, boxShadow: `0 0 8px ${stage.dot}60` }} />
-                                <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--bo-text)', letterSpacing: '0.1em', textTransform: 'uppercase', flex: 1 }}>
+                                <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.1em', textTransform: 'uppercase', flex: 1 }}>
                                     {stage.label}
                                 </span>
                                 <span style={{
@@ -383,17 +383,17 @@ export default function PipelineKanbanPage() {
                                     {stageLeads.length}
                                 </span>
                                 <button
-                                    style={{ width: 24, height: 24, borderRadius: 6, background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    style={{ width: 24, height: 24, borderRadius: 6, background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                     onClick={() => {}}
                                 >
-                                    <Plus size={12} style={{ color: 'var(--bo-text-muted)' }} />
+                                    <Plus size={12} style={{ color: 'var(--text-secondary)' }} />
                                 </button>
                             </div>
 
                             {/* Cards container */}
                             <div style={{
-                                background: `color-mix(in srgb, ${stage.dot}06, var(--bo-surface))`,
-                                border: `1px solid color-mix(in srgb, ${stage.dot}20, var(--bo-border))`,
+                                background: `color-mix(in srgb, ${stage.dot}06, var(--bg-surface))`,
+                                border: `1px solid color-mix(in srgb, ${stage.dot}20, var(--border-default))`,
                                 borderTop: `2px solid ${stage.dot}40`,
                                 borderRadius: 16, padding: 10,
                                 minHeight: 120,
@@ -404,8 +404,8 @@ export default function PipelineKanbanPage() {
                             }}>
                                 {loading ? (
                                     <div style={{ padding: '20px 0', textAlign: 'center' }}>
-                                        <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bo-elevated)', opacity: 0.5, marginBottom: 8 }} />
-                                        <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bo-elevated)', opacity: 0.3 }} />
+                                        <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bg-elevated)', opacity: 0.5, marginBottom: 8 }} />
+                                        <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bg-elevated)', opacity: 0.3 }} />
                                     </div>
                                 ) : stageLeads.length > 0 ? (
                                     <DroppableColumn stageKey={stage.key}>
@@ -419,7 +419,7 @@ export default function PipelineKanbanPage() {
                                             <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${stage.dot}10`, border: `1px dashed ${stage.dot}40`, margin: '0 auto 8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 <Plus size={14} style={{ color: stage.dot, opacity: 0.5 }} />
                                             </div>
-                                            <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', opacity: 0.6 }}>Sem leads</p>
+                                            <p style={{ fontSize: 11, color: 'var(--text-secondary)', opacity: 0.6 }}>Sem leads</p>
                                         </div>
                                     </DroppableColumn>
                                 )}
@@ -428,7 +428,7 @@ export default function PipelineKanbanPage() {
                             {/* Column total budget */}
                             {stageLeads.length > 0 && (
                                 <div style={{ padding: '6px 4px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <span style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</span>
+                                    <span style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</span>
                                     <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--imi-gold-500)' }}>
                                         {formatTotal(stageLeads.reduce((s, l) => s + (l.capital || l.budget || 0), 0))}
                                     </span>
@@ -463,8 +463,8 @@ export default function PipelineKanbanPage() {
                 }}
             >
                 <Zap size={16} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
-                <p style={{ fontSize: 12, color: 'var(--bo-text-muted)', flex: 1, lineHeight: 1.4 }}>
-                    <span style={{ color: 'var(--bo-text)', fontWeight: 600 }}>IA Pipeline:</span> {
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', flex: 1, lineHeight: 1.4 }}>
+                    <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>IA Pipeline:</span> {
                         !loading && leads.length > 0
                             ? `${byStage['negociacao']?.length || 0} leads em negociação, com potencial total de ${formatTotal(byStage['negociacao']?.reduce((s, l) => s + (l.capital || 0), 0) || 0)}.`
                             : 'Carregando análise do pipeline...'

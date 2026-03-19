@@ -42,15 +42,15 @@ const timeAgo = (d: string) => {
 function LeadsSkeleton() {
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div style={{ height: 40, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.5, width: '60%' }} />
+      <div style={{ height: 40, background: 'var(--bg-surface)', borderRadius: 12, opacity: 0.5, width: '60%' }} />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[0,1,2,3].map(i => (
-          <div key={i} style={{ height: 60, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.4 }} />
+          <div key={i} style={{ height: 60, background: 'var(--bg-surface)', borderRadius: 12, opacity: 0.4 }} />
         ))}
       </div>
-      <div style={{ height: 44, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.4 }} />
+      <div style={{ height: 44, background: 'var(--bg-surface)', borderRadius: 12, opacity: 0.4 }} />
       {[0,1,2,3,4].map(i => (
-        <div key={i} style={{ height: 88, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 - i * 0.04 }} />
+        <div key={i} style={{ height: 88, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.3 - i * 0.04 }} />
       ))}
     </div>
   )
@@ -107,8 +107,8 @@ export default function LeadsPage() {
   // ── Filter tabs ────────────────────────────────────────────────
   const FILTER_TABS: FilterTab[] = [
     { id: 'all',         label: 'Todos',      count: stats.total },
-    { id: 'hot',         label: 'HOT',        count: leads.filter(l => l.status === 'hot').length, dotColor: 'var(--s-hot)' },
-    { id: 'negotiation', label: 'Negociação', count: leads.filter(l => l.status === 'negotiation').length, dotColor: 'var(--s-warm)' },
+    { id: 'hot',         label: 'HOT',        count: leads.filter(l => l.status === 'hot').length, dotColor: 'var(--error)' },
+    { id: 'negotiation', label: 'Negociação', count: leads.filter(l => l.status === 'negotiation').length, dotColor: 'var(--warning)' },
     { id: 'qualified',   label: 'Qualificado', count: stats.qualified },
     { id: 'new',         label: 'Novo',       count: leads.filter(l => l.status === 'new').length },
   ]
@@ -154,8 +154,8 @@ export default function LeadsPage() {
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '36px', padding: '0 12px', borderRadius: '10px',
-                  fontSize: '12px', fontWeight: 600, color: 'var(--bo-text-muted)',
-                  background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                  fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)',
+                  background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
                   cursor: 'pointer', whiteSpace: 'nowrap',
                 }}
               >
@@ -227,9 +227,9 @@ export default function LeadsPage() {
         <div
           style={{
             position: 'relative',
-            border: `1px solid ${searchFocused ? 'rgba(184,148,58,0.25)' : 'var(--bo-border)'}`,
+            border: `1px solid ${searchFocused ? 'rgba(184,148,58,0.25)' : 'var(--border-default)'}`,
             borderRadius: '12px',
-            background: 'var(--bo-card)',
+            background: 'var(--bg-surface)',
             transition: 'border-color 0.18s',
             boxShadow: searchFocused ? '0 0 0 3px rgba(184,148,58,0.10)' : 'none',
           }}
@@ -238,7 +238,7 @@ export default function LeadsPage() {
             size={15}
             style={{
               position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
-              color: searchFocused ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)',
+              color: searchFocused ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
               transition: 'color 0.18s',
             }}
           />
@@ -253,7 +253,7 @@ export default function LeadsPage() {
               width: '100%', height: '44px',
               paddingLeft: '38px', paddingRight: '16px',
               background: 'transparent', border: 'none', outline: 'none',
-              fontSize: '13px', color: 'var(--bo-text)',
+              fontSize: '13px', color: 'var(--text-primary)',
               borderRadius: '12px',
             }}
           />
@@ -263,7 +263,7 @@ export default function LeadsPage() {
               style={{
                 position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)',
                 background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: '6px',
-                color: 'var(--bo-text-muted)', fontSize: '11px', padding: '3px 7px',
+                color: 'var(--text-secondary)', fontSize: '11px', padding: '3px 7px',
                 cursor: 'pointer', fontWeight: 600,
               }}
             >
@@ -297,13 +297,13 @@ export default function LeadsPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="rounded-lg text-center"
-              style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', padding: '40px 16px' }}
+              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '40px 16px' }}
             >
-              <Users size={28} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 12px' }} />
-              <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--bo-text)', marginBottom: '6px' }}>
+              <Users size={28} style={{ color: 'var(--text-secondary)', opacity: 0.2, margin: '0 auto 12px' }} />
+              <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
                 {search ? 'Nenhum resultado encontrado' : 'Nenhum lead ainda'}
               </p>
-              <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginBottom: '16px' }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
                 {search
                   ? `Sem leads para "${search}"`
                   : 'Capture seu primeiro lead para começar'}

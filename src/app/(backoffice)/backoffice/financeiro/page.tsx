@@ -112,25 +112,25 @@ export default function FinanceiroPage() {
   const pendentes = transactions.filter(t => t.status === 'pendente').length
   const filterTabs: FilterTab[] = [
     { id: 'todos',   label: 'Todos',    count: filtered.length },
-    { id: 'receita', label: 'Receitas', dotColor: 'var(--s-done)' },
-    { id: 'despesa', label: 'Despesas', dotColor: 'var(--s-hot)'  },
+    { id: 'receita', label: 'Receitas', dotColor: 'var(--success)' },
+    { id: 'despesa', label: 'Despesas', dotColor: 'var(--error)'  },
   ]
   const inputStyle = {
     width: '100%', height: '44px', padding: '0 12px',
-    borderRadius: '10px', fontSize: '13px', color: 'var(--bo-text)',
-    background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+    borderRadius: '10px', fontSize: '13px', color: 'var(--text-primary)',
+    background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
     outline: 'none', boxSizing: 'border-box' as const,
   }
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div style={{ height: '72px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '72px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
         <div style={{ display: 'flex', gap: '12px' }}>
           {[1,2,3,4].map(i => (
-            <div key={i} style={{ flex: 1, height: '88px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} style={{ flex: 1, height: '88px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))}
         </div>
-        <div style={{ height: '300px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '300px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
       </div>
     )
   }
@@ -156,8 +156,8 @@ export default function FinanceiroPage() {
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '38px', padding: '0 14px', borderRadius: '12px',
-                  fontSize: '12px', fontWeight: 600, color: 'var(--bo-text-muted)',
-                  background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                  fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)',
+                  background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
                   cursor: 'pointer', flexShrink: 0,
                 }}
               >
@@ -172,7 +172,7 @@ export default function FinanceiroPage() {
                   height: '38px', padding: '0 18px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
                   background: 'var(--btn-primary-bg)',
-                  boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 28%, transparent)',
+                  boxShadow: '0 4px 14px color-mix(in srgb, var(--imi-gold-500) 28%, transparent)',
                   border: 'none', cursor: 'pointer',
                   flexShrink: 0,
                 }}
@@ -211,15 +211,15 @@ export default function FinanceiroPage() {
         transition={{ delay: 0.14, duration: 0.35 }}
         style={{ overflow: 'hidden' }}
       >
-        <div style={{ padding: '14px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ padding: '14px', borderBottom: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
           <SectionHeader title="Lançamentos" badge={filtered.length} />
           <FilterTabs tabs={filterTabs} active={tipoFilter} onChange={setTipoFilter} />
         </div>
         {filtered.length === 0 ? (
           <div style={{ padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', textAlign: 'center' }}>
-            <DollarSign size={32} color="var(--bo-text-muted)" />
-            <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--bo-text)' }}>Nenhum lançamento encontrado</p>
-            <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)' }}>Registre receitas e despesas para controlar seu fluxo de caixa</p>
+            <DollarSign size={32} color="var(--text-secondary)" />
+            <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Nenhum lançamento encontrado</p>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Registre receitas e despesas para controlar seu fluxo de caixa</p>
             <button
               onClick={() => setShowForm(true)}
               style={{
@@ -246,25 +246,25 @@ export default function FinanceiroPage() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: '12px',
                     padding: '12px 14px',
-                    borderBottom: '1px solid var(--bo-border)',
+                    borderBottom: '1px solid var(--border-default)',
                   }}
                 >
                   <div style={{ flexShrink: 0 }}>
                     {t.type === 'receita'
-                      ? <ArrowUpCircle size={22} color="var(--s-done)" />
-                      : <ArrowDownCircle size={22} color="var(--s-hot)" />
+                      ? <ArrowUpCircle size={22} color="var(--success)" />
+                      : <ArrowDownCircle size={22} color="var(--error)" />
                     }
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text)', marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {t.description}
                     </p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'var(--bo-surface)', padding: '1px 6px', borderRadius: '6px', border: '1px solid var(--bo-border)' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', background: 'var(--bg-surface)', padding: '1px 6px', borderRadius: '6px', border: '1px solid var(--border-default)' }}>
                         {t.category}
                       </span>
                       {t.due_date && (
-                        <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
+                        <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
                           {new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
                         </span>
                       )}
@@ -272,7 +272,7 @@ export default function FinanceiroPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                    <p style={{ fontSize: '13px', fontWeight: 700, color: t.type === 'receita' ? 'var(--s-done)' : 'var(--s-hot)' }}>
+                    <p style={{ fontSize: '13px', fontWeight: 700, color: t.type === 'receita' ? 'var(--success)' : 'var(--error)' }}>
                       {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
                     </p>
                     {t.status === 'pendente' && (
@@ -297,10 +297,10 @@ export default function FinanceiroPage() {
                           style={{
                             width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            background: 'var(--s-done-bg)', border: 'none', cursor: 'pointer',
+                            background: 'var(--success-bg)', border: 'none', cursor: 'pointer',
                           }}
                         >
-                          <CheckCircle size={16} color="var(--s-done)" />
+                          <CheckCircle size={16} color="var(--success)" />
                         </button>
                       </>
                     )}
@@ -331,12 +331,12 @@ export default function FinanceiroPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{ width: '100%', maxWidth: '480px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+            style={{ width: '100%', maxWidth: '480px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--bo-text)' }}>Novo Lançamento</h3>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Novo Lançamento</h3>
               <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
-                <X size={18} color="var(--bo-text-muted)" />
+                <X size={18} color="var(--text-secondary)" />
               </button>
             </div>
             {/* Type toggle */}
@@ -346,9 +346,9 @@ export default function FinanceiroPage() {
                   style={{
                     flex: 1, height: '40px', borderRadius: '10px', fontSize: '13px', fontWeight: 600,
                     cursor: 'pointer', transition: 'all 0.18s ease',
-                    background: form.type === tp ? (tp === 'receita' ? 'var(--s-done-bg)' : 'var(--s-hot-bg)') : 'var(--bo-surface)',
-                    color: form.type === tp ? (tp === 'receita' ? 'var(--s-done)' : 'var(--s-hot)') : 'var(--bo-text-muted)',
-                    border: `1px solid ${form.type === tp ? (tp === 'receita' ? 'var(--s-done)' : 'var(--s-hot)') : 'var(--bo-border)'}`,
+                    background: form.type === tp ? (tp === 'receita' ? 'var(--success-bg)' : 'var(--error-bg)') : 'var(--bg-surface)',
+                    color: form.type === tp ? (tp === 'receita' ? 'var(--success)' : 'var(--error)') : 'var(--text-secondary)',
+                    border: `1px solid ${form.type === tp ? (tp === 'receita' ? 'var(--success)' : 'var(--error)') : 'var(--border-default)'}`,
                   }}>
                   {tp === 'receita' ? '↑ Receita' : '↓ Despesa'}
                 </button>
@@ -356,27 +356,27 @@ export default function FinanceiroPage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Descrição *</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Descrição *</label>
                 <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                   placeholder="Ex: Comissão Venda Apt 905" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Valor (R$) *</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Valor (R$) *</label>
                 <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
                   placeholder="0.00" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Categoria</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Categoria</label>
                 <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} style={inputStyle}>
                   {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Data de Vencimento</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Data de Vencimento</label>
                 <input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))} style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Método de Pagamento</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Método de Pagamento</label>
                 <select value={form.payment_method} onChange={e => setForm(f => ({ ...f, payment_method: e.target.value }))} style={inputStyle}>
                   <option value="">Não informado</option>
                   <option value="pix">PIX</option>
@@ -387,7 +387,7 @@ export default function FinanceiroPage() {
                 </select>
               </div>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Observações</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Observações</label>
                 <textarea value={form.notes || ''} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                   rows={2} placeholder="Notas adicionais..."
                   style={{ ...inputStyle, height: 'auto', padding: '10px 12px', resize: 'none' }} />
@@ -395,7 +395,7 @@ export default function FinanceiroPage() {
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => setShowForm(false)}
-                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
+                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-default)' }}>
                 Cancelar
               </button>
               <button onClick={handleSubmit} disabled={saving}

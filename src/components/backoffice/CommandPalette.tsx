@@ -88,23 +88,23 @@ export function CommandPalette() {
         <div className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh] animate-in fade-in duration-200"
             style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
             <Command className="w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
-                style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
-                <div className="flex items-center px-4" style={{ borderBottom: '1px solid var(--bo-border)' }}>
-                    <Search className="mr-2 h-5 w-5 shrink-0 opacity-50" style={{ color: 'var(--bo-text-muted)' }} />
+                style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
+                <div className="flex items-center px-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
+                    <Search className="mr-2 h-5 w-5 shrink-0 opacity-50" style={{ color: 'var(--text-secondary)' }} />
                     <Command.Input
                         placeholder="Busque por páginas, leads ou comandos..."
                         className="flex h-16 w-full rounded-md bg-transparent py-3 text-lg outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                        style={{ color: 'var(--bo-text)' }}
+                        style={{ color: 'var(--text-primary)' }}
                     />
-                    <div className="text-xs px-2 py-1 rounded" style={{ color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)', background: 'var(--bo-surface)' }}>ESC</div>
+                    <div className="text-xs px-2 py-1 rounded" style={{ color: 'var(--text-secondary)', border: '1px solid var(--border-default)', background: 'var(--bg-surface)' }}>ESC</div>
                 </div>
 
                 <Command.List className="max-h-[60vh] overflow-y-auto overflow-x-hidden py-2 px-2 custom-scrollbar">
-                    <Command.Empty className="py-12 text-center text-sm" style={{ color: 'var(--bo-text-muted)' }}>
+                    <Command.Empty className="py-12 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
                         Nenhum resultado encontrado.
                     </Command.Empty>
 
-                    <Command.Group heading="Sugestões" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--bo-text-muted)' }}>
+                    <Command.Group heading="Sugestões" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--text-secondary)' }}>
                         {[
                             { href: '/backoffice/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
                             { href: '/backoffice/leads', icon: Users, label: 'Gestão de Leads' },
@@ -112,18 +112,18 @@ export function CommandPalette() {
                         ].map(({ href, icon: Icon, label }) => (
                             <Command.Item key={href} onSelect={() => runCommand(() => router.push(href))}
                                 className={itemClass}
-                                style={{ color: 'var(--bo-text-muted)' }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bo-hover)'; e.currentTarget.style.color = 'var(--bo-text)' }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--bo-text-muted)' }}>
+                                style={{ color: 'var(--text-secondary)' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)' }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)' }}>
                                 <Icon className="h-5 w-5 opacity-70" />
                                 <span className="font-medium text-sm">{label}</span>
                             </Command.Item>
                         ))}
                     </Command.Group>
 
-                    <Command.Separator className="h-px mx-2 my-2" style={{ background: 'var(--bo-border)' }} />
+                    <Command.Separator className="h-px mx-2 my-2" style={{ background: 'var(--border-default)' }} />
 
-                    <Command.Group heading="Ferramentas" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2 mt-2" style={{ color: 'var(--bo-text-muted)' }}>
+                    <Command.Group heading="Ferramentas" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2 mt-2" style={{ color: 'var(--text-secondary)' }}>
                         {[
                             { href: '/backoffice/campanhas', icon: BarChart3, label: 'Campanhas' },
                             { href: '/backoffice/conteudo', icon: Sparkles, label: 'Conteúdo & IA' },
@@ -132,18 +132,18 @@ export function CommandPalette() {
                         ].map(({ href, icon: Icon, label }) => (
                             <Command.Item key={href} onSelect={() => runCommand(() => router.push(href))}
                                 className={itemClass}
-                                style={{ color: 'var(--bo-text-muted)' }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bo-hover)'; e.currentTarget.style.color = 'var(--bo-text)' }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--bo-text-muted)' }}>
+                                style={{ color: 'var(--text-secondary)' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)' }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)' }}>
                                 <Icon className="h-5 w-5 opacity-70" />
                                 <span className="font-medium text-sm">{label}</span>
                             </Command.Item>
                         ))}
                     </Command.Group>
 
-                    <Command.Separator className="h-px mx-2 my-2" style={{ background: 'var(--bo-border)' }} />
+                    <Command.Separator className="h-px mx-2 my-2" style={{ background: 'var(--border-default)' }} />
 
-                    <Command.Group heading="Configurações" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2 mt-2" style={{ color: 'var(--bo-text-muted)' }}>
+                    <Command.Group heading="Configurações" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2 mt-2" style={{ color: 'var(--text-secondary)' }}>
                         {[
                             { href: '/backoffice/settings', icon: Settings, label: 'Geral' },
                             { href: '/backoffice/settings/corretores', icon: User, label: 'Corretores' },
@@ -151,9 +151,9 @@ export function CommandPalette() {
                         ].map(({ href, icon: Icon, label }) => (
                             <Command.Item key={href} onSelect={() => runCommand(() => router.push(href))}
                                 className={itemClass}
-                                style={{ color: 'var(--bo-text-muted)' }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bo-hover)'; e.currentTarget.style.color = 'var(--bo-text)' }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--bo-text-muted)' }}>
+                                style={{ color: 'var(--text-secondary)' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)' }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)' }}>
                                 <Icon className="h-5 w-5 opacity-70" />
                                 <span className="font-medium text-sm">{label}</span>
                             </Command.Item>
@@ -161,16 +161,16 @@ export function CommandPalette() {
                     </Command.Group>
                 </Command.List>
 
-                <div className="p-2" style={{ borderTop: '1px solid var(--bo-border)', background: 'rgba(255,255,255,0.02)' }}>
+                <div className="p-2" style={{ borderTop: '1px solid var(--border-default)', background: 'rgba(255,255,255,0.02)' }}>
                     <div className="flex items-center justify-between px-3">
-                        <span className="text-[10px] flex items-center gap-2" style={{ color: 'var(--bo-text-muted)' }}>
-                            <span>Navegar <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>↑</kbd><kbd className="font-sans px-1 py-0.5 rounded ml-1" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>↓</kbd></span>
+                        <span className="text-[10px] flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
+                            <span>Navegar <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>↑</kbd><kbd className="font-sans px-1 py-0.5 rounded ml-1" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>↓</kbd></span>
                             <span className="opacity-50">·</span>
-                            <span>Buscar <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>/</kbd></span>
+                            <span>Buscar <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>/</kbd></span>
                             <span className="opacity-50">·</span>
-                            <span>Novo <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>n</kbd></span>
+                            <span>Novo <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>n</kbd></span>
                         </span>
-                        <span className="text-[10px] flex items-center gap-1" style={{ color: 'var(--bo-text-muted)' }}>
+                        <span className="text-[10px] flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
                             <CommandIcon size={10} /> IMI Intelligence
                         </span>
                     </div>

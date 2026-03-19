@@ -51,12 +51,12 @@ export function WidgetSimulator() {
 
     const inputStyle: React.CSSProperties = {
         width: '100%',
-        background: 'var(--bo-bg)',
-        border: '1px solid var(--bo-border)',
+        background: 'var(--bg-base)',
+        border: '1px solid var(--border-default)',
         borderRadius: 6,
         padding: '7px 10px',
         fontSize: 13,
-        color: 'var(--bo-text)',
+        color: 'var(--text-primary)',
         fontFamily: 'var(--font-ui)',
         outline: 'none',
         boxSizing: 'border-box',
@@ -67,7 +67,7 @@ export function WidgetSimulator() {
         fontWeight: 600,
         letterSpacing: '0.1em',
         textTransform: 'uppercase' as const,
-        color: 'var(--bo-text-muted)',
+        color: 'var(--text-secondary)',
         fontFamily: 'var(--font-ui)',
         marginBottom: 4,
         display: 'block',
@@ -75,7 +75,7 @@ export function WidgetSimulator() {
 
     const sliderStyle: React.CSSProperties = {
         width: '100%',
-        accentColor: 'var(--bo-accent,#C8A44A)',
+        accentColor: 'var(--imi-gold-500,#C8A44A)',
         cursor: 'pointer',
     }
 
@@ -83,10 +83,10 @@ export function WidgetSimulator() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Title */}
             <div>
-                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)', marginBottom: 2 }}>
                     Simulador
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--bo-text)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-display,"Playfair Display",serif)' }}>
                     Financiamento Imobiliário
                 </div>
             </div>
@@ -119,15 +119,15 @@ export function WidgetSimulator() {
                 <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <label style={{ ...labelStyle, marginBottom: 0 }}>Entrada</label>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--bo-accent,#C8A44A)' }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--imi-gold-500,#C8A44A)' }}>
                             {entrada}% — {formatBRL(valorImovel * entrada / 100)}
                         </span>
                     </div>
                     <input type="range" min={5} max={80} step={5} value={entrada}
                         onChange={e => setEntrada(Number(e.target.value))} style={sliderStyle} />
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-                        <span style={{ fontSize: 9, color: 'var(--bo-text-muted)' }}>5%</span>
-                        <span style={{ fontSize: 9, color: 'var(--bo-text-muted)' }}>80%</span>
+                        <span style={{ fontSize: 9, color: 'var(--text-secondary)' }}>5%</span>
+                        <span style={{ fontSize: 9, color: 'var(--text-secondary)' }}>80%</span>
                     </div>
                 </div>
 
@@ -135,15 +135,15 @@ export function WidgetSimulator() {
                 <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <label style={{ ...labelStyle, marginBottom: 0 }}>Prazo</label>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--bo-accent,#C8A44A)' }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--imi-gold-500,#C8A44A)' }}>
                             {prazo} anos ({prazo * 12} meses)
                         </span>
                     </div>
                     <input type="range" min={10} max={35} step={5} value={prazo}
                         onChange={e => setPrazo(Number(e.target.value))} style={sliderStyle} />
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-                        <span style={{ fontSize: 9, color: 'var(--bo-text-muted)' }}>10 anos</span>
-                        <span style={{ fontSize: 9, color: 'var(--bo-text-muted)' }}>35 anos</span>
+                        <span style={{ fontSize: 9, color: 'var(--text-secondary)' }}>10 anos</span>
+                        <span style={{ fontSize: 9, color: 'var(--text-secondary)' }}>35 anos</span>
                     </div>
                 </div>
             </div>
@@ -156,11 +156,11 @@ export function WidgetSimulator() {
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
                 <div>
-                    <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--bo-text-muted)', marginBottom: 4 }}>Parcela Mensal</div>
-                    <div style={{ fontSize: 32, fontWeight: 700, color: 'var(--bo-accent,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
+                    <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-secondary)', marginBottom: 4 }}>Parcela Mensal</div>
+                    <div style={{ fontSize: 32, fontWeight: 700, color: 'var(--imi-gold-500,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
                         {formatBRL(parcela)}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--bo-text-muted)', marginTop: 4 }}>
+                    <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 4 }}>
                         Sistema Price — {prazo * 12} parcelas
                     </div>
                 </div>
@@ -173,37 +173,37 @@ export function WidgetSimulator() {
                     { label: 'Total Pago', value: formatBRL(totalPago) },
                     { label: 'Total Juros', value: formatBRL(totalJuros) },
                 ].map(s => (
-                    <div key={s.label} style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: 7, padding: '8px 10px' }}>
-                        <div style={{ fontSize: 8, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 3 }}>{s.label}</div>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bo-text)', fontFamily: 'var(--font-ui)' }}>{s.value}</div>
+                    <div key={s.label} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: 7, padding: '8px 10px' }}>
+                        <div style={{ fontSize: 8, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 3 }}>{s.label}</div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-ui)' }}>{s.value}</div>
                     </div>
                 ))}
             </div>
 
             {/* Amortization sparkline */}
             <div>
-                <div style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
+                <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
                     Evolução do Saldo Devedor
                 </div>
                 <svg width="100%" viewBox={`0 0 ${spW} ${spH}`} preserveAspectRatio="none" style={{ height: spH }}>
                     <defs>
                         <linearGradient id="amortGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="var(--bo-accent,#C8A44A)" stopOpacity="0.18" />
-                            <stop offset="100%" stopColor="var(--bo-accent,#C8A44A)" stopOpacity="0" />
+                            <stop offset="0%" stopColor="var(--imi-gold-500,#C8A44A)" stopOpacity="0.18" />
+                            <stop offset="100%" stopColor="var(--imi-gold-500,#C8A44A)" stopOpacity="0" />
                         </linearGradient>
                     </defs>
                     <polyline points={`${spPts} ${spW},${spH} 0,${spH}`} fill="url(#amortGrad)" stroke="none" />
-                    <polyline points={spPts} fill="none" stroke="var(--bo-accent,#C8A44A)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline points={spPts} fill="none" stroke="var(--imi-gold-500,#C8A44A)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             </div>
 
             {/* CTA */}
             <button style={{
                 background: 'transparent',
-                border: '1px solid var(--bo-accent,#C8A44A)',
+                border: '1px solid var(--imi-gold-500,#C8A44A)',
                 borderRadius: 7,
                 padding: '9px 16px',
-                color: 'var(--bo-accent,#C8A44A)',
+                color: 'var(--imi-gold-500,#C8A44A)',
                 fontSize: 11,
                 fontWeight: 600,
                 fontFamily: 'var(--font-ui)',
