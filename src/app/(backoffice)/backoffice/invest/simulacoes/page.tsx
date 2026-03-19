@@ -60,7 +60,7 @@ export default function SimulacoesPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Buscar por mercado, tipo..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50"
+          className="w-full pl-10 pr-4 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50"
           style={{ background: 'rgba(255,255,255,0.03)' }}
         />
       </div>
@@ -73,7 +73,7 @@ export default function SimulacoesPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
           <BarChart3 className="w-10 h-10 text-white/20 mx-auto mb-3" />
           <h3 className="text-white/70 font-medium mb-1">Nenhuma simulacao encontrada</h3>
           <p className="text-white/40 text-sm mb-4">
@@ -91,7 +91,7 @@ export default function SimulacoesPage() {
           )}
         </div>
       ) : (
-        <div className="rounded-xl border border-white/10 overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-lg border border-white/10 overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)' }}>
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/10">

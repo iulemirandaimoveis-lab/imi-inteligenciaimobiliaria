@@ -201,7 +201,7 @@ export default function UsuariosPage() {
         actions={
           <button
             onClick={() => router.push('/backoffice/settings/usuarios/novo')}
-            className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-sm transition-all"
+            className="flex items-center gap-2 h-11 px-5 rounded-[6px] font-semibold text-sm transition-all"
             style={{ background: 'var(--btn-primary-bg)', color: 'white' }}
           >
             <Plus size={16} />
@@ -219,7 +219,7 @@ export default function UsuariosPage() {
       </div>
 
       {/* Filtros */}
-      <div className="rounded-2xl p-4 space-y-3" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-4 space-y-3" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textMuted }} />
           <input
@@ -227,7 +227,7 @@ export default function UsuariosPage() {
             placeholder="Buscar por nome ou email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-9 pl-9 pr-4 rounded-xl text-sm outline-none"
+            className="w-full h-9 pl-9 pr-4 rounded-[6px] text-sm outline-none"
             style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
           />
         </div>
@@ -244,7 +244,7 @@ export default function UsuariosPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="h-9 px-3 rounded-xl text-xs font-semibold outline-none"
+            className="h-9 px-3 rounded-[6px] text-xs font-semibold outline-none"
             style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
           >
             <option value="all">Todas as roles</option>
@@ -260,13 +260,13 @@ export default function UsuariosPage() {
       {loading ? (
         <div className="space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="animate-pulse rounded-2xl h-16" style={{ background: T.elevated }} />
+            <div key={i} className="animate-pulse rounded-lg h-16" style={{ background: T.elevated }} />
           ))}
         </div>
       ) : (
         <>
           {/* Lista */}
-          <div className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+          <div className="rounded-lg overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
             {filteredUsuarios.length === 0 ? (
               <div className="py-20 text-center" style={{ color: T.textMuted }}>
                 <Shield size={36} className="mx-auto mb-4" style={{ opacity: 0.25 }} />
@@ -326,7 +326,7 @@ export default function UsuariosPage() {
                           <button
                             onClick={() => openEdit(user)}
                             title="Editar usuário"
-                            className="flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-medium transition-all hover:brightness-110"
+                            className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
                             style={{ background: 'rgba(72,101,129,0.1)', border: `1px solid ${T.border}`, color: T.textMuted }}
                           >
                             <Edit size={13} />
@@ -338,7 +338,7 @@ export default function UsuariosPage() {
                             <button
                               onClick={() => openDeactivate(user)}
                               title="Desativar usuário"
-                              className="flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-medium transition-all hover:brightness-110"
+                              className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
                               style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.2)', color: 'var(--bo-error, #e57373)' }}
                             >
                               <UserX size={13} />
@@ -360,7 +360,7 @@ export default function UsuariosPage() {
       {editModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div
-            className="w-full max-w-md rounded-2xl p-6 space-y-5"
+            className="w-full max-w-md rounded-xl p-6 space-y-5"
             style={{ background: 'var(--bo-elevated, var(--bg-elevated))', border: `1px solid ${T.border}` }}
           >
             {/* Header */}
@@ -368,7 +368,7 @@ export default function UsuariosPage() {
               <h2 className="font-semibold text-base" style={{ color: T.text }}>Editar Usuário</h2>
               <button
                 onClick={() => setEditModal({ open: false, user: null, name: '', role: '', saving: false })}
-                className="w-8 h-8 rounded-xl flex items-center justify-center hover:opacity-70 transition-all"
+                className="w-8 h-8 rounded-[6px] flex items-center justify-center hover:opacity-70 transition-all"
                 style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
               >
                 <X size={14} />
@@ -382,7 +382,7 @@ export default function UsuariosPage() {
                 type="text"
                 value={editModal.name}
                 onChange={e => setEditModal(m => ({ ...m, name: e.target.value }))}
-                className="w-full rounded-xl text-sm outline-none"
+                className="w-full rounded-[6px] text-sm outline-none"
                 style={{ ...inputStyle, padding: '0 14px', borderRadius: '10px' }}
               />
             </div>
@@ -393,7 +393,7 @@ export default function UsuariosPage() {
               <select
                 value={editModal.role}
                 onChange={e => setEditModal(m => ({ ...m, role: e.target.value }))}
-                className="w-full rounded-xl text-sm outline-none"
+                className="w-full rounded-[6px] text-sm outline-none"
                 style={{ ...inputStyle, padding: '0 14px', borderRadius: '10px' }}
               >
                 <option value="ADMIN">Administrador</option>
@@ -410,7 +410,7 @@ export default function UsuariosPage() {
               <button
                 onClick={() => setEditModal({ open: false, user: null, name: '', role: '', saving: false })}
                 disabled={editModal.saving}
-                className="flex-1 h-11 rounded-xl text-sm font-medium transition-all"
+                className="flex-1 h-11 rounded-[6px] text-sm font-medium transition-all"
                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
               >
                 Cancelar
@@ -418,7 +418,7 @@ export default function UsuariosPage() {
               <button
                 onClick={handleSaveEdit}
                 disabled={editModal.saving}
-                className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
+                className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
                 style={{ background: 'var(--btn-primary-bg, var(--bo-accent))' }}
               >
                 {editModal.saving && <Loader2 size={14} className="animate-spin" />}
@@ -433,13 +433,13 @@ export default function UsuariosPage() {
       {deactivateModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div
-            className="w-full max-w-sm rounded-2xl p-6 space-y-5"
+            className="w-full max-w-sm rounded-xl p-6 space-y-5"
             style={{ background: 'var(--bo-elevated, var(--bg-elevated))', border: `1px solid ${T.border}` }}
           >
             {/* Icon + Title */}
             <div className="flex flex-col items-center text-center gap-3">
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                className="w-12 h-12 rounded-lg flex items-center justify-center"
                 style={{ background: 'rgba(229,115,115,0.12)', border: '1px solid rgba(229,115,115,0.25)' }}
               >
                 <UserX size={22} style={{ color: 'var(--bo-error, #e57373)' }} />
@@ -457,7 +457,7 @@ export default function UsuariosPage() {
               <button
                 onClick={() => setDeactivateModal({ open: false, user: null, saving: false })}
                 disabled={deactivateModal.saving}
-                className="flex-1 h-11 rounded-xl text-sm font-medium transition-all"
+                className="flex-1 h-11 rounded-[6px] text-sm font-medium transition-all"
                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
               >
                 Cancelar
@@ -465,7 +465,7 @@ export default function UsuariosPage() {
               <button
                 onClick={handleDeactivate}
                 disabled={deactivateModal.saving}
-                className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
+                className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
                 style={{ background: '#e57373' }}
               >
                 {deactivateModal.saving && <Loader2 size={14} className="animate-spin" />}

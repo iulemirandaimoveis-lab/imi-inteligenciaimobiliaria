@@ -62,7 +62,7 @@ export default function ConfiguracoesPage() {
     }
   }
 
-  const inputCls = "w-full px-3 py-2.5 rounded-lg border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#C8A44A]/50"
+  const inputCls = "w-full px-3 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#C8A44A]/50"
   const inputBg = { background: 'rgba(255,255,255,0.05)' }
   const labelCls = "block text-xs text-white/50 mb-1.5"
 
@@ -92,7 +92,7 @@ export default function ConfiguracoesPage() {
       </div>
 
       {/* Default Parameters */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
           <Globe className="w-4 h-4 text-[#C8A44A]" />
           Parametros Padrao
@@ -136,7 +136,7 @@ export default function ConfiguracoesPage() {
       </div>
 
       {/* Toggles */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
           <Zap className="w-4 h-4 text-[#C8A44A]" />
           Funcionalidades
@@ -164,7 +164,7 @@ export default function ConfiguracoesPage() {
       </div>
 
       {/* Notifications */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
           <Bell className="w-4 h-4 text-[#C8A44A]" />
           Notificacoes
@@ -191,7 +191,7 @@ export default function ConfiguracoesPage() {
       </div>
 
       {/* Integrations */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
           <Database className="w-4 h-4 text-[#C8A44A]" />
           Integracoes

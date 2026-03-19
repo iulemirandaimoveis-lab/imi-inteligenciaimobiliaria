@@ -60,7 +60,7 @@ export default function LeadDetailPage() {
     return (
       <div className="space-y-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-24 rounded-xl bg-white/5 animate-pulse" />
+          <div key={i} className="h-24 rounded-lg bg-white/5 animate-pulse" />
         ))}
       </div>
     )
@@ -68,7 +68,7 @@ export default function LeadDetailPage() {
 
   if (!lead) {
     return (
-      <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <User className="w-10 h-10 text-white/20 mx-auto mb-3" />
         <h3 className="text-white/70 font-medium mb-1">Lead nao encontrado</h3>
         <p className="text-white/40 text-sm mb-4">ID: {id}</p>
@@ -100,7 +100,7 @@ export default function LeadDetailPage() {
         {/* Left: Profile & Scoring */}
         <div className="space-y-4">
           {/* Scores */}
-          <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
             <h3 className="text-sm font-semibold text-white mb-4">Scoring</h3>
             <div className="flex justify-around">
               <ScoreRing value={lead.engagementScore} label="Engajamento" color="#C8A44A" />
@@ -109,7 +109,7 @@ export default function LeadDetailPage() {
           </div>
 
           {/* Investment Profile */}
-          <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
             <h3 className="text-sm font-semibold text-white mb-3">Perfil de Investimento</h3>
             <div className="space-y-3">
               <div className="flex justify-between py-1.5 border-b border-white/5">
@@ -132,7 +132,7 @@ export default function LeadDetailPage() {
           </div>
 
           {/* Broker */}
-          <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
             <h3 className="text-sm font-semibold text-white mb-2">Corretor Responsavel</h3>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center">
@@ -150,7 +150,7 @@ export default function LeadDetailPage() {
         <div className="md:col-span-2 space-y-4">
           {/* Simulations */}
           {lead.simulations && lead.simulations.length > 0 && (
-            <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
               <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-gold" />
                 Simulacoes Vinculadas
@@ -178,7 +178,7 @@ export default function LeadDetailPage() {
           )}
 
           {/* Interaction History */}
-          <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-gold" />
               Historico de Interacoes
@@ -212,7 +212,7 @@ export default function LeadDetailPage() {
           </div>
 
           {/* Notes */}
-          <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
             <h3 className="text-sm font-semibold text-white mb-2">Notas</h3>
             <p className="text-sm text-white/50">{lead.notes || 'Sem notas registradas.'}</p>
           </div>

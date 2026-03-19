@@ -536,7 +536,7 @@ function DesktopUnidades({
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => router.push(`/backoffice/imoveis/${id}`)}
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
                     style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textDim }}
                 >
                     <ArrowLeft size={17} />
@@ -554,7 +554,7 @@ function DesktopUnidades({
                 actions={
                     <div className="flex items-center gap-2">
                         <button
-                            className="flex items-center gap-2 h-10 px-4 rounded-xl font-medium text-sm transition-colors"
+                            className="flex items-center gap-2 h-10 px-4 rounded-[6px] font-medium text-sm transition-colors"
                             style={{ border: `1px solid ${T.border}`, color: T.text, background: T.surface }}
                             onClick={() => toast.info('Export em desenvolvimento')}
                         >
@@ -563,7 +563,7 @@ function DesktopUnidades({
                         </button>
                         <button
                             onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
-                            className="flex items-center gap-2 h-10 px-5 text-white rounded-xl font-semibold text-sm transition-all hover:scale-[1.02]"
+                            className="flex items-center gap-2 h-10 px-5 text-white rounded-[6px] font-semibold text-sm transition-all hover:scale-[1.02]"
                             style={{ background: T.accent }}
                         >
                             <Plus size={15} />
@@ -596,7 +596,7 @@ function DesktopUnidades({
                 ].map(s => (
                     <div
                         key={s.label}
-                        className="rounded-2xl p-4"
+                        className="rounded-lg p-4"
                         style={{ background: T.surface, border: `1px solid ${T.border}` }}
                     >
                         <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>
@@ -621,7 +621,7 @@ function DesktopUnidades({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="rounded-2xl p-4"
+                className="rounded-lg p-4"
                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
             >
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -632,14 +632,14 @@ function DesktopUnidades({
                             placeholder="Buscar unidade..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full h-10 pl-10 pr-4 rounded-xl focus:outline-none text-sm"
+                            className="w-full h-10 pl-10 pr-4 rounded-[6px] focus:outline-none text-sm"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                         />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={e => setStatusFilter(e.target.value)}
-                        className="h-10 px-4 rounded-xl focus:outline-none text-sm"
+                        className="h-10 px-4 rounded-[6px] focus:outline-none text-sm"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     >
                         <option value="all">Todos os status</option>
@@ -650,7 +650,7 @@ function DesktopUnidades({
                     <select
                         value={tipoFilter}
                         onChange={e => setTipoFilter(e.target.value)}
-                        className="h-10 px-4 rounded-xl focus:outline-none text-sm"
+                        className="h-10 px-4 rounded-[6px] focus:outline-none text-sm"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     >
                         <option value="all">Todos os tipos</option>
@@ -662,11 +662,11 @@ function DesktopUnidades({
             {/* Unit Cards Grid */}
             {filtered.length === 0 ? (
                 <div
-                    className="text-center py-20 rounded-2xl"
+                    className="text-center py-20 rounded-lg"
                     style={{ background: T.surface, border: `1px dashed ${T.border}` }}
                 >
                     <div
-                        className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                        className="w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                     >
                         <Building2 size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
@@ -682,7 +682,7 @@ function DesktopUnidades({
                     {unidades.length === 0 && (
                         <button
                             onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
-                            className="mt-5 h-10 px-6 rounded-xl font-semibold text-sm text-white transition-all hover:scale-[1.02]"
+                            className="mt-5 h-10 px-6 rounded-[6px] font-semibold text-sm text-white transition-all hover:scale-[1.02]"
                             style={{ background: T.accent }}
                         >
                             + Nova Unidade
@@ -701,7 +701,7 @@ function DesktopUnidades({
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.04, duration: 0.3 }}
                                 whileHover={{ y: -2, transition: { duration: 0.15 } }}
-                                className="rounded-2xl p-4 cursor-pointer transition-shadow hover:shadow-lg"
+                                className="rounded-lg p-4 cursor-pointer transition-shadow hover:shadow-lg"
                                 style={{
                                     background: T.surface,
                                     border: unidade.is_highlighted

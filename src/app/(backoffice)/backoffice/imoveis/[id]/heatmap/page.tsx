@@ -342,7 +342,7 @@ export default function ImovelHeatmapPage() {
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => router.back()}
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
                     style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textDim }}
                 >
                     <ArrowLeft size={17} />
@@ -359,7 +359,7 @@ export default function ImovelHeatmapPage() {
                 subtitle={`${development?.name || '—'} · ${development?.neighborhood ? `${development.neighborhood}, ` : ''}${development?.city || ''}`}
                 live
                 actions={
-                    <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="flex items-center gap-1 p-1 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         {rangeOptions.map(r => (
                             <button
                                 key={r}
@@ -382,7 +382,7 @@ export default function ImovelHeatmapPage() {
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl overflow-hidden"
+                className="rounded-lg overflow-hidden"
                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
             >
                 {coverImage ? (
@@ -452,7 +452,7 @@ export default function ImovelHeatmapPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="rounded-2xl p-5"
+                className="rounded-lg p-5"
                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
             >
                 <div className="flex items-center justify-between mb-5">
@@ -518,7 +518,7 @@ export default function ImovelHeatmapPage() {
 
                 {/* AI Insight */}
                 <div className="mt-5 pt-4 flex items-start gap-3" style={{ borderTop: `1px solid ${T.border}` }}>
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.2)' }}>
                         <Zap size={14} style={{ color: 'var(--bo-warning)' }} />
                     </div>
@@ -538,7 +538,7 @@ export default function ImovelHeatmapPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="rounded-2xl p-5"
+                className="rounded-lg p-5"
                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
             >
                 <div className="flex items-center justify-between mb-5">
@@ -579,7 +579,7 @@ export default function ImovelHeatmapPage() {
                 )}
 
                 <button
-                    className="w-full mt-5 h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                    className="w-full mt-5 h-10 rounded-[6px] font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99]"
                     style={{ background: 'var(--info)', color: 'var(--text-inverse)' }}
                 >
                     <Share2 size={14} /> Compartilhar Analytics
@@ -592,7 +592,7 @@ export default function ImovelHeatmapPage() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="rounded-2xl p-5"
+                    className="rounded-lg p-5"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >
                     <div className="mb-5">
@@ -605,7 +605,7 @@ export default function ImovelHeatmapPage() {
                     <div className="space-y-4">
                         {sourceData.map((item, i) => (
                             <div key={item.src} className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-base"
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-base"
                                     style={{ background: T.surface }}>
                                     {item.src.toLowerCase().includes('google') ? '🔍' : item.src.toLowerCase().includes('meta') || item.src.toLowerCase().includes('facebook') ? '📘' : item.src.toLowerCase().includes('instagram') ? '📸' : '🌐'}
                                 </div>

@@ -106,11 +106,11 @@ export default function IndicesPage() {
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="h-32 rounded-xl bg-white/5 animate-pulse" />
+            <div key={i} className="h-32 rounded-lg bg-white/5 animate-pulse" />
           ))}
         </div>
       ) : Object.keys(indices).length === 0 ? (
-        <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
           <TrendingUp className="w-10 h-10 text-white/20 mx-auto mb-3" />
           <h3 className="text-white/70 font-medium mb-1">Dados indisponiveis</h3>
           <p className="text-white/40 text-sm">Nao foi possivel carregar os indices do BCB. Tente novamente.</p>
@@ -135,7 +135,7 @@ export default function IndicesPage() {
                   return (
                     <div
                       key={key}
-                      className="rounded-xl border border-white/10 hover:border-gold/20 p-4 transition-all"
+                      className="rounded-lg border border-white/10 hover:border-gold/20 p-4 transition-all"
                       style={{ background: 'rgba(255,255,255,0.02)' }}
                     >
                       <div className="flex items-start justify-between mb-3">

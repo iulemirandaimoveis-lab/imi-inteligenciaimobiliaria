@@ -139,7 +139,7 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
             <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setOpen(!open)}
-                className="flex items-center gap-2 h-9 px-2.5 rounded-xl transition-all"
+                className="flex items-center gap-2 h-9 px-2.5 rounded-lg transition-all"
                 style={{
                     background: open ? 'var(--bg-elevated)' : 'transparent',
                     border: `1px solid ${open ? 'var(--border-focus)' : 'transparent'}`,
@@ -205,14 +205,14 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                             </div>
                             <div className="p-1.5">
                                 <button onClick={() => { setOpen(false); router.push('/backoffice/settings') }}
-                                    className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
+                                    className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all"
                                     style={{ color: 'var(--text-tertiary)' }}
                                 >
                                     <Settings size={14} />Configurações
                                 </button>
                                 <div className="h-px my-1" style={{ background: 'var(--border-default)' }} />
                                 <button onClick={() => { setOpen(false); onSignOut() }}
-                                    className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
+                                    className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all"
                                     style={{ color: 'var(--error)' }}
                                 >
                                     <LogOut size={14} />Sair
@@ -246,7 +246,7 @@ export default function DesktopHeader() {
                 <div className="flex items-center gap-1.5">
                     <button
                         onClick={startTutorial}
-                        className="flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-semibold transition-all hover:brightness-110"
+                        className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-semibold transition-all hover:brightness-110"
                         style={{
                             background: 'var(--bg-elevated)',
                             border: '1px solid var(--border-default)',

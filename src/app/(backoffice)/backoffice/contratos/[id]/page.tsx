@@ -98,7 +98,7 @@ export default function ContratoDetalhePage() {
                     <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-red-400" />
                     <p className="text-lg font-bold mb-2" style={{ color: T.text }}>{error || 'Contrato não encontrado'}</p>
                     <button onClick={() => router.push('/backoffice/contratos')}
-                        className="mt-4 px-4 py-2 rounded-xl text-white text-sm" style={{ backgroundColor: T.accent }}>
+                        className="mt-4 px-4 py-2 rounded-lg text-white text-sm" style={{ backgroundColor: T.accent }}>
                         Voltar
                     </button>
                 </div>
@@ -121,7 +121,7 @@ export default function ContratoDetalhePage() {
                 actions={
                     <div className="flex items-center gap-2">
                         <button onClick={() => router.back()}
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: T.card, border: `1px solid ${T.border}` }}>
                             <ArrowLeft size={18} style={{ color: T.text }} />
                         </button>
@@ -131,20 +131,20 @@ export default function ContratoDetalhePage() {
                         </span>
                         {data.pdf_url && (
                             <a href={data.pdf_url} target="_blank" rel="noopener noreferrer"
-                                className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium hover:opacity-80"
+                                className="h-10 px-4 rounded-[6px] flex items-center gap-2 text-sm font-medium hover:opacity-80"
                                 style={{ border: `1px solid ${T.border}`, color: T.text }}>
                                 <Download size={16} /> PDF
                             </a>
                         )}
                         {data.drive_url && (
                             <a href={data.drive_url} target="_blank" rel="noopener noreferrer"
-                                className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium hover:opacity-80"
+                                className="h-10 px-4 rounded-[6px] flex items-center gap-2 text-sm font-medium hover:opacity-80"
                                 style={{ border: `1px solid ${T.border}`, color: T.text }}>
                                 <ExternalLink size={16} /> Drive
                             </a>
                         )}
                         <button onClick={() => setShowDeleteConfirm(true)}
-                            className="h-10 px-3 rounded-xl text-sm font-medium hover:bg-red-500/20"
+                            className="h-10 px-3 rounded-[6px] text-sm font-medium hover:bg-red-500/20"
                             style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--bo-error)' }}>
                             <Trash2 size={16} />
                         </button>
@@ -154,11 +154,11 @@ export default function ContratoDetalhePage() {
 
             {/* Delete Confirm */}
             {showDeleteConfirm && (
-                <div className="rounded-xl p-4 flex items-center justify-between"
+                <div className="rounded-lg p-4 flex items-center justify-between"
                     style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>
                     <p className="text-sm" style={{ color: T.text }}>Cancelar contrato <strong>{data.numero}</strong>?</p>
                     <div className="flex gap-2">
-                        <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 rounded-lg text-sm" style={{ color: T.textMuted }}>Não</button>
+                        <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 rounded-[6px] text-sm" style={{ color: T.textMuted }}>Não</button>
                         <button onClick={handleDelete} disabled={deleting}
                             className="px-4 py-2 rounded-lg text-white text-sm bg-red-500 hover:bg-red-600 disabled:opacity-50">
                             {deleting ? 'Cancelando...' : 'Sim, cancelar'}
@@ -169,7 +169,7 @@ export default function ContratoDetalhePage() {
 
             {/* Status Workflow */}
             {data.status !== 'cancelado' && data.status !== 'assinado' && (
-                <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: T.textMuted }}>Atualizar Status</p>
                     <div className="flex gap-2 flex-wrap">
                         {['gerado', 'aguardando_assinatura', 'assinado_parcial', 'assinado'].map(s => {
@@ -177,7 +177,7 @@ export default function ContratoDetalhePage() {
                             if (!cfg || s === data.status) return null
                             return (
                                 <button key={s} onClick={() => handleStatusUpdate(s)}
-                                    className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all hover:opacity-80"
+                                    className="px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all hover:opacity-80"
                                     style={{ color: cfg.text, background: cfg.bg, border: `1px solid ${cfg.text}30` }}>
                                     {cfg.label}
                                 </button>
@@ -211,7 +211,7 @@ export default function ContratoDetalhePage() {
             {activeTab === 'overview' && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Contratante */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.textMuted }}>Contratante</h2>
                         <div className="space-y-3">
                             <div>
@@ -242,7 +242,7 @@ export default function ContratoDetalhePage() {
                     </div>
 
                     {/* Contratado */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.textMuted }}>Contratado</h2>
                         <div className="space-y-3">
                             <div>
@@ -266,7 +266,7 @@ export default function ContratoDetalhePage() {
 
                     {/* Contract Data */}
                     {Object.keys(dadosContrato).length > 0 && (
-                        <div className="lg:col-span-2 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="lg:col-span-2 rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.textMuted }}>Dados do Contrato</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {Object.entries(dadosContrato).map(([key, value]) => (
@@ -282,7 +282,7 @@ export default function ContratoDetalhePage() {
                     )}
 
                     {/* Meta Info */}
-                    <div className="lg:col-span-2 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="lg:col-span-2 rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.textMuted }}>Metadados</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
@@ -322,18 +322,18 @@ export default function ContratoDetalhePage() {
             {activeTab === 'conteudo' && (
                 <div className="space-y-4">
                     {data.conteudo_markdown ? (
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-lg font-bold" style={{ color: T.text }}>Conteúdo do Contrato</h2>
                                 <button onClick={copyMarkdown}
-                                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium hover:opacity-80"
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-[6px] text-xs font-medium hover:opacity-80"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                                     <Copy size={14} /> Copiar
                                 </button>
                             </div>
                             <div className="prose prose-sm max-w-none prose-invert"
                                 style={{ color: T.textMuted }}>
-                                <pre className="whitespace-pre-wrap text-sm leading-relaxed p-4 rounded-xl overflow-auto"
+                                <pre className="whitespace-pre-wrap text-sm leading-relaxed p-4 rounded-lg overflow-auto"
                                     style={{ background: T.elevated, maxHeight: '70vh' }}>
                                     {data.conteudo_markdown}
                                 </pre>
@@ -350,7 +350,7 @@ export default function ContratoDetalhePage() {
 
             {/* INFO TAB */}
             {activeTab === 'info' && (
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Todas as Informações</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {Object.entries(data).filter(([key]) => !['conteudo_markdown', 'conteudo_adicional'].includes(key)).map(([key, value]) => {
@@ -360,7 +360,7 @@ export default function ContratoDetalhePage() {
                                 <div key={key} className={typeof value === 'object' ? 'md:col-span-2' : ''}>
                                     <p className="text-xs mb-1" style={{ color: T.textMuted }}>{key}</p>
                                     {typeof value === 'object' ? (
-                                        <pre className="text-xs p-3 rounded-xl overflow-auto" style={{ background: T.elevated, color: T.text, maxHeight: '200px' }}>
+                                        <pre className="text-xs p-3 rounded-lg overflow-auto" style={{ background: T.elevated, color: T.text, maxHeight: '200px' }}>
                                             {display}
                                         </pre>
                                     ) : (

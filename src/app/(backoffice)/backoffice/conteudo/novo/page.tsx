@@ -306,7 +306,7 @@ export default function NovoConteudoPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPreview(!preview)}
-              className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-bold transition-colors flex-shrink-0"
+              className="flex items-center gap-2 h-10 px-4 rounded-[6px] text-sm font-bold transition-colors flex-shrink-0"
               style={{ background: T.elevated, color: T.text }}
             >
               <Eye size={16} />
@@ -315,7 +315,7 @@ export default function NovoConteudoPage() {
             <button
               onClick={salvarConteudo}
               disabled={!titulo || !corpo || salvo}
-              className="flex items-center gap-2 h-10 px-5 text-white rounded-xl text-sm font-bold hover:brightness-110 disabled:opacity-50 transition-all flex-shrink-0"
+              className="flex items-center gap-2 h-10 px-5 text-white rounded-[6px] text-sm font-bold hover:brightness-110 disabled:opacity-50 transition-all flex-shrink-0"
               style={{ background: T.accent }}
             >
               {salvo ? <Check size={16} /> : <Save size={16} />}
@@ -329,7 +329,7 @@ export default function NovoConteudoPage() {
         {/* ── Painel esquerdo: configuração ──────────────────────────────── */}
         <div className="lg:col-span-1 space-y-6">
           {/* Tipo de conteúdo */}
-          <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
             <label className="block text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: T.textMuted }}>
               Canal de Publicação
             </label>
@@ -366,7 +366,7 @@ export default function NovoConteudoPage() {
           </div>
 
           {/* Contexto para IA */}
-          <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
             <label className="block text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: T.textMuted }}>
               Objetivo & Contexto
             </label>
@@ -374,7 +374,7 @@ export default function NovoConteudoPage() {
               value={contexto}
               onChange={e => setContexto(e.target.value)}
               placeholder="Ex: Lançamento Reserva Imperial, foco em investidores, destacar valorização de 18% a.a. em Boa Viagem..."
-              className="w-full h-28 px-4 py-3 text-sm rounded-2xl focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all resize-none font-medium"
+              className="w-full h-28 px-4 py-3 text-sm rounded-[6px] focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all resize-none font-medium"
               style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
             />
             <div className="flex items-center gap-2 mt-2 px-1">
@@ -384,7 +384,7 @@ export default function NovoConteudoPage() {
           </div>
 
           {/* Assistente IA */}
-          <div className="rounded-2xl p-5 shadow-lg" style={{ background: `linear-gradient(135deg, ${T.accent}18, ${T.card})`, border: `1px solid ${T.borderGold}` }}>
+          <div className="rounded-lg p-5 shadow-lg" style={{ background: `linear-gradient(135deg, ${T.accent}18, ${T.card})`, border: `1px solid ${T.borderGold}` }}>
             <div className="flex items-center justify-between mb-4">
               <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
                 Multi-Model Assistant
@@ -400,7 +400,7 @@ export default function NovoConteudoPage() {
                 <button
                   key={sugestao.id}
                   onClick={() => gerarComIA(sugestao.task, sugestao.id)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl text-xs transition-all group hover:brightness-105"
+                  className="w-full flex items-center justify-between p-3 rounded-lg text-xs transition-all group hover:brightness-105"
                   style={{ color: T.text }}
                 >
                   <span>{sugestao.label}</span>
@@ -410,7 +410,7 @@ export default function NovoConteudoPage() {
               <div className="pt-2 mt-2" style={{ borderTop: `1px solid ${T.border}` }}>
                 <button
                   onClick={usarTemplate}
-                  className="w-full flex items-center justify-between p-3 rounded-xl text-xs transition-all font-bold hover:brightness-105"
+                  className="w-full flex items-center justify-between p-3 rounded-lg text-xs transition-all font-bold hover:brightness-105"
                   style={{ color: T.textMuted }}
                 >
                   <span>Preencher Template</span>
@@ -426,7 +426,7 @@ export default function NovoConteudoPage() {
           {!preview ? (
             <>
               {/* Campo título */}
-              <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center gap-2 mb-4">
                   <div style={{ width: '32px', height: '32px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
                     <TipoIcon size={16} />
@@ -443,19 +443,19 @@ export default function NovoConteudoPage() {
                       ? 'Ex: Oportunidade: Reserva Imperial com 18% de valorização...'
                       : 'Ex: Guia definitivo para investir em Boa Viagem'
                   }
-                  className="w-full h-12 px-5 rounded-2xl text-base font-bold focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all"
+                  className="w-full h-12 px-5 rounded-[6px] text-base font-bold focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
 
               {/* Editor central */}
-              <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center gap-1 px-5 py-3 flex-wrap" style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
-                  <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                  <div className="flex items-center gap-1 p-1 rounded-lg" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     {[Bold, Italic, Link2, List, Quote, Image].map((Icon, i) => (
                       <button
                         key={i}
-                        className="w-9 h-9 flex items-center justify-center rounded-lg transition-all font-bold"
+                        className="w-9 h-9 flex items-center justify-center rounded-[6px] transition-all font-bold"
                         style={{ color: T.textMuted }}
                         title="Formatação"
                       >
@@ -512,7 +512,7 @@ export default function NovoConteudoPage() {
             </>
           ) : (
             /* ── Preview Mode ───────────────────────────────────────────── */
-            <div className="rounded-2xl p-10 min-h-[600px] relative overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-10 min-h-[600px] relative overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className="absolute top-0 right-0 p-8 opacity-5">
                 <LogoIMI className="w-32" />
               </div>
@@ -557,7 +557,7 @@ export default function NovoConteudoPage() {
       {/* ── Modal Assistente IA ───────────────────────────────────────────── */}
       {aiPanel.open && (
         <div className="fixed inset-0 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300" style={{ background: "rgba(0,0,0,0.5)" }}>
-          <div className="rounded-3xl border shadow-2xl w-full max-w-xl overflow-hidden scale-in-center" style={{ background: T.surface, borderColor: T.border }}>
+          <div className="rounded-xl border shadow-2xl w-full max-w-xl overflow-hidden scale-in-center" style={{ background: T.surface, borderColor: T.border }}>
             {/* Header */}
             <div className="flex items-center justify-between p-6" style={{ background: T.elevated, borderBottom: `1px solid ${T.border}` }}>
               <div className="flex items-center gap-3">
@@ -569,7 +569,7 @@ export default function NovoConteudoPage() {
               </div>
               <button
                 onClick={() => setAiPanel(p => ({ ...p, open: false }))}
-                className="w-10 h-10 flex items-center justify-center rounded-2xl transition-colors text-2xl leading-none"
+                className="w-10 h-10 flex items-center justify-center rounded-lg transition-colors text-2xl leading-none"
                 style={{ color: T.textDim }}
               >
                 <X size={20} />
@@ -593,7 +593,7 @@ export default function NovoConteudoPage() {
                 </div>
               ) : aiPanel.result ? (
                 <div className="space-y-6">
-                  <div className="rounded-2xl p-6 max-h-[350px] overflow-y-auto scrollbar-thin" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                  <div className="rounded-lg p-6 max-h-[350px] overflow-y-auto scrollbar-thin" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     <pre className="text-sm whitespace-pre-wrap leading-relaxed font-sans font-medium" style={{ color: T.text }}>
                       {aiPanel.result}
                     </pre>
@@ -602,7 +602,7 @@ export default function NovoConteudoPage() {
                   <div className="flex flex-col sm:flex-row items-center gap-3 font-bold">
                     <button
                       onClick={() => aplicarSugestao(aiPanel.result)}
-                      className="flex items-center gap-2 h-12 px-6 text-white rounded-2xl text-sm hover:brightness-110 w-full sm:flex-1 justify-center shadow-lg transition-all"
+                      className="flex items-center gap-2 h-12 px-6 text-white rounded-lg text-sm hover:brightness-110 w-full sm:flex-1 justify-center shadow-lg transition-all"
                       style={{ background: T.accent }}
                     >
                       <Check size={18} />
@@ -611,7 +611,7 @@ export default function NovoConteudoPage() {
                     <div className="flex gap-2 w-full sm:w-auto">
                       <button
                         onClick={() => navigator.clipboard.writeText(aiPanel.result)}
-                        className="flex items-center gap-2 h-12 px-4 rounded-2xl text-sm flex-1 sm:flex-none justify-center transition-colors"
+                        className="flex items-center gap-2 h-12 px-4 rounded-lg text-sm flex-1 sm:flex-none justify-center transition-colors"
                         style={{ background: T.elevated, color: T.text }}
                         title="Copiar para área de transferência"
                       >
@@ -619,7 +619,7 @@ export default function NovoConteudoPage() {
                       </button>
                       <button
                         onClick={() => gerarComIA(aiPanel.task, aiPanel.field)}
-                        className="flex items-center gap-2 h-12 px-4 rounded-2xl text-sm flex-1 sm:flex-none justify-center transition-colors"
+                        className="flex items-center gap-2 h-12 px-4 rounded-lg text-sm flex-1 sm:flex-none justify-center transition-colors"
                         style={{ background: T.elevated, color: T.text }}
                         title="Regerar resposta"
                       >

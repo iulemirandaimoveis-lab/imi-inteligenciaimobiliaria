@@ -80,7 +80,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                 actions={
                     <button
                         onClick={() => router.push('/backoffice/construtoras/nova')}
-                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold transition-all hover:brightness-110"
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] font-semibold transition-all hover:brightness-110"
                         style={{ background: T.accent }}
                     >
                         <Plus size={18} />
@@ -132,7 +132,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                         placeholder="Buscar pelo nome ou razão social..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full h-10 pl-9 pr-4 rounded-xl outline-none text-sm"
+                        className="w-full h-10 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                 </div>
@@ -153,13 +153,13 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                     <Link
                         key={construtora.id}
                         href={`/backoffice/construtoras/${construtora.id}`}
-                        className="rounded-2xl p-6 transition-all cursor-pointer flex flex-col h-full hover:brightness-105 no-underline"
+                        className="rounded-lg p-6 transition-all cursor-pointer flex flex-col h-full hover:brightness-105 no-underline"
                         style={{ background: T.surface, border: `1px solid ${T.border}` }}
                     >
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-start gap-4">
-                                <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden relative"
+                                <div className="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden relative"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                     {construtora.logo_url ? (
                                         <Image src={construtora.logo_url} alt={construtora.name} width={48} height={48} className="w-full h-full object-contain p-1" />
@@ -238,7 +238,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
 
             {/* Empty State */}
             {filteredConstrutoras.length === 0 && (
-                <div className="rounded-2xl p-12 text-center"
+                <div className="rounded-lg p-12 text-center"
                     style={{ background: T.surface, border: `1px dashed ${T.border}` }}>
                     <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                         style={{ background: T.elevated }}>
@@ -248,7 +248,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                     <p className="text-xs mb-6" style={{ color: T.textMuted }}>Cadastre construtoras para que elas sejam exibidas na página pública de Empreendimentos.</p>
                     <button
                         onClick={() => router.push('/backoffice/construtoras/nova')}
-                        className="inline-flex items-center gap-2 h-10 px-5 text-white rounded-xl text-sm font-medium hover:brightness-110 transition-colors"
+                        className="inline-flex items-center gap-2 h-10 px-5 text-white rounded-[6px] text-sm font-medium hover:brightness-110 transition-colors"
                         style={{ background: T.accent }}
                     >
                         <Plus size={16} />

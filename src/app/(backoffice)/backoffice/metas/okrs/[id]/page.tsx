@@ -58,7 +58,7 @@ function scoreColor(score: number) {
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(v)
 const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
 
-const inputCls = 'w-full px-3 py-2 rounded-lg text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-colors'
+const inputCls = 'w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-colors'
 
 /* ── component ─────────────────────────────────────────────── */
 export default function OKRDetailPage() {
@@ -138,7 +138,7 @@ export default function OKRDetailPage() {
 
   if (!obj) {
     return (
-      <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
         <Target className="w-8 h-8 text-white/20 mx-auto mb-3" />
         <p className="text-white/50 text-sm">OKR não encontrado.</p>
         <Link href="/backoffice/metas/okrs" className="text-gold text-sm mt-2 inline-block hover:underline">
@@ -167,7 +167,7 @@ export default function OKRDetailPage() {
       </div>
 
       {/* Objective Header */}
-      <div className="rounded-xl border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="rounded-lg border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.03)' }}>
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <h1 className="text-xl font-bold text-white">{obj.title}</h1>
@@ -199,7 +199,7 @@ export default function OKRDetailPage() {
       <div>
         <h2 className="text-lg font-semibold text-white mb-4">Key Results</h2>
         {krs.length === 0 ? (
-          <div className="rounded-xl border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="rounded-lg border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <p className="text-white/50 text-sm">Nenhum Key Result definido.</p>
           </div>
         ) : (
@@ -212,7 +212,7 @@ export default function OKRDetailPage() {
               return (
                 <div
                   key={kr.id}
-                  className="rounded-xl border border-white/10 p-5"
+                  className="rounded-lg border border-white/10 p-5"
                   style={{ background: 'rgba(255,255,255,0.03)' }}
                 >
                   <div className="flex items-start justify-between mb-3">

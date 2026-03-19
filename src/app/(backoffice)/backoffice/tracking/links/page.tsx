@@ -154,7 +154,7 @@ export default function TrackingLinksPage() {
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         placeholder="Buscar por campanha ou código..."
-                        className="w-full h-10 pl-10 pr-4 rounded-xl text-sm"
+                        className="w-full h-10 pl-10 pr-4 rounded-lg text-sm"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                 </div>
@@ -198,7 +198,7 @@ export default function TrackingLinksPage() {
                     {filtered.map(link => (
                         <div
                             key={link.id}
-                            className="rounded-xl p-4 transition-all"
+                            className="rounded-lg p-4 transition-all"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                         >
                             <div className="flex flex-col sm:flex-row sm:items-center gap-3">

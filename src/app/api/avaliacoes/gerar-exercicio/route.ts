@@ -3,6 +3,7 @@
 // Chama Anthropic server-side — API key nunca exposta ao cliente
 
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -12,6 +13,10 @@ const NIVEIS = ['básico', 'intermediário', 'avançado'] as const
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { categoria, nivel, quantidade = 3 } = await req.json()
 
     const apiKey = process.env.ANTHROPIC_API_KEY

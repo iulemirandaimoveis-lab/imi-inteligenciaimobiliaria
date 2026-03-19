@@ -344,7 +344,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => router.push(`/backoffice/imoveis/${id}`)}
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
                     style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textDim }}
                 >
                     <ArrowLeft size={17} />
@@ -361,7 +361,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                 subtitle="Histórico completo de eventos do ativo imobiliário"
                 actions={
                     <button
-                        className="h-10 px-5 rounded-xl font-semibold text-sm flex items-center gap-2 text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        className="h-10 px-5 rounded-[6px] font-semibold text-sm flex items-center gap-2 text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
                         style={{ background: T.accent }}
                     >
                         <Plus size={16} />
@@ -407,7 +407,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                             >
                                 {/* Icon dot */}
                                 <div
-                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 z-10"
+                                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 z-10"
                                     style={{ background: cfg.bg, border: `1px solid ${cfg.color}40` }}
                                 >
                                     <Icon size={16} style={{ color: cfg.color }} />
@@ -415,7 +415,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
 
                                 {/* Card */}
                                 <div
-                                    className="flex-1 rounded-2xl p-5 group transition-all hover:shadow-lg"
+                                    className="flex-1 rounded-lg p-5 group transition-all hover:shadow-lg"
                                     style={{ background: T.surface, border: `1px solid ${T.border}` }}
                                 >
                                     <div className="flex items-start justify-between mb-3">
@@ -432,7 +432,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                                                 {format(new Date(event.event_date), "dd MMM 'yy", { locale: ptBR })}
                                             </span>
                                             <button
-                                                className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                                className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-[6px] flex items-center justify-center transition-all"
                                                 style={{ color: T.textMuted, background: T.elevated }}
                                             >
                                                 <Edit3 size={13} />
@@ -467,11 +467,11 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                         <motion.div
                             initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex flex-col items-center justify-center py-24 rounded-2xl"
+                            className="flex flex-col items-center justify-center py-24 rounded-lg"
                             style={{ background: T.surface, border: `1px dashed ${T.border}` }}
                         >
                             <div
-                                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+                                className="w-16 h-16 rounded-lg flex items-center justify-center mb-5"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                             >
                                 <History size={28} style={{ color: T.textMuted, opacity: 0.5 }} />
@@ -483,7 +483,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                                 Esta timeline será preenchida automaticamente conforme o ativo performar ou quando você registrar eventos manuais.
                             </p>
                             <button
-                                className="h-10 px-6 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all hover:scale-[1.02]"
+                                className="h-10 px-6 rounded-[6px] font-semibold text-sm flex items-center gap-2 transition-all hover:scale-[1.02]"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
                             >
                                 <Plus size={15} />

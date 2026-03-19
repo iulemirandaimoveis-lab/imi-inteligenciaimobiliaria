@@ -194,7 +194,7 @@ export default function EditarConstrutoraPage() {
           <p style={{ color: T.text }}>{error}</p>
           <button
             onClick={() => router.back()}
-            className="mt-4 px-4 py-2 rounded-xl text-white text-sm"
+            className="mt-4 px-4 py-2 rounded-lg text-white text-sm"
             style={{ backgroundColor: T.accent }}
           >
             Voltar
@@ -224,14 +224,14 @@ export default function EditarConstrutoraPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo Upload */}
-        <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center gap-2 mb-6">
             <ImageIcon size={20} style={{ color: T.accent }} />
             <h2 className="text-lg font-bold" style={{ color: T.text }}>Logo</h2>
           </div>
           <div className="flex items-center gap-6">
             <div
-              className="w-24 h-24 rounded-xl flex items-center justify-center overflow-hidden relative"
+              className="w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden relative"
               style={{ backgroundColor: T.surfaceAlt, border: `1px solid ${T.border}` }}
             >
               {logoPreview ? (
@@ -260,7 +260,7 @@ export default function EditarConstrutoraPage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors hover:opacity-80"
+                className="flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium transition-colors hover:opacity-80"
                 style={{ backgroundColor: T.surfaceAlt, border: `1px solid ${T.border}`, color: T.text }}
               >
                 <Upload size={16} />
@@ -272,7 +272,7 @@ export default function EditarConstrutoraPage() {
         </div>
 
         {/* Dados da Empresa */}
-        <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center gap-2 mb-6">
             <Building2 size={20} style={{ color: T.accent }} />
             <h2 className="text-lg font-bold" style={{ color: T.text }}>Dados da Empresa</h2>
@@ -286,7 +286,7 @@ export default function EditarConstrutoraPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
               />
             </div>
@@ -297,7 +297,7 @@ export default function EditarConstrutoraPage() {
                 name="legal_name"
                 value={formData.legal_name}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
               />
             </div>
@@ -308,7 +308,7 @@ export default function EditarConstrutoraPage() {
                 name="cnpj"
                 value={formData.cnpj}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
               />
             </div>
@@ -335,7 +335,7 @@ export default function EditarConstrutoraPage() {
                   name="display_order"
                   value={formData.display_order}
                   onChange={handleChange}
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                  className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                   style={inputStyle}
                 />
               </div>
@@ -344,7 +344,7 @@ export default function EditarConstrutoraPage() {
         </div>
 
         {/* Contato */}
-        <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center gap-2 mb-6">
             <Phone size={20} style={{ color: T.accent }} />
             <h2 className="text-lg font-bold" style={{ color: T.text }}>Contato</h2>
@@ -357,7 +357,7 @@ export default function EditarConstrutoraPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
               />
             </div>
@@ -368,7 +368,7 @@ export default function EditarConstrutoraPage() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
               />
             </div>
@@ -379,7 +379,7 @@ export default function EditarConstrutoraPage() {
                 name="website"
                 value={formData.website}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
                 placeholder="https://..."
               />
@@ -388,7 +388,7 @@ export default function EditarConstrutoraPage() {
         </div>
 
         {/* Endereço */}
-        <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center gap-2 mb-6">
             <MapPin size={20} style={{ color: T.accent }} />
             <h2 className="text-lg font-bold" style={{ color: T.text }}>Endereço</h2>
@@ -401,7 +401,7 @@ export default function EditarConstrutoraPage() {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
               />
             </div>
@@ -412,7 +412,7 @@ export default function EditarConstrutoraPage() {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
               />
             </div>
@@ -423,7 +423,7 @@ export default function EditarConstrutoraPage() {
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
                 maxLength={2}
               />
@@ -432,7 +432,7 @@ export default function EditarConstrutoraPage() {
         </div>
 
         {/* Redes Sociais */}
-        <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center gap-2 mb-6">
             <Globe size={20} style={{ color: T.accent }} />
             <h2 className="text-lg font-bold" style={{ color: T.text }}>Redes Sociais</h2>
@@ -445,7 +445,7 @@ export default function EditarConstrutoraPage() {
                 name="instagram"
                 value={formData.instagram}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
                 placeholder="@construtora"
               />
@@ -457,7 +457,7 @@ export default function EditarConstrutoraPage() {
                 name="linkedin"
                 value={formData.linkedin}
                 onChange={handleChange}
-                className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
+                className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)]"
                 style={inputStyle}
                 placeholder="URL ou nome da página"
               />
@@ -466,7 +466,7 @@ export default function EditarConstrutoraPage() {
         </div>
 
         {/* Descrição e Observações */}
-        <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center gap-2 mb-6">
             <FileText size={20} style={{ color: T.accent }} />
             <h2 className="text-lg font-bold" style={{ color: T.text }}>Descrição e Observações</h2>
@@ -479,7 +479,7 @@ export default function EditarConstrutoraPage() {
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)] resize-none"
+                className="w-full px-4 py-3 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)] resize-none"
                 style={inputStyle}
                 placeholder="Descrição da construtora para exibição pública..."
               />
@@ -491,7 +491,7 @@ export default function EditarConstrutoraPage() {
                 value={formData.notes}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)] resize-none"
+                className="w-full px-4 py-3 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[var(--bo-border-gold)] resize-none"
                 style={inputStyle}
                 placeholder="Notas internas sobre a construtora..."
               />
@@ -504,7 +504,7 @@ export default function EditarConstrutoraPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="h-11 px-6 rounded-xl font-medium transition-colors hover:opacity-80"
+            className="h-11 px-6 rounded-[6px] font-medium transition-colors hover:opacity-80"
             style={{ border: `1px solid ${T.border}`, color: T.text }}
           >
             Cancelar
@@ -512,7 +512,7 @@ export default function EditarConstrutoraPage() {
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 h-11 px-6 rounded-xl text-white font-medium transition-colors hover:opacity-90 disabled:opacity-50"
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] text-white font-medium transition-colors hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: T.accent }}
           >
             {saving ? (

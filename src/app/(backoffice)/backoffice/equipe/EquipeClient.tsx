@@ -223,7 +223,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
             </motion.div>
 
             {/* View Toggle */}
-            <div className="flex items-center gap-1 p-1 rounded-xl w-fit" style={{ background: T.elevated }}>
+            <div className="flex items-center gap-1 p-1 rounded-lg w-fit" style={{ background: T.elevated }}>
                 {[
                     { key: 'team' as const, label: 'Equipe', icon: Users },
                     { key: 'performance' as const, label: 'Performance', icon: TrendingUp },
@@ -255,7 +255,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                     <motion.div key={k.label}
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-4"
+                        className="rounded-lg p-4"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <div className="flex items-center gap-2 mb-2">
                             <k.icon size={14} style={{ color: k.color }} />
@@ -267,7 +267,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
             </div>
 
             {/* Filters */}
-            <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="flex-1 relative">
                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
@@ -276,14 +276,14 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Buscar por nome ou email..."
-                            className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                            className="w-full h-10 pl-9 pr-4 rounded-[6px] text-sm outline-none"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                         />
                     </div>
                     <select
                         value={roleFilter}
                         onChange={(e) => setRoleFilter(e.target.value)}
-                        className="h-10 px-4 rounded-xl text-sm outline-none"
+                        className="h-10 px-4 rounded-[6px] text-sm outline-none"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     >
                         <option value="all">Todas as funções</option>
@@ -300,7 +300,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                 {filteredTeam.length === 0 && (
                     <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                        className="text-center py-16 rounded-2xl"
+                        className="text-center py-16 rounded-lg"
                         style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <Users size={36} className="mx-auto mb-3" style={{ color: T.textDim, opacity: 0.3 }} />
                         <p className="text-sm font-semibold" style={{ color: T.text }}>
@@ -314,7 +314,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                         {team.length === 0 && (
                             <button
                                 onClick={openAdd}
-                                className="mt-4 inline-flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-medium text-white"
+                                className="mt-4 inline-flex items-center gap-2 h-9 px-4 rounded-[6px] text-sm font-medium text-white"
                                 style={{ background: 'var(--btn-primary-bg)' }}>
                                 <Plus size={14} /> Adicionar primeiro membro
                             </button>
@@ -333,7 +333,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: isBeingDeleted ? 0.4 : 1, y: 0 }}
                             transition={{ delay: i * 0.04 }}
-                            className="rounded-2xl p-4 transition-all"
+                            className="rounded-lg p-4 transition-all"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}
                         >
                             <div className="flex items-center gap-3">
@@ -394,7 +394,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                     <button
                                         onClick={() => openEdit(member)}
                                         disabled={isBeingDeleted}
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
                                         style={{ color: T.textDim }}
                                         title="Editar membro">
                                         <Edit size={14} />
@@ -402,7 +402,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                     <button
                                         onClick={() => setMenuOpen(menuOpen === member.id ? null : member.id)}
                                         disabled={isBeingDeleted}
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
                                         style={{ color: T.textDim }}>
                                         {isBeingDeleted
                                             ? <Loader2 size={14} className="animate-spin" />
@@ -417,7 +417,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                                 exit={{ opacity: 0, scale: 0.92, y: -4 }}
                                                 transition={{ duration: 0.12 }}
-                                                className="absolute right-0 top-10 z-50 rounded-xl shadow-xl overflow-hidden"
+                                                className="absolute right-0 top-10 z-50 rounded-lg shadow-xl overflow-hidden"
                                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, minWidth: '150px' }}>
                                                 <button
                                                     onClick={() => openEdit(member)}
@@ -463,7 +463,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                             className="fixed bottom-0 left-0 right-0 z-50 lg:inset-0 lg:flex lg:items-center lg:justify-center pointer-events-none"
                         >
                             <div
-                                className="pointer-events-auto rounded-t-3xl lg:rounded-2xl w-full lg:max-w-md max-h-[92vh] overflow-y-auto"
+                                className="pointer-events-auto rounded-t-2xl lg:rounded-xl w-full lg:max-w-md max-h-[92vh] overflow-y-auto"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 {/* Drag handle */}
                                 <div className="pt-4 pb-1 flex justify-center lg:hidden">
@@ -485,7 +485,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                         </div>
                                         <button
                                             onClick={closeModal}
-                                            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
                                             style={{ color: T.textDim }}>
                                             <X size={16} />
                                         </button>
@@ -566,14 +566,14 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                         <button
                                             onClick={closeModal}
                                             disabled={saving}
-                                            className="flex-1 h-11 rounded-xl text-sm font-medium transition-all"
+                                            className="flex-1 h-11 rounded-[6px] text-sm font-medium transition-all"
                                             style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textDim }}>
                                             Cancelar
                                         </button>
                                         <button
                                             onClick={handleSave}
                                             disabled={saving}
-                                            className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all"
+                                            className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all"
                                             style={{
                                                 background: saving ? 'var(--bo-elevated)' : 'var(--bo-accent)',
                                                 boxShadow: saving ? 'none' : '0 2px 8px rgba(30,58,95,0.4)',
@@ -613,7 +613,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                             exit={{ opacity: 0, scale: 0.92 }}
                             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
                         >
-                            <div className="pointer-events-auto rounded-2xl p-6 w-full max-w-sm text-center"
+                            <div className="pointer-events-auto rounded-xl p-6 w-full max-w-sm text-center"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 <Trash2 size={28} className="mx-auto mb-3" style={{ color: getStatusConfig('erro').dot }} />
                                 <h3 className="text-base font-bold mb-1" style={{ color: T.text }}>Remover membro?</h3>
@@ -623,13 +623,13 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                 <div className="flex gap-3">
                                     <button
                                         onClick={() => setConfirmDelete(null)}
-                                        className="flex-1 h-10 rounded-xl text-sm font-medium"
+                                        className="flex-1 h-10 rounded-[6px] text-sm font-medium"
                                         style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textMuted }}>
                                         Cancelar
                                     </button>
                                     <button
                                         onClick={handleDelete}
-                                        className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
+                                        className="flex-1 h-10 rounded-[6px] text-sm font-semibold text-white"
                                         style={{ background: getStatusConfig('erro').dot }}>
                                         Remover
                                     </button>

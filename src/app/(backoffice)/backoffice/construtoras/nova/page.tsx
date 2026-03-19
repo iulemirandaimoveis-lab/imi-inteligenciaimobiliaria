@@ -142,7 +142,7 @@ export default function NovaConstrutora() {
         actions={
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+            className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-all hover:opacity-80"
             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
           >
             <ArrowLeft size={18} style={{ color: T.textMuted }} />
@@ -158,7 +158,7 @@ export default function NovaConstrutora() {
             <h2 className="text-base font-bold" style={{ color: T.text }}>Logo da Construtora</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-xl flex items-center justify-center overflow-hidden relative"
+            <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden relative"
               style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
               {logoPreview ? (
                 <>
@@ -185,7 +185,7 @@ export default function NovaConstrutora() {
                   reader.readAsDataURL(file)
                 }} />
               <button type="button" onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-medium transition-all hover:opacity-80"
+                className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-sm font-medium transition-all hover:opacity-80"
                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
                 <Upload size={14} /> {logoPreview ? 'Trocar Logo' : 'Upload Logo'}
               </button>
@@ -306,7 +306,7 @@ export default function NovaConstrutora() {
         {/* Botões */}
         <div className="flex items-center justify-end gap-3">
           <button type="button" onClick={() => router.back()}
-            className="h-11 px-6 rounded-xl text-sm font-medium transition-all hover:opacity-80"
+            className="h-11 px-6 rounded-[6px] text-sm font-medium transition-all hover:opacity-80"
             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
             Cancelar
           </button>

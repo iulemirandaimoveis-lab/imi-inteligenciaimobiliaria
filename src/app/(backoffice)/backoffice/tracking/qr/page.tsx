@@ -239,7 +239,7 @@ export default function QRGeneratorPage() {
                         { label: 'Total Cliques', value: totalClicks, icon: <MousePointer size={13} />, color: 'var(--bo-success)' },
                         { label: 'Melhor Canal', value: topSourceLink ? (srcInfo(topSourceLink.utm_source).label || '—') : '—', icon: <TrendingUp size={13} />, color: 'var(--warning)' },
                     ].map(s => (
-                        <div key={s.label} className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div key={s.label} className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-1.5 mb-2">
                                 <span style={{ color: s.color }}>{s.icon}</span>
                                 <p className="text-[9px] font-bold uppercase tracking-[0.1em]" style={{ color: T.textMuted }}>{s.label}</p>
@@ -252,7 +252,7 @@ export default function QRGeneratorPage() {
 
             {/* Pre-fill banner */}
             {prefilledId && (
-                <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
                     <Building2 size={14} style={{ color: 'var(--info)' }} />
                     <p className="text-xs font-medium" style={{ color: 'var(--info)' }}>
                         Imóvel selecionado: <strong>{prefilledName ? decodeURIComponent(prefilledName) : 'Carregando...'}</strong>
@@ -261,7 +261,7 @@ export default function QRGeneratorPage() {
             )}
 
             {/* Form card */}
-            <div className="rounded-3xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
 
                 {/* Property selector */}
                 <div className="p-5 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
@@ -269,10 +269,10 @@ export default function QRGeneratorPage() {
                     <div className="relative">
                         <button
                             onClick={() => { setShowDevDD(v => !v); setShowBrokerDD(false) }}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all"
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all"
                             style={{ background: T.elevated, border: `1px solid ${showDevDD ? T.borderGold : T.border}` }}
                         >
-                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(59,130,246,0.12)' }}>
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(59,130,246,0.12)' }}>
                                 <Building2 size={15} style={{ color: 'var(--info)' }} />
                             </div>
                             <span className="flex-1 text-left text-sm font-semibold truncate" style={{ color: T.text }}>
@@ -287,7 +287,7 @@ export default function QRGeneratorPage() {
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: -4, scale: 0.98 }}
                                     transition={{ duration: 0.12 }}
-                                    className="absolute left-0 right-0 z-50 rounded-2xl overflow-hidden mt-1.5"
+                                    className="absolute left-0 right-0 z-50 rounded-lg overflow-hidden mt-1.5"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, boxShadow: '0 12px 40px rgba(0,0,0,0.3)', maxHeight: 240, overflowY: 'auto' }}
                                 >
                                     {developments.map(dev => (
@@ -314,7 +314,7 @@ export default function QRGeneratorPage() {
                             return (
                                 <button key={src.value}
                                     onClick={() => setSelectedSource(src)}
-                                    className="flex flex-col items-center gap-1.5 py-3 rounded-xl transition-all"
+                                    className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all"
                                     style={{
                                         background: active ? src.bg : T.elevated,
                                         border: `1.5px solid ${active ? src.color + '80' : T.border}`,
@@ -337,7 +337,7 @@ export default function QRGeneratorPage() {
                         value={campaign}
                         onChange={e => setCampaign(e.target.value)}
                         placeholder="Ex: Lançamento Verão 2025"
-                        className="w-full h-11 px-4 rounded-xl text-sm outline-none"
+                        className="w-full h-11 px-4 rounded-[6px] text-sm outline-none"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                         onFocus={e => e.currentTarget.style.border = `1px solid ${T.borderGold}`}
                         onBlur={e => e.currentTarget.style.border = `1px solid ${T.border}`}
@@ -353,7 +353,7 @@ export default function QRGeneratorPage() {
                             <p className="text-[10px] font-semibold mb-1.5" style={{ color: T.textMuted }}>Corretor</p>
                             <button
                                 onClick={() => { setShowBrokerDD(v => !v); setShowDevDD(false) }}
-                                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all"
+                                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all"
                                 style={{ background: T.elevated, border: `1px solid ${showBrokerDD ? T.borderGold : T.border}` }}
                             >
                                 <User size={13} style={{ color: T.textMuted, flexShrink: 0 }} />
@@ -369,7 +369,7 @@ export default function QRGeneratorPage() {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -4 }}
                                         transition={{ duration: 0.1 }}
-                                        className="absolute left-0 right-0 z-50 rounded-xl overflow-hidden mt-1"
+                                        className="absolute left-0 right-0 z-50 rounded-lg overflow-hidden mt-1"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, boxShadow: '0 8px 24px rgba(0,0,0,0.25)', maxHeight: 180, overflowY: 'auto' }}
                                     >
                                         <button
@@ -395,7 +395,7 @@ export default function QRGeneratorPage() {
                         {/* Team label */}
                         <div>
                             <p className="text-[10px] font-semibold mb-1.5" style={{ color: T.textMuted }}>Equipe</p>
-                            <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 <Users size={13} style={{ color: T.textMuted, flexShrink: 0 }} />
                                 <input
                                     value={teamLabel}
@@ -430,7 +430,7 @@ export default function QRGeneratorPage() {
                             >
                                 <div className="pt-3">
                                     <p className="text-[10px] font-semibold mb-1.5" style={{ color: T.textMuted }}>URL Personalizada (opcional)</p>
-                                    <div className="flex items-center gap-0 rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: T.elevated }}>
+                                    <div className="flex items-center gap-0 rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}`, background: T.elevated }}>
                                         <span className="px-3 text-xs font-mono" style={{ color: T.textMuted, borderRight: `1px solid ${T.border}`, padding: '0 10px', height: 40, display: 'flex', alignItems: 'center' }}>imi.com.br/l/</span>
                                         <input
                                             value={customSlug}
@@ -448,7 +448,7 @@ export default function QRGeneratorPage() {
             </div>
 
             {/* QR Preview */}
-            <div className="rounded-3xl overflow-hidden relative" style={{ background: '#0d1520', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-lg overflow-hidden relative" style={{ background: '#0d1520', border: '1px solid rgba(255,255,255,0.07)' }}>
                 {/* Glow */}
                 <div style={{ position: 'absolute', top: -60, right: -60, width: 200, height: 200, borderRadius: '50%', background: `radial-gradient(circle, ${selectedSource.color}14 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
@@ -474,7 +474,7 @@ export default function QRGeneratorPage() {
                             <p className="text-[9px] font-bold tracking-[0.15em] uppercase text-center mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
                                 Link Rastreado · Ativo
                             </p>
-                            <div className="flex items-center gap-2 px-4 py-3 rounded-2xl" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
                                 <Link2 size={13} style={{ color: 'var(--info)', flexShrink: 0 }} />
                                 <span className="flex-1 text-xs font-bold font-mono truncate" style={{ color: 'var(--info)' }}>
                                     {shortUrl.replace('https://www.iulemirandaimoveis.com.br', 'imi.com.br')}
@@ -520,7 +520,7 @@ export default function QRGeneratorPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleGenerate}
                 disabled={loading || !selectedDev}
-                className="w-full h-14 rounded-2xl text-white font-bold text-base flex items-center justify-center gap-2.5 transition-all disabled:opacity-40"
+                className="w-full h-14 rounded-[6px] text-white font-bold text-base flex items-center justify-center gap-2.5 transition-all disabled:opacity-40"
                 style={{ background: T.accent }}
             >
                 {loading ? <Loader2 size={20} className="animate-spin" /> : <Sparkles size={20} />}
@@ -553,7 +553,7 @@ export default function QRGeneratorPage() {
                         <Loader2 size={22} className="animate-spin" style={{ color: T.accent }} />
                     </div>
                 ) : links.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-12 rounded-3xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="flex flex-col items-center justify-center py-12 rounded-lg" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <QrCode size={32} className="mb-3 opacity-20" style={{ color: T.textMuted }} />
                         <p className="text-sm font-semibold" style={{ color: T.text }}>Nenhum link gerado ainda</p>
                         <p className="text-xs mt-1" style={{ color: T.textMuted }}>Configure um imóvel e canal acima para gerar o primeiro link</p>
@@ -574,7 +574,7 @@ export default function QRGeneratorPage() {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, x: 8 }}
                                         transition={{ delay: isNew ? 0 : i * 0.03 }}
-                                        className="rounded-2xl overflow-hidden transition-all"
+                                        className="rounded-lg overflow-hidden transition-all"
                                         style={{
                                             background: isNew ? `${src.color}0d` : T.surface,
                                             border: `1px solid ${isNew ? src.color + '30' : T.border}`,
@@ -582,7 +582,7 @@ export default function QRGeneratorPage() {
                                     >
                                         {/* Main row */}
                                         <div className="flex items-center gap-3 p-3.5">
-                                            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: src.bg }}>
+                                            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: src.bg }}>
                                                 <span style={{ color: src.color, fontSize: 15 }}>{src.icon}</span>
                                             </div>
 
@@ -666,7 +666,7 @@ export default function QRGeneratorPage() {
                                                                 { label: 'Cliques únicos', value: link.unique_clicks ?? 0, color: 'var(--info)' },
                                                                 { label: 'Criado', value: link.created_at ? new Date(link.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : '—', color: T.textMuted as string },
                                                             ].map(s => (
-                                                                <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: T.elevated }}>
+                                                                <div key={s.label} className="rounded-lg p-3 text-center" style={{ background: T.elevated }}>
                                                                     <p className="text-base font-bold" style={{ color: s.color }}>{s.value}</p>
                                                                     <p className="text-[9px] mt-0.5" style={{ color: T.textMuted }}>{s.label}</p>
                                                                 </div>
@@ -694,7 +694,7 @@ export default function QRGeneratorPage() {
 
                         {links.length > 20 && (
                             <a href="/backoffice/tracking/links"
-                                className="flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold transition-opacity hover:opacity-70"
+                                className="flex items-center justify-center gap-2 py-3 rounded-[6px] text-xs font-bold transition-opacity hover:opacity-70"
                                 style={{ background: T.elevated, color: T.textMuted }}
                             >
                                 Ver todos os {links.length} links <ChevronRight size={13} />

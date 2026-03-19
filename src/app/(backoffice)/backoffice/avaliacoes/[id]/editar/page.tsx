@@ -292,7 +292,7 @@ export default function EditarAvaliacaoPage() {
         actions={
           <div className="flex items-center gap-2">
             <div
-              className="flex items-center gap-2 px-4 py-2 rounded-xl"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg"
               style={{ background: T.elevated, border: `1px solid ${T.border}` }}
             >
               <Sparkles size={14} style={{ color: 'var(--imi-ai-gold)' }} />
@@ -300,7 +300,7 @@ export default function EditarAvaliacaoPage() {
             </div>
             <button
               onClick={() => router.back()}
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors hover:opacity-80"
+              className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-colors hover:opacity-80"
               style={{ border: `1px solid ${T.border}`, background: T.elevated, color: T.textMuted }}
             >
               <ArrowLeft size={18} />
@@ -310,7 +310,7 @@ export default function EditarAvaliacaoPage() {
       />
 
       {/* Progress Bar */}
-      <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between mb-4">
           {steps.map((step, index) => {
             const StepIcon = step.icon
@@ -360,7 +360,7 @@ export default function EditarAvaliacaoPage() {
       </div>
 
       {/* Form Content */}
-      <div className="rounded-2xl p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Step 1: Imóvel */}
         {currentStep === 1 && (
           <div className="space-y-6">
@@ -379,7 +379,7 @@ export default function EditarAvaliacaoPage() {
                     onChange={(e) => handleChange('propertyAddress', e.target.value)}
                     placeholder="Ex: Av. Boa Viagem, 3500 - Apto 802, Boa Viagem"
                     rows={3}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-0 resize-none`}
+                    className={`w-full pl-10 pr-4 py-3 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0 resize-none`}
                     style={{ background: T.elevated, border: `1px solid ${errors.propertyAddress ? T.error : T.border}`, color: T.text }}
                   />
                 </div>
@@ -401,7 +401,7 @@ export default function EditarAvaliacaoPage() {
                   <select
                     value={formData.propertyType}
                     onChange={(e) => handleChange('propertyType', e.target.value)}
-                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0`}
                     style={{ background: T.elevated, border: `1px solid ${errors.propertyType ? T.error : T.border}`, color: T.text }}
                   >
                     <option value="">Selecione...</option>
@@ -430,7 +430,7 @@ export default function EditarAvaliacaoPage() {
                     value={formData.propertyArea}
                     onChange={(e) => handleChange('propertyArea', e.target.value)}
                     placeholder="95"
-                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0`}
                     style={{ background: T.elevated, border: `1px solid ${errors.propertyArea ? T.error : T.border}`, color: T.text }}
                   />
                 </div>
@@ -452,7 +452,7 @@ export default function EditarAvaliacaoPage() {
                   value={formData.bedrooms}
                   onChange={(e) => handleChange('bedrooms', e.target.value)}
                   placeholder="3"
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                  className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
@@ -467,7 +467,7 @@ export default function EditarAvaliacaoPage() {
                   value={formData.bathrooms}
                   onChange={(e) => handleChange('bathrooms', e.target.value)}
                   placeholder="2"
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                  className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
@@ -482,7 +482,7 @@ export default function EditarAvaliacaoPage() {
                   value={formData.parking}
                   onChange={(e) => handleChange('parking', e.target.value)}
                   placeholder="2"
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                  className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
@@ -496,7 +496,7 @@ export default function EditarAvaliacaoPage() {
                   type="text"
                   value={formData.city}
                   onChange={(e) => handleChange('city', e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                  className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
@@ -509,7 +509,7 @@ export default function EditarAvaliacaoPage() {
                 <select
                   value={formData.state}
                   onChange={(e) => handleChange('state', e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                  className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 >
                   <option value="PE">Pernambuco</option>
@@ -540,7 +540,7 @@ export default function EditarAvaliacaoPage() {
                     value={formData.clientName}
                     onChange={(e) => handleChange('clientName', e.target.value)}
                     placeholder="Ex: Maria Santos Silva"
-                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0`}
                     style={{ background: T.elevated, border: `1px solid ${errors.clientName ? T.error : T.border}`, color: T.text }}
                   />
                 </div>
@@ -564,7 +564,7 @@ export default function EditarAvaliacaoPage() {
                     value={formData.clientEmail}
                     onChange={(e) => handleChange('clientEmail', e.target.value)}
                     placeholder="email@exemplo.com"
-                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0`}
                     style={{ background: T.elevated, border: `1px solid ${errors.clientEmail ? T.error : T.border}`, color: T.text }}
                   />
                 </div>
@@ -589,7 +589,7 @@ export default function EditarAvaliacaoPage() {
                     onChange={(e) => handleChange('clientPhone', formatPhone(e.target.value))}
                     placeholder="(81) 99999-9999"
                     maxLength={15}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                    className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
@@ -608,7 +608,7 @@ export default function EditarAvaliacaoPage() {
                     onChange={(e) => handleChange('clientCPF', formatCPF(e.target.value))}
                     placeholder="000.000.000-00"
                     maxLength={14}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                    className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
@@ -631,7 +631,7 @@ export default function EditarAvaliacaoPage() {
                 <select
                   value={formData.purpose}
                   onChange={(e) => handleChange('purpose', e.target.value)}
-                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                  className={`w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0`}
                   style={{ background: T.elevated, border: `1px solid ${errors.purpose ? T.error : T.border}`, color: T.text }}
                 >
                   <option value="">Selecione...</option>
@@ -655,7 +655,7 @@ export default function EditarAvaliacaoPage() {
                 <select
                   value={formData.method}
                   onChange={(e) => handleChange('method', e.target.value)}
-                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                  className={`w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0`}
                   style={{ background: T.elevated, border: `1px solid ${errors.method ? T.error : T.border}`, color: T.text }}
                 >
                   {metodosAvaliacao.map(met => (
@@ -681,7 +681,7 @@ export default function EditarAvaliacaoPage() {
                     type="date"
                     value={formData.requestDate}
                     onChange={(e) => handleChange('requestDate', e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                    className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
@@ -698,7 +698,7 @@ export default function EditarAvaliacaoPage() {
                     type="date"
                     value={formData.deadline}
                     onChange={(e) => handleChange('deadline', e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
+                    className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-0"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
@@ -719,7 +719,7 @@ export default function EditarAvaliacaoPage() {
                   className="hidden"
                 />
                 <div
-                  className="border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer"
+                  className="border-2 border-dashed rounded-lg p-8 text-center transition-all cursor-pointer"
                   style={{ borderColor: T.border }}
                   onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = T.accent; (e.currentTarget as HTMLDivElement).style.background = T.accentBg }}
                   onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = T.border; (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
@@ -738,7 +738,7 @@ export default function EditarAvaliacaoPage() {
               {formData.documents.length > 0 && (
                 <div className="mt-4 space-y-2">
                   {formData.documents.map((file, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: T.elevated }}>
+                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg" style={{ background: T.elevated }}>
                       <FileText size={20} style={{ color: T.accent }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate" style={{ color: T.text }}>{file.name}</p>
@@ -767,7 +767,7 @@ export default function EditarAvaliacaoPage() {
           type="button"
           onClick={handlePrev}
           disabled={currentStep === 1}
-          className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ border: `1px solid ${T.border}`, color: T.text }}
         >
           <ArrowLeft size={20} />
@@ -778,7 +778,7 @@ export default function EditarAvaliacaoPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 rounded-xl font-semibold text-white transition-all hover:opacity-90"
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-semibold text-white transition-all hover:opacity-90"
             style={{ background: T.accent }}
           >
             Próximo
@@ -789,7 +789,7 @@ export default function EditarAvaliacaoPage() {
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 h-11 px-6 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ background: T.accent }}
           >
             {isSubmitting ? (

@@ -49,7 +49,7 @@ export default function RelatoriosPage() {
           </h1>
           <p className="text-sm text-white/50 mt-1">Relatorios de investimento e analises de mercado</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[#0B1928]" style={{ background: '#C8A44A' }}>
+        <button className="flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium text-[#0B1928]" style={{ background: '#C8A44A' }}>
           <Plus className="w-4 h-4" />
           Novo Relatorio
         </button>
@@ -63,7 +63,7 @@ export default function RelatoriosPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Buscar relatorios..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50"
+          className="w-full pl-10 pr-4 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50"
           style={{ background: 'rgba(255,255,255,0.03)' }}
         />
       </div>
@@ -76,7 +76,7 @@ export default function RelatoriosPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
           <FileText className="w-10 h-10 text-white/20 mx-auto mb-3" />
           <h3 className="text-white/70 font-medium mb-1">Nenhum relatorio encontrado</h3>
           <p className="text-white/40 text-sm">
@@ -89,7 +89,7 @@ export default function RelatoriosPage() {
             <a
               key={report.id}
               href={`/backoffice/invest/relatorios/${report.id}`}
-              className="block rounded-xl border border-white/10 hover:border-gold/30 p-4 transition-all"
+              className="block rounded-lg border border-white/10 hover:border-gold/30 p-4 transition-all"
               style={{ background: 'rgba(255,255,255,0.02)' }}
             >
               <div className="flex items-center justify-between">

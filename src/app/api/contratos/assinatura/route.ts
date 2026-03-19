@@ -3,6 +3,7 @@
 // Interface unificada — detecta provider pelo config ativo
 
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -234,6 +235,10 @@ class ClickSignProvider {
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { action, provider: requestedProvider, ...payload } = await req.json()
 
     const govbr     = new GovBrProvider()
@@ -328,6 +333,10 @@ export async function POST(req: NextRequest) {
 
 // ── Webhook Gov.br / ClickSign ─────────────────────────────
 export async function GET(req: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   return NextResponse.json({
     status: 'ok',
     service: 'IMI Digital Signature Webhook',

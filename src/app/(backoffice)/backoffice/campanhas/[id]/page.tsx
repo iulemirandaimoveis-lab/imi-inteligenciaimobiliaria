@@ -88,7 +88,7 @@ export default function CampanhaDetalhesPage() {
 
     if (!campanha) {
         return (
-            <div className="rounded-2xl p-16 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-16 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <Target size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textMuted }} />
                 <p className="text-sm font-semibold" style={{ color: T.textMuted }}>Campanha não encontrada</p>
                 <Link href="/backoffice/campanhas" className="text-xs mt-2 inline-block hover:underline" style={{ color: T.accent }}>
@@ -152,7 +152,7 @@ export default function CampanhaDetalhesPage() {
             {/* KPI grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
                 {KPIS.map((kpi, i) => (
-                    <div key={i} className="rounded-2xl p-4"
+                    <div key={i} className="rounded-lg p-4"
                         style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${kpi.color}` }}>
                         <p className="text-[9px] mb-1.5 uppercase tracking-widest font-bold" style={{ color: T.textMuted }}>{kpi.label}</p>
                         <p className="text-lg font-bold font-mono" style={{ color: kpi.color }}>{kpi.value}</p>
@@ -162,7 +162,7 @@ export default function CampanhaDetalhesPage() {
 
             {/* Budget progress */}
             {campanha.budget > 0 && (
-                <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center justify-between mb-3">
                         <div>
                             <p className="text-sm font-semibold" style={{ color: T.text }}>Orçamento utilizado</p>
@@ -185,7 +185,7 @@ export default function CampanhaDetalhesPage() {
             )}
 
             {/* AI Insight Card */}
-            <div className="rounded-2xl p-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border-gold)' }}>
+            <div className="rounded-lg p-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border-gold)' }}>
                 <div className="flex items-center gap-2 mb-3">
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(var(--imi-ai-gold-rgb),0.12)' }}>
                         {aiLoading ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--imi-ai-gold)' }} /> : <Sparkles size={13} style={{ color: 'var(--imi-ai-gold)' }} />}
@@ -201,7 +201,7 @@ export default function CampanhaDetalhesPage() {
                         <p className="text-sm mb-3" style={{ color: T.text, lineHeight: 1.65 }}>{aiAnalysis.insight}</p>
                         <div className="grid grid-cols-2 gap-2 mb-3">
                             {aiAnalysis.status && (
-                                <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                     <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Performance</p>
                                     <p className="text-sm font-bold" style={{
                                         color: aiAnalysis.status === 'excelente' ? 'var(--success)' : aiAnalysis.status === 'bom' ? 'var(--info)' : aiAnalysis.status === 'regular' ? 'var(--warning)' : 'var(--bo-error)'
@@ -209,14 +209,14 @@ export default function CampanhaDetalhesPage() {
                                 </div>
                             )}
                             {aiAnalysis.score != null && (
-                                <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                     <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Eficiência IA</p>
                                     <p className="text-sm font-bold" style={{ color: T.accent }}>{aiAnalysis.score}/100</p>
                                 </div>
                             )}
                         </div>
                         {aiAnalysis.nextAction && (
-                            <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--bo-border)' }}>
+                            <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--bo-border)' }}>
                                 <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Próxima Ação</p>
                                 <p className="text-xs font-medium" style={{ color: T.text }}>{aiAnalysis.nextAction}</p>
                             </div>
@@ -235,7 +235,7 @@ export default function CampanhaDetalhesPage() {
 
             {/* UTM info if present */}
             {(campanha.utm_source || campanha.utm_campaign) && (
-                <div className="rounded-2xl p-4 flex items-center gap-3"
+                <div className="rounded-lg p-4 flex items-center gap-3"
                     style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <LinkIcon size={14} style={{ color: T.textMuted }} />
                     <p className="text-xs" style={{ color: T.textMuted }}>
@@ -264,7 +264,7 @@ export default function CampanhaDetalhesPage() {
             {activeTab === 'overview' && (
                 <div className="grid md:grid-cols-2 gap-4">
                     {/* Conversion funnel */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}` }}>
                         <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Funil de Conversão</h2>
                         <div className="space-y-4">
                             {funnel.map((stage, idx) => {
@@ -289,7 +289,7 @@ export default function CampanhaDetalhesPage() {
                     </div>
 
                     {/* Campaign info */}
-                    <div className="rounded-2xl p-6 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.border}` }}>
                         <h2 className="text-sm font-bold" style={{ color: T.text }}>Detalhes da Campanha</h2>
                         {[
                             { label: 'Canal', value: type.label },
@@ -310,7 +310,7 @@ export default function CampanhaDetalhesPage() {
 
             {/* Métricas tab */}
             {activeTab === 'metricas' && (
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Métricas Detalhadas</h2>
                     <div className="grid sm:grid-cols-2 gap-4">
                         {[
@@ -325,7 +325,7 @@ export default function CampanhaDetalhesPage() {
                             { label: 'Orçamento total', value: fmtBRL(campanha.budget) },
                             { label: 'Taxa de conversão', value: campanha.leads > 0 ? `${((campanha.conversions / campanha.leads) * 100).toFixed(1)}%` : '—' },
                         ].map((item, i) => (
-                            <div key={i} className="flex items-center justify-between p-3 rounded-xl"
+                            <div key={i} className="flex items-center justify-between p-3 rounded-lg"
                                 style={{ background: T.elevated, borderLeft: `2px solid ${T.border}` }}>
                                 <span className="text-xs" style={{ color: T.textMuted }}>{item.label}</span>
                                 <span className="text-sm font-bold font-mono" style={{ color: T.text }}>{item.value}</span>

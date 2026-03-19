@@ -113,7 +113,7 @@ export default function LeadBehaviorPage() {
                 title="Behavior Analytics"
                 subtitle="Análise comportamental e engajamento de leads"
                 actions={
-                    <div className="flex rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                    <div className="flex rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                         {(['today', '7d', '30d'] as RangeKey[]).map(r => (
                             <button
                                 key={r}
@@ -170,7 +170,7 @@ export default function LeadBehaviorPage() {
                 {loading ? (
                     <div className="space-y-3">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="animate-pulse rounded-2xl h-24" style={{ background: T.elevated, opacity: 1 - i * 0.25 }} />
+                            <div key={i} className="animate-pulse rounded-lg h-24" style={{ background: T.elevated, opacity: 1 - i * 0.25 }} />
                         ))}
                     </div>
                 ) : topLeads.length === 0 ? (
@@ -195,14 +195,14 @@ export default function LeadBehaviorPage() {
                                 >
                                     <button
                                         onClick={() => router.push(`/backoffice/leads/${lead.id}`)}
-                                        className="w-full text-left rounded-2xl p-4 transition-all hover:scale-[1.005]"
+                                        className="w-full text-left rounded-lg p-4 transition-all hover:scale-[1.005]"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, display: 'block' }}
                                     >
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex items-center gap-3 min-w-0">
                                                 {/* Avatar */}
                                                 <div
-                                                    className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center font-bold text-sm"
+                                                    className="w-10 h-10 rounded-[6px] flex-shrink-0 flex items-center justify-center font-bold text-sm"
                                                     style={{ background: `linear-gradient(135deg, ${tc.bg}, rgba(255,255,255,0.05))`, border: `1px solid ${tc.border}`, color: tc.text }}
                                                 >
                                                     {lead.name?.split(' ').slice(0, 2).map((n: string) => n[0]).join('') || '?'}
@@ -281,7 +281,7 @@ export default function LeadBehaviorPage() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="rounded-2xl p-5"
+                    className="rounded-lg p-5"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >
                     <div className="flex items-center gap-2 mb-4">
@@ -302,12 +302,12 @@ export default function LeadBehaviorPage() {
                                         {item.pct}%
                                     </span>
                                 </div>
-                                <div className="h-7 rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                                <div className="h-7 rounded-lg overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${item.pct}%` }}
                                         transition={{ delay: 0.35 + i * 0.08, duration: 0.5, ease: 'easeOut' }}
-                                        className="h-full rounded-xl flex items-center px-3"
+                                        className="h-full rounded-lg flex items-center px-3"
                                         style={{ background: item.cfg.bg, minWidth: item.pct > 0 ? 40 : 0 }}
                                     >
                                         <span className="text-[10px] font-black" style={{ color: item.cfg.text }}>

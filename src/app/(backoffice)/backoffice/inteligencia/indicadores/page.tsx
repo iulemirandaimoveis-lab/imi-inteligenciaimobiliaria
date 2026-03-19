@@ -59,7 +59,7 @@ const inputStyle = {
     border: '1px solid var(--bo-border)',
     color: 'var(--bo-text)',
 }
-const inputClass = "h-9 px-3 rounded-xl text-sm outline-none transition-all w-full focus:ring-1 focus:ring-[var(--bo-accent)]"
+const inputClass = "h-9 px-3 rounded-[6px] text-sm outline-none transition-all w-full focus:ring-1 focus:ring-[var(--bo-accent)]"
 
 // ── Indicator Card — view mode ───────────────────────────────────
 function IndicatorCard({
@@ -78,14 +78,14 @@ function IndicatorCard({
 
     return (
         <div
-            className="rounded-2xl p-4 flex flex-col gap-3 group transition-all hover-card"
+            className="rounded-lg p-4 flex flex-col gap-3 group transition-all hover-card"
             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
         >
             {/* Header row */}
             <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                     <div
-                        className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: cm.bg }}
                     >
                         <CatIcon size={14} style={{ color: cm.color }} />
@@ -168,14 +168,14 @@ function IndicatorEditCard({
 
     return (
         <div
-            className="rounded-2xl p-4 flex flex-col gap-3"
+            className="rounded-lg p-4 flex flex-col gap-3"
             style={{ background: 'var(--bo-active-bg)', border: `1px solid var(--bo-border-gold)` }}
         >
             <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold" style={{ color: T.text }}>
                     {isNew ? 'Novo Indicador' : 'Editar Indicador'}
                 </p>
-                <button onClick={onCancel} className="w-7 h-7 rounded-lg flex items-center justify-center"
+                <button onClick={onCancel} className="w-7 h-7 rounded-[6px] flex items-center justify-center"
                     style={{ background: 'var(--bo-hover)' }}>
                     <X size={13} style={{ color: T.textMuted }} />
                 </button>
@@ -217,7 +217,7 @@ function IndicatorEditCard({
                 <button
                     onClick={() => onSave(form as any)}
                     disabled={saving || !form.metric_name || !form.value}
-                    className="flex-1 h-9 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-1.5 disabled:opacity-40 transition-opacity"
+                    className="flex-1 h-9 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-1.5 disabled:opacity-40 transition-opacity"
                     style={{ background: 'var(--btn-primary-bg)' }}
                 >
                     {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
@@ -312,7 +312,7 @@ export default function IndicadoresPage() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={load}
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                            className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                         >
                             <RefreshCw size={14} style={{ color: T.textMuted }} />
@@ -340,7 +340,7 @@ export default function IndicadoresPage() {
             <div className="chip-scroll-row pb-1">
                 <button
                     onClick={() => setCategoryFilter('all')}
-                    className="flex-shrink-0 h-8 px-3 rounded-xl text-xs font-semibold transition-all"
+                    className="flex-shrink-0 h-8 px-3 rounded-[6px] text-xs font-semibold transition-all"
                     style={{
                         background: categoryFilter === 'all' ? 'var(--bo-accent)' : T.elevated,
                         color: categoryFilter === 'all' ? 'white' : T.textMuted,
@@ -357,7 +357,7 @@ export default function IndicadoresPage() {
                         <button
                             key={cat}
                             onClick={() => setCategoryFilter(cat)}
-                            className="flex-shrink-0 h-8 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all"
+                            className="flex-shrink-0 h-8 px-3 rounded-[6px] text-xs font-semibold flex items-center gap-1.5 transition-all"
                             style={{
                                 background: categoryFilter === cat ? cm.bg : T.elevated,
                                 color: categoryFilter === cat ? cm.color : T.textMuted,
@@ -385,10 +385,10 @@ export default function IndicadoresPage() {
             {loading ? (
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                     {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="rounded-2xl p-4 animate-pulse"
+                        <div key={i} className="rounded-lg p-4 animate-pulse"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, height: 160 }}>
                             <div className="flex gap-2 mb-3">
-                                <div className="w-8 h-8 rounded-xl" style={{ background: 'var(--bo-hover)' }} />
+                                <div className="w-8 h-8 rounded-lg" style={{ background: 'var(--bo-hover)' }} />
                                 <div className="flex-1">
                                     <div className="h-2.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: '50%' }} />
                                     <div className="h-2 rounded" style={{ background: 'var(--bo-hover)', width: '70%' }} />
@@ -400,7 +400,7 @@ export default function IndicadoresPage() {
                     ))}
                 </div>
             ) : filtered.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 rounded-2xl"
+                <div className="flex flex-col items-center justify-center py-20 rounded-lg"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     <BarChart3 size={36} style={{ color: T.textDim }} className="mb-3" />
                     <p className="text-sm font-semibold" style={{ color: T.text }}>

@@ -589,7 +589,7 @@ function DesktopEmpty({ onBack }: { onBack: () => void }) {
             <BarChart3 size={40} className="mx-auto mb-4 opacity-30" />
             <p className="text-sm">Nenhum dado de analytics encontrado</p>
             <button onClick={onBack}
-                className="mt-4 text-sm font-semibold px-4 py-2 rounded-xl" style={{ color: T.accent }}>
+                className="mt-4 text-sm font-semibold px-4 py-2 rounded-lg" style={{ color: T.accent }}>
                 Voltar
             </button>
         </div>
@@ -677,7 +677,7 @@ export default function ImovelAnalyticsPage() {
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => router.push(`/backoffice/imoveis/${params.id}`)}
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
                     style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textDim }}
                 >
                     <ArrowLeft size={17} />
@@ -697,7 +697,7 @@ export default function ImovelAnalyticsPage() {
                     <select
                         value={periodoFilter}
                         onChange={e => setPeriodoFilter(e.target.value)}
-                        className="h-10 px-4 rounded-xl text-sm outline-none"
+                        className="h-10 px-4 rounded-[6px] text-sm outline-none"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     >
                         <option value="7d">Últimos 7 dias</option>
@@ -712,11 +712,11 @@ export default function ImovelAnalyticsPage() {
                 {KPI_CARDS.map(k => (
                     <div
                         key={k.label}
-                        className="rounded-2xl p-4"
+                        className="rounded-lg p-4"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                     >
                         <div
-                            className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
+                            className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
                             style={{ background: `${k.color}18` }}
                         >
                             <k.icon size={15} style={{ color: k.color }} />
@@ -730,7 +730,7 @@ export default function ImovelAnalyticsPage() {
             </div>
 
             {/* Performance Chart — Bloomberg bar chart style */}
-            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center justify-between mb-5">
                     <div>
                         <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: T.textMuted }}>
@@ -791,7 +791,7 @@ export default function ImovelAnalyticsPage() {
             {/* Sources + Locations */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Traffic Sources */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: T.textMuted }}>
                         Fontes de Tráfego
                     </p>
@@ -834,7 +834,7 @@ export default function ImovelAnalyticsPage() {
                 </div>
 
                 {/* Locations */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: T.textMuted }}>
                         Localização
                     </p>
@@ -846,7 +846,7 @@ export default function ImovelAnalyticsPage() {
                             {topLocations.map((loc, idx) => (
                                 <div
                                     key={idx}
-                                    className="flex items-center justify-between p-3 rounded-xl"
+                                    className="flex items-center justify-between p-3 rounded-lg"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                 >
                                     <div className="flex items-center gap-2.5">
@@ -874,7 +874,7 @@ export default function ImovelAnalyticsPage() {
             {/* Devices + Campaigns */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Devices */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: T.textMuted }}>
                         Dispositivos
                     </p>
@@ -899,7 +899,7 @@ export default function ImovelAnalyticsPage() {
                 </div>
 
                 {/* Campaigns */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: T.textMuted }}>
                         Campanhas
                     </p>
@@ -911,7 +911,7 @@ export default function ImovelAnalyticsPage() {
                             {topCampaigns.map((c, idx) => (
                                 <div
                                     key={idx}
-                                    className="flex items-center justify-between p-3.5 rounded-xl"
+                                    className="flex items-center justify-between p-3.5 rounded-lg"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                 >
                                     <div className="flex items-center gap-2.5 min-w-0">

@@ -110,7 +110,7 @@ export default function AutomacaoConteudoPage() {
                 ]}
                 actions={
                     <button
-                        className="flex items-center gap-2 h-10 px-5 text-white rounded-xl font-semibold text-sm hover:brightness-110 transition-all flex-shrink-0"
+                        className="flex items-center gap-2 h-10 px-5 text-white rounded-[6px] font-semibold text-sm hover:brightness-110 transition-all flex-shrink-0"
                         style={{ background: T.accent }}
                     >
                         <Plus size={16} />
@@ -127,7 +127,7 @@ export default function AutomacaoConteudoPage() {
             </div>
 
             {/* Lista de Pipelines */}
-            <div className="rounded-3xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4" style={{ borderBottom: `1px solid ${T.border}` }}>
                     <div className="relative flex-1 max-w-md">
                         <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
@@ -135,13 +135,13 @@ export default function AutomacaoConteudoPage() {
                             value={busca}
                             onChange={e => setBusca(e.target.value)}
                             placeholder="Buscar pipeline de automação..."
-                            className="w-full h-11 pl-11 pr-4 rounded-2xl text-sm focus:ring-2 outline-none"
+                            className="w-full h-11 pl-11 pr-4 rounded-[6px] text-sm focus:ring-2 outline-none"
                             style={{ background: T.elevated, color: T.text }}
                         />
                     </div>
                     <button
                         onClick={loadWorkflows}
-                        className="flex items-center gap-2 h-11 px-4 rounded-2xl text-xs font-bold transition-all uppercase tracking-widest"
+                        className="flex items-center gap-2 h-11 px-4 rounded-[6px] text-xs font-bold transition-all uppercase tracking-widest"
                         style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}
                     >
                         <RefreshCw size={14} />
@@ -222,7 +222,7 @@ export default function AutomacaoConteudoPage() {
                                         <div className="flex items-center gap-2">
                                             <button
                                                 onClick={() => toggleWorkflow(wf)}
-                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+                                                className="w-10 h-10 flex items-center justify-center rounded-lg transition-all"
                                                 style={(() => {
                                                     const sc = getStatusConfig(wf.is_active ? 'morno' : 'ativo')
                                                     return { background: `${sc.dot}1f`, color: sc.dot }
@@ -233,7 +233,7 @@ export default function AutomacaoConteudoPage() {
                                             </button>
                                             <button
                                                 onClick={() => toast.info(`Configurações de "${wf.name}" — em breve`)}
-                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:brightness-110"
+                                                className="w-10 h-10 flex items-center justify-center rounded-lg transition-all hover:brightness-110"
                                                 style={{ background: T.elevated, color: T.textMuted }}
                                                 title="Configurações"
                                             >

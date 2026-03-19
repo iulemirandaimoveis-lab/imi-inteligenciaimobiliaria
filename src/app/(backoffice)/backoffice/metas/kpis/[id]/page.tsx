@@ -50,7 +50,7 @@ const statusStyles = {
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(v)
 const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
 
-const inputCls = 'w-full px-3 py-2 rounded-lg text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C8A44A]/50 transition-colors'
+const inputCls = 'w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C8A44A]/50 transition-colors'
 
 /* ── component ─────────────────────────────────────────────── */
 export default function KPIDetailPage() {
@@ -111,7 +111,7 @@ export default function KPIDetailPage() {
 
   if (!kpi) {
     return (
-      <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
         <Activity className="w-8 h-8 text-white/20 mx-auto mb-3" />
         <p className="text-white/50 text-sm">KPI não encontrado.</p>
         <Link href="/backoffice/metas/kpis" className="text-[#C8A44A] text-sm mt-2 inline-block hover:underline">
@@ -142,7 +142,7 @@ export default function KPIDetailPage() {
       </div>
 
       {/* KPI Header */}
-      <div className="rounded-xl border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="rounded-lg border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.03)' }}>
         <div className="flex items-start justify-between mb-4">
           <div>
             <h1 className="text-xl font-bold text-white">{kpi.name}</h1>
@@ -204,7 +204,7 @@ export default function KPIDetailPage() {
       </div>
 
       {showForm && (
-        <div className="rounded-xl border border-[#C8A44A]/20 p-5 space-y-4" style={{ background: 'rgba(200,164,74,0.05)' }}>
+        <div className="rounded-lg border border-[#C8A44A]/20 p-5 space-y-4" style={{ background: 'rgba(200,164,74,0.05)' }}>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-[#C8A44A]">Nova Leitura</span>
             <button onClick={() => setShowForm(false)} className="text-white/30 hover:text-white/60">
@@ -236,7 +236,7 @@ export default function KPIDetailPage() {
       )}
 
       {/* Historical Chart (CSS bars) */}
-      <div className="rounded-xl border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="rounded-lg border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.03)' }}>
         <h2 className="text-sm font-semibold text-white mb-4">Histórico ({readings.length} leituras)</h2>
         {readings.length === 0 ? (
           <p className="text-white/40 text-sm text-center py-8">Nenhuma leitura registrada.</p>

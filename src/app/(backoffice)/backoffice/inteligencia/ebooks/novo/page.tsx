@@ -59,7 +59,7 @@ export default function NovoEbookPage() {
         }
     }
 
-    const inputClass = "w-full h-10 px-3 rounded-xl text-sm outline-none transition-all"
+    const inputClass = "w-full h-10 px-3 rounded-[6px] text-sm outline-none transition-all"
     const inputStyle = {
         background: 'var(--bo-elevated)',
         border: '1px solid var(--bo-border)',
@@ -80,7 +80,7 @@ export default function NovoEbookPage() {
             />
 
             <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="p-6 rounded-2xl space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
+                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
                     <h2 className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Informações Básicas</h2>
 
                     <div>
@@ -114,7 +114,7 @@ export default function NovoEbookPage() {
                             value={form.description}
                             onChange={e => set('description', e.target.value)}
                             rows={4}
-                            className="w-full px-3 py-2 rounded-xl text-sm outline-none transition-all resize-none"
+                            className="w-full px-3 py-2 rounded-[6px] text-sm outline-none transition-all resize-none"
                             style={inputStyle}
                             placeholder="Descrição do conteúdo..."
                         />
@@ -133,7 +133,7 @@ export default function NovoEbookPage() {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-2xl space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
+                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
                     <h2 className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Mídia & Links</h2>
 
                     <div>
@@ -173,7 +173,7 @@ export default function NovoEbookPage() {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-2xl space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
+                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
                     <h2 className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Publicação</h2>
                     <div className="flex items-center justify-between">
                         <div>
@@ -208,7 +208,7 @@ export default function NovoEbookPage() {
                 <div className="flex items-center gap-3 justify-end">
                     <Link
                         href="/backoffice/inteligencia/ebooks"
-                        className="h-9 px-5 rounded-xl text-sm font-medium transition-colors"
+                        className="h-9 px-5 rounded-[6px] text-sm font-medium transition-colors"
                         style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }}
                     >
                         Cancelar

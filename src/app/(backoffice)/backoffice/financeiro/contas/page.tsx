@@ -97,7 +97,7 @@ export default function ContasBancariasPage() {
                 actions={
                     <button
                         onClick={() => router.push('/backoffice/financeiro/contas/nova')}
-                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold transition-opacity hover:opacity-80"
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] font-semibold transition-opacity hover:opacity-80"
                         style={{ background: T.accent }}
                     >
                         <Plus size={18} />
@@ -147,7 +147,7 @@ export default function ContasBancariasPage() {
                         placeholder="Buscar por banco ou conta..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full h-10 pl-9 pr-4 rounded-xl outline-none text-sm"
+                        className="w-full h-10 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                 </div>
@@ -173,7 +173,7 @@ export default function ContasBancariasPage() {
                         return (
                             <div
                                 key={conta.id}
-                                className="rounded-2xl p-6 transition-all hover:brightness-105 cursor-pointer"
+                                className="rounded-lg p-6 transition-all hover:brightness-105 cursor-pointer"
                                 style={{
                                     background: conta.is_active ? T.surface : T.elevated,
                                     border: `1px solid ${T.border}`,
@@ -183,7 +183,7 @@ export default function ContasBancariasPage() {
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-start gap-3">
-                                        <div className="w-12 h-12 rounded-xl flex items-center justify-center"
+                                        <div className="w-12 h-12 rounded-lg flex items-center justify-center"
                                             style={{ background: conta.is_active ? `${T.accent}15` : T.elevated }}>
                                             <Building2 size={24} style={{ color: conta.is_active ? T.accent : T.textMuted }} />
                                         </div>
@@ -271,9 +271,9 @@ export default function ContasBancariasPage() {
                 </div>
             ) : (
                 /* Empty State */
-                <div className="rounded-2xl p-12 text-center"
+                <div className="rounded-lg p-12 text-center"
                     style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 opacity-20"
+                    <div className="w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4 opacity-20"
                         style={{ background: T.elevated }}>
                         <Landmark size={32} style={{ color: T.textMuted }} />
                     </div>
@@ -288,7 +288,7 @@ export default function ContasBancariasPage() {
                     {!searchTerm && tipoFilter === 'all' && (
                         <button
                             onClick={() => router.push('/backoffice/financeiro/contas/nova')}
-                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium hover:brightness-110 transition-colors"
+                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-[6px] font-medium hover:brightness-110 transition-colors"
                             style={{ background: T.accent }}
                         >
                             <Plus size={20} />

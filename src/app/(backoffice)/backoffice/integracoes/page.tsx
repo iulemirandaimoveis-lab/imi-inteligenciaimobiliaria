@@ -114,13 +114,13 @@ function ConfigModal({
                 initial={{ opacity: 0, y: 20, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.97 }}
-                className="w-full max-w-lg rounded-3xl overflow-hidden"
+                className="w-full max-w-lg rounded-xl overflow-hidden"
                 style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}
             >
                 {/* Header */}
                 <div className="flex items-center gap-4 p-6"
                     style={{ borderBottom: `1px solid ${T.border}` }}>
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                    <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: `${integracao.cor}18`, border: `1px solid ${integracao.cor}30` }}>
                         <Icon size={22} style={{ color: integracao.cor }} />
                     </div>
@@ -129,7 +129,7 @@ function ConfigModal({
                         <p className="text-xs" style={{ color: T.textDim }}>{integracao.descricao}</p>
                     </div>
                     <button onClick={onClose}
-                        className="w-8 h-8 rounded-xl flex items-center justify-center"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <X size={14} style={{ color: T.textDim }} />
                     </button>
@@ -138,7 +138,7 @@ function ConfigModal({
                 {/* Campos */}
                 <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
                     {integracao.id === 'supabase_storage' ? (
-                        <div className="rounded-xl p-4 text-sm" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: 'var(--bo-success)' }}>
+                        <div className="rounded-lg p-4 text-sm" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: 'var(--bo-success)' }}>
                             ✓ Supabase Storage é o armazenamento interno do projeto. Já está configurado automaticamente via variáveis de ambiente NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.
                         </div>
                     ) : integracao.campos_config.length === 0 ? (
@@ -156,7 +156,7 @@ function ConfigModal({
                                         <select
                                             value={values[campo.key] || ''}
                                             onChange={e => setValues(p => ({ ...p, [campo.key]: e.target.value }))}
-                                            className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                            className="w-full h-10 px-3 rounded-[6px] text-sm outline-none"
                                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         >
                                             <option value="">Selecionar...</option>
@@ -168,7 +168,7 @@ function ConfigModal({
                                             onChange={e => setValues(p => ({ ...p, [campo.key]: e.target.value }))}
                                             placeholder={campo.placeholder}
                                             rows={4}
-                                            className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none font-mono text-xs"
+                                            className="w-full px-3 py-2.5 rounded-[6px] text-sm outline-none resize-none font-mono text-xs"
                                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         />
                                     ) : (
@@ -178,7 +178,7 @@ function ConfigModal({
                                                 value={values[campo.key] || ''}
                                                 onChange={e => setValues(p => ({ ...p, [campo.key]: e.target.value }))}
                                                 placeholder={campo.placeholder}
-                                                className="w-full h-10 px-3 rounded-xl text-sm outline-none font-mono"
+                                                className="w-full h-10 px-3 rounded-[6px] text-sm outline-none font-mono"
                                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, paddingRight: campo.masked ? '40px' : undefined }}
                                             />
                                             {campo.masked && (
@@ -202,7 +202,7 @@ function ConfigModal({
 
                     {/* Resultado do teste */}
                     {testResult && (
-                        <div className="rounded-xl p-3 text-xs"
+                        <div className="rounded-lg p-3 text-xs"
                             style={{
                                 background: testResult.ok ? 'rgba(107,184,123,0.10)' : 'rgba(229,115,115,0.10)',
                                 border: `1px solid ${testResult.ok ? 'rgba(107,184,123,0.25)' : 'rgba(229,115,115,0.25)'}`,
@@ -217,7 +217,7 @@ function ConfigModal({
                 <div className="flex gap-3 p-6" style={{ borderTop: `1px solid ${T.border}` }}>
                     {integracao.docs_url && (
                         <a href={integracao.docs_url} target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 px-4 h-10 rounded-xl text-xs font-medium"
+                            className="flex items-center gap-1.5 px-4 h-10 rounded-[6px] text-xs font-medium"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
                             <ExternalLink size={12} /> Docs
                         </a>
@@ -225,7 +225,7 @@ function ConfigModal({
 
                     {integracao.campos_config.length > 0 && integracao.id !== 'supabase_storage' && (
                         <button onClick={handleTest} disabled={testing}
-                            className="flex items-center gap-1.5 px-4 h-10 rounded-xl text-xs font-medium"
+                            className="flex items-center gap-1.5 px-4 h-10 rounded-[6px] text-xs font-medium"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
                             {testing ? <RefreshCw size={12} className="animate-spin" /> : <Plug size={12} />}
                             Testar Conexão
@@ -233,7 +233,7 @@ function ConfigModal({
                     )}
 
                     <button onClick={handleSave} disabled={saving}
-                        className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
+                        className="flex-1 h-10 rounded-[6px] text-sm font-semibold text-white"
                         style={{ background: 'var(--btn-primary-bg)' }}>
                         {saving ? 'Salvando...' : 'Salvar Configuração'}
                     </button>
@@ -297,7 +297,7 @@ export default function IntegracoesPage() {
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                 {[...Array(3)].map((_, i) => (
                     <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
-                        <div className="skeleton w-9 h-9 rounded-xl mb-3" />
+                        <div className="skeleton w-9 h-9 rounded-lg mb-3" />
                         <div className="skeleton lg h-5 w-16 mb-2" />
                         <div className="skeleton h-3 w-24" />
                     </div>
@@ -307,7 +307,7 @@ export default function IntegracoesPage() {
                 {[...Array(6)].map((_, i) => (
                     <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 60}ms` }}>
                         <div className="flex items-center gap-3 mb-3">
-                            <div className="skeleton w-10 h-10 rounded-xl" />
+                            <div className="skeleton w-10 h-10 rounded-lg" />
                             <div className="flex-1">
                                 <div className="skeleton h-4 w-28 mb-1" />
                                 <div className="skeleton h-3 w-20" />
@@ -343,7 +343,7 @@ export default function IntegracoesPage() {
                 <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1">
                     {[{ key: 'todas', label: 'Todas' }, ...Object.entries(CATEGORIAS_INTEGRACAO).map(([k, v]) => ({ key: k, label: v.label }))].map(cat => (
                         <button key={cat.key} onClick={() => setCategoriaAtiva(cat.key)}
-                            className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
+                            className="px-3.5 h-9 rounded-[6px] text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
                                 background: categoriaAtiva === cat.key ? 'var(--bo-accent)' : T.surface,
                                 color: categoriaAtiva === cat.key ? 'white' : T.textDim,
@@ -365,7 +365,7 @@ export default function IntegracoesPage() {
                             <motion.div key={integ.id}
                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.04 }}
-                                className="rounded-2xl p-4 transition-all group hover-card"
+                                className="rounded-lg p-4 transition-all group hover-card"
                                 style={{
                                     background: connected ? 'rgba(107,184,123,0.05)' : T.surface,
                                     border: `1px solid ${connected ? 'rgba(107,184,123,0.22)' : T.border}`,
@@ -374,7 +374,7 @@ export default function IntegracoesPage() {
                             >
                                 {/* Top */}
                                 <div className="flex items-start gap-3 mb-4">
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                                         style={{ background: `${integ.cor}18`, border: `1px solid ${integ.cor}25` }}>
                                         <Icon size={18} style={{ color: integ.cor }} />
                                     </div>
@@ -407,7 +407,7 @@ export default function IntegracoesPage() {
                                 {/* Action */}
                                 <button
                                     onClick={() => setIntegracaoAberta(integ)}
-                                    className="mt-3 w-full h-9 rounded-xl text-xs font-semibold transition-all"
+                                    className="mt-3 w-full h-9 rounded-[6px] text-xs font-semibold transition-all"
                                     style={{
                                         background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bo-active-bg)',
                                         border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
@@ -422,14 +422,14 @@ export default function IntegracoesPage() {
                 </div>
 
                 {/* Info .env */}
-                <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: T.textDim }}>
                         Variáveis de Ambiente (.env.local)
                     </p>
                     <p className="text-xs mb-3" style={{ color: T.textDim }}>
                         As configurações salvas aqui são armazenadas criptografadas no Supabase. Para produção, adicione também ao Vercel → Settings → Environment Variables.
                     </p>
-                    <div className="rounded-xl p-3 font-mono text-[10px] leading-relaxed overflow-x-auto"
+                    <div className="rounded-lg p-3 font-mono text-[10px] leading-relaxed overflow-x-auto"
                         style={{ background: 'var(--bo-surface)', border: `1px solid ${T.border}`, color: 'var(--s-done)' }}>
                         {[
                             '# Assinatura Digital',

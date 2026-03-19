@@ -145,7 +145,7 @@ export default function MetasPage() {
                 actions={
                     <button
                         onClick={() => setEditing(!editing)}
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold flex-shrink-0 transition-all"
+                        className="flex items-center gap-2 h-10 px-5 rounded-[6px] text-sm font-semibold flex-shrink-0 transition-all"
                         style={{ background: editing ? 'rgba(229,115,115,0.12)' : T.accent, color: editing ? 'var(--bo-error)' : 'white', border: editing ? '1px solid rgba(229,115,115,0.3)' : 'none' }}
                     >
                         {editing ? <><X size={15} /> Cancelar</> : <><Pencil size={15} /> Editar Metas</>}
@@ -171,7 +171,7 @@ export default function MetasPage() {
                     <div data-tour="goals" className="grid md:grid-cols-2 gap-4">
                         {/* Receita */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                            className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
+                            className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
@@ -195,7 +195,7 @@ export default function MetasPage() {
                                         value={form.target_revenue}
                                         onChange={e => setForm(f => ({ ...f, target_revenue: e.target.value }))}
                                         placeholder="Ex: 50000"
-                                        className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                        className="w-full h-10 px-3 rounded-[6px] text-sm outline-none"
                                         style={{ background: T.surface, border: `1px solid ${T.borderGold}`, color: T.text }}
                                     />
                                 </div>
@@ -216,7 +216,7 @@ export default function MetasPage() {
 
                         {/* Avaliações */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-                            className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
+                            className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
@@ -240,7 +240,7 @@ export default function MetasPage() {
                                         value={form.target_avaliacoes}
                                         onChange={e => setForm(f => ({ ...f, target_avaliacoes: e.target.value }))}
                                         placeholder="Ex: 5"
-                                        className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                        className="w-full h-10 px-3 rounded-[6px] text-sm outline-none"
                                         style={{ background: T.surface, border: `1px solid ${T.borderGold}`, color: T.text }}
                                     />
                                 </div>
@@ -281,9 +281,9 @@ export default function MetasPage() {
                                     const rPct = g.target_revenue > 0 ? Math.min(100, Math.round((0 / g.target_revenue) * 100)) : 0
                                     return (
                                         <motion.div key={g.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
-                                            className="flex items-center gap-4 p-4 rounded-2xl"
+                                            className="flex items-center gap-4 p-4 rounded-lg"
                                             style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                            <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                                                 style={{ background: T.elevated }}>
                                                 <Target size={16} style={{ color: T.accent }} />
                                             </div>
@@ -304,7 +304,7 @@ export default function MetasPage() {
 
                     {/* Empty state */}
                     {!currentGoal && !editing && (
-                        <div className="rounded-2xl p-10 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-10 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <Target size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textMuted }} />
                             <p className="text-sm font-semibold mb-1" style={{ color: T.textMuted }}>Metas não definidas para {monthLabel(currentMonth)}</p>
                             <p className="text-xs mb-4" style={{ color: T.textMuted }}>Defina sua meta de receita e avaliações para acompanhar o progresso</p>

@@ -38,7 +38,7 @@ export default function ReportDetailPage() {
     return (
       <div className="space-y-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-24 rounded-xl bg-white/5 animate-pulse" />
+          <div key={i} className="h-24 rounded-lg bg-white/5 animate-pulse" />
         ))}
       </div>
     )
@@ -46,7 +46,7 @@ export default function ReportDetailPage() {
 
   if (!report) {
     return (
-      <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <FileText className="w-10 h-10 text-white/20 mx-auto mb-3" />
         <h3 className="text-white/70 font-medium mb-1">Relatorio nao encontrado</h3>
         <p className="text-white/40 text-sm mb-4">ID: {id}</p>
@@ -72,13 +72,13 @@ export default function ReportDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="p-2 rounded-lg border border-white/10 hover:border-white/20 transition-colors">
+          <button className="p-2 rounded-[6px] border border-white/10 hover:border-white/20 transition-colors">
             <Share2 className="w-4 h-4 text-white/50" />
           </button>
-          <button className="p-2 rounded-lg border border-white/10 hover:border-white/20 transition-colors">
+          <button className="p-2 rounded-[6px] border border-white/10 hover:border-white/20 transition-colors">
             <Printer className="w-4 h-4 text-white/50" />
           </button>
-          <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[#0B1928]" style={{ background: '#C8A44A' }}>
+          <button className="flex items-center gap-2 px-3 py-2 rounded-[6px] text-sm font-medium text-[#0B1928]" style={{ background: '#C8A44A' }}>
             <Download className="w-4 h-4" />
             PDF
           </button>
@@ -97,7 +97,7 @@ export default function ReportDetailPage() {
       )}
 
       {/* Summary */}
-      <div className="rounded-xl border border-[#C8A44A]/20 p-5" style={{ background: 'rgba(200,164,74,0.05)' }}>
+      <div className="rounded-lg border border-[#C8A44A]/20 p-5" style={{ background: 'rgba(200,164,74,0.05)' }}>
         <h3 className="text-xs text-[#C8A44A] font-semibold mb-2">RESUMO EXECUTIVO</h3>
         <p className="text-sm text-white/70 leading-relaxed">{report.summary}</p>
       </div>
@@ -106,20 +106,20 @@ export default function ReportDetailPage() {
       {report.sections && report.sections.length > 0 ? (
         <div className="space-y-4">
           {report.sections.map((section, i) => (
-            <div key={i} className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <div key={i} className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
               <h3 className="text-sm font-semibold text-white mb-3">{section.title}</h3>
               <p className="text-sm text-white/60 leading-relaxed whitespace-pre-line">{section.content}</p>
             </div>
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-lg border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
           <p className="text-white/40 text-sm">Conteudo do relatorio sera exibido aqui.</p>
         </div>
       )}
 
       {/* Metadata */}
-      <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.01)' }}>
+      <div className="rounded-lg border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.01)' }}>
         <div className="flex items-center justify-between text-xs text-white/20">
           <span>Tipo: {report.type}</span>
           <span>Status: {report.status}</span>

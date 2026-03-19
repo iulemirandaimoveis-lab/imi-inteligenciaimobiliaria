@@ -137,7 +137,7 @@ export default function AvaliacaoDetalhesPage() {
                     <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-red-400" />
                     <p className="text-lg font-bold mb-2" style={{ color: T.text }}>{error || 'Avaliação não encontrada'}</p>
                     <button onClick={() => router.push('/backoffice/avaliacoes')}
-                        className="mt-4 px-4 py-2 rounded-xl text-white text-sm" style={{ backgroundColor: T.accent }}>
+                        className="mt-4 px-4 py-2 rounded-lg text-white text-sm" style={{ backgroundColor: T.accent }}>
                         Voltar
                     </button>
                 </div>
@@ -174,7 +174,7 @@ export default function AvaliacaoDetalhesPage() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => router.back()}
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: T.card, border: `1px solid ${T.border}` }}
                         >
                             <ArrowLeft size={18} style={{ color: T.text }} />
@@ -185,13 +185,13 @@ export default function AvaliacaoDetalhesPage() {
                         </span>
                         {data.laudo_url && (
                             <a href={data.laudo_url} target="_blank" rel="noopener noreferrer"
-                                className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium hover:opacity-80"
+                                className="h-10 px-4 rounded-[6px] flex items-center gap-2 text-sm font-medium hover:opacity-80"
                                 style={{ border: `1px solid ${T.border}`, color: T.text }}>
                                 <Download size={16} /> PDF
                             </a>
                         )}
                         <button onClick={() => setShowDeleteConfirm(true)}
-                            className="h-10 px-3 rounded-xl text-sm font-medium hover:bg-red-500/20"
+                            className="h-10 px-3 rounded-[6px] text-sm font-medium hover:bg-red-500/20"
                             style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--bo-error)' }}>
                             <Trash2 size={16} />
                         </button>
@@ -200,11 +200,11 @@ export default function AvaliacaoDetalhesPage() {
             />
 
             {showDeleteConfirm && (
-                <div className="rounded-xl p-4 flex items-center justify-between"
+                <div className="rounded-lg p-4 flex items-center justify-between"
                     style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>
                     <p className="text-sm" style={{ color: T.text }}>Cancelar avaliação <strong>{data.protocolo}</strong>?</p>
                     <div className="flex gap-2">
-                        <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 rounded-lg text-sm" style={{ color: T.textMuted }}>Não</button>
+                        <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 rounded-[6px] text-sm" style={{ color: T.textMuted }}>Não</button>
                         <button onClick={handleDelete} disabled={deleting}
                             className="px-4 py-2 rounded-lg text-white text-sm bg-red-500 disabled:opacity-50">
                             {deleting ? 'Cancelando...' : 'Confirmar'}
@@ -215,7 +215,7 @@ export default function AvaliacaoDetalhesPage() {
 
             {/* Status Workflow */}
             {data.status !== 'cancelada' && data.status !== 'concluida' && (
-                <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: T.textMuted }}>Atualizar Status</p>
                     <div className="flex gap-2 flex-wrap">
                         {['aguardando_docs', 'em_andamento', 'concluida'].map(s => {
@@ -223,7 +223,7 @@ export default function AvaliacaoDetalhesPage() {
                             if (!cfg || s === data.status) return null
                             return (
                                 <button key={s} onClick={() => handleStatusUpdate(s)}
-                                    className="px-3 py-1.5 rounded-xl text-xs font-semibold hover:opacity-80"
+                                    className="px-3 py-1.5 rounded-[6px] text-xs font-semibold hover:opacity-80"
                                     style={{ color: cfg.text, background: cfg.bg, border: `1px solid ${cfg.text}30` }}>
                                     {cfg.label}
                                 </button>
@@ -236,10 +236,10 @@ export default function AvaliacaoDetalhesPage() {
             {/* KPIs */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {data.valor_estimado && (
-                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Valor Avaliado</p>
-                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.12)' }}>
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.12)' }}>
                                 <TrendingUp size={14} style={{ color: 'var(--success)' }} />
                             </div>
                         </div>
@@ -247,10 +247,10 @@ export default function AvaliacaoDetalhesPage() {
                     </div>
                 )}
                 {data.valor_m2 && (
-                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Preço/m²</p>
-                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(139,92,246,0.12)' }}>
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(139,92,246,0.12)' }}>
                                 <BarChart2 size={14} style={{ color: 'var(--imi-gold-500)' }} />
                             </div>
                         </div>
@@ -258,10 +258,10 @@ export default function AvaliacaoDetalhesPage() {
                     </div>
                 )}
                 {data.area_privativa && (
-                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Área Privativa</p>
-                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.08)' }}>
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.08)' }}>
                                 <Ruler size={14} style={{ color: 'var(--success)' }} />
                             </div>
                         </div>
@@ -269,10 +269,10 @@ export default function AvaliacaoDetalhesPage() {
                     </div>
                 )}
                 {data.honorarios && (
-                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Honorários</p>
-                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245,158,11,0.12)' }}>
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245,158,11,0.12)' }}>
                                 <DollarSign size={14} style={{ color: 'var(--warning)' }} />
                             </div>
                         </div>
@@ -312,7 +312,7 @@ export default function AvaliacaoDetalhesPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-6">
                         {/* Property Data */}
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Dados do Imóvel</h2>
                             <div className="space-y-4">
                                 <div>
@@ -359,7 +359,7 @@ export default function AvaliacaoDetalhesPage() {
 
                         {/* Features */}
                         {caracteristicas.length > 0 && (
-                            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Características</h2>
                                 <div className="flex flex-wrap gap-2">
                                     {caracteristicas.map((f: string, i: number) => (
@@ -374,7 +374,7 @@ export default function AvaliacaoDetalhesPage() {
 
                         {/* Value Range — Zillow-style confidence bar */}
                         {(data.valor_minimo || data.valor_maximo || data.valor_estimado) && (
-                            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-lg font-bold" style={{ color: T.text }}>Intervalo de Valores</h2>
                                     {hasRange && (
@@ -436,12 +436,12 @@ export default function AvaliacaoDetalhesPage() {
                                         {/* Stats strip */}
                                         <div className="grid grid-cols-2 gap-3 mt-5 pt-4"
                                             style={{ borderTop: `1px solid ${T.border}` }}>
-                                            <div className="rounded-xl p-3 text-center"
+                                            <div className="rounded-lg p-3 text-center"
                                                 style={{ background: 'rgba(99,102,241,0.06)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Spread</p>
                                                 <p className="text-sm font-bold" style={{ color: T.text }}>{rangeSpread.toFixed(1)}%</p>
                                             </div>
-                                            <div className="rounded-xl p-3 text-center"
+                                            <div className="rounded-lg p-3 text-center"
                                                 style={{ background: 'rgba(99,102,241,0.06)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Margem</p>
                                                 <p className="text-sm font-bold" style={{ color: T.text }}>
@@ -477,7 +477,7 @@ export default function AvaliacaoDetalhesPage() {
                         )}
                         {/* Neighborhood price benchmark — Comparativo de Bairro */}
                         {comps && data.valor_m2 && (
-                            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <div className="flex items-center justify-between mb-5">
                                     <h2 className="text-lg font-bold" style={{ color: T.text }}>Comparativo de Bairro</h2>
                                     <span className="text-[10px] font-semibold px-2.5 py-1 rounded-[6px]"
@@ -488,7 +488,7 @@ export default function AvaliacaoDetalhesPage() {
 
                                 {/* Price/m² comparison grid */}
                                 <div className="grid grid-cols-3 gap-3 mb-4">
-                                    <div className="rounded-xl p-3 text-center"
+                                    <div className="rounded-lg p-3 text-center"
                                         style={{ background: 'rgba(16,185,129,0.06)' }}>
                                         <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Mín. Bairro</p>
                                         <p className="text-sm font-bold" style={{ color: T.text }}>
@@ -496,7 +496,7 @@ export default function AvaliacaoDetalhesPage() {
                                         </p>
                                         <p className="text-[10px]" style={{ color: T.textDim }}>/m²</p>
                                     </div>
-                                    <div className="rounded-xl p-3 text-center"
+                                    <div className="rounded-lg p-3 text-center"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                         <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Média Bairro</p>
                                         <p className="text-sm font-bold" style={{ color: T.accent }}>
@@ -504,7 +504,7 @@ export default function AvaliacaoDetalhesPage() {
                                         </p>
                                         <p className="text-[10px]" style={{ color: T.textDim }}>/m²</p>
                                     </div>
-                                    <div className="rounded-xl p-3 text-center"
+                                    <div className="rounded-lg p-3 text-center"
                                         style={{ background: 'rgba(239,68,68,0.06)' }}>
                                         <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Máx. Bairro</p>
                                         <p className="text-sm font-bold" style={{ color: T.text }}>
@@ -527,9 +527,9 @@ export default function AvaliacaoDetalhesPage() {
                                         : 'Na média do bairro'
                                     const verdictColor = isPremium ? 'var(--warning)' : isBelowMarket ? 'var(--success)' : 'var(--info)'
                                     return (
-                                        <div className="flex items-center gap-3 p-3 rounded-xl"
+                                        <div className="flex items-center gap-3 p-3 rounded-lg"
                                             style={{ background: `${verdictColor}12`, border: `1px solid ${verdictColor}30` }}>
-                                            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                                                 style={{ background: `${verdictColor}20` }}>
                                                 <MapPin size={15} style={{ color: verdictColor }} />
                                             </div>
@@ -551,7 +551,7 @@ export default function AvaliacaoDetalhesPage() {
                     {/* Sidebar */}
                     <div className="space-y-6">
                         {/* Client */}
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Cliente</h3>
                             <div className="space-y-3">
                                 <div>
@@ -580,7 +580,7 @@ export default function AvaliacaoDetalhesPage() {
                         </div>
 
                         {/* Evaluation Details */}
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Avaliação</h3>
                             <div className="space-y-3">
                                 {data.finalidade && (
@@ -613,7 +613,7 @@ export default function AvaliacaoDetalhesPage() {
                         </div>
 
                         {/* AI Intelligence Card */}
-                        <div className="rounded-2xl p-5" style={{ background: T.surface, border: '1px solid var(--bo-border-gold)' }}>
+                        <div className="rounded-lg p-5" style={{ background: T.surface, border: '1px solid var(--bo-border-gold)' }}>
                             <div className="flex items-center gap-2 mb-3">
                                 <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(200,166,90,0.15)' }}>
                                     {aiLoading ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--imi-ai-gold)' }} /> : <Sparkles size={13} style={{ color: 'var(--imi-ai-gold)' }} />}
@@ -629,7 +629,7 @@ export default function AvaliacaoDetalhesPage() {
                                     <p className="text-xs mb-3" style={{ color: T.text, lineHeight: 1.65 }}>{aiAnalysis.insight}</p>
                                     <div className="grid grid-cols-2 gap-2 mb-3">
                                         {aiAnalysis.investmentGrade && (
-                                            <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                            <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Grau Invest.</p>
                                                 <p className="text-lg font-bold" style={{
                                                     color: aiAnalysis.investmentGrade === 'A' ? 'var(--success)' : aiAnalysis.investmentGrade === 'B' ? 'var(--info)' : aiAnalysis.investmentGrade === 'C' ? 'var(--warning)' : 'var(--bo-error)'
@@ -637,7 +637,7 @@ export default function AvaliacaoDetalhesPage() {
                                             </div>
                                         )}
                                         {aiAnalysis.marketTrend && (
-                                            <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                            <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Tendência</p>
                                                 <p className="text-sm font-bold" style={{
                                                     color: aiAnalysis.marketTrend === 'alta' ? 'var(--success)' : aiAnalysis.marketTrend === 'queda' ? 'var(--bo-error)' : 'var(--warning)'
@@ -649,7 +649,7 @@ export default function AvaliacaoDetalhesPage() {
                                         <p className="text-[11px] mb-2" style={{ color: T.textMuted }}>💰 {aiAnalysis.priceAnalysis}</p>
                                     )}
                                     {aiAnalysis.recommendation && (
-                                        <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
+                                        <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
                                             <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Recomendação</p>
                                             <p className="text-xs" style={{ color: T.text }}>{aiAnalysis.recommendation}</p>
                                         </div>
@@ -664,7 +664,7 @@ export default function AvaliacaoDetalhesPage() {
                         </div>
 
                         {/* Timeline */}
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Cronograma</h3>
                             <div className="space-y-3">
                                 <div>
@@ -687,7 +687,7 @@ export default function AvaliacaoDetalhesPage() {
 
             {/* INFO TAB */}
             {activeTab === 'info' && (
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Todas as Informações</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {Object.entries(data).map(([key, value]) => {

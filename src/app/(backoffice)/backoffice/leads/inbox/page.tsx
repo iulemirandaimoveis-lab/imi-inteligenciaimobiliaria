@@ -139,7 +139,7 @@ export default function LeadsInboxPage() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => loadLeads(true)}
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                            className="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
                             title="Atualizar"
                         >
@@ -147,7 +147,7 @@ export default function LeadsInboxPage() {
                         </button>
                         <button
                             onClick={() => setShowSearch(v => !v)}
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                            className="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
                             style={{
                                 background: showSearch ? T.accent : T.elevated,
                                 border: `1px solid ${T.border}`,
@@ -157,7 +157,7 @@ export default function LeadsInboxPage() {
                             <Search size={14} style={{ color: showSearch ? '#fff' : T.textMuted }} />
                         </button>
                         <button
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                            className="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
                         >
                             <SlidersHorizontal size={14} style={{ color: T.textMuted }} />
@@ -182,7 +182,7 @@ export default function LeadsInboxPage() {
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             placeholder="Buscar por nome, email ou telefone..."
-                            className="w-full h-10 px-4 rounded-xl text-sm outline-none"
+                            className="w-full h-10 px-4 rounded-[6px] text-sm outline-none"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                         />
                     </motion.div>
@@ -215,7 +215,7 @@ export default function LeadsInboxPage() {
             {loading ? (
                 <div className="space-y-3">
                     {[1, 2, 3].map(i => (
-                        <div key={i} className="animate-pulse rounded-2xl"
+                        <div key={i} className="animate-pulse rounded-lg"
                             style={{ background: T.elevated, height: 120, opacity: 1 - i * 0.25 }} />
                     ))}
                 </div>
@@ -226,7 +226,7 @@ export default function LeadsInboxPage() {
                         {filter !== 'all' ? `Sem leads ${filter.toUpperCase()} no momento` : 'Inbox vazio'}
                     </p>
                     <Link href="/backoffice/leads/novo"
-                        className="mt-2 h-9 px-5 rounded-xl text-xs font-semibold text-white flex items-center gap-1.5"
+                        className="mt-2 h-9 px-5 rounded-[6px] text-xs font-semibold text-white flex items-center gap-1.5"
                         style={{ background: T.accent }}
                     >
                         <Plus size={13} /> Capturar Lead
@@ -251,7 +251,7 @@ export default function LeadsInboxPage() {
                             >
                                 <button
                                     onClick={() => router.push(`/backoffice/leads/inbox/${lead.id}`)}
-                                    className="w-full text-left rounded-2xl p-4 hover:scale-[1.01] active:scale-[0.998]"
+                                    className="w-full text-left rounded-lg p-4 hover:scale-[1.01] active:scale-[0.998]"
                                     style={{
                                         background: T.elevated,
                                         border: `1px solid ${T.border}`,

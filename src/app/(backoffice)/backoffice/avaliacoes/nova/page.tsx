@@ -232,7 +232,7 @@ function InputField({ icon: Icon, error, ...props }: any) {
       {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textMuted }} />}
       <input
         {...props}
-        className={`w-full h-10 ${Icon ? 'pl-9' : 'px-3'} pr-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] ${error ? 'border-red-300' : ''}`}
+        className={`w-full h-10 ${Icon ? 'pl-9' : 'px-3'} pr-3 border rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] ${error ? 'border-red-300' : ''}`}
         style={{ background: T.elevated, border: `1px solid ${error ? '#fca5a5' : T.border}`, color: T.text }}
       />
     </div>
@@ -375,12 +375,12 @@ export default function NovaAvaliacaoPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => router.back()}
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+              className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-all hover:opacity-80"
               style={{ background: T.card, border: `1px solid ${T.border}` }}
             >
               <ArrowLeft size={18} style={{ color: T.text }} />
             </button>
-            <div className="flex items-center gap-2 h-9 px-3 rounded-xl"
+            <div className="flex items-center gap-2 h-9 px-3 rounded-lg"
               style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)' }}>
               <Sparkles size={14} style={{ color: 'var(--warning)' }} />
               <span className="text-xs font-semibold" style={{ color: 'var(--warning)' }}>Motor IA</span>
@@ -390,7 +390,7 @@ export default function NovaAvaliacaoPage() {
       />
 
       {/* Steps */}
-      <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center">
           {STEPS.map((step, i) => {
             const Icon = step.icon
@@ -424,7 +424,7 @@ export default function NovaAvaliacaoPage() {
       </div>
 
       {/* Form */}
-      <div className="rounded-xl p-6 sm:p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-6 sm:p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
 
         {/* ===== STEP 1: IMÓVEL ===== */}
         {currentStep === 1 && (
@@ -460,7 +460,7 @@ export default function NovaAvaliacaoPage() {
               <div className="col-span-2">
                 <Label required>Tipo de Imóvel</Label>
                 <select value={formData.tipo} onChange={e => handleChange('tipo', e.target.value)}
-                  className={`w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]`}
+                  className={`w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]`}
                   style={{ background: T.elevated, border: `1px solid ${errors.tipo ? '#fca5a5' : T.border}`, color: T.text }}>
                   <option value="">Selecione...</option>
                   {TIPOS_IMOVEL.map(t => <option key={t}>{t}</option>)}
@@ -505,7 +505,7 @@ export default function NovaAvaliacaoPage() {
               <div>
                 <Label>Padrão Construtivo</Label>
                 <select value={formData.padrao} onChange={e => handleChange('padrao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                   {PADROES.map(p => <option key={p}>{p}</option>)}
                 </select>
@@ -513,7 +513,7 @@ export default function NovaAvaliacaoPage() {
               <div>
                 <Label>Estado de Conservação</Label>
                 <select value={formData.estado_conservacao} onChange={e => handleChange('estado_conservacao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                   {ESTADOS_CONSERVACAO.map(e => <option key={e}>{e}</option>)}
                 </select>
@@ -580,7 +580,7 @@ export default function NovaAvaliacaoPage() {
             </div>
 
             {/* Info Box */}
-            <div className="flex gap-3 p-4 rounded-xl" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
+            <div className="flex gap-3 p-4 rounded-lg" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
               <Info size={18} style={{ color: 'var(--bo-accent)', flexShrink: 0, marginTop: 1 }} />
               <div className="text-sm">
                 <p className="font-medium mb-1" style={{ color: T.text }}>Responsabilidade do Avaliador</p>
@@ -601,7 +601,7 @@ export default function NovaAvaliacaoPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
                 {FINALIDADES.map(f => (
                   <button key={f.value} type="button" onClick={() => handleChange('finalidade', f.value)}
-                    className="flex items-start gap-3 p-3 rounded-xl text-left transition-all"
+                    className="flex items-start gap-3 p-3 rounded-lg text-left transition-all"
                     style={formData.finalidade === f.value
                       ? { border: '1px solid var(--bo-accent)', background: 'var(--bo-active-bg)' }
                       : { border: `1px solid ${T.border}`, background: T.elevated }}>
@@ -630,7 +630,7 @@ export default function NovaAvaliacaoPage() {
                   const Icon = m.icone
                   return (
                     <button key={m.value} type="button" onClick={() => handleChange('metodologia', m.value)}
-                      className="w-full flex items-center gap-4 p-4 rounded-xl text-left transition-all"
+                      className="w-full flex items-center gap-4 p-4 rounded-lg text-left transition-all"
                       style={formData.metodologia === m.value
                         ? { border: '1px solid var(--bo-accent)', background: 'var(--bo-active-bg)' }
                         : { border: `1px solid ${T.border}`, background: T.elevated }}>
@@ -658,7 +658,7 @@ export default function NovaAvaliacaoPage() {
               <div>
                 <Label>Grau de Fundamentação</Label>
                 <select value={formData.grauFundamentacao} onChange={e => handleChange('grauFundamentacao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                   {GRAUS_FUNDAMENTACAO.map(g => <option key={g}>Grau {g}</option>)}
                 </select>
@@ -666,7 +666,7 @@ export default function NovaAvaliacaoPage() {
               <div>
                 <Label>Grau de Precisão</Label>
                 <select value={formData.grauPrecisao} onChange={e => handleChange('grauPrecisao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                   {GRAUS_PRECISAO.map(g => <option key={g}>Grau {g}</option>)}
                 </select>
@@ -678,7 +678,7 @@ export default function NovaAvaliacaoPage() {
             </div>
 
             {/* Calculadora de Honorários */}
-            <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)', background: T.card }}>
+            <div className="rounded-lg overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)', background: T.card }}>
               <button type="button" onClick={() => setShowHonorarios(!showHonorarios)}
                 className="w-full flex items-center justify-between p-4 transition-colors"
                 style={{ background: 'rgba(245,158,11,0.08)' }}>
@@ -713,7 +713,7 @@ export default function NovaAvaliacaoPage() {
                   <p className="text-xs italic" style={{ color: T.textMuted }}>{honorarios.justificativa}</p>
 
                   <button type="button" onClick={() => handleChange('valorHonorarios', honorarios.recomendado.toString())}
-                    className="w-full py-2 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+                    className="w-full py-2 text-white rounded-[6px] text-sm font-semibold transition-all hover:opacity-80"
                     style={{ background: 'var(--btn-primary-bg)' }}>
                     Usar Valor Recomendado ({formatCurrency(honorarios.recomendado)})
                   </button>
@@ -731,7 +731,7 @@ export default function NovaAvaliacaoPage() {
               <div>
                 <Label>Forma de Pagamento</Label>
                 <select value={formData.formaPagamento} onChange={e => handleChange('formaPagamento', e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                   <option>À vista</option>
                   <option>50% entrada / 50% entrega</option>
@@ -745,7 +745,7 @@ export default function NovaAvaliacaoPage() {
               <Label>Observações</Label>
               <textarea value={formData.observacoes} onChange={e => handleChange('observacoes', e.target.value)}
                 rows={3} placeholder="Informações adicionais sobre a avaliação..."
-                className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] resize-none"
+                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] resize-none"
                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
             </div>
           </div>
@@ -760,7 +760,7 @@ export default function NovaAvaliacaoPage() {
                 <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>NBR 14653-2 exige mín. 3 amostras (Grau II) ou 5 amostras (Grau III)</p>
               </div>
               <button type="button" onClick={addComparavel}
-                className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+                className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-sm font-semibold transition-all hover:opacity-80"
                 style={{ background: 'var(--btn-primary-bg)', color: 'white' }}>
                 + Adicionar
               </button>
@@ -768,7 +768,7 @@ export default function NovaAvaliacaoPage() {
 
             {/* Status de amostras */}
             <div
-              className="flex items-center gap-3 p-3 rounded-xl"
+              className="flex items-center gap-3 p-3 rounded-lg"
               style={{
                 background: formData.comparaveis.length >= 5 ? 'rgba(107,184,123,0.10)' : formData.comparaveis.length >= 3 ? 'rgba(245,158,11,0.10)' : 'rgba(229,115,115,0.10)',
                 border: `1px solid ${formData.comparaveis.length >= 5 ? 'rgba(107,184,123,0.25)' : formData.comparaveis.length >= 3 ? 'rgba(245,158,11,0.25)' : 'rgba(229,115,115,0.25)'}`,
@@ -794,7 +794,7 @@ export default function NovaAvaliacaoPage() {
             </div>
 
             {formData.comparaveis.map((comp, idx) => (
-              <div key={comp.id} className="rounded-xl p-4 space-y-3" style={{ border: `1px solid ${T.border}`, background: T.elevated }}>
+              <div key={comp.id} className="rounded-lg p-4 space-y-3" style={{ border: `1px solid ${T.border}`, background: T.elevated }}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold" style={{ color: T.text }}>Amostra #{idx + 1}</span>
                   {formData.comparaveis.length > 1 && (
@@ -809,27 +809,27 @@ export default function NovaAvaliacaoPage() {
                     <Label>Endereço / Referência</Label>
                     <input value={comp.endereco} onChange={e => updateComparavel(comp.id, 'endereco', e.target.value)}
                       placeholder="Ex: Av. Conselheiro Aguiar, 3200 - Boa Viagem"
-                      className="w-full h-9 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                       style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
                   </div>
                   <div>
                     <Label>Área (m²)</Label>
                     <input type="number" value={comp.area || ''} onChange={e => updateComparavel(comp.id, 'area', Number(e.target.value))}
                       placeholder="90"
-                      className="w-full h-9 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                       style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
                   </div>
                   <div>
                     <Label>Valor de Oferta (R$)</Label>
                     <input type="number" value={comp.valorVenda || ''} onChange={e => updateComparavel(comp.id, 'valorVenda', Number(e.target.value))}
                       placeholder="550000"
-                      className="w-full h-9 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                       style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
                   </div>
                   <div>
                     <Label>Fonte do Dado</Label>
                     <select value={comp.fonteDado} onChange={e => updateComparavel(comp.id, 'fonteDado', e.target.value)}
-                      className="w-full h-9 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                       style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}>
                       <option>ZAP Imóveis</option>
                       <option>VivaReal</option>
@@ -843,7 +843,7 @@ export default function NovaAvaliacaoPage() {
                   <div>
                     <Label>Data de Coleta</Label>
                     <input type="date" value={comp.dataColeta} onChange={e => updateComparavel(comp.id, 'dataColeta', e.target.value)}
-                      className="w-full h-9 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                       style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
                   </div>
                 </div>
@@ -862,7 +862,7 @@ export default function NovaAvaliacaoPage() {
 
             {/* Resumo estatístico */}
             {formData.comparaveis.length >= 3 && formData.comparaveis.every(c => c.area > 0 && c.valorVenda > 0) && (
-              <div className="rounded-xl p-4" style={{ background: "var(--bo-elevated)", border: "1px solid var(--bo-border)" }}>
+              <div className="rounded-lg p-4" style={{ background: "var(--bo-elevated)", border: "1px solid var(--bo-border)" }}>
                 <p className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color: "var(--bo-text-muted)" }}>Análise Estatística da Amostra</p>
                 {(() => {
                   const valores = formData.comparaveis.map(c => c.valorVenda / c.area).filter(v => v > 0)
@@ -896,7 +896,7 @@ export default function NovaAvaliacaoPage() {
           <div className="space-y-6">
             <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Documentação</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-lg" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
               <p className="text-sm font-semibold col-span-2" style={{ color: T.text }}>Documentos Necessários (NBR 14653)</p>
               {['Matrícula do imóvel (RI Digital / ONR)', 'IPTU vigente', 'Plantas / Croquis', 'Memorial descritivo', 'Fotos do imóvel (mín. 8 fotos)', 'Habite-se (edificações)'].map(d => (
                 <div key={d} className="flex items-center gap-2">
@@ -913,7 +913,7 @@ export default function NovaAvaliacaoPage() {
                 const files = Array.from(e.target.files || [])
                 setFormData(prev => ({ ...prev, documentos: [...prev.documentos, ...files] }))
               }} className="hidden" />
-              <div className="border-2 border-dashed rounded-xl p-8 text-center transition-all hover:opacity-80" style={{ borderColor: T.border }}>
+              <div className="border-2 border-dashed rounded-[6px] p-8 text-center transition-all hover:opacity-80" style={{ borderColor: T.border }}>
                 <Upload size={32} className="mx-auto mb-3" style={{ color: T.textMuted }} />
                 <p className="text-sm font-medium" style={{ color: T.text }}>Arraste ou clique para fazer upload</p>
                 <p className="text-xs mt-1" style={{ color: T.textMuted }}>PDF, JPG, PNG, DOC — máx. 10MB cada</p>
@@ -937,7 +937,7 @@ export default function NovaAvaliacaoPage() {
             )}
 
             {/* Links úteis */}
-            <div className="rounded-xl p-4 space-y-2" style={{ border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-4 space-y-2" style={{ border: `1px solid ${T.border}` }}>
               <p className="text-sm font-semibold mb-3" style={{ color: T.text }}>Links de Consulta</p>
               <a href="https://ridigital.org.br/" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
@@ -966,7 +966,7 @@ export default function NovaAvaliacaoPage() {
             </div>
 
             {/* Resumo Final */}
-            <div className="rounded-xl p-5 space-y-3" style={{ background: "var(--bo-elevated)", border: "1px solid var(--bo-border)" }}>
+            <div className="rounded-lg p-5 space-y-3" style={{ background: "var(--bo-elevated)", border: "1px solid var(--bo-border)" }}>
               <p className="text-sm font-semibold" style={{ color: "var(--bo-text)" }}>Resumo da Avaliação</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div><span style={{ color: "var(--bo-text-muted)" }}>Imóvel:</span><br /><span style={{ color: "var(--bo-text)" }}>{formData.tipo || '—'} • {formData.bairro || '—'}</span></div>
@@ -984,20 +984,20 @@ export default function NovaAvaliacaoPage() {
       {/* Navigation */}
       <div className="flex items-center justify-between">
         <button type="button" onClick={handlePrev} disabled={currentStep === 1}
-          className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-medium transition-colors disabled:opacity-40"
+          className="flex items-center gap-2 h-10 px-5 rounded-[6px] text-sm font-medium transition-colors disabled:opacity-40"
           style={{ border: `1px solid ${T.border}`, color: T.text }}>
           <ArrowLeft size={18} /> Anterior
         </button>
 
         {currentStep < 5 ? (
           <button type="button" onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+            className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold transition-all hover:opacity-80"
             style={{ background: 'var(--btn-primary-bg)' }}>
             Próximo <ArrowRight size={18} />
           </button>
         ) : (
           <button type="button" onClick={handleSubmit} disabled={isSubmitting}
-            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 hover:opacity-80"
+            className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold transition-all disabled:opacity-50 hover:opacity-80"
             style={{ background: 'var(--bo-success)' }}>
             {isSubmitting ? <><Loader2 size={18} className="animate-spin" /> Criando...</> : <><Save size={18} /> Criar Avaliação</>}
           </button>

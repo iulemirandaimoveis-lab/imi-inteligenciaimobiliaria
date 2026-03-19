@@ -343,7 +343,7 @@ export default function IAHubPage() {
                 actions={
                     <button
                         onClick={checkAllProviders}
-                        className="flex items-center gap-2 h-10 px-4 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex-shrink-0"
+                        className="flex items-center gap-2 h-10 px-4 rounded-[6px] text-xs font-bold uppercase tracking-widest transition-all flex-shrink-0"
                         style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}
                     >
                         <RefreshCw size={14} />
@@ -372,12 +372,12 @@ export default function IAHubPage() {
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.06 }}
-                            className="rounded-2xl p-5 flex flex-col gap-3"
+                            className="rounded-lg p-5 flex flex-col gap-3"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}
                         >
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
                                         style={{ background: provider.bg }}>
                                         {provider.logo}
                                     </div>
@@ -471,7 +471,7 @@ export default function IAHubPage() {
             {/* Test Playground + Routing Table (side by side on desktop) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Test Playground */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-2 mb-4">
                         <Play size={16} style={{ color: T.accent }} />
                         <h2 className="text-sm font-bold" style={{ color: T.text }}>Playground de Testes</h2>
@@ -486,7 +486,7 @@ export default function IAHubPage() {
                                 <select
                                     value={testModel}
                                     onChange={e => setTestModel(e.target.value)}
-                                    className="w-full h-9 px-3 rounded-xl text-xs"
+                                    className="w-full h-9 px-3 rounded-lg text-xs"
                                     style={{ background: T.elevated, color: T.text, border: `1px solid ${T.border}` }}
                                 >
                                     <option value="claude-sonnet">Claude Sonnet</option>
@@ -505,7 +505,7 @@ export default function IAHubPage() {
                                 <select
                                     value={testTaskType}
                                     onChange={e => setTestTaskType(e.target.value)}
-                                    className="w-full h-9 px-3 rounded-xl text-xs"
+                                    className="w-full h-9 px-3 rounded-lg text-xs"
                                     style={{ background: T.elevated, color: T.text, border: `1px solid ${T.border}` }}
                                 >
                                     <option value="legenda">Legenda / Caption</option>
@@ -524,7 +524,7 @@ export default function IAHubPage() {
                             value={testPrompt}
                             onChange={e => setTestPrompt(e.target.value)}
                             rows={3}
-                            className="w-full p-3 rounded-xl text-xs resize-none"
+                            className="w-full p-3 rounded-[6px] text-xs resize-none"
                             style={{ background: T.elevated, color: T.text, border: `1px solid ${T.border}` }}
                             placeholder="Digite seu prompt de teste..."
                         />
@@ -532,7 +532,7 @@ export default function IAHubPage() {
                         <button
                             onClick={handleTest}
                             disabled={testing || !testPrompt.trim()}
-                            className="w-full h-10 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            className="w-full h-10 rounded-[6px] text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                             style={{ background: T.accent, color: 'white' }}
                         >
                             {testing ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
@@ -543,7 +543,7 @@ export default function IAHubPage() {
                             <motion.div
                                 initial={{ opacity: 0, y: 4 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="rounded-xl p-4"
+                                className="rounded-lg p-4"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                             >
                                 <div className="flex items-center justify-between mb-2">
@@ -568,7 +568,7 @@ export default function IAHubPage() {
                 </div>
 
                 {/* Model Routing Table */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-2 mb-4">
                         <Braces size={16} style={{ color: 'var(--imi-gold-500)' }} />
                         <h2 className="text-sm font-bold" style={{ color: T.text }}>Roteamento por Tarefa</h2>
@@ -577,7 +577,7 @@ export default function IAHubPage() {
                     <div className="space-y-1">
                         {ROUTING_TABLE.map((row) => (
                             <div key={row.task}
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-lg"
                                 style={{ background: T.elevated }}
                             >
                                 <row.icon size={14} style={{ color: T.textMuted, flexShrink: 0 }} />
@@ -604,7 +604,7 @@ export default function IAHubPage() {
             </div>
 
             {/* Image Generation Test */}
-            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center gap-2 mb-4">
                     <ImageIcon size={16} style={{ color: '#4285F4' }} />
                     <h2 className="text-sm font-bold" style={{ color: T.text }}>Geração de Imagem — Gemini 2.0 Flash</h2>
@@ -620,14 +620,14 @@ export default function IAHubPage() {
                             value={imagePrompt}
                             onChange={e => setImagePrompt(e.target.value)}
                             rows={3}
-                            className="w-full p-3 rounded-xl text-xs resize-none"
+                            className="w-full p-3 rounded-[6px] text-xs resize-none"
                             style={{ background: T.elevated, color: T.text, border: `1px solid ${T.border}` }}
                             placeholder="Descreva a imagem a ser gerada..."
                         />
                         <button
                             onClick={handleGenerateImage}
                             disabled={generatingImage || !imagePrompt.trim()}
-                            className="w-full h-10 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            className="w-full h-10 rounded-[6px] text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                             style={{ background: 'rgba(66,133,244,0.15)', color: '#4285F4', border: '1px solid rgba(66,133,244,0.3)' }}
                         >
                             {generatingImage ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
@@ -639,7 +639,7 @@ export default function IAHubPage() {
                         </p>
                     </div>
 
-                    <div className="rounded-xl overflow-hidden flex items-center justify-center min-h-32"
+                    <div className="rounded-lg overflow-hidden flex items-center justify-center min-h-32"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         {generatingImage ? (
                             <div className="flex flex-col items-center gap-2">
@@ -659,7 +659,7 @@ export default function IAHubPage() {
             </div>
 
             {/* AI Request History */}
-            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center justify-between mb-5">
                     <div className="flex items-center gap-2">
                         <History size={16} style={{ color: T.accent }} />
@@ -667,7 +667,7 @@ export default function IAHubPage() {
                     </div>
                     <button
                         onClick={fetchAIHistory}
-                        className="flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-bold transition-all"
+                        className="flex items-center gap-1.5 h-8 px-3 rounded-[6px] text-xs font-bold transition-all"
                         style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
                         <RefreshCw size={12} />
                         Atualizar
@@ -677,12 +677,12 @@ export default function IAHubPage() {
                 {historyLoading ? (
                     <div className="space-y-2">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="h-14 animate-pulse rounded-xl" style={{ background: T.elevated }} />
+                            <div key={i} className="h-14 animate-pulse rounded-lg" style={{ background: T.elevated }} />
                         ))}
                     </div>
                 ) : aiHistory.length === 0 ? (
                     <div className="py-16 flex flex-col items-center gap-3 text-center">
-                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                        <div className="w-16 h-16 rounded-lg flex items-center justify-center"
                             style={{ background: T.elevated }}>
                             <Bot size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
                         </div>

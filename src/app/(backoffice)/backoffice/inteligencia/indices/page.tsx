@@ -93,7 +93,7 @@ export default function IndicesBackofficePage() {
         })
     }
 
-    const inputClass = "h-9 px-3 rounded-xl text-sm outline-none transition-all w-full"
+    const inputClass = "h-9 px-3 rounded-[6px] text-sm outline-none transition-all w-full"
     const inputStyle = { background: T.surface ?? T.elevated, border: `1px solid ${T.border}`, color: T.text }
 
     const [filterTab, setFilterTab] = useState('todos')
@@ -116,7 +116,7 @@ export default function IndicesBackofficePage() {
                 actions={
                     <button
                         onClick={load}
-                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                     >
                         <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
@@ -166,9 +166,9 @@ export default function IndicesBackofficePage() {
                 {loading ? (
                     <div className="space-y-3">
                         {Array.from({ length: 3 }).map((_, i) => (
-                            <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div key={i} className="rounded-lg p-5 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-9 h-9 rounded-xl" style={{ background: 'var(--bo-hover)' }} />
+                                    <div className="w-9 h-9 rounded-lg" style={{ background: 'var(--bo-hover)' }} />
                                     <div>
                                         <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: 120 }} />
                                         <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: 80 }} />
@@ -176,25 +176,25 @@ export default function IndicesBackofficePage() {
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     {[...Array(4)].map((_, j) => (
-                                        <div key={j} className="h-12 rounded-xl" style={{ background: 'var(--bo-hover)' }} />
+                                        <div key={j} className="h-12 rounded-lg" style={{ background: 'var(--bo-hover)' }} />
                                     ))}
                                 </div>
                             </div>
                         ))}
                     </div>
                 ) : indices.length === 0 ? (
-                    <div className="text-center py-20 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="text-center py-20 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <TrendingUp size={40} style={{ color: T.textMuted, opacity: 0.25 }} className="mx-auto mb-4" />
                         <p className="text-sm font-semibold mb-1" style={{ color: T.text }}>Nenhum índice cadastrado</p>
                         <p className="text-xs" style={{ color: T.textMuted }}>Adicione índices via migração SQL ou painel admin</p>
                     </div>
                 ) : (
                     filteredIndices.map((idx) => (
-                        <div key={idx.id} className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div key={idx.id} className="rounded-lg overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             {/* Header row */}
                             <div className="p-5 flex items-center justify-between" style={{ borderBottom: `1px solid ${T.border}` }}>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'var(--bo-info-bg)' }}>
+                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'var(--bo-info-bg)' }}>
                                         <TrendingUp size={15} style={{ color: 'var(--bo-info)' }} />
                                     </div>
                                     <div>
@@ -206,7 +206,7 @@ export default function IndicesBackofficePage() {
                                     <StatusBadge statusKey={idx.is_published ? 'publicado' : 'rascunho'} size="xs" />
                                     <button
                                         onClick={() => togglePublish(idx.id, idx.is_published)}
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center hover:opacity-70 transition-opacity"
+                                        className="w-9 h-9 rounded-[6px] flex items-center justify-center hover:opacity-70 transition-opacity"
                                         style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                     >
                                         {idx.is_published
@@ -216,14 +216,14 @@ export default function IndicesBackofficePage() {
                                     </button>
                                     <button
                                         onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }}
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center hover:opacity-70 transition-opacity"
+                                        className="w-9 h-9 rounded-[6px] flex items-center justify-center hover:opacity-70 transition-opacity"
                                         style={{ background: editingId === idx.id ? 'var(--bo-info-bg)' : 'rgba(255,255,255,0.04)', border: `1px solid ${editingId === idx.id ? 'var(--bo-info)' : T.border}` }}
                                     >
                                         <Save size={14} style={{ color: editingId === idx.id ? 'var(--bo-info)' : T.textMuted }} />
                                     </button>
                                     <button
                                         onClick={() => deleteIndex(idx.id)}
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-red-500/10 transition-colors"
+                                        className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-red-500/10 transition-colors"
                                         style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                     >
                                         <Trash2 size={14} style={{ color: 'var(--bo-error)' }} />
@@ -281,12 +281,12 @@ export default function IndicesBackofficePage() {
                                     </div>
                                     <div>
                                         <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: T.textMuted }}>Descrição</label>
-                                        <textarea className="w-full px-3 py-2 rounded-xl text-sm outline-none resize-none" style={inputStyle} rows={2} value={editForm.description ?? ''} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} />
+                                        <textarea className="w-full px-3 py-2 rounded-[6px] text-sm outline-none resize-none" style={inputStyle} rows={2} value={editForm.description ?? ''} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} />
                                     </div>
                                     <div className="flex gap-3 justify-end">
                                         <button
                                             onClick={() => setEditingId(null)}
-                                            className="h-10 px-4 rounded-xl text-sm font-medium transition-all hover:opacity-80"
+                                            className="h-10 px-4 rounded-[6px] text-sm font-medium transition-all hover:opacity-80"
                                             style={{ color: T.textMuted, background: T.elevated, border: `1px solid ${T.border}` }}
                                         >
                                             Cancelar

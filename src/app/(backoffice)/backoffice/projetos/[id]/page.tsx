@@ -183,7 +183,7 @@ export default function ProjetoDetalhePage() {
 
                         {/* PDF Import */}
                         <label
-                            className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold transition-all cursor-pointer hover:brightness-110"
+                            className="flex items-center gap-2 h-11 px-5 rounded-[6px] font-semibold transition-all cursor-pointer hover:brightness-110"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
                         >
                             {pdfUploading ? (
@@ -203,7 +203,7 @@ export default function ProjetoDetalhePage() {
 
                         <button
                             onClick={() => router.push(`/backoffice/projetos/${params.id}/editar`)}
-                            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold transition-all hover:brightness-110"
+                            className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] font-semibold transition-all hover:brightness-110"
                             style={{ background: T.accent }}
                         >
                             <Edit size={16} />
@@ -222,7 +222,7 @@ export default function ProjetoDetalhePage() {
                     { icon: TrendingUp, label: 'Vendas', value: `${progressVendas}%`, sub: `${projeto.unidades_vendidas ?? 0} vendidas`, color: getStatusConfig('convertido').dot },
                     { icon: Ruler, label: 'Plantas', value: `${plantas.length}`, sub: `tipos disponíveis`, color: T.accent },
                 ].map((kpi, i) => (
-                    <div key={i} className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div key={i} className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <div className="flex items-center gap-2 mb-3">
                             <kpi.icon size={14} style={{ color: kpi.color }} />
                             <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>{kpi.label}</p>
@@ -263,7 +263,7 @@ export default function ProjetoDetalhePage() {
                     <motion.div key="overview" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                         {/* Progresso de vendas */}
                         {projeto.unidades > 0 && (
-                            <div className="rounded-xl p-5 mb-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="rounded-lg p-5 mb-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="text-sm font-medium" style={{ color: T.text }}>Progresso de Vendas</span>
                                     <span className="text-sm font-bold" style={{ color: T.text }}>
@@ -279,14 +279,14 @@ export default function ProjetoDetalhePage() {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* About */}
                             {projeto.descricao && (
-                                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Sobre o Projeto</h2>
                                     <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: T.textMuted }}>{projeto.descricao}</p>
                                 </div>
                             )}
 
                             {/* Info */}
-                            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Informações</h2>
                                 <div className="space-y-4">
                                     {[
@@ -311,14 +311,14 @@ export default function ProjetoDetalhePage() {
                         {projeto.gallery_images?.length > 0 && (
                             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {projeto.gallery_images.map((url: string, i: number) => (
-                                    <img key={i} src={url} alt={`Gallery ${i}`} className="w-full h-32 object-cover rounded-xl" />
+                                    <img key={i} src={url} alt={`Gallery ${i}`} className="w-full h-32 object-cover rounded-lg" />
                                 ))}
                             </div>
                         )}
 
                         {/* Map */}
                         {(projeto.latitude && projeto.longitude) && (
-                            <div className="rounded-2xl overflow-hidden mt-6" style={{ border: `1px solid ${T.border}` }}>
+                            <div className="rounded-lg overflow-hidden mt-6" style={{ border: `1px solid ${T.border}` }}>
                                 <iframe
                                     src={`https://www.google.com/maps?q=${projeto.latitude},${projeto.longitude}&z=15&output=embed`}
                                     className="w-full h-64 border-0"
@@ -329,7 +329,7 @@ export default function ProjetoDetalhePage() {
 
                         {/* Image */}
                         {projeto.imagem_url && (
-                            <div className="rounded-2xl overflow-hidden mt-6" style={{ border: `1px solid ${T.border}` }}>
+                            <div className="rounded-lg overflow-hidden mt-6" style={{ border: `1px solid ${T.border}` }}>
                                 <img src={projeto.imagem_url} alt={projeto.nome} className="w-full h-64 object-cover" />
                             </div>
                         )}

@@ -40,7 +40,7 @@ export default function FloorPlanGallery({ plantas }: FloorPlanGalleryProps) {
             {plantas.map((planta, i) => (
                 <div
                     key={i}
-                    className="rounded-2xl overflow-hidden"
+                    className="rounded-lg overflow-hidden"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >
                     {/* Image or placeholder */}

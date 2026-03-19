@@ -125,7 +125,7 @@ export default function RetrospectivaPage() {
           <select
             value={quarter}
             onChange={e => setQuarter(e.target.value)}
-            className="px-3 py-1.5 rounded-lg text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-[#C8A44A]/50"
+            className="px-3 py-1.5 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-[#C8A44A]/50"
           >
             {QUARTERS.map(q => (
               <option key={q} value={q} className="bg-[#0B1928]">{q}</option>
@@ -135,7 +135,7 @@ export default function RetrospectivaPage() {
       </div>
 
       {/* Company Average */}
-      <div className={`rounded-xl border ${companyStyle.border} p-6`} style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className={`rounded-lg border ${companyStyle.border} p-6`} style={{ background: 'rgba(255,255,255,0.03)' }}>
         <div className="flex items-center gap-3 mb-3">
           <Target className={`w-5 h-5 ${companyStyle.text}`} />
           <span className="text-sm font-medium text-white">Score Médio da Empresa</span>
@@ -164,7 +164,7 @@ export default function RetrospectivaPage() {
       <div>
         <h2 className="text-lg font-semibold text-white mb-4">Resultados por Objetivo</h2>
         {objScores.length === 0 ? (
-          <div className="rounded-xl border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="rounded-lg border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <p className="text-white/50 text-sm">Nenhum OKR encontrado para {quarter}.</p>
           </div>
         ) : (
@@ -174,7 +174,7 @@ export default function RetrospectivaPage() {
               return (
                 <div
                   key={obj.id}
-                  className={`rounded-xl border ${st.border} p-4`}
+                  className={`rounded-lg border ${st.border} p-4`}
                   style={{ background: 'rgba(255,255,255,0.03)' }}
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -219,7 +219,7 @@ export default function RetrospectivaPage() {
         ].map(section => (
           <div
             key={section.field}
-            className="rounded-xl border border-white/10 p-5"
+            className="rounded-lg border border-white/10 p-5"
             style={{ background: 'rgba(255,255,255,0.03)' }}
           >
             <div className="flex items-center gap-2 mb-3">
@@ -231,7 +231,7 @@ export default function RetrospectivaPage() {
               onChange={e => saveText(section.field, e.target.value)}
               placeholder={section.placeholder}
               rows={4}
-              className="w-full px-3 py-2 rounded-lg text-sm bg-white/[0.03] border border-white/[0.06] text-white/80 placeholder:text-white/20 focus:outline-none focus:border-[#C8A44A]/30 resize-none transition-colors"
+              className="w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.03] border border-white/[0.06] text-white/80 placeholder:text-white/20 focus:outline-none focus:border-[#C8A44A]/30 resize-none transition-colors"
             />
             <p className="text-[10px] text-white/20 mt-1">Salvo automaticamente no navegador</p>
           </div>

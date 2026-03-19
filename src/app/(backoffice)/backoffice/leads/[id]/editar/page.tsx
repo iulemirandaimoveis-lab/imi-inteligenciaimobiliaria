@@ -293,7 +293,7 @@ export default function EditarLeadPage() {
                     { label: 'Editar' },
                 ]}
                 actions={
-                    <div className="flex-shrink-0 px-5 py-3 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="flex-shrink-0 px-5 py-3 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <div className="flex items-center gap-3">
                             <Sparkles size={18} style={{ color: T.accent }} />
                             <div>
@@ -313,7 +313,7 @@ export default function EditarLeadPage() {
                 {/* Main Form */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Dados Pessoais */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Dados Pessoais</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -328,7 +328,7 @@ export default function EditarLeadPage() {
                                         type="text"
                                         value={formData.name}
                                         onChange={(e) => handleChange('name', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={errors.name ? inputErrorStyle : inputStyle}
                                     />
                                 </div>
@@ -351,7 +351,7 @@ export default function EditarLeadPage() {
                                         type="email"
                                         value={formData.email}
                                         onChange={(e) => handleChange('email', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={errors.email ? inputErrorStyle : inputStyle}
                                     />
                                 </div>
@@ -375,7 +375,7 @@ export default function EditarLeadPage() {
                                         value={formData.phone}
                                         onChange={(e) => handleChange('phone', formatPhone(e.target.value))}
                                         maxLength={15}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={errors.phone ? inputErrorStyle : inputStyle}
                                     />
                                 </div>
@@ -399,7 +399,7 @@ export default function EditarLeadPage() {
                                         value={formData.cpf}
                                         onChange={(e) => handleChange('cpf', formatCPF(e.target.value))}
                                         maxLength={14}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     />
                                 </div>
@@ -417,7 +417,7 @@ export default function EditarLeadPage() {
                                         value={formData.occupation}
                                         onChange={(e) => handleChange('occupation', e.target.value)}
                                         placeholder="Ex: Médica Cardiologista"
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     />
                                 </div>
@@ -435,7 +435,7 @@ export default function EditarLeadPage() {
                                         value={formData.company}
                                         onChange={(e) => handleChange('company', e.target.value)}
                                         placeholder="Ex: Hospital Português"
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     />
                                 </div>
@@ -449,7 +449,7 @@ export default function EditarLeadPage() {
                                 <select
                                     value={formData.maritalStatus}
                                     onChange={(e) => handleChange('maritalStatus', e.target.value)}
-                                    className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                    className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     style={inputStyle}
                                 >
                                     <option value="">Selecione...</option>
@@ -472,7 +472,7 @@ export default function EditarLeadPage() {
                                         min="0"
                                         value={formData.children}
                                         onChange={(e) => handleChange('children', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     />
                                 </div>
@@ -481,7 +481,7 @@ export default function EditarLeadPage() {
                     </div>
 
                     {/* Interesse */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Interesse</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -493,7 +493,7 @@ export default function EditarLeadPage() {
                                 <select
                                     value={formData.status}
                                     onChange={(e) => handleChange('status', e.target.value)}
-                                    className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                    className="w-full h-11 px-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     style={inputStyle}
                                 >
                                     {statusOptions.map(status => (
@@ -512,7 +512,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.origem}
                                         onChange={(e) => handleChange('origem', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={errors.origem ? inputErrorStyle : inputStyle}
                                     >
                                         <option value="">Selecione...</option>
@@ -533,7 +533,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.interesse}
                                         onChange={(e) => handleChange('interesse', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     >
                                         <option value="">Selecione...</option>
@@ -554,7 +554,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.localizacao}
                                         onChange={(e) => handleChange('localizacao', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     >
                                         <option value="">Selecione...</option>
@@ -575,7 +575,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.orcamento}
                                         onChange={(e) => handleChange('orcamento', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     >
                                         <option value="">Selecione...</option>
@@ -589,7 +589,7 @@ export default function EditarLeadPage() {
                     </div>
 
                     {/* Preferências de Contato */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Preferências de Contato</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -602,7 +602,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.preferredContact}
                                         onChange={(e) => handleChange('preferredContact', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     >
                                         <option value="">Selecione...</option>
@@ -622,7 +622,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.bestTime}
                                         onChange={(e) => handleChange('bestTime', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                         style={inputStyle}
                                     >
                                         <option value="">Selecione...</option>
@@ -637,14 +637,14 @@ export default function EditarLeadPage() {
                     </div>
 
                     {/* Observações */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Observações</h2>
                         <textarea
                             value={formData.notes}
                             onChange={(e) => handleChange('notes', e.target.value)}
                             placeholder="Adicione informações relevantes sobre o lead..."
                             rows={6}
-                            className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] resize-none"
+                            className="w-full px-4 py-3 rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#334E68] resize-none"
                             style={inputStyle}
                         />
                     </div>
@@ -652,13 +652,13 @@ export default function EditarLeadPage() {
 
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
-                    <div className="rounded-2xl p-6 sticky top-6 space-y-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6 sticky top-6 space-y-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h3 className="text-sm font-bold uppercase tracking-wider" style={{ color: T.text }}>
                             Alterações
                         </h3>
 
                         {/* Info */}
-                        <div className="p-4 rounded-xl" style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)' }}>
+                        <div className="p-4 rounded-lg" style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)' }}>
                             <div className="flex gap-3">
                                 <AlertCircle size={20} className="text-blue-400 flex-shrink-0 mt-0.5" />
                                 <div className="text-sm">
@@ -675,7 +675,7 @@ export default function EditarLeadPage() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full h-11 text-white rounded-xl font-semibold transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full h-11 text-white rounded-[6px] font-semibold transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 style={{ background: T.accent }}
                             >
                                 {isSubmitting ? (
@@ -693,7 +693,7 @@ export default function EditarLeadPage() {
                             <button
                                 type="button"
                                 onClick={() => router.back()}
-                                className="w-full h-11 rounded-xl font-medium transition-colors"
+                                className="w-full h-11 rounded-[6px] font-medium transition-colors"
                                 style={{ border: `1px solid ${T.border}`, color: T.text }}
                                 onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
                                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}

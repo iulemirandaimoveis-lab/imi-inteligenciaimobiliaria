@@ -395,7 +395,7 @@ export default function AgentesIAPage() {
 
             {/* Agno banner */}
             <div
-                className="rounded-2xl p-4 mb-6 flex items-center gap-4"
+                className="rounded-lg p-4 mb-6 flex items-center gap-4"
                 style={{
                     background: 'linear-gradient(135deg, rgba(139,92,246,0.10) 0%, rgba(59,130,246,0.08) 100%)',
                     border: '1px solid rgba(139,92,246,0.20)',
@@ -461,7 +461,7 @@ export default function AgentesIAPage() {
                     return (
                         <div
                             key={agent.id}
-                            className="rounded-2xl overflow-hidden transition-all duration-200"
+                            className="rounded-lg overflow-hidden transition-all duration-200"
                             style={{
                                 background: 'var(--bo-elevated)',
                                 border: `1px solid var(--bo-border)`,
@@ -599,7 +599,7 @@ export default function AgentesIAPage() {
             {/* Hormozi Squad banner */}
             {(category === 'todos' || category === 'squads') && (
                 <div
-                    className="mt-2 mb-4 rounded-2xl p-4 flex items-center gap-4"
+                    className="mt-2 mb-4 rounded-lg p-4 flex items-center gap-4"
                     style={{
                         background: 'linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(249,115,22,0.06) 100%)',
                         border: '1px solid rgba(245,158,11,0.18)',
@@ -626,7 +626,7 @@ export default function AgentesIAPage() {
 
             {/* Coming soon */}
             <div
-                className="mt-6 rounded-2xl p-6 text-center"
+                className="mt-6 rounded-lg p-6 text-center"
                 style={{
                     background: 'var(--bo-elevated)',
                     border: '1px dashed var(--bo-border)',

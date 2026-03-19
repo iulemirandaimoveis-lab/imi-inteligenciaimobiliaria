@@ -125,7 +125,7 @@ export default function LeadDetailPage() {
           ← Leads
         </button>
         <div
-          className="rounded-2xl text-center"
+          className="rounded-lg text-center"
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '48px 24px' }}
         >
           <AlertCircle size={28} style={{ color: 'var(--text-secondary)', opacity: 0.3, margin: '0 auto 12px' }} />

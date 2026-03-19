@@ -111,7 +111,7 @@ const TABS = [
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null
     return (
-        <div className="rounded-xl px-3 py-2 text-xs shadow-lg"
+        <div className="rounded-lg px-3 py-2 text-xs shadow-lg"
             style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }}>
             <p className="font-semibold mb-1">{label}</p>
             {payload.map((p: any, i: number) => (
@@ -173,13 +173,13 @@ export default function RelatoriosPage() {
 
             {/* Tabs */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}
-                className="flex gap-1 p-1 rounded-xl w-fit"
+                className="flex gap-1 p-1 rounded-lg w-fit"
                 style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 {TABS.map(t => (
                     <button
                         key={t.key}
                         onClick={() => setTab(t.key as any)}
-                        className="flex items-center gap-2 px-4 h-9 rounded-lg text-sm font-medium transition-all"
+                        className="flex items-center gap-2 px-4 h-9 rounded-[6px] text-sm font-medium transition-all"
                         style={{
                             background: tab === t.key ? 'var(--bo-accent)' : 'transparent',
                             color: tab === t.key ? 'white' : T.textDim,
@@ -203,7 +203,7 @@ export default function RelatoriosPage() {
                             { label: 'Taxa Conversão', value: `${conversionRate}%`, color: 'var(--text-secondary)' },
                             { label: 'Empreendimentos', value: byDev?.length || 0, color: 'var(--warning)' },
                         ].map((kpi, i) => (
-                            <div key={i} className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div key={i} className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <p className="text-xs mb-2" style={{ color: T.textDim }}>{kpi.label}</p>
                                 <p className="text-2xl font-bold" style={{ color: kpi.color }}>
                                     {loadingFunnel ? '—' : kpi.value}
@@ -213,7 +213,7 @@ export default function RelatoriosPage() {
                     </div>
 
                     {/* Funil de leads */}
-                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <p className="text-sm font-semibold mb-4" style={{ color: T.text }}>Funil de Leads</p>
                         {loadingFunnel ? (
                             <div className="h-48 flex items-center justify-center text-sm" style={{ color: T.textDim }}>Carregando...</div>
@@ -234,7 +234,7 @@ export default function RelatoriosPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {/* Leads por semana */}
-                        <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <p className="text-sm font-semibold mb-4" style={{ color: T.text }}>Leads por Semana</p>
                             {loadingTemporal ? (
                                 <div className="h-40 flex items-center justify-center text-sm" style={{ color: T.textDim }}>Carregando...</div>
@@ -254,7 +254,7 @@ export default function RelatoriosPage() {
                         </div>
 
                         {/* Top empreendimentos */}
-                        <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <p className="text-sm font-semibold mb-4" style={{ color: T.text }}>Leads por Empreendimento</p>
                             {loadingByDev ? (
                                 <div className="h-40 flex items-center justify-center text-sm" style={{ color: T.textDim }}>Carregando...</div>
@@ -298,12 +298,12 @@ export default function RelatoriosPage() {
                                 <motion.div key={r.id}
                                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.06 }}
-                                    className="rounded-2xl p-5 transition-all hover-card"
+                                    className="rounded-lg p-5 transition-all hover-card"
                                     style={{ background: T.surface, border: `1px solid ${T.border}` }}
 
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
+                                        <div className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
                                             style={{ background: cat?.bg || 'var(--bo-active-bg)' }}>
                                             <r.icon size={20} style={{ color: cat?.text || T.accent }} />
                                         </div>
@@ -333,7 +333,7 @@ export default function RelatoriosPage() {
                                         </div>
                                         <motion.button whileTap={{ scale: 0.95 }}
                                             onClick={() => handleGerar(r.id)} disabled={loading}
-                                            className="flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white transition-all"
+                                            className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-xs font-semibold text-white transition-all"
                                             style={{ background: loading ? 'var(--bo-elevated)' : 'var(--bo-accent)', opacity: loading ? 0.7 : 1 }}>
                                             {loading ? (
                                                 <>

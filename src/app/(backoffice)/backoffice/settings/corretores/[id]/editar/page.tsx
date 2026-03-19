@@ -132,8 +132,8 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
     if (isLoading) {
         return (
             <div className="space-y-6 pb-20 max-w-5xl mx-auto">
-                <div className="rounded-2xl p-6 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, height: 120 }} />
-                <div className="rounded-2xl p-6 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, height: 300 }} />
+                <div className="rounded-lg p-6 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, height: 120 }} />
+                <div className="rounded-lg p-6 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, height: 300 }} />
             </div>
         )
     }
@@ -141,11 +141,11 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
     if (isError || !broker) {
         return (
             <div className="space-y-6 pb-20 max-w-5xl mx-auto">
-                <div className="rounded-2xl p-10 text-center" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-10 text-center" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     <p className="text-sm" style={{ color: T.textMuted }}>Corretor não encontrado.</p>
                     <button
                         onClick={() => router.push('/backoffice/equipe')}
-                        className="mt-4 h-10 px-5 rounded-xl text-sm font-medium"
+                        className="mt-4 h-10 px-5 rounded-[6px] text-sm font-medium"
                         style={{ background: T.accent, color: 'var(--text-inverse)' }}
                     >
                         Voltar para Equipe
@@ -162,7 +162,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                 subtitle={`Atualize os dados e permissões de ${broker.name}`}
                 actions={
                     <button type="button" onClick={() => router.back()}
-                        className="h-11 px-5 rounded-xl text-sm font-medium transition-all"
+                        className="h-11 px-5 rounded-[6px] text-sm font-medium transition-all"
                         style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: T.elevated }}>
                         Cancelar
                     </button>
@@ -174,7 +174,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                     {/* Left Column: Personal Data */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Dados Pessoais */}
-                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h2 className="text-sm font-bold mb-1" style={{ color: T.text }}>Dados Pessoais</h2>
                             <p className="text-xs mb-5" style={{ color: T.textMuted }}>
                                 Email: <span className="font-mono">{broker.email}</span> (não editável)
@@ -185,7 +185,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                     <div className="relative">
                                         <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="Ex: João da Silva" {...register('name')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
@@ -198,7 +198,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                             type="email"
                                             value={broker.email}
                                             disabled
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm cursor-not-allowed opacity-50"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm cursor-not-allowed opacity-50"
                                             style={fieldStyle}
                                         />
                                     </div>
@@ -208,7 +208,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                     <div className="relative">
                                         <Smartphone size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="(11) 99999-9999" {...register('phone')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.phone && <p className="text-xs text-red-400">{errors.phone.message}</p>}
@@ -218,7 +218,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                     <div className="relative">
                                         <Shield size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="12345-F" {...register('creci')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.creci && <p className="text-xs text-red-400">{errors.creci.message}</p>}
@@ -226,7 +226,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>Status</label>
                                     <select {...register('status')}
-                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                         style={fieldStyle}>
                                         <option value="active">Ativo</option>
                                         <option value="inactive">Inativo</option>
@@ -238,7 +238,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
 
                     {/* Right Column: Permissions */}
                     <div className="lg:col-span-1">
-                        <div className="rounded-2xl overflow-hidden sticky top-6"
+                        <div className="rounded-lg overflow-hidden sticky top-6"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="p-5" style={{ borderBottom: `1px solid ${T.border}` }}>
                                 <h3 className="font-display font-bold text-lg flex items-center gap-2" style={{ color: T.text }}>
@@ -249,7 +249,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
 
                             <div className="p-6 space-y-6 max-h-[600px] overflow-y-auto custom-scrollbar">
                                 {/* Mandatory Dashboard */}
-                                <div className="p-4 rounded-xl flex items-center justify-between"
+                                <div className="p-4 rounded-lg flex items-center justify-between"
                                     style={{ background: `${T.accent}15`, border: `1px solid ${T.accent}30` }}>
                                     <span className="font-bold text-sm flex items-center gap-2" style={{ color: T.accent }}>
                                         <CheckCircle size={16} /> Dashboard
@@ -277,7 +277,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                                     <div
                                                         key={item.id}
                                                         onClick={() => togglePermission(item.id)}
-                                                        className="flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200"
+                                                        className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
                                                         style={{
                                                             background: isSelected ? `${T.accent}10` : T.elevated,
                                                             border: isSelected ? `1px solid ${T.accent}40` : `1px solid ${T.border}`,
@@ -314,12 +314,12 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
 
                 <div className="flex justify-end gap-3 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
                     <button type="button" onClick={() => router.back()}
-                        className="h-11 px-6 rounded-xl text-sm font-medium transition-all"
+                        className="h-11 px-6 rounded-[6px] text-sm font-medium transition-all"
                         style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: 'transparent' }}>
                         Cancelar
                     </button>
                     <button type="submit" disabled={isSubmitting}
-                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold hover:brightness-110 transition-all disabled:opacity-60"
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold hover:brightness-110 transition-all disabled:opacity-60"
                         style={{ background: T.accent }}>
                         <UserCog size={16} />
                         {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}

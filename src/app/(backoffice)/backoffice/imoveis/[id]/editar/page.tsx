@@ -48,12 +48,12 @@ function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, on
     zIndex: isDragging ? 30 : 1,
   }
   return (
-    <div ref={setNodeRef} style={style} className="relative group rounded-xl overflow-hidden"
+    <div ref={setNodeRef} style={style} className="relative group rounded-lg overflow-hidden"
       {...attributes}>
       <div className="w-full h-28 relative" style={{ border: `1px solid ${T.border}`, borderRadius: 6, overflow: 'hidden' }}>
         <img src={url} alt="" className="w-full h-full object-cover" />
         {/* Drag handle */}
-        <div {...listeners} className="absolute top-2 left-2 w-6 h-6 rounded-lg flex items-center justify-center cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+        <div {...listeners} className="absolute top-2 left-2 w-6 h-6 rounded-[6px] flex items-center justify-center cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
           style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
           <GripVertical size={12} color="white" />
         </div>
@@ -176,7 +176,7 @@ const INITIAL: FormData = {
 /* ── Gallery Tab with Drag-and-Drop (Fotos + Vídeos + Plantas + Brochure) ── */
 function GalleryTabContent({ formData, set, params }: { formData: FormData; set: (k: keyof FormData, v: any) => void; params: any }) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const inp = `w-full h-11 px-4 rounded-xl text-sm outline-none transition-all`
+  const inp = `w-full h-11 px-4 rounded-[6px] text-sm outline-none transition-all`
   const inpStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
 
   const sensors = useSensors(
@@ -259,7 +259,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
             </SortableContext>
           </DndContext>
         ) : (
-          <label className="cursor-pointer h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:opacity-80"
+          <label className="cursor-pointer h-32 rounded-[6px] flex flex-col items-center justify-center gap-2 transition-all hover:opacity-80"
             style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
             <ImageIcon size={28} style={{ color: T.textDim }} />
             <span className="text-sm" style={{ color: T.textDim }}>Clique para adicionar fotos</span>
@@ -288,7 +288,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
             <input value={formData.videoUrl} onChange={e => set('videoUrl', e.target.value)}
               placeholder="https://youtube.com/watch?v=..." className={inp} style={inpStyle} />
             {formData.videoUrl && getYoutubeEmbedUrl(formData.videoUrl) && (
-              <div className="mt-3 rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+              <div className="mt-3 rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                 <iframe src={getYoutubeEmbedUrl(formData.videoUrl)!} className="w-full h-40" allow="autoplay; encrypted-media" allowFullScreen />
               </div>
             )}
@@ -316,7 +316,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
         {(formData.existingFloorPlans.length > 0 || formData.floorPlans.length > 0) ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {formData.existingFloorPlans.map((url, i) => (
-              <div key={url} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+              <div key={url} className="relative group rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                 <img src={url} alt={`planta ${i}`} className="w-full h-28 object-cover" />
                 <button type="button" onClick={() => set('existingFloorPlans', formData.existingFloorPlans.filter(x => x !== url))}
                   className="absolute top-2 right-2 w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
@@ -324,7 +324,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
               </div>
             ))}
             {formData.floorPlans.map((file, i) => (
-              <div key={i} className="relative group rounded-xl overflow-hidden" style={{ border: `2px dashed ${T.accent}40` }}>
+              <div key={i} className="relative group rounded-lg overflow-hidden" style={{ border: `2px dashed ${T.accent}40` }}>
                 <img src={URL.createObjectURL(file)} alt="planta nova" className="w-full h-28 object-cover" />
                 <button type="button" onClick={() => set('floorPlans', formData.floorPlans.filter((_, j) => j !== i))}
                   className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
@@ -333,7 +333,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 rounded-xl" style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
+          <div className="text-center py-8 rounded-lg" style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
             <FileText size={28} className="mx-auto mb-2" style={{ color: T.textDim }} />
             <p className="text-sm" style={{ color: T.textDim }}>Nenhuma planta adicionada</p>
             <p className="text-xs mt-1" style={{ color: T.textDim }}>JPG, PNG, WEBP · Máx. 10MB</p>
@@ -345,7 +345,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
       <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
         <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Brochure / Material PDF</h3>
         {formData.existingBrochure ? (
-          <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+          <div className="flex items-center gap-3 p-4 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
             <FileText size={20} style={{ color: T.accent }} />
             <div className="flex-1">
               <p className="text-sm font-medium" style={{ color: T.text }}>Brochure atual</p>
@@ -357,7 +357,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
             </button>
           </div>
         ) : (
-          <label className="cursor-pointer flex items-center gap-3 p-4 rounded-xl transition-all hover:opacity-80"
+          <label className="cursor-pointer flex items-center gap-3 p-4 rounded-[6px] transition-all hover:opacity-80"
             style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
             <FileText size={20} style={{ color: T.textDim }} />
             <div>
@@ -373,7 +373,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
 
       {/* ── Visibilidade ── */}
       <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
-        <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: `${T.accent}08`, border: `1px solid ${T.accent}20` }}>
+        <div className="flex items-center gap-3 p-4 rounded-lg" style={{ background: `${T.accent}08`, border: `1px solid ${T.accent}20` }}>
           <Globe size={18} style={{ color: T.accent }} />
           <div className="flex-1">
             <p className="text-sm font-medium" style={{ color: T.text }}>Visibilidade no site público</p>
@@ -595,7 +595,7 @@ export default function EditarImovelPage() {
     } finally { setIsSubmitting(false) }
   }
 
-  const inp = `w-full h-11 px-4 rounded-xl text-sm outline-none transition-all`
+  const inp = `w-full h-11 px-4 rounded-[6px] text-sm outline-none transition-all`
   const inpStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
   const focusStyle = { boxShadow: `0 0 0 2px ${T.accent}22` }
 
@@ -713,7 +713,7 @@ export default function EditarImovelPage() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="rounded-2xl p-6 md:p-8"
+          className="rounded-lg p-6 md:p-8"
           style={{ background: T.surface, border: `1px solid ${T.border}` }}>
 
           {/* ── BÁSICO ── */}
@@ -838,7 +838,7 @@ export default function EditarImovelPage() {
                     </button>
                   </div>
                   <textarea value={formData.description} onChange={e => set('description', e.target.value)}
-                    rows={5} placeholder="Descreva o empreendimento..." className="w-full px-4 py-3 rounded-xl text-sm outline-none resize-none" style={inpStyle} />
+                    rows={5} placeholder="Descreva o empreendimento..." className="w-full px-4 py-3 rounded-[6px] text-sm outline-none resize-none" style={inpStyle} />
                 </div>
 
                 <div className="md:col-span-2">
@@ -902,7 +902,7 @@ export default function EditarImovelPage() {
                     const active = formData.features.includes(f)
                     return (
                       <button key={f} type="button" onClick={() => toggleFeature(f)}
-                        className="h-10 px-3 rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+                        className="h-10 px-3 rounded-[6px] text-sm font-medium transition-all flex items-center gap-2"
                         style={{
                           background: active ? `${T.accent}20` : T.elevated,
                           color: active ? T.accent : T.textMuted,

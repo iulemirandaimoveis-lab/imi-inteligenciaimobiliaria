@@ -147,13 +147,13 @@ export default function CalendarioPage() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setAnoMes({ ano: hoje.getFullYear(), mes: hoje.getMonth() })}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+                            className="w-10 h-10 flex items-center justify-center rounded-lg transition-all"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
                             title="Ir para hoje"
                         >
                             <RefreshCw size={15} />
                         </button>
-                        <div className="flex rounded-xl p-1" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="flex rounded-lg p-1" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             {(['mes', 'lista'] as const).map(v => (
                                 <button
                                     key={v}
@@ -188,7 +188,7 @@ export default function CalendarioPage() {
                     { label: 'Agendados', value: stats.agendados, color: 'var(--info)', bg: 'rgba(96,165,250,0.10)', accent: 'rgba(96,165,250,0.08)' },
                     { label: 'Rascunhos', value: stats.rascunhos, color: T.textMuted, bg: T.elevated, accent: 'rgba(59,130,246,0.04)' },
                 ].map(s => (
-                    <div key={s.label} className="rounded-2xl p-4 transition-all" style={{
+                    <div key={s.label} className="rounded-lg p-4 transition-all" style={{
                         background: s.bg,
                         border: `1px solid ${T.border}`,
                         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
@@ -212,7 +212,7 @@ export default function CalendarioPage() {
                         <button
                             key={k}
                             onClick={() => setFiltroTipo(isActive ? null : k)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border"
                             style={isActive
                                 ? { background: v.bg, color: v.color, borderColor: v.color }
                                 : { background: T.surface, borderColor: T.border, color: T.textMuted }
@@ -230,7 +230,7 @@ export default function CalendarioPage() {
                         <button
                             key={k}
                             onClick={() => setFiltroStatus(isActive ? null : k)}
-                            className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all border"
+                            className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all border"
                             style={isActive
                                 ? { background: v.bg, color: v.color, borderColor: v.color }
                                 : { background: T.surface, borderColor: T.border, color: T.textMuted }
@@ -251,15 +251,15 @@ export default function CalendarioPage() {
                     {view === 'mes' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* Calendário */}
-                            <div className="lg:col-span-2 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 50%)' }}>
+                            <div className="lg:col-span-2 rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 50%)' }}>
                                 <div className="flex items-center justify-between mb-6">
-                                    <button onClick={mesAnterior} className="w-9 h-9 flex items-center justify-center rounded-xl" style={{ color: T.textMuted }}>
+                                    <button onClick={mesAnterior} className="w-9 h-9 flex items-center justify-center rounded-[6px]" style={{ color: T.textMuted }}>
                                         <ChevronLeft size={18} />
                                     </button>
                                     <h2 className="text-lg font-bold" style={{ color: T.text }}>
                                         {MESES[anoMes.mes]} {anoMes.ano}
                                     </h2>
-                                    <button onClick={proximoMes} className="w-9 h-9 flex items-center justify-center rounded-xl" style={{ color: T.textMuted }}>
+                                    <button onClick={proximoMes} className="w-9 h-9 flex items-center justify-center rounded-[6px]" style={{ color: T.textMuted }}>
                                         <ChevronRight size={18} />
                                     </button>
                                 </div>
@@ -278,7 +278,7 @@ export default function CalendarioPage() {
                                             <button
                                                 key={dia}
                                                 onClick={() => setDiaSelecionado(isSel ? null : dia)}
-                                                className="relative aspect-square p-1 rounded-xl text-sm transition-all"
+                                                className="relative aspect-square p-1 rounded-lg text-sm transition-all"
                                                 style={
                                                     isSel ? { background: T.accent, color: 'var(--text-inverse)' }
                                                     : isHoje ? { background: 'rgba(72,101,129,0.2)', border: `1px solid ${T.accent}`, color: T.text, fontWeight: 700 }
@@ -301,7 +301,7 @@ export default function CalendarioPage() {
                             </div>
 
                             {/* Painel lateral */}
-                            <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
+                            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
                                 {diaSelecionado ? (
                                     <>
                                         <div className="flex items-center justify-between mb-4">
@@ -331,7 +331,7 @@ export default function CalendarioPage() {
                                                     const TIcon = tCfg.icon
                                                     const hora = getHora(c)
                                                     return (
-                                                        <div key={c.id} className="p-3 rounded-xl border" style={{ background: tCfg.bg, borderColor: T.border }}>
+                                                        <div key={c.id} className="p-3 rounded-lg border" style={{ background: tCfg.bg, borderColor: T.border }}>
                                                             <div className="flex items-start justify-between gap-2 mb-1">
                                                                 <div className="flex items-center gap-2">
                                                                     <TIcon size={14} style={{ color: tCfg.color }} />
@@ -347,10 +347,10 @@ export default function CalendarioPage() {
                                                                 </div>
                                                             )}
                                                             <div className="flex gap-1 mt-2">
-                                                                <button className="flex items-center gap-1 text-xs h-6 px-2 rounded-lg hover:opacity-80" style={{ color: T.textMuted }}>
+                                                                <button className="flex items-center gap-1 text-xs h-6 px-2 rounded-[6px] hover:opacity-80" style={{ color: T.textMuted }}>
                                                                     <Eye size={11} />Ver
                                                                 </button>
-                                                                <button onClick={() => router.push(`/backoffice/conteudo/${c.id}/editar`)} className="flex items-center gap-1 text-xs h-6 px-2 rounded-lg hover:opacity-80" style={{ color: T.textMuted }}>
+                                                                <button onClick={() => router.push(`/backoffice/conteudo/${c.id}/editar`)} className="flex items-center gap-1 text-xs h-6 px-2 rounded-[6px] hover:opacity-80" style={{ color: T.textMuted }}>
                                                                     <Edit size={11} />Editar
                                                                 </button>
                                                             </div>
@@ -382,7 +382,7 @@ export default function CalendarioPage() {
                                                         const dia = dateStr ? parseInt(dateStr.split('-')[2]) : null
                                                         return (
                                                             <button key={c.id} onClick={() => dia && setDiaSelecionado(dia)}
-                                                                className="w-full text-left p-3 rounded-xl transition-all"
+                                                                className="w-full text-left p-3 rounded-lg transition-all"
                                                                 style={{ border: `1px solid ${T.border}` }}>
                                                                 <div className="flex items-center justify-between mb-1">
                                                                     <div className="flex items-center gap-1.5">
@@ -404,7 +404,7 @@ export default function CalendarioPage() {
                     )}
 
                     {view === 'lista' && (
-                        <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 40%)' }}>
+                        <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 40%)' }}>
                             {conteudosFiltrados.length === 0 ? (
                                 <div className="text-center py-12">
                                     <Calendar size={40} className="mx-auto mb-3" style={{ color: T.border }} />
@@ -427,7 +427,7 @@ export default function CalendarioPage() {
                                         return (
                                             <div key={c.id} className="p-4 flex items-center justify-between group" style={{ borderBottom: `1px solid ${T.border}`, transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)' }}>
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: tCfg.bg }}>
+                                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: tCfg.bg }}>
                                                         <TIcon size={18} style={{ color: tCfg.color }} />
                                                     </div>
                                                     <div>
@@ -450,7 +450,7 @@ export default function CalendarioPage() {
                                                         <StatusIcon size={11} />
                                                         {sCfg.label}
                                                     </span>
-                                                    <button onClick={() => router.push(`/backoffice/conteudo/${c.id}/editar`)} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: T.textMuted }}>
+                                                    <button onClick={() => router.push(`/backoffice/conteudo/${c.id}/editar`)} className="w-8 h-8 flex items-center justify-center rounded-[6px] transition-colors" style={{ color: T.textMuted }}>
                                                         <Edit size={14} />
                                                     </button>
                                                 </div>

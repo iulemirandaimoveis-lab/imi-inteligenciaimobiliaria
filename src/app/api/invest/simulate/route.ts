@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { runSimulation } from '@/lib/invest/engine/calculator'
 import { getDefaultFiscalParams } from '@/lib/invest/engine/fiscal'
 import type { SimulationParams, Market } from '@/lib/invest/engine/types'
 
 export async function POST(request: Request) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const body = await request.json()
     const { market, objective, investorProfile, currency, propertyValue, propertyType, area_m2, bedrooms, location, downPayment, financingType, rentalStrategy, monthlyRent, occupancyRate, averageDailyRate, monthlyExpenses, appreciationRate, inflationRate, holdingPeriod, exitStrategy, interestRate } = body
 

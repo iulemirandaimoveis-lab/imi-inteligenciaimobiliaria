@@ -294,7 +294,7 @@ export default function LeadsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="rounded-2xl text-center"
+              className="rounded-lg text-center"
               style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', padding: '40px 16px' }}
             >
               <Users size={28} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 12px' }} />

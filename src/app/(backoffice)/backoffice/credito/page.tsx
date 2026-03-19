@@ -123,7 +123,7 @@ function SimuladorCredito() {
   }
 
   return (
-    <div className="rounded-2xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+    <div className="rounded-lg p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
       <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: T.text }}>
         <Calculator size={16} style={{ color: T.accent }} /> Simulador de Crédito Imobiliário
       </h3>
@@ -162,7 +162,7 @@ function SimuladorCredito() {
       <div className="flex gap-2">
         {(['PRICE', 'SAC'] as const).map(s => (
           <button key={s} onClick={() => setSistema(s)}
-            className="flex-1 py-2 rounded-xl text-sm font-semibold transition-all"
+            className="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
             style={{
               background: sistema === s ? T.accent : T.elevated,
               border: `1px solid ${sistema === s ? T.accent : T.border}`,
@@ -180,14 +180,14 @@ function SimuladorCredito() {
           { l: sistema === 'PRICE' ? 'Parcela Fixa' : '1ª Parcela', v: fmt(primeiraParcela), color: T.accent },
           { l: sistema === 'SAC' ? 'Última Parcela' : 'Total Juros', v: sistema === 'SAC' ? fmt(ultimaParcela) : fmt(totalJuros), color: T.text },
         ].map(item => (
-          <div key={item.l} className="p-3 rounded-xl text-center" style={{ background: T.elevated }}>
+          <div key={item.l} className="p-3 rounded-lg text-center" style={{ background: T.elevated }}>
             <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>{item.l}</p>
             <p className="text-sm font-bold" style={{ color: item.color, fontVariantNumeric: 'tabular-nums' }}>{item.v}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--s-warm-bg)', border: '1px solid var(--border-subtle)' }}>
+      <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'var(--s-warm-bg)', border: '1px solid var(--border-subtle)' }}>
         <User size={14} style={{ color: 'var(--s-warm)' }} className="flex-shrink-0" />
         <p className="text-xs" style={{ color: 'var(--s-warm)' }}>
           Renda mínima estimada: <strong>{fmt(primeiraParcela * 3)}/mês</strong> (comprometimento máx. 30%)
@@ -195,13 +195,13 @@ function SimuladorCredito() {
       </div>
 
       <Link href="/backoffice/credito/novo"
-        className="flex items-center justify-center gap-2 w-full rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90"
+        className="flex items-center justify-center gap-2 w-full rounded-[6px] text-sm font-bold text-white transition-all hover:opacity-90"
         style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 22%, transparent)' }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
 
       {/* ─── Investment Analysis Panel ──────────────────────────── */}
-      <div className="rounded-xl p-4 space-y-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-4 space-y-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
         <div className="flex items-center gap-2">
           <TrendingUp size={14} style={{ color: T.accent }} />
           <p className="text-xs font-bold uppercase tracking-wide" style={{ color: T.text }}>
@@ -253,7 +253,7 @@ function SimuladorCredito() {
               color: T.textMuted,
             },
           ].map(item => (
-            <div key={item.l} className="p-3 rounded-xl text-center" style={{ background: T.surface }}>
+            <div key={item.l} className="p-3 rounded-lg text-center" style={{ background: T.surface }}>
               <p className="text-[10px] mb-0.5" style={{ color: T.textMuted }}>{item.l}</p>
               <p className="text-xs font-bold" style={{ color: item.color }}>{item.v}</p>
             </div>
@@ -261,9 +261,9 @@ function SimuladorCredito() {
         </div>
 
         {/* Investment Grade badge */}
-        <div className="flex items-center gap-3 p-3 rounded-xl"
+        <div className="flex items-center gap-3 p-3 rounded-lg"
           style={{ background: gradeMeta.bg, border: `1px solid ${gradeMeta.color}30` }}>
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 text-xl font-black"
+          <div className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 text-xl font-black"
             style={{ background: gradeMeta.bg, color: gradeMeta.color, border: `2px solid ${gradeMeta.color}50` }}>
             {investGrade}
           </div>
@@ -307,7 +307,7 @@ export default function CreditoPage() {
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={() => window.location.href = '/backoffice/credito/novo'}
-            className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white flex-shrink-0"
+            className="flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white flex-shrink-0"
             style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 22%, transparent)', border: 'none' }}
           >
             <Plus size={16} /> <span className="hidden sm:inline">Nova Operação</span>
@@ -346,7 +346,7 @@ export default function CreditoPage() {
             <div className="space-y-2">
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
-                  <div className="skeleton w-10 h-10 rounded-xl flex-shrink-0" />
+                  <div className="skeleton w-10 h-10 rounded-lg flex-shrink-0" />
                   <div className="flex-1">
                     <div className="skeleton h-4 w-40 mb-2" />
                     <div className="skeleton h-3 w-56" />
@@ -355,18 +355,18 @@ export default function CreditoPage() {
               ))}
             </div>
           ) : list.length === 0 ? (
-            <div className="empty-state rounded-2xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="empty-state rounded-lg" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className="empty-state-icon"><FileX size={24} /></div>
               <p className="empty-state-title">Nenhuma operação de crédito</p>
               <p className="empty-state-desc">Registre operações de crédito para acompanhar o processo.</p>
               <Link href="/backoffice/credito/novo"
-                className="mt-4 flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
+                className="mt-4 flex items-center gap-2 h-10 px-5 rounded-[6px] text-sm font-semibold text-white"
                 style={{ background: T.accent }}>
                 <Plus size={14} /> Nova Operação
               </Link>
             </div>
           ) : (
-            <div data-tour="credito-list" className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div data-tour="credito-list" className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               {list.map((op, i) => {
                 const stt = STATUS_CONFIG[op.status] ?? STATUS_CONFIG.pending
                 const StatusIcon = stt.icon
@@ -374,7 +374,7 @@ export default function CreditoPage() {
                   <div key={op.id}
                     className="flex items-center gap-4 p-4 transition-colors hover:opacity-90 group"
                     style={{ borderTop: i > 0 ? `1px solid ${T.border}` : 'none' }}>
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: T.elevated }}>
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: T.elevated }}>
                       <Landmark size={16} style={{ color: T.textMuted }} />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -399,7 +399,7 @@ export default function CreditoPage() {
                       )}
                     </div>
                     <Link href={`/backoffice/credito/${op.id}`}
-                      className="w-9 h-9 rounded-xl flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                      className="w-9 h-9 rounded-[6px] flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                       <Eye size={13} style={{ color: T.textMuted }} />
                     </Link>

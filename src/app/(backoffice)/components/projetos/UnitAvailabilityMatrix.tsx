@@ -120,7 +120,7 @@ export default function UnitAvailabilityMatrix({ unidades, onUnitClick }: UnitAv
             )}
 
             {/* Matrix grid */}
-            <div className="overflow-x-auto rounded-2xl" style={{ border: `1px solid ${T.border}` }}>
+            <div className="overflow-x-auto rounded-lg" style={{ border: `1px solid ${T.border}` }}>
                 <table className="w-full">
                     <thead>
                         <tr style={{ background: T.elevated }}>

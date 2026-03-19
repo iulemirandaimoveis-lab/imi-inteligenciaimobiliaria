@@ -168,7 +168,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
 
     return (
         <div
-            className="rounded-2xl overflow-hidden transition-all"
+            className="rounded-lg overflow-hidden transition-all"
             style={{
                 background: T.surface,
                 border: `1px solid ${insights ? 'rgba(59,130,246,0.3)' : T.border}`,
@@ -244,7 +244,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     </div>
 
                                     {/* Market Position */}
-                                    <div className="rounded-xl p-3" style={{ background: T.elevated }}>
+                                    <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
                                             <TrendingUp size={11} style={{ color: T.accent }} />
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.accent }}>
@@ -260,7 +260,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     </div>
 
                                     {/* Price Recommendation */}
-                                    <div className="rounded-xl p-3" style={{ background: T.elevated }}>
+                                    <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
                                             <DollarSign size={11} style={{ color: 'var(--bo-warning)' }} />
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-warning)' }}>
@@ -279,7 +279,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     </div>
 
                                     {/* Listing Optimization */}
-                                    <div className="rounded-xl p-3" style={{ background: T.elevated }}>
+                                    <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
                                             <Target size={11} style={{ color: 'var(--bo-success)' }} />
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-success)' }}>
@@ -297,7 +297,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     </div>
 
                                     {/* Competitive Analysis */}
-                                    <div className="rounded-xl p-3" style={{ background: T.elevated }}>
+                                    <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
                                             <Shield size={11} style={{ color: 'var(--bo-info, #60a5fa)' }} />
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-info, #60a5fa)' }}>
@@ -324,7 +324,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     </div>
 
                                     {/* Lead Strategy */}
-                                    <div className="rounded-xl p-3" style={{ background: T.elevated }}>
+                                    <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
                                             <Users size={11} style={{ color: 'var(--bo-accent)' }} />
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.accent }}>
@@ -348,7 +348,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     {/* Refresh button */}
                                     <button
                                         onClick={() => fetchInsights(true)}
-                                        className="w-full h-8 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-colors hover:bg-white/5"
+                                        className="w-full h-8 rounded-[6px] text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-colors hover:bg-white/5"
                                         style={{ color: T.textMuted, border: `1px solid ${T.border}` }}
                                     >
                                         <RefreshCw size={10} /> Atualizar Insights

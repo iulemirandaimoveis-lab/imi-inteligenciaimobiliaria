@@ -50,7 +50,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             return (
                 <div
-                    className="flex flex-col items-center justify-center min-h-[400px] gap-4 rounded-2xl p-8"
+                    className="flex flex-col items-center justify-center min-h-[400px] gap-4 rounded-lg p-8"
                     style={{
                         background: 'var(--bo-surface)',
                         border: '1px solid var(--bo-border)',
@@ -81,7 +81,7 @@ export class ErrorBoundary extends Component<Props, State> {
                     <div className="flex gap-3">
                         <button
                             onClick={this.handleReset}
-                            className="flex items-center gap-2 px-5 h-10 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                            className="flex items-center gap-2 px-5 h-10 rounded-[6px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
                             style={{ background: 'var(--btn-primary-bg)' }}
                         >
                             <RefreshCcw size={14} />
@@ -89,7 +89,7 @@ export class ErrorBoundary extends Component<Props, State> {
                         </button>
                         <button
                             onClick={() => window.location.reload()}
-                            className="flex items-center gap-2 px-5 h-10 rounded-xl text-sm font-semibold transition-colors"
+                            className="flex items-center gap-2 px-5 h-10 rounded-[6px] text-sm font-semibold transition-colors"
                             style={{
                                 background: 'var(--bg-elevated)',
                                 border: '1px solid var(--bo-border)',

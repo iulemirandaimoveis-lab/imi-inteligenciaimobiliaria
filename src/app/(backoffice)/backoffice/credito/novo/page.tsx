@@ -21,7 +21,7 @@ const STEPS = [
     { id: 4, name: 'Dossiê', description: 'Instruções finais', icon: FileText },
 ]
 
-const inputClass = 'w-full h-11 px-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all'
+const inputClass = 'w-full h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all'
 const inputStyle = { background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }
 const inputErrorStyle = { background: 'var(--bo-elevated)', border: `1px solid ${T.error}`, color: 'var(--bo-text)' }
 
@@ -175,7 +175,7 @@ export default function CreditoNovoPage() {
             />
 
             {/* Sticky step header */}
-            <div className="sticky top-0 z-20 rounded-2xl px-5 py-4"
+            <div className="sticky top-0 z-20 rounded-lg px-5 py-4"
                 style={{ background: T.surface, border: `1px solid ${T.border}`, backdropFilter: 'blur(12px)' }}>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -226,7 +226,7 @@ export default function CreditoNovoPage() {
             </div>
 
             {/* Form card */}
-            <div className="rounded-2xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 {/* Card header */}
                 <div className="px-8 py-5" style={{ borderBottom: `1px solid ${T.border}` }}>
                     <p className="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>
@@ -396,7 +396,7 @@ export default function CreditoNovoPage() {
                                     className={inputClass} style={inputStyle} />
                             </div>
 
-                            <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 <div className="flex flex-col md:flex-row items-start gap-6">
                                     <div className="flex-1">
                                         <Label>Utilizar Saldo de FGTS na Operação?</Label>
@@ -430,15 +430,15 @@ export default function CreditoNovoPage() {
                                     onChange={handleChange}
                                     rows={6}
                                     placeholder="Insira aqui detalhes sobre a composição de renda, outros proponentes ou particularidades do imóvel..."
-                                    className="w-full px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all resize-none"
+                                    className="w-full px-4 py-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all resize-none"
                                     style={inputStyle}
                                 />
                             </div>
 
-                            <div className="rounded-2xl p-6"
+                            <div className="rounded-lg p-6"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}` }}>
                                 <div className="flex items-start gap-4">
-                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                                         style={{ background: 'rgba(var(--imi-ai-gold-rgb, 72,101,129),0.15)' }}>
                                         <Check size={16} style={{ color: T.accent }} />
                                     </div>
@@ -476,7 +476,7 @@ export default function CreditoNovoPage() {
                         type="button"
                         onClick={handlePrevious}
                         disabled={currentStep === 1}
-                        className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-80"
+                        className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-80"
                         style={{ border: `1px solid ${T.border}`, background: T.elevated, color: T.text }}
                     >
                         <ArrowLeft size={18} />
@@ -487,7 +487,7 @@ export default function CreditoNovoPage() {
                         <button
                             type="button"
                             onClick={handleNext}
-                            className="flex items-center gap-2 h-11 px-8 rounded-xl font-semibold text-white transition-all hover:opacity-90"
+                            className="flex items-center gap-2 h-11 px-8 rounded-[6px] font-semibold text-white transition-all hover:opacity-90"
                             style={{ background: T.accent }}
                         >
                             Continuar
@@ -498,7 +498,7 @@ export default function CreditoNovoPage() {
                             type="button"
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="flex items-center gap-2 h-11 px-8 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="flex items-center gap-2 h-11 px-8 rounded-[6px] font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
                             style={{ background: T.accent }}
                         >
                             {isSubmitting ? (

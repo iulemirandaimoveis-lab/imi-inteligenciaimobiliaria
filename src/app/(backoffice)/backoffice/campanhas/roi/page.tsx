@@ -218,20 +218,20 @@ export default function CampanhasROIPage() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => router.back()}
-                            className="w-11 h-11 flex items-center justify-center rounded-xl transition-opacity hover:opacity-80"
+                            className="w-11 h-11 flex items-center justify-center rounded-[6px] transition-opacity hover:opacity-80"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                         >
                             <ArrowLeft size={16} style={{ color: T.textMuted }} />
                         </button>
                         <button
                             onClick={() => setRefreshKey(k => k + 1)}
-                            className="w-11 h-11 flex items-center justify-center rounded-xl transition-opacity hover:opacity-80"
+                            className="w-11 h-11 flex items-center justify-center rounded-[6px] transition-opacity hover:opacity-80"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                             title="Atualizar dados"
                         >
                             <RefreshCw size={14} style={{ color: T.textMuted }} />
                         </button>
-                        <div className="flex rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                        <div className="flex rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                             {(Object.entries(PERIOD_LABELS) as [Period, string][]).map(([k, v]) => (
                                 <button
                                     key={k}
@@ -255,7 +255,7 @@ export default function CampanhasROIPage() {
                     <Loader2 size={32} className="animate-spin" style={{ color: T.accent }} />
                 </div>
             ) : campaigns.length === 0 ? (
-                <div className="rounded-2xl p-12 text-center" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-12 text-center" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     <Target size={40} className="mx-auto mb-3 opacity-30" style={{ color: T.textMuted }} />
                     <p className="font-semibold" style={{ color: T.text }}>Nenhuma campanha neste período</p>
                     <p className="text-sm mt-1" style={{ color: T.textMuted }}>Crie campanhas com budget definido para visualizar ROI</p>
@@ -272,7 +272,7 @@ export default function CampanhasROIPage() {
 
                     {/* ROI por Canal */}
                     {canaisROI.length > 0 && (
-                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h2 className="text-base font-bold mb-5" style={{ color: T.text }}>ROI por Canal</h2>
                             <div className="space-y-4">
                                 {canaisROI.map((canal, idx) => {
@@ -284,7 +284,7 @@ export default function CampanhasROIPage() {
                                         <div key={idx}>
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: T.surface }}>
+                                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: T.surface }}>
                                                         <Icon size={18} style={{ color: T.textMuted }} />
                                                     </div>
                                                     <div>
@@ -320,7 +320,7 @@ export default function CampanhasROIPage() {
                     {/* Top & Bottom */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {/* Top performers */}
-                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-2 mb-4">
                                 <Award size={18} style={{ color: 'var(--bo-success)' }} />
                                 <h2 className="text-base font-bold" style={{ color: T.text }}>Top Performers</h2>
@@ -330,7 +330,7 @@ export default function CampanhasROIPage() {
                             ) : (
                                 <div className="space-y-3">
                                     {topPerformers.map((camp, idx) => (
-                                        <div key={camp.id} className="p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.06)', border: '1px solid rgba(107,184,123,0.15)' }}>
+                                        <div key={camp.id} className="p-3 rounded-lg" style={{ background: 'rgba(107,184,123,0.06)', border: '1px solid rgba(107,184,123,0.15)' }}>
                                             <div className="flex items-start justify-between mb-1">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: 'var(--bo-success)', color: '#0F0F1E' }}>
@@ -350,7 +350,7 @@ export default function CampanhasROIPage() {
                         </div>
 
                         {/* Needs attention */}
-                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-2 mb-4">
                                 <AlertTriangle size={18} style={{ color: 'var(--warning)' }} />
                                 <h2 className="text-base font-bold" style={{ color: T.text }}>Requerem Atenção</h2>
@@ -360,7 +360,7 @@ export default function CampanhasROIPage() {
                             ) : (
                                 <div className="space-y-3">
                                     {bottomPerformers.map(camp => (
-                                        <div key={camp.id} className="p-3 rounded-xl" style={{ background: 'rgba(232,168,124,0.06)', border: '1px solid rgba(232,168,124,0.15)' }}>
+                                        <div key={camp.id} className="p-3 rounded-lg" style={{ background: 'rgba(232,168,124,0.06)', border: '1px solid rgba(232,168,124,0.15)' }}>
                                             <div className="flex items-start justify-between mb-1">
                                                 <p className="text-sm font-semibold line-clamp-1" style={{ color: T.text }}>{camp.name}</p>
                                                 <p className="text-sm font-bold ml-2 shrink-0"
@@ -381,7 +381,7 @@ export default function CampanhasROIPage() {
 
                     {/* Evolução Mensal */}
                     {evolucaoMensal.length > 1 && (
-                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h2 className="text-base font-bold mb-5" style={{ color: T.text }}>Evolução Mensal</h2>
                             <div className="space-y-3">
                                 {evolucaoMensal.map((m, idx) => {
@@ -422,7 +422,7 @@ export default function CampanhasROIPage() {
 
                     {/* Insights */}
                     {insights.length > 0 && (
-                        <div className="rounded-2xl p-5" style={{ background: `${T.elevated}`, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: `${T.elevated}`, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-3 uppercase tracking-wider" style={{ color: T.accent }}>Insights Automáticos</h3>
                             <ul className="space-y-1.5">
                                 {insights.map((ins, i) => (

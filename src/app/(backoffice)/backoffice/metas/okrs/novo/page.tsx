@@ -50,9 +50,9 @@ const emptyKR = (): KRDraft => ({
   due_date: '',
 })
 
-const inputCls = 'w-full px-3 py-2 rounded-lg text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-colors'
+const inputCls = 'w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-colors'
 const labelCls = 'block text-xs font-medium text-white/60 mb-1.5'
-const selectCls = 'w-full px-3 py-2 rounded-lg text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-gold/50 transition-colors'
+const selectCls = 'w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-gold/50 transition-colors'
 
 /* ── component ─────────────────────────────────────────────── */
 export default function NovoOKRPage() {
@@ -170,7 +170,7 @@ export default function NovoOKRPage() {
       </div>
 
       {/* Objective Form */}
-      <div className="rounded-xl border border-white/10 p-6 space-y-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="rounded-lg border border-white/10 p-6 space-y-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
         <div className="flex items-center gap-2 mb-2">
           <Target className="w-4 h-4 text-gold" />
           <h2 className="text-sm font-semibold text-white">Objetivo</h2>
@@ -236,7 +236,7 @@ export default function NovoOKRPage() {
       </div>
 
       {/* Key Results */}
-      <div className="rounded-xl border border-white/10 p-6 space-y-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="rounded-lg border border-white/10 p-6 space-y-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Target className="w-4 h-4 text-gold" />

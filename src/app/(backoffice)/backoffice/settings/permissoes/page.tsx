@@ -231,7 +231,7 @@ export default function PermissoesPage() {
                             <button
                                 onClick={handleDiscard}
                                 disabled={saving}
-                                className="flex items-center gap-2 h-11 px-5 rounded-xl font-medium transition-all hover:opacity-80 disabled:opacity-40"
+                                className="flex items-center gap-2 h-11 px-5 rounded-[6px] font-medium transition-all hover:opacity-80 disabled:opacity-40"
                                 style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: 'transparent' }}
                             >
                                 <RotateCcw size={15} />
@@ -240,7 +240,7 @@ export default function PermissoesPage() {
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-40"
+                                className="flex items-center gap-2 h-11 px-5 rounded-[6px] font-semibold text-white transition-all hover:opacity-90 disabled:opacity-40"
                                 style={{ background: 'var(--btn-primary-bg)' }}
                             >
                                 {saving
@@ -261,7 +261,7 @@ export default function PermissoesPage() {
                     { label: 'Módulos', value: modules.length },
                     { label: 'Ações', value: actions.length },
                 ].map(stat => (
-                    <div key={stat.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div key={stat.label} className="rounded-lg p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{stat.label}</p>
                         <p className="text-2xl font-bold" style={{ color: T.text }}>{stat.value}</p>
                     </div>
@@ -271,7 +271,7 @@ export default function PermissoesPage() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
                 {/* Roles Sidebar */}
                 <div className="lg:col-span-1">
-                    <div className="rounded-2xl p-4 sticky top-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-4 sticky top-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <h2 className="text-[10px] font-bold uppercase tracking-wider mb-4" style={{ color: T.textMuted }}>
                             Roles do Sistema
                         </h2>
@@ -280,7 +280,7 @@ export default function PermissoesPage() {
                                 <button
                                     key={role.id}
                                     onClick={() => setSelectedRoleId(role.id)}
-                                    className="w-full text-left p-3 rounded-xl transition-all"
+                                    className="w-full text-left p-3 rounded-lg transition-all"
                                     style={{
                                         border: selectedRoleId === role.id
                                             ? `2px solid ${getRoleTextColor(role.color)}40`
@@ -307,11 +307,11 @@ export default function PermissoesPage() {
 
                 {/* Permissions Matrix */}
                 <div className="lg:col-span-3">
-                    <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                         {/* Matrix Header */}
                         <div className="p-5" style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                                     style={{ background: getRoleAccentColor(selectedRole.color) }}>
                                     <Shield size={20} style={{ color: getRoleTextColor(selectedRole.color) }} />
                                 </div>
@@ -374,7 +374,7 @@ export default function PermissoesPage() {
                                                         <td key={action.key} className="px-5 py-4 text-center">
                                                             <button
                                                                 onClick={() => handleToggle(module.key, action.key)}
-                                                                className="inline-flex items-center justify-center rounded-xl p-1.5 transition-all hover:opacity-70"
+                                                                className="inline-flex items-center justify-center rounded-[6px] p-1.5 transition-all hover:opacity-70"
                                                                 title={hasPermission ? 'Clique para revogar' : 'Clique para conceder'}
                                                                 style={{
                                                                     outline: isPending ? '2px solid #fb923c' : 'none',
@@ -402,7 +402,7 @@ export default function PermissoesPage() {
             </div>
 
             {/* Info Card */}
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(51,78,104,0.08)', border: '1px solid rgba(51,78,104,0.25)' }}>
+            <div className="rounded-lg p-5" style={{ background: 'rgba(51,78,104,0.08)', border: '1px solid rgba(51,78,104,0.25)' }}>
                 <p className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: '#829AB1' }}>Sobre as Roles</p>
                 <ul className="space-y-1.5 text-sm" style={{ color: T.textMuted }}>
                     <li><strong style={{ color: T.text }}>Admin:</strong> Acesso completo a todos os módulos</li>

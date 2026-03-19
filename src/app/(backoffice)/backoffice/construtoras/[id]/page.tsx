@@ -156,7 +156,7 @@ export default function ConstrutoraDetalhesPage() {
           <p className="text-sm mb-4" style={{ color: T.textMuted }}>{error || 'Construtora não encontrada'}</p>
           <button
             onClick={() => router.push('/backoffice/construtoras')}
-            className="px-4 py-2 rounded-xl text-white text-sm font-medium"
+            className="px-4 py-2 rounded-lg text-white text-sm font-medium"
             style={{ backgroundColor: T.accent }}
           >
             Voltar para lista
@@ -183,14 +183,14 @@ export default function ConstrutoraDetalhesPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => router.back()}
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors hover:opacity-80"
+              className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-colors hover:opacity-80"
               style={{ border: `1px solid ${T.border}`, background: T.elevated, color: T.textMuted }}
             >
               <ArrowLeft size={18} />
             </button>
             <Link
               href={`/backoffice/construtoras/${params.id}/editar`}
-              className="flex items-center gap-2 h-10 px-5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition-colors"
+              className="flex items-center gap-2 h-10 px-5 rounded-[6px] text-white text-sm font-semibold hover:opacity-90 transition-colors"
               style={{ backgroundColor: T.accent }}
             >
               <Edit size={15} />
@@ -198,7 +198,7 @@ export default function ConstrutoraDetalhesPage() {
             </Link>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors"
+              className="flex items-center gap-2 h-10 px-4 rounded-[6px] text-sm font-medium transition-colors"
               style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--bo-error)', background: 'rgba(239,68,68,0.06)' }}
             >
               <Trash2 size={16} />
@@ -210,7 +210,7 @@ export default function ConstrutoraDetalhesPage() {
       {/* Identity strip — logo + status badge */}
       <div className="flex items-center gap-4">
         <div
-          className="relative w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+          className="relative w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
           style={{ border: `1px solid ${T.border}`, background: T.surfaceAlt }}
         >
           {data.logo_url ? (
@@ -234,7 +234,7 @@ export default function ConstrutoraDetalhesPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div
-          className="rounded-xl p-4 flex items-center justify-between"
+          className="rounded-lg p-4 flex items-center justify-between"
           style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}
         >
           <div className="flex items-center gap-3">
@@ -264,19 +264,19 @@ export default function ConstrutoraDetalhesPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-xl p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Empreendimentos</p>
           <p className="text-2xl font-bold" style={{ color: 'var(--bo-accent)' }}>{activeDevelopments.length}</p>
         </div>
-        <div className="rounded-xl p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Total Unidades</p>
           <p className="text-2xl font-bold" style={{ color: T.text }}>{totalUnits}</p>
         </div>
-        <div className="rounded-xl p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Vendidas</p>
           <p className="text-2xl font-bold" style={{ color: 'var(--success)' }}>{soldUnits}</p>
         </div>
-        <div className="rounded-xl p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Disponíveis</p>
           <p className="text-2xl font-bold" style={{ color: 'var(--warning)' }}>{availableUnits}</p>
         </div>
@@ -310,7 +310,7 @@ export default function ConstrutoraDetalhesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             {/* Dados Cadastrais */}
-            <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
               <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Dados Cadastrais</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {data.cnpj && (
@@ -360,7 +360,7 @@ export default function ConstrutoraDetalhesPage() {
 
             {/* Description / Notes */}
             {(data.description || data.notes) && (
-              <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+              <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
                 <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>
                   {data.description ? 'Descrição' : 'Observações'}
                 </h2>
@@ -375,7 +375,7 @@ export default function ConstrutoraDetalhesPage() {
           <div className="space-y-6">
             {/* Social Links */}
             {(data.instagram || data.linkedin || data.website) && (
-              <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+              <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
                 <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Links</h2>
                 <div className="space-y-3">
                   {data.instagram && (
@@ -419,7 +419,7 @@ export default function ConstrutoraDetalhesPage() {
             )}
 
             {/* Timeline */}
-            <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
               <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Timeline</h2>
               <div className="space-y-3">
                 <div>
@@ -438,12 +438,12 @@ export default function ConstrutoraDetalhesPage() {
             </div>
 
             {/* Quick Links */}
-            <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
               <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Ações Rápidas</h2>
               <div className="space-y-2">
                 <Link
                   href={`/backoffice/construtoras/${params.id}/editar`}
-                  className="flex items-center gap-2.5 text-sm p-2.5 rounded-lg hover:opacity-80 transition-colors"
+                  className="flex items-center gap-2.5 text-sm p-2.5 rounded-[6px] hover:opacity-80 transition-colors"
                   style={{ backgroundColor: T.surfaceAlt, color: T.text }}
                 >
                   <Edit size={16} style={{ color: T.accent }} />
@@ -451,7 +451,7 @@ export default function ConstrutoraDetalhesPage() {
                 </Link>
                 <Link
                   href="/backoffice/imoveis/novo"
-                  className="flex items-center gap-2.5 text-sm p-2.5 rounded-lg hover:opacity-80 transition-colors"
+                  className="flex items-center gap-2.5 text-sm p-2.5 rounded-[6px] hover:opacity-80 transition-colors"
                   style={{ backgroundColor: T.surfaceAlt, color: T.text }}
                 >
                   <Home size={16} style={{ color: T.accent }} />
@@ -468,7 +468,7 @@ export default function ConstrutoraDetalhesPage() {
         <div className="space-y-4">
           {activeDevelopments.length === 0 ? (
             <div
-              className="rounded-2xl p-12 text-center"
+              className="rounded-lg p-12 text-center"
               style={{ backgroundColor: T.surface, border: `1px dashed ${T.border}` }}
             >
               <Home size={32} className="mx-auto mb-3" style={{ color: T.textMuted }} />
@@ -478,7 +478,7 @@ export default function ConstrutoraDetalhesPage() {
               </p>
               <Link
                 href="/backoffice/imoveis/novo"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium"
                 style={{ backgroundColor: T.accent }}
               >
                 Criar Empreendimento
@@ -489,13 +489,13 @@ export default function ConstrutoraDetalhesPage() {
               <Link
                 key={dev.id}
                 href={`/backoffice/imoveis/${dev.id}`}
-                className="block rounded-2xl p-5 hover:opacity-90 transition-all"
+                className="block rounded-[6px] p-5 hover:opacity-90 transition-all"
                 style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}
               >
                 <div className="flex items-start gap-4">
                   {/* Image */}
                   <div
-                    className="relative w-20 h-20 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center"
+                    className="relative w-20 h-20 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center"
                     style={{ backgroundColor: T.surfaceAlt }}
                   >
                     {dev.image ? (
@@ -556,7 +556,7 @@ export default function ConstrutoraDetalhesPage() {
 
       {/* === INFO TAB === */}
       {activeTab === 'info' && (
-        <div className="rounded-2xl p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Todas as Informações</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries({

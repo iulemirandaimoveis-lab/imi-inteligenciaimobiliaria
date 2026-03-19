@@ -57,7 +57,7 @@ export default function NovoRelatorioPage() {
         }
     }
 
-    const inputClass = "w-full h-10 px-3 rounded-xl text-sm outline-none transition-all"
+    const inputClass = "w-full h-10 px-3 rounded-[6px] text-sm outline-none transition-all"
     const inputStyle = { background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }
 
     return (
@@ -74,7 +74,7 @@ export default function NovoRelatorioPage() {
             />
 
             <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="p-6 rounded-2xl space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
+                <div className="p-6 rounded-lg space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
                     <h2 className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Informações</h2>
                     <div>
                         <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Título *</label>
@@ -89,7 +89,7 @@ export default function NovoRelatorioPage() {
                     </div>
                     <div>
                         <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Resumo</label>
-                        <textarea value={form.summary} onChange={e => set('summary', e.target.value)} rows={4} className="w-full px-3 py-2 rounded-xl text-sm outline-none transition-all resize-none" style={inputStyle} placeholder="Descrição do conteúdo do relatório..." />
+                        <textarea value={form.summary} onChange={e => set('summary', e.target.value)} rows={4} className="w-full px-3 py-2 rounded-[6px] text-sm outline-none transition-all resize-none" style={inputStyle} placeholder="Descrição do conteúdo do relatório..." />
                     </div>
                     <div>
                         <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>URL do PDF</label>
@@ -105,7 +105,7 @@ export default function NovoRelatorioPage() {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-2xl" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
+                <div className="p-6 rounded-lg" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium" style={{ color: 'var(--bo-text)' }}>Publicar</p>
@@ -118,7 +118,7 @@ export default function NovoRelatorioPage() {
                 </div>
 
                 <div className="flex items-center gap-3 justify-end">
-                    <Link href="/backoffice/inteligencia/relatorios" className="h-9 px-5 rounded-xl text-sm font-medium" style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }}>Cancelar</Link>
+                    <Link href="/backoffice/inteligencia/relatorios" className="h-9 px-5 rounded-[6px] text-sm font-medium" style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }}>Cancelar</Link>
                     <button type="submit" disabled={saving} className="bo-btn bo-btn-primary" style={{ background: 'var(--accent-500)' }}>
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                         Salvar

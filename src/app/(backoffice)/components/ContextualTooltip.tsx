@@ -155,7 +155,7 @@ export default function ContextualTooltip({
             {/* Spotlight on target */}
             {pos.spotlightRect && (
                 <div
-                    className="fixed z-[9999] rounded-xl pointer-events-none"
+                    className="fixed z-[9999] rounded-lg pointer-events-none"
                     style={{
                         top: pos.spotlightRect.top - 4,
                         left: pos.spotlightRect.left - 4,
@@ -185,7 +185,7 @@ export default function ContextualTooltip({
                     onClick={e => e.stopPropagation()}
                 >
                     <div
-                        className="rounded-2xl overflow-hidden"
+                        className="rounded-xl overflow-hidden"
                         style={{
                             background: 'var(--bg-surface)',
                             border: '1px solid var(--border-default)',

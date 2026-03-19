@@ -70,13 +70,13 @@ function FormParte({ titulo, parte, onChange }: { titulo: string; parte: any; on
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'var(--bo-active-bg)' }}><User size={15} style={{ color: T.accent }} /></div>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--bo-active-bg)' }}><User size={15} style={{ color: T.accent }} /></div>
                 <h3 className="text-sm font-bold" style={{ color: T.text }}>{titulo}</h3>
             </div>
             <div className="flex gap-2">
                 {['pessoa_fisica', 'pessoa_juridica'].map(t => (
                     <button key={t} onClick={() => onChange({ ...parte, tipo: t })}
-                        className="flex-1 h-10 rounded-xl text-xs font-semibold transition-all"
+                        className="flex-1 h-10 rounded-[6px] text-xs font-semibold transition-all"
                         style={{ background: parte.tipo === t ? 'var(--bo-accent)' : T.elevated, color: parte.tipo === t ? 'white' : T.textDim, border: `1px solid ${parte.tipo === t ? T.borderGold : T.border}` }}>
                         {t === 'pessoa_fisica' ? '👤 Pessoa Física' : '🏢 Pessoa Jurídica'}
                     </button>
@@ -219,8 +219,8 @@ function NovoContratoInner() {
             <AnimatePresence mode="wait">
                 {!gerado && step === 0 && (
                     <motion.div key="s0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-3">
-                        <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <input placeholder="🔍 Buscar modelo..." value={busca} onChange={e => setBusca(e.target.value)} className="w-full h-10 px-4 rounded-xl text-sm outline-none" style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} onFocus={onF} onBlur={onB} />
+                        <div className="rounded-lg p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <input placeholder="🔍 Buscar modelo..." value={busca} onChange={e => setBusca(e.target.value)} className="w-full h-10 px-4 rounded-[6px] text-sm outline-none" style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} onFocus={onF} onBlur={onB} />
                             <div className="flex gap-2 overflow-x-auto pb-0.5">
                                 {['todos', ...Object.keys(CATEGORIAS_LABEL)].map(cat => (
                                     <button key={cat} onClick={() => setCatF(cat)} className="px-3 h-8 rounded text-xs font-semibold flex-shrink-0 transition-all"
@@ -235,7 +235,7 @@ function NovoContratoInner() {
                                 const sel = modelo?.id === m.id
                                 return (
                                     <motion.button key={m.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
-                                        onClick={() => setModelo(m)} className="text-left rounded-2xl p-4 transition-all"
+                                        onClick={() => setModelo(m)} className="text-left rounded-lg p-4 transition-all"
                                         style={{ background: sel ? 'var(--bo-active-bg)' : T.surface, border: `1px solid ${sel ? T.borderGold : T.border}` }}>
                                         <div className="flex items-start gap-3">
                                             <div className="text-2xl w-10 h-10 flex items-center justify-center flex-shrink-0">{ICONES_CAT[m.categoria]}</div>
@@ -258,7 +258,7 @@ function NovoContratoInner() {
 
                 {!gerado && step === 1 && modelo && (
                     <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
-                        <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-1" style={{ color: T.text }}>Idioma(s) do contrato</h3>
                             <p className="text-xs mb-4" style={{ color: T.textDim }}>PT-BR obrigatório. Selecione os idiomas adicionais disponíveis neste modelo.</p>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -269,7 +269,7 @@ function NovoContratoInner() {
                                     return (
                                         <button key={lang} disabled={!disp || obrig}
                                             onClick={() => { if (obrig) return; setIdiomasSel(p => p.includes(lang) ? p.filter(l => l !== lang) : [...p, lang]) }}
-                                            className="flex items-center gap-2 p-3 rounded-xl text-left transition-all"
+                                            className="flex items-center gap-2 p-3 rounded-lg text-left transition-all"
                                             style={{ background: sel ? 'var(--bo-active-bg)' : T.elevated, border: `1px solid ${sel ? T.borderGold : T.border}`, opacity: disp ? 1 : 0.3, cursor: disp && !obrig ? 'pointer' : 'default' }}>
                                             <span className="text-xl">{cfg.flag}</span>
                                             <div>
@@ -294,7 +294,7 @@ function NovoContratoInner() {
                                 </div>
                             )}
                         </div>
-                        <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-1" style={{ color: T.text }}>Assinatura Digital</h3>
                             <p className="text-xs mb-4" style={{ color: T.textDim }}>Todas as plataformas são suportadas. Configure em .env.local. O sistema funciona sem assinatura digital.</p>
                             <div className="space-y-2">
@@ -303,7 +303,7 @@ function NovoContratoInner() {
                                     return (
                                         <button key={p.id} onClick={() => setPlat(p.id)} className="w-full flex items-center gap-3 p-4 rounded text-left transition-all"
                                             style={{ background: sel ? `${p.cor}12` : T.elevated, border: `1px solid ${sel ? p.cor + '40' : T.border}` }}>
-                                            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${p.cor}18` }}>
+                                            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${p.cor}18` }}>
                                                 <p.icon size={16} style={{ color: p.cor }} />
                                             </div>
                                             <div className="flex-1">
@@ -324,18 +324,18 @@ function NovoContratoInner() {
                 )}
 
                 {!gerado && step === 2 && (
-                    <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <FormParte titulo="Contratante (Parte A)" parte={contratante} onChange={setContratante} />
                     </motion.div>
                 )}
                 {!gerado && step === 3 && (
-                    <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <FormParte titulo="Contratado / IMI (Parte B)" parte={contratado} onChange={setContratado} />
                     </motion.div>
                 )}
 
                 {!gerado && step === 4 && modelo && (
-                    <motion.div key="s4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="rounded-2xl p-5 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <motion.div key="s4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="rounded-lg p-5 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         {(['objeto', 'valores', 'prazos', 'condicoes', 'garantias'] as const).map(sec => {
                             const campos = modelo.campos.filter((c: any) => c.section === sec)
                             if (!campos.length) return null
@@ -359,7 +359,7 @@ function NovoContratoInner() {
                             <label className="text-[11px] font-semibold mb-1.5 block" style={{ color: T.textDim }}>✍️ Cláusulas especiais / Instruções para a IA</label>
                             <textarea value={notas} onChange={e => setNotas(e.target.value)} rows={4}
                                 placeholder="Descreva condições específicas não previstas no modelo, cláusulas especiais, contexto importante..."
-                                className="w-full rounded-xl text-sm outline-none"
+                                className="w-full rounded-[6px] text-sm outline-none"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, padding: '10px 14px', resize: 'vertical' }}
                                 onFocus={onF} onBlur={onB} />
                         </div>
@@ -368,7 +368,7 @@ function NovoContratoInner() {
 
                 {!gerado && step === 5 && (
                     <motion.div key="s5" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
-                        <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Resumo</h3>
                             <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-xs">
                                 <div><p style={{ color: T.textDim }}>Modelo</p><p className="font-semibold mt-0.5 truncate" style={{ color: T.text }}>{modelo?.nome}</p></div>
@@ -378,7 +378,7 @@ function NovoContratoInner() {
                                 <div className="col-span-2"><p style={{ color: T.textDim }}>Assinatura</p><p className="font-semibold mt-0.5" style={{ color: T.accent }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</p></div>
                             </div>
                         </div>
-                        {erro && <div className="flex items-start gap-3 p-4 rounded-2xl" style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.20)' }}>
+                        {erro && <div className="flex items-start gap-3 p-4 rounded-lg" style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.20)' }}>
                             <AlertCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--bo-error)' }} />
                             <div className="flex-1 min-w-0">
                                 <p className="text-xs font-semibold mb-1" style={{ color: 'var(--bo-error)' }}>Erro ao gerar contrato</p>
@@ -389,7 +389,7 @@ function NovoContratoInner() {
                         <div className="space-y-2">
                             {idiomasSel.map(lang => (
                                 <motion.button key={lang} whileTap={{ scale: 0.97 }} onClick={() => gerar(lang)} disabled={gerando}
-                                    className="w-full flex items-center justify-between h-14 px-6 rounded-2xl font-semibold text-sm text-white"
+                                    className="w-full flex items-center justify-between h-14 px-6 rounded-[6px] font-semibold text-sm text-white"
                                     style={{ background: gerando ? 'var(--bo-hover)' : 'var(--bo-accent)', boxShadow: gerando ? 'none' : '0 1px 2px rgba(0,0,0,0.1)' }}>
                                     <div className="flex items-center gap-3">
                                         {gerando ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
@@ -404,7 +404,7 @@ function NovoContratoInner() {
 
                 {gerado && resultado && (
                     <motion.div key="result" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="space-y-4">
-                        <div className="flex items-center gap-3 p-4 rounded-2xl" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.22)' }}>
+                        <div className="flex items-center gap-3 p-4 rounded-lg" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.22)' }}>
                             <CheckCircle size={20} style={{ color: 'var(--bo-success)' }} />
                             <div><p className="text-sm font-bold" style={{ color: 'var(--bo-success)' }}>Contrato gerado com sucesso!</p><p className="text-xs mt-0.5" style={{ color: T.textDim }}>{resultado.numero} · salvo automaticamente</p></div>
                         </div>
@@ -423,7 +423,7 @@ function NovoContratoInner() {
                                 </button>
                             ))}
                         </div>
-                        <div className="rounded-2xl p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold" style={{ color: T.text }}>Enviar para {contratante.nome?.split(' ')[0] || 'o contratante'}</h3>
                             <div className="flex gap-2">
                                 {(['email', 'whatsapp', 'ambos'] as const).map(c => (
@@ -434,7 +434,7 @@ function NovoContratoInner() {
                                 ))}
                             </div>
                             {envioOk
-                                ? <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: 'var(--bo-success)' }} /><p className="text-xs font-semibold" style={{ color: 'var(--bo-success)' }}>Enviado com sucesso!</p></div>
+                                ? <div className="flex items-center gap-2 p-3 rounded-lg" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: 'var(--bo-success)' }} /><p className="text-xs font-semibold" style={{ color: 'var(--bo-success)' }}>Enviado com sucesso!</p></div>
                                 : <button onClick={enviar} disabled={enviando} className="w-full rounded text-sm font-bold text-white flex items-center justify-center gap-2" style={{ height: '44px', background: 'var(--btn-primary-bg)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}>
                                     {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                                     {enviando ? 'Enviando...' : `Enviar via ${canal}`}
@@ -442,7 +442,7 @@ function NovoContratoInner() {
                             }
                         </div>
                         {plat !== 'sem_assinatura' && (
-                            <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
+                            <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
                                 <div className="flex items-center gap-2 mb-2"><FileSignature size={16} style={{ color: T.accent }} /><h3 className="text-sm font-bold" style={{ color: T.text }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</h3></div>
                                 <p className="text-xs mb-3" style={{ color: T.textDim }}>Envie para assinatura digital juridicamente válida. Configure a variável de ambiente antes de ativar.</p>
                                 <button className="w-full h-11 rounded text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'var(--bo-active-bg)', border: `1px solid ${T.borderGold}`, color: T.accent }}>
@@ -454,7 +454,7 @@ function NovoContratoInner() {
                         <AnimatePresence>
                             {preview && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'var(--backdrop-bg, rgba(0,0,0,0.4))', backdropFilter: 'blur(8px)' }}>
-                                    <motion.div initial={{ scale: 0.96 }} animate={{ scale: 1 }} exit={{ scale: 0.96 }} className="relative w-full max-w-3xl max-h-[88vh] rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                    <motion.div initial={{ scale: 0.96 }} animate={{ scale: 1 }} exit={{ scale: 0.96 }} className="relative w-full max-w-3xl max-h-[88vh] rounded-xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                         <div className="flex items-center justify-between p-4" style={{ borderBottom: `1px solid ${T.border}` }}>
                                             <p className="text-sm font-bold" style={{ color: T.text }}>{resultado.numero}</p>
                                             <button onClick={() => setPreview(false)}><X size={18} style={{ color: T.textDim }} /></button>

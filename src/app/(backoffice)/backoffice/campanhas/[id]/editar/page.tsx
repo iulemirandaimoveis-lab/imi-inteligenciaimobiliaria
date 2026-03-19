@@ -283,7 +283,7 @@ export default function EditarCampanhaPage() {
 
   const selectedChannel = canais.find(c => c.value === formData.channel)
 
-  const inputClass = "w-full h-11 px-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
+  const inputClass = "w-full h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
   const inputStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
   const inputErrorStyle = { background: T.elevated, border: '1px solid #EF4444', color: T.text }
 
@@ -298,7 +298,7 @@ export default function EditarCampanhaPage() {
           { label: 'Editar' },
         ]}
         actions={selectedChannel ? (
-          <div className={`px-4 py-2 ${selectedChannel.color} text-white rounded-xl flex items-center gap-2 flex-shrink-0`}>
+          <div className={`px-4 py-2 ${selectedChannel.color} text-white rounded-lg flex items-center gap-2 flex-shrink-0`}>
             <selectedChannel.icon size={16} />
             <span className="text-sm font-medium">{selectedChannel.label}</span>
           </div>
@@ -306,7 +306,7 @@ export default function EditarCampanhaPage() {
       />
 
       {/* Progress Bar */}
-      <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between mb-4">
           {steps.map((step, index) => {
             const StepIcon = step.icon
@@ -354,7 +354,7 @@ export default function EditarCampanhaPage() {
       </div>
 
       {/* Form Content */}
-      <div className="rounded-2xl p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Step 1: Configuração */}
         {currentStep === 1 && (
           <div className="space-y-6">
@@ -585,7 +585,7 @@ export default function EditarCampanhaPage() {
                   onChange={(e) => handleChange('targetAudience', e.target.value)}
                   placeholder="Ex: Profissionais liberais, casais sem filhos, renda acima de R$ 10k"
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] resize-none transition-all"
+                  className="w-full px-4 py-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] resize-none transition-all"
                   style={inputStyle}
                 />
               </div>
@@ -621,7 +621,7 @@ export default function EditarCampanhaPage() {
                       key={loc}
                       type="button"
                       onClick={() => toggleLocation(loc)}
-                      className="h-10 px-4 rounded-lg text-sm font-medium transition-all"
+                      className="h-10 px-4 rounded-[6px] text-sm font-medium transition-all"
                       style={formData.location.includes(loc)
                         ? { background: T.activeBg, border: `1px solid ${T.borderActive}`, color: T.text }
                         : { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }
@@ -647,7 +647,7 @@ export default function EditarCampanhaPage() {
                       key={interest}
                       type="button"
                       onClick={() => toggleInterest(interest)}
-                      className="h-10 px-4 rounded-lg text-sm font-medium transition-all"
+                      className="h-10 px-4 rounded-[6px] text-sm font-medium transition-all"
                       style={formData.interests.includes(interest)
                         ? { background: T.activeBg, border: `1px solid ${T.borderActive}`, color: T.text }
                         : { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }
@@ -707,7 +707,7 @@ export default function EditarCampanhaPage() {
                   placeholder="Descreva os principais benefícios e diferenciais..."
                   rows={4}
                   maxLength={200}
-                  className="w-full px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] resize-none transition-all"
+                  className="w-full px-4 py-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] resize-none transition-all"
                   style={errors.adDescription ? inputErrorStyle : inputStyle}
                 />
                 <p className="text-xs mt-1" style={{ color: T.textMuted }}>
@@ -774,7 +774,7 @@ export default function EditarCampanhaPage() {
                     className="hidden"
                   />
                   <div
-                    className="border-2 border-dashed rounded-2xl p-8 text-center hover:brightness-110 transition-all cursor-pointer"
+                    className="border-2 border-dashed rounded-lg p-8 text-center hover:brightness-110 transition-all cursor-pointer"
                     style={{ borderColor: T.border, background: T.elevated }}
                   >
                     <Upload size={40} className="mx-auto mb-3" style={{ color: T.textMuted }} />
@@ -794,7 +794,7 @@ export default function EditarCampanhaPage() {
                         <img
                           src={URL.createObjectURL(file)}
                           alt={`Criativo ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-xl"
+                          className="w-full h-32 object-cover rounded-lg"
                         />
                         <button
                           type="button"
@@ -825,7 +825,7 @@ export default function EditarCampanhaPage() {
                       value={formData.utmSource}
                       onChange={(e) => handleChange('utmSource', e.target.value)}
                       placeholder="instagram"
-                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
+                      className="w-full h-10 px-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
                       style={inputStyle}
                     />
                   </div>
@@ -838,7 +838,7 @@ export default function EditarCampanhaPage() {
                       value={formData.utmMedium}
                       onChange={(e) => handleChange('utmMedium', e.target.value)}
                       placeholder="paid"
-                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
+                      className="w-full h-10 px-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
                       style={inputStyle}
                     />
                   </div>
@@ -851,7 +851,7 @@ export default function EditarCampanhaPage() {
                       value={formData.utmCampaign}
                       onChange={(e) => handleChange('utmCampaign', e.target.value)}
                       placeholder="reserva-imperial"
-                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
+                      className="w-full h-10 px-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
                       style={inputStyle}
                     />
                   </div>
@@ -868,7 +868,7 @@ export default function EditarCampanhaPage() {
           type="button"
           onClick={handlePrev}
           disabled={currentStep === 1}
-          className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ border: `1px solid ${T.border}`, background: T.elevated, color: T.text }}
         >
           <ArrowLeft size={20} />
@@ -879,7 +879,7 @@ export default function EditarCampanhaPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium text-white transition-all hover:opacity-90"
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium text-white transition-all hover:opacity-90"
             style={{ background: T.accent }}
           >
             Próximo
@@ -890,7 +890,7 @@ export default function EditarCampanhaPage() {
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ background: T.accent }}
           >
             {isSubmitting ? (

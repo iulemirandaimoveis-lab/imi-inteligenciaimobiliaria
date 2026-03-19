@@ -58,7 +58,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="group relative rounded-2xl overflow-hidden transition-all duration-200"
+            className="group relative rounded-lg overflow-hidden transition-all duration-200"
             style={{ background: T.surface, border: `1px solid ${T.border}` }}
         >
             {/* Active indicator top bar */}
@@ -77,7 +77,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                     {/* Avatar */}
                     <div className="relative flex-shrink-0">
                         <div
-                            className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center text-sm font-bold"
+                            className="w-12 h-12 rounded-[6px] overflow-hidden flex items-center justify-center text-sm font-bold"
                             style={{
                                 background: isActive ? 'rgba(59,130,246,0.15)' : T.elevated,
                                 border: `1px solid ${isActive ? 'rgba(59,130,246,0.25)' : T.border}`,
@@ -138,7 +138,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                         <motion.button
                             whileTap={{ scale: 0.88 }}
                             onClick={() => setMenuOpen(!menuOpen)}
-                            className="w-7 h-7 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="w-7 h-7 rounded-[6px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                         >
                             <MoreHorizontal size={13} style={{ color: T.textMuted }} />
@@ -153,7 +153,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.88, y: -6 }}
                                         transition={{ type: 'spring', stiffness: 420, damping: 30 }}
-                                        className="absolute right-0 top-9 z-50 w-44 rounded-xl overflow-hidden shadow-2xl"
+                                        className="absolute right-0 top-9 z-50 w-44 rounded-lg overflow-hidden shadow-2xl"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                     >
                                         <Link
@@ -224,11 +224,11 @@ function EmptyEquipe({ onAddFirst }: { onAddFirst: () => void }) {
         <motion.div
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-2xl p-16 text-center"
+            className="rounded-lg p-16 text-center"
             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
         >
             <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                className="w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4"
                 style={{ background: 'rgba(96,165,250,0.10)' }}
             >
                 <Users size={28} style={{ color: 'var(--info)', opacity: 0.7 }} />
@@ -353,7 +353,7 @@ export default function EquipePage() {
                         placeholder="Buscar por nome, email ou CRECI..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                        className="w-full h-10 pl-9 pr-4 rounded-[6px] text-sm outline-none"
                         style={{
                             background: T.elevated,
                             border: `1px solid ${T.border}`,
@@ -374,7 +374,7 @@ export default function EquipePage() {
                     {[...Array(6)].map((_, i) => (
                         <div
                             key={i}
-                            className="rounded-2xl p-5 animate-pulse"
+                            className="rounded-lg p-5 animate-pulse"
                             style={{ background: T.surface, border: `1px solid ${T.border}`, height: 200 }}
                         />
                     ))}

@@ -78,7 +78,7 @@ export default function PlaybooksPage() {
                 <div className="space-y-3">
                     {[1, 2, 3].map(i => (
                         <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
-                            <div className="skeleton w-10 h-10 rounded-xl flex-shrink-0" />
+                            <div className="skeleton w-10 h-10 rounded-lg flex-shrink-0" />
                             <div className="flex-1">
                                 <div className="skeleton h-4 w-40 mb-2" />
                                 <div className="skeleton h-3 w-56" />
@@ -90,7 +90,7 @@ export default function PlaybooksPage() {
 
             {/* Empty state */}
             {!loading && filtered.length === 0 && (
-                <div className="rounded-2xl p-8 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-8 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-2xl mb-2">📋</p>
                     <p className="text-sm font-semibold" style={{ color: T.text }}>Nenhum playbook encontrado</p>
                     <p className="text-xs mt-1" style={{ color: T.textMuted }}>
@@ -109,12 +109,12 @@ export default function PlaybooksPage() {
                         const pct = steps.length > 0 ? Math.round((done.size / steps.length) * 100) : 0
 
                         return (
-                            <div key={pb.id} className="rounded-2xl overflow-hidden"
+                            <div key={pb.id} className="rounded-lg overflow-hidden"
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <button onClick={() => toggle(pb.id)}
                                     className="w-full flex items-center gap-4 p-4 text-left transition-colors"
                                     style={{ background: isOpen ? T.elevated : 'transparent' }}>
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl"
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-xl"
                                         style={{ background: 'rgba(72,101,129,0.12)' }}>
                                         {pb.icon || '📋'}
                                     </div>
@@ -196,7 +196,7 @@ export default function PlaybooksPage() {
             )}
 
             {/* Info */}
-            <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
+            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
                 <p className="text-xs font-semibold mb-1" style={{ color: T.accent }}>Playbooks Customizados</p>
                 <p className="text-xs leading-relaxed" style={{ color: T.textMuted }}>
                     Os playbooks são checklists interativos — marque cada etapa como concluída durante a execução.

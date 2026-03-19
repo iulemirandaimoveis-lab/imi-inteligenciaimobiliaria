@@ -120,7 +120,7 @@ export default function NovoCorretorPage() {
                 subtitle="Preencha os dados e defina as permissões de acesso"
                 actions={
                     <button type="button" onClick={() => router.back()}
-                        className="h-11 px-5 rounded-xl text-sm font-medium transition-all"
+                        className="h-11 px-5 rounded-[6px] text-sm font-medium transition-all"
                         style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: T.elevated }}>
                         Cancelar
                     </button>
@@ -132,7 +132,7 @@ export default function NovoCorretorPage() {
                     {/* Left Column: Personal Data */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Dados Pessoais */}
-                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Dados Pessoais</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div className="md:col-span-2 space-y-1.5">
@@ -140,7 +140,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="Ex: João da Silva" {...register('name')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
@@ -150,7 +150,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="email" placeholder="joao@imi.com.br" {...register('email')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
@@ -160,7 +160,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <Smartphone size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="(11) 99999-9999" {...register('phone')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.phone && <p className="text-xs text-red-400">{errors.phone.message}</p>}
@@ -170,7 +170,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <Shield size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="12345-F" {...register('creci')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.creci && <p className="text-xs text-red-400">{errors.creci.message}</p>}
@@ -178,7 +178,7 @@ export default function NovoCorretorPage() {
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>Status</label>
                                     <select {...register('status')}
-                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                         style={fieldStyle}>
                                         <option value="active">Ativo</option>
                                         <option value="inactive">Inativo</option>
@@ -188,7 +188,7 @@ export default function NovoCorretorPage() {
                         </div>
 
                         {/* Segurança */}
-                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Segurança</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div className="space-y-1.5">
@@ -196,7 +196,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <Key size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="password" placeholder="Mínimo 8 caracteres" {...register('password')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.password && <p className="text-xs text-red-400">{errors.password.message}</p>}
@@ -206,7 +206,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <Key size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                         <input type="password" placeholder="Repita a senha" {...register('confirmPassword')}
-                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            className="w-full h-11 pl-9 pr-4 rounded-[6px] outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.confirmPassword && <p className="text-xs text-red-400">{errors.confirmPassword.message}</p>}
@@ -217,7 +217,7 @@ export default function NovoCorretorPage() {
 
                     {/* Right Column: Permissions */}
                     <div className="lg:col-span-1">
-                        <div className="rounded-2xl overflow-hidden sticky top-6"
+                        <div className="rounded-lg overflow-hidden sticky top-6"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="p-5" style={{ borderBottom: `1px solid ${T.border}` }}>
                                 <h3 className="font-display font-bold text-lg flex items-center gap-2" style={{ color: T.text }}>
@@ -228,7 +228,7 @@ export default function NovoCorretorPage() {
 
                             <div className="p-6 space-y-6 max-h-[600px] overflow-y-auto custom-scrollbar">
                                 {/* Mandatory Dashboard */}
-                                <div className="p-4 rounded-xl flex items-center justify-between"
+                                <div className="p-4 rounded-lg flex items-center justify-between"
                                     style={{ background: `${T.accent}15`, border: `1px solid ${T.accent}30` }}>
                                     <span className="font-bold text-sm flex items-center gap-2" style={{ color: T.accent }}>
                                         <CheckCircle size={16} /> Dashboard
@@ -256,7 +256,7 @@ export default function NovoCorretorPage() {
                                                     <div
                                                         key={item.id}
                                                         onClick={() => togglePermission(item.id)}
-                                                        className="flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200"
+                                                        className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
                                                         style={{
                                                             background: isSelected ? `${T.accent}10` : T.elevated,
                                                             border: isSelected ? `1px solid ${T.accent}40` : `1px solid ${T.border}`,
@@ -293,12 +293,12 @@ export default function NovoCorretorPage() {
 
                 <div className="flex justify-end gap-3 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
                     <button type="button" onClick={() => router.back()}
-                        className="h-11 px-6 rounded-xl text-sm font-medium transition-all"
+                        className="h-11 px-6 rounded-[6px] text-sm font-medium transition-all"
                         style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: 'transparent' }}>
                         Cancelar
                     </button>
                     <button type="submit" disabled={isSubmitting}
-                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold hover:brightness-110 transition-all disabled:opacity-60"
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold hover:brightness-110 transition-all disabled:opacity-60"
                         style={{ background: T.accent }}>
                         <UserPlus size={16} />
                         {isSubmitting ? 'Cadastrando...' : 'Cadastrar Corretor'}

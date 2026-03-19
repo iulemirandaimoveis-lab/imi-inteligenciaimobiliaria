@@ -353,7 +353,7 @@ export default function ExerciciosPage() {
   if (mode === 'resultado') {
     return (
       <div className="max-w-2xl mx-auto space-y-6 pb-20">
-        <div className="text-center py-8 rounded-2xl px-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
+        <div className="text-center py-8 rounded-lg px-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(245,158,11,0.12)' }}>
             <Trophy size={36} style={{ color: 'var(--warning)' }} />
           </div>
@@ -366,7 +366,7 @@ export default function ExerciciosPage() {
               { label: 'Corretas', value: score.corretas, color: 'var(--bo-success)' },
               { label: 'Sequência max.', value: score.maxStreak, color: 'var(--warning)' },
             ].map(item => (
-              <div key={item.label} className="rounded-xl p-3" style={{ background: T.elevated }}>
+              <div key={item.label} className="rounded-lg p-3" style={{ background: T.elevated }}>
                 <p className="text-2xl font-bold" style={{ color: item.color, fontVariantNumeric: 'tabular-nums' }}>{item.value}</p>
                 <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{item.label}</p>
               </div>
@@ -388,7 +388,7 @@ export default function ExerciciosPage() {
             </div>
           )}
 
-          <button onClick={startTreino} className="mt-6 w-full h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
+          <button onClick={startTreino} className="mt-6 w-full h-11 text-white rounded-[6px] font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
             style={{ background: 'var(--btn-primary-bg)' }}>
             <RefreshCw size={18} /> Treinar Novamente
           </button>
@@ -401,7 +401,7 @@ export default function ExerciciosPage() {
     return (
       <div className="max-w-2xl mx-auto space-y-4 pb-20">
         <div className="flex items-center justify-between">
-          <button onClick={() => setMode('menu')} className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ border: `1px solid ${T.border}` }}>
+          <button onClick={() => setMode('menu')} className="w-9 h-9 rounded-[6px] flex items-center justify-center" style={{ border: `1px solid ${T.border}` }}>
             <ArrowLeft size={18} />
           </button>
           <div className="flex items-center gap-3">
@@ -423,7 +423,7 @@ export default function ExerciciosPage() {
           <div className="h-full rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%`, background: 'var(--btn-primary-bg)' }} />
         </div>
 
-        <div className="rounded-2xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
+        <div className="rounded-lg p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
           {/* Meta */}
           <div className="flex items-center gap-2">
             <span className="text-xs px-2 py-0.5 rounded-[6px]" style={{ background: T.elevated, color: T.textMuted }}>{current.categoria}</span>
@@ -434,7 +434,7 @@ export default function ExerciciosPage() {
           <p className="text-base font-semibold leading-relaxed" style={{ color: T.text }}>{current.pergunta}</p>
 
           {current.contexto && (
-            <div className="p-3 rounded-xl text-sm font-mono" style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)', color: 'var(--warning)' }}>
+            <div className="p-3 rounded-lg text-sm font-mono" style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)', color: 'var(--warning)' }}>
               {current.contexto}
             </div>
           )}
@@ -449,7 +449,7 @@ export default function ExerciciosPage() {
               }
               return (
                 <button key={idx} onClick={() => handleAnswer(idx)}
-                  className="w-full flex items-center gap-3 p-3.5 rounded-xl text-left text-sm transition-all"
+                  className="w-full flex items-center gap-3 p-3.5 rounded-lg text-left text-sm transition-all"
                   style={inlineStyle}>
                   <div
                     className="w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0"
@@ -470,7 +470,7 @@ export default function ExerciciosPage() {
           </div>
 
           {revealed && (
-            <div className="p-4 rounded-xl text-sm" style={{ background: 'rgba(72,101,129,0.12)', border: '1px solid rgba(72,101,129,0.25)' }}>
+            <div className="p-4 rounded-lg text-sm" style={{ background: 'rgba(72,101,129,0.12)', border: '1px solid rgba(72,101,129,0.25)' }}>
               <p className="font-semibold mb-1" style={{ color: 'var(--bo-accent)' }}>Explicação</p>
               <p style={{ color: T.textMuted }}>{current.explicacao}</p>
             </div>
@@ -478,7 +478,7 @@ export default function ExerciciosPage() {
         </div>
 
         {revealed && (
-          <button onClick={handleNext} className="w-full h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
+          <button onClick={handleNext} className="w-full h-11 text-white rounded-[6px] font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
             style={{ background: 'var(--btn-primary-bg)' }}>
             {currentIdx < filtered.length - 1 ? <>Próxima <ChevronRight size={18} /></> : <>Ver Resultado <Trophy size={18} /></>}
           </button>
@@ -496,7 +496,7 @@ export default function ExerciciosPage() {
         actions={
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+            className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-all hover:opacity-80"
             style={{ background: T.card, border: `1px solid ${T.border}` }}
           >
             <ArrowLeft size={18} style={{ color: T.text }} />
@@ -513,7 +513,7 @@ export default function ExerciciosPage() {
         ].map(item => {
           const Icon = item.icon
           return (
-            <div key={item.label} className="rounded-xl p-4 flex items-center gap-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div key={item.label} className="rounded-lg p-4 flex items-center gap-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: item.bg }}>
                 <Icon size={18} style={{ color: item.color }} />
               </div>
@@ -527,7 +527,7 @@ export default function ExerciciosPage() {
       </div>
 
       {/* Filtros */}
-      <div className="rounded-xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <p className="text-sm font-semibold" style={{ color: T.text }}>Filtros</p>
         <div className="flex flex-wrap gap-2">
           {['Todos', ...CATEGORIAS].map(cat => (
@@ -553,7 +553,7 @@ export default function ExerciciosPage() {
         <div className="flex items-center justify-between pt-1">
           <p className="text-sm" style={{ color: T.textMuted }}><strong style={{ color: T.text }}>{filtered.length}</strong> questões selecionadas</p>
           <button onClick={startTreino} disabled={filtered.length === 0}
-            className="flex items-center gap-2 h-9 px-5 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-40"
+            className="flex items-center gap-2 h-9 px-5 text-white rounded-[6px] text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-40"
             style={{ background: 'var(--btn-primary-bg)' }}>
             <Play size={15} /> Iniciar Treino
           </button>
@@ -561,7 +561,7 @@ export default function ExerciciosPage() {
       </div>
 
       {/* IA Generator */}
-      <div className="rounded-xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <button type="button" onClick={() => setShowIA(!showIA)}
           className="w-full flex items-center justify-between p-4 transition-colors"
           style={{ background: T.surface }}>
@@ -580,7 +580,7 @@ export default function ExerciciosPage() {
         {showIA && (
           <div className="p-4 space-y-3" style={{ borderTop: `1px solid ${T.border}` }}>
             <button onClick={generateIAExercise} disabled={isGenerating}
-              className="w-full flex items-center justify-center gap-2 h-10 rounded-xl text-sm font-medium transition-all hover:opacity-80 disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 h-10 rounded-[6px] text-sm font-medium transition-all hover:opacity-80 disabled:opacity-50"
               style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.25)', color: 'var(--warning)' }}>
               {isGenerating ? <><Loader2 size={16} className="animate-spin" /> Gerando...</> : <><Sparkles size={16} /> Nova Questão</>}
             </button>
@@ -588,7 +588,7 @@ export default function ExerciciosPage() {
               try {
                 const parsed = JSON.parse(iaExercicio)
                 return (
-                  <div className="space-y-3 p-3 rounded-xl" style={{ background: T.elevated }}>
+                  <div className="space-y-3 p-3 rounded-lg" style={{ background: T.elevated }}>
                     <p className="text-sm font-medium" style={{ color: T.text }}>{parsed.pergunta}</p>
                     {parsed.opcoes?.map((opt: string, i: number) => (
                       <div key={i} className="flex items-center gap-2 text-xs" style={{ color: T.textMuted }}>

@@ -73,7 +73,7 @@ const urgencyStyle: Record<string, React.CSSProperties> = {
 function Skeleton({ className }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse rounded-xl ${className ?? ''}`}
+      className={`animate-pulse rounded-lg ${className ?? ''}`}
       style={{ background: 'rgba(72,101,129,0.12)' }}
     />
   )
@@ -157,7 +157,7 @@ export default function SmartNotifications() {
       <button
         onClick={() => setOpen(o => !o)}
         aria-label="Abrir painel de notificações inteligentes"
-        className="relative flex items-center justify-center w-9 h-9 rounded-xl transition-all"
+        className="relative flex items-center justify-center w-9 h-9 rounded-lg transition-all"
         style={{
           background: open ? 'var(--bg-elevated)' : 'transparent',
           border: `1px solid ${open ? 'var(--border-focus)' : 'transparent'}`,
@@ -216,7 +216,7 @@ export default function SmartNotifications() {
           </div>
           <button
             onClick={() => setOpen(false)}
-            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:opacity-70"
+            className="w-8 h-8 rounded-[6px] flex items-center justify-center transition-all hover:opacity-70"
             style={{ border: '1px solid var(--border-default)', color: 'var(--text-tertiary)' }}
           >
             <X size={14} />
@@ -232,7 +232,7 @@ export default function SmartNotifications() {
               BRIEFING DO DIA
             </p>
             <div
-              className="rounded-2xl p-4"
+              className="rounded-lg p-4"
               style={{
                 background: 'rgba(184,148,58,0.06)',
                 border: '1px solid rgba(184,148,58,0.18)',
@@ -265,7 +265,7 @@ export default function SmartNotifications() {
                     return (
                       <div
                         key={alert.id}
-                        className="flex items-start gap-3 rounded-xl p-3"
+                        className="flex items-start gap-3 rounded-lg p-3"
                         style={{
                           background: s.background,
                           border: `1px solid ${s.borderColor}`,
@@ -303,7 +303,7 @@ export default function SmartNotifications() {
               <button
                 onClick={handleQualifyLeads}
                 disabled={actionLoading === 'qualify'}
-                className="w-full flex items-center justify-between rounded-xl px-4 py-3 transition-all hover:brightness-105 disabled:opacity-60"
+                className="w-full flex items-center justify-between rounded-lg px-4 py-3 transition-all hover:brightness-105 disabled:opacity-60"
                 style={{
                   background: 'var(--bo-elevated, var(--bg-elevated))',
                   border: '1px solid var(--border-default)',
@@ -329,7 +329,7 @@ export default function SmartNotifications() {
               <button
                 onClick={handleGenerateSummary}
                 disabled={actionLoading === 'summary' || dailySummary.loading}
-                className="w-full flex items-center justify-between rounded-xl px-4 py-3 transition-all hover:brightness-105 disabled:opacity-60"
+                className="w-full flex items-center justify-between rounded-lg px-4 py-3 transition-all hover:brightness-105 disabled:opacity-60"
                 style={{
                   background: 'var(--bo-elevated, var(--bg-elevated))',
                   border: '1px solid var(--border-default)',
@@ -354,7 +354,7 @@ export default function SmartNotifications() {
               {/* Ver leads quentes */}
               <button
                 onClick={() => { setOpen(false); router.push('/backoffice/leads?filter=hot') }}
-                className="w-full flex items-center justify-between rounded-xl px-4 py-3 transition-all hover:brightness-105"
+                className="w-full flex items-center justify-between rounded-lg px-4 py-3 transition-all hover:brightness-105"
                 style={{
                   background: 'rgba(229,115,115,0.07)',
                   border: '1px solid rgba(229,115,115,0.18)',

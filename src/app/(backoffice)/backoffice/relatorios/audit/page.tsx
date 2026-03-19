@@ -218,7 +218,7 @@ export default function AuditPage() {
         actions={
           <button
             onClick={exportCSV}
-            className="flex items-center gap-2 h-11 px-4 rounded-xl text-sm font-semibold transition-opacity hover:opacity-80"
+            className="flex items-center gap-2 h-11 px-4 rounded-[6px] text-sm font-semibold transition-opacity hover:opacity-80"
             style={{ background: T.elevated, color: T.text, border: `1px solid ${T.border}` }}>
             <Download size={16} />
             Exportar CSV
@@ -236,7 +236,7 @@ export default function AuditPage() {
         ].map(s => {
           const Icon = s.icon
           return (
-            <div key={s.label} className="rounded-2xl p-4" style={{ background: s.bg, border: `1px solid ${T.border}` }}>
+            <div key={s.label} className="rounded-lg p-4" style={{ background: s.bg, border: `1px solid ${T.border}` }}>
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>{s.label}</p>
                 <Icon size={14} style={{ color: s.textColor }} />
@@ -255,7 +255,7 @@ export default function AuditPage() {
             value={busca}
             onChange={e => setBusca(e.target.value)}
             placeholder="Buscar por usuário, ação, módulo..."
-            className="w-full h-11 pl-11 pr-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#334E68]"
+            className="w-full h-11 pl-11 pr-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[#334E68]"
             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
           />
         </div>
@@ -263,7 +263,7 @@ export default function AuditPage() {
         <select
           value={moduloFiltro}
           onChange={e => setModuloFiltro(e.target.value)}
-          className="h-11 px-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#334E68]"
+          className="h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[#334E68]"
           style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
         >
           {MODULOS.map(m => (
@@ -278,7 +278,7 @@ export default function AuditPage() {
             <button
               key={k}
               onClick={() => setSeveridadeFiltro(severidadeFiltro === k ? null : k)}
-              className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={severidadeFiltro === k
                 ? { background: v.bgColor, color: v.textColor, border: `1px solid ${v.textColor}` }
                 : { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }
@@ -291,7 +291,7 @@ export default function AuditPage() {
       </div>
 
       {/* Tabela */}
-      <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Cabeçalho */}
         <div className="grid grid-cols-12 gap-4 px-4 py-3" style={{ background: T.elevated, borderBottom: `1px solid ${T.border}` }}>
           <div className="col-span-3 text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Usuário</div>

@@ -151,7 +151,7 @@ export default function AdsPerformancePage() {
             {/* Leads Trend Chart — 30 dias reais */}
             <motion.div
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="rounded-2xl p-5"
+                className="rounded-lg p-5"
                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
             >
                 <div className="flex items-center justify-between mb-4">
@@ -176,7 +176,7 @@ export default function AdsPerformancePage() {
                     <button
                         key={ch}
                         onClick={() => setChannel(ch)}
-                        className="flex-shrink-0 px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all"
+                        className="flex-shrink-0 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all"
                         style={{
                             background: channel === ch ? T.accent : T.elevated,
                             border: `1px solid ${channel === ch ? T.accent : T.border}`,
@@ -202,11 +202,11 @@ export default function AdsPerformancePage() {
                 {loading ? (
                     <div className="space-y-2.5">
                         {[1, 2].map(i => (
-                            <div key={i} className="animate-pulse rounded-2xl h-24" style={{ background: T.elevated, border: `1px solid ${T.border}` }} />
+                            <div key={i} className="animate-pulse rounded-lg h-24" style={{ background: T.elevated, border: `1px solid ${T.border}` }} />
                         ))}
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="text-center py-10 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="text-center py-10 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <BarChart3 size={32} className="mx-auto mb-2" style={{ color: T.textMuted, opacity: 0.3 }} />
                         <p className="text-sm" style={{ color: T.textMuted }}>Nenhuma campanha encontrada</p>
                         <p className="text-xs mt-1 opacity-70" style={{ color: T.textMuted }}>Crie a primeira campanha para ver métricas</p>
@@ -221,7 +221,7 @@ export default function AdsPerformancePage() {
                                     initial={{ opacity: 0, x: -8 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.2 + i * 0.06 }}
-                                    className="rounded-2xl p-4"
+                                    className="rounded-lg p-4"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, borderLeft: `3px solid ${st.color}` }}
                                 >
                                     <div className="flex items-start justify-between gap-2 mb-3">
@@ -271,7 +271,7 @@ export default function AdsPerformancePage() {
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-4">
                     <Link
                         href="/backoffice/campanhas/nova"
-                        className="flex items-center justify-center gap-2 h-13 rounded-2xl text-sm font-bold text-white"
+                        className="flex items-center justify-center gap-2 h-13 rounded-lg text-sm font-bold text-white"
                         style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 4px 20px rgba(59,130,246,0.3)', height: 52 }}
                     >
                         <Zap size={16} />

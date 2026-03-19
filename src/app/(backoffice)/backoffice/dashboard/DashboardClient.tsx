@@ -112,7 +112,7 @@ function ConversaoFonteWidget() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.52, duration: 0.35 }}
-            className="rounded-2xl overflow-hidden"
+            className="rounded-lg overflow-hidden"
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
@@ -191,7 +191,7 @@ function ProximosCompromissosWidget() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.56, duration: 0.35 }}
-            className="rounded-2xl overflow-hidden"
+            className="rounded-lg overflow-hidden"
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
@@ -217,7 +217,7 @@ function ProximosCompromissosWidget() {
                 {loading ? (
                     <div className="px-4 py-3 space-y-2">
                         {[1,2,3].map(i => (
-                            <div key={i} className="h-10 rounded-xl animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
+                            <div key={i} className="h-10 rounded-lg animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
                         ))}
                     </div>
                 ) : items.length > 0 ? (
@@ -307,7 +307,7 @@ function TopImoveisWidget() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.60, duration: 0.35 }}
-            className="rounded-2xl overflow-hidden"
+            className="rounded-lg overflow-hidden"
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
@@ -402,7 +402,7 @@ function VelocidadeRespostaWidget() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.64, duration: 0.35 }}
-            className="rounded-2xl overflow-hidden"
+            className="rounded-lg overflow-hidden"
             style={{
                 background: status ? status.bg : 'var(--bg-surface)',
                 border: `1px solid ${status ? status.border : 'var(--border-default)'}`,
@@ -424,7 +424,7 @@ function VelocidadeRespostaWidget() {
             </div>
 
             {loading ? (
-                <div className="h-16 rounded-xl animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
+                <div className="h-16 rounded-lg animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
             ) : (
                 <>
                     <div className="flex items-end gap-2 mb-3">
@@ -506,7 +506,7 @@ function AIDailySummary() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-2xl p-5"
+            className="rounded-lg p-5"
             style={{
                 background: 'linear-gradient(135deg, var(--surface-raised, var(--bg-surface)) 0%, rgba(200,164,74,0.06) 100%)',
                 border: '1px solid var(--surface-border-gold, rgba(200,164,74,0.30))',
@@ -678,7 +678,7 @@ export default function DashboardClient({
                         whileTap={{ scale: 0.95 }}
                         whileHover={{ scale: 1.02 }}
                         onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                        className="flex items-center gap-2 h-9 px-4 rounded-xl text-[13px] font-semibold text-white flex-shrink-0"
+                        className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-[13px] font-semibold text-white flex-shrink-0"
                         style={{
                             background: T.accent,
                             boxShadow: 'var(--shadow-md)',
@@ -710,7 +710,7 @@ export default function DashboardClient({
                                 initial={{ opacity: 0, x: -12 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.08 + i * 0.05 }}
-                                className="flex items-center gap-3 px-4 py-2.5 rounded-xl flex-shrink-0"
+                                className="flex items-center gap-3 px-4 py-2.5 rounded-lg flex-shrink-0"
                                 style={{ background: c.bg, border: `1px solid ${c.border}`, minWidth: 230 }}
                             >
                                 <IconComp size={14} style={{ color: c.text, flexShrink: 0 }} />
@@ -734,7 +734,7 @@ export default function DashboardClient({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.08, duration: 0.35 }}
-                className="relative overflow-hidden rounded-2xl"
+                className="relative overflow-hidden rounded-lg"
                 style={{
                     background: T.card,
                     border: '1px solid var(--info-border, rgba(59,130,246,0.28))',
@@ -905,7 +905,7 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.22, duration: 0.35 }}
-                    className="md:col-span-2 lg:col-span-2 rounded-2xl overflow-hidden"
+                    className="md:col-span-2 lg:col-span-2 rounded-lg overflow-hidden"
                     style={{
                         background: T.card,
                         border: `1px solid ${T.border}`,
@@ -933,7 +933,7 @@ export default function DashboardClient({
                             </div>
                         </div>
                         {/* Period tabs */}
-                        <div className="flex items-center gap-0.5 flex-shrink-0 p-0.5 rounded-xl"
+                        <div className="flex items-center gap-0.5 flex-shrink-0 p-0.5 rounded-lg"
                             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-default)' }}>
                             {PERIOD_OPTS.map(opt => (
                                 <button
@@ -1004,7 +1004,7 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.28, duration: 0.35 }}
-                    className="rounded-2xl overflow-hidden"
+                    className="rounded-lg overflow-hidden"
                     style={{
                         background: T.card,
                         border: '1px solid var(--border-default)',
@@ -1026,12 +1026,12 @@ export default function DashboardClient({
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.30 + i * 0.05 }}
                                     whileTap={{ scale: 0.97 }}
-                                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all group"
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all group"
                                     style={{ background: 'transparent' }}
                                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
-                                    <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                                         style={{
                                             background: a.color,
                                             border: `1px solid rgba(${a.raw},0.20)`,
@@ -1058,7 +1058,7 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.35, duration: 0.35 }}
-                    className="rounded-2xl overflow-hidden"
+                    className="rounded-lg overflow-hidden"
                     style={{
                         background: T.card,
                         border: '1px solid var(--border-default)',
@@ -1099,7 +1099,7 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.40, duration: 0.35 }}
-                    className="rounded-2xl overflow-hidden"
+                    className="rounded-lg overflow-hidden"
                     style={{
                         background: T.card,
                         border: '1px solid var(--border-default)',
@@ -1162,7 +1162,7 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.45, duration: 0.35 }}
-                    className="rounded-2xl overflow-hidden"
+                    className="rounded-lg overflow-hidden"
                     style={{
                         background: T.card,
                         border: '1px solid var(--border-default)',
@@ -1194,7 +1194,7 @@ export default function DashboardClient({
                                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
-                                    <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                                         style={{ background: 'rgba(251,191,36,0.12)' }}>
                                         <Scale size={13} style={{ color: 'var(--s-warm)' }} />
                                     </div>

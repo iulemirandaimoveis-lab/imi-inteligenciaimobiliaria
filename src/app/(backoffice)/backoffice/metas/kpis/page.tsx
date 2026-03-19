@@ -143,7 +143,7 @@ export default function KPIsDashboard() {
 
       {/* KPI Grid */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <Activity className="w-8 h-8 text-white/20 mx-auto mb-3" />
           <p className="text-white/50 text-sm">Nenhum KPI cadastrado.</p>
           <p className="text-white/30 text-xs mt-1">Configure indicadores para acompanhar a performance.</p>
@@ -165,7 +165,7 @@ export default function KPIsDashboard() {
               <Link
                 key={kpi.id}
                 href={`/backoffice/metas/kpis/${kpi.id}`}
-                className="rounded-xl border border-white/10 p-5 hover:border-white/20 transition-colors group"
+                className="rounded-lg border border-white/10 p-5 hover:border-white/20 transition-colors group"
                 style={{ background: 'rgba(255,255,255,0.03)' }}
               >
                 {/* Header */}

@@ -2,8 +2,9 @@
 // API Route para gerar laudos técnicos com Claude
 
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
-export const runtime = 'edge' // Usar Edge Runtime para melhor performance
+export const runtime = 'nodejs'
 
 interface GenerateEvaluationRequest {
     prompt: string
@@ -13,6 +14,10 @@ interface GenerateEvaluationRequest {
 
 export async function POST(request: Request) {
     try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
         const { prompt, evaluationId } = await request.json() as { prompt: string; evaluationId: string }
 
         if (!prompt) {
@@ -120,6 +125,10 @@ COMPLIANCE:
 
 // Função auxiliar para validar API key
 export async function GET() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const hasApiKey = !!process.env.ANTHROPIC_API_KEY
 
     return NextResponse.json({

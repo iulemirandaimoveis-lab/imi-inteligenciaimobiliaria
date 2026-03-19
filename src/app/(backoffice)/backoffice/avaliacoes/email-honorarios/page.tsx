@@ -238,7 +238,7 @@ export default function EmailHonorariosPage() {
         actions={
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+            className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-all hover:opacity-80"
             style={{ background: T.card, border: `1px solid ${T.border}` }}
           >
             <ArrowLeft size={18} style={{ color: T.text }} />
@@ -247,7 +247,7 @@ export default function EmailHonorariosPage() {
       />
 
       {/* Input */}
-      <div className="rounded-xl p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between flex-wrap gap-2">
           <label className="text-sm font-semibold flex items-center gap-2" style={{ color: T.text }}>
             <Mail size={15} style={{ color: T.accent }} /> Cole o email aqui
@@ -265,15 +265,15 @@ export default function EmailHonorariosPage() {
 
         <textarea value={emailText} onChange={e => setEmailText(e.target.value)}
           rows={7} placeholder="Cole aqui o conteúdo do email recebido do tribunal, banco ou cliente..."
-          className="w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-navy-600 resize-none"
+          className="w-full px-3 py-2.5 rounded-[6px] text-sm font-mono focus:outline-none focus:border-navy-600 resize-none"
           style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
 
         {error && (
-          <p className="text-sm rounded-xl px-3 py-2" style={{ background: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)' }}>{error}</p>
+          <p className="text-sm rounded-lg px-3 py-2" style={{ background: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)' }}>{error}</p>
         )}
 
         <button onClick={analisar} disabled={!emailText.trim() || loading}
-          className="w-full flex items-center justify-center gap-2 h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 h-11 text-white rounded-[6px] font-semibold transition-all hover:opacity-80 disabled:opacity-50"
           style={{ background: 'var(--btn-primary-bg)' }}>
           {loading
             ? <><Loader2 size={17} className="animate-spin" /> Analisando com IA…</>
@@ -298,7 +298,7 @@ export default function EmailHonorariosPage() {
           </div>
 
           {activeTab === 'analise' && (
-            <div className="rounded-xl p-5 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-5 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div>
                   <p className="font-bold" style={{ color: T.text }}>{analysis.solicitante}</p>
@@ -339,7 +339,7 @@ export default function EmailHonorariosPage() {
                 ].map(item => {
                   const Icon = item.icon
                   return (
-                    <div key={item.label} className="p-3 rounded-xl" style={{ background: T.elevated }}>
+                    <div key={item.label} className="p-3 rounded-lg" style={{ background: T.elevated }}>
                       <div className="flex items-center gap-1.5 mb-1">
                         <Icon size={12} style={{ color: T.textMuted }} />
                         <span className="text-xs" style={{ color: T.textMuted }}>{item.label}</span>
@@ -351,7 +351,7 @@ export default function EmailHonorariosPage() {
               </div>
 
               {/* Honorários */}
-              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)' }}>
+              <div className="rounded-lg overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)' }}>
                 <div className="px-4 py-2.5" style={{ background: 'rgba(245,158,11,0.08)', borderBottom: '1px solid rgba(245,158,11,0.20)' }}>
                   <p className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--warning)' }}>
                     <DollarSign size={14} /> Proposta de Honorários (IBAPE)
@@ -373,12 +373,12 @@ export default function EmailHonorariosPage() {
 
               <div className="flex gap-3">
                 <button onClick={() => setActiveTab('resposta')}
-                  className="flex-1 h-11 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
+                  className="flex-1 h-11 text-white rounded-[6px] text-sm font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
                   style={{ background: 'var(--btn-primary-bg)' }}>
                   <Mail size={15} /> Ver Rascunho
                 </button>
                 <button onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                  className="flex-1 h-11 rounded-xl text-sm font-medium transition-all hover:opacity-80 flex items-center justify-center gap-2"
+                  className="flex-1 h-11 rounded-[6px] text-sm font-medium transition-all hover:opacity-80 flex items-center justify-center gap-2"
                   style={{ border: `1px solid ${T.border}`, color: T.text, background: T.card }}>
                   <FileText size={15} /> Criar Avaliação
                 </button>
@@ -387,7 +387,7 @@ export default function EmailHonorariosPage() {
           )}
 
           {activeTab === 'resposta' && (
-            <div className="rounded-xl p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className="flex items-center justify-between">
                 <p className="text-sm font-bold" style={{ color: T.text }}>Rascunho de Proposta</p>
                 <div className="flex gap-2">
@@ -405,9 +405,9 @@ export default function EmailHonorariosPage() {
               </div>
               {editing
                 ? <textarea value={editedDraft} onChange={e => setEditedDraft(e.target.value)}
-                  rows={22} className="w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-navy-600 resize-none"
+                  rows={22} className="w-full px-3 py-2.5 rounded-[6px] text-sm font-mono focus:outline-none focus:border-navy-600 resize-none"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
-                : <pre className="whitespace-pre-wrap text-sm rounded-xl p-4 font-sans leading-relaxed" style={{ background: T.elevated, color: T.text }}>{editing ? editedDraft : draft}</pre>
+                : <pre className="whitespace-pre-wrap text-sm rounded-lg p-4 font-sans leading-relaxed" style={{ background: T.elevated, color: T.text }}>{editing ? editedDraft : draft}</pre>
               }
             </div>
           )}

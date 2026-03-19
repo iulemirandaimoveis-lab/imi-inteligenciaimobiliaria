@@ -164,7 +164,7 @@ export default function MetasDashboard() {
       </div>
 
       {/* North Star Metric */}
-      <div className="rounded-xl border border-gold/30 p-6" style={{ background: 'rgba(200,164,74,0.05)' }}>
+      <div className="rounded-lg border border-gold/30 p-6" style={{ background: 'rgba(200,164,74,0.05)' }}>
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(200,164,74,0.15)' }}>
             <Zap className="w-5 h-5 text-gold" />
@@ -198,7 +198,7 @@ export default function MetasDashboard() {
 
       {/* OKR Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <div className="flex items-center gap-2 mb-3">
             <Target className="w-4 h-4 text-gold" />
             <span className="text-xs text-white/50">Objetivos</span>
@@ -208,7 +208,7 @@ export default function MetasDashboard() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <div className="flex items-center gap-2 mb-3">
             <BarChart3 className="w-4 h-4 text-blue-400" />
             <span className="text-xs text-white/50">Key Results</span>
@@ -218,7 +218,7 @@ export default function MetasDashboard() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             <span className="text-xs text-white/50">Score Médio</span>
@@ -234,7 +234,7 @@ export default function MetasDashboard() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <div className="flex items-center gap-2 mb-3">
             <Activity className="w-4 h-4 text-purple-400" />
             <span className="text-xs text-white/50">KPIs Ativos</span>
@@ -263,7 +263,7 @@ export default function MetasDashboard() {
         </div>
 
         {kpiHealth.length === 0 ? (
-          <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <Activity className="w-8 h-8 text-white/20 mx-auto mb-3" />
             <p className="text-white/50 text-sm">Nenhum KPI cadastrado ainda.</p>
             <p className="text-white/30 text-xs mt-1">Cadastre KPIs para acompanhar a saúde dos indicadores.</p>
@@ -283,7 +283,7 @@ export default function MetasDashboard() {
                 <Link
                   key={kpi.id}
                   href={`/backoffice/metas/kpis/${kpi.id}`}
-                  className="rounded-xl border border-white/10 p-4 hover:border-white/20 transition-colors group"
+                  className="rounded-lg border border-white/10 p-4 hover:border-white/20 transition-colors group"
                   style={{ background: 'rgba(255,255,255,0.03)' }}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -316,7 +316,7 @@ export default function MetasDashboard() {
           <Link
             key={item.href}
             href={item.href}
-            className="rounded-xl border border-white/10 p-5 hover:border-gold/30 transition-colors group"
+            className="rounded-lg border border-white/10 p-5 hover:border-gold/30 transition-colors group"
             style={{ background: 'rgba(255,255,255,0.03)' }}
           >
             <div className="flex items-center justify-between">

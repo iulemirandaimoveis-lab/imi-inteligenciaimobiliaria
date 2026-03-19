@@ -174,13 +174,13 @@ export default function NovoLeadPage() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => router.back()}
-                            className="w-11 h-11 rounded-xl flex items-center justify-center transition-opacity hover:opacity-80"
+                            className="w-11 h-11 rounded-[6px] flex items-center justify-center transition-opacity hover:opacity-80"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                         >
                             <ArrowLeft size={18} style={{ color: T.textMuted }} />
                         </button>
                         {/* Score Badge */}
-                        <div className="px-5 py-3 rounded-xl flex items-center gap-3" style={getScoreColor()}>
+                        <div className="px-5 py-3 rounded-lg flex items-center gap-3" style={getScoreColor()}>
                             <Sparkles size={16} />
                             <div>
                                 <p className="font-semibold opacity-80 uppercase" style={{ fontSize: '11px', letterSpacing: '0.05em' }}>Score</p>
@@ -401,7 +401,7 @@ export default function NovoLeadPage() {
                         </div>
 
                         {/* Dica */}
-                        <div className="rounded-xl p-4" style={{ background: 'var(--info-bg)', border: '1px solid var(--border-subtle)' }}>
+                        <div className="rounded-lg p-4" style={{ background: 'var(--info-bg)', border: '1px solid var(--border-subtle)' }}>
                             <div className="flex gap-3">
                                 <AlertCircle size={16} className="flex-shrink-0 mt-1" style={{ color: T.accent }} />
                                 <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
@@ -416,7 +416,7 @@ export default function NovoLeadPage() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-opacity hover:opacity-80 disabled:opacity-50"
+                                className="w-full h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-opacity hover:opacity-80 disabled:opacity-50"
                                 style={{ background: T.accent }}
                             >
                                 {isSubmitting ? <><Loader2 size={15} className="animate-spin" /> Salvando...</> : <><Save size={15} /> Criar Lead</>}
@@ -424,7 +424,7 @@ export default function NovoLeadPage() {
                             <button
                                 type="button"
                                 onClick={() => router.back()}
-                                className="w-full h-11 rounded-xl text-sm font-medium transition-all hover:opacity-80"
+                                className="w-full h-11 rounded-[6px] text-sm font-medium transition-all hover:opacity-80"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
                             >
                                 Cancelar

@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { getAllBrazilIndices } from '@/lib/invest/data/providers/bcb'
 
 export const revalidate = 3600 // 1 hour ISR cache
 
 export async function GET() {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const data = await getAllBrazilIndices()
 
     const format = (series: { date: string; value: number }[], name: string, unit: string) => {

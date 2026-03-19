@@ -119,7 +119,7 @@ export default function OKRsListPage() {
         <select
           value={quarter}
           onChange={e => setQuarter(e.target.value)}
-          className="px-3 py-1.5 rounded-lg text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-gold/50"
+          className="px-3 py-1.5 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-gold/50"
         >
           {QUARTERS.map(q => (
             <option key={q} value={q} className="bg-navy-900">{q}</option>
@@ -146,7 +146,7 @@ export default function OKRsListPage() {
 
       {/* OKR Cards */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <Target className="w-8 h-8 text-white/20 mx-auto mb-3" />
           <p className="text-white/50 text-sm">Nenhum OKR encontrado para {quarter}.</p>
           <p className="text-white/30 text-xs mt-1">Crie o primeiro objetivo do quarter.</p>
@@ -173,7 +173,7 @@ export default function OKRsListPage() {
               <Link
                 key={obj.id}
                 href={`/backoffice/metas/okrs/${obj.id}`}
-                className="block rounded-xl border border-white/10 p-5 hover:border-white/20 transition-colors group"
+                className="block rounded-lg border border-white/10 p-5 hover:border-white/20 transition-colors group"
                 style={{ background: 'rgba(255,255,255,0.03)' }}
               >
                 <div className="flex items-start justify-between mb-3">

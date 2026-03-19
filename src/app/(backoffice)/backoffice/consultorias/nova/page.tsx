@@ -62,7 +62,7 @@ export default function NovaConsultoriaPage() {
 
   const steps = ['Cliente', 'Tipo & Escopo', 'Honorários']
 
-  const inputClass = 'w-full h-11 px-3 rounded-xl text-sm focus:outline-none focus:border-[var(--bo-border-gold)]'
+  const inputClass = 'w-full h-11 px-3 rounded-[6px] text-sm focus:outline-none focus:border-[var(--bo-border-gold)]'
   const inputStyle = { background: T.bg, border: `1px solid ${T.border}`, color: T.text }
 
   return (
@@ -101,7 +101,7 @@ export default function NovaConsultoriaPage() {
       </div>
 
       {/* Form */}
-      <div className="rounded-xl p-6 space-y-5" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-6 space-y-5" style={{ background: T.card, border: `1px solid ${T.border}` }}>
         {/* Step 1 — Cliente */}
         {step === 1 && (
           <>
@@ -114,7 +114,7 @@ export default function NovaConsultoriaPage() {
             <div className="flex gap-2">
               {['PF', 'PJ'].map(t => (
                 <button key={t} onClick={() => set('cliente_tipo', t)}
-                  className="flex-1 h-10 rounded-xl text-sm font-medium transition-colors"
+                  className="flex-1 h-10 rounded-[6px] text-sm font-medium transition-colors"
                   style={{
                     background: form.cliente_tipo === t ? T.activeBg : T.card,
                     color: form.cliente_tipo === t ? T.text : T.sub,
@@ -173,7 +173,7 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium mb-2" style={{ color: T.sub }}>Tipo de Consultoria</label>
               {TIPOS.map(t => (
                 <button key={t.v} onClick={() => set('tipo', t.v)}
-                  className="w-full text-left p-3 rounded-xl transition-all"
+                  className="w-full text-left p-3 rounded-lg transition-all"
                   style={{
                     border: `1px solid ${form.tipo === t.v ? T.borderActive : T.border}`,
                     background: form.tipo === t.v ? T.activeBg : T.bg,
@@ -188,7 +188,7 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Descrição do Projeto</label>
               <textarea value={form.descricao} onChange={e => set('descricao', e.target.value)}
                 rows={3} placeholder="Descreva o contexto, o imóvel ou empreendimento envolvido, e o escopo esperado…"
-                className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
                 style={inputStyle} />
             </div>
 
@@ -196,7 +196,7 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Objetivo Principal do Cliente</label>
               <textarea value={form.objetivo} onChange={e => set('objetivo', e.target.value)}
                 rows={2} placeholder="O que o cliente precisa resolver ou decidir com esta consultoria?"
-                className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
                 style={inputStyle} />
             </div>
           </>
@@ -261,13 +261,13 @@ export default function NovaConsultoriaPage() {
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Observações Internas</label>
                 <textarea value={form.observacoes} onChange={e => set('observacoes', e.target.value)}
                   rows={3} placeholder="Notas sobre o cliente, contexto sensível, histórico de negociação…"
-                  className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                  className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
                   style={inputStyle} />
               </div>
             </div>
 
             {/* Resumo */}
-            <div className="rounded-xl p-4 space-y-2 text-sm" style={{ background: T.bg, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-4 space-y-2 text-sm" style={{ background: T.bg, border: `1px solid ${T.border}` }}>
               <p className="font-semibold mb-2" style={{ color: T.text }}>Resumo da Consultoria</p>
               <div className="flex justify-between">
                 <span style={{ color: T.sub }}>Cliente</span>
@@ -291,18 +291,18 @@ export default function NovaConsultoriaPage() {
       {/* Navigation */}
       <div className="flex justify-between">
         <button onClick={() => step > 1 ? setStep(s => s - 1) : router.push('/backoffice/consultorias')}
-          className="h-11 px-5 rounded-xl text-sm font-medium transition-colors hover-card"
+          className="h-11 px-5 rounded-[6px] text-sm font-medium transition-colors hover-card"
           style={{ border: `1px solid ${T.border}`, color: T.text }}>
           {step === 1 ? 'Cancelar' : 'Voltar'}
         </button>
         {step < 3
           ? <button onClick={() => setStep(s => s + 1)}
-            className="h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+            className="h-11 px-6 rounded-[6px] text-sm font-semibold text-white transition-all hover:opacity-90"
             style={BTN_PRIMARY}>
             Continuar
           </button>
           : <button onClick={handleSubmit} disabled={loading}
-            className="h-11 px-6 rounded-xl text-sm font-semibold text-white disabled:opacity-60 flex items-center gap-2 transition-all hover:opacity-90"
+            className="h-11 px-6 rounded-[6px] text-sm font-semibold text-white disabled:opacity-60 flex items-center gap-2 transition-all hover:opacity-90"
             style={BTN_PRIMARY}>
             {loading ? <><Loader2 size={15} className="animate-spin" /> Salvando…</> : <><Save size={15} /> Criar Consultoria</>}
           </button>

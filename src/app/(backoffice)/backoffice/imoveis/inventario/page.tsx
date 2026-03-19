@@ -624,7 +624,7 @@ export default function InventarioPage() {
                 actions={
                     <Link
                         href="/backoffice/imoveis/novo"
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl font-semibold text-sm text-white transition-all hover:brightness-110"
+                        className="flex items-center gap-2 h-10 px-5 rounded-[6px] font-semibold text-sm text-white transition-all hover:brightness-110"
                         style={{ background: T.accent, textDecoration: 'none' }}
                     >
                         <Plus size={15} /> Novo Imóvel
@@ -669,7 +669,7 @@ export default function InventarioPage() {
             {/* Controls row: view tabs + search + type filter */}
             <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                 {/* View tabs */}
-                <div className="flex gap-1 p-1 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <div className="flex gap-1 p-1 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     {VIEW_TABS.map(tab => (
                         <button
                             key={tab.key}
@@ -693,7 +693,7 @@ export default function InventarioPage() {
                         value={busca}
                         onChange={e => setBusca(e.target.value)}
                         placeholder="Buscar empreendimento..."
-                        className="w-full h-10 pl-9 pr-4 rounded-xl text-sm focus:outline-none"
+                        className="w-full h-10 pl-9 pr-4 rounded-[6px] text-sm focus:outline-none"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                 </div>
@@ -715,7 +715,7 @@ export default function InventarioPage() {
             {loading && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="animate-pulse rounded-2xl h-80"
+                        <div key={i} className="animate-pulse rounded-lg h-80"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, opacity: 0.5 }} />
                     ))}
                 </div>
@@ -723,9 +723,9 @@ export default function InventarioPage() {
 
             {/* Empty state */}
             {!loading && filtered.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-24 rounded-2xl"
+                <div className="flex flex-col items-center justify-center py-24 rounded-lg"
                     style={{ background: T.surface, border: `1px dashed ${T.border}` }}>
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+                    <div className="w-16 h-16 rounded-lg flex items-center justify-center mb-4"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                         <Building2 size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
                     </div>
@@ -759,7 +759,7 @@ export default function InventarioPage() {
                             >
                                 <Link href={`/backoffice/imoveis/${d.id}`} style={{ textDecoration: 'none', display: 'block' }}>
                                     <div
-                                        className="rounded-2xl overflow-hidden transition-shadow hover:shadow-xl"
+                                        className="rounded-lg overflow-hidden transition-shadow hover:shadow-xl"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                     >
                                         {/* Image */}
@@ -869,12 +869,12 @@ export default function InventarioPage() {
                                 whileHover={{ x: 2, transition: { duration: 0.12 } }}
                             >
                                 <div
-                                    className="grid grid-cols-[1fr_100px_130px] gap-3 items-center px-4 py-3.5 rounded-2xl"
+                                    className="grid grid-cols-[1fr_100px_130px] gap-3 items-center px-4 py-3.5 rounded-lg"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                 >
                                     {/* Property info */}
                                     <div className="flex items-center gap-3 min-w-0">
-                                        <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0"
+                                        <div className="relative w-11 h-11 rounded-lg overflow-hidden flex-shrink-0"
                                             style={{ background: T.surface }}>
                                             {image ? (
                                                 <Image src={image} alt={d.name} fill className="object-cover" />

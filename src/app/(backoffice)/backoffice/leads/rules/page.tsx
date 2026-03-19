@@ -233,7 +233,7 @@ export default function LeadRulesPage() {
                 subtitle="Configure como leads são qualificados automaticamente"
                 actions={
                     <button
-                        className="flex items-center gap-2 h-11 px-5 text-white rounded-xl font-semibold text-sm transition-colors"
+                        className="flex items-center gap-2 h-11 px-5 text-white rounded-[6px] font-semibold text-sm transition-colors"
                         style={{ background: 'var(--btn-primary-bg)' }}
                     >
                         <Plus size={16} />
@@ -251,7 +251,7 @@ export default function LeadRulesPage() {
             </div>
 
             {/* Info box */}
-            <div className="rounded-2xl p-4 flex items-start gap-3" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+            <div className="rounded-lg p-4 flex items-start gap-3" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
                 <Info size={16} className="text-blue-400 flex-shrink-0 mt-0.5" />
                 <div>
                     <p className="text-sm font-medium text-blue-300">Como funciona o Lead Scoring</p>
@@ -294,12 +294,12 @@ export default function LeadRulesPage() {
                     return (
                         <div
                             key={regra.id}
-                            className={`rounded-2xl p-5 transition-all group ${!regra.ativa ? 'opacity-60' : ''}`}
+                            className={`rounded-lg p-5 transition-all group ${!regra.ativa ? 'opacity-60' : ''}`}
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}
                         >
                             <div className="flex items-start gap-4">
                                 {/* Ícone */}
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                                     style={{ background: `${regra.color}18`, border: `1px solid ${regra.color}30` }}>
                                     <Icon size={22} style={{ color: regra.color }} />
                                 </div>
@@ -348,14 +348,14 @@ export default function LeadRulesPage() {
                                 {/* Ações */}
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <button
-                                        className="w-8 h-8 flex items-center justify-center rounded-xl transition-all opacity-0 group-hover:opacity-100 hover:bg-white/10"
+                                        className="w-8 h-8 flex items-center justify-center rounded-[6px] transition-all opacity-0 group-hover:opacity-100 hover:bg-white/10"
                                         title="Editar"
                                     >
                                         <Edit size={14} style={{ color: T.textMuted }} />
                                     </button>
                                     <button
                                         onClick={() => toggleRegra(regra.id)}
-                                        className="flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-medium transition-colors"
+                                        className="flex items-center gap-1.5 h-8 px-3 rounded-[6px] text-xs font-medium transition-colors"
                                         title={regra.ativa ? 'Desativar' : 'Ativar'}
                                     >
                                         {regra.ativa ? (
@@ -377,7 +377,7 @@ export default function LeadRulesPage() {
                 })}
 
                 {regrasFiltradas.length === 0 && (
-                    <div className="text-center py-12 rounded-2xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="text-center py-12 rounded-lg" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <Settings size={40} className="mx-auto mb-3" style={{ color: T.textMuted, opacity: 0.4 }} />
                         <p style={{ color: T.textMuted }}>Nenhuma regra encontrada</p>
                         <button className="mt-3 text-sm font-medium hover:opacity-80 transition-opacity" style={{ color: T.accent }}>
@@ -388,7 +388,7 @@ export default function LeadRulesPage() {
             </div>
 
             {/* Score preview */}
-            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>
                     Simulador de Score
                 </h3>
@@ -398,7 +398,7 @@ export default function LeadRulesPage() {
                         { label: 'Lead Morno', range: '20–49 pts', bgColor: 'rgba(249,115,22,0.1)', textColor: '#fb923c', desc: 'Follow-up em 48h' },
                         { label: 'Lead Quente', range: '50+ pts', bgColor: 'rgba(239,68,68,0.1)', textColor: T.error, desc: 'Contato imediato' },
                     ].map(cat => (
-                        <div key={cat.label} className="rounded-xl p-4" style={{ background: cat.bgColor }}>
+                        <div key={cat.label} className="rounded-lg p-4" style={{ background: cat.bgColor }}>
                             <p className="text-sm font-bold" style={{ color: cat.textColor }}>{cat.label}</p>
                             <p className="text-xs font-mono mt-1" style={{ color: cat.textColor }}>{cat.range}</p>
                             <p className="text-xs mt-2 opacity-70" style={{ color: cat.textColor }}>{cat.desc}</p>

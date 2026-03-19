@@ -25,7 +25,7 @@ export default function ThemeToggle({ size = 'md' }: { size?: 'sm' | 'md' }) {
         <motion.button
             whileTap={{ scale: 0.88 }}
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
-            className={`flex items-center justify-center rounded-xl transition-all ${size === 'sm' ? 'w-8 h-8' : 'w-9 h-9'}`}
+            className={`flex items-center justify-center rounded-lg transition-all ${size === 'sm' ? 'w-8 h-8' : 'w-9 h-9'}`}
             style={{
                 background: 'transparent',
                 border: '1px solid transparent',

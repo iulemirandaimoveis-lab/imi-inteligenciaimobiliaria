@@ -6,13 +6,15 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
     try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
         const { property_id, tenant_id } = await req.json()
 
         if (!property_id) {
             return NextResponse.json({ error: 'property_id is required' }, { status: 400 })
         }
-
-        const supabase = await createClient()
 
         // Fetch property data
         const { data: property, error: propErr } = await supabase

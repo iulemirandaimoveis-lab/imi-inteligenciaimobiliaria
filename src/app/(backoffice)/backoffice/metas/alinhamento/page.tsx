@@ -87,7 +87,7 @@ function TreeNode({
       {/* Node */}
       <Link
         href={`/backoffice/metas/okrs/${obj.id}`}
-        className="block rounded-xl border border-white/10 p-4 hover:border-white/20 transition-colors group"
+        className="block rounded-lg border border-white/10 p-4 hover:border-white/20 transition-colors group"
         style={{ background: 'rgba(255,255,255,0.03)' }}
       >
         <div className="flex items-start justify-between">
@@ -251,7 +251,7 @@ export default function AlinhamentoPage() {
 
       {/* Tree */}
       {objectives.length === 0 ? (
-        <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <Target className="w-8 h-8 text-white/20 mx-auto mb-3" />
           <p className="text-white/50 text-sm">Nenhum OKR encontrado para {QUARTER}.</p>
           <p className="text-white/30 text-xs mt-1">Crie OKRs com relacionamento pai/filho para visualizar o alinhamento.</p>

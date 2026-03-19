@@ -107,7 +107,7 @@ export default function SimuladorCreditoPage() {
                 actions={
                     <button
                         onClick={() => { toast.success('Simulação salva com sucesso!'); router.push('/backoffice/credito') }}
-                        className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90"
+                        className="flex items-center gap-2 px-5 rounded-[6px] text-sm font-bold text-white transition-all hover:opacity-90"
                         style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}
                     >
                         <Save size={16} /> Salvar Simulação
@@ -118,7 +118,7 @@ export default function SimuladorCreditoPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* LEFT: Form */}
                 <div className="lg:col-span-1">
-                    <div className="sticky top-6 space-y-5 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="sticky top-6 space-y-5 rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-base font-bold" style={{ color: T.text }}>Dados da Simulação</h2>
 
                         {/* Valor do Imóvel */}
@@ -182,7 +182,7 @@ export default function SimuladorCreditoPage() {
                             <div className="grid grid-cols-2 gap-2">
                                 {(['price', 'sac'] as const).map(s => (
                                     <button key={s} onClick={() => setSystem(s)}
-                                        className="h-11 rounded-xl font-semibold text-sm transition-all uppercase"
+                                        className="h-11 rounded-[6px] font-semibold text-sm transition-all uppercase"
                                         style={{
                                             background: system === s ? T.accent : T.elevated,
                                             border: `1px solid ${system === s ? T.accent : T.border}`,
@@ -215,7 +215,7 @@ export default function SimuladorCreditoPage() {
                 {/* RIGHT: Results */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Resumo */}
-                    <div className="rounded-2xl p-8 text-white" style={{ background: 'linear-gradient(135deg, #1E3A5F, #0B1929)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                    <div className="rounded-lg p-8 text-white" style={{ background: 'linear-gradient(135deg, #1E3A5F, #0B1929)', border: '1px solid rgba(59,130,246,0.2)' }}>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             {[
                                 { l: 'Parcela Mensal', v: fmt(monthlyPayment), large: true },
@@ -251,7 +251,7 @@ export default function SimuladorCreditoPage() {
                         ].map(item => {
                             const Icon = item.icon
                             return (
-                                <div key={item.label} className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div key={item.label} className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     <div className="flex items-center gap-3 mb-2">
                                         <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: item.bg }}>
                                             <Icon size={18} style={{ color: item.color }} />
@@ -268,7 +268,7 @@ export default function SimuladorCreditoPage() {
                     </div>
 
                     {/* Tabela de Amortização */}
-                    <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="p-5 border-b" style={{ borderColor: T.border }}>
                             <h3 className="text-base font-bold" style={{ color: T.text }}>Tabela de Amortização</h3>
                             <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Primeiras 12 e últimas 12 parcelas</p>
@@ -308,7 +308,7 @@ export default function SimuladorCreditoPage() {
                     </div>
 
                     {/* Comparativo Bancos */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h3 className="text-base font-bold mb-4" style={{ color: T.text }}>Comparativo de Bancos</h3>
                         <div className="space-y-3">
                             {bancos.map(bank => {
@@ -318,7 +318,7 @@ export default function SimuladorCreditoPage() {
                                 const selected = selectedBank.id === bank.id
                                 return (
                                     <div key={bank.id}
-                                        className="p-4 rounded-xl border-2 transition-all cursor-pointer"
+                                        className="p-4 rounded-lg border-2 transition-all cursor-pointer"
                                         style={{
                                             border: selected ? `2px solid ${T.accent}` : `1px solid ${T.border}`,
                                             background: selected ? 'rgba(72,101,129,0.1)' : T.elevated,

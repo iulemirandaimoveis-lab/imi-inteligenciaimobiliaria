@@ -103,7 +103,7 @@ export default function ProjetosPage() {
                 subtitle="Portfólio de desenvolvimentos ativos"
                 actions={
                     <button onClick={() => setShowModal(true)}
-                        className="flex items-center gap-2 h-11 px-5 text-white rounded-xl text-sm font-semibold hover:brightness-110 transition"
+                        className="flex items-center gap-2 h-11 px-5 text-white rounded-[6px] text-sm font-semibold hover:brightness-110 transition"
                         style={{ background: T.accent }}>
                         <Plus size={16} /> Novo Projeto
                     </button>
@@ -164,15 +164,15 @@ export default function ProjetosPage() {
                         <Loader2 className="animate-spin" size={32} style={{ color: T.accent }} />
                     </div>
                 ) : projetos.length === 0 ? (
-                    <div className="p-16 text-center rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                    <div className="p-16 text-center rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4"
                             style={{ background: T.surface }}>
                             <Building2 size={28} style={{ color: T.textMuted, opacity: 0.5 }} />
                         </div>
                         <h3 className="text-lg font-semibold mb-2" style={{ color: T.text }}>Nenhum projeto encontrado</h3>
                         <p className="text-sm mb-6" style={{ color: T.textMuted }}>Crie um novo projeto para começar</p>
                         <button onClick={() => setShowModal(true)}
-                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold hover:brightness-110 transition"
+                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold hover:brightness-110 transition"
                             style={{ background: T.accent }}>
                             <Plus size={16} /> Novo Projeto
                         </button>
@@ -183,7 +183,7 @@ export default function ProjetosPage() {
                             const stt = STATUS_CFG[p.status] || { l: p.status, color: 'var(--text-tertiary)' }
                             const pct = p.unidades > 0 ? Math.round((p.unidades_vendidas / p.unidades) * 100) : 0
                             return (
-                                <div key={p.id} className="overflow-hidden rounded-2xl transition-all"
+                                <div key={p.id} className="overflow-hidden rounded-lg transition-all"
                                     style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     {/* Image placeholder */}
                                     <div className="h-36 flex items-center justify-center relative overflow-hidden"
@@ -260,7 +260,7 @@ export default function ProjetosPage() {
             {/* Create Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="w-full max-w-lg p-6 space-y-5 max-h-[90vh] overflow-y-auto rounded-2xl"
+                    <div className="w-full max-w-lg p-6 space-y-5 max-h-[90vh] overflow-y-auto rounded-xl"
                         style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="flex items-center justify-between">
                             <h2 className="text-lg font-bold" style={{ color: T.text }}>Novo Projeto</h2>
@@ -277,7 +277,7 @@ export default function ProjetosPage() {
                             <div>
                                 <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Nome *</label>
                                 <input value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })}
-                                    className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                    className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                     placeholder="Nome do projeto" />
                             </div>
@@ -286,14 +286,14 @@ export default function ProjetosPage() {
                                 <div>
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Tipo</label>
                                     <input value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })}
-                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         placeholder="Ex: Residencial" />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Status</label>
                                     <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}
-                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                                         {Object.entries(STATUS_CFG).map(([k, v]) => (
                                             <option key={k} value={k}>{v.l}</option>
@@ -306,14 +306,14 @@ export default function ProjetosPage() {
                                 <div>
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Cidade</label>
                                     <input value={form.cidade} onChange={e => setForm({ ...form, cidade: e.target.value })}
-                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         placeholder="Cidade" />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Estado</label>
                                     <input value={form.estado} onChange={e => setForm({ ...form, estado: e.target.value })}
-                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         placeholder="UF" />
                                 </div>
@@ -324,14 +324,14 @@ export default function ProjetosPage() {
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Unidades</label>
                                     <input type="number" value={form.unidades}
                                         onChange={e => setForm({ ...form, unidades: parseInt(e.target.value) || 0 })}
-                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>VGV (R$)</label>
                                     <input type="number" value={form.vgv}
                                         onChange={e => setForm({ ...form, vgv: parseFloat(e.target.value) || 0 })}
-                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        className="w-full h-11 px-4 rounded-[6px] outline-none text-sm"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
                                 </div>
                             </div>
@@ -339,7 +339,7 @@ export default function ProjetosPage() {
                             <div>
                                 <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Descrição</label>
                                 <textarea value={form.descricao} onChange={e => setForm({ ...form, descricao: e.target.value })}
-                                    rows={3} className="w-full px-4 py-3 rounded-xl outline-none text-sm resize-none"
+                                    rows={3} className="w-full px-4 py-3 rounded-[6px] outline-none text-sm resize-none"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                     placeholder="Detalhes do projeto" />
                             </div>
@@ -347,12 +347,12 @@ export default function ProjetosPage() {
 
                         <div className="flex gap-3 pt-2">
                             <button onClick={() => setShowModal(false)}
-                                className="flex-1 h-11 rounded-xl font-medium transition"
+                                className="flex-1 h-11 rounded-[6px] font-medium transition"
                                 style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>
                                 Cancelar
                             </button>
                             <button onClick={handleCreate} disabled={saving || !form.nome}
-                                className="flex-1 h-11 text-white rounded-xl font-semibold hover:brightness-110 transition disabled:opacity-40"
+                                className="flex-1 h-11 text-white rounded-[6px] font-semibold hover:brightness-110 transition disabled:opacity-40"
                                 style={{ background: T.accent }}>
                                 {saving ? <Loader2 className="animate-spin mx-auto" size={20} /> : 'Criar Projeto'}
                             </button>

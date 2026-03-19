@@ -56,13 +56,13 @@ export default function ComparadorPage() {
       </div>
 
       {/* Value input */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <label className="block text-xs text-white/50 mb-2">Valor do Investimento (R$)</label>
         <input
           type="number"
           value={value}
           onChange={e => setValue(+e.target.value || 0)}
-          className="w-full px-4 py-3 rounded-lg border border-white/10 text-xl text-white focus:outline-none focus:border-gold/50"
+          className="w-full px-4 py-3 rounded-[6px] border border-white/10 text-xl text-white focus:outline-none focus:border-gold/50"
           style={{ background: 'rgba(255,255,255,0.05)', ...dmMono }}
         />
         <div className="flex gap-2 mt-3">
@@ -82,7 +82,7 @@ export default function ComparadorPage() {
       </div>
 
       {/* Comparison table */}
-      <div className="rounded-xl border border-white/10 overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)' }}>
         {/* Market headers */}
         <div className="grid grid-cols-4 border-b border-white/10">
           <div className="p-4 text-xs text-white/30">Metrica</div>
@@ -119,7 +119,7 @@ export default function ComparadorPage() {
       </div>
 
       {/* Visual comparison bars */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4">Atratividade por Metrica</h3>
         {[
           { label: 'Cap Rate', values: [5.8, 6.2, 7.5] },

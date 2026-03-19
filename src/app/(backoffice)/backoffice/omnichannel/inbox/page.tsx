@@ -259,13 +259,13 @@ export default function SocialInboxPage() {
                 actions={
                     <div className="flex items-center gap-2">
                         <button onClick={fetchMessages}
-                            className="p-2 rounded-xl transition-colors hover:opacity-70 flex-shrink-0"
+                            className="p-2 rounded-[6px] transition-colors hover:opacity-70 flex-shrink-0"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
                         </button>
                         {!gmailConnected && (
                             <a href="/api/auth/google"
-                                className="flex items-center gap-1.5 h-10 px-4 rounded-xl text-xs font-semibold flex-shrink-0"
+                                className="flex items-center gap-1.5 h-10 px-4 rounded-[6px] text-xs font-semibold flex-shrink-0"
                                 style={{ background: 'rgba(234,67,53,0.12)', color: '#EA4335' }}>
                                 <Mail size={13} />
                                 Conectar Gmail
@@ -275,7 +275,7 @@ export default function SocialInboxPage() {
                 }
             />
 
-            <div className="flex flex-col flex-1 min-h-0 overflow-hidden rounded-2xl"
+            <div className="flex flex-col flex-1 min-h-0 overflow-hidden rounded-lg"
             style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
 
             {/* Channel tabs */}
@@ -317,7 +317,7 @@ export default function SocialInboxPage() {
                     style={{ borderRight: `1px solid ${T.border}` }}>
                     {/* Search */}
                     <div className="px-3 py-2 flex-shrink-0" style={{ borderBottom: `1px solid ${T.border}` }}>
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
                             style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
                             <Search size={12} style={{ color: T.textMuted }} />
                             <input value={search} onChange={e => setSearch(e.target.value)}
@@ -335,7 +335,7 @@ export default function SocialInboxPage() {
                             </div>
                         ) : filtered.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-16 gap-3 px-4 text-center">
-                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                                <div className="w-12 h-12 rounded-lg flex items-center justify-center"
                                     style={{ background: 'rgba(255,255,255,0.05)' }}>
                                     <MessageCircle size={20} style={{ color: T.textMuted }} />
                                 </div>
@@ -344,7 +344,7 @@ export default function SocialInboxPage() {
                                 </p>
                                 {!gmailConnected && channel === 'all' && (
                                     <a href="/api/auth/google"
-                                        className="text-[11px] font-semibold px-3 py-1.5 rounded-xl"
+                                        className="text-[11px] font-semibold px-3 py-1.5 rounded-lg"
                                         style={{ background: 'rgba(234,67,53,0.12)', color: '#EA4335' }}>
                                         Conectar Gmail
                                     </a>
@@ -364,7 +364,7 @@ export default function SocialInboxPage() {
                 <div className="flex-1 flex flex-col overflow-hidden">
                     {!selected ? (
                         <div className="flex flex-col items-center justify-center flex-1 gap-4">
-                            <div className="w-16 h-16 rounded-3xl flex items-center justify-center"
+                            <div className="w-16 h-16 rounded-lg flex items-center justify-center"
                                 style={{ background: 'rgba(255,255,255,0.04)' }}>
                                 <MessageCircle size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
                             </div>
@@ -413,7 +413,7 @@ export default function SocialInboxPage() {
 
                             {/* Message body */}
                             <div className="flex-1 overflow-y-auto px-5 py-4">
-                                <div className="rounded-2xl p-4"
+                                <div className="rounded-lg p-4"
                                     style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
                                     <p className="text-[13px] leading-relaxed whitespace-pre-wrap" style={{ color: T.text }}>
                                         {selected.body || selected.preview}
@@ -423,7 +423,7 @@ export default function SocialInboxPage() {
 
                             {/* Reply area */}
                             <div className="px-4 py-3 flex-shrink-0" style={{ borderTop: `1px solid ${T.border}` }}>
-                                <div className="rounded-2xl overflow-hidden"
+                                <div className="rounded-lg overflow-hidden"
                                     style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
                                     <textarea
                                         ref={replyRef}
@@ -440,7 +440,7 @@ export default function SocialInboxPage() {
                                     <div className="flex items-center justify-between px-3 py-2"
                                         style={{ borderTop: `1px solid ${T.border}` }}>
                                         <button onClick={handleAiSuggest} disabled={aiLoading}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all disabled:opacity-50"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-50"
                                             style={{ background: 'rgba(167,139,250,0.12)', color: 'var(--imi-gold-400)' }}>
                                             {aiLoading ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                                             Sugerir com IA
@@ -450,7 +450,7 @@ export default function SocialInboxPage() {
                                             <button
                                                 onClick={handleSend}
                                                 disabled={!reply.trim() || sending}
-                                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[12px] font-semibold transition-all disabled:opacity-40"
+                                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[12px] font-semibold transition-all disabled:opacity-40"
                                                 style={{
                                                     background: reply.trim() ? CHANNEL_CFG[selected.channel].color : 'rgba(255,255,255,0.05)',
                                                     color: reply.trim() ? 'white' : T.textMuted,

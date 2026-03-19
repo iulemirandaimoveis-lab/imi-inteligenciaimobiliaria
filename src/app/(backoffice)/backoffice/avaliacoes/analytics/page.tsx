@@ -143,17 +143,17 @@ export default function AvaliacoesAnalyticsPage() {
                 <div className="animate-pulse" style={{ height: '72px', borderRadius: '6px', background: T.surface, border: `1px solid ${T.border}` }} />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[...Array(4)].map((_, i) => (
-                        <div key={i} className="animate-pulse rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div key={i} className="animate-pulse rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div style={{ width: '40px', height: '40px', borderRadius: '6px', background: T.elevated, marginBottom: '12px' }} />
                             <div style={{ height: '28px', width: '60%', borderRadius: '6px', background: T.elevated, marginBottom: '8px' }} />
                             <div style={{ height: '12px', width: '80%', borderRadius: '6px', background: T.elevated }} />
                         </div>
                     ))}
                 </div>
-                <div className="animate-pulse rounded-2xl" style={{ height: '200px', background: T.surface, border: `1px solid ${T.border}` }} />
+                <div className="animate-pulse rounded-lg" style={{ height: '200px', background: T.surface, border: `1px solid ${T.border}` }} />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {[...Array(2)].map((_, i) => (
-                        <div key={i} className="animate-pulse rounded-2xl" style={{ height: '240px', background: T.surface, border: `1px solid ${T.border}` }} />
+                        <div key={i} className="animate-pulse rounded-lg" style={{ height: '240px', background: T.surface, border: `1px solid ${T.border}` }} />
                     ))}
                 </div>
             </div>
@@ -168,7 +168,7 @@ export default function AvaliacoesAnalyticsPage() {
                 title="Analytics: Laudos & Avaliações"
                 subtitle={`Performance analítica do motor de avaliação imobiliária · ${data.total} avaliações no período`}
                 actions={
-                    <div className="flex rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                    <div className="flex rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                         {([
                             { key: '30d', label: '30d' },
                             { key: '3m',  label: '3m'  },
@@ -199,8 +199,8 @@ export default function AvaliacoesAnalyticsPage() {
                     { label: 'SLA Médio', value: `${data.avgTime.toFixed(1)} dias`, icon: Clock, color: 'var(--bo-accent)', bg: 'color-mix(in srgb, var(--bo-accent) 12%, transparent)' },
                     { label: 'Billing Total', value: formatCurrency(data.totalRevenue), icon: DollarSign, color: 'var(--warning)', bg: 'color-mix(in srgb, var(--warning) 12%, transparent)' },
                 ].map(({ label, value, icon: Icon, color, bg }) => (
-                    <div key={label} className="rounded-2xl p-5 relative overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: bg }}>
+                    <div key={label} className="rounded-lg p-5 relative overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style={{ background: bg }}>
                             <Icon size={20} style={{ color }} />
                         </div>
                         <p className="text-3xl font-black mb-1 leading-tight" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{value}</p>
@@ -219,7 +219,7 @@ export default function AvaliacoesAnalyticsPage() {
                     { label: 'Em Andamento', value: data.pending, color: 'var(--info)', bg: 'color-mix(in srgb, var(--info) 8%, transparent)', border: 'color-mix(in srgb, var(--info) 20%, transparent)' },
                     { label: 'Canceladas', value: data.cancelled, color: 'var(--error)', bg: 'color-mix(in srgb, var(--error) 8%, transparent)', border: 'color-mix(in srgb, var(--error) 20%, transparent)' },
                 ].map(({ label, value, color, bg, border }) => (
-                    <div key={label} className="rounded-xl p-4 text-center" style={{ background: bg, border: `1px solid ${border}` }}>
+                    <div key={label} className="rounded-lg p-4 text-center" style={{ background: bg, border: `1px solid ${border}` }}>
                         <p className="text-2xl font-bold" style={{ color }}>{value}</p>
                         <p className="text-xs mt-1" style={{ color }}>{label}</p>
                     </div>
@@ -229,7 +229,7 @@ export default function AvaliacoesAnalyticsPage() {
             {/* Distribution Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* By tipo_imovel */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="mb-5">
                         <h3 className="text-base font-bold" style={{ color: T.text }}>Segmentação por Tipo de Imóvel</h3>
                         <p className="text-xs mt-1" style={{ color: T.textMuted }}>Distribuição por tipologia</p>
@@ -267,7 +267,7 @@ export default function AvaliacoesAnalyticsPage() {
                 </div>
 
                 {/* By metodologia */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="mb-5">
                         <h3 className="text-base font-bold" style={{ color: T.text }}>Metodologias (NBR 14653)</h3>
                         <p className="text-xs mt-1" style={{ color: T.textMuted }}>Consistência técnica dos laudos</p>
@@ -298,7 +298,7 @@ export default function AvaliacoesAnalyticsPage() {
             </div>
 
             {/* Monthly Trend */}
-            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center justify-between mb-5">
                     <div>
                         <h3 className="text-base font-bold" style={{ color: T.text }}>Trend de Billing & Produtividade</h3>
@@ -312,7 +312,7 @@ export default function AvaliacoesAnalyticsPage() {
                         return (
                             <div key={month.month} className="flex items-center gap-4">
                                 <span className="text-xs font-bold w-12 shrink-0 uppercase" style={{ color: T.textMuted }}>{month.month}</span>
-                                <div className="flex-1 h-10 rounded-xl overflow-hidden relative" style={{ background: T.elevated }}>
+                                <div className="flex-1 h-10 rounded-lg overflow-hidden relative" style={{ background: T.elevated }}>
                                     <div
                                         className="h-full transition-all duration-700"
                                         style={{ width: `${pct}%`, background: `${T.accent}30`, borderRight: `3px solid ${T.accent}` }}
@@ -334,7 +334,7 @@ export default function AvaliacoesAnalyticsPage() {
             {/* Bottom row: top clients + by neighborhood */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Top clients */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="mb-5">
                         <h3 className="text-base font-bold" style={{ color: T.text }}>Top Contratantes</h3>
                         <p className="text-xs mt-1" style={{ color: T.textMuted }}>Por volume de ordens</p>
@@ -344,8 +344,8 @@ export default function AvaliacoesAnalyticsPage() {
                     ) : (
                         <div className="space-y-3">
                             {data.topClients.map((client, i) => (
-                                <div key={client.name} className="flex items-center gap-4 p-4 rounded-xl" style={{ background: T.elevated }}>
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
+                                <div key={client.name} className="flex items-center gap-4 p-4 rounded-lg" style={{ background: T.elevated }}>
+                                    <div className="w-10 h-10 rounded-[6px] flex items-center justify-center text-sm font-bold shrink-0"
                                         style={{ background: T.surface, color: T.accent, border: `1px solid ${T.border}` }}>
                                         {i + 1}
                                     </div>
@@ -365,7 +365,7 @@ export default function AvaliacoesAnalyticsPage() {
                 </div>
 
                 {/* By bairro */}
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="mb-5">
                         <h3 className="text-base font-bold" style={{ color: T.text }}>Valorização por Bairro</h3>
                         <p className="text-xs mt-1" style={{ color: T.textMuted }}>Honorário médio por localização</p>
@@ -398,7 +398,7 @@ export default function AvaliacoesAnalyticsPage() {
             </div>
 
             {/* Executive Summary */}
-            <div className="rounded-2xl p-8 relative overflow-hidden" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-8 relative overflow-hidden" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                     <PieChart size={180} />
                 </div>
@@ -419,7 +419,7 @@ export default function AvaliacoesAnalyticsPage() {
                             color: 'var(--info)'
                         },
                     ].map(({ label, value, sub, color }) => (
-                        <div key={label} className="text-center p-6 rounded-2xl" style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}>
+                        <div key={label} className="text-center p-6 rounded-lg" style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}>
                             <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: T.textDim }}>{label}</p>
                             <p className="text-4xl font-black mb-1" style={{ color }}>{value}</p>
                             <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textDim }}>{sub}</p>

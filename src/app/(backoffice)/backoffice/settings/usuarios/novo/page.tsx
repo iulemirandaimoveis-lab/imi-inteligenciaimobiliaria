@@ -60,7 +60,7 @@ export default function NovoUsuarioPage() {
                 subtitle="Adicionar um novo usuário ao sistema"
                 actions={
                     <button type="button" onClick={() => router.back()}
-                        className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-medium transition-all"
+                        className="flex items-center gap-2 h-11 px-5 rounded-[6px] text-sm font-medium transition-all"
                         style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: T.elevated }}>
                         <ArrowLeft size={16} /> Voltar
                     </button>
@@ -68,7 +68,7 @@ export default function NovoUsuarioPage() {
             />
 
             {/* Form card */}
-            <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                 <form onSubmit={handleCreate} className="space-y-5">
                     {/* Name */}
                     <div>
@@ -146,7 +146,7 @@ export default function NovoUsuarioPage() {
                     </div>
 
                     {/* Info box */}
-                    <div className="rounded-xl p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
+                    <div className="rounded-lg p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
                         <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                             💡 O usuário receberá as credenciais para acessar o sistema. A senha pode ser alterada no primeiro acesso.
                         </p>
@@ -158,14 +158,14 @@ export default function NovoUsuarioPage() {
                             type="button"
                             disabled={loading}
                             onClick={() => router.back()}
-                            className="flex-1 h-11 rounded-xl text-sm font-medium transition-all"
+                            className="flex-1 h-11 rounded-[6px] text-sm font-medium transition-all"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
                             Cancelar
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
+                            className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
                             style={{ background: T.accent }}>
                             {loading && <Loader2 size={15} className="animate-spin" />}
                             {loading ? 'Criando...' : 'Criar Usuário'}

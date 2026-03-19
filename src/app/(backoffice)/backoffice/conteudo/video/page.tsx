@@ -188,13 +188,13 @@ export default function VideoCreatorPage() {
                 <div className="space-y-4">
 
                     {/* Tab navigation */}
-                    <div className="flex gap-1 p-1 rounded-xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="flex gap-1 p-1 rounded-lg" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         {TABS.map(t => (
                             <motion.button
                                 key={t.id}
                                 onClick={() => setTab(t.id)}
                                 whileTap={{ scale: 0.96 }}
-                                className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg text-xs font-semibold transition-all"
+                                className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-[6px] text-xs font-semibold transition-all"
                                 style={{
                                     background: tab === t.id ? T.accent : 'transparent',
                                     color: tab === t.id ? 'white' : T.textDim,
@@ -217,7 +217,7 @@ export default function VideoCreatorPage() {
                                 className="space-y-3"
                             >
                                 {/* Format selection */}
-                                <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div className="rounded-lg p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textDim }}>Formato</p>
                                     <div className="grid grid-cols-2 gap-2">
                                         {(Object.entries(FORMAT_CONFIG) as [Format, typeof FORMAT_CONFIG.tiktok][]).map(([key, cfg]) => (
@@ -225,7 +225,7 @@ export default function VideoCreatorPage() {
                                                 key={key}
                                                 onClick={() => setSelectedFormat(key)}
                                                 whileTap={{ scale: 0.95 }}
-                                                className="flex flex-col gap-1 p-3 rounded-xl text-left transition-all"
+                                                className="flex flex-col gap-1 p-3 rounded-lg text-left transition-all"
                                                 style={{
                                                     background: selectedFormat === key ? `${T.accent}20` : T.elevated,
                                                     border: `1px solid ${selectedFormat === key ? T.accent : T.border}`,
@@ -242,7 +242,7 @@ export default function VideoCreatorPage() {
                                 </div>
 
                                 {/* Template selection */}
-                                <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div className="rounded-lg p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textDim }}>Template</p>
                                     <div className="space-y-2">
                                         {TEMPLATES.map(tpl => (
@@ -251,13 +251,13 @@ export default function VideoCreatorPage() {
                                                 onClick={() => setSelectedTemplate(tpl.id)}
                                                 whileHover={{ x: 2 }}
                                                 whileTap={{ scale: 0.98 }}
-                                                className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all"
+                                                className="w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all"
                                                 style={{
                                                     background: selectedTemplate === tpl.id ? `${tpl.color}12` : T.elevated,
                                                     border: `1px solid ${selectedTemplate === tpl.id ? tpl.color + '44' : T.border}`,
                                                 }}
                                             >
-                                                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                                                     style={{ background: `${tpl.color}18` }}>
                                                     <tpl.icon size={16} style={{ color: tpl.color }} />
                                                 </div>
@@ -276,7 +276,7 @@ export default function VideoCreatorPage() {
                                 <motion.button
                                     onClick={() => setTab('editor')}
                                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                                    className="w-full h-10 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold text-white"
+                                    className="w-full h-10 rounded-[6px] flex items-center justify-center gap-2 text-sm font-semibold text-white"
                                     style={{ background: T.accent }}
                                 >
                                     Próximo <ChevronRight size={15} />
@@ -293,7 +293,7 @@ export default function VideoCreatorPage() {
                                 exit={{ opacity: 0, x: 8 }}
                                 className="space-y-3"
                             >
-                                <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div className="rounded-lg p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textDim }}>
                                         Conteúdo — {selectedTemplate === 'PropertyShowcase' ? 'Imóvel' : 'Relatório'}
                                     </p>
@@ -315,7 +315,7 @@ export default function VideoCreatorPage() {
                                                         value={f.val}
                                                         onChange={e => f.set(e.target.value)}
                                                         placeholder={f.placeholder}
-                                                        className="w-full h-8 px-3 rounded-lg text-xs outline-none"
+                                                        className="w-full h-8 px-3 rounded-[6px] text-xs outline-none"
                                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                                         onFocus={e => { e.currentTarget.style.border = `1px solid ${T.borderGold}` }}
                                                         onBlur={e => { e.currentTarget.style.border = `1px solid ${T.border}` }}
@@ -330,7 +330,7 @@ export default function VideoCreatorPage() {
                                                             key={n}
                                                             onClick={() => setBedrooms(n)}
                                                             whileTap={{ scale: 0.88 }}
-                                                            className="w-9 h-8 rounded-lg text-xs font-bold transition-all"
+                                                            className="w-9 h-8 rounded-[6px] text-xs font-bold transition-all"
                                                             style={{
                                                                 background: bedrooms === n ? T.accent : T.elevated,
                                                                 color: bedrooms === n ? 'white' : T.textDim,
@@ -354,7 +354,7 @@ export default function VideoCreatorPage() {
                                 <motion.button
                                     onClick={loadComposition}
                                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                                    className="w-full h-10 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold text-white"
+                                    className="w-full h-10 rounded-[6px] flex items-center justify-center gap-2 text-sm font-semibold text-white"
                                     style={{ background: T.accent }}
                                 >
                                     <Play size={15} /> Gerar Preview
@@ -371,7 +371,7 @@ export default function VideoCreatorPage() {
                                 exit={{ opacity: 0, x: 8 }}
                                 className="space-y-3"
                             >
-                                <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div className="rounded-lg p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     <div className="flex items-center justify-between">
                                         <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textDim }}>Status do Render</p>
                                         <RenderStatusBadge status={renderStatus} />
@@ -392,7 +392,7 @@ export default function VideoCreatorPage() {
                                     </div>
                                 </div>
 
-                                <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: T.textDim }}>Renderizar para</p>
                                     <div className="space-y-1.5">
                                         {['TikTok', 'Instagram Reels', 'YouTube Shorts', 'Download MP4'].map((dest, i) => (
@@ -410,7 +410,7 @@ export default function VideoCreatorPage() {
 
                 {/* ── PAINEL DIREITO: Preview ── */}
                 <div
-                    className="rounded-2xl overflow-hidden flex items-center justify-center"
+                    className="rounded-lg overflow-hidden flex items-center justify-center"
                     style={{
                         background: T.surface,
                         border: `1px solid ${T.border}`,
@@ -429,7 +429,7 @@ export default function VideoCreatorPage() {
                                 <motion.div
                                     animate={{ y: [0, -8, 0] }}
                                     transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                                    className="w-20 h-20 rounded-3xl flex items-center justify-center"
+                                    className="w-20 h-20 rounded-lg flex items-center justify-center"
                                     style={{ background: `${T.accent}18` }}
                                 >
                                     <Video size={36} style={{ color: T.accent, opacity: 0.7 }} />
@@ -489,7 +489,7 @@ export default function VideoCreatorPage() {
 
             {/* Info box */}
             <div
-                className="rounded-2xl p-4 flex items-start gap-3"
+                className="rounded-lg p-4 flex items-start gap-3"
                 style={{ background: `${T.accent}0a`, border: `1px solid ${T.accent}22` }}
             >
                 <Zap size={16} style={{ color: T.accent, flexShrink: 0, marginTop: 1 }} />

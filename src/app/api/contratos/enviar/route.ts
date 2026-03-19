@@ -2,6 +2,7 @@
 // ── Envio: Email (Resend/SMTP) + WhatsApp (Evolution/Z-API) ──
 
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -75,6 +76,10 @@ const getTpl = (idioma: string) => ({
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const {
       canal,
       destinatario_email,

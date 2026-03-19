@@ -147,7 +147,7 @@ export default function CreditoDetalhesPage() {
                     <p className="text-sm mb-4" style={{ color: T.textMuted }}>{error || 'Crédito não encontrado'}</p>
                     <button
                         onClick={() => router.push('/backoffice/credito')}
-                        className="px-4 py-2 rounded-xl text-white text-sm font-medium"
+                        className="px-4 py-2 rounded-lg text-white text-sm font-medium"
                         style={{ backgroundColor: T.accent }}
                     >
                         Voltar para lista
@@ -179,7 +179,7 @@ export default function CreditoDetalhesPage() {
                         {getStatusBadge(credit.status)}
                         <button
                             onClick={() => toast.info('Exportação em desenvolvimento')}
-                            className="h-9 px-3 rounded-xl font-medium flex items-center gap-2 text-sm flex-shrink-0"
+                            className="h-9 px-3 rounded-[6px] font-medium flex items-center gap-2 text-sm flex-shrink-0"
                             style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
                         >
                             <Download size={15} />
@@ -188,7 +188,7 @@ export default function CreditoDetalhesPage() {
                         {credit.client_email && (
                             <a
                                 href={`mailto:${credit.client_email}`}
-                                className="h-9 px-3 rounded-xl font-medium flex items-center gap-2 text-sm flex-shrink-0"
+                                className="h-9 px-3 rounded-[6px] font-medium flex items-center gap-2 text-sm flex-shrink-0"
                                 style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
                             >
                                 <Mail size={15} />
@@ -201,9 +201,9 @@ export default function CreditoDetalhesPage() {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-blue-500/15 flex items-center justify-center">
                             <Home size={20} className="text-blue-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Valor do Imóvel</p>
@@ -213,9 +213,9 @@ export default function CreditoDetalhesPage() {
                     </p>
                 </div>
 
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #4CAF7D' }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #4CAF7D' }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-green-500/15 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-green-500/15 flex items-center justify-center">
                             <DollarSign size={20} className="text-green-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Valor Financiado</p>
@@ -228,9 +228,9 @@ export default function CreditoDetalhesPage() {
                     )}
                 </div>
 
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #A89EC4' }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #A89EC4' }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-purple-500/15 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-purple-500/15 flex items-center justify-center">
                             <CreditCard size={20} className="text-purple-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Parcela Mensal</p>
@@ -241,9 +241,9 @@ export default function CreditoDetalhesPage() {
                     <p className="text-xs mt-1 font-mono" style={{ color: T.textMuted }}>{credit.term_months} meses</p>
                 </div>
 
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #E8A87C' }}>
+                <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #E8A87C' }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-orange-500/15 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-orange-500/15 flex items-center justify-center">
                             <Percent size={20} className="text-orange-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Taxa de Juros</p>
@@ -262,7 +262,7 @@ export default function CreditoDetalhesPage() {
                 {/* Left Column */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Dados do Cliente */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid #7BA3C2` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid #7BA3C2` }}>
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                             <User size={20} className="text-blue-400" />
                             Dados do Cliente
@@ -306,7 +306,7 @@ export default function CreditoDetalhesPage() {
                     </div>
 
                     {/* Dados do Imóvel */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid #4CAF7D` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid #4CAF7D` }}>
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                             <Building2 size={20} className="text-green-400" />
                             Dados do Imóvel
@@ -347,7 +347,7 @@ export default function CreditoDetalhesPage() {
 
                     {/* Tabela de Amortização */}
                     {amortizationTable.length > 0 && (
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: T.text }}>
                                     <Calculator size={20} className="text-purple-400" />
@@ -399,7 +399,7 @@ export default function CreditoDetalhesPage() {
                 <div className="space-y-6">
                     {/* Análise de Risco */}
                     {(credit.ltv != null || credit.dti != null) && (
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                                 <TrendingUp size={20} className="text-orange-400" />
                                 Análise de Risco
@@ -456,14 +456,14 @@ export default function CreditoDetalhesPage() {
 
                     {/* Documentos */}
                     {documents.length > 0 && (
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                                 <FileText size={20} className="text-blue-400" />
                                 Documentos
                             </h3>
                             <div className="space-y-3">
                                 {documents.map((doc, index) => (
-                                    <div key={index} className="flex items-center justify-between p-3 rounded-xl" style={{ background: T.elevated }}>
+                                    <div key={index} className="flex items-center justify-between p-3 rounded-lg" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-3">
                                             <FileText size={18} style={{ color: T.textMuted }} />
                                             <div>
@@ -486,7 +486,7 @@ export default function CreditoDetalhesPage() {
 
                     {/* Timeline */}
                     {timeline.length > 0 ? (
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                                 <Calendar size={20} className="text-purple-400" />
                                 Timeline
@@ -532,7 +532,7 @@ export default function CreditoDetalhesPage() {
                         </div>
                     ) : (
                         /* Timeline vazia — info básica */
-                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                                 <Calendar size={20} className="text-purple-400" />
                                 Informações

@@ -135,7 +135,7 @@ export default function PerformanceDashboard() {
                         { icon: DollarSign, label: 'Receita Total', value: fmtCurrency(totals.totalRevenue), color: 'var(--bo-warning)' },
                         { icon: TrendingUp, label: 'Taxa Conversão', value: `${totals.avgConversion}%`, color: T.accent },
                     ].map((kpi, i) => (
-                        <div key={i} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div key={i} className="rounded-lg p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-1.5 mb-2">
                                 <kpi.icon size={12} style={{ color: kpi.color }} />
                                 <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>{kpi.label}</span>
@@ -147,7 +147,7 @@ export default function PerformanceDashboard() {
             )}
 
             {/* AI Insights Button + Panel */}
-            <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid rgba(59,130,246,0.2)` }}>
+            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid rgba(59,130,246,0.2)` }}>
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                         <Brain size={14} style={{ color: T.accent }} />
@@ -209,7 +209,7 @@ export default function PerformanceDashboard() {
             </div>
 
             {/* Leaderboard */}
-            <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                 <div className="px-4 py-3" style={{ background: T.elevated }}>
                     <span className="text-xs font-bold" style={{ color: T.text }}>Ranking de Performance</span>
                 </div>

@@ -177,13 +177,13 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => router.back()}
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: T.card, border: `1px solid ${T.border}` }}
                         >
                             <ArrowLeft size={18} style={{ color: T.text }} />
                         </button>
                         <span
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
                             style={{ background: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)', border: '1px solid rgba(139,92,246,0.25)' }}
                         >
                             <Sparkles size={12} />
@@ -194,7 +194,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
             />
 
             {/* Progress Steps */}
-            <div className="rounded-2xl p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center">
                     {STEPS.map((step, index) => {
                         const StepIcon = step.icon
@@ -233,7 +233,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
             {currentStep === 1 && (
                 <div className="space-y-5">
                     {/* Property form */}
-                    <div className="rounded-2xl p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-5" style={{ color: T.sub }}>Dados do Imóvel</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="md:col-span-2">
@@ -282,7 +282,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     </div>
 
                     {/* Client form */}
-                    <div className="rounded-2xl p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-5" style={{ color: T.sub }}>Dados do Cliente</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -306,12 +306,12 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     </div>
 
                     {/* File upload */}
-                    <div className="rounded-2xl p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-5" style={{ color: T.sub }}>Documentos de Suporte</h2>
                         <label className="block cursor-pointer">
                             <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onChange={handleFileUpload} className="hidden" />
                             <div
-                                className="border-2 border-dashed rounded-2xl p-8 text-center transition-all hover:opacity-80"
+                                className="border-2 border-dashed rounded-[6px] p-8 text-center transition-all hover:opacity-80"
                                 style={{ borderColor: T.border }}
                             >
                                 <Upload size={32} className="mx-auto mb-3" style={{ color: T.sub, opacity: 0.5 }} />
@@ -322,7 +322,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                         {uploadedFiles.length > 0 && (
                             <div className="mt-4 space-y-2">
                                 {uploadedFiles.map(file => (
-                                    <div key={file.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: T.bg }}>
+                                    <div key={file.id} className="flex items-center gap-3 p-3 rounded-lg" style={{ background: T.bg }}>
                                         {file.type === 'image'
                                             ? <ImageIcon size={17} style={{ color: 'var(--bo-accent)' }} />
                                             : <FileText size={17} style={{ color: 'var(--imi-gold-500)' }} />
@@ -341,7 +341,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     </div>
 
                     {/* Info */}
-                    <div className="rounded-2xl p-5" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
+                    <div className="rounded-lg p-5" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
                         <div className="flex gap-3">
                             <AlertCircle size={18} style={{ color: 'var(--bo-accent)', flexShrink: 0, marginTop: 1 }} />
                             <div>
@@ -360,7 +360,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                         <button
                             onClick={handleAnalyze}
                             disabled={!propertyForm.address.trim()}
-                            className="flex items-center gap-2 h-11 px-8 rounded-xl font-medium transition-all disabled:opacity-40"
+                            className="flex items-center gap-2 h-11 px-8 rounded-[6px] font-medium transition-all disabled:opacity-40"
                             style={{ background: 'var(--btn-primary-bg)', color: 'white' }}
                         >
                             <Sparkles size={18} />
@@ -372,7 +372,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
 
             {/* ── Step 2: Loading ── */}
             {currentStep === 2 && (
-                <div className="rounded-2xl p-12" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-12" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                     <div className="max-w-md mx-auto text-center">
                         <div
                             className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
@@ -412,20 +412,20 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                 <div className="space-y-5">
                     {aiMeta.model && (
                         <div
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium"
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium"
                             style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.2)', color: 'var(--imi-gold-400)' }}
                         >
                             <Sparkles size={14} />
                             Gerado por {aiMeta.model} • {aiMeta.tokens?.toLocaleString()} tokens usados
                         </div>
                     )}
-                    <div className="rounded-2xl p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-lg p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                         <div className="flex items-center justify-between mb-5">
                             <h2 className="text-base font-bold" style={{ color: T.text }}>Laudo Gerado</h2>
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => { navigator.clipboard.writeText(aiContent); toast.success('Copiado!') }}
-                                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium transition-all"
+                                    className="flex items-center gap-1.5 h-8 px-3 rounded-[6px] text-xs font-medium transition-all"
                                     style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.sub }}
                                 >
                                     <Copy size={13} />
@@ -433,7 +433,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                 </button>
                                 <button
                                     onClick={() => { setIsEditing(v => !v); if (!isEditing) setEditableContent(aiContent) }}
-                                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium transition-all"
+                                    className="flex items-center gap-1.5 h-8 px-3 rounded-[6px] text-xs font-medium transition-all"
                                     style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.sub }}
                                 >
                                     <Edit3 size={13} />
@@ -447,7 +447,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                 value={editableContent}
                                 onChange={e => setEditableContent(e.target.value)}
                                 rows={30}
-                                className="w-full rounded-xl p-5 text-sm font-mono resize-none focus:outline-none"
+                                className="w-full rounded-[6px] p-5 text-sm font-mono resize-none focus:outline-none"
                                 style={{
                                     background: T.bg,
                                     border: `1px solid ${T.border}`,
@@ -457,7 +457,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                             />
                         ) : (
                             <div
-                                className="rounded-xl p-5 overflow-y-auto"
+                                className="rounded-lg p-5 overflow-y-auto"
                                 style={{
                                     background: T.bg,
                                     border: `1px solid ${T.border}`,
@@ -476,7 +476,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     <div className="flex flex-wrap gap-3">
                         <button
                             onClick={() => { setCurrentStep(1); setAiContent('') }}
-                            className="flex items-center gap-2 h-11 px-5 rounded-xl font-medium text-sm transition-all"
+                            className="flex items-center gap-2 h-11 px-5 rounded-[6px] font-medium text-sm transition-all"
                             style={{ background: T.card, border: `1px solid ${T.border}`, color: T.sub }}
                         >
                             <RefreshCw size={15} />
@@ -484,14 +484,14 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                         </button>
                         <button
                             onClick={() => setCurrentStep(4)}
-                            className="flex-1 h-11 rounded-xl font-medium text-sm transition-all"
+                            className="flex-1 h-11 rounded-[6px] font-medium text-sm transition-all"
                             style={{ background: T.card, border: `1px solid ${T.border}`, color: T.text }}
                         >
                             Exportar PDF
                         </button>
                         <button
                             onClick={handleSave}
-                            className="flex-1 h-11 rounded-xl font-medium flex items-center justify-center gap-2 transition-all"
+                            className="flex-1 h-11 rounded-[6px] font-medium flex items-center justify-center gap-2 transition-all"
                             style={{ background: '#1E3A5F', color: 'white' }}
                         >
                             <Save size={18} />
@@ -503,7 +503,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
 
             {/* ── Step 4: Done ── */}
             {currentStep === 4 && (
-                <div className="rounded-2xl p-12 text-center" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-12 text-center" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                     <div
                         className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                         style={{ background: 'rgba(107,184,123,0.12)' }}
@@ -514,7 +514,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     <p className="text-sm mb-8" style={{ color: T.sub }}>O laudo foi gerado com sucesso e está pronto para download.</p>
                     <div className="flex gap-3 justify-center">
                         <button
-                            className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-all"
+                            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium transition-all"
                             style={{ background: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)', border: '1px solid rgba(139,92,246,0.2)' }}
                         >
                             <Download size={18} />
@@ -522,7 +522,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                         </button>
                         <button
                             onClick={handleSave}
-                            className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-all"
+                            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium transition-all"
                             style={{ background: '#1E3A5F', color: 'white' }}
                         >
                             <Save size={18} />

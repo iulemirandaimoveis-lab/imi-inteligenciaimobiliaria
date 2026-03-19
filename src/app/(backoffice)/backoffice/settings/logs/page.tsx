@@ -183,14 +183,14 @@ export default function LogsPage() {
           <div className="flex gap-2">
             <button
               onClick={fetchLogs}
-              className="flex items-center gap-2 h-11 px-4 rounded-xl font-medium text-sm transition-all"
+              className="flex items-center gap-2 h-11 px-4 rounded-[6px] font-medium text-sm transition-all"
               style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
             >
               <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
               Atualizar
             </button>
             <button
-              className="flex items-center gap-2 h-11 px-4 rounded-xl font-medium text-sm transition-all"
+              className="flex items-center gap-2 h-11 px-4 rounded-[6px] font-medium text-sm transition-all"
               style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
             >
               <Download size={14} />
@@ -209,7 +209,7 @@ export default function LogsPage() {
       </div>
 
       {/* Filtros */}
-      <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textMuted }} />
@@ -234,7 +234,7 @@ export default function LogsPage() {
       </div>
 
       {/* Log Timeline */}
-      <div className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
         {/* Table header */}
         {!loading && filtered.length > 0 && (
           <div className="overflow-x-auto">
@@ -259,7 +259,7 @@ export default function LogsPage() {
                       className="transition-all hover:opacity-90">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                             style={{ background: cfg.bg }}>
                             <StatusIcon size={14} style={{ color: cfg.color }} />
                           </div>
@@ -322,7 +322,7 @@ export default function LogsPage() {
       </div>
 
       {/* Info */}
-      <div className="rounded-2xl p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
+      <div className="rounded-lg p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
           <strong style={{ color: T.text }}>Retenção:</strong> Logs são mantidos por 90 dias. Exportações são recomendadas para auditoria de longo prazo.
         </p>

@@ -56,7 +56,7 @@ export default function CorretoresPage() {
             </div>
 
             {/* Filters + List */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 {/* Filter bar */}
                 <div className="p-4 border-b space-y-3"
                     style={{ borderColor: T.border, background: T.elevated }}>
@@ -67,7 +67,7 @@ export default function CorretoresPage() {
                             placeholder="Buscar por nome, email ou CRECI..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full h-9 pl-8 pr-3 rounded-xl text-xs outline-none"
+                            className="w-full h-9 pl-8 pr-3 rounded-[6px] text-xs outline-none"
                             style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
                         />
                     </div>
@@ -142,7 +142,7 @@ export default function CorretoresPage() {
                                         <td className="px-5 py-4 text-right">
                                             <button
                                                 onClick={() => handleStatusToggle(broker.id, broker.status)}
-                                                className="p-2 rounded-lg transition-all hover:opacity-80"
+                                                className="p-2 rounded-[6px] transition-all hover:opacity-80"
                                                 style={{ color: broker.status === 'active' ? getStatusConfig('perdido').dot : getStatusConfig('ativo').dot }}
                                                 title={broker.status === 'active' ? 'Desativar' : 'Ativar'}>
                                                 {broker.status === 'active' ? <XCircle size={18} /> : <CheckCircle size={18} />}

@@ -88,7 +88,7 @@ export default function NovaSimulacaoPage() {
     }
   }
 
-  const inputCls = "w-full px-3 py-2.5 rounded-lg border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50"
+  const inputCls = "w-full px-3 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50"
   const inputBg = { background: 'rgba(255,255,255,0.05)' }
   const labelCls = "block text-xs text-white/50 mb-1.5"
 
@@ -123,7 +123,7 @@ export default function NovaSimulacaoPage() {
       </div>
 
       {/* Step content */}
-      <div className="rounded-xl border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.02)' }}>
         {step === 0 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-white mb-4">Selecione o Mercado</h2>

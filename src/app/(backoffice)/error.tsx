@@ -21,7 +21,7 @@ export default function Error({
         <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 py-12 text-center">
             {/* Icon */}
             <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+                className="w-16 h-16 rounded-lg flex items-center justify-center mb-5"
                 style={{ background: 'rgba(229,115,115,0.10)' }}
             >
                 <AlertTriangle size={28} style={{ color: 'var(--bo-error)' }} />
@@ -42,7 +42,7 @@ export default function Error({
             <div className="flex items-center gap-3">
                 <button
                     onClick={reset}
-                    className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all active:scale-95"
+                    className="flex items-center gap-2 h-11 px-6 rounded-[6px] text-sm font-semibold text-white transition-all active:scale-95"
                     style={{
                         background: 'var(--btn-primary-bg)',
                     }}
@@ -53,7 +53,7 @@ export default function Error({
 
                 <button
                     onClick={() => (window.location.href = '/backoffice/dashboard')}
-                    className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-medium transition-all active:scale-95"
+                    className="flex items-center gap-2 h-11 px-6 rounded-[6px] text-sm font-medium transition-all active:scale-95"
                     style={{
                         background: 'var(--bg-elevated)',
                         border: '1px solid var(--bo-border)',

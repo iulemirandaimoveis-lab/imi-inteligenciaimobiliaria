@@ -39,7 +39,7 @@ export default function InvestDashboard() {
           </h1>
           <p className="text-sm text-white/50 mt-1">Painel de Inteligência de Investimentos</p>
         </div>
-        <button className="px-4 py-2 rounded-lg text-sm font-medium text-navy-900" style={{ background: 'var(--imi-gold-500, #C8A44A)' }}>
+        <button className="px-4 py-2 rounded-[6px] text-sm font-medium text-navy-900" style={{ background: 'var(--imi-gold-500, #C8A44A)' }}>
           Nova Simulação
         </button>
       </div>
@@ -47,7 +47,7 @@ export default function InvestDashboard() {
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {kpis.map((kpi) => (
-          <div key={kpi.label} className="rounded-xl p-4 border border-white/10" style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(12px)' }}>
+          <div key={kpi.label} className="rounded-lg p-4 border border-white/10" style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(12px)' }}>
             <div className="flex items-center gap-2 mb-2">
               <kpi.icon className={`w-4 h-4 ${kpi.color}`} />
               <span className="text-xs text-white/50">{kpi.label}</span>
@@ -59,7 +59,7 @@ export default function InvestDashboard() {
       </div>
 
       {/* Índices do Dia */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <div className="flex items-center gap-2 mb-4">
           <Globe className="w-4 h-4 text-gold" />
           <h2 className="text-sm font-semibold text-white">Índices Econômicos — Brasil</h2>
@@ -90,7 +90,7 @@ export default function InvestDashboard() {
       </div>
 
       {/* Leads Quentes */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
           <Target className="w-4 h-4 text-amber-400" />
           Leads Quentes (Score &gt; 70)
@@ -108,7 +108,7 @@ export default function InvestDashboard() {
           { label: 'Comparador', href: '/backoffice/invest/comparador', icon: Globe },
           { label: 'Índices', href: '/backoffice/invest/indices', icon: TrendingUp },
         ].map(item => (
-          <a key={item.label} href={item.href} className="rounded-xl p-4 border border-white/10 hover:border-gold/30 transition-all group" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <a key={item.label} href={item.href} className="rounded-lg p-4 border border-white/10 hover:border-gold/30 transition-all group" style={{ background: 'rgba(255,255,255,0.02)' }}>
             <item.icon className="w-5 h-5 text-white/40 group-hover:text-gold transition-colors mb-2" />
             <div className="text-sm text-white/70 group-hover:text-white transition-colors">{item.label}</div>
           </a>

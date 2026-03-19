@@ -31,7 +31,7 @@ function ShimmerBlock({ style, className }: { style?: React.CSSProperties; class
   )
 }
 
-// card variant — rounded-2xl block
+// card variant — rounded-lg block
 function CardSkeleton({ height = 120, count = 1 }: { height?: number; count?: number }) {
   return (
     <>

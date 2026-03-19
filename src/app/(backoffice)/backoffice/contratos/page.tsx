@@ -115,7 +115,7 @@ export default function ContratosPage() {
                         <motion.button
                             whileTap={{ scale: 0.96 }}
                             onClick={() => router.push('/backoffice/contratos/novo')}
-                            className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white flex-shrink-0"
+                            className="flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white flex-shrink-0"
                             style={{
                                 height: '44px',
                                 background: 'var(--imi-gold-500)',
@@ -201,7 +201,7 @@ export default function ContratosPage() {
                 ].map(tab => (
                     <button key={tab.key}
                         onClick={() => setActiveTab(tab.key as any)}
-                        className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl text-xs font-semibold transition-all"
+                        className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-[6px] text-xs font-semibold transition-all"
                         style={{
                             background: activeTab === tab.key ? 'var(--imi-gold-500)' : T.surface,
                             color: activeTab === tab.key ? 'white' : T.textDim,
@@ -218,13 +218,13 @@ export default function ContratosPage() {
                 {activeTab === 'lista' && (
                     <motion.div key="lista" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
                         {/* Filters */}
-                        <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <div className="relative flex-1">
                                     <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
                                     <input type="text" placeholder="Buscar por número, modelo ou cliente..."
                                         value={search} onChange={e => setSearch(e.target.value)}
-                                        className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                                        className="w-full h-10 pl-9 pr-4 rounded-[6px] text-sm outline-none"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                     />
                                 </div>
@@ -244,9 +244,9 @@ export default function ContratosPage() {
                         {loading && (
                             <div className="space-y-2">
                                 {[...Array(4)].map((_, i) => (
-                                    <div key={i} className="animate-pulse rounded-2xl p-4 flex items-center gap-3"
+                                    <div key={i} className="animate-pulse rounded-lg p-4 flex items-center gap-3"
                                         style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                                        <div className="w-10 h-10 rounded-xl flex-shrink-0" style={{ background: T.elevated }} />
+                                        <div className="w-10 h-10 rounded-lg flex-shrink-0" style={{ background: T.elevated }} />
                                         <div className="flex-1 space-y-2">
                                             <div style={{ height: '10px', width: '30%', borderRadius: '6px', background: T.elevated }} />
                                             <div style={{ height: '13px', width: '55%', borderRadius: '6px', background: T.elevated }} />
@@ -270,11 +270,11 @@ export default function ContratosPage() {
                                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: i * 0.04 }}
                                             onClick={() => router.push(`/backoffice/contratos/${c.id}`)}
-                                            className="rounded-2xl cursor-pointer transition-all hover-card"
+                                            className="rounded-lg cursor-pointer transition-all hover-card"
                                             style={{ background: T.surface, border: `1px solid ${T.border}` }}
 >
                                             <div className="flex items-center gap-3 p-4">
-                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                                                     style={{ background: 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' }}>
                                                     <FileSignature size={18} style={{ color: T.accent }} />
                                                 </div>
@@ -320,7 +320,7 @@ export default function ContratosPage() {
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="rounded-2xl p-12 text-center"
+                                className="rounded-lg p-12 text-center"
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
                             >
                                 <div className="mb-4" style={{ opacity: 0.15 }}>
@@ -333,7 +333,7 @@ export default function ContratosPage() {
                                 {!search && (
                                     <button
                                         onClick={() => router.push('/backoffice/contratos/novo')}
-                                        className="inline-flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white"
+                                        className="inline-flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white"
                                         style={{
                                             height: '44px',
                                             background: 'var(--imi-gold-500)',
@@ -363,11 +363,11 @@ export default function ContratosPage() {
                                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: i * 0.03 }}
                                                 onClick={() => router.push(`/backoffice/contratos/novo?modelo=${m.id}`)}
-                                                className="rounded-2xl p-4 cursor-pointer transition-all group hover-card"
+                                                className="rounded-lg p-4 cursor-pointer transition-all group hover-card"
                                                 style={{ background: m.id === 'modelo-personalizado' ? 'var(--bg-hover)' : T.surface, border: `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}` }}
 >
                                                 <div className="flex items-start gap-3">
-                                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                                                         style={{ background: `${m.cor}18` }}>
                                                         <FileText size={15} style={{ color: m.cor }} />
                                                     </div>

@@ -82,7 +82,7 @@ function Chip({ label, active, onClick }: { label: string; active: boolean; onCl
         <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={onClick}
-            className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
             style={active
                 ? { background: `${T.accent}22`, borderColor: `${T.accent}55`, color: T.accent }
                 : { background: T.hover, borderColor: T.border, color: T.textMuted }
@@ -275,7 +275,7 @@ export default function EbookPage() {
                         conteudo ? (
                             <button
                                 onClick={() => setPreviewMode(!previewMode)}
-                                className="flex items-center gap-1.5 h-11 px-4 rounded-xl text-xs font-semibold transition-all"
+                                className="flex items-center gap-1.5 h-11 px-4 rounded-[6px] text-xs font-semibold transition-all"
                                 style={{
                                     background: previewMode ? `${T.accent}18` : T.elevated,
                                     color: previewMode ? T.accent : T.textMuted,
@@ -310,7 +310,7 @@ export default function EbookPage() {
                                         value={config.titulo}
                                         onChange={e => set('titulo', e.target.value)}
                                         placeholder="Ex: O Guia Definitivo do Investimento Imobiliário"
-                                        className="w-full h-12 px-4 rounded-xl text-sm font-medium outline-none"
+                                        className="w-full h-12 px-4 rounded-[6px] text-sm font-medium outline-none"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         onFocus={e => (e.currentTarget.style.borderColor = T.accent)}
                                         onBlur={e => (e.currentTarget.style.borderColor = T.border)}
@@ -325,7 +325,7 @@ export default function EbookPage() {
                                         value={config.subtitulo}
                                         onChange={e => set('subtitulo', e.target.value)}
                                         placeholder="Ex: Como multiplicar seu patrimônio no mercado imobiliário"
-                                        className="w-full h-12 px-4 rounded-xl text-sm outline-none"
+                                        className="w-full h-12 px-4 rounded-[6px] text-sm outline-none"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         onFocus={e => (e.currentTarget.style.borderColor = T.accent)}
                                         onBlur={e => (e.currentTarget.style.borderColor = T.border)}
@@ -351,7 +351,7 @@ export default function EbookPage() {
                                         value={config.publico_alvo}
                                         onChange={e => set('publico_alvo', e.target.value)}
                                         placeholder="Ex: Investidores iniciantes, construtoras, compradores de imóvel de luxo..."
-                                        className="w-full h-12 px-4 rounded-xl text-sm outline-none"
+                                        className="w-full h-12 px-4 rounded-[6px] text-sm outline-none"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         onFocus={e => (e.currentTarget.style.borderColor = T.accent)}
                                         onBlur={e => (e.currentTarget.style.borderColor = T.border)}
@@ -372,7 +372,7 @@ export default function EbookPage() {
                                                 key={t.value}
                                                 whileTap={{ scale: 0.97 }}
                                                 onClick={() => set('tom', t.value)}
-                                                className="p-3 rounded-xl text-left border transition-all"
+                                                className="p-3 rounded-lg text-left border transition-all"
                                                 style={config.tom === t.value
                                                     ? { background: `${T.accent}18`, borderColor: `${T.accent}55` }
                                                     : { background: T.elevated, borderColor: T.border }
@@ -414,11 +414,11 @@ export default function EbookPage() {
                                             onChange={e => setNewPonto(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && addPonto()}
                                             placeholder="Ex: Análise de yield e valorização..."
-                                            className="flex-1 h-9 px-3 rounded-xl text-xs outline-none"
+                                            className="flex-1 h-9 px-3 rounded-[6px] text-xs outline-none"
                                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                         />
                                         <button onClick={addPonto}
-                                            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                                            className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
                                             style={{ background: T.accent, color: 'var(--text-inverse)' }}
                                         >
                                             <Plus size={14} />
@@ -446,7 +446,7 @@ export default function EbookPage() {
                                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                                 disabled={!config.titulo}
                                 onClick={() => setStep(1)}
-                                className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all"
+                                className="flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all"
                                 style={config.titulo
                                     ? { background: T.accent, color: 'var(--text-inverse)' }
                                     : { background: T.hover, color: T.textMuted, cursor: 'not-allowed' }
@@ -462,7 +462,7 @@ export default function EbookPage() {
                 {step === 1 && (
                     <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                         {/* Config summary */}
-                        <div className="flex flex-wrap items-center gap-2 mb-5 p-3 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="flex flex-wrap items-center gap-2 mb-5 p-3 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <span className="text-xs font-bold" style={{ color: T.text }}>"{config.titulo}"</span>
                             <span className="text-[10px] px-2 py-0.5 rounded-[6px]" style={{ background: `${T.accent}20`, color: T.accent }}>{config.pilar}</span>
                             <span className="text-[10px]" style={{ color: T.textMuted }}>{config.num_capitulos} caps · {config.tom}</span>
@@ -474,7 +474,7 @@ export default function EbookPage() {
                                 <motion.div
                                     animate={{ y: [-4, 4, -4], rotate: [-3, 3, -3] }}
                                     transition={{ repeat: Infinity, duration: 2.5 }}
-                                    className="w-20 h-20 rounded-3xl flex items-center justify-center"
+                                    className="w-20 h-20 rounded-lg flex items-center justify-center"
                                     style={{ background: `${T.accent}20`, border: `1px solid ${T.accent}40` }}
                                 >
                                     <Wand2 size={32} style={{ color: T.accent }} />
@@ -489,7 +489,7 @@ export default function EbookPage() {
                                 <motion.button
                                     whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                                     onClick={handleWrite}
-                                    className="flex items-center gap-3 px-8 py-4 rounded-2xl text-sm font-bold shadow-lg"
+                                    className="flex items-center gap-3 px-8 py-4 rounded-lg text-sm font-bold shadow-lg"
                                     style={{ background: T.accent, color: 'var(--text-inverse)' }}
                                 >
                                     <Sparkles size={16} />
@@ -518,7 +518,7 @@ export default function EbookPage() {
                                     {wordCount.toLocaleString()} palavras geradas...
                                 </p>
                                 {conteudo && (
-                                    <div className="mt-4 p-4 rounded-xl text-xs font-mono overflow-hidden max-h-40"
+                                    <div className="mt-4 p-4 rounded-lg text-xs font-mono overflow-hidden max-h-40"
                                         style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                         {conteudo.slice(-400)}
                                         <span className="animate-pulse">▌</span>
@@ -539,12 +539,12 @@ export default function EbookPage() {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <button onClick={() => setPreviewMode(!previewMode)}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
                                             style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                             <Eye size={12} /> {previewMode ? 'Editor' : 'Preview'}
                                         </button>
                                         <button onClick={handleWrite}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
                                             style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                             <RefreshCw size={12} /> Regerar
                                         </button>
@@ -555,7 +555,7 @@ export default function EbookPage() {
                                     {previewMode ? (
                                         <motion.div key="preview"
                                             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                            className="p-6 rounded-2xl prose prose-invert max-w-none text-sm leading-relaxed"
+                                            className="p-6 rounded-lg prose prose-invert max-w-none text-sm leading-relaxed"
                                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, maxHeight: '60vh', overflowY: 'auto' }}
                                             dangerouslySetInnerHTML={{ __html: conteudo
                                                 .replace(/^## (.+)$/gm, '<h2 class="text-lg font-black mt-6 mb-2">$1</h2>')
@@ -573,7 +573,7 @@ export default function EbookPage() {
                                             ref={editorRef}
                                             value={conteudo}
                                             onChange={e => setConteudo(e.target.value)}
-                                            className="w-full rounded-2xl p-5 text-sm leading-relaxed font-mono outline-none resize-none"
+                                            className="w-full rounded-[6px] p-5 text-sm leading-relaxed font-mono outline-none resize-none"
                                             style={{
                                                 background: T.elevated, border: `1px solid ${T.border}`,
                                                 color: T.text, minHeight: '60vh',
@@ -584,7 +584,7 @@ export default function EbookPage() {
                             </div>
                         )}
 
-                        {error && <p className="text-xs mt-3 px-3 py-2 rounded-xl bg-red-500/10 text-red-400">{error}</p>}
+                        {error && <p className="text-xs mt-3 px-3 py-2 rounded-lg bg-red-500/10 text-red-400">{error}</p>}
 
                         <div className="flex justify-between mt-6">
                             <button onClick={() => setStep(0)} className="flex items-center gap-1 px-4 py-2.5 rounded text-sm font-semibold transition-all"
@@ -618,7 +618,7 @@ export default function EbookPage() {
                                             <motion.button
                                                 key={e.value} whileTap={{ scale: 0.98 }}
                                                 onClick={() => { set('estilo_capa', e.value); setCapaUrl(null) }}
-                                                className="flex items-center gap-3 p-3 rounded-xl border text-left transition-all"
+                                                className="flex items-center gap-3 p-3 rounded-lg border text-left transition-all"
                                                 style={config.estilo_capa === e.value
                                                     ? { background: `${T.accent}18`, borderColor: `${T.accent}55` }
                                                     : { background: T.elevated, borderColor: T.border }
@@ -641,7 +641,7 @@ export default function EbookPage() {
                                         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                                         disabled={generating}
                                         onClick={handleGenerateCover}
-                                        className="flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-bold"
+                                        className="flex items-center justify-center gap-2 h-11 rounded-[6px] text-sm font-bold"
                                         style={{ background: T.accent, color: 'var(--text-inverse)', opacity: generating ? 0.7 : 1 }}
                                     >
                                         {generating ? <><Loader2 size={14} className="animate-spin" /> Gerando com DALL-E 3...</> : <><Sparkles size={14} /> Gerar Capa com IA</>}
@@ -649,7 +649,7 @@ export default function EbookPage() {
 
                                     {capaUrl && (
                                         <button onClick={handleGenerateCover} disabled={generating}
-                                            className="flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-semibold"
+                                            className="flex items-center justify-center gap-2 h-10 rounded-[6px] text-xs font-semibold"
                                             style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                             <RefreshCw size={12} /> Regenerar nova versão
                                         </button>
@@ -658,18 +658,18 @@ export default function EbookPage() {
                                     <div className="relative">
                                         <input ref={fileRef} type="file" accept="image/*" onChange={handleUploadCover} className="sr-only" />
                                         <button onClick={() => fileRef.current?.click()}
-                                            className="w-full flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-semibold"
+                                            className="w-full flex items-center justify-center gap-2 h-10 rounded-[6px] text-xs font-semibold"
                                             style={{ background: T.hover, color: T.textMuted, border: `1px dashed ${T.border}` }}>
                                             <Upload size={12} /> Usar minha própria capa
                                         </button>
                                     </div>
                                 </div>
-                                {error && <p className="text-xs px-3 py-2 rounded-xl bg-red-500/10 text-red-400">{error}</p>}
+                                {error && <p className="text-xs px-3 py-2 rounded-lg bg-red-500/10 text-red-400">{error}</p>}
                             </div>
 
                             {/* Right: Cover preview */}
                             <div className="flex flex-col items-center gap-4">
-                                <div className="relative w-full max-w-[260px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl"
+                                <div className="relative w-full max-w-[260px] aspect-[3/4] rounded-lg overflow-hidden shadow-2xl"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                     {capaUrl ? (
                                         <img src={capaUrl} alt="Capa" className="w-full h-full object-cover" />
@@ -698,7 +698,7 @@ export default function EbookPage() {
                                 {capaUrl && (
                                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                                         <a href={capaUrl} download="capa-ebook.jpg" target="_blank" rel="noopener noreferrer"
-                                            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl"
+                                            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg"
                                             style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                             <Download size={12} /> Baixar capa
                                         </a>
@@ -727,7 +727,7 @@ export default function EbookPage() {
                             {/* Summary */}
                             <div className="space-y-4">
                                 <h2 className="text-lg font-black" style={{ color: T.text }}>Resumo do eBook</h2>
-                                <div className="p-4 rounded-2xl space-y-3" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                                <div className="p-4 rounded-lg space-y-3" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                     {[
                                         { icon: FileText, label: 'Título', value: config.titulo },
                                         config.subtitulo && { icon: FileText, label: 'Subtítulo', value: config.subtitulo },
@@ -771,12 +771,12 @@ export default function EbookPage() {
                                             <p className="text-sm" style={{ color: T.textMuted }}>Acesse em Inteligência → eBooks</p>
                                             <div className="flex gap-2 mt-2">
                                                 <a href="/backoffice/inteligencia/ebooks"
-                                                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold"
+                                                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold"
                                                     style={{ background: T.accent, color: 'var(--text-inverse)' }}>
                                                     <Globe size={12} /> Ver eBooks
                                                 </a>
                                                 <button onClick={() => { setSaved(false); setStep(0); setConfig(DEFAULT_CONFIG); setConteudo(''); setCapaUrl(null) }}
-                                                    className="px-4 py-2 rounded-xl text-xs font-bold"
+                                                    className="px-4 py-2 rounded-lg text-xs font-bold"
                                                     style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                                     Novo eBook
                                                 </button>
@@ -784,11 +784,11 @@ export default function EbookPage() {
                                         </motion.div>
                                     ) : (
                                         <motion.div key="save-btn" className="flex flex-col gap-2">
-                                            {error && <p className="text-xs px-3 py-2 rounded-xl bg-red-500/10 text-red-400">{error}</p>}
+                                            {error && <p className="text-xs px-3 py-2 rounded-lg bg-red-500/10 text-red-400">{error}</p>}
                                             <motion.button
                                                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                                                 onClick={handleSave} disabled={saving}
-                                                className="flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold w-full shadow-lg"
+                                                className="flex items-center justify-center gap-2 h-12 rounded-[6px] text-sm font-bold w-full shadow-lg"
                                                 style={{ background: T.accent, color: 'var(--text-inverse)', opacity: saving ? 0.7 : 1 }}
                                             >
                                                 {saving ? <><Loader2 size={15} className="animate-spin" /> Salvando...</> : <><Save size={15} /> Salvar eBook no Catálogo</>}
@@ -801,11 +801,11 @@ export default function EbookPage() {
                             {/* Cover + content snippet */}
                             <div className="flex flex-col items-center gap-4">
                                 {capaUrl && (
-                                    <div className="w-full max-w-[220px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl">
+                                    <div className="w-full max-w-[220px] aspect-[3/4] rounded-lg overflow-hidden shadow-2xl">
                                         <img src={capaUrl} alt="Capa" className="w-full h-full object-cover" />
                                     </div>
                                 )}
-                                <div className="w-full p-4 rounded-xl text-xs leading-relaxed"
+                                <div className="w-full p-4 rounded-lg text-xs leading-relaxed"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted, maxHeight: 200, overflowY: 'auto', fontFamily: 'Georgia, serif' }}>
                                     {conteudo.slice(0, 600)}...
                                 </div>

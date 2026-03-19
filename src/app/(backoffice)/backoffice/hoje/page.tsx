@@ -189,7 +189,7 @@ export default function HojePage() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.28, ease: [0, 0, 0.2, 1] }}
-        className="rounded-2xl"
+        className="rounded-lg"
         style={{
           background: 'linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface) 100%)',
           border: '1px solid var(--border-default)',
@@ -435,7 +435,7 @@ export default function HojePage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.12 }}
-          className="rounded-2xl"
+          className="rounded-lg"
           style={{
             background: 'linear-gradient(135deg, rgba(184,148,58,0.08) 0%, rgba(184,148,58,0.04) 100%)',
             border: '1px solid rgba(184,148,58,0.25)',
@@ -527,7 +527,7 @@ export default function HojePage() {
           action={{ label: 'Ver todos', href: '/backoffice/ia/agentes' }}
         />
         <div
-          className="rounded-2xl overflow-hidden"
+          className="rounded-lg overflow-hidden"
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
         >
           {/* Header */}
@@ -617,7 +617,7 @@ export default function HojePage() {
         />
 
         <div
-          className="rounded-2xl overflow-hidden"
+          className="rounded-lg overflow-hidden"
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
         >
           {todayEvents.length === 0 ? (
@@ -682,7 +682,7 @@ export default function HojePage() {
 
         {hotLeads.length === 0 ? (
           <div
-            className="rounded-2xl text-center"
+            className="rounded-lg text-center"
             style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '28px 16px' }}
           >
             <Users size={24} style={{ color: 'var(--text-secondary)', opacity: 0.2, margin: '0 auto 10px' }} />
@@ -743,7 +743,7 @@ export default function HojePage() {
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={() => router.push('/backoffice/leads')}
-          className="rounded-2xl text-left"
+          className="rounded-lg text-left"
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '14px' }}
         >
           <div style={{
@@ -765,7 +765,7 @@ export default function HojePage() {
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={() => router.push('/backoffice/imoveis')}
-          className="rounded-2xl text-left"
+          className="rounded-lg text-left"
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '14px' }}
         >
           <div style={{
@@ -793,21 +793,21 @@ export default function HojePage() {
         <SectionHeader title="Performance da Semana" action={{ label: 'Ver relatório', href: '/backoffice/relatorios' }} />
         <div className="grid grid-cols-3 gap-2">
           <div
-            className="rounded-2xl p-3 text-center"
+            className="rounded-lg p-3 text-center"
             style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
             <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--error)', lineHeight: 1 }}>{hotCount}</div>
             <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Quentes</div>
           </div>
           <div
-            className="rounded-2xl p-3 text-center"
+            className="rounded-lg p-3 text-center"
             style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
             <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--warning)', lineHeight: 1 }}>{warmCount}</div>
             <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Mornos</div>
           </div>
           <div
-            className="rounded-2xl p-3 text-center"
+            className="rounded-lg p-3 text-center"
             style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
             <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--info)', lineHeight: 1 }}>{coldCount}</div>
@@ -817,7 +817,7 @@ export default function HojePage() {
 
         {/* Conversion funnel bar */}
         <div
-          className="mt-2 rounded-2xl p-4"
+          className="mt-2 rounded-lg p-4"
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
         >
           <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
@@ -870,7 +870,7 @@ export default function HojePage() {
               key={mod.label}
               whileTap={{ scale: 0.95 }}
               onClick={() => router.push(mod.href)}
-              className="rounded-2xl text-left"
+              className="rounded-lg text-left"
               style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',

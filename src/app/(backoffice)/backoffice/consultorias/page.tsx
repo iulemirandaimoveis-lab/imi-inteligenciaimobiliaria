@@ -99,7 +99,7 @@ export default function ConsultoriasPage() {
                         <div className="skeleton h-6 w-32 mb-2" />
                         <div className="skeleton h-4 w-48" />
                     </div>
-                    <div className="skeleton h-10 w-40 rounded-xl" />
+                    <div className="skeleton h-10 w-40 rounded-lg" />
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                     {[...Array(4)].map((_, i) => (
@@ -111,7 +111,7 @@ export default function ConsultoriasPage() {
                 </div>
                 {[...Array(3)].map((_, i) => (
                     <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
-                        <div className="skeleton w-10 h-10 rounded-xl flex-shrink-0" />
+                        <div className="skeleton w-10 h-10 rounded-lg flex-shrink-0" />
                         <div className="flex-1">
                             <div className="skeleton h-4 w-40 mb-2" />
                             <div className="skeleton h-3 w-56" />
@@ -152,7 +152,7 @@ export default function ConsultoriasPage() {
 
             {/* Filtros */}
             <div
-                className="rounded-2xl p-4"
+                className="rounded-lg p-4"
                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
             >
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -161,7 +161,7 @@ export default function ConsultoriasPage() {
                         <input
                             value={search} onChange={e => setSearch(e.target.value)}
                             placeholder="Buscar cliente, protocolo, cidade…"
-                            className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none transition-all"
+                            className="w-full h-10 pl-9 pr-4 rounded-[6px] text-sm outline-none transition-all"
                             style={{
                                 background: T.elevated,
                                 border: `1px solid ${T.border}`,
@@ -186,14 +186,14 @@ export default function ConsultoriasPage() {
                             key={c.id}
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.03 }}
-                            className="rounded-2xl cursor-pointer transition-all hover-card"
+                            className="rounded-lg cursor-pointer transition-all hover-card"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                             onClick={() => router.push(`/backoffice/consultorias/${c.id}`)}
 
                         >
                             <div className="flex items-start gap-4 p-4">
                                 <div
-                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                                     style={{ background: 'rgba(72,101,129,0.12)' }}
                                 >
                                     <Briefcase size={18} style={{ color: T.accent }} />
@@ -290,7 +290,7 @@ export default function ConsultoriasPage() {
                 {filtered.length === 0 && (
                     <motion.div
                         initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                        className="empty-state rounded-2xl"
+                        className="empty-state rounded-lg"
                         style={{ background: T.surface, border: `1px solid ${T.border}` }}
                     >
                         <div className="empty-state-icon">
@@ -304,7 +304,7 @@ export default function ConsultoriasPage() {
                             <motion.button
                                 whileTap={{ scale: 0.96 }}
                                 onClick={() => router.push('/backoffice/consultorias/nova')}
-                                className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
+                                className="mt-4 flex items-center gap-2 h-9 px-4 rounded-[6px] text-xs font-semibold text-white"
                                 style={{ background: T.accent }}
                             >
                                 <Plus size={14} /> Nova Consultoria

@@ -82,10 +82,10 @@ export default function CampanhaAnalyticsPage() {
   if (loading) {
     return (
       <div className="space-y-4 pt-2">
-        <div className="animate-pulse rounded-2xl h-16" style={{ background: T.elevated }} />
+        <div className="animate-pulse rounded-lg h-16" style={{ background: T.elevated }} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="animate-pulse rounded-2xl h-32" style={{ background: T.elevated }} />
+            <div key={i} className="animate-pulse rounded-lg h-32" style={{ background: T.elevated }} />
           ))}
         </div>
       </div>
@@ -94,12 +94,12 @@ export default function CampanhaAnalyticsPage() {
 
   if (!campaign) {
     return (
-      <div className="rounded-2xl p-16 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <div className="rounded-lg p-16 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <Target size={40} className="mx-auto mb-4 opacity-20" style={{ color: T.textMuted }} />
         <p className="font-semibold mb-2" style={{ color: T.text }}>Campanha não encontrada</p>
         <button
           onClick={() => router.back()}
-          className="h-11 px-5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-80"
+          className="h-11 px-5 rounded-[6px] text-sm font-semibold transition-opacity hover:opacity-80"
           style={{ background: T.accent, color: 'var(--text-inverse)' }}
         >
           Voltar
@@ -121,13 +121,13 @@ export default function CampanhaAnalyticsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => router.back()}
-              className="w-11 h-11 rounded-xl flex items-center justify-center transition-opacity hover:opacity-80"
+              className="w-11 h-11 rounded-[6px] flex items-center justify-center transition-opacity hover:opacity-80"
               style={{ background: T.elevated, border: `1px solid ${T.border}` }}
             >
               <ArrowLeft size={18} style={{ color: T.textMuted }} />
             </button>
             <button
-              className="h-11 px-4 rounded-xl font-semibold flex items-center gap-2 transition-opacity hover:opacity-80"
+              className="h-11 px-4 rounded-[6px] font-semibold flex items-center gap-2 transition-opacity hover:opacity-80"
               style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
             >
               <Download size={16} />
@@ -135,7 +135,7 @@ export default function CampanhaAnalyticsPage() {
             </button>
             <button
               onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
-              className="h-11 px-4 rounded-xl font-semibold flex items-center gap-2 text-white transition-opacity hover:opacity-80"
+              className="h-11 px-4 rounded-[6px] font-semibold flex items-center gap-2 text-white transition-opacity hover:opacity-80"
               style={{ background: T.accent }}
             >
               <Edit size={16} />
@@ -148,9 +148,9 @@ export default function CampanhaAnalyticsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Orçamento */}
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)' }}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)' }}>
               <DollarSign size={20} style={{ color: 'var(--info)' }} />
             </div>
             <div className="text-right">
@@ -168,9 +168,9 @@ export default function CampanhaAnalyticsPage() {
         </div>
 
         {/* Leads */}
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.12)' }}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.12)' }}>
               <Users size={20} style={{ color: 'var(--success)' }} />
             </div>
             <TrendingUp size={16} style={{ color: 'var(--success)' }} />
@@ -182,9 +182,9 @@ export default function CampanhaAnalyticsPage() {
         </div>
 
         {/* Prazo */}
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
               <Calendar size={20} style={{ color: 'var(--imi-gold-500)' }} />
             </div>
           </div>
@@ -197,9 +197,9 @@ export default function CampanhaAnalyticsPage() {
         </div>
 
         {/* Objetivo */}
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(249,115,22,0.12)' }}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(249,115,22,0.12)' }}>
               <Target size={20} style={{ color: '#F97316' }} />
             </div>
           </div>
@@ -211,7 +211,7 @@ export default function CampanhaAnalyticsPage() {
       </div>
 
       {/* Meta Ads Notice */}
-      <div className="rounded-2xl p-5 flex items-start gap-4"
+      <div className="rounded-lg p-5 flex items-start gap-4"
         style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)' }}>
         <Zap size={20} style={{ color: 'var(--info)', flexShrink: 0, marginTop: 2 }} />
         <div>
@@ -225,23 +225,23 @@ export default function CampanhaAnalyticsPage() {
 
       {/* UTM Tracking */}
       {(campaign.utm_source || campaign.utm_campaign) && (
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <h3 className="text-base font-bold mb-4" style={{ color: T.text }}>Rastreamento UTM</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {campaign.utm_source && (
-              <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
+              <div className="p-4 rounded-lg" style={{ background: T.elevated }}>
                 <p className="text-xs mb-1" style={{ color: T.textMuted }}>utm_source</p>
                 <p className="text-sm font-bold font-mono" style={{ color: T.text }}>{campaign.utm_source}</p>
               </div>
             )}
             {campaign.utm_campaign && (
-              <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
+              <div className="p-4 rounded-lg" style={{ background: T.elevated }}>
                 <p className="text-xs mb-1" style={{ color: T.textMuted }}>utm_campaign</p>
                 <p className="text-sm font-bold font-mono" style={{ color: T.text }}>{campaign.utm_campaign}</p>
               </div>
             )}
             {campaign.utm_medium && (
-              <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
+              <div className="p-4 rounded-lg" style={{ background: T.elevated }}>
                 <p className="text-xs mb-1" style={{ color: T.textMuted }}>utm_medium</p>
                 <p className="text-sm font-bold font-mono" style={{ color: T.text }}>{campaign.utm_medium}</p>
               </div>

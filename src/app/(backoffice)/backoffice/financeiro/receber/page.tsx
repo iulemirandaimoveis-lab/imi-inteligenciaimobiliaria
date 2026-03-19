@@ -124,7 +124,7 @@ export default function ReceberPage() {
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                     <input type="text" placeholder="Buscar por descrição ou categoria..."
                         value={search} onChange={e => setSearch(e.target.value)}
-                        className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                        className="w-full h-10 pl-9 pr-4 rounded-[6px] text-sm outline-none"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                 </div>
@@ -144,11 +144,11 @@ export default function ReceberPage() {
             {loading ? (
                 <div className="space-y-2">
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className="animate-pulse rounded-2xl h-16" style={{ background: T.elevated }} />
+                        <div key={i} className="animate-pulse rounded-lg h-16" style={{ background: T.elevated }} />
                     ))}
                 </div>
             ) : filtered.length === 0 ? (
-                <div className="rounded-2xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-lg p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <TrendingUp size={36} className="mx-auto mb-4 opacity-20" style={{ color: T.textMuted }} />
                     <p className="text-sm font-semibold mb-1" style={{ color: T.textMuted }}>
                         {transactions.length === 0 ? 'Nenhuma receita cadastrada' : 'Nenhum resultado para o filtro'}
@@ -171,10 +171,10 @@ export default function ReceberPage() {
                         return (
                             <motion.div key={t.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.03 }}
-                                className="flex items-center gap-3 sm:gap-4 p-4 rounded-2xl transition-all hover-card"
+                                className="flex items-center gap-3 sm:gap-4 p-4 rounded-lg transition-all hover-card"
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
 >
-                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                                     style={{ background: 'var(--bo-success-bg)' }}>
                                     <ArrowUpCircle size={18} style={{ color: 'var(--bo-success)' }} />
                                 </div>

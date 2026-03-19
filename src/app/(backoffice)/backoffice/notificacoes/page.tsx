@@ -86,12 +86,12 @@ export default function NotificacoesPage() {
             <div className="space-y-5 max-w-3xl mx-auto">
                 <div className="animate-pulse" style={{ height: '72px', borderRadius: '6px', background: T.surface, border: `1px solid ${T.border}` }} />
                 <div className="flex gap-2">
-                    <div className="animate-pulse h-9 w-28 rounded-xl" style={{ background: T.elevated }} />
-                    <div className="animate-pulse h-9 w-36 rounded-xl" style={{ background: T.elevated }} />
+                    <div className="animate-pulse h-9 w-28 rounded-lg" style={{ background: T.elevated }} />
+                    <div className="animate-pulse h-9 w-36 rounded-lg" style={{ background: T.elevated }} />
                 </div>
                 <div className="space-y-2">
                     {[...Array(5)].map((_, i) => (
-                        <div key={i} className="animate-pulse flex items-start gap-3 p-4 rounded-2xl"
+                        <div key={i} className="animate-pulse flex items-start gap-3 p-4 rounded-lg"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div style={{ width: '36px', height: '36px', borderRadius: '6px', background: T.elevated, flexShrink: 0 }} />
                             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -119,7 +119,7 @@ export default function NotificacoesPage() {
                         unreadCount > 0 ? (
                             <button
                                 onClick={markAllRead}
-                                className="flex items-center gap-2 px-4 rounded-xl text-xs font-semibold"
+                                className="flex items-center gap-2 px-4 rounded-lg text-xs font-semibold"
                                 style={{ height: '44px', background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}
                             >
                                 <CheckCheck size={14} /> Marcar todas como lidas
@@ -133,7 +133,7 @@ export default function NotificacoesPage() {
             <div className="flex gap-2">
                 {(['all', 'unread'] as const).map(f => (
                     <button key={f} onClick={() => setFilter(f)}
-                        className="px-3.5 h-9 rounded-xl text-xs font-semibold transition-all"
+                        className="px-3.5 h-9 rounded-[6px] text-xs font-semibold transition-all"
                         style={{
                             background: filter === f ? T.accent : T.elevated,
                             color: filter === f ? 'white' : T.textDim,
@@ -149,7 +149,7 @@ export default function NotificacoesPage() {
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-2xl p-14 text-center"
+                    className="rounded-lg p-14 text-center"
                     style={{ background: T.surface, border: `1px solid ${T.border}` }}
                 >
                     <div className="mb-4" style={{ opacity: 0.12 }}>
@@ -167,14 +167,14 @@ export default function NotificacoesPage() {
                         const color = TYPE_COLORS[n.type] || T.accent
                         return (
                             <motion.div key={n.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                                className="flex items-start gap-3 p-4 rounded-2xl transition-all cursor-pointer"
+                                className="flex items-start gap-3 p-4 rounded-lg transition-all cursor-pointer"
                                 style={{
                                     background: n.read ? T.surface : T.elevated,
                                     border: `1px solid ${n.read ? T.border : T.borderGold}`,
                                     opacity: n.read ? 0.7 : 1,
                                 }}
                                 onClick={() => !n.read && markRead(n.id)}>
-                                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${color}18` }}>
+                                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${color}18` }}>
                                     <Icon size={16} style={{ color }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -186,7 +186,7 @@ export default function NotificacoesPage() {
                                     <p className="text-[10px] mt-1" style={{ color: T.textDim }}>{timeAgo(n.created_at)}</p>
                                 </div>
                                 {!n.read && (
-                                    <button className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
+                                    <button className="flex-shrink-0 w-7 h-7 rounded-[6px] flex items-center justify-center"
                                         style={{ background: 'var(--bo-active-bg)' }} onClick={e => { e.stopPropagation(); markRead(n.id) }}>
                                         <Check size={12} style={{ color: T.accent }} />
                                     </button>

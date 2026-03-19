@@ -157,7 +157,7 @@ export default function IASettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-white transition-all disabled:opacity-60"
+            className="flex items-center gap-2 h-11 px-5 rounded-[6px] font-semibold text-white transition-all disabled:opacity-60"
             style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 0 18px rgba(59,130,246,0.25)' }}
           >
             {saving

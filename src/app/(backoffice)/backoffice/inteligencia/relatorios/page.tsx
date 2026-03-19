@@ -98,7 +98,7 @@ export default function RelatoriosBackofficePage() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={load}
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                            className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
                             style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                         >
                             <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
@@ -134,13 +134,13 @@ export default function RelatoriosBackofficePage() {
             />
 
             {/* Table */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+            <div className="rounded-lg overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                 {loading ? (
                     <div className="space-y-0">
                         {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="px-5 py-4 flex items-center gap-4 animate-pulse"
                                 style={{ borderBottom: i < 3 ? `1px solid ${T.border}` : 'none' }}>
-                                <div className="w-9 h-9 rounded-xl flex-shrink-0" style={{ background: 'var(--bo-hover)' }} />
+                                <div className="w-9 h-9 rounded-lg flex-shrink-0" style={{ background: 'var(--bo-hover)' }} />
                                 <div className="flex-1">
                                     <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: '45%' }} />
                                     <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: '25%' }} />
@@ -185,7 +185,7 @@ export default function RelatoriosBackofficePage() {
                                             className="transition-colors hover:opacity-90">
                                             <td className="px-5 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                                                         style={{ background: 'rgba(72,101,129,0.15)' }}>
                                                         <FileText size={14} style={{ color: 'var(--bo-accent)' }} />
                                                     </div>
@@ -223,7 +223,7 @@ export default function RelatoriosBackofficePage() {
                                                 <div className="flex items-center gap-1">
                                                     <button
                                                         onClick={() => togglePublish(r.id, r.is_published)}
-                                                        className="w-8 h-8 rounded-xl flex items-center justify-center hover:opacity-70 transition-opacity"
+                                                        className="w-8 h-8 rounded-[6px] flex items-center justify-center hover:opacity-70 transition-opacity"
                                                         style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                                     >
                                                         {r.is_published
@@ -233,14 +233,14 @@ export default function RelatoriosBackofficePage() {
                                                     </button>
                                                     <Link
                                                         href={`/backoffice/inteligencia/relatorios/${r.id}/editar`}
-                                                        className="w-8 h-8 rounded-xl flex items-center justify-center hover:opacity-70 transition-opacity"
+                                                        className="w-8 h-8 rounded-[6px] flex items-center justify-center hover:opacity-70 transition-opacity"
                                                         style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                                     >
                                                         <Pencil size={13} style={{ color: T.textMuted }} />
                                                     </Link>
                                                     <button
                                                         onClick={() => deleteReport(r.id)}
-                                                        className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-red-500/10 transition-colors"
+                                                        className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-500/10 transition-colors"
                                                         style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                                     >
                                                         <Trash2 size={13} style={{ color: 'var(--bo-error)' }} />

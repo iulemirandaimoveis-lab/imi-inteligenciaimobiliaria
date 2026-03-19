@@ -56,7 +56,7 @@ export default function SimulacaoDetailPage() {
     return (
       <div className="space-y-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-20 rounded-xl bg-white/5 animate-pulse" />
+          <div key={i} className="h-20 rounded-lg bg-white/5 animate-pulse" />
         ))}
       </div>
     )
@@ -64,7 +64,7 @@ export default function SimulacaoDetailPage() {
 
   if (!sim) {
     return (
-      <div className="rounded-xl border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <BarChart3 className="w-10 h-10 text-white/20 mx-auto mb-3" />
         <h3 className="text-white/70 font-medium mb-1">Simulacao nao encontrada</h3>
         <p className="text-white/40 text-sm mb-4">ID: {id}</p>
@@ -126,7 +126,7 @@ export default function SimulacaoDetailPage() {
       </div>
 
       {/* Tab content */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         {tab === 'overview' && (
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-white">Resumo do Investimento</h3>

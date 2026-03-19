@@ -74,14 +74,14 @@ export default function TrackingDashboardPage() {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => router.push('/backoffice/tracking/qr')}
-                                className="h-10 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 text-white transition-all"
+                                className="h-10 px-4 rounded-[6px] text-xs font-semibold flex items-center gap-2 text-white transition-all"
                                 style={{ background: T.accent }}
                             >
                                 <QrCode size={14} /> Novo QR Code
                             </button>
                             <button
                                 onClick={() => router.push('/backoffice/tracking/links')}
-                                className="h-10 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all"
+                                className="h-10 px-4 rounded-[6px] text-xs font-semibold flex items-center gap-2 transition-all"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                             >
                                 <Link2 size={14} /> Links
@@ -98,7 +98,7 @@ export default function TrackingDashboardPage() {
                         <button
                             key={range}
                             onClick={() => setTimeRange(range)}
-                            className="h-8 px-3 rounded-xl text-[11px] font-semibold transition-all"
+                            className="h-8 px-3 rounded-[6px] text-[11px] font-semibold transition-all"
                             style={{
                                 background: timeRange === range ? T.accent : T.elevated,
                                 color: timeRange === range ? '#fff' : T.textMuted,
@@ -111,7 +111,7 @@ export default function TrackingDashboardPage() {
                 </div>
                 <button
                     onClick={load}
-                    className="h-8 w-8 rounded-xl flex items-center justify-center transition-all"
+                    className="h-8 w-8 rounded-lg flex items-center justify-center transition-all"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >
                     <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
@@ -154,7 +154,7 @@ export default function TrackingDashboardPage() {
                         ].map(({ label, value }) => (
                             <div
                                 key={label}
-                                className="rounded-2xl p-3 flex items-center justify-between"
+                                className="rounded-lg p-3 flex items-center justify-between"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                             >
                                 <span className="text-[10px] font-medium" style={{ color: T.textMuted }}>{label}</span>
@@ -168,7 +168,7 @@ export default function TrackingDashboardPage() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.14, duration: 0.35 }}
-                        className="rounded-2xl p-5"
+                        className="rounded-lg p-5"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                     >
                         <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Evolução Diária</h3>
@@ -215,7 +215,7 @@ export default function TrackingDashboardPage() {
                         className="grid grid-cols-1 lg:grid-cols-2 gap-5"
                     >
                         {/* By Source */}
-                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Tráfego por Origem</h3>
                             <div className="space-y-3">
                                 {data.bySource.length > 0 ? data.bySource.map(item => {
@@ -248,7 +248,7 @@ export default function TrackingDashboardPage() {
                         </div>
 
                         {/* By Device */}
-                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Sessões por Dispositivo</h3>
                             <div className="space-y-3">
                                 {data.byDevice.length > 0 ? data.byDevice.map(item => {
@@ -297,7 +297,7 @@ export default function TrackingDashboardPage() {
                         className="grid grid-cols-1 lg:grid-cols-2 gap-5"
                     >
                         {/* Top Pages */}
-                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Páginas Mais Visitadas</h3>
                             <div className="space-y-2">
                                 {data.topPages.length > 0 ? data.topPages.slice(0, 8).map((p, i) => (
@@ -328,7 +328,7 @@ export default function TrackingDashboardPage() {
                         </div>
 
                         {/* Top Properties */}
-                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Imóveis Mais Visualizados</h3>
                             <div className="space-y-2">
                                 {data.topProperties.length > 0 ? data.topProperties.map((p, i) => (
@@ -366,7 +366,7 @@ export default function TrackingDashboardPage() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.26, duration: 0.35 }}
-                        className="rounded-2xl p-5"
+                        className="rounded-lg p-5"
                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                     >
                         <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Top Campanhas</h3>
@@ -414,7 +414,7 @@ export default function TrackingDashboardPage() {
                 <div className="flex flex-col items-center justify-center h-64 gap-4">
                     <BarChart3 size={36} className="opacity-30" style={{ color: T.textMuted }} />
                     <p className="text-sm" style={{ color: T.textMuted }}>Erro ao carregar analytics</p>
-                    <button onClick={load} className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: T.accent }}>
+                    <button onClick={load} className="text-xs font-semibold px-4 py-2 rounded-[6px]" style={{ color: T.accent }}>
                         Tentar novamente
                     </button>
                 </div>

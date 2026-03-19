@@ -107,7 +107,7 @@ export default function OnboardingTutorial({
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: -10 }}
                             transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-                            className="fixed z-[9998] right-4 top-16 w-80 max-h-[80vh] overflow-y-auto rounded-2xl"
+                            className="fixed z-[9998] right-4 top-16 w-80 max-h-[80vh] overflow-y-auto rounded-xl"
                             style={{
                                 background: 'var(--bg-surface)',
                                 border: '1px solid var(--border-default)',
@@ -133,7 +133,7 @@ export default function OnboardingTutorial({
                                 <div className="px-3 pb-2">
                                     <button
                                         onClick={handleStartCurrentModule}
-                                        className="w-full h-10 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                                        className="w-full h-10 rounded-[6px] text-xs font-bold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110"
                                         style={{ background: 'var(--imi-gold-500)' }}
                                     >
                                         <Sparkles size={12} />
@@ -154,7 +154,7 @@ export default function OnboardingTutorial({
                                         <button
                                             key={key}
                                             onClick={() => handleStartModule(key)}
-                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors hover:bg-white/5"
+                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-white/5"
                                             style={{
                                                 opacity: isCurrent ? 1 : 0.7,
                                             }}
@@ -188,7 +188,7 @@ export default function OnboardingTutorial({
                             <div className="px-3 pb-3 pt-1" style={{ borderTop: '1px solid var(--border-default)' }}>
                                 <button
                                     onClick={handleResetAll}
-                                    className="w-full h-9 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-colors hover:bg-white/5"
+                                    className="w-full h-9 rounded-[6px] text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-colors hover:bg-white/5"
                                     style={{ color: 'var(--text-secondary)' }}
                                 >
                                     <RotateCcw size={10} />
@@ -208,7 +208,7 @@ export function OnboardingTrigger({ onClick }: { onClick: () => void }) {
     return (
         <button
             onClick={onClick}
-            className="flex items-center gap-2 h-9 px-3 rounded-lg text-xs font-semibold transition-all hover:brightness-110"
+            className="flex items-center gap-2 h-9 px-3 rounded-[6px] text-xs font-semibold transition-all hover:brightness-110"
             style={{
                 background: 'var(--bg-elevated)',
                 border: '1px solid var(--border-default)',
