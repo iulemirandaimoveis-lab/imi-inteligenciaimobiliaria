@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 /**
@@ -80,9 +79,11 @@ export function AvatarGroup({
         React.Children.forEach(child.props.children as React.ReactNode, (c) => {
           if (
             React.isValidElement(c) &&
-            (c.type as string) === AvatarGroupTooltip
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (c.type as any) === AvatarGroupTooltip
           ) {
-            tooltipContent = (c.props as string).children
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            tooltipContent = (c.props as any).children
           } else {
             cleanChildren.push(c)
           }
@@ -108,7 +109,8 @@ export function AvatarGroup({
             onHoverEnd={() => setHoveredIdx(null)}
           >
             {/* Avatar without the tooltip marker */}
-            {React.cloneElement(child, { children: cleanChildren })}
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {React.cloneElement(child as any, { children: cleanChildren })}
 
             {/* Tooltip */}
             <AnimatePresence>

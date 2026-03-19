@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
@@ -20,23 +19,27 @@ interface Proposal {
   buyer_name: string; buyer_email: string; buyer_phone: string
   seller_name: string
   property_id: string; lead_id: string
-  property_snapshot: Record<string, unknown>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  property_snapshot: Record<string, any>
   listed_price: number; proposed_value: number
   entry_value: number; financing_value: number
   financing_bank: string; financing_term_months: number; financing_rate: number
   consortium_value: number; fgts_value: number; cash_value: number
   direct_installments_count: number; direct_installments_value: number
-  balloon_installments: Record<string, unknown>[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  balloon_installments: Record<string, any>[]
   validity_days: number; validity_until: string
   conditions: string; commission_pct: number; commission_who_pays: string
-  notes: string; counter_proposal: Record<string, unknown> | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  notes: string; counter_proposal: Record<string, any> | null
   created_at: string; sent_at: string
   score: number; tier: string
   opens_count: number; total_time_seconds: number; last_activity: string
 }
 
 interface Event {
-  id: string; event_type: string; metadata: Record<string, unknown>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  id: string; event_type: string; metadata: Record<string, any>
   device_type: string; time_on_page_seconds: number; created_at: string
 }
 
@@ -313,7 +316,8 @@ export default function PropostaDetailPage() {
                   Parcelas Intercaladas
                 </h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {proposal.balloon_installments.map((b: Record<string, unknown>, i: number) => (
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {proposal.balloon_installments.map((b: Record<string, any>, i: number) => (
                     <div key={i} style={{ ...cardStyle, padding: '8px 12px', background: T.surface }}>
                       <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 4 }}>Mês {b.month}</div>
                       <div style={{ fontSize: 13, fontWeight: 600, color: T.text, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{fmt(b.value)}</div>

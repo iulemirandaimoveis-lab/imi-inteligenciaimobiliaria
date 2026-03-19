@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useRef } from 'react'
@@ -127,7 +126,7 @@ export default function MediaUploader({
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as string)}
+                        onClick={() => setActiveTab(tab.id as 'images' | 'plans' | 'videos' | 'tour')}
                         className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${activeTab === tab.id
                                 ? 'text-imi-900 border-b-2 border-imi-900'
                                 : 'text-slate-600 hover:text-slate-900'

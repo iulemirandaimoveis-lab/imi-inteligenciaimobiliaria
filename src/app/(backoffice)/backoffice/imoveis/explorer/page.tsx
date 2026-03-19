@@ -627,7 +627,7 @@ function PropertyCard({
             overflow: 'hidden',
           }}>
             {property.cover_image_url
-              ? <img src={property.cover_image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ? <img src={property.cover_image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               : <Building2 size={18} style={{ color: 'rgba(184,148,58,0.3)' }} />
             }
           </div>
@@ -697,7 +697,7 @@ function PropertyCard({
       {/* Thumbnail */}
       <div style={{ position: 'relative', height: 140, background: 'rgba(184,148,58,0.06)', flexShrink: 0 }}>
         {property.cover_image_url
-          ? <img src={property.cover_image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? <img src={property.cover_image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
             <Building2 size={36} style={{ color: 'rgba(184,148,58,0.2)' }} />
           </div>

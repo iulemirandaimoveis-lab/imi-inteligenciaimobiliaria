@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Btn — Botao canonico IMI DS3
  * Inline styles with DS3 tokens. Self-contained, no external CSS classes.
@@ -149,7 +148,8 @@ function buildStyle(
     border: v.border,
     background: hovered && !disabled ? v.hoverBackground : v.background,
     color: hovered && v.hoverColor && !disabled ? v.hoverColor : v.color,
-    boxShadow: !disabled ? (v as Record<string, unknown>).boxShadow : undefined,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    boxShadow: !disabled ? (v as any).boxShadow : undefined,
     cursor: disabled ? 'default' : 'pointer',
     opacity: disabled ? 0.5 : 1,
     pointerEvents: disabled ? 'none' : undefined,

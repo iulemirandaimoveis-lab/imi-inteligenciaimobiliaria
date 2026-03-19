@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
@@ -46,7 +45,8 @@ const STATUS_CFG = Object.fromEntries(
 
 const EMPTY_FORM = { name: '', email: '', phone: '', role: 'agent', status: 'active' }
 
-function memberFromJson(json: Record<string, unknown>): TeamMember {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function memberFromJson(json: any): TeamMember {
     return {
         id: json.id,
         name: json.name || 'Sem Nome',

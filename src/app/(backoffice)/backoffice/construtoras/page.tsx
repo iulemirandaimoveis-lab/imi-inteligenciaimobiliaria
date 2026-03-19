@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import ConstrutorasClient, { Developer } from './ConstrutorasClient'
 import { T } from '@/app/(backoffice)/lib/theme'
@@ -13,7 +12,8 @@ export default async function BackofficeConstrutorasPage() {
   if (error) {
   }
   // Mapeia para a tipagem que o front-end aceita e conta os empreendimentos
-  const developers: Developer[] = (developersData || []).map((dev: Record<string, unknown>) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const developers: Developer[] = (developersData || []).map((dev: any) => ({
     id: dev.id,
     name: dev.name,
     legal_name: dev.legal_name,

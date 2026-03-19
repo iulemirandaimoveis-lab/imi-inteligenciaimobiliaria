@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react'
 import {
@@ -142,10 +141,11 @@ export default function NotificationCenter() {
         setIsOpen(false)
         // Navigate based on type
         if (notification.data?.url) {
-            window.location.href = notification.data.url
+            window.location.href = notification.data.url as string
         }
     }
     const getNotificationIcon = (type: string) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const icons: Record<string, any> = {
             lead: Users,
             development: Building2,

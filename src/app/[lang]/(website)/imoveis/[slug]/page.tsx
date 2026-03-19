@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
@@ -51,11 +50,13 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
     const description = priceText + rawDesc
 
     // Main image: prefer images JSONB > gallery_images > legacy image column > fallback
-    const imagesJson = (typeof data.images === 'object' && data.images ? data.images : {}) as Record<string, unknown>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const imagesJson = (typeof data.images === 'object' && data.images ? data.images : {}) as Record<string, any>
     const gallery: string[] = Array.isArray(imagesJson.gallery)
         ? imagesJson.gallery
         : (Array.isArray(data.gallery_images) ? data.gallery_images : [])
-    const rawImage: string = imagesJson.main || gallery[0] || (data as Record<string, unknown>).image || ''
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rawImage: string = imagesJson.main || gallery[0] || (data as any).image || ''
     // Ensure absolute URL — local paths get the BASE prepended
     const mainImage: string = rawImage
         ? (rawImage.startsWith('http') ? rawImage : `${BASE}${rawImage}`)
@@ -119,7 +120,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     const development = mapDbPropertyToDevelopment(data)
 
     // Fetch broker separately (resilient — won't break if brokers table is missing)
-    let brokerData: Record<string, unknown> | null = null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let brokerData: Record<string, any> | null = null
     if (data.broker_id) {
         const { data: broker } = await supabase
             .from('brokers')
@@ -143,9 +145,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     // JSON-LD structured data for rich search results
     const priceMin = Number(data.price_from || data.price_min) || undefined
     const location = [data.neighborhood, data.city, data.country !== 'Brasil' ? data.country : data.state].filter(Boolean).join(', ')
-    const imagesJson = (typeof data.images === 'object' && data.images ? data.images : {}) as Record<string, unknown>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const imagesJson = (typeof data.images === 'object' && data.images ? data.images : {}) as Record<string, any>
     const gallery: string[] = Array.isArray(imagesJson.gallery) ? imagesJson.gallery : (Array.isArray(data.gallery_images) ? data.gallery_images : [])
-    const rawImg: string = imagesJson.main || gallery[0] || (data as Record<string, unknown>).image || ''
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rawImg: string = imagesJson.main || gallery[0] || (data as any).image || ''
     const mainImage: string = rawImg ? (rawImg.startsWith('http') ? rawImg : `${BASE}${rawImg}`) : ''
 
     // Breadcrumbs for SEO + navigation
@@ -220,7 +224,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <DevelopmentCTA development={development} />
                         {brokerData?.name && (
                             <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
-                                <RealtorCard broker={brokerData} propertyName={development.name} />
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                <RealtorCard broker={brokerData as any} propertyName={development.name} />
                             </div>
                         )}
                     </aside>

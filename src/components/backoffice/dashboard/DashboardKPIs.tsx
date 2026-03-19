@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useEffect, useState } from 'react'
 import {
@@ -220,7 +219,8 @@ export default function DashboardKPIs() {
             setLoading(false)
         }
     }
-    const generateAlerts = (developments: Record<string, unknown>[], leads: Record<string, unknown>[], metrics: Record<string, unknown>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const generateAlerts = (developments: any[], leads: any[], metrics: any) => {
         const newAlerts: typeof alerts = []
         // Alert: Leads em queda
         if (metrics.leadsThisMonth < metrics.leadsLastMonth * 0.8) {
@@ -247,7 +247,8 @@ export default function DashboardKPIs() {
             })
         }
         // Alert: Empreendimentos sem leads
-        const devsWithoutLeads = developments.filter(d =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const devsWithoutLeads = developments.filter((d: any) =>
             d.status === 'published' && (!d.leads_count || d.leads_count === 0)
         )
         if (devsWithoutLeads.length > 0) {

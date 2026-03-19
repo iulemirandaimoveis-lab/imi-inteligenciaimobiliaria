@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -44,7 +43,8 @@ export default function ContratosPage() {
     const [search, setSearch] = useState('')
     const [filterStatus, setFilterStatus] = useState('todos')
     const [activeTab, setActiveTab] = useState<'lista' | 'modelos'>('lista')
-    const [contratos, setContratos] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [contratos, setContratos] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const loadContratos = async () => {
         setLoading(true)
@@ -186,7 +186,7 @@ export default function ContratosPage() {
                     { key: 'modelos', label: 'Modelos Disponíveis', labelSm: 'Modelos',    icon: Sparkles },
                 ].map(tab => (
                     <button key={tab.key}
-                        onClick={() => setActiveTab(tab.key as string)}
+                        onClick={() => setActiveTab(tab.key as 'lista' | 'modelos')}
                         className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-[6px] text-xs font-semibold transition-all"
                         style={{
                             background: activeTab === tab.key ? 'var(--imi-gold-500)' : T.surface,

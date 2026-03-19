@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react'
 import {
@@ -217,7 +216,7 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                     ].map((option) => (
                         <button
                             key={option.value}
-                            onClick={() => setTimeRange(option.value as string)}
+                            onClick={() => setTimeRange(option.value as '7d' | '30d' | '90d')}
                             className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${timeRange === option.value
                                     ? 'bg-accent-500 text-white shadow-md'
                                     : 'border text-imi-700 hover:border-accent-300'

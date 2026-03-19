@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -19,7 +18,8 @@ interface Workflow {
     description: string | null
     is_active: boolean | null
     trigger_type: string
-    config: Record<string, unknown>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    config: Record<string, any>
     last_run_at: string | null
     run_count: number | null
     created_at: string

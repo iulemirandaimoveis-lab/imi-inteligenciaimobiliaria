@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
@@ -170,7 +169,8 @@ export default function EbookPage() {
             }
             setWriteProgress(100)
         } catch (err: unknown) {
-            if (err.name !== 'AbortError') setError((err instanceof Error ? err.message : 'Erro desconhecido') || 'Erro na geração')
+            if (err instanceof Error && err.name !== 'AbortError') setError(err.message || 'Erro na geração')
+            else if (!(err instanceof Error)) setError('Erro desconhecido')
         } finally {
             setWriting(false)
         }
@@ -736,7 +736,7 @@ export default function EbookPage() {
                                         { icon: Pen, label: 'Tom', value: config.tom },
                                         { icon: BookOpen, label: 'Capítulos', value: `${config.num_capitulos}` },
                                         { icon: FileText, label: 'Palavras', value: wordCount.toLocaleString() },
-                                    ].filter(Boolean).map((item: { icon: React.ElementType; label: string; value: string }) => (
+                                    ].filter(Boolean).map((item: any) => (
                                         <div key={item.label} className="flex items-center gap-3">
                                             <item.icon size={13} style={{ color: T.textMuted, flexShrink: 0 }} />
                                             <span className="text-xs" style={{ color: T.textMuted }}>{item.label}</span>

@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -216,7 +215,7 @@ function IndicatorEditCard({
             </div>
             <div className="flex gap-2 pt-1">
                 <button
-                    onClick={() => onSave(form as string)}
+                    onClick={() => onSave(form as any)}
                     disabled={saving || !form.metric_name || !form.value}
                     className="flex-1 h-9 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-1.5 disabled:opacity-40 transition-opacity"
                     style={{ background: 'var(--btn-primary-bg)' }}

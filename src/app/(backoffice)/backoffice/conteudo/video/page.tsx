@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useCallback, lazy, Suspense } from 'react'
@@ -100,8 +99,10 @@ export default function VideoCreatorPage() {
 
     // Remotion component + props
     // Dynamically imported to avoid SSR issues
-    const [RemotionComp, setRemotionComp] = useState<Record<string, unknown> | null>(null)
-    const [compProps, setCompProps] = useState<Record<string, unknown> | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [RemotionComp, setRemotionComp] = useState<any>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [compProps, setCompProps] = useState<any>(null)
 
     const loadComposition = useCallback(async () => {
         try {

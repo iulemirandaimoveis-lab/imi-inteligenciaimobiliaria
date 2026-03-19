@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -124,12 +123,12 @@ export default function ConsultationWizard() {
     const [formData, setFormData] = useState<ConsultationFormData>(INITIAL_FORM)
     const [loading, setLoading] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({})
-    const handleInputChange = (field: keyof FormData, value: string | number | boolean | null) => {
+    const handleInputChange = (field: keyof ConsultationFormData, value: string | number | boolean | null) => {
         setFormData(prev => ({ ...prev, [field]: value }))
-        if (errors[field]) {
+        if (errors[field as string]) {
             setErrors(prev => {
                 const newErrors = { ...prev }
-                delete newErrors[field]
+                delete newErrors[field as string]
                 return newErrors
             })
         }

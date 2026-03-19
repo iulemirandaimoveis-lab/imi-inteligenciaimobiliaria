@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
@@ -76,11 +75,11 @@ export default function QRGeneratorPage() {
     const prefilledName = searchParams.get('propertyName')
 
     // Form state
-    const [developments, setDevelopments] = useState<Record<string, unknown>[]>([])
-    const [selectedDev, setSelectedDev] = useState<Record<string, unknown> | null>(null)
+    const [developments, setDevelopments] = useState<Record<string, any>[]>([])
+    const [selectedDev, setSelectedDev] = useState<Record<string, any> | null>(null)
     const [showDevDD, setShowDevDD] = useState(false)
-    const [brokers, setBrokers] = useState<Record<string, unknown>[]>([])
-    const [selectedBroker, setSelectedBroker] = useState<Record<string, unknown> | null>(null)
+    const [brokers, setBrokers] = useState<Record<string, any>[]>([])
+    const [selectedBroker, setSelectedBroker] = useState<Record<string, any> | null>(null)
     const [showBrokerDD, setShowBrokerDD] = useState(false)
     const [teamLabel, setTeamLabel] = useState('')
     const [selectedSource, setSelectedSource] = useState(SOURCES[0])
@@ -97,7 +96,7 @@ export default function QRGeneratorPage() {
     const [copiedId, setCopiedId] = useState<string | null>(null)
 
     // Links list
-    const [links, setLinks] = useState<Record<string, unknown>[]>([])
+    const [links, setLinks] = useState<Record<string, any>[]>([])
     const [linksLoading, setLinksLoading] = useState(true)
     const [refreshing, setRefreshing] = useState(false)
     const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
@@ -123,7 +122,7 @@ export default function QRGeneratorPage() {
                 const devs = data || []
                 setDevelopments(devs)
                 if (prefilledId) {
-                    const match = devs.find((d: Record<string, unknown>) => d.id === prefilledId)
+                    const match = devs.find((d: Record<string, any>) => d.id === prefilledId)
                     if (match) { setSelectedDev(match); return }
                 }
                 if (devs.length > 0) setSelectedDev(devs[0])

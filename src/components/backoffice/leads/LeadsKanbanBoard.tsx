@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import React, { useState, useEffect } from 'react'
 import {
@@ -249,18 +248,18 @@ export default function LeadsKanbanBoard() {
     }, [])
     const loadLeads = async () => {
         setLoading(true)
-        const { data, error } = await (supabase as string)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data, error } = await supabase
             .from('leads')
             .select(`
         *,
-        development:developments(name),
-        assigned_user:auth.users(name)
+        development:developments(name)
       `)
             .order('created_at', { ascending: false })
         if (error) {
             toast.error('Erro ao carregar leads')
         } else {
-            setLeads(data || [])
+            setLeads((data as any[]) || [])
         }
         setLoading(false)
     }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -34,7 +33,8 @@ const ALL_STATUSES = ['all', 'draft', 'sent', 'viewed', 'countered', 'accepted',
 export default function PropostasPage() {
   const router = useRouter()
   const supabase = createClient()
-  const [proposals, setProposals] = useState<Record<string, unknown>[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [proposals, setProposals] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')

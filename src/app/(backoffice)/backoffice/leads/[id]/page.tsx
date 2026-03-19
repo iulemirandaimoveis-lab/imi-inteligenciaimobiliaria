@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -90,10 +89,12 @@ export default function LeadDetailPage() {
 
   const { lead, isLoading, isError, revalidate } = useLead(id ?? null)
   const [activeTab, setActiveTab] = useState<'timeline' | 'history' | 'notes' | 'matches'>('timeline')
-  const [matches, setMatches] = useState<Record<string, unknown>[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [matches, setMatches] = useState<Record<string, any>[]>([])
   const [matchesLoading, setMatchesLoading] = useState(false)
   const [note, setNote] = useState('')
-  const [aiAnalysis, setAiAnalysis] = useState<Record<string, unknown> | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [aiAnalysis, setAiAnalysis] = useState<Record<string, any> | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
   const [statusMenuOpen, setStatusMenuOpen] = useState(false)
   const [localStatus, setLocalStatus] = useState<string | null>(null)
@@ -140,7 +141,8 @@ export default function LeadDetailPage() {
   const initials     = getInitials(lead.name)
   const leadStatus   = localStatus ?? lead.status ?? 'cold'
   const avatarBg     = AVATAR_GRADIENTS[leadStatus] ?? AVATAR_GRADIENTS.cold
-  const devName      = (lead as Record<string, unknown>).development?.name ?? null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const devName      = (lead as any).development?.name ?? null
   const aiIntentPct  = lead.score ?? 0
 
   async function changeStatus(newStatus: string) {
@@ -597,7 +599,7 @@ export default function LeadDetailPage() {
             return (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key as string)}
+                onClick={() => setActiveTab(tab.key as typeof activeTab)}
                 style={{
                   flex: 1,
                   padding: '12px 8px',

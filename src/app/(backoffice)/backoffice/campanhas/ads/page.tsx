@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -65,7 +64,8 @@ function LeadsBarChart({ data }: { data: number[] }) {
 
 export default function AdsPerformancePage() {
     const [channel, setChannel] = useState('Todos')
-    const [campaigns, setCampaigns] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [campaigns, setCampaigns] = useState<Record<string, any>[]>([])
     const [totalLeads, setTotalLeads] = useState(0)
     const [totalSpent, setTotalSpent] = useState(0)
     const [avgCPL, setAvgCPL] = useState(0)

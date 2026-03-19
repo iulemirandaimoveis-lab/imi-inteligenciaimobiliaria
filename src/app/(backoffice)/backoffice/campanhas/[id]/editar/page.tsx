@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
@@ -128,7 +127,8 @@ export default function EditarCampanhaPage() {
   useEffect(() => {
     fetch(`/api/campanhas?id=${params.id}`)
       .then(r => r.json())
-      .then((d: Record<string, unknown>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((d: any) => {
         if (d && !d.error) {
           setFormData(prev => ({
             ...prev,

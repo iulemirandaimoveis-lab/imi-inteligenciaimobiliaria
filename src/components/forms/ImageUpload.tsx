@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useRef } from 'react'
 import { ArrowUpTrayIcon, XMarkIcon, PhotoIcon } from '@heroicons/react/24/outline'
@@ -62,11 +61,13 @@ export default function ImageUpload({ images, onChange, maxFiles = 10 }: ImageUp
                     alt: file.name.split('.')[0]
                 })
             } catch (error: unknown) {
-                const errorMessage = error.message || JSON.stringify(error)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const err = error as any
+                const errorMessage = err?.message || JSON.stringify(error)
                 // Specific error for missing bucket
-                if (errorMessage.includes('bucket not found') || error.error?.includes('Bucket not found') || error.statusCode === '404') {
+                if (errorMessage.includes('bucket not found') || err?.error?.includes('Bucket not found') || err?.statusCode === '404') {
                     alert('CONFIGURAÇÃO PENDENTE: O bucket "properties" não foi encontrado no Supabase.\n\nPor favor, crie o bucket "properties" no painel do Supabase como "Public".')
-                } else if (errorMessage.includes('security check') || error.statusCode === '403') {
+                } else if (errorMessage.includes('security check') || err?.statusCode === '403') {
                     alert('ERRO DE PERMISSÃO: Verifique as políticas (RLS) do Storage no Supabase.\n\nCertifique-se que o bucket "properties" é PÚBLICO e permite INSERT e SELECT.')
                 } else {
                     alert(`Erro ao fazer upload da imagem: ${errorMessage}\n\nTente novamente ou contate o suporte.`)

@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import React, { useEffect } from 'react'
 import { UserCog, Shield, CheckCircle, Smartphone, Mail, User, CheckSquare } from 'lucide-react'
@@ -109,7 +108,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
             toast.success('Corretor atualizado com sucesso!')
             router.push('/backoffice/equipe')
         } catch (error: unknown) {
-            toast.error(error.message || 'Erro ao atualizar corretor')
+            toast.error((error instanceof Error ? error.message : null) || 'Erro ao atualizar corretor')
         }
     }
     const fieldStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }

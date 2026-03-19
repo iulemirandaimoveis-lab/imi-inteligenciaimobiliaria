@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
@@ -80,8 +79,10 @@ function HojeSkeleton() {
 // ── Main ────────────────────────────────────────────────────────────
 export default function HojePage() {
   const router = useRouter()
-  const [leads, setLeads] = useState<Record<string, unknown>[]>([])
-  const [events, setEvents] = useState<Record<string, unknown>[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [leads, setLeads] = useState<Record<string, any>[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [events, setEvents] = useState<Record<string, any>[]>([])
   const [agentActivity, setAgentActivity] = useState(AGENT_ACTIVITY_DEFAULT)
   const [loading, setLoading] = useState(true)
 
@@ -162,7 +163,7 @@ export default function HojePage() {
   if (loading) return <HojeSkeleton />
 
   // Derived data
-  const todayEvents  = events.filter(e => e.start_time?.startsWith(todayISO))
+  const todayEvents  = events.filter(e => String(e.start_time ?? '').startsWith(todayISO))
   const hotLeads     = leads.filter(l => l.status === 'hot').slice(0, 4)
   const hotCount     = leads.filter(l => l.status === 'hot').length
   const warmCount    = leads.filter(l => l.status === 'warm').length
@@ -345,12 +346,12 @@ export default function HojePage() {
               <div style={{
                 width: '40px', height: '40px', borderRadius: '12px',
                 background: 'var(--bg-surface)',
-                border: `1px solid ${(a as Record<string, unknown>).isNew ? 'rgba(167,139,250,0.30)' : 'var(--border-default)'}`,
+                border: `1px solid ${('isNew' in a && a.isNew) ? 'rgba(167,139,250,0.30)' : 'var(--border-default)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0, position: 'relative',
               }}>
                 <a.icon size={15} style={{ color: a.color }} />
-                {(a as Record<string, unknown>).isNew && (
+                {'isNew' in a && a.isNew && (
                   <span style={{
                     position: 'absolute', top: -5, right: -5,
                     fontSize: '7px', fontWeight: 800, padding: '1px 4px',
@@ -643,23 +644,23 @@ export default function HojePage() {
           ) : (
             todayEvents.map((ev, i) => (
               <div
-                key={ev.id}
+                key={String(ev.id)}
                 className="flex items-center gap-3 px-4 py-3"
                 style={{ borderBottom: i < todayEvents.length - 1 ? '1px solid var(--border-default)' : 'none' }}
               >
                 {/* Accent line */}
                 <div style={{
                   width: '3px', height: '36px', borderRadius: '2px', flexShrink: 0,
-                  background: ev.color || 'var(--imi-gold-500)',
+                  background: String(ev.color || 'var(--imi-gold-500)'),
                 }} />
                 <div className="flex-1 min-w-0">
                   <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {ev.title}
+                    {String(ev.title ?? '')}
                   </p>
                   <p className="flex items-center gap-1" style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
                     <Clock size={10} />
-                    {formatTime(ev.start_time)}
-                    {ev.location && ` · ${ev.location}`}
+                    {formatTime(String(ev.start_time ?? ''))}
+                    {ev.location && ` · ${String(ev.location)}`}
                   </p>
                 </div>
                 <StatusBadge status="pend" label="Hoje" size="xs" />
@@ -706,12 +707,12 @@ export default function HojePage() {
         ) : (
           <div className="space-y-2">
             {hotLeads.map((l, i) => (
-              <div key={l.id} style={{ cursor: 'pointer' }} onClick={() => router.push(`/backoffice/leads/${l.id}`)}>
+              <div key={String(l.id)} style={{ cursor: 'pointer' }} onClick={() => router.push(`/backoffice/leads/${l.id}`)}>
                 <MobileLeadCard
-                  id={l.id}
-                  name={l.name || 'Sem nome'}
+                  id={l.id as string}
+                  name={String(l.name || 'Sem nome')}
                   status="hot"
-                  score={l.ai_score ?? 75}
+                  score={(l.ai_score as number) ?? 75}
                   aiState="qualifying"
                   aiSummary={
                     l.interest
@@ -719,10 +720,10 @@ export default function HojePage() {
                       : undefined
                   }
                   meta={{
-                    origin: l.source || 'Meta Ads',
-                    location: l.city || undefined,
+                    origin: String(l.source || 'Meta Ads'),
+                    location: l.city ? String(l.city) : undefined,
                     lastActivity: 'hoje',
-                    product: l.interest || undefined,
+                    product: l.interest ? String(l.interest) : undefined,
                   }}
                   isNew={i === 0}
                   animDelay={i * 60}

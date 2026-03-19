@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { usePathname } from 'next/navigation'
@@ -21,7 +20,8 @@ import { createClient } from '@/lib/supabase/client'
 interface NavItem {
     label: string
     href?: string
-    icon: React.ComponentType<{ className?: string }>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    icon: React.ComponentType<any>
     badge?: string | number
     children?: NavItem[]
 }

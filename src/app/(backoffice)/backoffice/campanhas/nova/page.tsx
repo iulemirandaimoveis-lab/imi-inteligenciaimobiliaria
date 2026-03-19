@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
@@ -252,7 +251,7 @@ export default function NovaCampanhaPage() {
       toast.success('Campanha criada com sucesso!')
       router.push('/backoffice/campanhas')
     } catch (error: unknown) {
-      toast.error(error?.message || 'Erro ao criar campanha')
+      toast.error((error instanceof Error ? error.message : String(error)) || 'Erro ao criar campanha')
       setIsSubmitting(false)
     }
   }

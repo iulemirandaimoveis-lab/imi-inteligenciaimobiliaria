@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState } from 'react'
 import {
@@ -64,7 +63,7 @@ export default function EvaluationEditor({
             toast.success('Laudo técnico gerado com sucesso!')
             toast.info('Revise o conteúdo antes de finalizar')
         } catch (error: unknown) {
-            toast.error(error.message || 'Erro ao gerar laudo')
+            toast.error((error instanceof Error ? error.message : String(error)) || 'Erro ao gerar laudo')
         } finally {
             setGenerating(false)
             setGenerationProgress('')

@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -69,7 +68,8 @@ function timeAgo(iso: string | null): string {
     return 'agora'
 }
 
-function urgencyBadge(lead: Record<string, unknown>): { label: string; color: string; bg: string } | null {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function urgencyBadge(lead: Record<string, any>): { label: string; color: string; bg: string } | null {
     const score = lead.score || 0
     const status = (lead.status || '').toLowerCase()
     if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' }
@@ -78,9 +78,10 @@ function urgencyBadge(lead: Record<string, unknown>): { label: string; color: st
 }
 
 // ── Draggable card wrapper ─────────────────────────────────────────
-function DraggableLeadCard({ lead, stageColor }: { lead: Record<string, unknown>; stageColor: string }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function DraggableLeadCard({ lead, stageColor }: { lead: Record<string, any>; stageColor: string }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-        id: lead.id,
+        id: String(lead.id),
         data: { lead },
     })
     return (
@@ -127,7 +128,8 @@ function DroppableColumn({ stageKey, children }: { stageKey: string; children: R
 }
 
 // ── Card component ────────────────────────────────────────────────
-function LeadCard({ lead, stageColor }: { lead: Record<string, unknown>; stageColor: string }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function LeadCard({ lead, stageColor }: { lead: Record<string, any>; stageColor: string }) {
     const badge = urgencyBadge(lead)
     const budget = formatBudget(lead.capital || lead.budget)
     const initials = getInitials(lead.name || '?')
@@ -215,7 +217,8 @@ const STAGE_TO_STATUS: Record<string, string> = {
 
 // ── Main ──────────────────────────────────────────────────────────
 export default function PipelineKanbanPage() {
-    const [leads, setLeads] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [leads, setLeads] = useState<Record<string, any>[]>([])
     const [loading, setLoading] = useState(true)
     const [busca, setBusca] = useState('')
     const [activeId, setActiveId] = useState<string | null>(null)
@@ -262,7 +265,8 @@ export default function PipelineKanbanPage() {
         !busca || l.name?.toLowerCase().includes(busca.toLowerCase())
     )
 
-    const byStage = STAGES.reduce<Record<string, Record<string, unknown>[]>>((acc, s) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const byStage = STAGES.reduce<Record<string, Record<string, any>[]>>((acc, s) => {
         acc[s.key] = filteredLeads.filter(l => toStage(l.status) === s.key)
         return acc
     }, {})

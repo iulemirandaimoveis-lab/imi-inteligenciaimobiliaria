@@ -51,7 +51,7 @@ function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, on
     <div ref={setNodeRef} style={style} className="relative group rounded-lg overflow-hidden"
       {...attributes}>
       <div className="w-full h-28 relative" style={{ border: `1px solid ${T.border}`, borderRadius: 6, overflow: 'hidden' }}>
-        <img src={url} alt="" className="w-full h-full object-cover" />
+        <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" />
         {/* Drag handle */}
         <div {...listeners} className="absolute top-2 left-2 w-6 h-6 rounded-[6px] flex items-center justify-center cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
           style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
@@ -317,7 +317,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {formData.existingFloorPlans.map((url, i) => (
               <div key={url} className="relative group rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
-                <img src={url} alt={`planta ${i}`} className="w-full h-28 object-cover" />
+                <img src={url} alt={`planta ${i}`} className="w-full h-28 object-cover" loading="lazy" />
                 <button type="button" onClick={() => set('existingFloorPlans', formData.existingFloorPlans.filter(x => x !== url))}
                   className="absolute top-2 right-2 w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
                   style={{ background: '#EF444480' }}><X size={12} color="white" /></button>

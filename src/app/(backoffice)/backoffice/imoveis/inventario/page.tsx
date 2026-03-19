@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -558,7 +557,8 @@ function MobileInventario({
 
 export default function InventarioPage() {
     const isMobile = useIsMobile()
-    const [developments, setDevelopments] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [developments, setDevelopments] = useState<any[]>([])
     const [viewCounts, setViewCounts] = useState<Record<string, number>>({})
     const [loading, setLoading] = useState(true)
     const [activeType, setActiveType] = useState('all')
@@ -792,7 +792,7 @@ export default function InventarioPage() {
                                         {/* Image */}
                                         <div className="relative h-44 overflow-hidden" style={{ background: T.surface }}>
                                             {image ? (
-                                                <Image src={image} alt={d.name} fill className="object-cover" />
+                                                <Image src={image} alt={d.name} fill className="object-cover" loading="lazy" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
                                                     <Building2 size={36} style={{ color: T.textMuted, opacity: 0.25 }} />
@@ -904,7 +904,7 @@ export default function InventarioPage() {
                                         <div className="relative w-11 h-11 rounded-lg overflow-hidden flex-shrink-0"
                                             style={{ background: T.surface }}>
                                             {image ? (
-                                                <Image src={image} alt={d.name} fill className="object-cover" />
+                                                <Image src={image} alt={d.name} fill className="object-cover" loading="lazy" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
                                                     <Building2 size={16} style={{ color: T.textMuted, opacity: 0.4 }} />

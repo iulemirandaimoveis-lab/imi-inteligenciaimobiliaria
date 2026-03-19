@@ -45,7 +45,7 @@ export default function FloorPlanGallery({ plantas }: FloorPlanGalleryProps) {
                 >
                     {/* Image or placeholder */}
                     {planta.imagem_url ? (
-                        <img src={planta.imagem_url} alt={planta.tipo} className="w-full h-40 object-cover" />
+                        <img src={planta.imagem_url} alt={planta.tipo} className="w-full h-40 object-cover" loading="lazy" />
                     ) : (
                         <div
                             className="w-full h-40 flex items-center justify-center"

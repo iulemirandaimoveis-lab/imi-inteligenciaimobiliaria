@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -306,7 +305,7 @@ export default function IAHubPage() {
                 toast.info('A geração de imagem completa requer um content item no pipeline de conteúdo.')
             }
         } catch (e: unknown) {
-            toast.error(e.message)
+            toast.error(e instanceof Error ? e.message : String(e))
         } finally {
             setGeneratingImage(false)
         }

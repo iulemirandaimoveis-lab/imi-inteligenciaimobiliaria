@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -24,7 +23,8 @@ const STATUS_CFG = Object.fromEntries(
 export default function ContratoDetalhePage() {
     const params = useParams()
     const router = useRouter()
-    const [data, setData] = useState<Record<string, unknown> | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [data, setData] = useState<any | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<'overview' | 'conteudo' | 'info'>('overview')

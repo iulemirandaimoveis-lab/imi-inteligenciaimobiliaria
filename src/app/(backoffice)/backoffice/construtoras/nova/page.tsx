@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useRef } from 'react'
@@ -101,7 +100,7 @@ export default function NovaConstrutora() {
       toast.success('Construtora criada com sucesso!')
       router.push('/backoffice/construtoras')
     } catch (error: unknown) {
-      toast.error(error.message || 'Erro ao salvar construtora')
+      toast.error(error instanceof Error ? error.message : 'Erro ao salvar construtora')
     } finally {
       setLoading(false)
     }
@@ -124,7 +123,7 @@ export default function NovaConstrutora() {
       <input
         type={opts?.type || 'text'}
         name={name}
-        value={(formData as Record<string, unknown>)[name]}
+        value={(formData as Record<string, any>)[name]}
         onChange={opts?.mask ? e => setFormData(p => ({ ...p, [name]: opts.mask!(e.target.value) })) : handleChange}
         placeholder={opts?.placeholder}
         style={{ ...inputStyle, border: errors[name] ? '1px solid var(--error)' : `1px solid ${T.border}` }}

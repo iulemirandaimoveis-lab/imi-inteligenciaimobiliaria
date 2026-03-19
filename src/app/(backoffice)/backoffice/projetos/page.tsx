@@ -189,7 +189,7 @@ export default function ProjetosPage() {
                                     <div className="h-36 flex items-center justify-center relative overflow-hidden"
                                         style={{ background: T.elevated }}>
                                         {p.imagem_url ? (
-                                            <Image src={p.imagem_url} alt={p.nome} fill className="object-cover" />
+                                            <Image src={p.imagem_url} alt={p.nome} fill className="object-cover" loading="lazy" />
                                         ) : (
                                             <Building2 size={48} style={{ color: T.textMuted, opacity: 0.3 }} />
                                         )}

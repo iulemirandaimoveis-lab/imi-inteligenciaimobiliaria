@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -28,14 +27,16 @@ const formatPrice = (price: number) =>
 export default function AvaliacaoDetalhesPage() {
     const params = useParams()
     const router = useRouter()
-    const [data, setData] = useState<Record<string, unknown> | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [data, setData] = useState<Record<string, any> | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<'overview' | 'info'>('overview')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [comps, setComps] = useState<{ count: number; avgM2: number; minM2: number; maxM2: number } | null>(null)
-    const [aiAnalysis, setAiAnalysis] = useState<Record<string, unknown> | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [aiAnalysis, setAiAnalysis] = useState<Record<string, any> | null>(null)
     const [aiLoading, setAiLoading] = useState(false)
 
     useEffect(() => {

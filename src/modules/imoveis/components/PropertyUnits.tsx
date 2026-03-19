@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import React, { useState } from 'react'
@@ -50,7 +49,8 @@ export default function PropertyUnits({ propertyId }: PropertyUnitsProps) {
         }
     }
 
-    const startEditing = (unit: Record<string, unknown>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const startEditing = (unit: any) => {
         setEditingId(unit.id)
         setFormData(unit)
     }
@@ -105,7 +105,8 @@ export default function PropertyUnits({ propertyId }: PropertyUnitsProps) {
                                 onCancel={() => setIsAdding(false)}
                             />
                         )}
-                        {units.map((unit: Record<string, unknown>) => (
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {units.map((unit: any) => (
                             editingId === unit.id ? (
                                 <UnitRowForm
                                     key={unit.id}
@@ -176,7 +177,8 @@ export default function PropertyUnits({ propertyId }: PropertyUnitsProps) {
     )
 }
 
-function UnitRowForm({ data, onChange, onSave, onCancel }: { data: Record<string, unknown>; onChange: (field: string, value: string | number | boolean | null) => void; onSave: () => void; onCancel: () => void }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function UnitRowForm({ data, onChange, onSave, onCancel }: { data: any; onChange: (data: any) => void; onSave: () => void; onCancel: () => void }) {
     return (
         <tr className="bg-imi-50/30">
             <td className="px-6 py-4 space-y-2">

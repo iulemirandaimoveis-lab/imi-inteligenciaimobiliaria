@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -73,6 +72,7 @@ export default function AgendaPage() {
   const [showModal, setShowModal] = useState(false)
   const [saving, setSaving] = useState(false)
   const [dismissed, setDismissed] = useState<string[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [smartSuggestions, setSmartSuggestions] = useState<{id:string;title:string;desc:string;action:string;icon:any;color:string}[]>([])
 
   const [currentMonth, setCurrentMonth] = useState(() => {
@@ -115,7 +115,7 @@ export default function AgendaPage() {
         const leads: Record<string, unknown>[] = Array.isArray(data) ? data : (data.data ?? [])
         const suggestions: typeof smartSuggestions = []
 
-        const hotLead = leads.find(l => (l.ai_score ?? 0) >= 70 && ['novo', 'contatado'].includes(l.status ?? ''))
+        const hotLead = leads.find(l => ((l.ai_score as number) ?? 0) >= 70 && ['novo', 'contatado'].includes(String(l.status ?? '')))
         if (hotLead) suggestions.push({
           id: `hot-${hotLead.id}`,
           title: 'Lead Quente – Agendar Follow-up',
@@ -123,7 +123,7 @@ export default function AgendaPage() {
           action: 'Agendar Agora', icon: Zap, color: 'var(--s-hot)',
         })
 
-        const qualified = leads.find(l => l.status === 'qualificado' && !suggestions.find(s => s.id.includes(l.id)))
+        const qualified = leads.find(l => l.status === 'qualificado' && !suggestions.find(s => s.id.includes(String(l.id))))
         if (qualified) suggestions.push({
           id: `qual-${qualified.id}`,
           title: 'Lead Qualificado – Proposta Pendente',
@@ -132,8 +132,8 @@ export default function AgendaPage() {
         })
 
         const recent = leads.find(l => {
-          const diff = Date.now() - new Date(l.created_at ?? 0).getTime()
-          return diff < 86400000 * 3 && !suggestions.find(s => s.id.includes(l.id))
+          const diff = Date.now() - new Date(String(l.created_at ?? 0)).getTime()
+          return diff < 86400000 * 3 && !suggestions.find(s => s.id.includes(String(l.id)))
         })
         if (recent) suggestions.push({
           id: `new-${recent.id}`,

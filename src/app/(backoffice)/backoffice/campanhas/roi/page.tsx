@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
@@ -77,7 +76,8 @@ export default function CampanhasROIPage() {
     const [period, setPeriod] = useState<Period>('30d')
     const [loading, setLoading] = useState(true)
     const [refreshKey, setRefreshKey] = useState(0)
-    const [campaigns, setCampaigns] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [campaigns, setCampaigns] = useState<Record<string, any>[]>([])
 
     useEffect(() => {
         async function load() {
@@ -163,7 +163,8 @@ export default function CampanhasROIPage() {
     const campSorted = useMemo(() => {
         return [...campaigns]
             .filter(c => c.spent > 0 && c.roi != null)
-            .map(c => ({ ...c, roi: Number(c.roi) }))
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .map(c => ({ ...c, roi: Number(c.roi) }) as Record<string, any> & { roi: number })
             .sort((a, b) => b.roi - a.roi)
     }, [campaigns])
 

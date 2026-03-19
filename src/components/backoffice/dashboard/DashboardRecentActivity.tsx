@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useEffect, useState } from 'react'
 import {
@@ -211,7 +210,8 @@ export default function DashboardRecentActivity() {
             meeting: { icon: Calendar, color: 'text-teal-600', bgColor: 'bg-teal-50' },
             high_score: { icon: Star, color: 'text-yellow-600', bgColor: 'bg-yellow-50' }
         }
-        return (configs as Record<string, unknown>)[type] || configs.lead
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (configs as any)[type] || configs.lead
     }
     const getStatusName = (status: string): string => {
         const names: Record<string, string> = {

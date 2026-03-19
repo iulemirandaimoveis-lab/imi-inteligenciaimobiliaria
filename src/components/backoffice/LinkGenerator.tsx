@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react'
 import { Link as LinkIcon, Copy, QrCode, Download, CheckCircle, Share2, BarChart3 } from 'lucide-react'
@@ -68,7 +67,8 @@ export default function LinkGenerator() {
         }
         setLoading(true)
         try {
-            const development = developments.find(d => d.id === formData.development_id)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const development = developments.find((d: any) => d.id === formData.development_id) as any
             if (!development) throw new Error('Empreendimento não encontrado')
             // URL base
             const baseUrl = 'https://www.iulemirandaimoveis.com.br'
@@ -116,7 +116,7 @@ export default function LinkGenerator() {
             setQrCodeUrl(qr)
             toast.success('Link gerado com sucesso!')
         } catch (error: unknown) {
-            toast.error(error.message || 'Erro ao gerar link')
+            toast.error((error instanceof Error ? error.message : String(error)) || 'Erro ao gerar link')
         } finally {
             setLoading(false)
         }
@@ -158,9 +158,9 @@ export default function LinkGenerator() {
                         className="w-full h-12 px-4 border border-imi-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
                     >
                         <option value="">Selecione um empreendimento</option>
-                        {developments.map((dev) => (
-                            <option key={dev.id} value={dev.id}>
-                                {dev.name}
+                        {developments.map((dev: Record<string, unknown>) => (
+                            <option key={dev.id as string} value={dev.id as string}>
+                                {dev.name as string}
                             </option>
                         ))}
                     </select>

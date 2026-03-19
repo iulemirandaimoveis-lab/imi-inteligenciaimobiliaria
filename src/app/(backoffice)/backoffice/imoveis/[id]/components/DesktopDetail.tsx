@@ -226,7 +226,7 @@ export function DesktopImovelDetail({
         <div style={{ display: 'flex', gap: 6, marginTop: 8, overflowX: 'auto', paddingBottom: 4 }}>
           {images.slice(0, 8).map((img, idx) => (
             <button key={idx} onClick={() => setGalleryIdx(idx)} style={{ flexShrink: 0, width: 60, height: 40, borderRadius: 6, overflow: 'hidden', border: `2px solid ${idx === galleryIdx ? 'var(--gold, var(--imi-gold-500))' : 'transparent'}`, cursor: 'pointer', position: 'relative', background: T.surface, opacity: idx === galleryIdx ? 1 : 0.6, transition: 'all 150ms ease' }}>
-              <Image src={img} alt="" fill sizes="60px" style={{ objectFit: 'cover' }} />
+              <Image src={img} alt="" fill sizes="60px" style={{ objectFit: 'cover' }} loading="lazy" />
             </button>
           ))}
         </div>
@@ -601,7 +601,7 @@ export function DesktopImovelDetail({
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {dev.developer.logo_url ? (
                   <div style={{ width: 36, height: 36, borderRadius: 6, overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
-                    <Image src={dev.developer.logo_url} alt={dev.developer.name} fill sizes="36px" style={{ objectFit: 'contain' }} />
+                    <Image src={dev.developer.logo_url} alt={dev.developer.name} fill sizes="36px" style={{ objectFit: 'contain' }} loading="lazy" />
                   </div>
                 ) : (
                   <div style={{ width: 36, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(184,148,58,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

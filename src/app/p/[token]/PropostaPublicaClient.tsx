@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
@@ -10,7 +9,8 @@ import {
 } from 'lucide-react'
 
 // ── Types ────────────────────────────────────────────────────
-interface Props { proposal: Record<string, unknown> }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface Props { proposal: Record<string, any> }
 
 // ── Utils ────────────────────────────────────────────────────
 const fmt = (v: number) =>
@@ -295,7 +295,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                 Parcelas Intercaladas
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {proposal.balloon_installments.map((b: Record<string, unknown>, i: number) => (
+                {proposal.balloon_installments.map((b: Record<string, any>, i: number) => (
                   <div key={i} style={{ padding: '6px 12px', background: C.elevated, border: `1px solid ${C.border}`, borderRadius: 8 }}>
                     <div style={{ fontSize: 10, color: C.textMuted }}>Mês {b.month}</div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{fmt(b.value)}</div>

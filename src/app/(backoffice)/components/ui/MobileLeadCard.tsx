@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 /**
@@ -123,7 +122,8 @@ export function MobileLeadCard({
     : { className: `animate-fade-in-up ${className} ${onClick ? 'cursor-pointer' : ''}`, style: cardStyle, onClick }
 
   return (
-    <Wrapper {...(wrapperProps as string)}>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <Wrapper {...(wrapperProps as any)}>
       {/* NEW badge — top accent line */}
       {isNew && (
         <div

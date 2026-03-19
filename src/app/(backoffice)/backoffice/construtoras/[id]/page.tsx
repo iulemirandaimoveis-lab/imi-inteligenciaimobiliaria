@@ -499,7 +499,7 @@ export default function ConstrutoraDetalhesPage() {
                     style={{ backgroundColor: T.surfaceAlt }}
                   >
                     {dev.image ? (
-                      <Image src={dev.image} alt={dev.name} fill className="object-cover" />
+                      <Image src={dev.image} alt={dev.name} fill className="object-cover" loading="lazy" />
                     ) : (
                       <ImageIcon size={24} style={{ color: T.textMuted }} />
                     )}

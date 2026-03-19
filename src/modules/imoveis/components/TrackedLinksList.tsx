@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -140,7 +139,8 @@ export default function TrackedLinksList({ propertyId, property }: TrackedLinksL
 
             {isModalOpen && (
                 <TrackingLinkModal
-                    property={property}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    property={property as any}
                     onClose={() => {
                         setIsModalOpen(false)
                         fetchLinks()

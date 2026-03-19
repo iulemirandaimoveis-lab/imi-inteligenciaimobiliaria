@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
@@ -69,10 +68,12 @@ export default function LeadsPage() {
   useEffect(() => {
     fetch('/api/leads')
       .then(r => r.ok ? r.json() : [])
-      .then((json: Record<string, unknown>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((json: any) => {
         // API returns { data: [...], pagination: {} } or [] on error
         const data = json.data || (Array.isArray(json) ? json : [])
-        setLeads(data.map((l: Record<string, unknown>) => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setLeads(data.map((l: any) => ({
           id: l.id,
           name: l.name || 'Sem nome',
           email: l.email || '',

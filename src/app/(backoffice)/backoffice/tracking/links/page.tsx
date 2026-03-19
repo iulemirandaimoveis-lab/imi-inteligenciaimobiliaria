@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -13,7 +12,8 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 export const dynamic = 'force-dynamic'
 export default function TrackingLinksPage() {
     const router = useRouter()
-    const [links, setLinks] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [links, setLinks] = useState<Record<string, any>[]>([])
     const [loading, setLoading] = useState(true)
     const [copiedId, setCopiedId] = useState<string | null>(null)
     const [search, setSearch] = useState('')

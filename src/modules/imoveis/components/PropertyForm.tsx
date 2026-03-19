@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -29,7 +28,8 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
         setValue,
         watch,
     } = useForm<PropertyFormData>({
-        resolver: zodResolver(propertySchema) as unknown as Parameters<typeof useForm>[0]['resolver'],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        resolver: zodResolver(propertySchema) as any,
         defaultValues: property ? {
             name: property.name,
             slug: property.slug,

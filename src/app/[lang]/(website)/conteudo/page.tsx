@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -54,8 +53,9 @@ export default async function ConteudoPage() {
         .order('data_publicacao', { ascending: false })
         .limit(30)
 
-    const items = posts || []
-    const totalViews = items.reduce((a: number, c: Record<string, unknown>) => a + (Number(c.visualizacoes) || 0), 0)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const items: Record<string, any>[] = posts || []
+    const totalViews = items.reduce((a: number, c: Record<string, any>) => a + (Number(c.visualizacoes) || 0), 0)
     const featured = items[0]
     const rest = items.slice(1)
 
@@ -168,7 +168,8 @@ export default async function ConteudoPage() {
                             <div>
                                 <p className="text-[11px] font-bold uppercase tracking-[0.2em] mb-5" style={{ color: '#6C757D' }}>Publicações Recentes</p>
                                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {rest.map((post: Record<string, unknown>) => {
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                    {rest.map((post: Record<string, any>) => {
                                         const tipoCfg = TIPO_CFG[post.tipo] || TIPO_CFG.post
                                         const TipoIcon = tipoCfg.icon
                                         const canal = post.plataforma || post.canal

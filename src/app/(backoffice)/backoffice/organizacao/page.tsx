@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
@@ -172,7 +171,8 @@ export default function OrganizacaoPage() {
         .single()
       if (data?.tenant_id) {
         setTenantId(data.tenant_id)
-        const tenant = (data as Record<string, unknown>).tenants
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tenant = (data as any).tenants as Record<string, any> | null
         if (tenant) {
           setForm(prev => ({
             ...prev,

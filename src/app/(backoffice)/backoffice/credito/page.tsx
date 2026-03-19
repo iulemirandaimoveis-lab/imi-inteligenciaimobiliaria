@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
@@ -327,7 +326,7 @@ export default function CreditoPage() {
       {/* Tabs */}
       <div className="flex border-b" style={{ borderColor: T.border }}>
         {[{ v: 'simulador', l: 'Simulador' }, { v: 'operacoes', l: 'Operações' }].map(tab => (
-          <button key={tab.v} onClick={() => setActiveTab(tab.v as string)}
+          <button key={tab.v} onClick={() => setActiveTab(tab.v as 'operacoes' | 'simulador')}
             className="px-5 text-sm font-semibold border-b-2 transition-colors"
             style={{
               height: '44px',

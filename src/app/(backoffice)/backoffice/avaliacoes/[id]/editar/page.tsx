@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -127,7 +126,8 @@ export default function EditarAvaliacaoPage() {
   useEffect(() => {
     fetch(`/api/avaliacoes?id=${params.id}`)
       .then(r => r.json())
-      .then((d: Record<string, unknown>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((d: any) => {
         if (d && !d.error) {
           setFormData(prev => ({
             ...prev,
@@ -145,7 +145,7 @@ export default function EditarAvaliacaoPage() {
             clientCPF: d.cliente_cpf_cnpj || '',
             purpose: d.finalidade || '',
             method: d.metodologia || '',
-            requestDate: d.created_at ? d.created_at.split('T')[0] : '',
+            requestDate: d.created_at ? String(d.created_at).split('T')[0] : '',
             deadline: d.prazo_entrega || '',
             documents: [],
           }))
@@ -263,7 +263,7 @@ export default function EditarAvaliacaoPage() {
       toast.success('Avaliação atualizada com sucesso!')
       router.push(`/backoffice/avaliacoes`)
     } catch (error: unknown) {
-      toast.error(error.message || 'Erro ao atualizar avaliação')
+      toast.error((error instanceof Error ? error.message : String(error)) || 'Erro ao atualizar avaliação')
       setIsSubmitting(false)
     }
   }

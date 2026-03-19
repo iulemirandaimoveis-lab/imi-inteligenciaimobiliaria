@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -49,8 +48,10 @@ function getUpcomingDays() {
 export default function CriadorIAPage() {
     const [tema, setTema] = useState(TEMAS[0])
     const [showTemaDropdown, setShowTemaDropdown] = useState(false)
-    const [developments, setDevelopments] = useState<Record<string, unknown>[]>([])
-    const [selectedDev, setSelectedDev] = useState<Record<string, unknown> | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [developments, setDevelopments] = useState<Record<string, any>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [selectedDev, setSelectedDev] = useState<Record<string, any> | null>(null)
     const [showDevDropdown, setShowDevDropdown] = useState(false)
     const [activeCanal, setActiveCanal] = useState(CANAIS[0])
     const [outputTab, setOutputTab] = useState<'legenda' | 'reels' | 'prompt'>('legenda')
@@ -93,7 +94,7 @@ export default function CriadorIAPage() {
             setOutputTab('legenda')
             toast.success('Conteúdo gerado com IA IMI!')
         } catch (e: unknown) {
-            toast.error('Erro ao gerar: ' + e.message)
+            toast.error('Erro ao gerar: ' + (e instanceof Error ? e.message : String(e)))
         } finally {
             setGenerating(false)
         }
@@ -333,7 +334,7 @@ export default function CriadorIAPage() {
                             {OUTPUT_TABS.map(tab => (
                                 <button
                                     key={tab.key}
-                                    onClick={() => setOutputTab(tab.key as string)}
+                                    onClick={() => setOutputTab(tab.key as 'legenda' | 'reels' | 'prompt')}
                                     style={{
                                         flex: 1, height: 34, borderRadius: 10, fontSize: 11, fontWeight: 700,
                                         background: outputTab === tab.key ? T.surface : 'transparent',

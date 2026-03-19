@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import React, { useState } from 'react'
@@ -17,7 +16,8 @@ export default function PropertyEvents({ propertyId }: PropertyEventsProps) {
     const { events, isLoading, mutate } = usePropertyEvents(propertyId)
     const { showToast } = useToast()
     const [isAdding, setIsAdding] = useState(false)
-    const [formData, setFormData] = useState<Record<string, unknown>>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [formData, setFormData] = useState<Record<string, any>>({
         title: '',
         description: '',
         event_type: 'atualizado',
@@ -137,7 +137,8 @@ export default function PropertyEvents({ propertyId }: PropertyEventsProps) {
                         <p className="text-slate-400 font-bold text-sm">Este ativo ainda não possui histórico registrado.</p>
                     </div>
                 ) : (
-                    events.map((event: Record<string, unknown>, index: number) => (
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    events.map((event: any, index: number) => (
                         <div key={event.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
                             {/* Dot */}
                             <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-100 group-hover:bg-imi-900 group-hover:scale-110 transition-all duration-300 shadow-sm z-10 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">

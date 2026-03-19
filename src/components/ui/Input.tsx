@@ -1,4 +1,3 @@
-// @ts-nocheck
 // components/ui/Input.tsx
 // Input Component - Estados Claros e Profissionais
 
@@ -167,7 +166,7 @@ Input.displayName = 'Input'
 // TEXTAREA COMPONENT
 // ============================================
 
-export interface TextareaProps extends InputHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     label?: string
     error?: string
     hint?: string
@@ -220,11 +219,11 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                     disabled={disabled}
                     onFocus={(e) => {
                         setIsFocused(true)
-                        props.onFocus?.(e as string)
+                        props.onFocus?.(e)
                     }}
                     onBlur={(e) => {
                         setIsFocused(false)
-                        props.onBlur?.(e as string)
+                        props.onBlur?.(e)
                     }}
                     {...props}
                 />

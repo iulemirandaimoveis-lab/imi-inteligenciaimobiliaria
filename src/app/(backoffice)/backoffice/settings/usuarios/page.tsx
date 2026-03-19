@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -55,7 +54,8 @@ export default function UsuariosPage() {
       if (res.ok) {
         const json = await res.json()
         const users = json.users || []
-        const formatted = users.map((u: Record<string, unknown>) => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const formatted = users.map((u: any) => ({
           id: u.id,
           name: u.name || 'Sem nome',
           email: u.email,
@@ -71,7 +71,8 @@ export default function UsuariosPage() {
         const supabase = createClient()
         const { data } = await supabase.from('users').select('*').order('createdAt', { ascending: false })
         if (data) {
-          setUsuariosData(data.map((u: Record<string, unknown>) => ({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          setUsuariosData(data.map((u: any) => ({
             id: u.id, name: u.name || 'Sem nome', email: u.email, phone: u.phone || '',
             role: (u.role || 'ADMIN').toUpperCase(),
             avatar: (u.name || u.email || 'U').substring(0, 2).toUpperCase(),

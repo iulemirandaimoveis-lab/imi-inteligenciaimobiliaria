@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
@@ -122,7 +121,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
             setAiMeta({ tokens: data.tokens, model: data.model })
             setCurrentStep(3)
         } catch (e: unknown) {
-            toast.error('Erro ao analisar: ' + e.message)
+            toast.error('Erro ao analisar: ' + (e instanceof Error ? e.message : String(e)))
             setCurrentStep(1)
         } finally {
             setIsAnalyzing(false)
@@ -148,7 +147,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
             toast.success('Laudo salvo com sucesso!')
             router.push('/backoffice/avaliacoes')
         } catch (e: unknown) {
-            toast.error('Erro ao salvar: ' + e.message)
+            toast.error('Erro ao salvar: ' + (e instanceof Error ? e.message : String(e)))
         }
     }
 

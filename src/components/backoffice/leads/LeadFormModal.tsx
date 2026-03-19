@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react'
 import { X, Save, User, Mail, Phone, DollarSign, Building2, Tag, Calendar, UserPlus } from 'lucide-react'
@@ -127,12 +126,12 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
         }
         setLoading(false)
     }
-    const handleInputChange = (field: keyof FormData, value: string | number | boolean | null) => {
+    const handleInputChange = (field: keyof LeadFormData, value: string | number | boolean | null) => {
         setFormData(prev => ({ ...prev, [field]: value }))
-        if (errors[field]) {
+        if (errors[field as string]) {
             setErrors(prev => {
                 const newErrors = { ...prev }
-                delete newErrors[field]
+                delete newErrors[field as string]
                 return newErrors
             })
         }
@@ -212,7 +211,7 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
             }
             onSuccess()
         } catch (error: unknown) {
-            toast.error(error.message || 'Erro ao salvar lead')
+            toast.error((error instanceof Error ? error.message : String(error)) || 'Erro ao salvar lead')
         } finally {
             setLoading(false)
         }
@@ -342,9 +341,9 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                                     className="w-full h-12 px-4 border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-input-dark dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
                                 >
                                     <option value="">Nenhum específico</option>
-                                    {developments.map((dev) => (
-                                        <option key={dev.id} value={dev.id}>
-                                            {dev.name}
+                                    {developments.map((dev: Record<string, unknown>) => (
+                                        <option key={dev.id as string} value={dev.id as string}>
+                                            {dev.name as string}
                                         </option>
                                     ))}
                                 </select>
@@ -402,9 +401,9 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                                 className="w-full h-12 pl-12 pr-4 border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-input-dark dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
                             >
                                 <option value="">Não atribuído</option>
-                                {brokers.map((broker) => (
-                                    <option key={broker.user_id} value={broker.user_id}>
-                                        {broker.name}
+                                {brokers.map((broker: Record<string, unknown>) => (
+                                    <option key={broker.user_id as string} value={broker.user_id as string}>
+                                        {broker.name as string}
                                     </option>
                                 ))}
                             </select>

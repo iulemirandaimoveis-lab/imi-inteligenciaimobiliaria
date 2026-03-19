@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -137,7 +136,7 @@ export default function CreditoNovoPage() {
             toast.success('Solicitação de crédito enviada para análise com sucesso!')
             router.push('/backoffice/credito')
         } catch (error: unknown) {
-            toast.error(`Falha ao processar solicitação: ${error.message || 'Erro de conexão'}`)
+            toast.error(`Falha ao processar solicitação: ${(error instanceof Error ? error.message : null) || 'Erro de conexão'}`)
         } finally {
             setIsSubmitting(false)
         }

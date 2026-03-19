@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
@@ -90,10 +89,11 @@ export default function PerformanceChart({ chartData }: PerformanceChartProps) {
                                     fontSize: 11,
                                     boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
                                 }}
-                                formatter={(v: string | number, name?: string) => [
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                formatter={((v: any, name: any) => [
                                     name === 'leads' ? `${v} leads` : `R$ ${v}k`,
                                     name === 'leads' ? 'Leads' : 'Receita',
-                                ] as [string, string]}
+                                ]) as any}
                             />
                             <Area type="monotone" dataKey="leads" stroke="var(--info)" strokeWidth={2}
                                 fill="url(#blueGrad)" dot={false}

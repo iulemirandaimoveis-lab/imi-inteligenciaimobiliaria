@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useEffect, useState } from 'react'
 import {
@@ -188,12 +187,14 @@ export default function DashboardCharts() {
             </div>
         )
     }
-    const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<Record<string, unknown>>; label?: string }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
         if (active && payload && payload.length) {
             return (
                 <div className="bg-navy-950 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
                     <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2 font-display">{label}</p>
-                    {payload.map((p: Record<string, unknown>, i: number) => (
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {payload.map((p: any, i: number) => (
                         <p key={i} className="text-sm font-bold text-white flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color || p.fill }} />
                             {p.name}: {p.value}
@@ -232,7 +233,7 @@ export default function DashboardCharts() {
                             <Tooltip content={<CustomTooltip />} cursor={{ fill: '#F1F5F9' }} />
                             <Bar dataKey="count" radius={[0, 12, 12, 0]} barSize={24}>
                                 {funnelData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.color} fillOpacity={0.9} />
+                                    <Cell key={`cell-${index}`} fill={entry.color as string} fillOpacity={0.9} />
                                 ))}
                             </Bar>
                         </BarChart>
@@ -391,8 +392,8 @@ export default function DashboardCharts() {
                             <Bar dataKey="value" name="Volume" radius={[12, 12, 0, 0]} barSize={32}>
                                 {scoreData.map((entry, index) => {
                                     let color = COLORS.red
-                                    if (entry.name.startsWith('61')) color = COLORS.yellow
-                                    if (entry.name.startsWith('81')) color = COLORS.green
+                                    if ((entry.name as string).startsWith('61')) color = COLORS.yellow
+                                    if ((entry.name as string).startsWith('81')) color = COLORS.green
                                     return <Cell key={`cell-${index}`} fill={color} fillOpacity={0.8} />
                                 })}
                             </Bar>

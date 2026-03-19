@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -39,7 +38,8 @@ export default function AvaliacoesPage() {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [tab, setTab] = useState('todos')
-  const [avaliacoes, setAvaliacoes] = useState<Record<string, unknown>[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [avaliacoes, setAvaliacoes] = useState<Record<string, any>[]>([])
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     async function fetchAvaliacoes() {

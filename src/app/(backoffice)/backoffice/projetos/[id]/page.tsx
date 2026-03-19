@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -47,8 +46,10 @@ const TABS: { key: TabKey; label: string; icon: React.ElementType }[] = [
 export default function ProjetoDetalhePage() {
     const params = useParams()
     const router = useRouter()
-    const [projeto, setProjeto] = useState<Record<string, unknown> | null>(null)
-    const [unidades, setUnidades] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [projeto, setProjeto] = useState<any | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [unidades, setUnidades] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState<TabKey>('overview')
     const [pdfUploading, setPdfUploading] = useState(false)
@@ -312,7 +313,7 @@ export default function ProjetoDetalhePage() {
                         {projeto.gallery_images?.length > 0 && (
                             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {projeto.gallery_images.map((url: string, i: number) => (
-                                    <img key={i} src={url} alt={`Gallery ${i}`} className="w-full h-32 object-cover rounded-lg" />
+                                    <img key={i} src={url} alt={`Gallery ${i}`} className="w-full h-32 object-cover rounded-lg" loading="lazy" />
                                 ))}
                             </div>
                         )}
@@ -331,7 +332,7 @@ export default function ProjetoDetalhePage() {
                         {/* Image */}
                         {projeto.imagem_url && (
                             <div className="rounded-lg overflow-hidden mt-6" style={{ border: `1px solid ${T.border}` }}>
-                                <img src={projeto.imagem_url} alt={projeto.nome} className="w-full h-64 object-cover" />
+                                <img src={projeto.imagem_url} alt={projeto.nome} className="w-full h-64 object-cover" loading="lazy" />
                             </div>
                         )}
                     </motion.div>

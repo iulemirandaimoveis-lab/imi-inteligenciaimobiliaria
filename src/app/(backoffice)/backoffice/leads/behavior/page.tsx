@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -57,8 +56,10 @@ type RangeKey = 'today' | '7d' | '30d'
 
 export default function LeadBehaviorPage() {
     const router = useRouter()
-    const [leads, setLeads] = useState<Record<string, unknown>[]>([])
-    const [sessions, setSessions] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [leads, setLeads] = useState<Record<string, any>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [sessions, setSessions] = useState<Record<string, any>[]>([])
     const [loading, setLoading] = useState(true)
     const [range, setRange] = useState<RangeKey>('7d')
 

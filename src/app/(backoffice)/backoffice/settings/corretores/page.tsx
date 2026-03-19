@@ -107,7 +107,7 @@ export default function CorretoresPage() {
                                                 <div className="relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden"
                                                     style={{ background: 'rgba(72,101,129,0.15)', color: T.accent }}>
                                                     {broker.avatar_url
-                                                        ? <Image src={broker.avatar_url} alt={broker.name} fill className="object-cover" />
+                                                        ? <Image src={broker.avatar_url} alt={broker.name} fill className="object-cover" loading="lazy" />
                                                         : broker.name.charAt(0)}
                                                 </div>
                                                 <div>

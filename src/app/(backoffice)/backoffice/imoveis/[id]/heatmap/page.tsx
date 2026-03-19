@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -30,7 +29,8 @@ type RangeKey = '7d' | '30d' | '90d'
 
 interface MobileHeatmapProps {
     id: string
-    development: Record<string, unknown>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    development: Record<string, any>
     sections: typeof SECTIONS_DEFAULT
     range: RangeKey
     setRange: (r: RangeKey) => void
@@ -245,8 +245,10 @@ export default function ImovelHeatmapPage() {
     const isMobile = useIsMobile()
     const id = params?.id as string
 
-    const [development, setDevelopment] = useState<Record<string, unknown> | null>(null)
-    const [pageViews, setPageViews] = useState<Record<string, unknown>[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [development, setDevelopment] = useState<Record<string, any> | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [pageViews, setPageViews] = useState<Record<string, any>[]>([])
     const [loading, setLoading] = useState(true)
     const [range, setRange] = useState<RangeKey>('30d')
 
@@ -324,7 +326,7 @@ export default function ImovelHeatmapPage() {
         return (
             <MobileHeatmap
                 id={id}
-                development={development}
+                development={development!}
                 sections={SECTIONS_DEFAULT}
                 range={range}
                 setRange={setRange}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 // components/backoffice/LoadingStates.tsx
 // Loading states e animações profissionais
 
@@ -204,7 +203,8 @@ export function LoadingDots({ className = '' }: { className?: string }) {
 // BUTTON LOADING STATE
 // ============================================
 
-export function ButtonLoading({ children, loading, ...props }: { children: React.ReactNode; loading?: boolean; [key: string]: unknown }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function ButtonLoading({ children, loading, ...props }: { children: React.ReactNode; loading?: boolean; [key: string]: any }) {
     return (
         <button {...props} disabled={loading || props.disabled} className={`${props.className || ''} ${loading ? 'cursor-not-allowed opacity-80' : ''}`}>
             {loading ? (

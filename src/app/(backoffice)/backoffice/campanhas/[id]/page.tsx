@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -50,10 +49,12 @@ export default function CampanhaDetalhesPage() {
     const params = useParams()
     const id = params.id as string
 
-    const [campanha, setCampanha] = useState<Record<string, unknown> | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [campanha, setCampanha] = useState<Record<string, any> | null>(null)
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState<'overview' | 'metricas'>('overview')
-    const [aiAnalysis, setAiAnalysis] = useState<Record<string, unknown> | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [aiAnalysis, setAiAnalysis] = useState<Record<string, any> | null>(null)
     const [aiLoading, setAiLoading] = useState(false)
 
     useEffect(() => {
