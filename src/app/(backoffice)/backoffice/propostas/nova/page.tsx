@@ -9,6 +9,7 @@ import {
   CheckCircle, AlertCircle, Banknote, CreditCard,
   Users, Calendar, Percent, Hash
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { T, cardStyle, inputStyle } from '@/app/(backoffice)/lib/theme'
 import { createClient } from '@/lib/supabase/client'
 
@@ -160,7 +161,7 @@ function StepCard({ title, children }: { title: string; children: React.ReactNod
   )
 }
 
-function PaymentTag({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: React.ComponentType<{ size?: number }>; label: string }) {
+function PaymentTag({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: LucideIcon; label: string }) {
   return (
     <button
       onClick={onClick}
@@ -273,7 +274,7 @@ export default function NovaPropostaPage() {
         buyer_profession: form.buyer_profession,
         seller_name: form.seller_name,
         seller_cpf: form.seller_cpf,
-        property_snapshot: imovel ? { titulo: imovel.titulo, endereco: imovel.endereco } : null,
+        property_snapshot: imovel ? { titulo: imovel.name, endereco: imovel.address } : null,
         listed_price: parseMoney(form.listed_price) || null,
         proposed_value: parseMoney(form.proposed_value),
         entry_value: parseMoney(form.entry_value),

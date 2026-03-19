@@ -241,7 +241,7 @@ export default function SettingsPage() {
     whatsappApi: '',
   })
 
-  const set = (field: keyof SettingsData, value: string) => {
+  const set = (field: keyof SettingsData, value: string | boolean) => {
     setSettings(prev => ({ ...prev, [field]: value }))
     setSaveError('')
   }
@@ -711,7 +711,7 @@ export default function SettingsPage() {
                   <Label>{f.label}</Label>
                   <input
                     type={f.type}
-                    value={settings[f.key as keyof SettingsData]}
+                    value={settings[f.key as keyof SettingsData] as string}
                     onChange={e => set(f.key as keyof SettingsData, e.target.value)}
                     style={inputBase}
                     onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-focus)')}
@@ -1017,7 +1017,7 @@ export default function SettingsPage() {
                     }} />
                     <input
                       type="text"
-                      value={settings[f.key as keyof SettingsData]}
+                      value={settings[f.key as keyof SettingsData] as string}
                       onChange={e => set(f.key as keyof SettingsData, e.target.value)}
                       placeholder={f.placeholder}
                       style={{ ...inputBase, paddingLeft: 38, fontFamily: 'var(--font-mono)', fontSize: 13 }}

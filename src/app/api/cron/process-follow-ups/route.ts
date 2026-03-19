@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         const errors: string[] = []
         for (const fu of followUps) {
             try {
-                const lead = fu.leads as Record<string, unknown>
+                const lead = fu.leads as unknown as Record<string, unknown> | null
                 const assignedTo = fu.assigned_to
                 // Marcar como em processamento para evitar double-processing
                 await supabaseAdmin

@@ -16,6 +16,7 @@ import {
     Edit3,
     Building2,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { format } from 'date-fns'
@@ -27,7 +28,7 @@ import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-
 
 const supabase = createClient()
 
-const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }> }> = {
+const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: LucideIcon }> = {
     creation:       { color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Plus },
     price_change:   { color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
     campaign_start: { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: Activity },

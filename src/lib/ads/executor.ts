@@ -176,7 +176,7 @@ async function executeGoogleAdsAction(
                         {
                             update: {
                                 resourceName: campaign.budget_id,
-                                amountMicros: params.budget_amount * 1000000, // Converter para micros
+                                amountMicros: (params.budget_amount ?? 0) * 1000000, // Converter para micros
                             },
                             updateMask: 'amountMicros',
                         },
@@ -231,7 +231,7 @@ async function executeMetaAdsAction(
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    daily_budget: params.budget_amount * 100, // Converter para centavos
+                    daily_budget: (params.budget_amount ?? 0) * 100, // Converter para centavos
                 }),
             }).then((r) => r.json());
         default:

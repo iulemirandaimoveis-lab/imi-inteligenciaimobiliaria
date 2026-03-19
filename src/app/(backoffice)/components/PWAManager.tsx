@@ -11,6 +11,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // ---------------------------------------------------------------------------
 // Types

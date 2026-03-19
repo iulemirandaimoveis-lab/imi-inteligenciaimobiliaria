@@ -33,15 +33,18 @@ DADOS DO LEAD:
 - Budget min: ${data.budget_min ? `R$ ${Number(data.budget_min).toLocaleString('pt-BR')}` : 'N/A'}
 - Budget max: ${data.budget_max ? `R$ ${Number(data.budget_max).toLocaleString('pt-BR')}` : 'N/A'}
 - Score atual: ${data.score || 0}
-- Criado em: ${data.created_at ? new Date(data.created_at).toLocaleDateString('pt-BR') : 'N/A'}
-- Última interação: ${data.last_interaction_at ? new Date(data.last_interaction_at).toLocaleDateString('pt-BR') : 'Nenhuma'}
+- Criado em: ${data.created_at ? new Date(String(data.created_at)).toLocaleDateString('pt-BR') : 'N/A'}
+- Última interação: ${data.last_interaction_at ? new Date(String(data.last_interaction_at)).toLocaleDateString('pt-BR') : 'Nenhuma'}
 - Localização de interesse: ${data.interest_location || 'N/A'}
 - Tags: ${Array.isArray(data.tags) ? data.tags.join(', ') : 'Nenhuma'}
 - Notas: ${data.notes || 'Nenhuma'}`
 }
 function buildCampanhaPrompt(data: Record<string, unknown>): string {
-  const cpl = data.leads > 0 && data.cost > 0 ? (data.cost / data.leads).toFixed(2) : null
-  const roi = data.revenue > 0 && data.cost > 0 ? (((data.revenue - data.cost) / data.cost) * 100).toFixed(1) : null
+  const nLeads = Number(data.leads) || 0
+  const nCost = Number(data.cost) || 0
+  const nRevenue = Number(data.revenue) || 0
+  const cpl = nLeads > 0 && nCost > 0 ? (nCost / nLeads).toFixed(2) : null
+  const roi = nRevenue > 0 && nCost > 0 ? (((nRevenue - nCost) / nCost) * 100).toFixed(1) : null
   return `Analise esta campanha de marketing imobiliário e retorne JSON no formato exato:
 {
   "insight": "análise de performance em 1-2 frases",
@@ -65,8 +68,8 @@ DADOS DA CAMPANHA:
 - ROI calculado: ${roi ? `${roi}%` : 'N/A'}
 - Impressões: ${data.impressions || 'N/A'}
 - Cliques: ${data.clicks || 'N/A'}
-- CTR: ${data.impressions && data.clicks ? `${((data.clicks / data.impressions) * 100).toFixed(2)}%` : 'N/A'}
-- Período: ${data.start_date ? new Date(data.start_date).toLocaleDateString('pt-BR') : 'N/A'} → ${data.end_date ? new Date(data.end_date).toLocaleDateString('pt-BR') : 'Em andamento'}`
+- CTR: ${data.impressions && data.clicks ? `${((Number(data.clicks) / Number(data.impressions)) * 100).toFixed(2)}%` : 'N/A'}
+- Período: ${data.start_date ? new Date(String(data.start_date)).toLocaleDateString('pt-BR') : 'N/A'} → ${data.end_date ? new Date(String(data.end_date)).toLocaleDateString('pt-BR') : 'Em andamento'}`
 }
 function buildAvaliacaoPrompt(data: Record<string, unknown>): string {
   return `Analise esta avaliação imobiliária e retorne JSON no formato exato:
@@ -86,7 +89,7 @@ DADOS DA AVALIAÇÃO:
 - Área: ${data.area ? `${data.area}m²` : 'N/A'}
 - Bairro/Cidade: ${data.neighborhood || 'N/A'}${data.city ? ', ' + data.city : ''}
 - Valor estimado: ${data.estimated_value ? `R$ ${Number(data.estimated_value).toLocaleString('pt-BR')}` : 'Pendente'}
-- Valor R$/m²: ${data.area && data.estimated_value ? `R$ ${Math.round(data.estimated_value / data.area).toLocaleString('pt-BR')}` : 'N/A'}
+- Valor R$/m²: ${data.area && data.estimated_value ? `R$ ${Math.round(Number(data.estimated_value) / Number(data.area)).toLocaleString('pt-BR')}` : 'N/A'}
 - Padrão: ${data.standard || data.quality || 'N/A'}
 - Estado de conservação: ${data.condition || 'N/A'}
 - Propósito: ${data.purpose || 'N/A'}

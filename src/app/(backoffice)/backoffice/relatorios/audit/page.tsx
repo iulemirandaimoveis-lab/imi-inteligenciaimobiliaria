@@ -4,6 +4,7 @@ import {
   Shield, Search, User, Settings, Trash2, Plus, Edit, Eye,
   LogIn, LogOut, Download, AlertTriangle, CheckCircle, Clock, Lock,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 // DB action → UI action
@@ -108,7 +109,7 @@ function transformLog(raw: RawAuditLog): UILog {
     entidade_id: raw.entity_id,
   }
 }
-type IconComponent = React.ComponentType<{ size?: number; style?: React.CSSProperties; className?: string }>
+type IconComponent = LucideIcon
 
 const ACAO_CONFIG: Record<string, { label: string; icon: IconComponent; textColor: string; bgColor: string }> = {
   login:  { label: 'Login',         icon: LogIn,    textColor: 'var(--info)', bgColor: 'rgba(96,165,250,0.10)'  },

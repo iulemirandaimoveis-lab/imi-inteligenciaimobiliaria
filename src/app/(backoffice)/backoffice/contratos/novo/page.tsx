@@ -101,7 +101,7 @@ function FormParte({ titulo, parte, onChange }: { titulo: string; parte: ParteDa
                 <h3 className="text-sm font-bold" style={{ color: T.text }}>{titulo}</h3>
             </div>
             <div className="flex gap-2">
-                {['pessoa_fisica', 'pessoa_juridica'].map(t => (
+                {(['pessoa_fisica', 'pessoa_juridica'] as const).map(t => (
                     <button key={t} onClick={() => onChange({ ...parte, tipo: t })}
                         className="flex-1 h-10 rounded-[6px] text-xs font-semibold transition-all"
                         style={{ background: parte.tipo === t ? 'var(--bo-accent)' : T.elevated, color: parte.tipo === t ? 'white' : T.textDim, border: `1px solid ${parte.tipo === t ? T.borderGold : T.border}` }}>
@@ -295,7 +295,7 @@ function NovoContratoInner() {
                             <p className="text-xs mb-4" style={{ color: T.textDim }}>PT-BR obrigatório. Selecione os idiomas adicionais disponíveis neste modelo.</p>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 {Object.entries(IDIOMAS_LABEL).map(([lang, cfg]) => {
-                                    const disp = modelo.idiomas.includes(lang)
+                                    const disp = (modelo.idiomas as string[]).includes(lang)
                                     const sel = idiomasSel.includes(lang)
                                     const obrig = lang === 'pt'
                                     return (

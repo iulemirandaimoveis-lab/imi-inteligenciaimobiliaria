@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         const result = await executeAdAction({
             tenant_id: campaign.tenant_id,
             campaign_id,
-            platform: campaign.account.platform as string,
+            platform: campaign.account.platform as 'google_ads' | 'meta_ads',
             action_type: 'pause',
             params: {},
             reason: reason || 'Manual pause',

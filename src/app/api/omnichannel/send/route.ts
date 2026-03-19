@@ -25,12 +25,12 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Mensagem não encontrada' }, { status: 404 })
     }
 
-    const conv = msg.whatsapp_conversations as Record<string, unknown>
+    const conv = msg.whatsapp_conversations as unknown as { phone_number: string; tenant_id: string | null; lead_id: string | null }
     const result = await sendWhatsAppMessage({
         tenant_id: conv.tenant_id || user.id,
         phone_number: conv.phone_number,
         message: reply,
-        lead_id: conv.lead_id,
+        lead_id: conv.lead_id ?? undefined,
     })
 
     if (!result.success) {

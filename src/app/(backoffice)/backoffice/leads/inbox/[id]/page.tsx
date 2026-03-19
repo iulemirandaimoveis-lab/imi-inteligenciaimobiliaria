@@ -173,10 +173,10 @@ export default function LeadInboxDetailPage() {
             // Use persisted interactions if available, else build from lead data
             if (intRes.data && intRes.data.length > 0) {
                 const mapped = intRes.data.map((i: Record<string, unknown>) => ({
-                    id: i.id,
-                    role: i.direction === 'inbound' ? 'bot' : 'user',
-                    text: i.content || i.notes || '',
-                    time: new Date(i.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                    id: String(i.id),
+                    role: (i.direction === 'inbound' ? 'bot' : 'user') as 'user' | 'bot',
+                    text: String(i.content || i.notes || ''),
+                    time: new Date(i.created_at as string).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
                 }))
                 setMessages(mapped)
             } else {
@@ -224,7 +224,7 @@ export default function LeadInboxDetailPage() {
         } catch { /* fallback abaixo */ }
 
         if (!botText) {
-            botText = generateBotResponse(userMsg, lead, getScore(lead))
+            botText = generateBotResponse(userMsg, lead!, getScore(lead!))
         }
 
         const botMsg = {
@@ -275,12 +275,12 @@ export default function LeadInboxDetailPage() {
         <div style={{ maxWidth: 640, paddingBottom: 140 }}>
             <PageIntelHeader
                 moduleLabel="LEADS"
-                title={lead.name}
+                title={lead.name ?? 'Lead'}
                 subtitle={lead.email || lead.phone || 'Conversa com IA'}
                 breadcrumbs={[
                     { label: 'Leads', href: '/backoffice/leads' },
                     { label: 'Inbox', href: '/backoffice/leads/inbox' },
-                    { label: lead.name },
+                    { label: lead.name ?? 'Lead' },
                 ]}
                 actions={
                     <div style={{
@@ -439,7 +439,7 @@ export default function LeadInboxDetailPage() {
                         bg: 'rgba(167,139,250,0.12)',
                         border: 'rgba(167,139,250,0.25)',
                     },
-                ].filter(Boolean).map((action, i) => (
+                ].filter((x): x is { href: string; label: string; icon: React.ReactElement; color: string; bg: string; border: string; target?: string } => Boolean(x)).map((action, i) => (
                     <a
                         key={i}
                         href={action.href}

@@ -20,7 +20,7 @@ class GovBrProvider {
     this.clientId     = process.env.GOVBR_CLIENT_ID || ''
     this.clientSecret = process.env.GOVBR_CLIENT_SECRET || ''
     this.redirectUri  = process.env.GOVBR_REDIRECT_URI || ''
-    this.env          = (process.env.GOVBR_ENVIRONMENT as string) || 'staging'
+    this.env          = (process.env.GOVBR_ENVIRONMENT as 'staging' | 'production') || 'staging'
     this.baseUrl      = this.env === 'production'
       ? 'https://sso.acesso.gov.br'
       : 'https://sso.staging.acesso.gov.br'

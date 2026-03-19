@@ -95,8 +95,9 @@ Responda APENAS em JSON válido com esta estrutura:
             return NextResponse.json({ error: pageError?.message || 'Erro ao salvar página' }, { status: 500 })
         }
         // 4. Save topics
-        if (extracted.topics?.length > 0) {
-            const topicsToInsert = (extracted.topics as Array<Record<string, unknown>>).map((t) => ({
+        const topicsArray = Array.isArray(extracted.topics) ? extracted.topics as Array<Record<string, unknown>> : []
+        if (topicsArray.length > 0) {
+            const topicsToInsert = topicsArray.map((t) => ({
                 page_id: page.id,
                 title: t.title,
                 content: t.content,
@@ -111,14 +112,14 @@ Responda APENAS em JSON válido com esta estrutura:
         if (sessionId) {
             await supabaseAdmin
                 .from('avaliacoes_kb_upload_queue')
-                .update({ status: 'completed', page_id: page.id, topics_count: extracted.topics?.length || 0 })
+                .update({ status: 'completed', page_id: page.id, topics_count: topicsArray.length })
                 .eq('session_id', sessionId)
                 .eq('file_name', sourceFile)
         }
         return NextResponse.json({
             success: true,
             page_id: page.id,
-            topics_count: extracted.topics?.length || 0,
+            topics_count: topicsArray.length,
             page_title: extracted.page_title,
         })
     } catch (err: unknown) {

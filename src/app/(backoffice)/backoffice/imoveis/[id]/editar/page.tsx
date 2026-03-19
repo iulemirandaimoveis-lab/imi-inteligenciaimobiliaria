@@ -878,7 +878,7 @@ export default function EditarImovelPage() {
                       <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: validationErrors[field] ? 'var(--bo-error,#f87171)' : T.textDim }} />
                       <input
                         type="number" min="0"
-                        value={formData[field as keyof FormData]}
+                        value={formData[field as keyof FormData] as string}
                         onChange={e => set(field as keyof FormData, e.target.value)}
                         className={inp}
                         style={{
@@ -936,7 +936,7 @@ export default function EditarImovelPage() {
                       <input
                         type="number" min="0"
                         placeholder={placeholder}
-                        value={formData[field as keyof FormData]}
+                        value={formData[field as keyof FormData] as string}
                         onChange={e => set(field as keyof FormData, e.target.value)}
                         className={inp}
                         style={{
@@ -992,7 +992,7 @@ export default function EditarImovelPage() {
 
           {/* ── MÍDIA ── */}
           {activeTab === 'midia' && (
-            <GalleryTabContent formData={formData} set={set} params={params} />
+            <GalleryTabContent formData={formData} set={set} params={{ id: String(params.id) }} />
           )}
         </motion.div>
       </AnimatePresence>

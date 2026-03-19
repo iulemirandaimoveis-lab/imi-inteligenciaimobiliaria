@@ -76,6 +76,9 @@ interface InventoryDevelopment {
     area_max?: number
     units_total?: number
     units_available?: number
+    bedrooms?: number
+    bathrooms?: number
+    area?: number
     [key: string]: unknown
 }
 

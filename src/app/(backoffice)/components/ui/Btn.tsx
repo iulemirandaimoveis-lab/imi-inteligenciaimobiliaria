@@ -143,7 +143,6 @@ function buildStyle(
     width: isIcon ? `${s.height}px` : full ? '100%' : undefined,
     fontSize: `${s.fontSize}px`,
     fontFamily: 'var(--font-sans)',
-    fontWeight: 500,
     lineHeight: 1,
     borderRadius: 'var(--r-md, 8px)',
     border: v.border,

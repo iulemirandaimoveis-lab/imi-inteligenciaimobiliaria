@@ -38,7 +38,7 @@ export async function GET(request: Request) {
             capital: l.capital || l.budget_min || null,
             budget_min: l.budget_min || null,
             budget_max: l.budget_max || null,
-            budget: formatBudget(l.budget_min || l.capital, l.budget_max),
+            budget: formatBudget((l.budget_min || l.capital) as number | null, l.budget_max as number | null),
             country: l.country || 'BR',
             currency: l.currency || 'BRL',
             language: l.language || 'pt',

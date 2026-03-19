@@ -8,6 +8,7 @@ import {
   Landmark, ChevronDown, ChevronRight, Car, Layers, Star, Eye,
   Hash, Clock, CreditCard, Gavel
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 // ============================================================
@@ -199,7 +200,7 @@ function Label({ children, required }: { children: React.ReactNode; required?: b
     </label>
   )
 }
-function InputField({ icon: Icon, error, ...props }: { icon?: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function InputField({ icon: Icon, error, ...props }: { icon?: LucideIcon; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className="relative">
       {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textMuted }} />}

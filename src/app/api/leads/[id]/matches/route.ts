@@ -68,6 +68,26 @@ export async function GET(
             return lower
         }
         // --- Score each development ---
+        interface DevRecord {
+            id: string
+            name: string
+            slug: string | null
+            type: string | null
+            tipo: string | null
+            property_type: string | null
+            city: string | null
+            neighborhood: string | null
+            state: string | null
+            bedrooms: number | null
+            price_min: number | null
+            price_max: number | null
+            price_from: number | null
+            price_to: number | null
+            status: string | null
+            status_commercial: string | null
+            image_url: string | null
+            gallery_images: string[] | null
+        }
         interface ScoredMatch {
             id: string
             name: string
@@ -90,7 +110,7 @@ export async function GET(
                 quartos: number
             }
         }
-        const scored: ScoredMatch[] = (developments ?? []).map((dev: Record<string, unknown>) => {
+        const scored: ScoredMatch[] = ((developments ?? []) as unknown as DevRecord[]).map((dev) => {
             let valorScore = 0
             let tipoScore = 0
             let localizacaoScore = 0
@@ -126,7 +146,7 @@ export async function GET(
             // ---- 2. Tipo (30 pts) ----
             if (leadType) {
                 const normLead = normaliseType(leadType)
-                const normDev = normaliseType(dev.tipo) || normaliseType(dev.type) || normaliseType(dev.property_type)
+                const normDev = normaliseType(dev.tipo ?? null) || normaliseType(dev.type ?? null) || normaliseType(dev.property_type ?? null)
                 if (normLead && normDev && normLead === normDev) {
                     tipoScore = 30
                 }
@@ -168,7 +188,7 @@ export async function GET(
                 bedrooms: dev.bedrooms ?? null,
                 price_min: devMin,
                 price_max: devMax,
-                image_url: dev.image_url ?? dev.gallery_images?.[0] ?? null,
+                image_url: dev.image_url ?? (dev.gallery_images ? dev.gallery_images[0] : null) ?? null,
                 status: dev.status ?? null,
                 score: totalScore,
                 score_breakdown: {

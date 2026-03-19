@@ -30,7 +30,17 @@ export async function GET(request: NextRequest) {
         const linkIds = (trackedLinks || []).map(l => l.id)
         const totalClicks = (trackedLinks || []).reduce((sum, l) => sum + (l.clicks || 0), 0)
         // 3. Get link events for these tracked links within time range
-        let events: Record<string, unknown>[] = []
+        interface LinkEvent {
+            id: string
+            tracked_link_id: string
+            event_type: string
+            utm_params: Record<string, string> | null
+            device_type: string | null
+            location: string | null
+            created_at: string
+            metadata: Record<string, unknown> | null
+        }
+        let events: LinkEvent[] = []
         if (linkIds.length > 0) {
             const { data: eventsData } = await supabase
                 .from('link_events')
@@ -38,7 +48,7 @@ export async function GET(request: NextRequest) {
                 .in('tracked_link_id', linkIds)
                 .gte('created_at', sinceISO)
                 .order('created_at', { ascending: true })
-            events = eventsData || []
+            events = (eventsData || []) as LinkEvent[]
         }
         // 4. Get leads for this development within time range
         const { data: leads } = await supabase
@@ -59,7 +69,7 @@ export async function GET(request: NextRequest) {
             const key = d.toISOString().split('T')[0]
             dailyMap[key] = { views: 0, clicks: 0, leads: 0 }
         }
-        events.forEach(e => {
+        events.forEach((e: LinkEvent) => {
             const day = new Date(e.created_at).toISOString().split('T')[0]
             if (dailyMap[day]) {
                 dailyMap[day].clicks++
@@ -82,7 +92,7 @@ export async function GET(request: NextRequest) {
         }))
         // 6. Traffic sources from UTM params
         const sourceMap: Record<string, number> = {}
-        events.forEach(e => {
+        events.forEach((e: LinkEvent) => {
             const src = e.utm_params?.utm_source || 'Direto'
             sourceMap[src] = (sourceMap[src] || 0) + 1
         });
@@ -102,13 +112,13 @@ export async function GET(request: NextRequest) {
             }))
         // 7. Device breakdown
         const deviceMap: Record<string, number> = {}
-        events.forEach(e => {
+        events.forEach((e: LinkEvent) => {
             const device = e.device_type || 'desktop'
             deviceMap[device] = (deviceMap[device] || 0) + 1
         })
         // 8. Location breakdown
         const locationMap: Record<string, number> = {}
-        events.forEach(e => {
+        events.forEach((e: LinkEvent) => {
             const loc = e.location || 'Desconhecido'
             locationMap[loc] = (locationMap[loc] || 0) + 1
         })

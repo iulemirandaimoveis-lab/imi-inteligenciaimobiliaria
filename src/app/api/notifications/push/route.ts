@@ -83,7 +83,8 @@ async function sendToSubscription(
         )
         return true
     } catch (err: unknown) {
-        const statusCode = err?.statusCode ?? err?.status
+        const errObj = err instanceof Object ? err as Record<string, unknown> : {}
+        const statusCode = (errObj.statusCode as number | undefined) ?? (errObj.status as number | undefined)
         if (statusCode === 410 || statusCode === 404) {
             // Subscription is expired or no longer valid — remove it
             console.info('[push] Removing stale subscription (status %d):', statusCode, subscription.endpoint)

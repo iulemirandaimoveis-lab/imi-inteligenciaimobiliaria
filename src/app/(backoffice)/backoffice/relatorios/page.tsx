@@ -69,7 +69,7 @@ function useLeadsByDev() {
             .select('development:developments(name)')
         if (error) throw error
         const counts: Record<string, number> = {}
-        for (const row of (data as { development: { name: string } | null }[]) || []) {
+        for (const row of (data as unknown as { development: { name: string } | null }[]) || []) {
             const name = row.development?.name || 'Sem imóvel'
             counts[name] = (counts[name] || 0) + 1
         }

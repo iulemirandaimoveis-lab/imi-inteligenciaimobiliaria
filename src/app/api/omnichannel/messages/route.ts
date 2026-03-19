@@ -23,7 +23,15 @@ export async function GET(req: NextRequest) {
         .order('created_at', { ascending: false })
         .limit(limit)
 
-    const messages = (waMessages || []).map((m: Record<string, unknown>) => ({
+    interface WaMessage {
+        id: string
+        content: string | null
+        status: string | null
+        created_at: string
+        conversation_id: string | null
+        whatsapp_conversations: { phone_number: string; lead_id: string | null } | null
+    }
+    const messages = ((waMessages || []) as WaMessage[]).map((m) => ({
         id: m.id,
         channel: 'whatsapp',
         from: m.whatsapp_conversations?.phone_number || 'Desconhecido',

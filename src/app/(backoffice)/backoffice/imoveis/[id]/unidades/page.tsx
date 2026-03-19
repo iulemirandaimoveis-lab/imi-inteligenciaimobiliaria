@@ -7,6 +7,7 @@ import {
     Clock, XCircle, Home, Ruler, DollarSign, User,
     Star, Loader2, Building2,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
@@ -17,7 +18,7 @@ import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-
 
 // ─── Shared Config ────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }> }> = {
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: LucideIcon }> = {
     available:  { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
     disponivel: { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
     reserved:   { label: 'Reservada',  color: '#F59E0B', bg: 'rgba(245,158,11,0.14)',  icon: Clock },
@@ -327,7 +328,7 @@ function MobileUnidades({
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                         {filtered.map(unidade => {
-                            const st = STATUS_CONFIG[unidade.status] || STATUS_CONFIG.available
+                            const st = STATUS_CONFIG[unidade.status ?? 'available'] || STATUS_CONFIG.available
                             return (
                                 <div
                                     key={unidade.id}
@@ -396,7 +397,7 @@ function MobileUnidades({
                                     </div>
 
                                     {/* Specs row: area, bedrooms, bathrooms */}
-                                    {(unidade.area > 0 || unidade.bedrooms > 0 || unidade.bathrooms > 0) && (
+                                    {((unidade.area ?? 0) > 0 || (unidade.bedrooms ?? 0) > 0 || (unidade.bathrooms ?? 0) > 0) && (
                                         <div style={{
                                             display: 'flex',
                                             alignItems: 'center',
@@ -405,7 +406,7 @@ function MobileUnidades({
                                             paddingBottom: 10,
                                             borderBottom: '1px solid rgba(184,148,58,0.08)',
                                         }}>
-                                            {unidade.area > 0 && (
+                                            {(unidade.area ?? 0) > 0 && (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                                                     <Ruler size={12} style={{ color: '#5C6B7D', flexShrink: 0 }} />
                                                     <span style={{
@@ -415,7 +416,7 @@ function MobileUnidades({
                                                     }}>{unidade.area}m²</span>
                                                 </div>
                                             )}
-                                            {unidade.bedrooms > 0 && (
+                                            {(unidade.bedrooms ?? 0) > 0 && (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                                                     <Home size={12} style={{ color: '#5C6B7D', flexShrink: 0 }} />
                                                     <span style={{
@@ -425,7 +426,7 @@ function MobileUnidades({
                                                     }}>{unidade.bedrooms} qts</span>
                                                 </div>
                                             )}
-                                            {unidade.bathrooms > 0 && (
+                                            {(unidade.bathrooms ?? 0) > 0 && (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5C6B7D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                                                         <path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><line x1="10" x2="8" y1="5" y2="7"/><line x1="2" x2="22" y1="12" y2="12"/>
@@ -715,7 +716,7 @@ function DesktopUnidades({
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {filtered.map((unidade, index) => {
-                        const st = STATUS_CONFIG[unidade.status] || STATUS_CONFIG.available
+                        const st = STATUS_CONFIG[unidade.status ?? 'available'] || STATUS_CONFIG.available
                         const StatusIcon = st.icon
                         return (
                             <motion.div
@@ -762,18 +763,18 @@ function DesktopUnidades({
                                     className="grid grid-cols-2 gap-2 mb-3 pb-3"
                                     style={{ borderBottom: `1px solid ${T.border}` }}
                                 >
-                                    {unidade.area > 0 && (
+                                    {(unidade.area ?? 0) > 0 && (
                                         <div className="flex items-center gap-1.5 text-xs" style={{ color: T.textMuted }}>
                                             <Ruler size={11} />
                                             <span>{unidade.area}m²</span>
                                         </div>
                                     )}
-                                    {(unidade.bedrooms > 0 || unidade.bathrooms > 0) && (
+                                    {((unidade.bedrooms ?? 0) > 0 || (unidade.bathrooms ?? 0) > 0) && (
                                         <div className="flex items-center gap-1.5 text-xs" style={{ color: T.textMuted }}>
                                             <Home size={11} />
                                             <span>
-                                                {unidade.bedrooms > 0 ? `${unidade.bedrooms}Q` : ''}
-                                                {unidade.bathrooms > 0 ? ` ${unidade.bathrooms}B` : ''}
+                                                {(unidade.bedrooms ?? 0) > 0 ? `${unidade.bedrooms}Q` : ''}
+                                                {(unidade.bathrooms ?? 0) > 0 ? ` ${unidade.bathrooms}B` : ''}
                                             </span>
                                         </div>
                                     )}
@@ -847,7 +848,7 @@ export default function ImoveisUnidadesPage() {
         return matchSearch && matchStatus && matchTipo
     })
 
-    const tipos = [...new Set(unidades.map(u => u.unit_type).filter(Boolean))]
+    const tipos = [...new Set(unidades.map(u => u.unit_type).filter((t): t is string => Boolean(t)))]
 
     const stats = {
         total: unidades.length,
