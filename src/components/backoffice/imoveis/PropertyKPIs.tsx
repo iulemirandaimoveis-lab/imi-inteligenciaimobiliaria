@@ -34,7 +34,7 @@ export default function PropertyKPIs() {
     const totalUnits = developments?.reduce((sum, d) => sum + (d.units_count || 0), 0) || 0
 
     // Handling views which might be 'views' in DB but 'views_count' in type, or vice versa
-    const totalViews = developments?.reduce((sum, d) => sum + ((d as any).views || (d as any).views_count || 0), 0) || 0
+    const totalViews = developments?.reduce((sum, d) => sum + ((d as Record<string, unknown>).views || (d as Record<string, unknown>).views_count || 0), 0) || 0
     const totalLeads = developments?.reduce((sum, d) => sum + (d.leads_count || 0), 0) || 0
 
     const kpis = [

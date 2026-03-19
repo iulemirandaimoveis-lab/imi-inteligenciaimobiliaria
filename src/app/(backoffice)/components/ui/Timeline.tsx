@@ -70,7 +70,7 @@ function BadgePill({ label, status }: { label: string; status?: TimelineStatus }
         display: 'inline-flex',
         alignItems: 'center',
         padding: '2px 8px',
-        borderRadius: 'var(--r-full, 9999px)',
+        borderRadius: 'var(--r-chip, 6px)',
         fontFamily: 'var(--font-mono)',
         fontSize: 11,
         fontWeight: 600,

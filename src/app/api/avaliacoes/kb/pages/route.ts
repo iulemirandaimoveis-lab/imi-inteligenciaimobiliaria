@@ -14,7 +14,7 @@ export async function GET() {
         .select('id, source_file, source_type, page_title, normas_citadas, created_at, avaliacoes_kb_topics(count)')
         .order('created_at', { ascending: false })
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
     return NextResponse.json(data ?? [])
 }
 
@@ -33,6 +33,6 @@ export async function DELETE(req: NextRequest) {
         .delete()
         .eq('id', id)
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
     return NextResponse.json({ success: true })
 }

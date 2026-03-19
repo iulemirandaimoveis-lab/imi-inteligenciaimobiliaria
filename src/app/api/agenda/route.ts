@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
         if (id) {
             const { data, error } = await supabase.from('calendar_events').select('*').eq('id', id).single()
-            if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+            if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 404 })
             return NextResponse.json(data)
         }
 
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
         }
 
         const { data, error } = await query.limit(200)
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data || [])
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
             related_type: related_type || null, related_id: related_id || null,
         }).select().single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -72,7 +72,7 @@ export async function PUT(req: NextRequest) {
         ;(updates as Record<string, unknown>).updated_at = new Date().toISOString()
 
         const { data, error } = await supabase.from('calendar_events').update(updates).eq('id', id).select().single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data)
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -88,7 +88,7 @@ export async function DELETE(req: NextRequest) {
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
         const { error } = await supabase.from('calendar_events').delete().eq('id', id)
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })

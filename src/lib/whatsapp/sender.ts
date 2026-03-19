@@ -52,7 +52,7 @@ export async function sendWhatsAppMessage(params: SendWhatsAppParams): Promise<W
             throw new Error('Failed to create conversation');
         }
         // Prepara payload
-        const payload: any = {
+        const payload: Record<string, unknown> = {
             messaging_product: 'whatsapp',
             to: phone_number.replace(/\D/g, ''), // Remove caracteres não numéricos
         };
@@ -118,17 +118,33 @@ export async function sendWhatsAppMessage(params: SendWhatsAppParams): Promise<W
             success: true,
             message_id: result.messages?.[0]?.id,
         };
-    } catch (error: any) {
+    } catch (error: unknown) {
         return {
             success: false,
-            error: error.message,
+            error: error instanceof Error ? error.message : 'Unknown error',
         };
     }
+}
+
+interface WhatsAppWebhookPayload {
+    entry?: Array<{
+        changes?: Array<{
+            value?: {
+                messages?: Array<{
+                    from: string;
+                    type: string;
+                    id: string;
+                    text?: { body?: string };
+                    caption?: string;
+                }>;
+            };
+        }>;
+    }>;
 }
 /**
  * Processa webhook do WhatsApp (mensagens recebidas)
  */
-export async function processWhatsAppWebhook(payload: any) {
+export async function processWhatsAppWebhook(payload: WhatsAppWebhookPayload) {
     const supabase = await createClient();
     try {
         const entry = payload.entry?.[0];

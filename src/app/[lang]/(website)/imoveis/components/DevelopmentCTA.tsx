@@ -137,7 +137,7 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
     );
 }
 
-function InfoRow({ icon: Icon, text }: { icon: any; text: string }) {
+function InfoRow({ icon: Icon, text }: { icon: React.ElementType; text: string }) {
     return (
         <div className="flex items-center gap-3 text-sm">
             <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} style={{ color: GOLD, opacity: 0.5 }} />

@@ -65,7 +65,7 @@ export function WidgetDemandTrend() {
                         onClick={() => setActiveSegment(seg)}
                         style={{
                             padding: '5px 14px',
-                            borderRadius: 999,
+                            borderRadius: 6,
                             border: activeSegment === seg
                                 ? '1px solid var(--bo-accent,#C8A44A)'
                                 : '1px solid var(--bo-border)',

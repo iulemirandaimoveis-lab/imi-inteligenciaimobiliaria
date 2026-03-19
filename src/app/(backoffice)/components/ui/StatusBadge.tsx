@@ -146,7 +146,7 @@ export function StatusBadge({
         letterSpacing: '0.06em',
         lineHeight: 1,
         whiteSpace: 'nowrap',
-        borderRadius: 'var(--r-full, 9999px)',
+        borderRadius: 'var(--r-chip, 6px)',
       }}
     >
       {dot && (

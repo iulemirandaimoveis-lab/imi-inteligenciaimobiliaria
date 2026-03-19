@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
             .select('*', { count: 'exact' })
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1)
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({
             data: data || [],
             pagination: {
@@ -47,7 +47,7 @@ export async function PUT(req: NextRequest) {
                 .from('notifications')
                 .update({ read: true, read_at: new Date().toISOString() })
                 .eq('read', false)
-            if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+            if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
             return NextResponse.json({ success: true })
         }
 
@@ -56,7 +56,7 @@ export async function PUT(req: NextRequest) {
             .from('notifications')
             .update({ read: true, read_at: new Date().toISOString() })
             .eq('id', id)
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
             })
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })

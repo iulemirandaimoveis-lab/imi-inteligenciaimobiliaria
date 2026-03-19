@@ -25,7 +25,7 @@ export function WidgetImiIndex() {
                         <span style={{ fontFamily: 'var(--font-display,"Playfair Display",serif)', fontSize: 40, color: 'var(--bo-text)', letterSpacing: '-1.5px', lineHeight: 1 }}>
                             {IDX_BASE.toFixed(3)}
                         </span>
-                        <div style={{ paddingBottom: 6, display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 999, background: 'rgba(45,143,92,0.10)', color: 'var(--bo-success,#2D8F5C)', fontSize: 11, fontWeight: 600 }}>
+                        <div style={{ paddingBottom: 6, display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'rgba(45,143,92,0.10)', color: 'var(--bo-success,#2D8F5C)', fontSize: 11, fontWeight: 600 }}>
                             ↑ +{IDX_DELTA}% hoje
                         </div>
                     </div>

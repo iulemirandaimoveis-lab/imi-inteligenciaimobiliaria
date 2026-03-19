@@ -107,6 +107,15 @@ export function fmtRelative(date: string | Date | null | undefined): string {
 }
 
 /**
+ * Extract error message from unknown caught value
+ */
+export function getErrorMessage(err: unknown): string {
+    if (err instanceof Error) return (err instanceof Error ? err.message : 'Erro desconhecido')
+    if (typeof err === 'string') return err
+    return 'Erro desconhecido'
+}
+
+/**
  * Generate slug from text
  */
 export function slugify(text: string): string {

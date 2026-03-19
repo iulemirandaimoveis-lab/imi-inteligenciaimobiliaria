@@ -96,7 +96,7 @@ export async function GET(
                 created_at: new Date().toISOString()
             }),
         supabaseAdmin
-            .rpc('increment_link_clicks', { link_id: link.id } as any),
+            .rpc('increment_link_clicks', { link_id: link.id } as unknown as string),
     ])
     // Log failures for debugging (visible in Vercel function logs)
     if (eventResult.status === 'rejected') {

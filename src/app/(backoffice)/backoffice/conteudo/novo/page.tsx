@@ -282,8 +282,8 @@ export default function NovoConteudoPage() {
       }
       toast.success('Conteúdo salvo com sucesso!')
       setTimeout(() => router.push('/backoffice/conteudos'), 800)
-    } catch (err: any) {
-      toast.error(err.message || 'Erro ao salvar conteúdo')
+    } catch (err: unknown) {
+      toast.error((err instanceof Error ? err.message : 'Erro desconhecido') || 'Erro ao salvar conteúdo')
       setSalvo(false)
     }
   }

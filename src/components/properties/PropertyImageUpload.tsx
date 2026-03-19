@@ -33,8 +33,8 @@ export function PropertyImageUpload({
             const newImages = [...images, ...uploadedUrls];
             setImages(newImages);
             onChange(newImages);
-        } catch (err: any) {
-            setError(err.message || 'Erro ao fazer upload');
+        } catch (err: unknown) {
+            setError((err instanceof Error ? err.message : 'Erro desconhecido') || 'Erro ao fazer upload');
         } finally {
             setUploading(false);
         }
@@ -56,8 +56,8 @@ export function PropertyImageUpload({
             const newImages = images.filter((_, i) => i !== index);
             setImages(newImages);
             onChange(newImages);
-        } catch (err: any) {
-            setError(err.message || 'Erro ao deletar imagem');
+        } catch (err: unknown) {
+            setError((err instanceof Error ? err.message : 'Erro desconhecido') || 'Erro ao deletar imagem');
         }
     };
     return (

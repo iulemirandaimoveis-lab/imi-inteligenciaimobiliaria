@@ -63,7 +63,7 @@ export default function BulkActions({
 
                 if (error) throw error
             } else {
-                const updates: any = {}
+                const updates: Record<string, unknown> = {}
 
                 switch (action) {
                     case 'activate':
@@ -91,8 +91,8 @@ export default function BulkActions({
             showToast(`Ação executada com sucesso em ${selectedIds.length} imóveis!`, 'success')
             onClearSelection()
             onActionComplete()
-        } catch (err: any) {
-            showToast('Erro ao executar ação: ' + err.message, 'error')
+        } catch (err: unknown) {
+            showToast('Erro ao executar ação: ' + (err instanceof Error ? err.message : 'Erro desconhecido'), 'error')
         } finally {
             setIsProcessing(false)
         }

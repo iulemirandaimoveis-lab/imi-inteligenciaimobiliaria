@@ -75,7 +75,7 @@ export async function POST(request: Request) {
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         // Short URL routes through the backoffice deployment where /l/[shortCode] lives
         const shortUrl = `${trackingBaseUrl}/l/${shortCode}`

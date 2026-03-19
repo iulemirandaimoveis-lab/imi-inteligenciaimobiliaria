@@ -7,8 +7,8 @@ import type { IMIProperty } from '@/features/properties/types'
  *  - Website schema: name, images (JSONB), specs (JSONB), price_min, price_max
  *  - Backoffice schema: area_min, bedrooms_from, image_urls, cover_image_url
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function mapDevToProperty(d: any): IMIProperty {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- DB row has 30+ dynamic columns from multiple schema versions
+export function mapDevToProperty(d: Record<string, any>): IMIProperty {
   // Images: handle JSONB `images` field or array fields
   const imagesObj = d.images as { main?: string; gallery?: string[]; videos?: string[]; floorPlans?: string[] } | null
   const gallery = imagesObj?.gallery ?? d.gallery_images ?? d.image_urls ?? []

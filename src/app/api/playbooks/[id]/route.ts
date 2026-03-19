@@ -19,7 +19,7 @@ export async function GET(
             .eq('id', id)
             .single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 404 })
         return NextResponse.json(data)
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
@@ -46,7 +46,7 @@ export async function PATCH(
             .select()
             .single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ data })
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
@@ -72,7 +72,7 @@ export async function DELETE(
             .select()
             .single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true, data })
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

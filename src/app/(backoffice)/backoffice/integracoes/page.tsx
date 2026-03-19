@@ -29,7 +29,7 @@ const STATUS_CFG = Object.fromEntries(
         const cfg = getStatusConfig(key)
         return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS_INT[key] || Clock, dot: cfg.dot }]
     })
-) as Record<IntegracaoStatus, { label: string; text: string; bg: string; icon: any; dot: string }>
+) as Record<IntegracaoStatus, { label: string; text: string; bg: string; icon: React.ElementType; dot: string }>
 function StatusBadge({ status }: { status: IntegracaoStatus }) {
     const cfg = STATUS_CFG[status]
     const Icon = cfg.icon

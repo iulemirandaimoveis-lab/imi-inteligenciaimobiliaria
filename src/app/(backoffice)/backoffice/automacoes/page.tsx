@@ -26,8 +26,8 @@ interface AutomationRule {
   firedTotal: number
   conversionRate: number
   category: string
-  triggerIcon: any
-  actionIcon: any
+  triggerIcon: React.ElementType
+  actionIcon: React.ElementType
   lastFired: string
 }
 

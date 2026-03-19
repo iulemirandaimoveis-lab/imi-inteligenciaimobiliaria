@@ -7,7 +7,7 @@ import { GlobalSettings } from '@/lib/settings'
 interface FooterProps {
     lang: string
     settings?: GlobalSettings
-    dict?: any
+    dict?: Record<string, unknown>
 }
 
 const NAV_COLS = [

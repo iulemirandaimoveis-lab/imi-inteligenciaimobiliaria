@@ -56,7 +56,7 @@ export function AIScore({
           alignItems: 'center',
           fontFamily: 'var(--font-mono)',
           fontWeight: 600,
-          borderRadius: 'var(--r-full, 9999px)',
+          borderRadius: 'var(--r-chip, 6px)',
           color,
           background: bg,
           border: `1px solid ${color}22`,

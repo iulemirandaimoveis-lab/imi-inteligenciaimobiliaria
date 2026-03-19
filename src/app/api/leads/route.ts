@@ -20,7 +20,7 @@ export async function GET(request: Request) {
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
         if (error) {
-            return NextResponse.json({ error: error.message, data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido', data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
         }
         // Map to the format the frontend expects
         const formatted = (leads || []).map((l: Record<string, unknown>) => ({
@@ -113,7 +113,7 @@ export async function POST(request: Request) {
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         // Audit log
         const meta = getRequestMeta(request)
@@ -151,7 +151,7 @@ export async function DELETE(request: Request) {
             .update({ status: 'archived', updated_at: new Date().toISOString() })
             .eq('id', id)
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         const meta = getRequestMeta(request)
         logAudit({
@@ -216,7 +216,7 @@ export async function PUT(request: Request) {
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         return NextResponse.json({ success: true, lead: data })
     } catch (error) {

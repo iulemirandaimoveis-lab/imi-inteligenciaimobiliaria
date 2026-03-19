@@ -77,8 +77,8 @@ export default function CreditoDetalhesPage() {
                     .single()
                 if (error) throw new Error(error.message)
                 setCredit(data as CreditApplication)
-            } catch (err: any) {
-                setError(err.message || 'Crédito não encontrado')
+            } catch (err: unknown) {
+                setError((err instanceof Error ? err.message : 'Erro desconhecido') || 'Crédito não encontrado')
             } finally {
                 setLoading(false)
             }

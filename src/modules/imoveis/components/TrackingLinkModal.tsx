@@ -63,8 +63,8 @@ export default function TrackingLinkModal({ property, onClose }: TrackingLinkMod
             // URL encurtada
             const shortUrl = `${window.location.origin}/l/${shortCode}`
             setGeneratedLink(shortUrl)
-        } catch (err: any) {
-            alert('Erro ao gerar link: ' + err.message)
+        } catch (err: unknown) {
+            alert('Erro ao gerar link: ' + (err instanceof Error ? err.message : 'Erro desconhecido'))
         } finally {
             setIsGenerating(false)
         }

@@ -172,7 +172,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ analysis, latency })
   } catch (err: unknown) {
     // Return helpful error message
-    if (err instanceof Error && err.message?.includes('API key')) {
+    if (err instanceof Error && (err instanceof Error ? err.message : 'Erro desconhecido')?.includes('API key')) {
       return NextResponse.json({ error: 'Claude API não configurada. Verifique ANTHROPIC_API_KEY.' }, { status: 503 })
     }
     return NextResponse.json({ error: err instanceof Error ? err.message : 'Erro ao processar análise IA' }, { status: 500 })

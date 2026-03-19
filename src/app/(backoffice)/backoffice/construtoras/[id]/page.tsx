@@ -85,8 +85,8 @@ export default function ConstrutoraDetalhesPage() {
         if (!res.ok) throw new Error('Falha ao carregar construtora')
         const result = await res.json()
         setData(result)
-      } catch (err: any) {
-        setError(err.message)
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Erro desconhecido')
       } finally {
         setLoading(false)
       }
@@ -101,8 +101,8 @@ export default function ConstrutoraDetalhesPage() {
       if (!res.ok) throw new Error('Falha ao desativar')
       toast.success('Construtora desativada com sucesso')
       router.push('/backoffice/construtoras')
-    } catch (err: any) {
-      toast.error(err.message)
+    } catch (err: unknown) {
+      toast.error((err instanceof Error ? err.message : 'Erro desconhecido'))
     } finally {
       setDeleting(false)
     }

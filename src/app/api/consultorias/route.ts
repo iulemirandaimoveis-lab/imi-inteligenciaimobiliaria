@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
                 .select('*')
                 .eq('id', id)
                 .single()
-            if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+            if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 404 })
             return NextResponse.json(data)
         }
         const page = parseInt(searchParams.get('page') || '1')
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
             .insert({ ...parsed.data, consultor_id: user.id })
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 400 })
         return NextResponse.json(data, { status: 201 })
     } catch {
         return NextResponse.json({ error: 'Server error' }, { status: 500 })
@@ -74,7 +74,7 @@ export async function PUT(req: NextRequest) {
             .eq('id', id)
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ data })
     } catch {
         return NextResponse.json({ error: 'Server error' }, { status: 500 })
@@ -95,7 +95,7 @@ export async function DELETE(req: NextRequest) {
             .eq('id', id)
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true, data })
     } catch {
         return NextResponse.json({ error: 'Server error' }, { status: 500 })

@@ -26,7 +26,7 @@ export async function GET(request: Request) {
         }
         const { data: links, error } = await query
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         const enrichedLinks = (links || []).map(link => ({
             ...link,
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         return NextResponse.json({
             success: true,
@@ -137,7 +137,7 @@ export async function DELETE(request: Request) {
             .update({ is_active: false, updated_at: new Date().toISOString() })
             .eq('id', id)
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         return NextResponse.json({ success: true })
     } catch (error: unknown) {

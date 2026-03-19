@@ -80,7 +80,7 @@ export function IntegrationRequired({
               letterSpacing: '1.5px',
               textTransform: 'uppercase',
               padding: '4px 8px',
-              borderRadius: 'var(--r-full, 9999px)',
+              borderRadius: 'var(--r-chip, 6px)',
               fontFamily: 'var(--font-mono)',
               whiteSpace: 'nowrap',
             }}

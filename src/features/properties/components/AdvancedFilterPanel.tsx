@@ -70,7 +70,7 @@ function ChipSelect({ options, value, onChange, multi = true }: {
             key={o.value}
             onClick={() => toggle(o.value)}
             style={{
-              padding: '6px 12px', borderRadius: 999,
+              padding: '6px 12px', borderRadius: 6,
               background: active ? 'rgba(200,164,74,0.12)' : 'var(--bo-surface, rgba(255,255,255,0.04))',
               border: `1px solid ${active ? 'rgba(200,164,74,0.40)' : 'rgba(255,255,255,0.08)'}`,
               color: active ? '#C8A44A' : 'var(--bo-text-muted, #9FAAB8)',

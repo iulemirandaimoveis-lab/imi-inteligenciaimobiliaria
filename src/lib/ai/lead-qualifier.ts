@@ -1,14 +1,30 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/lib/supabase/server';
-import { LeadQualification, LeadInteraction, LeadFollowUp } from '@/types/commercial-system';
+import { LeadQualification, LeadInteraction, LeadFollowUp, LeadPriority } from '@/types/commercial-system';
 
 const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+interface LeadData {
+    name: string;
+    email?: string;
+    phone?: string;
+    source?: string;
+    interest?: string;
+    budget?: number;
+    preferred_location?: string;
+    property_type?: string;
+    timeline?: string;
+    created_at: string;
+    updated_at?: string;
+    tenant_id?: string;
+    user_id?: string;
+}
+
 interface QualifyLeadParams {
     lead_id: string;
-    lead_data: any;
+    lead_data: LeadData;
     interactions?: LeadInteraction[];
     requested_by: string;
 }
@@ -126,11 +142,30 @@ Seja específico, prescritivo e focado em ações práticas.`;
         message.content[0].type === 'text' ? message.content[0].text : '';
 
     // Parse JSON da resposta
-    let analysis: any;
+    interface LeadAnalysis {
+        score: number;
+        priority: string;
+        summary: string;
+        strengths: string[];
+        concerns: string[];
+        recommendations: string[];
+        next_action: string;
+        next_action_deadline: string;
+        confidence: number;
+        follow_ups: Array<{
+            suggested_action: string;
+            suggested_message?: string;
+            suggested_channel: string;
+            scheduled_for: string;
+            ai_rationale: string;
+            ai_confidence: number;
+        }>;
+    }
+    let analysis: LeadAnalysis;
     try {
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        analysis = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-    } catch (error) {
+        analysis = jsonMatch ? JSON.parse(jsonMatch[0]) : {} as LeadAnalysis;
+    } catch (_error) {
         // Fallback se parsing falhar
         analysis = {
             score: 50,
@@ -182,7 +217,7 @@ Seja específico, prescritivo e focado em ações práticas.`;
 
     const qualification: LeadQualification = {
         score: analysis.score,
-        priority: analysis.priority,
+        priority: analysis.priority as LeadPriority,
         summary: analysis.summary,
         strengths: analysis.strengths || [],
         concerns: analysis.concerns || [],

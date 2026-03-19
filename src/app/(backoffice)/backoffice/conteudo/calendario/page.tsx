@@ -22,7 +22,7 @@ interface ConteudoItem {
     data_publicacao: string | null
 }
 
-const TIPO_CONFIG: Record<string, { icon: any; label: string; color: string; bg: string }> = {
+const TIPO_CONFIG: Record<string, { icon: React.ElementType; label: string; color: string; bg: string }> = {
     instagram: { icon: Instagram, label: 'Instagram', color: '#EC4899', bg: 'rgba(236,72,153,0.12)' },
     linkedin:  { icon: Linkedin,  label: 'LinkedIn',  color: 'var(--info)', bg: 'rgba(59,130,246,0.12)' },
     facebook:  { icon: Facebook,  label: 'Facebook',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
@@ -31,7 +31,7 @@ const TIPO_CONFIG: Record<string, { icon: any; label: string; color: string; bg:
     youtube:   { icon: Youtube,   label: 'YouTube',   color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' },
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
     publicado: { label: 'Publicado', color: 'var(--success)', bg: 'rgba(16,185,129,0.12)', icon: CheckCircle },
     agendado:  { label: 'Agendado',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)', icon: Clock },
     rascunho:  { label: 'Rascunho',  color: 'var(--bo-text-muted)', bg: 'var(--bo-elevated)', icon: AlertCircle },

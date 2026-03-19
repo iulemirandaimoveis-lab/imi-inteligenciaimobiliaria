@@ -10,7 +10,7 @@ const supabase = createClient()
 interface UsePropertiesReturn {
     properties: Property[]
     isLoading: boolean
-    error: any
+    error: Error | undefined
     mutate: () => void
     total: number
 }
@@ -141,7 +141,7 @@ export function useProperty(id: string) {
     }
 }
 
-export async function createProperty(data: any) {
+export async function createProperty(data: Record<string, unknown>) {
     const { data: property, error } = await supabase
         .from('developments')
         .insert([data])
@@ -152,7 +152,7 @@ export async function createProperty(data: any) {
     return property
 }
 
-export async function updateProperty(id: string, data: any) {
+export async function updateProperty(id: string, data: Record<string, unknown>) {
     const { data: property, error } = await supabase
         .from('developments')
         .update(data)

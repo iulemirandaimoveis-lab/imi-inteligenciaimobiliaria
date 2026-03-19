@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
             .order('andar', { ascending: true })
             .order('numero', { ascending: true })
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data || [])
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
                 .insert(rows)
                 .select()
 
-            if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+            if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
             return NextResponse.json({ inserted: data?.length || 0, data }, { status: 201 })
         }
 
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
             .select()
             .single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -105,7 +105,7 @@ export async function PUT(req: NextRequest) {
             .select()
             .single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data)
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -128,7 +128,7 @@ export async function DELETE(req: NextRequest) {
             .delete()
             .eq('id', id)
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })

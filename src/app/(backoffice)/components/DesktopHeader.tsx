@@ -84,7 +84,7 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
             const urlWithCache = `${publicUrl}?t=${Date.now()}`
             await supabase.auth.updateUser({ data: { avatar_url: urlWithCache } })
             setAvatarUrl(urlWithCache)
-        } catch (err: any) {
+        } catch (err: unknown) {
         } finally {
             setUploading(false)
             // Reset input so same file can be re-uploaded

@@ -44,7 +44,7 @@ async function publishToFacebook({ access_token, content, image_urls = [], accou
             if (data.id) photo_ids.push(data.id)
         }
 
-        const body: any = { message: content, access_token }
+        const body: Record<string, unknown> = { message: content, access_token }
         if (photo_ids.length === 1) {
             body.object_attachment = photo_ids[0]
         } else if (photo_ids.length > 1) {
@@ -65,8 +65,8 @@ async function publishToFacebook({ access_token, content, image_urls = [], accou
             external_post_id: data.id,
             external_post_url: `https://facebook.com/${data.id}`,
         }
-    } catch (e: any) {
-        return { success: false, error_code: 'FB_ERROR', error_message: e.message }
+    } catch (e: unknown) {
+        return { success: false, error_code: 'FB_ERROR', error_message: e instanceof Error ? e.message : 'Unknown error' }
     }
 }
 
@@ -141,8 +141,8 @@ async function publishToInstagram({ access_token, content, image_urls = [], vide
             external_post_id: pubData.id,
             external_post_url: `https://instagram.com/p/${pubData.id}`,
         }
-    } catch (e: any) {
-        return { success: false, error_code: 'IG_ERROR', error_message: e.message }
+    } catch (e: unknown) {
+        return { success: false, error_code: 'IG_ERROR', error_message: e instanceof Error ? e.message : 'Unknown error' }
     }
 }
 
@@ -152,7 +152,7 @@ async function publishToLinkedIn({ access_token, content, image_urls = [], accou
     try {
         const author = account_id.startsWith('urn:') ? account_id : `urn:li:person:${account_id}`
 
-        const body: any = {
+        const body: Record<string, unknown> = {
             author,
             lifecycleState: 'PUBLISHED',
             specificContent: {
@@ -169,7 +169,8 @@ async function publishToLinkedIn({ access_token, content, image_urls = [], accou
         }
 
         if (image_urls.length === 0) {
-            delete body.specificContent['com.linkedin.ugc.ShareContent'].media
+            const sc = body.specificContent as Record<string, Record<string, unknown>>
+            delete sc['com.linkedin.ugc.ShareContent'].media
         }
 
         const res = await fetch('https://api.linkedin.com/v2/ugcPosts', {
@@ -191,8 +192,8 @@ async function publishToLinkedIn({ access_token, content, image_urls = [], accou
             external_post_id: data.id,
             external_post_url: `https://linkedin.com/feed/update/${data.id}`,
         }
-    } catch (e: any) {
-        return { success: false, error_code: 'LI_ERROR', error_message: e.message }
+    } catch (e: unknown) {
+        return { success: false, error_code: 'LI_ERROR', error_message: e instanceof Error ? e.message : 'Unknown error' }
     }
 }
 

@@ -23,7 +23,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    error: error.message,
+                    error: error instanceof Error ? error.message : 'Erro desconhecido',
                     stack: error.stack,
                     page: typeof window !== 'undefined' ? window.location.pathname : null,
                     component: info.componentStack?.substring(0, 300),

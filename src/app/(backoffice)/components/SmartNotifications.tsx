@@ -96,7 +96,7 @@ export default function SmartNotifications() {
       .then(r => r.json())
       .then(res => {
         const items = Array.isArray(res) ? res : (res.data || [])
-        setUnreadCount(items.filter((n: any) => !n.read).length)
+        setUnreadCount(items.filter((n: Record<string, unknown>) => !n.read).length)
       })
       .catch(() => {})
   }, [])

@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 
 const COLORS = ['#486581', '#7B9EC4', '#6BB87B', '#E8A87C', '#A89EC4', '#E57373'];
 
-export default function ReportsCharts({ leadsData, consData }: { leadsData: any[], consData: any[] }) {
+export default function ReportsCharts({ leadsData, consData }: { leadsData: Record<string, unknown>[], consData: Record<string, unknown>[] }) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="rounded-2xl p-6 shadow-sm"

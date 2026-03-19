@@ -64,11 +64,11 @@ export async function uploadFile(
             url: json.data.url,
             path: json.data.fileName,
         }
-    } catch (error: any) {
+    } catch (error: unknown) {
         return {
             url: '',
             path: '',
-            error: error.message || 'Erro ao fazer upload'
+            error: error instanceof Error ? error.message : 'Erro ao fazer upload'
         }
     }
 }
@@ -162,7 +162,7 @@ export async function uploadImage(
         })
         // Upload
         return await uploadFile(optimizedFile, bucket, folder)
-    } catch (error: any) {
+    } catch (_error: unknown) {
         // Fallback: upload sem otimização
         return await uploadFile(file, bucket, folder)
     }
@@ -253,8 +253,8 @@ export async function uploadMultipleImages(
                         success = true
                         break
                     }
-                } catch (err: any) {
-                    lastError = err.message || 'Erro no upload'
+                } catch (err: unknown) {
+                    lastError = err instanceof Error ? err.message : 'Erro no upload'
                 }
             }
             if (!success) {
@@ -283,10 +283,10 @@ export async function deleteFile(
             throw error
         }
         return { success: true }
-    } catch (error: any) {
+    } catch (error: unknown) {
         return {
             success: false,
-            error: error.message || 'Erro ao deletar arquivo'
+            error: error instanceof Error ? error.message : 'Erro ao deletar arquivo'
         }
     }
 }
@@ -327,8 +327,8 @@ export function useFileUpload() {
                 throw new Error(result.error)
             }
             return result
-        } catch (err: any) {
-            const msg = err.message || 'Erro no upload'
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Erro no upload'
             setError(msg)
             return { url: '', path: '', error: msg }
         } finally {

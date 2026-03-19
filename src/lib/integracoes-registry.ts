@@ -234,7 +234,7 @@ export const INTEGRACOES: Integracao[] = [
       {
         key: 'gdrive_service_account_json',
         label: 'Service Account JSON',
-        tipo: 'textarea' as any,
+        tipo: 'textarea',
         placeholder: '{ "type": "service_account", "project_id": "..." }',
         required: false,
         descricao: 'Apenas para modo service_account. Cole o JSON completo da Service Account.',

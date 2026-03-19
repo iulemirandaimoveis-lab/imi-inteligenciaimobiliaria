@@ -137,7 +137,7 @@ export default function EditarLeadPage() {
                     bestTime: data.best_time || '',
                     notes: data.notes || '',
                 })
-            } catch (err: any) {
+            } catch (err: unknown) {
                 toast.error('Erro ao carregar lead')
                 router.push('/backoffice/leads')
             } finally {

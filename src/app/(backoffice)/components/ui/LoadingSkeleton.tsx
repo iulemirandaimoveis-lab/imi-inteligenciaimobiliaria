@@ -111,7 +111,7 @@ function RowSkeleton({ count = 1 }: { count?: number }) {
           <ShimmerBlock style={{ height: 12, flex: 1, borderRadius: 'var(--r-sm, 4px)' }} />
           <ShimmerBlock style={{ height: 12, width: 80, borderRadius: 'var(--r-sm, 4px)', flexShrink: 0 }} />
           <ShimmerBlock style={{ height: 12, width: 60, borderRadius: 'var(--r-sm, 4px)', flexShrink: 0 }} />
-          <ShimmerBlock style={{ height: 24, width: 70, borderRadius: 'var(--r-full, 9999px)', flexShrink: 0 }} />
+          <ShimmerBlock style={{ height: 24, width: 70, borderRadius: 'var(--r-chip, 6px)', flexShrink: 0 }} />
         </div>
       ))}
     </>
@@ -175,7 +175,7 @@ function ListSkeleton({ count = 4 }: { count?: number }) {
             <ShimmerBlock style={{ height: 11, width: `${55 + (i % 3) * 15}%`, borderRadius: 'var(--r-xs, 4px)' }} />
             <ShimmerBlock style={{ height: 9, width: `${35 + (i % 2) * 20}%`, borderRadius: 'var(--r-xs, 4px)' }} />
           </div>
-          <ShimmerBlock style={{ height: 22, width: 60, borderRadius: 'var(--r-full, 9999px)', flexShrink: 0 }} />
+          <ShimmerBlock style={{ height: 22, width: 60, borderRadius: 'var(--r-chip, 6px)', flexShrink: 0 }} />
         </div>
       ))}
     </div>

@@ -115,7 +115,7 @@ export interface Integracao {
 export interface CampoConfig {
   key: string
   label: string
-  tipo: 'text' | 'password' | 'url' | 'select'
+  tipo: 'text' | 'password' | 'url' | 'select' | 'textarea'
   placeholder?: string
   required: boolean
   descricao?: string

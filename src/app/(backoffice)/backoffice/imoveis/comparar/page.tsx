@@ -22,7 +22,7 @@ const DB_STATUS: Record<string, string> = {
 }
 function ns(s?: string) { return DB_STATUS[s?.toLowerCase() ?? ''] ?? s?.toLowerCase() ?? 'disponivel' }
 
-function toP(d: any): IMIProperty {
+function toP(d: Record<string, unknown>): IMIProperty {
   return mapDevToProperty(d)
 }
 
@@ -171,7 +171,7 @@ function MobileComparar() {
       .select('*')
       .in('id', ids)
       .then(({ data, error: err }) => {
-        if (err) { setError(err.message); setLoading(false); return }
+        if (err) { setError(err instanceof Error ? err.message : 'Erro desconhecido'); setLoading(false); return }
         const enriched = (data ?? []).map(d => enrichProperty(toP(d)))
         const sorted = ids
           .map(id => enriched.find(p => p.id === id))
@@ -654,7 +654,7 @@ function DesktopComparar() {
       .select('*')
       .in('id', ids)
       .then(({ data, error: err }) => {
-        if (err) { setError(err.message); setLoading(false); return }
+        if (err) { setError(err instanceof Error ? err.message : 'Erro desconhecido'); setLoading(false); return }
         const enriched = (data ?? []).map(d => enrichProperty(toP(d)))
         const sorted = ids
           .map(id => enriched.find(p => p.id === id))

@@ -17,7 +17,7 @@ export interface WhatsappConversation {
     last_message_at: string
     last_message_preview: string
     unread_count: number
-    metadata: any
+    metadata: Record<string, unknown>
     created_at: string
     updated_at: string
 }
@@ -30,7 +30,7 @@ export interface WhatsappMessage {
     content: string
     media_url?: string
     template_name?: string
-    template_params?: any
+    template_params?: Record<string, string>
     status: 'sent' | 'delivered' | 'read' | 'failed'
     external_id?: string
     error_message?: string
@@ -57,8 +57,8 @@ export function useWhatsapp(tenantId: string) {
 
             if (error) throw error
             setConversations(data || [])
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Unknown error')
         } finally {
             setLoading(false)
         }
@@ -75,8 +75,8 @@ export function useWhatsapp(tenantId: string) {
 
             if (error) throw error
             setMessages(data || [])
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Unknown error')
         }
     }, [])
 
@@ -106,8 +106,8 @@ export function useWhatsapp(tenantId: string) {
 
             // Update local state if needed (usually handled by subscription)
             return { success: true, data }
-        } catch (err: any) {
-            return { success: false, error: err.message }
+        } catch (err: unknown) {
+            return { success: false, error: err instanceof Error ? err.message : 'Unknown error' }
         }
     }
 

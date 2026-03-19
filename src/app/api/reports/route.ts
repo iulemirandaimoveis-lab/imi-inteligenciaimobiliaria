@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
                 .select('*')
                 .eq('id', id)
                 .single()
-            if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+            if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 404 })
             return NextResponse.json(data)
         }
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         query = query.range(offset, offset + limit - 1)
 
         const { data, error, count } = await query
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
 
         return NextResponse.json({
             data: data || [],
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
             .select()
             .single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -85,7 +85,7 @@ export async function PATCH(request: NextRequest) {
             .select()
             .single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data)
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
@@ -107,7 +107,7 @@ export async function DELETE(request: NextRequest) {
             .from('market_reports')
             .update({ is_published: false, updated_at: new Date().toISOString() })
             .eq('id', id)
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })

@@ -170,8 +170,8 @@ function TabConsultar() {
           setMessages(p => { const a = [...p]; a[a.length-1] = {...a[a.length-1], content: a[a.length-1].content + chunk}; return a })
         }
       }
-    } catch (err: any) {
-      setMessages(p => { const a = [...p]; a[a.length-1] = {...a[a.length-1], content: `⚠️ ${err.message}`}; return a })
+    } catch (err: unknown) {
+      setMessages(p => { const a = [...p]; a[a.length-1] = {...a[a.length-1], content: `⚠️ ${(err instanceof Error ? err.message : 'Erro desconhecido')}`}; return a })
     } finally { setLoading(false) }
   }, [input, loading, category])
 
@@ -405,8 +405,8 @@ function TabProcessar() {
         const data = await resp.json()
         if (!resp.ok || data.error) throw new Error(data.error || 'Erro')
         setResults(p => p.map((r, idx) => idx === i ? { ...r, status: 'done', message: `${data.topics_count} tópicos extraídos` } : r))
-      } catch (err: any) {
-        setResults(p => p.map((r, idx) => idx === i ? { ...r, status: 'error', message: err.message } : r))
+      } catch (err: unknown) {
+        setResults(p => p.map((r, idx) => idx === i ? { ...r, status: 'error', message: (err instanceof Error ? err.message : 'Erro desconhecido') } : r))
       }
     }
     setProc(false)

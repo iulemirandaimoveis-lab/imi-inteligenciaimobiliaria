@@ -28,7 +28,7 @@ const DB_STATUS: Record<string, string> = {
 }
 function ns(s?: string) { return DB_STATUS[s?.toLowerCase() ?? ''] ?? s?.toLowerCase() ?? 'disponivel' }
 
-function toP(d: any): IMIProperty { return mapDevToProperty(d) }
+function toP(d: Record<string, unknown>): IMIProperty { return mapDevToProperty(d) }
 
 function fmt(n?: number | null): string {
   if (n == null) return '—'

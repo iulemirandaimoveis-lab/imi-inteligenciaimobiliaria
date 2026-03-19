@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
                 .select('*')
                 .eq('id', id)
                 .single()
-            if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+            if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 404 })
             return NextResponse.json(data)
         }
         let query = supabase
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
         }
         const { data, error, count } = await query
         if (error) {
-            return NextResponse.json({ error: error.message, data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido', data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 })
         }
         return NextResponse.json({
             data: data || [],
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
             })
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
     } catch (err) {
         return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
@@ -101,7 +101,7 @@ export async function PUT(req: NextRequest) {
             .eq('id', id)
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json(data)
     } catch (err) {
         return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
@@ -119,7 +119,7 @@ export async function DELETE(req: NextRequest) {
             .from('financial_transactions')
             .update({ status: 'cancelado', updated_at: new Date().toISOString() })
             .eq('id', id)
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true })
     } catch (err) {
         return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })

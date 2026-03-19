@@ -35,7 +35,7 @@ export function WidgetPriceTrend() {
                         key={nb.name}
                         onClick={() => setActive(i)}
                         style={{
-                            padding: '4px 12px', borderRadius: 999, fontSize: 11, cursor: 'pointer',
+                            padding: '4px 12px', borderRadius: 6, fontSize: 11, cursor: 'pointer',
                             fontFamily: 'inherit', transition: 'all 150ms',
                             background: active === i ? 'var(--bo-active-bg)' : 'var(--bo-surface)',
                             border: `1px solid ${active === i ? 'var(--bo-accent)' : 'var(--bo-border)'}`,
@@ -56,7 +56,7 @@ export function WidgetPriceTrend() {
                 </div>
                 <div style={{
                     display: 'inline-flex', alignItems: 'center', gap: 4,
-                    padding: '3px 10px', borderRadius: 999, marginTop: 6,
+                    padding: '3px 10px', borderRadius: 6, marginTop: 6,
                     background: 'rgba(45,143,92,0.10)', color: 'var(--bo-success,#2D8F5C)',
                     fontSize: 11, fontWeight: 600,
                 }}>

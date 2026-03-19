@@ -85,8 +85,8 @@ export default function NovoProjetoPage() {
             if (!res.ok) throw new Error(data.error || 'Erro ao criar projeto')
             toast.success('Projeto criado com sucesso!')
             router.push('/backoffice/projetos')
-        } catch (err: any) {
-            toast.error(err.message || 'Erro ao salvar projeto')
+        } catch (err: unknown) {
+            toast.error((err instanceof Error ? err.message : 'Erro desconhecido') || 'Erro ao salvar projeto')
         } finally {
             setIsSubmitting(false)
         }

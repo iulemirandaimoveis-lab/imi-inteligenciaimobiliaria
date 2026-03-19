@@ -190,7 +190,7 @@ export function WidgetLiquidity() {
             <div style={{
                 display: 'inline-flex', alignSelf: 'flex-start',
                 alignItems: 'center', gap: 6,
-                padding: '6px 14px', borderRadius: 999,
+                padding: '6px 14px', borderRadius: 6,
                 background: 'rgba(45,143,92,0.10)',
                 border: '1px solid rgba(45,143,92,0.25)',
             }}>

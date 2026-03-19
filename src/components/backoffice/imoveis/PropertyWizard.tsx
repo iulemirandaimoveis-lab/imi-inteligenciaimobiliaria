@@ -39,7 +39,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 interface PropertyWizardProps {
-    onSubmit: (data: any) => Promise<void>
+    onSubmit: (data: Record<string, unknown>) => Promise<void>
     isSubmitting: boolean
 }
 

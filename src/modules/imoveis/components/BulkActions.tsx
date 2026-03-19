@@ -62,7 +62,7 @@ export default function BulkActions({
 
                 if (error) throw error
             } else {
-                const updates: any = {}
+                const updates: Record<string, unknown> = {}
 
                 switch (action) {
                     case 'activate':
@@ -89,8 +89,8 @@ export default function BulkActions({
 
             onClearSelection()
             onActionComplete()
-        } catch (err: any) {
-            alert('Erro ao processar lote: ' + err.message)
+        } catch (err: unknown) {
+            alert('Erro ao processar lote: ' + (err instanceof Error ? err.message : 'Erro desconhecido'))
         } finally {
             setIsProcessing(false)
         }

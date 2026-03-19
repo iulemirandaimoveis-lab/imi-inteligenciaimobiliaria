@@ -14,8 +14,8 @@ interface AnalyzeCampaignParams {
 }
 
 interface AnalyzeCampaignResult {
-    insights: any[];
-    ai_analysis: any;
+    insights: Record<string, unknown>[];
+    ai_analysis: Record<string, unknown>;
     recommendations: string[];
     ai_request_id: string;
     cost_usd: number;

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
                 .select('*')
                 .eq('id', id)
                 .single()
-            if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+            if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 404 })
             return NextResponse.json(data)
         }
         const page = parseInt(searchParams.get('page') || '1')
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1)
         if (error) {
-            return NextResponse.json({ error: error.message, data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido', data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 })
         }
         return NextResponse.json({
             data: data || [],
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
             .insert({ ...parsed.data, user_id: user.id })
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 400 })
         return NextResponse.json(data, { status: 201 })
     } catch {
         return NextResponse.json({ error: 'Server error' }, { status: 500 })
@@ -75,7 +75,7 @@ export async function PUT(req: NextRequest) {
             .eq('user_id', user.id)
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ data })
     } catch {
         return NextResponse.json({ error: 'Server error' }, { status: 500 })
@@ -97,7 +97,7 @@ export async function DELETE(req: NextRequest) {
             .eq('user_id', user.id)
             .select()
             .single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true, data })
     } catch {
         return NextResponse.json({ error: 'Server error' }, { status: 500 })

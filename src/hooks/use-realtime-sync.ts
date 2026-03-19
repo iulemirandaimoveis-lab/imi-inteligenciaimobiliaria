@@ -62,7 +62,7 @@ export function useRealtimeTable<T = Record<string, unknown>>(
                 },
                 (payload) => {
                     try {
-                        const { eventType, new: newRecord, old: oldRecord } = payload as any
+                        const { eventType, new: newRecord, old: oldRecord } = payload as unknown as { eventType: string; new: T; old: T }
 
                         switch (eventType) {
                             case 'INSERT':

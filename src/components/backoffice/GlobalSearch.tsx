@@ -20,7 +20,7 @@ interface SearchResult {
     title: string
     subtitle?: string
     url: string
-    icon: any
+    icon: React.ElementType
     color: string
 }
 export default function GlobalSearch() {

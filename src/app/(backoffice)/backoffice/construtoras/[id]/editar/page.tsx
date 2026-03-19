@@ -82,8 +82,8 @@ export default function EditarConstrutoraPage() {
         if (data.logo_url) {
           setLogoPreview(data.logo_url)
         }
-      } catch (err: any) {
-        setError(err.message)
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Erro desconhecido')
       } finally {
         setLoading(false)
       }
@@ -171,8 +171,8 @@ export default function EditarConstrutoraPage() {
 
       toast.success('Construtora atualizada com sucesso!')
       router.push(`/backoffice/construtoras/${params.id}`)
-    } catch (err: any) {
-      toast.error(err.message)
+    } catch (err: unknown) {
+      toast.error((err instanceof Error ? err.message : 'Erro desconhecido'))
     } finally {
       setSaving(false)
     }

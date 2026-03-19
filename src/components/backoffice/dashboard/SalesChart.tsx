@@ -15,7 +15,7 @@ import { createClient } from '@/lib/supabase/client'
 const supabase = createClient()
 
 export default function SalesChart() {
-    const [data, setData] = useState<any[]>([])
+    const [data, setData] = useState<Record<string, unknown>[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {

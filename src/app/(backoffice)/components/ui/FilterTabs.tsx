@@ -40,7 +40,7 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
             className="flex-shrink-0 flex items-center gap-1.5"
             style={{
               padding: '6px 14px',
-              borderRadius: 'var(--r-full, 9999px)',
+              borderRadius: 'var(--r-chip, 6px)',
               fontFamily: 'var(--font-sans)',
               fontSize: '12px',
               fontWeight: isActive ? 600 : 500,

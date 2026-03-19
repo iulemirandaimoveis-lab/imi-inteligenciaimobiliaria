@@ -12,6 +12,6 @@ export async function GET() {
         .eq('enabled', true)
         .order('display_order', { ascending: true })
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
     return NextResponse.json(data ?? [])
 }

@@ -236,7 +236,7 @@ export default function InteligenciaPage() {
               alignItems: 'center',
               gap: 6,
               padding: '4px 12px',
-              borderRadius: 999,
+              borderRadius: 6,
               background: 'rgba(200,164,74,0.08)',
               border: '1px solid rgba(200,164,74,0.22)',
               fontSize: 11,

@@ -17,7 +17,7 @@ export async function GET(
             .eq('id', params.id)
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 404 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 404 })
         }
         return NextResponse.json(lead)
     } catch (error) {
@@ -55,7 +55,7 @@ export async function PATCH(
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         // Audit log
         const meta = getRequestMeta(request)
@@ -88,7 +88,7 @@ export async function DELETE(
             .update({ status: 'archived', updated_at: new Date().toISOString() })
             .eq('id', params.id)
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         // Audit log
         const meta = getRequestMeta(request)

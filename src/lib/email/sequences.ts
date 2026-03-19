@@ -40,8 +40,8 @@ export async function enrollInSequence(params: EnrollInSequenceParams) {
             .single();
         if (error) throw error;
         return { success: true, enrollment: data };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error: unknown) {
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
 }
 /**
@@ -71,7 +71,7 @@ export async function processEmailSequences(): Promise<ProcessSequencesResult> {
             try {
                 const sequence = enrollment.sequence;
                 const lead = enrollment.lead;
-                const emails = sequence.emails as any[];
+                const emails = sequence.emails as Array<{ subject: string; body_html: string; delay_hours?: number }>;
                 // Verifica se há próximo email
                 if (enrollment.current_step >= emails.length) {
                     // Sequência completa
@@ -131,7 +131,7 @@ export async function processEmailSequences(): Promise<ProcessSequencesResult> {
                     })
                     .eq('id', enrollment.id);
                 sent++;
-            } catch (error: any) {
+            } catch (error: unknown) {
                 errors++;
                 // Log erro
                 await supabase.from('email_logs').insert({
@@ -141,7 +141,7 @@ export async function processEmailSequences(): Promise<ProcessSequencesResult> {
                     to_email: enrollment.lead.email,
                     subject: 'Error',
                     status: 'failed',
-                    error_message: error.message,
+                    error_message: error instanceof Error ? error.message : 'Unknown error',
                 });
             }
         }
@@ -152,13 +152,13 @@ export async function processEmailSequences(): Promise<ProcessSequencesResult> {
 /**
  * Renderiza template substituindo variáveis
  */
-function renderTemplate(template: string, lead: any): string {
+function renderTemplate(template: string, lead: Record<string, unknown>): string {
     let rendered = template;
     // Substitui variáveis {variable_name}
-    rendered = rendered.replace(/\{name\}/g, lead.name || 'Cliente');
-    rendered = rendered.replace(/\{email\}/g, lead.email || '');
-    rendered = rendered.replace(/\{phone\}/g, lead.phone || '');
-    rendered = rendered.replace(/\{source\}/g, lead.source || '');
+    rendered = rendered.replace(/\{name\}/g, (lead.name as string) || 'Cliente');
+    rendered = rendered.replace(/\{email\}/g, (lead.email as string) || '');
+    rendered = rendered.replace(/\{phone\}/g, (lead.phone as string) || '');
+    rendered = rendered.replace(/\{source\}/g, (lead.source as string) || '');
     return rendered;
 }
 /**

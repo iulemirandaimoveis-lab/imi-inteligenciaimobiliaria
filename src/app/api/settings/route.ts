@@ -15,7 +15,7 @@ export async function GET() {
             .limit(1)
             .maybeSingle()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         // Convert from snake_case to camelCase
         const formattedSettings = settings ? {
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
                 .select()
                 .single()
             if (error) {
-                return NextResponse.json({ error: error.message }, { status: 500 })
+                return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
             }
             result = updated
         } else {
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
                 .select()
                 .single()
             if (error) {
-                return NextResponse.json({ error: error.message }, { status: 500 })
+                return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
             }
             result = inserted
         }

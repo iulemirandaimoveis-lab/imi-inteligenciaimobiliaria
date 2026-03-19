@@ -19,7 +19,7 @@ export function usePropertyUnits(propertyId: string) {
             .order('unit_name', { ascending: true })
 
         if (error) throw error
-        return data as any[] // Mapear para PropertyUnit se necessário
+        return data as PropertyUnit[]
     }, [propertyId])
 
     const { data, error, isLoading, mutate } = useSWR(
@@ -35,7 +35,7 @@ export function usePropertyUnits(propertyId: string) {
     }
 }
 
-export async function createUnit(data: any) {
+export async function createUnit(data: Record<string, unknown>) {
     const { data: unit, error } = await supabase
         .from('development_units')
         .insert([data])
@@ -46,7 +46,7 @@ export async function createUnit(data: any) {
     return unit
 }
 
-export async function updateUnit(id: string, data: any) {
+export async function updateUnit(id: string, data: Record<string, unknown>) {
     const { data: unit, error } = await supabase
         .from('development_units')
         .update(data)
@@ -95,7 +95,7 @@ export function usePropertyEvents(propertyId: string) {
     }
 }
 
-export async function createPropertyEvent(data: any) {
+export async function createPropertyEvent(data: Record<string, unknown>) {
     const { data: event, error } = await supabase
         .from('property_events')
         .insert([data])

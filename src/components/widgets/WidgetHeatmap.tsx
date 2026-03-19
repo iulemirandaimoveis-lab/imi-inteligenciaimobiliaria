@@ -59,7 +59,7 @@ export function WidgetHeatmap() {
             key={v}
             onClick={() => setView(v)}
             style={{
-              padding: '4px 14px', borderRadius: 999, fontSize: 11, cursor: 'pointer',
+              padding: '4px 14px', borderRadius: 6, fontSize: 11, cursor: 'pointer',
               fontFamily: 'inherit', transition: 'all 150ms',
               background: view === v ? 'var(--bo-active-bg,rgba(200,164,74,0.12))' : 'var(--bo-surface,rgba(255,255,255,0.04))',
               border: `1px solid ${view === v ? 'var(--bo-accent,#C8A44A)' : 'var(--bo-border,rgba(200,164,74,0.12))'}`,

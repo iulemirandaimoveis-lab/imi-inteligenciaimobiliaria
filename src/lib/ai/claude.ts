@@ -50,9 +50,9 @@ export async function callClaude(params: ClaudeRequestParams): Promise<ClaudeRes
                 },
             ],
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         status = 'error';
-        error_message = error.message;
+        error_message = error instanceof Error ? error.message : 'Unknown error';
         // Loga erro
         await supabase.from('ai_requests').insert({
             tenant_id: params.tenant_id,
@@ -168,8 +168,8 @@ export async function generateContentCalendar(params: {
     month: number;
     year: number;
     objectives: string[];
-    offers: any[];
-    strategic_dates: any[];
+    offers: { title: string; date: string; description?: string }[];
+    strategic_dates: { date: string; event: string }[];
     custom_instructions?: string;
     requested_by?: string;
 }) {

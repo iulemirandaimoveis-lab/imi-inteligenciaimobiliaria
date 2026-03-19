@@ -79,7 +79,7 @@ export default async function BibliotecaPage() {
         .order('sort_order', { ascending: true })
 
     // Merge: DB ebooks + catálogo seed para preencher os vazios
-    const dbSlugs = new Set((dbEbooks || []).map((e: any) => e.slug))
+    const dbSlugs = new Set((dbEbooks || []).map((e: Record<string, unknown>) => e.slug))
     const seedEbooks = CATALOG_SEED.filter(e => !dbSlugs.has(e.slug)).map((e, i) => ({
         ...e, id: `seed-${i}`,
     }))

@@ -23,7 +23,7 @@ type FormData = z.infer<typeof schema>
 
 interface DeveloperFormProps {
     initialData?: Developer
-    onSubmit: (data: any) => Promise<void>
+    onSubmit: (data: Record<string, unknown>) => Promise<void>
     isSubmitting: boolean
 }
 

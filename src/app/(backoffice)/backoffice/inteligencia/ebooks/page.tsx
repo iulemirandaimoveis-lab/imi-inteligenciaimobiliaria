@@ -122,7 +122,7 @@ export default function EbooksPage() {
                                     <div className="h-3 rounded mb-2" style={{ background: 'var(--bo-hover)', width: '40%' }} />
                                     <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: '25%' }} />
                                 </div>
-                                <div className="h-5 w-16 rounded-full" style={{ background: 'var(--bo-hover)' }} />
+                                <div className="h-5 w-16 rounded-[6px]" style={{ background: 'var(--bo-hover)' }} />
                             </div>
                         ))}
                     </div>

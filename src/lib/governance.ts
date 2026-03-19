@@ -1,8 +1,8 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _supabase: SupabaseClient<any> | null = null
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getSupabase(): SupabaseClient<any> {
+
+let _supabase: SupabaseClient | null = null
+
+function getSupabase(): SupabaseClient {
     if (!_supabase) {
         _supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -27,8 +27,8 @@ async function loadPermissions(): Promise<Record<string, boolean>> {
         .from('role_permissions')
         .select('role, module, action, allowed')
     const map: Record<string, boolean> = {}
-    data?.forEach((p: any) => {
-        map[`${p.role}:${p.module}:${p.action}`] = p.allowed
+    data?.forEach((p: Record<string, unknown>) => {
+        map[`${p.role}:${p.module}:${p.action}`] = p.allowed as boolean
     })
     permissionsCache = map
     cacheTimestamp = now
@@ -68,8 +68,8 @@ export interface AuditEntry {
     action: string
     entity_type: string
     entity_id?: string
-    old_data?: any
-    new_data?: any
+    old_data?: Record<string, unknown>
+    new_data?: Record<string, unknown>
     ip_address?: string
     user_agent?: string
 }

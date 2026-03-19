@@ -145,7 +145,7 @@ export default function RelatoriosBackofficePage() {
                                     <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: '45%' }} />
                                     <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: '25%' }} />
                                 </div>
-                                <div className="h-5 w-20 rounded-full" style={{ background: 'var(--bo-hover)' }} />
+                                <div className="h-5 w-20 rounded-[6px]" style={{ background: 'var(--bo-hover)' }} />
                             </div>
                         ))}
                     </div>

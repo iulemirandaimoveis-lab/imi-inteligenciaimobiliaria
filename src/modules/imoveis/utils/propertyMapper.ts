@@ -16,7 +16,8 @@ function toYoutubeEmbed(url: string): string | null {
     return null;
 }
 
-export function mapDbPropertyToDevelopment(dbProp: any): Development {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- DB row shape is dynamic from Supabase joins
+export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Development {
     // Determine status from status_commercial
     const status = (dbProp.status === 'ready' || dbProp.status_commercial === 'ready') ? 'ready' : (dbProp.status || 'launch');
 
@@ -66,8 +67,8 @@ export function mapDbPropertyToDevelopment(dbProp: any): Development {
         name: dbProp.title || dbProp.name || 'Empreendimento Sem Nome',
         developer: developerName,
         developerLogo: developerLogo,
-        status: status as any,
-        region: (dbProp.region as any) || 'paraiba',
+        status: status as Development['status'],
+        region: (dbProp.region as Development['region']) || 'paraiba',
         location: {
             neighborhood: dbProp.neighborhood || '',
             city: dbProp.city || '',

@@ -37,4 +37,4 @@ export const supabaseAdmin = (supabaseUrl && serviceRoleKey && supabaseUrl.start
             persistSession: false
         }
     })
-    : null as any;
+    : null as unknown as ReturnType<typeof createClient>;

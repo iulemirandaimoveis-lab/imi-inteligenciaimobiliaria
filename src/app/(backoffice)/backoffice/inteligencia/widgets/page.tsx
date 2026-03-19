@@ -127,8 +127,8 @@ export default function WidgetsPage() {
         const list: WidgetConfig[] = Array.isArray(data) ? data : (data.widgets ?? data.data ?? [])
         list.sort((a, b) => a.display_order - b.display_order)
         setWidgets(list)
-      } catch (err: any) {
-        setError(err.message ?? 'Erro ao carregar widgets')
+      } catch (err: unknown) {
+        setError((err instanceof Error ? err.message : 'Erro desconhecido') ?? 'Erro ao carregar widgets')
       } finally {
         setLoading(false)
       }

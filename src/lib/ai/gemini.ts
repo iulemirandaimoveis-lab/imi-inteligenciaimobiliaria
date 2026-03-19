@@ -68,18 +68,19 @@ Style: ${params.style || 'architectural photography, clean, sophisticated, luxur
             throw new Error(`Gemini API ${response.status}: ${errText}`);
         }
         const data = await response.json();
-        const parts: any[] = data.candidates?.[0]?.content?.parts || [];
+        interface GeminiPart { inlineData?: { mimeType: string; data: string }; text?: string }
+        const parts: GeminiPart[] = data.candidates?.[0]?.content?.parts || [];
         // Encontra a parte de imagem na resposta
-        const imagePart = parts.find((p: any) => p.inlineData?.mimeType?.startsWith('image/'));
+        const imagePart = parts.find((p) => p.inlineData?.mimeType?.startsWith('image/'));
         if (!imagePart?.inlineData) {
             throw new Error('Gemini não retornou imagem — verifique se o modelo suporta image generation');
         }
         const { mimeType, data: b64 } = imagePart.inlineData;
         image_data = `data:${mimeType};base64,${b64}`;
         image_url = ''; // será preenchido após upload no storage
-    } catch (err: any) {
+    } catch (err: unknown) {
         status = 'error';
-        error_message = err.message;
+        error_message = err instanceof Error ? err.message : 'Unknown error';
         // Fallback para placeholder visual
         const dims: Record<string, [number, number]> = {
             '1:1': [1080, 1080], '4:5': [1080, 1350], '9:16': [1080, 1920], '16:9': [1920, 1080],

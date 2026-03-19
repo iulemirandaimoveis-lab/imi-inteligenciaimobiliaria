@@ -38,7 +38,7 @@ interface PropertyInsights {
 
 interface PropertyInsightsPanelProps {
     developmentId: string
-    data: any
+    data: Record<string, unknown>
 }
 
 const CACHE_PREFIX = 'imi_prop_insights_'
@@ -128,8 +128,8 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
             const { insights: ins } = await res.json()
             setInsights(ins)
             setCachedInsights(developmentId, ins)
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Erro desconhecido')
         } finally {
             setLoading(false)
         }

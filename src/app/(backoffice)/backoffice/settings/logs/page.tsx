@@ -22,8 +22,8 @@ interface AuditLog {
   action: string
   entity_type: string
   entity_id: string | null
-  new_data: any
-  old_data: any
+  new_data: Record<string, unknown>
+  old_data: Record<string, unknown>
   ip_address: string | null
   user_agent: string | null
   created_at: string
@@ -132,7 +132,7 @@ export default function LogsPage() {
     warnings: enriched.filter(l => l.status === 'warning').length,
   }
 
-  const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
+  const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
     success: { label: 'Sucesso', color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
     error: { label: 'Erro', color: 'var(--bo-error)', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
     warning: { label: 'Aviso', color: 'var(--warning)', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },

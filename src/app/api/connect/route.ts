@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
     const { data: channels, error } = await query
 
     if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
     }
 
     const enriched = (channels ?? []).map(ch => ({

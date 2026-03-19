@@ -2,10 +2,10 @@ import { createClient } from '@supabase/supabase-js'
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
 // Use direct supabase-js client for public data fetching
 // This avoids issues with cookies and server context in Next.js 14
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _supabase: ReturnType<typeof createClient<any>> | null = null
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getSupabase(): ReturnType<typeof createClient<any>> {
+
+let _supabase: ReturnType<typeof createClient> | null = null
+
+function getSupabase(): ReturnType<typeof createClient> {
     if (!_supabase) {
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
@@ -146,12 +146,18 @@ export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
     if (error) {
         return []
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase join returns dynamic shape
-    return posts.map((p: Record<string, any>) => ({
+    interface PostRow {
+        id: string
+        published_at: string
+        published_content: string
+        published_image_urls: string[] | null
+        content_item: { title?: string; topic?: string; hashtags?: string[] } | null
+    }
+    return (posts as unknown as PostRow[]).map((p) => ({
         id: p.id,
         title: p.content_item?.title || 'Sem título',
         slug: p.id,
-        excerpt: p.published_content?.substring(0, 150) + '...',
+        excerpt: (p.published_content?.substring(0, 150) || '') + '...',
         content: p.published_content || '',
         coverImage: p.published_image_urls?.[0] || '/images/blog-placeholder.jpg',
         publishedAt: p.published_at,
@@ -181,17 +187,19 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
         return null
     }
     // content_item pode ser array ou objeto dependendo do join
-    const item = Array.isArray(post.content_item) ? post.content_item[0] : post.content_item;
+    const postData = post as Record<string, unknown>
+    const rawItem = postData.content_item
+    const item = (Array.isArray(rawItem) ? rawItem[0] : rawItem) as Record<string, unknown> | null;
     return {
-        id: post.id,
-        title: item?.title || 'Sem título',
-        slug: post.id,
-        excerpt: post.published_content?.substring(0, 150) + '...',
-        content: post.published_content || '',
-        coverImage: post.published_image_urls?.[0] || '/images/blog-placeholder.jpg',
-        publishedAt: post.published_at,
+        id: postData.id as string,
+        title: (item?.title as string) || 'Sem título',
+        slug: postData.id as string,
+        excerpt: ((postData.published_content as string) || '').substring(0, 150) + '...',
+        content: (postData.published_content as string) || '',
+        coverImage: ((postData.published_image_urls as string[]) || [])[0] || '/images/blog-placeholder.jpg',
+        publishedAt: postData.published_at as string,
         author: 'IMI Intelligence',
-        category: item?.topic || 'Geral',
-        tags: item?.hashtags || []
+        category: (item?.topic as string) || 'Geral',
+        tags: (item?.hashtags as string[]) || []
     }
 }

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
                 .eq('id', id)
                 .single()
             if (error) {
-                return NextResponse.json({ error: error.message }, { status: 500 })
+                return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
             }
             if (!data) {
                 return NextResponse.json({ error: 'Empreendimento não encontrado' }, { status: 404 })
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
             .select('*')
             .order('created_at', { ascending: false })
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         return NextResponse.json(data)
     } catch (error) {
@@ -196,7 +196,7 @@ export async function POST(req: Request) {
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         const meta = getRequestMeta(req)
         logAudit({
@@ -260,7 +260,7 @@ export async function PUT(request: Request) {
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         const meta = getRequestMeta(request)
         logAudit({
@@ -313,7 +313,7 @@ export async function PATCH(request: Request) {
             .select('id, name, status, status_comercial, status_commercial')
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         const meta = getRequestMeta(request)
         logAudit({
@@ -350,7 +350,7 @@ export async function DELETE(request: Request) {
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
         const meta = getRequestMeta(request)
         logAudit({

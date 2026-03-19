@@ -39,7 +39,8 @@ export async function POST(req: NextRequest) {
     try {
         // Dynamic import to avoid bundling issues when Lambda not configured
         // @ts-ignore — @remotion/lambda optional dependency, loaded at runtime only when configured
-        const lambda: any = await import(/* webpackIgnore: true */ '@remotion/lambda' as any)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic import of optional dependency
+        const lambda: Record<string, any> = await import(/* webpackIgnore: true */ '@remotion/lambda' as string)
         const { renderMediaOnLambda, getRenderProgress } = lambda
         const FORMAT_DIMS: Record<string, { width: number; height: number; fps: number; durationInFrames: number }> = {
             tiktok:   { width: 1080, height: 1920, fps: 30, durationInFrames: 450 },

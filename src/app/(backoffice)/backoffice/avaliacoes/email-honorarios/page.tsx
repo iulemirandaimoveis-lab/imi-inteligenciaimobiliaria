@@ -198,8 +198,8 @@ export default function EmailHonorariosPage() {
       setEditedDraft(resposta)
       setActiveTab('analise')
 
-    } catch (err: any) {
-      setError(err.message || 'Erro na análise. Tente novamente.')
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : 'Erro desconhecido') || 'Erro na análise. Tente novamente.')
     } finally {
       setLoading(false)
     }

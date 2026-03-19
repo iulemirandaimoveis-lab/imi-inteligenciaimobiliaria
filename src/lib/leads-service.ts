@@ -1,9 +1,9 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 // Cliente Supabase Service Role para operações privilegiadas (bypass RLS se necessário)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _supabase: SupabaseClient<any> | null = null
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getSupabase(): SupabaseClient<any> {
+
+let _supabase: SupabaseClient | null = null
+
+function getSupabase(): SupabaseClient {
     if (!_supabase) {
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder';
@@ -98,7 +98,7 @@ export async function createLead(data: CreateLeadData) {
             created_at: new Date().toISOString()
         });
         return { success: true, leadId };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error: unknown) {
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
 }
