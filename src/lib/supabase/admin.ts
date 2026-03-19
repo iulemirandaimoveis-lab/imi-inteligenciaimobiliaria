@@ -5,7 +5,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 if (!supabaseUrl || !supabaseServiceKey) {
     // Graceful fallback for build time — will fail at runtime if keys not provided
-    console.warn('[supabase/admin] Missing environment variables — admin client not initialized')
+    // Admin client not initialized — missing environment variables
 }
 
 /**

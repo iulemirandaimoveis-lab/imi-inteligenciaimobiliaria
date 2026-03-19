@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -25,7 +24,6 @@ import {
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-
 // ⚠️ Opções reais Recife (mesmas do /novo)
 const origens = [
     'Site IMI',
@@ -39,7 +37,6 @@ const origens = [
     'Telefone',
     'Outro',
 ]
-
 const tiposImovel = [
     'Apartamento',
     'Casa',
@@ -49,7 +46,6 @@ const tiposImovel = [
     'Terreno',
     'Comercial',
 ]
-
 const localizacoes = [
     'Boa Viagem',
     'Pina',
@@ -61,7 +57,6 @@ const localizacoes = [
     'Recife Antigo',
     'Outro',
 ]
-
 const faixasOrcamento = [
     { label: 'Até R$ 300k', min: 0, max: 300000, score: 3 },
     { label: 'R$ 300k - R$ 500k', min: 300000, max: 500000, score: 5 },
@@ -69,7 +64,6 @@ const faixasOrcamento = [
     { label: 'R$ 800k - R$ 1.2M', min: 800000, max: 1200000, score: 8 },
     { label: 'Acima de R$ 1.2M', min: 1200000, max: 999999999, score: 10 },
 ]
-
 const statusOptions = [
     { value: 'pendente', label: 'Pendente', color: 'orange' },
     { value: 'qualificado', label: 'Qualificado', color: 'blue' },
@@ -78,9 +72,7 @@ const statusOptions = [
     { value: 'ganho', label: 'Ganho', color: 'green' },
     { value: 'perdido', label: 'Perdido', color: 'red' },
 ]
-
 const supabase = createClient()
-
 // Helper: convert budget_min/budget_max numbers to faixa label
 function getBudgetLabel(budgetMin: number | null, budgetMax: number | null): string {
     if (!budgetMin && !budgetMax) return ''
@@ -91,13 +83,11 @@ function getBudgetLabel(budgetMin: number | null, budgetMax: number | null): str
     if (budgetMin && budgetMin >= 1200000) return 'Acima de R$ 1.2M'
     return ''
 }
-
 export default function EditarLeadPage() {
     const router = useRouter()
     const params = useParams()
     const [isLoading, setIsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false)
-
     // Form State
     const [formData, setFormData] = useState({
         name: '',
@@ -117,10 +107,8 @@ export default function EditarLeadPage() {
         bestTime: '',
         notes: '',
     })
-
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [score, setScore] = useState(0)
-
     // Load real lead data on mount
     useEffect(() => {
         async function fetchLead() {
@@ -130,9 +118,7 @@ export default function EditarLeadPage() {
                     .select('*')
                     .eq('id', params.id)
                     .single()
-
                 if (error || !data) throw new Error('Lead não encontrado')
-
                 setFormData({
                     name: data.name || '',
                     email: data.email || '',
@@ -161,33 +147,25 @@ export default function EditarLeadPage() {
         if (params.id) fetchLead()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params.id])
-
     // Auto-calculate lead score
     const calculateScore = () => {
         let totalScore = 0
-
         if (formData.email && formData.email.includes('@')) totalScore += 2
         if (formData.phone && formData.phone.length >= 14) totalScore += 2
         if (['Site IMI', 'Indicação', 'Google Ads'].includes(formData.origem)) totalScore += 1
         if (formData.interesse) totalScore += 2
         if (formData.localizacao && formData.localizacao !== 'Outro') totalScore += 1
-
         const faixa = faixasOrcamento.find(f => f.label === formData.orcamento)
         if (faixa) totalScore += faixa.score
-
         setScore(Math.min(totalScore, 20))
     }
-
     const handleChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }))
-
         if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: '' }))
         }
-
         setTimeout(calculateScore, 100)
     }
-
     // Máscaras
     const formatPhone = (value: string) => {
         const numbers = value.replace(/\D/g, '')
@@ -198,7 +176,6 @@ export default function EditarLeadPage() {
         }
         return value
     }
-
     const formatCPF = (value: string) => {
         const numbers = value.replace(/\D/g, '')
         return numbers
@@ -206,10 +183,8 @@ export default function EditarLeadPage() {
             .replace(/(\d{3})(\d)/, '$1.$2')
             .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
     }
-
     const validate = () => {
         const newErrors: Record<string, string> = {}
-
         if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório'
         if (!formData.email.trim()) newErrors.email = 'Email é obrigatório'
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -217,20 +192,15 @@ export default function EditarLeadPage() {
         }
         if (!formData.phone.trim()) newErrors.phone = 'Telefone é obrigatório'
         if (!formData.origem) newErrors.origem = 'Origem é obrigatória'
-
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
         if (!validate()) {
             return
         }
-
         setIsSubmitting(true)
-
         try {
             const response = await fetch('/api/leads', {
                 method: 'PUT',
@@ -239,38 +209,31 @@ export default function EditarLeadPage() {
             })
             const result = await response.json()
             if (!response.ok) throw new Error(result.error || 'Erro ao atualizar')
-
             router.push(`/backoffice/leads/${params.id}`)
         } catch (error) {
-            console.error('Erro ao atualizar lead:', error)
             setIsSubmitting(false)
         }
     }
-
     const getScoreColor = () => {
         if (score >= 15) return 'text-green-400'
         if (score >= 10) return 'text-orange-400'
         return 'text-blue-400'
     }
-
     const getScoreLabel = () => {
         if (score >= 15) return 'Quente 🔥'
         if (score >= 10) return 'Morno ⚡'
         return 'Frio ❄️'
     }
-
     const inputStyle = {
         background: T.elevated,
         border: `1px solid ${T.border}`,
         color: T.text,
     }
-
     const inputErrorStyle = {
         background: T.elevated,
         border: '1px solid #ef4444',
         color: T.text,
     }
-
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
@@ -281,7 +244,6 @@ export default function EditarLeadPage() {
             </div>
         )
     }
-
     return (
         <div className="space-y-6">
             <PageIntelHeader
@@ -308,14 +270,12 @@ export default function EditarLeadPage() {
                     </div>
                 }
             />
-
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Form */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Dados Pessoais */}
                     <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Dados Pessoais</h2>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Nome */}
                             <div className="md:col-span-2">
@@ -339,7 +299,6 @@ export default function EditarLeadPage() {
                                     </p>
                                 )}
                             </div>
-
                             {/* Email */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -362,7 +321,6 @@ export default function EditarLeadPage() {
                                     </p>
                                 )}
                             </div>
-
                             {/* Telefone */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -386,7 +344,6 @@ export default function EditarLeadPage() {
                                     </p>
                                 )}
                             </div>
-
                             {/* CPF */}
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -404,7 +361,6 @@ export default function EditarLeadPage() {
                                     />
                                 </div>
                             </div>
-
                             {/* Profissão */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -422,7 +378,6 @@ export default function EditarLeadPage() {
                                     />
                                 </div>
                             </div>
-
                             {/* Empresa */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -440,7 +395,6 @@ export default function EditarLeadPage() {
                                     />
                                 </div>
                             </div>
-
                             {/* Estado Civil */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -459,7 +413,6 @@ export default function EditarLeadPage() {
                                     <option value="Viúvo(a)">Viúvo(a)</option>
                                 </select>
                             </div>
-
                             {/* Filhos */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -479,11 +432,9 @@ export default function EditarLeadPage() {
                             </div>
                         </div>
                     </div>
-
                     {/* Interesse */}
                     <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Interesse</h2>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Status */}
                             <div className="md:col-span-2">
@@ -501,7 +452,6 @@ export default function EditarLeadPage() {
                                     ))}
                                 </select>
                             </div>
-
                             {/* Origem */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -522,7 +472,6 @@ export default function EditarLeadPage() {
                                     </select>
                                 </div>
                             </div>
-
                             {/* Tipo de Imóvel */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -543,7 +492,6 @@ export default function EditarLeadPage() {
                                     </select>
                                 </div>
                             </div>
-
                             {/* Localização */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -564,7 +512,6 @@ export default function EditarLeadPage() {
                                     </select>
                                 </div>
                             </div>
-
                             {/* Orçamento */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -587,11 +534,9 @@ export default function EditarLeadPage() {
                             </div>
                         </div>
                     </div>
-
                     {/* Preferências de Contato */}
                     <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Preferências de Contato</h2>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
@@ -612,7 +557,6 @@ export default function EditarLeadPage() {
                                     </select>
                                 </div>
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                                     Melhor Horário
@@ -635,7 +579,6 @@ export default function EditarLeadPage() {
                             </div>
                         </div>
                     </div>
-
                     {/* Observações */}
                     <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Observações</h2>
@@ -649,14 +592,12 @@ export default function EditarLeadPage() {
                         />
                     </div>
                 </div>
-
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
                     <div className="rounded-lg p-6 sticky top-6 space-y-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h3 className="text-sm font-bold uppercase tracking-wider" style={{ color: T.text }}>
                             Alterações
                         </h3>
-
                         {/* Info */}
                         <div className="p-4 rounded-lg" style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)' }}>
                             <div className="flex gap-3">
@@ -669,7 +610,6 @@ export default function EditarLeadPage() {
                                 </div>
                             </div>
                         </div>
-
                         {/* Actions */}
                         <div className="space-y-3 pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
                             <button

@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, LogOut, Settings, ChevronDown, GraduationCap, Camera, Loader2 } from 'lucide-react'
@@ -8,16 +7,12 @@ import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from './ThemeToggle'
 import { useOnboardingContext } from './OnboardingWrapper'
 import SmartNotifications from './SmartNotifications'
-
 const supabase = createClient()
-
 function SearchBar() {
     const [focused, setFocused] = useState(false)
-
     const trigger = () => {
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))
     }
-
     return (
         <motion.button
             onClick={trigger}
@@ -50,7 +45,6 @@ function SearchBar() {
         </motion.button>
     )
 }
-
 function UserMenu({ onSignOut }: { onSignOut: () => void }) {
     const [open, setOpen] = useState(false)
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -58,7 +52,6 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
     const router = useRouter()
     const ref = useRef<HTMLDivElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
-
     // Load avatar from Supabase user metadata on mount
     useEffect(() => {
         supabase.auth.getUser().then(({ data }) => {
@@ -66,49 +59,38 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
             if (url) setAvatarUrl(url)
         })
     }, [])
-
     useEffect(() => {
         const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
         document.addEventListener('mousedown', h)
         return () => document.removeEventListener('mousedown', h)
     }, [])
-
     const handleAvatarUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
-
         setUploading(true)
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error('Não autenticado')
-
             const ext = file.name.split('.').pop()
             const path = `avatars/${user.id}.${ext}`
-
             const { error: uploadError } = await supabase.storage
                 .from('user-media')
                 .upload(path, file, { upsert: true, contentType: file.type })
-
             if (uploadError) throw uploadError
-
             const { data: { publicUrl } } = supabase.storage
                 .from('user-media')
                 .getPublicUrl(path)
-
             // Bust cache with timestamp
             const urlWithCache = `${publicUrl}?t=${Date.now()}`
-
             await supabase.auth.updateUser({ data: { avatar_url: urlWithCache } })
             setAvatarUrl(urlWithCache)
         } catch (err: any) {
-            console.error('Avatar upload error:', err)
         } finally {
             setUploading(false)
             // Reset input so same file can be re-uploaded
             if (fileInputRef.current) fileInputRef.current.value = ''
         }
     }, [])
-
     const Avatar = ({ size = 'sm' }: { size?: 'sm' | 'lg' }) => {
         const px = size === 'lg' ? 44 : 24
         return avatarUrl ? (
@@ -124,7 +106,6 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
             </div>
         )
     }
-
     return (
         <div ref={ref} className="relative">
             {/* Hidden file input */}
@@ -135,7 +116,6 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                 className="hidden"
                 onChange={handleAvatarUpload}
             />
-
             <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setOpen(!open)}
@@ -151,7 +131,6 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                     <ChevronDown size={12} style={{ color: 'var(--text-tertiary)' }} />
                 </motion.div>
             </motion.button>
-
             <AnimatePresence>
                 {open && (
                     <>
@@ -225,12 +204,10 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
         </div>
     )
 }
-
 export default function DesktopHeader() {
     const router = useRouter()
     const handleSignOut = async () => { await supabase.auth.signOut(); router.push('/login') }
     const { startTutorial } = useOnboardingContext()
-
     return (
         <header
             className="hidden lg:flex lg:fixed lg:top-0 lg:right-0 lg:left-60 lg:z-30 lg:h-16 items-center"

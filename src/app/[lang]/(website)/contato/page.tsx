@@ -1,12 +1,10 @@
 'use client'
-
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { slideUp, staggerContainer } from '@/lib/animations'
 import { MapPin, Phone, Mail, MessageCircle, Send, Loader2 } from 'lucide-react'
 import { ButtonPrimary } from '@/components/website/Buttons'
 import { getAttribution } from '@/lib/utils/attribution'
-
 export default function ContactPage() {
     const [formData, setFormData] = useState({
         name: '',
@@ -15,15 +13,11 @@ export default function ContactPage() {
         subject: '',
         message: ''
     })
-
     const [isSubmitting, setIsSubmitting] = useState(false)
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsSubmitting(true)
-
         const attribution = getAttribution()
-
         try {
             const response = await fetch('/api/leads/capture', {
                 method: 'POST',
@@ -37,7 +31,6 @@ export default function ContactPage() {
                     attribution
                 })
             })
-
             if (response.ok) {
                 setFormData({
                     name: '',
@@ -51,13 +44,11 @@ export default function ContactPage() {
                 throw new Error('Erro ao enviar')
             }
         } catch (err) {
-            console.error('Error saving lead:', err)
             alert('Erro ao enviar mensagem. Tente pelo WhatsApp abaixo.')
         } finally {
             setIsSubmitting(false)
         }
     }
-
     const contactInfo = [
         {
             icon: MapPin,
@@ -78,7 +69,6 @@ export default function ContactPage() {
             link: 'mailto:iulemirandaimoveis@gmail.com'
         }
     ]
-
     return (
         <main className="bg-[#0D0F14] min-h-screen">
             {/* HERO */}
@@ -104,7 +94,6 @@ export default function ContactPage() {
                     </motion.div>
                 </div>
             </section>
-
             {/* INFORMAÇÕES DE CONTATO */}
             <section className="py-16 md:py-24">
                 <div className="container-custom">
@@ -144,7 +133,6 @@ export default function ContactPage() {
                     </motion.div>
                 </div>
             </section>
-
             {/* FORMULÁRIO */}
             <section className="pb-16 md:pb-24">
                 <div className="container-custom">
@@ -164,7 +152,6 @@ export default function ContactPage() {
                                     Preencha o formulário abaixo e retornaremos em breve.
                                 </p>
                             </div>
-
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
@@ -192,7 +179,6 @@ export default function ContactPage() {
                                         />
                                     </div>
                                 </div>
-
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-2">Telefone / WhatsApp</label>
@@ -219,7 +205,6 @@ export default function ContactPage() {
                                         />
                                     </div>
                                 </div>
-
                                 <div>
                                     <label className="block text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-2">Mensagem</label>
                                     <textarea
@@ -232,7 +217,6 @@ export default function ContactPage() {
                                         className="w-full px-4 py-3 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all resize-none disabled:opacity-50"
                                     />
                                 </div>
-
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
@@ -255,7 +239,6 @@ export default function ContactPage() {
                     </div>
                 </div>
             </section>
-
             {/* CTA WHATSAPP */}
             <section className="bg-[#141420] text-white py-20 md:py-28 text-center relative overflow-hidden border-t border-white/[0.05]">
                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />

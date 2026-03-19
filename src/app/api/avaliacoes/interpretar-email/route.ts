@@ -1,35 +1,26 @@
 // src/app/api/avaliacoes/interpretar-email/route.ts
 // ── Interpretador de e-mail de solicitação de avaliação ───────
 // Chama Anthropic server-side — API key nunca exposta ao cliente
-
 import { NextRequest, NextResponse } from 'next/server'
-
 export const runtime = 'nodejs'
 export const maxDuration = 30
-
 export async function POST(req: NextRequest) {
   try {
     const { emailText } = await req.json()
-
     if (!emailText || emailText.trim().length < 20) {
       return NextResponse.json({ error: 'Texto do e-mail muito curto' }, { status: 400 })
     }
-
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) {
       return NextResponse.json({ error: 'ANTHROPIC_API_KEY não configurada' }, { status: 500 })
     }
-
     const systemPrompt = `Você é um assistente especializado em avaliações imobiliárias NBR 14653 no Brasil.
 Analise e-mails de solicitação de avaliação e extraia informações estruturadas em JSON.
 Responda APENAS com JSON válido, sem texto adicional, sem markdown, sem backticks.`
-
     const userPrompt = `Analise este e-mail de solicitação de avaliação imobiliária e retorne um JSON com os campos abaixo.
 Se um campo não puder ser determinado, use null.
-
 E-MAIL:
 ${emailText}
-
 Retorne APENAS este JSON (sem explicações, sem markdown):
 {
   "solicitante": "nome do solicitante",
@@ -47,7 +38,6 @@ Retorne APENAS este JSON (sem explicações, sem markdown):
   "observacoes_relevantes": "informações importantes para o avaliador ou null",
   "tom_comunicacao": "formal|informal|urgente"
 }`
-
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -62,16 +52,12 @@ Retorne APENAS este JSON (sem explicações, sem markdown):
         messages: [{ role: 'user', content: userPrompt }],
       }),
     })
-
     if (!response.ok) {
       const err = await response.text()
-      console.error('Anthropic error:', err)
       return NextResponse.json({ error: 'Falha na análise por IA' }, { status: 502 })
     }
-
     const data = await response.json()
     const rawText = data.content?.[0]?.text || ''
-
     // Parse JSON seguro
     let parsed: any
     try {
@@ -79,14 +65,10 @@ Retorne APENAS este JSON (sem explicações, sem markdown):
       const clean = rawText.replace(/```json\n?|\n?```/g, '').trim()
       parsed = JSON.parse(clean)
     } catch {
-      console.error('JSON parse failed:', rawText)
       return NextResponse.json({ error: 'Resposta da IA em formato inválido' }, { status: 422 })
     }
-
     return NextResponse.json({ success: true, dados: parsed })
-
   } catch (error) {
-    console.error('interpretar-email error:', error)
     return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }

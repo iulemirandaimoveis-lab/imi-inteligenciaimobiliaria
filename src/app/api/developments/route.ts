@@ -1,36 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { logAudit, getRequestMeta } from '@/lib/governance'
-
 export const runtime = 'nodejs'
-
 async function getAuthenticatedSupabase() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { supabase: null, user: null }
     return { supabase, user }
 }
-
-
 export async function GET(request: NextRequest) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
         if (!supabase || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
-
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
-
         if (id) {
             const { data, error } = await supabase
                 .from('developments')
                 .select('*')
                 .eq('id', id)
                 .single()
-
             if (error) {
-                console.error('Supabase Error:', error)
                 return NextResponse.json({ error: error.message }, { status: 500 })
             }
             if (!data) {
@@ -38,24 +30,18 @@ export async function GET(request: NextRequest) {
             }
             return NextResponse.json(data)
         }
-
         const { data, error } = await supabase
             .from('developments')
             .select('*')
             .order('created_at', { ascending: false })
-
         if (error) {
-            console.error('Supabase Error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
         return NextResponse.json(data)
     } catch (error) {
-        console.error('Error fetching developments:', error)
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
-
-
 /**
  * Normalize field names from camelCase (form) to snake_case (DB).
  * Handles both naming conventions so forms can send either format.
@@ -64,7 +50,6 @@ export async function GET(request: NextRequest) {
 function normalizeFields(body: Record<string, any>): Record<string, any> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: Record<string, any> = {}
-
     // Direct mappings — camelCase form field → snake_case DB column
     const fieldMap: Record<string, string> = {
         priceMin: 'price_min',
@@ -83,16 +68,13 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         areaFrom: 'area_from',
         areaTo: 'area_to',
     }
-
     for (const [key, value] of Object.entries(body)) {
         // Skip internal keys
         if (key === 'id') continue
-
         // Map camelCase to snake_case if mapping exists
         const dbKey = fieldMap[key] || key
         result[dbKey] = value
     }
-
     // Numeric conversions
     const numericFields = [
         'price_min', 'price_max', 'price_per_sqm',
@@ -107,29 +89,24 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
             result[f] = null
         }
     }
-
     // Sync dual price columns (price_min/price_max ↔ price_from/price_to)
     if (result.price_min !== undefined) result.price_from = result.price_min
     if (result.price_max !== undefined) result.price_to = result.price_max
-
     // Sync area: if only area_from set (from single 'area' form field), mirror to area_to
     if (result.area_from !== undefined && result.area_from !== null && result.area_to === undefined) {
         result.area_to = result.area_from
     }
-
     // Sync dual status columns with proper value mapping
     // status_commercial (EN): draft, published, campaign, private, sold
     // status_comercial (PT): rascunho, publicado, campanha, privado
     const enToPt: Record<string, string> = { draft: 'rascunho', published: 'publicado', campaign: 'campanha', private: 'privado', sold: 'privado' }
     const ptToEn: Record<string, string> = { rascunho: 'draft', publicado: 'published', campanha: 'campaign', privado: 'private' }
-
     if (result.status_commercial !== undefined && result.status_comercial === undefined) {
         result.status_comercial = enToPt[result.status_commercial] || 'rascunho'
     }
     if (result.status_comercial !== undefined && result.status_commercial === undefined) {
         result.status_commercial = ptToEn[result.status_comercial] || 'draft'
     }
-
     // Type normalization — form sends 'Apartamento', DB constraints expect lowercase
     // tipo (PT): apartamento, casa, flat, lote, comercial, resort
     // type (EN): apartment, house, penthouse, studio, land, commercial, resort
@@ -152,7 +129,6 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         'Comercial': 'commercial', 'Flat': 'apartment', 'Penthouse': 'apartment',
         'Villa': 'house', 'Empreendimento': 'mixed',
     }
-
     if (result.type && typeToTipo[result.type]) {
         // Form sends capitalized Portuguese, normalize to constraint values
         const formType = result.type
@@ -163,12 +139,10 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         // Already lowercase, ensure type/property_type are set
         // (editar form sends tipo directly)
     }
-
     // Date handling
     if (result.delivery_date && typeof result.delivery_date === 'string' && !result.delivery_date.includes('T')) {
         result.delivery_date = new Date(result.delivery_date).toISOString()
     }
-
     // Array defaults
     if (result.features !== undefined && !Array.isArray(result.features)) {
         result.features = []
@@ -179,32 +153,24 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     if (result.floor_plans !== undefined && !Array.isArray(result.floor_plans)) {
         result.floor_plans = []
     }
-
     return result
 }
-
-
 export async function POST(req: Request) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
         if (!supabase || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
-
         const body = await req.json()
-
         if (!body.name || !body.type) {
             return NextResponse.json({ error: 'Nome e tipo são obrigatórios' }, { status: 400 })
         }
-
         // Auto-generate slug
         const slug = body.slug || body.name.toLowerCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/(^-|-$)/g, '')
-
         const normalized = normalizeFields(body)
-
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const newDev: Record<string, any> = {
             ...normalized,
@@ -220,23 +186,18 @@ export async function POST(req: Request) {
             featured: normalized.featured || false,
             created_by: user.id,
         }
-
         // Remove undefined/undeclared fields that could cause Supabase errors
         for (const key of Object.keys(newDev)) {
             if (newDev[key] === undefined) delete newDev[key]
         }
-
         const { data, error } = await supabase
             .from('developments')
             .insert(newDev)
             .select()
             .single()
-
         if (error) {
-            console.error('Supabase Error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-
         const meta = getRequestMeta(req)
         logAudit({
             action: 'create',
@@ -245,29 +206,21 @@ export async function POST(req: Request) {
             new_data: { name: body.name, type: body.type, city: newDev.city },
             ...meta,
         })
-
         return NextResponse.json(data)
     } catch (error) {
-        console.error('Error creating development:', error)
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
-
-
 export async function PUT(request: Request) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
         if (!supabase || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
-
         const body = await request.json()
         const { id } = body
-
         if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
-
         const normalized = normalizeFields(body)
-
         // Ensure type fields stay in sync (only if normalizeFields didn't already handle it)
         // normalizeFields maps capitalized form values (e.g. 'Apartamento') to all three columns
         // This block handles cases where lowercase values come in (e.g. from edit form)
@@ -294,27 +247,21 @@ export async function PUT(request: Request) {
             normalized.type = ptToEn[normalized.tipo] || normalized.tipo
             normalized.property_type = ptToEn[normalized.tipo] || 'mixed'
         }
-
         normalized.updated_at = new Date().toISOString()
         normalized.updated_by = user.id
-
         // Remove undefined fields
         for (const key of Object.keys(normalized)) {
             if (normalized[key] === undefined) delete normalized[key]
         }
-
         const { data, error } = await supabase
             .from('developments')
             .update(normalized)
             .eq('id', id)
             .select()
             .single()
-
         if (error) {
-            console.error('Supabase Error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-
         const meta = getRequestMeta(request)
         logAudit({
             action: 'update',
@@ -323,30 +270,22 @@ export async function PUT(request: Request) {
             new_data: normalized,
             ...meta,
         })
-
         return NextResponse.json(data)
     } catch (error) {
-        console.error('Error updating development:', error)
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
-
-
-
 export async function PATCH(request: Request) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
         if (!supabase || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
-
         const body = await request.json()
         const { id, status } = body
-
         if (!id || !status) {
             return NextResponse.json({ error: 'ID e status obrigatórios' }, { status: 400 })
         }
-
         // Map frontend status → dual DB columns
         const statusMap: Record<string, { comercial: string; commercial: string; appStatus: string }> = {
             disponivel:    { comercial: 'publicado',  commercial: 'published', appStatus: 'disponivel' },
@@ -356,12 +295,10 @@ export async function PATCH(request: Request) {
             lancamento:    { comercial: 'publicado',  commercial: 'published', appStatus: 'lancamento' },
             arquivado:     { comercial: 'privado',    commercial: 'private',   appStatus: 'arquivado' },
         }
-
         const mapped = statusMap[status]
         if (!mapped) {
             return NextResponse.json({ error: `Status inválido: ${status}` }, { status: 400 })
         }
-
         const updateData = {
             status: mapped.appStatus,
             status_comercial: mapped.comercial,
@@ -369,19 +306,15 @@ export async function PATCH(request: Request) {
             updated_at: new Date().toISOString(),
             updated_by: user.id,
         }
-
         const { data, error } = await supabase
             .from('developments')
             .update(updateData)
             .eq('id', id)
             .select('id, name, status, status_comercial, status_commercial')
             .single()
-
         if (error) {
-            console.error('PATCH developments Error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-
         const meta = getRequestMeta(request)
         logAudit({
             action: 'status_change',
@@ -390,26 +323,20 @@ export async function PATCH(request: Request) {
             new_data: { requested_status: status, ...updateData },
             ...meta,
         })
-
         return NextResponse.json({ success: true, data })
     } catch (error) {
-        console.error('Error patching development:', error)
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
-
 export async function DELETE(request: Request) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
         if (!supabase || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
-
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
-
         if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
-
         // Soft delete: set to private (constraint-safe)
         const { data, error } = await supabase
             .from('developments')
@@ -422,12 +349,9 @@ export async function DELETE(request: Request) {
             .eq('id', id)
             .select()
             .single()
-
         if (error) {
-            console.error('Supabase Error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-
         const meta = getRequestMeta(request)
         logAudit({
             action: 'delete',
@@ -436,11 +360,8 @@ export async function DELETE(request: Request) {
             old_data: { name: data.name },
             ...meta,
         })
-
         return NextResponse.json({ success: true, data })
     } catch (error) {
-        console.error('Error deleting development:', error)
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
-

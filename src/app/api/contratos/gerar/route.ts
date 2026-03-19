@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getModeloById, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
-
 export const runtime = 'nodejs'
-
 interface Parte {
   nome?: string
   razao_social?: string
@@ -20,24 +18,20 @@ interface Parte {
   email?: string
   telefone?: string
 }
-
 interface Campo {
   section: string
   label: string
   key: string
 }
-
 interface Modelo {
   nome: string
   jurisdicao?: string
   campos: Campo[]
   categoria: string
 }
-
 interface IdiomaInfo {
   label: string
 }
-
 function qualificaParte(p: Parte, label: string) {
   if (!p) return ''
   let text = `**${label}**\n\n`
@@ -59,7 +53,6 @@ function qualificaParte(p: Parte, label: string) {
   
   return text
 }
-
 function generateLocalContractMarkdown(
   modelo: Modelo,
   idiomaInfo: IdiomaInfo,
@@ -122,7 +115,6 @@ function generateLocalContractMarkdown(
     md += `\n**Condições Especiais Adicionais:**\n${notasAdicionais}\n`
   }
   md += '\n'
-
   md += `## 7. DO FORO E DISPOSIÇÕES FINAIS\n\n`
   md += `Fica eleito o foro da situação do imóvel ou da comarca correspondente para dirimir quaisquer dúvidas oriundas deste contrato, renunciando a qualquer outro por mais privilegiado que seja.\n\n`
   
@@ -139,13 +131,11 @@ function generateLocalContractMarkdown(
   
   return md
 }
-
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
     const {
       modelo_id,
       idioma_primario,
@@ -156,19 +146,15 @@ export async function POST(req: NextRequest) {
       criado_por_nome,
       notas_adicionais,
     } = await req.json()
-
     if (!modelo_id || !contratante || !contratado) {
       return NextResponse.json({ error: 'Dados obrigatórios ausentes' }, { status: 400 })
     }
-
     const modelo = getModeloById(modelo_id)
     if (!modelo) {
       return NextResponse.json({ error: 'Modelo não encontrado' }, { status: 404 })
     }
-
     const idioma = idioma_primario || 'pt'
     const idiomaInfo = IDIOMAS_LABEL[idioma] || IDIOMAS_LABEL.pt
-
     // Geração Local (Substitui Anthropic para não travar o fluxo se acabar o crédito)
     const conteudoPrimario = generateLocalContractMarkdown(
       modelo,
@@ -179,7 +165,6 @@ export async function POST(req: NextRequest) {
       criado_por_nome || 'IMI – Inteligência Imobiliária',
       notas_adicionais
     )
-
     const conteudoAdicional: Record<string, string> = {}
     
     // Fallback: se tiver idiomas adicionais, também geramos mas com aviso que é um template em PT.
@@ -188,9 +173,7 @@ export async function POST(req: NextRequest) {
          conteudoAdicional[lang] = `> [TRANSLATION REQUIRED] The API translation feature is currently turned off to preserve credits. This is the local fallback template.\n\n` + conteudoPrimario
        });
     }
-
     const numero = `IMI-${new Date().getFullYear()}-CTR-${String(Date.now()).slice(-6)}`
-
     return NextResponse.json({
       success: true,
       numero,
@@ -201,9 +184,7 @@ export async function POST(req: NextRequest) {
       idioma_primario: idioma,
       idiomas_adicionais,
     })
-
   } catch (error) {
-    console.error('gerar-contrato error:', error)
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
   }
 }

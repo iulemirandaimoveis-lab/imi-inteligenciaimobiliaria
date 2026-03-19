@@ -1,22 +1,16 @@
 import { createClient } from '@/lib/supabase/server'
 import ConstrutorasClient, { Developer } from './ConstrutorasClient'
 import { T } from '@/app/(backoffice)/lib/theme'
-
 export const dynamic = 'force-dynamic'
-
 export default async function BackofficeConstrutorasPage() {
   const supabase = await createClient()
-
   // Buscar construtoras reais do banco de dados e suas estatísticas reais
   const { data: developersData, error } = await supabase
     .from('developers')
     .select('*')
     .order('name', { ascending: true })
-
   if (error) {
-    console.error('Falha ao buscar construtoras do banco:', error.message)
   }
-
   // Mapeia para a tipagem que o front-end aceita e conta os empreendimentos
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const developers: Developer[] = (developersData || []).map((dev: any) => ({
@@ -35,7 +29,6 @@ export default async function BackofficeConstrutorasPage() {
     rating: 4.0,
     parceriaDuracao: "Parceiro ativo",
   }))
-
   return (
     <ConstrutorasClient initialData={developers} />
   )

@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import {
   Shield, Search, User, Settings, Trash2, Plus, Edit, Eye,
@@ -7,7 +6,6 @@ import {
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-
 // DB action → UI action
 function mapAction(action: string): string {
   switch (action?.toUpperCase()) {
@@ -17,7 +15,6 @@ function mapAction(action: string): string {
     default: return action?.toLowerCase() || 'view'
   }
 }
-
 // DB action → severidade
 function mapSeveridade(action: string): string {
   switch (action?.toUpperCase()) {
@@ -27,7 +24,6 @@ function mapSeveridade(action: string): string {
     default: return 'info'
   }
 }
-
 // DB entity_type → UI modulo
 function mapModulo(entityType: string): string {
   const map: Record<string, string> = {
@@ -49,13 +45,13 @@ function mapModulo(entityType: string): string {
   }
   return map[entityType] || entityType || 'sistema'
 }
+type AuditJsonData = Record<string, unknown> | null
 
-function extractName(data: any): string | null {
+function extractName(data: AuditJsonData): string | null {
   if (!data) return null
-  return data.nome || data.name || data.titulo || data.title || data.email || null
+  return (data.nome || data.name || data.titulo || data.title || data.email) as string | null
 }
-
-function buildDescricao(action: string, entityType: string, newData: any, oldData: any): string {
+function buildDescricao(action: string, entityType: string, newData: AuditJsonData, oldData: AuditJsonData): string {
   const acao = mapAction(action)
   const nome = extractName(newData) || extractName(oldData)
   const modulo = mapModulo(entityType)
@@ -64,7 +60,6 @@ function buildDescricao(action: string, entityType: string, newData: any, oldDat
   if (nome) return `${modulo.charAt(0).toUpperCase() + modulo.slice(1)} ${acaoLabel}: ${nome}`
   return `Registro ${acaoLabel} em ${modulo}`
 }
-
 function parseDevice(userAgent: string | null): string {
   if (!userAgent) return 'Desconhecido'
   if (userAgent.includes('iPhone')) return 'iPhone · Safari'
@@ -74,20 +69,18 @@ function parseDevice(userAgent: string | null): string {
   if (userAgent.includes('curl')) return 'API · curl'
   return userAgent.slice(0, 30)
 }
-
 interface RawAuditLog {
   id: string
   user_id: string | null
   action: string
   entity_type: string
   entity_id: string | null
-  old_data: any
-  new_data: any
+  old_data: AuditJsonData
+  new_data: AuditJsonData
   ip_address: string | null
   user_agent: string | null
   created_at: string
 }
-
 interface UILog {
   id: string
   usuario: string
@@ -100,7 +93,6 @@ interface UILog {
   timestamp: string
   entidade_id: string | null
 }
-
 function transformLog(raw: RawAuditLog): UILog {
   const usuario = raw.user_id ? `ID: ${raw.user_id.slice(0, 8)}…` : 'Sistema'
   return {
@@ -116,8 +108,9 @@ function transformLog(raw: RawAuditLog): UILog {
     entidade_id: raw.entity_id,
   }
 }
+type IconComponent = React.ComponentType<{ size?: number; style?: React.CSSProperties; className?: string }>
 
-const ACAO_CONFIG: Record<string, { label: string; icon: any; textColor: string; bgColor: string }> = {
+const ACAO_CONFIG: Record<string, { label: string; icon: IconComponent; textColor: string; bgColor: string }> = {
   login:  { label: 'Login',         icon: LogIn,    textColor: 'var(--info)', bgColor: 'rgba(96,165,250,0.10)'  },
   logout: { label: 'Logout',        icon: LogOut,   textColor: 'var(--text-tertiary)', bgColor: 'rgba(148,163,184,0.10)' },
   create: { label: 'Criação',       icon: Plus,     textColor: 'var(--bo-success)', bgColor: 'rgba(107,184,123,0.10)' },
@@ -128,16 +121,13 @@ const ACAO_CONFIG: Record<string, { label: string; icon: any; textColor: string;
   sync:   { label: 'Sync',          icon: Settings, textColor: 'var(--info)', bgColor: 'rgba(96,165,250,0.10)'  },
   backup: { label: 'Backup',        icon: Shield,   textColor: 'var(--bo-success)', bgColor: 'rgba(107,184,123,0.10)' },
 }
-
-const SEVERIDADE_CONFIG: Record<string, { label: string; textColor: string; bgColor: string; icon: any }> = {
+const SEVERIDADE_CONFIG: Record<string, { label: string; textColor: string; bgColor: string; icon: IconComponent }> = {
   info:    { label: 'Info',    textColor: 'var(--info)', bgColor: 'rgba(96,165,250,0.10)',   icon: CheckCircle  },
   success: { label: 'Sucesso', textColor: 'var(--bo-success)', bgColor: 'rgba(107,184,123,0.10)', icon: CheckCircle  },
   warning: { label: 'Atenção', textColor: '#FCD34D', bgColor: 'rgba(252,211,77,0.10)',  icon: AlertTriangle },
   danger:  { label: 'Crítico', textColor: 'var(--bo-error)', bgColor: 'rgba(229,115,115,0.10)', icon: AlertTriangle },
 }
-
 const MODULOS = ['todos', 'auth', 'imoveis', 'leads', 'campanhas', 'avaliacoes', 'financeiro', 'contratos', 'automacoes', 'settings', 'sistema']
-
 export default function AuditPage() {
   const [logs, setLogs] = useState<UILog[]>([])
   const [total, setTotal] = useState(0)
@@ -145,7 +135,6 @@ export default function AuditPage() {
   const [busca, setBusca] = useState('')
   const [moduloFiltro, setModuloFiltro] = useState('todos')
   const [severidadeFiltro, setSeveridadeFiltro] = useState<string | null>(null)
-
   useEffect(() => {
     fetch('/api/audit?limit=100')
       .then(r => r.json())
@@ -154,10 +143,9 @@ export default function AuditPage() {
         setLogs(raw.map(transformLog))
         setTotal(json.total ?? raw.length)
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
-
   const logsFiltrados = logs.filter(log => {
     const matchBusca =
       log.usuario.toLowerCase().includes(busca.toLowerCase()) ||
@@ -167,14 +155,12 @@ export default function AuditPage() {
     const matchSeveridade = !severidadeFiltro || log.severidade === severidadeFiltro
     return matchBusca && matchModulo && matchSeveridade
   })
-
   const stats = {
     total,
     criticos: logs.filter(l => l.severidade === 'danger').length,
     atencao: logs.filter(l => l.severidade === 'warning').length,
     usuarios: [...new Set(logs.map(l => l.usuario))].length,
   }
-
   const exportCSV = () => {
     const headers = ['ID', 'Usuário', 'Ação', 'Módulo', 'Descrição', 'IP', 'Dispositivo', 'Status', 'Timestamp']
     const rows = logsFiltrados.map(l => [
@@ -197,17 +183,14 @@ export default function AuditPage() {
     a.click()
     URL.revokeObjectURL(url)
   }
-
   const formatTimestamp = (iso: string) =>
     new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
-
   const getInitials = (nome: string) =>
     nome === 'Sistema'
       ? 'SYS'
       : nome.startsWith('ID:')
       ? nome.slice(4, 6).toUpperCase()
       : nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -225,7 +208,6 @@ export default function AuditPage() {
           </button>
         }
       />
-
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
@@ -246,7 +228,6 @@ export default function AuditPage() {
           )
         })}
       </div>
-
       {/* Filtros */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
@@ -259,7 +240,6 @@ export default function AuditPage() {
             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
           />
         </div>
-
         <select
           value={moduloFiltro}
           onChange={e => setModuloFiltro(e.target.value)}
@@ -272,7 +252,6 @@ export default function AuditPage() {
             </option>
           ))}
         </select>
-
         <div className="flex items-center gap-2">
           {Object.entries(SEVERIDADE_CONFIG).map(([k, v]) => (
             <button
@@ -289,7 +268,6 @@ export default function AuditPage() {
           ))}
         </div>
       </div>
-
       {/* Tabela */}
       <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Cabeçalho */}
@@ -300,7 +278,6 @@ export default function AuditPage() {
           <div className="col-span-1 text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Status</div>
           <div className="col-span-2 text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Timestamp</div>
         </div>
-
         {/* Linhas */}
         <div>
           {loading ? (
@@ -337,12 +314,10 @@ export default function AuditPage() {
               const sevCfg = SEVERIDADE_CONFIG[log.severidade] || SEVERIDADE_CONFIG['info']
               const AcaoIcon = acaoCfg.icon
               const SevIcon = sevCfg.icon
-
               return (
                 <div key={log.id}
                   className="grid grid-cols-12 gap-4 px-4 py-4 transition-colors items-center"
                   style={{ borderTop: index > 0 ? `1px solid ${T.border}` : 'none' }}>
-
                   {/* Usuário */}
                   <div className="col-span-3 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full text-[10px] font-bold flex items-center justify-center flex-shrink-0"
@@ -357,7 +332,6 @@ export default function AuditPage() {
                       <p className="text-[10px] truncate" style={{ color: T.textMuted }}>{log.ip}</p>
                     </div>
                   </div>
-
                   {/* Ação */}
                   <div className="col-span-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold"
@@ -366,7 +340,6 @@ export default function AuditPage() {
                       {acaoCfg.label}
                     </span>
                   </div>
-
                   {/* Descrição */}
                   <div className="col-span-4">
                     <p className="text-xs leading-relaxed line-clamp-2" style={{ color: T.textMuted }}>{log.descricao}</p>
@@ -377,7 +350,6 @@ export default function AuditPage() {
                       </p>
                     )}
                   </div>
-
                   {/* Severidade */}
                   <div className="col-span-1">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold"
@@ -386,7 +358,6 @@ export default function AuditPage() {
                       {sevCfg.label}
                     </span>
                   </div>
-
                   {/* Timestamp */}
                   <div className="col-span-2">
                     <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: T.text }}>
@@ -400,7 +371,6 @@ export default function AuditPage() {
             })
           )}
         </div>
-
         {/* Footer */}
         <div className="px-4 py-3 flex items-center justify-between" style={{ borderTop: `1px solid ${T.border}`, background: T.elevated }}>
           <span className="text-xs font-medium" style={{ color: T.textMuted }}>

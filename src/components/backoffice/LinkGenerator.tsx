@@ -1,13 +1,10 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { Link as LinkIcon, Copy, QrCode, Download, CheckCircle, Share2, BarChart3 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import QRCode from 'qrcode'
-
 const supabase = createClient()
-
 interface LinkForm {
     development_id: string
     campaign_name: string
@@ -17,7 +14,6 @@ interface LinkForm {
     utm_content?: string
     custom_slug?: string
 }
-
 const UTM_SOURCES = [
     { value: 'instagram', label: 'Instagram' },
     { value: 'facebook', label: 'Facebook' },
@@ -28,7 +24,6 @@ const UTM_SOURCES = [
     { value: 'direct', label: 'Direto' },
     { value: 'referral', label: 'Indicação' }
 ]
-
 const UTM_MEDIUMS = [
     { value: 'cpc', label: 'CPC (Pago)' },
     { value: 'organic', label: 'Orgânico' },
@@ -39,7 +34,6 @@ const UTM_MEDIUMS = [
     { value: 'story', label: 'Story' },
     { value: 'post', label: 'Post' }
 ]
-
 export default function LinkGenerator() {
     const [formData, setFormData] = useState<LinkForm>({
         development_id: '',
@@ -55,48 +49,37 @@ export default function LinkGenerator() {
     const [qrCodeUrl, setQrCodeUrl] = useState('')
     const [loading, setLoading] = useState(false)
     const [developments, setDevelopments] = useState<any[]>([])
-
     useEffect(() => {
         loadDevelopments()
     }, []) // Fix: Added dependency array to avoid infinite loop
-
     const loadDevelopments = async () => {
         const { data } = await supabase
             .from('developments')
             .select('id, name, slug')
             .eq('status', 'published')
             .order('name')
-
         setDevelopments(data || [])
     }
-
     const generateLink = async () => {
         if (!formData.development_id || !formData.utm_campaign) {
             toast.error('Preencha empreendimento e campanha')
             return
         }
-
         setLoading(true)
-
         try {
             const development = developments.find(d => d.id === formData.development_id)
             if (!development) throw new Error('Empreendimento não encontrado')
-
             // URL base
             const baseUrl = 'https://www.iulemirandaimoveis.com.br'
             const path = `/imoveis/${development.slug}`
-
             // Construir query params
             const params = new URLSearchParams()
             params.append('utm_source', formData.utm_source)
             params.append('utm_medium', formData.utm_medium)
             params.append('utm_campaign', formData.utm_campaign)
             if (formData.utm_content) params.append('utm_content', formData.utm_content)
-
-
             const fullLink = `${baseUrl}${path}?${params.toString()}`
             setGeneratedLink(fullLink)
-
             // Criar registro no banco
             const { data: trackingLink, error } = await supabase
                 .from('tracked_links')
@@ -115,14 +98,11 @@ export default function LinkGenerator() {
                 })
                 .select()
                 .single()
-
             if (error) throw error
-
             // Short link - logic placeholder, as actual shortener needs backend/middleware
             const slug = formData.custom_slug || trackingLink.id.substring(0, 8)
             const shortUrl = `${baseUrl}/l/${slug}`
             setShortLink(shortUrl)
-
             // Gerar QR Code
             const qr = await QRCode.toDataURL(fullLink, {
                 width: 300,
@@ -133,22 +113,17 @@ export default function LinkGenerator() {
                 }
             })
             setQrCodeUrl(qr)
-
             toast.success('Link gerado com sucesso!')
-
         } catch (error: any) {
-            console.error('Erro ao gerar link:', error)
             toast.error(error.message || 'Erro ao gerar link')
         } finally {
             setLoading(false)
         }
     }
-
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text)
         toast.success('Link copiado!')
     }
-
     const downloadQRCode = () => {
         // Create link and download
         const link = document.createElement('a')
@@ -159,7 +134,6 @@ export default function LinkGenerator() {
         document.body.removeChild(link)
         toast.success('QR Code baixado!')
     }
-
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
             {/* Header */}
@@ -171,7 +145,6 @@ export default function LinkGenerator() {
                     Crie links rastreáveis para medir performance de campanhas
                 </p>
             </div>
-
             {/* Form */}
             <div className="bg-white rounded-2xl border border-imi-100 p-8 space-y-6 shadow-sm">
                 <div>
@@ -191,7 +164,6 @@ export default function LinkGenerator() {
                         ))}
                     </select>
                 </div>
-
                 <div>
                     <label className="block text-sm font-medium text-imi-700 mb-2">
                         Nome da Campanha * (interno)
@@ -204,7 +176,6 @@ export default function LinkGenerator() {
                         placeholder="Ex: Lancamento Outubro 2025"
                     />
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-imi-700 mb-2">
@@ -222,7 +193,6 @@ export default function LinkGenerator() {
                             ))}
                         </select>
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium text-imi-700 mb-2">
                             Mídia (utm_medium) *
@@ -240,7 +210,6 @@ export default function LinkGenerator() {
                         </select>
                     </div>
                 </div>
-
                 <div>
                     <label className="block text-sm font-medium text-imi-700 mb-2">
                         Campanha (utm_campaign) *
@@ -253,7 +222,6 @@ export default function LinkGenerator() {
                         placeholder="Ex: lancamento_2025"
                     />
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-imi-700 mb-2">
@@ -267,7 +235,6 @@ export default function LinkGenerator() {
                             placeholder="Ex: banner_topo"
                         />
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium text-imi-700 mb-2">
                             Slug Personalizado (opcional)
@@ -281,7 +248,6 @@ export default function LinkGenerator() {
                         />
                     </div>
                 </div>
-
                 <button
                     onClick={generateLink}
                     disabled={loading}
@@ -300,7 +266,6 @@ export default function LinkGenerator() {
                     )}
                 </button>
             </div>
-
             {/* Generated Links */}
             {generatedLink && (
                 <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
@@ -322,7 +287,6 @@ export default function LinkGenerator() {
                             </button>
                         </div>
                     </div>
-
                     {/* Short Link */}
                     {shortLink && (
                         <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
@@ -343,7 +307,6 @@ export default function LinkGenerator() {
                             </div>
                         </div>
                     )}
-
                     {/* QR Code */}
                     {qrCodeUrl && (
                         <div className="bg-purple-50 border border-purple-200 rounded-2xl p-6">
@@ -365,7 +328,6 @@ export default function LinkGenerator() {
                             </div>
                         </div>
                     )}
-
                     {/* Analytics Preview */}
                     <div className="bg-white border border-imi-100 rounded-2xl p-6 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">

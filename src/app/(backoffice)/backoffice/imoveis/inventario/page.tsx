@@ -56,9 +56,32 @@ function KpiIcon({ children, color }: { children: React.ReactNode; color: string
 
 // ─── Mobile Inventario Component ─────────────────────────────────────────────
 
+interface InventoryDevelopment {
+    id: string
+    name?: string
+    slug?: string
+    status?: string
+    status_commercial?: string
+    status_comercial?: string
+    type?: string
+    tipo?: string
+    price_min?: number
+    price_max?: number
+    gallery_images?: string[]
+    views?: number
+    address?: string
+    bedrooms_min?: number
+    bedrooms_max?: number
+    area_min?: number
+    area_max?: number
+    units_total?: number
+    units_available?: number
+    [key: string]: unknown
+}
+
 interface MobileInventarioProps {
-    developments: any[]
-    filtered: any[]
+    developments: InventoryDevelopment[]
+    filtered: InventoryDevelopment[]
     loading: boolean
     busca: string
     setBusca: (v: string) => void
@@ -82,18 +105,18 @@ function MobileInventario({
     totalSold,
     totalCampaign,
 }: MobileInventarioProps) {
-    const getStatus = (d: any) => {
+    const getStatus = (d: InventoryDevelopment) => {
         const s = d.status_commercial || d.status_comercial || 'draft'
         return STATUS_CONFIG[s] || { label: s, color: '#5C6B7D', bg: 'var(--bg-elevated)' }
     }
 
-    const getPrice = (d: any) => {
+    const getPrice = (d: InventoryDevelopment) => {
         const v = d.price_min || d.price_max
         if (!v) return null
         return `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
     }
 
-    const getImage = (d: any) => {
+    const getImage = (d: InventoryDevelopment) => {
         const g = d.gallery_images
         if (Array.isArray(g) && g.length > 0) return g[0]
         return null
@@ -569,24 +592,24 @@ export default function InventarioPage() {
         return d.type !== 'commercial' && d.tipo !== 'comercial'
     })
 
-    const getStatus = (d: any) => {
+    const getStatus = (d: InventoryDevelopment) => {
         const s = d.status_commercial || d.status_comercial || 'draft'
         return STATUS_CONFIG[s] || { label: s, color: T.textMuted, bg: T.elevated }
     }
 
-    const getPrice = (d: any) => {
+    const getPrice = (d: InventoryDevelopment) => {
         const v = d.price_min || d.price_max
         if (!v) return null
         return `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
     }
 
-    const getImage = (d: any) => {
+    const getImage = (d: InventoryDevelopment) => {
         const g = d.gallery_images
         if (Array.isArray(g) && g.length > 0) return g[0]
         return null
     }
 
-    const getViews = (d: any) => viewCounts[d.slug] || d.views || 0
+    const getViews = (d: InventoryDevelopment) => viewCounts[d.slug || ''] || d.views || 0
 
     // Summary counts
     const totalPublished = developments.filter(d => ['published', 'publicado'].includes(d.status_commercial || d.status_comercial || '')).length
@@ -673,7 +696,7 @@ export default function InventarioPage() {
                     {VIEW_TABS.map(tab => (
                         <button
                             key={tab.key}
-                            onClick={() => setActiveView(tab.key as any)}
+                            onClick={() => setActiveView(tab.key as 'listings' | 'performance')}
                             className="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
                             style={{
                                 background: activeView === tab.key ? T.surface : 'transparent',

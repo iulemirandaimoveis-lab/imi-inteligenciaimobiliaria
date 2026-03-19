@@ -1,7 +1,5 @@
-
 import { createClient } from '@supabase/supabase-js'
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
-
 // Use direct supabase-js client for public data fetching
 // This avoids issues with cookies and server context in Next.js 14
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,35 +13,27 @@ function getSupabase(): ReturnType<typeof createClient<any>> {
     }
     return _supabase!
 }
-
 export async function getDevelopments(): Promise<Development[]> {
     const { data: devs, error } = await getSupabase()
         .from('developments')
         .select('*')
         .order('display_order', { ascending: true })
-
     if (error) {
-        console.error('Error fetching developments:', error)
         return []
     }
-
     return devs.map((dev: Record<string, unknown>) => mapDatabaseToDevelopment(dev))
 }
-
 export async function getDevelopmentBySlug(slug: string): Promise<Development | null> {
     const { data: dev, error } = await getSupabase()
         .from('developments')
         .select('*')
         .eq('slug', slug)
         .single()
-
     if (error) {
         return null
     }
-
     return mapDatabaseToDevelopment(dev)
 }
-
 // Database row type for developments table
 interface DbDevelopment {
     id: string
@@ -75,7 +65,6 @@ interface DbDevelopment {
     created_at?: string
     updated_at?: string
 }
-
 function mapDatabaseToDevelopment(raw: Record<string, unknown>): Development {
     const dbDev = raw as unknown as DbDevelopment
     return {
@@ -125,7 +114,6 @@ function mapDatabaseToDevelopment(raw: Record<string, unknown>): Development {
         updatedAt: dbDev.updated_at || ''
     }
 }
-
 export interface BlogPost {
     id: string
     title: string
@@ -138,7 +126,6 @@ export interface BlogPost {
     category: string
     tags: string[]
 }
-
 export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
     const { data: posts, error } = await getSupabase()
         .from('content_publications')
@@ -156,11 +143,9 @@ export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
         .eq('status', 'published')
         .order('published_at', { ascending: false })
         .limit(limit)
-
     if (error) {
         return []
     }
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase join returns dynamic shape
     return posts.map((p: Record<string, any>) => ({
         id: p.id,
@@ -175,7 +160,6 @@ export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
         tags: p.content_item?.hashtags || []
     }))
 }
-
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     const { data: post, error } = await getSupabase()
         .from('content_publications')
@@ -193,14 +177,11 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
         .eq('status', 'published')
         .eq('id', slug) // Por enquanto slug é ID
         .single()
-
     if (error || !post) {
         return null
     }
-
     // content_item pode ser array ou objeto dependendo do join
     const item = Array.isArray(post.content_item) ? post.content_item[0] : post.content_item;
-
     return {
         id: post.id,
         title: item?.title || 'Sem título',
@@ -214,4 +195,3 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
         tags: item?.hashtags || []
     }
 }
-

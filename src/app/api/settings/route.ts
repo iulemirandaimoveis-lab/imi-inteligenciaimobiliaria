@@ -1,15 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-
 // Single-tenant mode: no user_id required for settings
-
 export async function GET() {
     try {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
         // Try to fetch existing settings
         const { data: settings, error } = await supabase
             .from('settings')
@@ -17,12 +14,9 @@ export async function GET() {
             .order('created_at', { ascending: true })
             .limit(1)
             .maybeSingle()
-
         if (error) {
-            console.error('Error fetching settings:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-
         // Convert from snake_case to camelCase
         const formattedSettings = settings ? {
             companyName: settings.company_name || '',
@@ -43,21 +37,17 @@ export async function GET() {
             whatsappApi: settings.whatsapp_api || '',
             aiConfig: settings.ai_config || {},
         } : {}
-
         return NextResponse.json({ settings: formattedSettings })
     } catch (error) {
-        console.error('Error fetching settings:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
-
 export async function POST(request: Request) {
     try {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const data = await request.json()
-
         const payload = {
             company_name: data.companyName || null,
             company_email: data.companyEmail || null,
@@ -78,7 +68,6 @@ export async function POST(request: Request) {
             ai_config: data.aiConfig ? data.aiConfig : undefined,
             updated_at: new Date().toISOString(),
         }
-
         // Check if settings row exists
         const { data: existing } = await supabase
             .from('settings')
@@ -86,7 +75,6 @@ export async function POST(request: Request) {
             .order('created_at', { ascending: true })
             .limit(1)
             .maybeSingle()
-
         let result
         if (existing) {
             // Update existing row
@@ -96,9 +84,7 @@ export async function POST(request: Request) {
                 .eq('id', existing.id)
                 .select()
                 .single()
-
             if (error) {
-                console.error('Error updating settings:', error)
                 return NextResponse.json({ error: error.message }, { status: 500 })
             }
             result = updated
@@ -109,19 +95,14 @@ export async function POST(request: Request) {
                 .insert(payload)
                 .select()
                 .single()
-
             if (error) {
-                console.error('Error inserting settings:', error)
                 return NextResponse.json({ error: error.message }, { status: 500 })
             }
             result = inserted
         }
-
         revalidatePath('/', 'layout')
-
         return NextResponse.json({ success: true, settings: result })
     } catch (error) {
-        console.error('Error in API /settings:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

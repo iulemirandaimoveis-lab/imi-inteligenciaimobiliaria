@@ -1,25 +1,18 @@
 'use client'
-
 import { useState, useRef } from 'react'
-
 import { ArrowUpTrayIcon, XMarkIcon, PhotoIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
-
 import { createClient } from '@/lib/supabase/client'
-
 const supabase = createClient()
-
 interface ImageUploadProps {
     images: { url: string; alt: string }[]
     onChange: (images: { url: string; alt: string }[]) => void
     maxFiles?: number
 }
-
 export default function ImageUpload({ images, onChange, maxFiles = 10 }: ImageUploadProps) {
     const [isUploading, setIsUploading] = useState(false)
     const [dragActive, setDragActive] = useState(false)
     const inputRef = useRef<HTMLInputElement>(null)
-
     const handleDrag = (e: React.DragEvent) => {
         e.preventDefault()
         e.stopPropagation()
@@ -29,7 +22,6 @@ export default function ImageUpload({ images, onChange, maxFiles = 10 }: ImageUp
             setDragActive(false)
         }
     }
-
     const handleDrop = async (e: React.DragEvent) => {
         e.preventDefault()
         e.stopPropagation()
@@ -38,50 +30,38 @@ export default function ImageUpload({ images, onChange, maxFiles = 10 }: ImageUp
             await handleFiles(e.dataTransfer.files)
         }
     }
-
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
         if (e.target.files && e.target.files[0]) {
             await handleFiles(e.target.files)
         }
     }
-
     const handleFiles = async (files: FileList) => {
         setIsUploading(true)
         const newImages = [...images]
         const bucketName = 'properties'
-
         for (let i = 0; i < files.length; i++) {
             if (newImages.length >= maxFiles) break;
-
             const file = files[i]
             const fileExt = file.name.split('.').pop()
             const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`
             const filePath = `${fileName}`
-
             try {
                 const { error: uploadError } = await supabase.storage
                     .from(bucketName)
                     .upload(filePath, file)
-
                 if (uploadError) {
                     throw uploadError
                 }
-
                 const { data } = supabase.storage
                     .from(bucketName)
                     .getPublicUrl(filePath)
-
                 newImages.push({
                     url: data.publicUrl,
                     alt: file.name.split('.')[0]
                 })
-
             } catch (error: any) {
-                console.error('Error uploading file:', error)
-
                 const errorMessage = error.message || JSON.stringify(error)
-
                 // Specific error for missing bucket
                 if (errorMessage.includes('bucket not found') || error.error?.includes('Bucket not found') || error.statusCode === '404') {
                     alert('CONFIGURAÇÃO PENDENTE: O bucket "properties" não foi encontrado no Supabase.\n\nPor favor, crie o bucket "properties" no painel do Supabase como "Public".')
@@ -92,17 +72,14 @@ export default function ImageUpload({ images, onChange, maxFiles = 10 }: ImageUp
                 }
             }
         }
-
         onChange(newImages)
         setIsUploading(false)
     }
-
     const removeImage = (index: number) => {
         const newImages = [...images]
         newImages.splice(index, 1)
         onChange(newImages)
     }
-
     return (
         <div className="w-full">
             <div className="mb-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -123,7 +100,6 @@ export default function ImageUpload({ images, onChange, maxFiles = 10 }: ImageUp
                         </button>
                     </div>
                 ))}
-
                 {images.length < maxFiles && (
                     <div
                         className={`
@@ -145,7 +121,6 @@ export default function ImageUpload({ images, onChange, maxFiles = 10 }: ImageUp
                             onChange={handleChange}
                             className="hidden"
                         />
-
                         {isUploading ? (
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-600"></div>
                         ) : (
@@ -159,7 +134,6 @@ export default function ImageUpload({ images, onChange, maxFiles = 10 }: ImageUp
                     </div>
                 )}
             </div>
-
             <p className="text-xs text-imi-500">
                 Suporta JPG, PNG, WebP (Max 5MB). Arraste e solte para adicionar.
             </p>

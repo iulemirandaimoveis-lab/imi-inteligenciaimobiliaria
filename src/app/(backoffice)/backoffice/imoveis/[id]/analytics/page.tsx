@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
@@ -14,9 +13,7 @@ import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts'
-
 const PIE_COLORS = ['var(--imi-gold-500)', 'var(--info)', '#6BB87B', '#A89EC4', '#E8A87C', '#7B9EC4']
-
 interface AnalyticsData {
     development: { id: string; name: string; slug?: string; city?: string; state?: string; neighborhood?: string }
     kpis: {
@@ -30,9 +27,7 @@ interface AnalyticsData {
     topCampaigns: { name: string; clicks: number; leads: number }[]
     timeRange: string
 }
-
 // ─── Mobile Analytics Component ───────────────────────────────────────────────
-
 interface MobileAnalyticsProps {
     data: AnalyticsData
     periodoFilter: string
@@ -40,10 +35,8 @@ interface MobileAnalyticsProps {
     params: { id: string | string[] }
     router: ReturnType<typeof useRouter>
 }
-
 function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router }: MobileAnalyticsProps) {
     const { kpis, performanceTemporal, fontesTrafico, devices, topLocations, topCampaigns, development } = data
-
     const KPI_CARDS = [
         { label: 'Total Cliques', value: kpis.totalClicks.toLocaleString('pt-BR'), icon: MousePointer, color: '#A89EC4' },
         { label: 'Links Ativos', value: String(kpis.trackedLinksCount), icon: Link2, color: 'var(--imi-gold-500)' },
@@ -52,10 +45,8 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
         { label: 'Taxa Conv.', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--imi-gold-500)' },
         { label: 'Eventos', value: String(kpis.totalEvents), icon: BarChart3, color: '#A89EC4' },
     ]
-
     const maxDailyClicks = Math.max(...performanceTemporal.map(d => d.clicks), 1)
     const maxDailyLeads = Math.max(...performanceTemporal.map(d => d.leads), 1)
-
     const totalDeviceHits = Object.values(devices).reduce((s, v) => s + v, 0) || 1
     const deviceList = Object.entries(devices)
         .sort((a, b) => b[1] - a[1])
@@ -64,30 +55,24 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
             count,
             percentage: Math.round((count / totalDeviceHits) * 100),
         }))
-
     const periodLabel = periodoFilter === '7d' ? '7' : periodoFilter === '90d' ? '90' : '30'
     const recentDays = performanceTemporal.slice(-7)
-
     const PERIOD_CHIPS = [
         { value: '7d', label: '7d' },
         { value: '30d', label: '30d' },
         { value: '90d', label: '90d' },
     ]
-
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
             <MobileGlobalStyles />
-
             {/* Fixed AppBar */}
             <MobileAppBar
                 title="Analytics"
                 subtitle={development.name}
                 onBack={() => router.push(`/backoffice/imoveis/${params.id}`)}
             />
-
             {/* Content */}
             <div style={{ paddingTop: 72, paddingBottom: 72, background: 'var(--bg-base)' }}>
-
                 {/* Period Selector */}
                 <div style={{
                     display: 'flex', gap: 8,
@@ -122,7 +107,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         )
                     })}
                 </div>
-
                 {/* KPI Grid — 2 columns × 3 rows */}
                 <div style={{
                     display: 'grid',
@@ -174,7 +158,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         </div>
                     ))}
                 </div>
-
                 {/* Performance Temporal */}
                 <div style={{ padding: '20px 14px 0' }}>
                     <div style={{
@@ -198,7 +181,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         }}>
                             Últimos {periodLabel} dias · Cliques &amp; Leads
                         </div>
-
                         {recentDays.length === 0 || recentDays.every(d => d.clicks === 0) ? (
                             <div style={{
                                 textAlign: 'center', padding: '20px 0',
@@ -234,7 +216,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         })()}
                     </div>
                 </div>
-
                 {/* Traffic Sources */}
                 <div style={{ padding: '16px 14px 0' }}>
                     <div style={{
@@ -258,7 +239,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         }}>
                             Origem dos acessos
                         </div>
-
                         {fontesTrafico.length === 0 ? (
                             <div style={{
                                 textAlign: 'center', padding: '16px 0',
@@ -312,7 +292,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         )}
                     </div>
                 </div>
-
                 {/* Top Locations */}
                 {topLocations.length > 0 && (
                     <div style={{ padding: '16px 14px 0' }}>
@@ -375,7 +354,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         </div>
                     </div>
                 )}
-
                 {/* Devices */}
                 {deviceList.length > 0 && (
                     <div style={{ padding: '16px 14px 0' }}>
@@ -434,7 +412,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         </div>
                     </div>
                 )}
-
                 {/* Top Campaigns */}
                 {topCampaigns.length > 0 && (
                     <div style={{ padding: '16px 14px 0' }}>
@@ -517,18 +494,14 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         </div>
                     </div>
                 )}
-
                 {/* Bottom spacer */}
                 <div style={{ height: 16 }} />
             </div>
-
             <MobileBottomNav />
         </div>
     )
 }
-
 // ─── Loading / Empty states ────────────────────────────────────────────────────
-
 function MobileLoading() {
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -543,7 +516,6 @@ function MobileLoading() {
         </div>
     )
 }
-
 function MobileEmpty({ onBack }: { onBack: () => void }) {
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 }}>
@@ -574,7 +546,6 @@ function MobileEmpty({ onBack }: { onBack: () => void }) {
         </div>
     )
 }
-
 function DesktopLoading() {
     return (
         <div className="flex items-center justify-center py-32">
@@ -582,7 +553,6 @@ function DesktopLoading() {
         </div>
     )
 }
-
 function DesktopEmpty({ onBack }: { onBack: () => void }) {
     return (
         <div className="text-center py-32" style={{ color: T.textDim }}>
@@ -595,9 +565,7 @@ function DesktopEmpty({ onBack }: { onBack: () => void }) {
         </div>
     )
 }
-
 // ─── Main Page Component ───────────────────────────────────────────────────────
-
 export default function ImovelAnalyticsPage() {
     const params = useParams()
     const router = useRouter()
@@ -605,7 +573,6 @@ export default function ImovelAnalyticsPage() {
     const [periodoFilter, setPeriodoFilter] = useState('30d')
     const [data, setData] = useState<AnalyticsData | null>(null)
     const [loading, setLoading] = useState(true)
-
     useEffect(() => {
         async function fetchAnalytics() {
             setLoading(true)
@@ -615,24 +582,20 @@ export default function ImovelAnalyticsPage() {
                 const result = await res.json()
                 setData(result)
             } catch (err) {
-                console.error('Erro ao buscar analytics:', err)
             } finally {
                 setLoading(false)
             }
         }
         fetchAnalytics()
     }, [params.id, periodoFilter])
-
     if (loading) {
         return isMobile ? <MobileLoading /> : <DesktopLoading />
     }
-
     if (!data) {
         return isMobile
             ? <MobileEmpty onBack={() => router.back()} />
             : <DesktopEmpty onBack={() => router.back()} />
     }
-
     if (isMobile) {
         return (
             <MobileAnalytics
@@ -644,12 +607,9 @@ export default function ImovelAnalyticsPage() {
             />
         )
     }
-
     // ── Desktop tree (unchanged) ──────────────────────────────────────────────
-
     const { kpis, performanceTemporal, fontesTrafico, devices, topLocations, topCampaigns, development } = data
     const location = [development.neighborhood, development.city, development.state].filter(Boolean).join(', ') || '—'
-
     const KPI_CARDS = [
         { label: 'Total Cliques', value: kpis.totalClicks.toLocaleString('pt-BR'), icon: MousePointer, color: '#A89EC4' },
         { label: 'Links Ativos', value: kpis.trackedLinksCount, icon: Link2, color: 'var(--bo-accent)' },
@@ -658,7 +618,6 @@ export default function ImovelAnalyticsPage() {
         { label: 'Taxa Conversão', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--bo-accent)' },
         { label: 'Eventos', value: kpis.totalEvents, icon: BarChart3, color: '#A89EC4' },
     ]
-
     // Device totals
     const totalDeviceHits = Object.values(devices).reduce((s, v) => s + v, 0) || 1
     const deviceList = Object.entries(devices)
@@ -668,9 +627,7 @@ export default function ImovelAnalyticsPage() {
             count,
             percentage: Math.round((count / totalDeviceHits) * 100),
         }))
-
     const periodLabel = periodoFilter === '7d' ? '7' : periodoFilter === '90d' ? '90' : '30'
-
     return (
         <div className="space-y-6 max-w-7xl mx-auto pb-10">
             {/* Back nav */}
@@ -686,7 +643,6 @@ export default function ImovelAnalyticsPage() {
                     {development.name} / Analytics
                 </span>
             </div>
-
             {/* Header */}
             <PageIntelHeader
                 moduleLabel="PERFORMANCE ANALYTICS"
@@ -706,7 +662,6 @@ export default function ImovelAnalyticsPage() {
                     </select>
                 }
             />
-
             {/* KPI Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 {KPI_CARDS.map(k => (
@@ -728,7 +683,6 @@ export default function ImovelAnalyticsPage() {
                     </div>
                 ))}
             </div>
-
             {/* Performance Chart — Bloomberg bar chart style */}
             <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center justify-between mb-5">
@@ -787,7 +741,6 @@ export default function ImovelAnalyticsPage() {
                     )
                 })()}
             </div>
-
             {/* Sources + Locations */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Traffic Sources */}
@@ -832,7 +785,6 @@ export default function ImovelAnalyticsPage() {
                         )
                     })()}
                 </div>
-
                 {/* Locations */}
                 <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: T.textMuted }}>
@@ -870,7 +822,6 @@ export default function ImovelAnalyticsPage() {
                     )}
                 </div>
             </div>
-
             {/* Devices + Campaigns */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Devices */}
@@ -897,7 +848,6 @@ export default function ImovelAnalyticsPage() {
                         </div>
                     )}
                 </div>
-
                 {/* Campaigns */}
                 <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: T.textMuted }}>

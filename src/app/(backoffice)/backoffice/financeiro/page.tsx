@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
@@ -14,7 +13,6 @@ import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 import PixChargeModal from './components/PixChargeModal'
 import { T } from '@/app/(backoffice)/lib/theme'
-
 interface Transaction {
   id: string
   type: 'receita' | 'despesa'
@@ -28,22 +26,18 @@ interface Transaction {
   notes: string | null
   created_at: string
 }
-
 const CATEGORIAS = [
   'Comissão', 'Honorário', 'Consultoria', 'Marketing',
   'Pessoal', 'Infraestrutura', 'Tecnologia', 'Jurídico', 'Outros'
 ]
-
 const formatCurrency = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
-
 const STATUS_TX: Record<string, { statusKey: string; label: string }> = {
   pago:     { statusKey: 'done',   label: 'Pago'     },
   pendente: { statusKey: 'pend',   label: 'Pendente' },
   atrasado: { statusKey: 'hot',    label: 'Atrasado' },
   cancelado:{ statusKey: 'cancel', label: 'Cancelado'},
 }
-
 export default function FinanceiroPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
@@ -51,7 +45,6 @@ export default function FinanceiroPage() {
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
   const [pixTx, setPixTx] = useState<Transaction | null>(null)
-
   const [form, setForm] = useState({
     type: 'receita' as 'receita' | 'despesa',
     category: 'Comissão',
@@ -62,7 +55,6 @@ export default function FinanceiroPage() {
     payment_method: '',
     notes: '',
   })
-
   const fetchTransactions = async () => {
     try {
       const res = await fetch('/api/financeiro')
@@ -72,14 +64,11 @@ export default function FinanceiroPage() {
         setTransactions(Array.isArray(json) ? json : (json.data ?? []))
       }
     } catch (err) {
-      console.error(err)
     } finally {
       setLoading(false)
     }
   }
-
   useEffect(() => { fetchTransactions() }, [])
-
   const handleSubmit = async () => {
     if (!form.description || !form.amount) {
       toast.error('Descrição e valor são obrigatórios')
@@ -104,7 +93,6 @@ export default function FinanceiroPage() {
     } catch { toast.error('Erro de conexão') }
     finally { setSaving(false) }
   }
-
   const markPaid = async (id: string) => {
     try {
       const res = await fetch('/api/financeiro', {
@@ -115,29 +103,24 @@ export default function FinanceiroPage() {
       if (res.ok) { toast.success('Marcado como pago'); fetchTransactions() }
     } catch { toast.error('Erro ao atualizar') }
   }
-
   const filtered = transactions.filter(t =>
     t.status !== 'cancelado' && (tipoFilter === 'todos' || t.type === tipoFilter)
   )
-
   const totalReceitas = transactions.filter(t => t.type === 'receita' && t.status !== 'cancelado').reduce((s, t) => s + Number(t.amount), 0)
   const totalDespesas = transactions.filter(t => t.type === 'despesa' && t.status !== 'cancelado').reduce((s, t) => s + Number(t.amount), 0)
   const saldo = totalReceitas - totalDespesas
   const pendentes = transactions.filter(t => t.status === 'pendente').length
-
   const filterTabs: FilterTab[] = [
     { id: 'todos',   label: 'Todos',    count: filtered.length },
     { id: 'receita', label: 'Receitas', dotColor: 'var(--s-done)' },
     { id: 'despesa', label: 'Despesas', dotColor: 'var(--s-hot)'  },
   ]
-
   const inputStyle = {
     width: '100%', height: '44px', padding: '0 12px',
     borderRadius: '10px', fontSize: '13px', color: 'var(--bo-text)',
     background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
     outline: 'none', boxSizing: 'border-box' as const,
   }
-
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -151,10 +134,8 @@ export default function FinanceiroPage() {
       </div>
     )
   }
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <PageIntelHeader
@@ -203,7 +184,6 @@ export default function FinanceiroPage() {
           }
         />
       </motion.div>
-
       {/* KPI row */}
       <motion.div
         data-tour="kpis"
@@ -223,7 +203,6 @@ export default function FinanceiroPage() {
         />
         <KPICard label="Pendentes" value={String(pendentes)} sublabel="a liquidar" icon={<DollarSign size={16} />} accent="warm" />
       </motion.div>
-
       {/* Transactions panel */}
       <motion.div
         className="intel-card"
@@ -236,7 +215,6 @@ export default function FinanceiroPage() {
           <SectionHeader title="Lançamentos" badge={filtered.length} />
           <FilterTabs tabs={filterTabs} active={tipoFilter} onChange={setTipoFilter} />
         </div>
-
         {filtered.length === 0 ? (
           <div style={{ padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', textAlign: 'center' }}>
             <DollarSign size={32} color="var(--bo-text-muted)" />
@@ -333,7 +311,6 @@ export default function FinanceiroPage() {
           </div>
         )}
       </motion.div>
-
       {/* Pix Charge Modal */}
       {pixTx && (
         <PixChargeModal
@@ -348,7 +325,6 @@ export default function FinanceiroPage() {
           }}
         />
       )}
-
       {/* Nova Transação Modal */}
       {showForm && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)' }}>
@@ -363,7 +339,6 @@ export default function FinanceiroPage() {
                 <X size={18} color="var(--bo-text-muted)" />
               </button>
             </div>
-
             {/* Type toggle */}
             <div style={{ display: 'flex', gap: '8px' }}>
               {(['receita', 'despesa'] as const).map(tp => (
@@ -379,7 +354,6 @@ export default function FinanceiroPage() {
                 </button>
               ))}
             </div>
-
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Descrição *</label>
@@ -419,7 +393,6 @@ export default function FinanceiroPage() {
                   style={{ ...inputStyle, height: 'auto', padding: '10px 12px', resize: 'none' }} />
               </div>
             </div>
-
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => setShowForm(false)}
                 style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>

@@ -1,17 +1,12 @@
 // src/app/api/integracoes/test-connection/route.ts
 // ── Testa conectividade das integrações ─────────────────────
-
 import { NextRequest, NextResponse } from 'next/server'
-
 export const runtime = 'nodejs'
 export const maxDuration = 15
-
 export async function POST(req: NextRequest) {
   try {
     const { integration_id, values } = await req.json()
-
     switch (integration_id) {
-
       case 'resend': {
         const key = values.resend_api_key || process.env.RESEND_API_KEY
         if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
@@ -22,7 +17,6 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: 'Resend conectado com sucesso!' }
           : { success: false, message: 'API Key inválida' })
       }
-
       case 'clicksign': {
         const token = values.clicksign_access_token || process.env.CLICKSIGN_ACCESS_TOKEN
         const env   = values.clicksign_environment || process.env.CLICKSIGN_ENVIRONMENT || 'sandbox'
@@ -33,7 +27,6 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: `ClickSign ${env} conectado!` }
           : { success: false, message: 'Token inválido ou ambiente incorreto' })
       }
-
       case 'govbr': {
         const clientId = values.govbr_client_id || process.env.GOVBR_CLIENT_ID
         if (!clientId) return NextResponse.json({ success: false, message: 'Client ID não informado' })
@@ -43,7 +36,6 @@ export async function POST(req: NextRequest) {
           message: 'Gov.br configurado. Teste real requer fluxo OAuth completo — use o ambiente de staging.',
         })
       }
-
       case 'evolution_api': {
         const url  = values.evolution_api_url || process.env.EVOLUTION_API_URL
         const key  = values.evolution_api_key || process.env.EVOLUTION_API_KEY
@@ -57,7 +49,6 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: `Evolution API conectada! Instância: ${inst}` }
           : { success: false, message: 'API Key inválida ou servidor inacessível' })
       }
-
       case 'zapi': {
         const inst     = values.zapi_instance || process.env.ZAPI_INSTANCE
         const token    = values.zapi_token || process.env.ZAPI_TOKEN
@@ -72,7 +63,6 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: 'Z-API conectado! WhatsApp ativo.' }
           : { success: false, message: data.error || 'Instância não encontrada ou WhatsApp desconectado' })
       }
-
       case 'google_drive': {
         const folderId = values.gdrive_folder_id || process.env.GDRIVE_FOLDER_ID
         const jsonStr  = values.gdrive_service_account_json || process.env.GDRIVE_SERVICE_ACCOUNT_JSON
@@ -88,7 +78,6 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ success: false, message: 'Service Account JSON inválido — verifique o formato' })
         }
       }
-
       case 'stripe': {
         const key = values.stripe_secret_key || process.env.STRIPE_SECRET_KEY
         if (!key) return NextResponse.json({ success: false, message: 'Secret Key não informada' })
@@ -99,7 +88,6 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: 'Stripe conectado com sucesso!' }
           : { success: false, message: 'Secret Key inválida' })
       }
-
       case 'mercadopago': {
         const token = values.mp_access_token || process.env.MP_ACCESS_TOKEN
         if (!token) return NextResponse.json({ success: false, message: 'Access Token não informado' })
@@ -110,7 +98,6 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: 'Mercado Pago conectado!' }
           : { success: false, message: 'Access Token inválido' })
       }
-
       case 'meta_ads': {
         const token   = values.meta_access_token || process.env.META_ACCESS_TOKEN
         const adAccId = values.meta_ad_account || process.env.META_AD_ACCOUNT_ID
@@ -128,7 +115,6 @@ export async function POST(req: NextRequest) {
         const err = await res.json().catch(() => ({}))
         return NextResponse.json({ success: false, message: err?.error?.message || 'Access Token inválido ou expirado' })
       }
-
       case 'google_analytics': {
         // GA4 — validate by checking if measurement ID / property ID looks correct
         const propertyId = values.ga4_measurement_id || values.ga_property_id || process.env.GA_PROPERTY_ID
@@ -139,7 +125,6 @@ export async function POST(req: NextRequest) {
         if (!isGFormat && (!clean || clean.length < 6)) return NextResponse.json({ success: false, message: 'Measurement ID inválido (formato esperado: G-XXXXXXXXXX)' })
         return NextResponse.json({ success: true, message: `GA4 configurado com Measurement ID ${propertyId}. Confirme no Google Analytics → Administração → Fluxos de dados.` })
       }
-
       case 'abacatepay': {
         const key = values.abacatepay_api_key || process.env.ABACATEPAY_API_KEY
         if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
@@ -151,14 +136,12 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: 'AbacatePay conectado com sucesso!' }
           : { success: false, message: 'API Key inválida' })
       }
-
       case 'supabase_storage': {
         return NextResponse.json({
           success: true,
           message: 'Supabase Storage é o armazenamento nativo do projeto — sempre ativo.',
         })
       }
-
       case 'anthropic_claude': {
         const key = values.anthropic_api_key || process.env.ANTHROPIC_API_KEY
         if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
@@ -187,7 +170,6 @@ export async function POST(req: NextRequest) {
         }
         return NextResponse.json({ success: false, message: errBody?.error?.message || 'Erro ao validar API Key' })
       }
-
       case 'openai_gpt': {
         const key = values.openai_api_key || process.env.OPENAI_API_KEY
         if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
@@ -199,7 +181,6 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: 'OpenAI GPT conectado com sucesso!' }
           : { success: false, message: 'API Key inválida' })
       }
-
       case 'google_gemini_ai': {
         const key = values.google_ai_api_key || process.env.GOOGLE_AI_API_KEY
         if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
@@ -209,7 +190,6 @@ export async function POST(req: NextRequest) {
           ? { success: true, message: 'Google Gemini conectado com sucesso!' }
           : { success: false, message: 'API Key inválida' })
       }
-
       case 'linkedin_ads': {
         const token = values.linkedin_access_token || process.env.LINKEDIN_ACCESS_TOKEN
         if (!token) return NextResponse.json({ success: false, message: 'Access Token não informado' })
@@ -223,7 +203,6 @@ export async function POST(req: NextRequest) {
         }
         return NextResponse.json({ success: false, message: 'Access Token inválido ou expirado' })
       }
-
       case 'tiktok_ads': {
         const token = values.tiktok_access_token || process.env.TIKTOK_ACCESS_TOKEN
         const advId = values.tiktok_advertiser_id || process.env.TIKTOK_ADVERTISER_ID
@@ -242,16 +221,13 @@ export async function POST(req: NextRequest) {
         }
         return NextResponse.json({ success: false, message: 'Access Token inválido ou expirado' })
       }
-
       default:
         return NextResponse.json({
           success: true,
           message: `Configuração salva para ${integration_id}. Teste real disponível após deploy.`,
         })
     }
-
   } catch (error: any) {
-    console.error('test-connection error:', error)
     return NextResponse.json({
       success: false,
       message: error.message || 'Erro ao testar conexão',

@@ -8,7 +8,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-
 // Source quality weights
 const SOURCE_SCORES: Record<string, number> = {
     organic: 25,
@@ -22,14 +21,12 @@ const SOURCE_SCORES: Record<string, number> = {
     whatsapp: 10,
     other: 5,
 }
-
 function scoreSource(source?: string | null, utmMedium?: string | null): number {
     if (!source) return 10
     const s = source.toLowerCase()
     if (utmMedium?.toLowerCase() === 'cpc' || utmMedium?.toLowerCase() === 'paid') return SOURCE_SCORES.paid
     return SOURCE_SCORES[s] || SOURCE_SCORES.other
 }
-
 function scoreCompleteness(lead: Record<string, unknown>): number {
     let score = 0
     if (lead.email) score += 7
@@ -38,7 +35,6 @@ function scoreCompleteness(lead: Record<string, unknown>): number {
     if (lead.interest_type || lead.development_id) score += 5
     return Math.min(score, 25)
 }
-
 function scoreEngagement(pageViews: number, sessionDuration: number): number {
     // page views: 0-3 pages → low, 4-8 → medium, 9+ → high
     const pvScore = Math.min(pageViews * 2, 15)
@@ -46,7 +42,6 @@ function scoreEngagement(pageViews: number, sessionDuration: number): number {
     const durScore = sessionDuration > 120 ? 10 : sessionDuration > 30 ? 5 : 0
     return Math.min(pvScore + durScore, 25)
 }
-
 function scoreBudget(budget: number | null, medianPrice: number): number {
     if (!budget || !medianPrice) return 10 // neutral
     const ratio = budget / medianPrice
@@ -55,7 +50,6 @@ function scoreBudget(budget: number | null, medianPrice: number): number {
     if (ratio > 1.5) return 22                    // high budget — still good
     return 8                                       // too low
 }
-
 export async function POST(request: NextRequest) {
     try {
         // Auth: allow authenticated users or internal server-to-server calls
@@ -64,25 +58,20 @@ export async function POST(request: NextRequest) {
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-
         const body = await request.json()
         const { lead_id } = body
-
         if (!lead_id) {
             return NextResponse.json({ error: 'lead_id required' }, { status: 400 })
         }
-
         // Fetch lead data
         const { data: lead, error: leadErr } = await supabaseAdmin
             .from('leads')
             .select('*')
             .eq('id', lead_id)
             .single()
-
         if (leadErr || !lead) {
             return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
         }
-
         // Fetch development prices and optionally engagement data via email match
         const [{ data: devs }, { data: sessions }] = await Promise.all([
             supabaseAdmin
@@ -98,7 +87,6 @@ export async function POST(request: NextRequest) {
                 .order('started_at', { ascending: false })
                 .limit(5),
         ])
-
         // Calculate median development price
         const prices = (devs || [])
             .filter((d: Record<string, unknown>) => d.price_min && (d.price_min as number) > 0)
@@ -106,7 +94,6 @@ export async function POST(request: NextRequest) {
         const medianPrice = prices.length > 0
             ? prices.sort((a, b) => a - b)[Math.floor(prices.length / 2)]
             : 0
-
         // Session stats (best session)
         const bestSession = (sessions || []).reduce(
             (best: Record<string, number> | null, s: Record<string, unknown>) => {
@@ -117,24 +104,19 @@ export async function POST(request: NextRequest) {
         )
         const totalPageViews = bestSession?.page_count || 0
         const totalDuration = bestSession?.total_duration || 0
-
         // Lead budget — use capital (primary) or budget_min
         const budget = lead.capital || lead.budget_min || null
-
         // Calculate component scores
         const srcScore = scoreSource(lead.source, lead.utm_medium)
         const completenessScore = scoreCompleteness(lead as Record<string, unknown>)
         const engagementScore = scoreEngagement(totalPageViews, totalDuration)
         const budgetScore = scoreBudget(budget ? Number(budget) : null, medianPrice)
-
         const totalScore = srcScore + completenessScore + engagementScore + budgetScore
-
         // Grade label
         const grade =
             totalScore >= 80 ? 'A' :
             totalScore >= 60 ? 'B' :
             totalScore >= 40 ? 'C' : 'D'
-
         // Persist score back to lead
         await supabaseAdmin
             .from('leads')
@@ -143,7 +125,6 @@ export async function POST(request: NextRequest) {
                 updated_at: new Date().toISOString(),
             })
             .eq('id', lead_id)
-
         return NextResponse.json({
             lead_id,
             score: totalScore,
@@ -156,7 +137,6 @@ export async function POST(request: NextRequest) {
             },
         })
     } catch (err: unknown) {
-        console.error('Auto-score error:', err)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

@@ -3,22 +3,17 @@ import { createClient } from '@/lib/supabase/server'
 import { runSimulation } from '@/lib/invest/engine/calculator'
 import { getDefaultFiscalParams } from '@/lib/invest/engine/fiscal'
 import type { SimulationParams, Market } from '@/lib/invest/engine/types'
-
 export async function POST(request: Request) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
     const body = await request.json()
     const { market, objective, investorProfile, currency, propertyValue, propertyType, area_m2, bedrooms, location, downPayment, financingType, rentalStrategy, monthlyRent, occupancyRate, averageDailyRate, monthlyExpenses, appreciationRate, inflationRate, holdingPeriod, exitStrategy, interestRate } = body
-
     if (!market || !propertyValue || !objective) {
       return NextResponse.json({ error: 'Campos obrigatórios: market, propertyValue, objective' }, { status: 400 })
     }
-
     const fiscal = getDefaultFiscalParams(market as Market)
-
     const params: SimulationParams = {
       market,
       objective,
@@ -51,12 +46,9 @@ export async function POST(request: Request) {
       ...fiscal,
       closingCosts: propertyValue * 0.02,
     }
-
     const result = runSimulation(params)
-
     return NextResponse.json(result)
   } catch (error) {
-    console.error('Simulation error:', error)
     return NextResponse.json({ error: 'Erro ao executar simulação' }, { status: 500 })
   }
 }

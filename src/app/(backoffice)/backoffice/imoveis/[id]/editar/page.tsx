@@ -174,7 +174,7 @@ const INITIAL: FormData = {
 }
 
 /* ── Gallery Tab with Drag-and-Drop (Fotos + Vídeos + Plantas + Brochure) ── */
-function GalleryTabContent({ formData, set, params }: { formData: FormData; set: (k: keyof FormData, v: any) => void; params: any }) {
+function GalleryTabContent({ formData, set, params }: { formData: FormData; set: (k: keyof FormData, v: FormData[keyof FormData]) => void; params: { id: string } }) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const inp = `w-full h-11 px-4 rounded-[6px] text-sm outline-none transition-all`
   const inpStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
@@ -481,13 +481,13 @@ export default function EditarImovelPage() {
           status: d.status || 'disponivel', status_commercial: d.status_commercial || d.status_comercial || 'draft',
           is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '',
         })
-      } catch (err: any) {
+      } catch (_err: unknown) {
         toast.error('Erro ao carregar dados do empreendimento')
       } finally { setIsLoading(false) }
     })()
   }, [params.id])
 
-  const set = (field: keyof FormData, value: any) => {
+  const set = (field: keyof FormData, value: FormData[keyof FormData]) => {
     setFormData(p => ({ ...p, [field]: value }))
     if (validationErrors[field]) setValidationErrors(p => { const n = { ...p }; delete n[field]; return n })
   }
@@ -590,8 +590,8 @@ export default function EditarImovelPage() {
         galleryItems: allImages.map(url => ({ type: 'existing' as const, url })),
         floorPlans: [], brochure: null,
       }))
-    } catch (err: any) {
-      toast.error('Erro ao salvar: ' + err.message)
+    } catch (err: unknown) {
+      toast.error('Erro ao salvar: ' + (err instanceof Error ? err.message : String(err)))
     } finally { setIsSubmitting(false) }
   }
 
@@ -878,7 +878,7 @@ export default function EditarImovelPage() {
                       <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: validationErrors[field] ? 'var(--bo-error,#f87171)' : T.textDim }} />
                       <input
                         type="number" min="0"
-                        value={(formData as any)[field]}
+                        value={formData[field as keyof FormData]}
                         onChange={e => set(field as keyof FormData, e.target.value)}
                         className={inp}
                         style={{
@@ -936,7 +936,7 @@ export default function EditarImovelPage() {
                       <input
                         type="number" min="0"
                         placeholder={placeholder}
-                        value={(formData as any)[field]}
+                        value={formData[field as keyof FormData]}
                         onChange={e => set(field as keyof FormData, e.target.value)}
                         className={inp}
                         style={{

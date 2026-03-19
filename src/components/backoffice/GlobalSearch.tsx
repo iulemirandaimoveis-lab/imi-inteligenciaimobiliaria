@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import {
     Search,
@@ -14,9 +13,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-
 const supabase = createClient()
-
 interface SearchResult {
     id: string
     type: 'development' | 'lead' | 'evaluation' | 'consultation'
@@ -26,7 +23,6 @@ interface SearchResult {
     icon: any
     color: string
 }
-
 export default function GlobalSearch() {
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false)
@@ -34,7 +30,6 @@ export default function GlobalSearch() {
     const [results, setResults] = useState<SearchResult[]>([])
     const [loading, setLoading] = useState(false)
     const [selectedIndex, setSelectedIndex] = useState(0)
-
     // Atalho Cmd+K / Ctrl+K
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -49,15 +44,12 @@ export default function GlobalSearch() {
                 setResults([])
             }
         }
-
         document.addEventListener('keydown', handleKeyDown)
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [])
-
     // Navigation com Arrow Keys
     useEffect(() => {
         if (!isOpen) return
-
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'ArrowDown') {
                 e.preventDefault()
@@ -76,29 +68,23 @@ export default function GlobalSearch() {
                 }
             }
         }
-
         document.addEventListener('keydown', handleKeyDown)
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [isOpen, results, selectedIndex, query])
-
     // Debounced search
     useEffect(() => {
         if (!query.trim()) {
             setResults([])
             return
         }
-
         const timer = setTimeout(() => {
             performSearch(query)
         }, 300)
-
         return () => clearTimeout(timer)
     }, [query])
-
     const performSearch = async (searchQuery: string) => {
         setLoading(true)
         const allResults: SearchResult[] = []
-
         try {
             // Buscar empreendimentos
             const { data: developments } = await supabase
@@ -106,7 +92,6 @@ export default function GlobalSearch() {
                 .select('id, name, city, status')
                 .or(`name.ilike.%${searchQuery}%,city.ilike.%${searchQuery}%`)
                 .limit(5)
-
             developments?.forEach(dev => {
                 allResults.push({
                     id: dev.id,
@@ -118,14 +103,12 @@ export default function GlobalSearch() {
                     color: 'text-blue-600'
                 })
             })
-
             // Buscar leads
             const { data: leads } = await supabase
                 .from('leads')
                 .select('id, name, email, status, score')
                 .or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
                 .limit(5)
-
             leads?.forEach(lead => {
                 allResults.push({
                     id: lead.id,
@@ -137,14 +120,12 @@ export default function GlobalSearch() {
                     color: 'text-purple-600'
                 })
             })
-
             // Buscar avaliações
             const { data: evaluations } = await supabase
                 .from('property_evaluations')
                 .select('id, property_address, client_name, status')
                 .or(`property_address.ilike.%${searchQuery}%,client_name.ilike.%${searchQuery}%`)
                 .limit(5)
-
             evaluations?.forEach(evaluationItem => {
                 allResults.push({
                     id: evaluationItem.id,
@@ -156,14 +137,12 @@ export default function GlobalSearch() {
                     color: 'text-pink-600'
                 })
             })
-
             // Buscar consultorias
             const { data: consultations } = await supabase
                 .from('consultations')
                 .select('id, client_name, consultation_type, status')
                 .ilike('client_name', `%${searchQuery}%`)
                 .limit(5)
-
             consultations?.forEach(cons => {
                 allResults.push({
                     id: cons.id,
@@ -175,17 +154,13 @@ export default function GlobalSearch() {
                     color: 'text-orange-600'
                 })
             })
-
             setResults(allResults)
             setSelectedIndex(0)
-
         } catch (error) {
-            console.error('Erro na busca:', error)
         } finally {
             setLoading(false)
         }
     }
-
     const handleSelect = (result: SearchResult) => {
         router.push(result.url)
         setIsOpen(false)
@@ -193,7 +168,6 @@ export default function GlobalSearch() {
         setResults([])
         toast.success(`Abrindo ${result.title}`)
     }
-
     const getTypeLabel = (type: string) => {
         const labels: Record<string, string> = {
             development: 'Empreendimento',
@@ -203,9 +177,7 @@ export default function GlobalSearch() {
         }
         return labels[type] || type
     }
-
     if (!isOpen) return null
-
     return (
         <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-xl z-[9999] flex items-start justify-center p-4 pt-[15vh]">
             <div
@@ -234,7 +206,6 @@ export default function GlobalSearch() {
                         </button>
                     </div>
                 </div>
-
                 {/* Content - Structured & Elegant */}
                 <div className="max-h-[50vh] overflow-y-auto custom-scrollbar bg-white">
                     {query && results.length === 0 && !loading && (
@@ -246,7 +217,6 @@ export default function GlobalSearch() {
                             <p className="text-base text-imi-500 font-medium">Refine seus termos de busca institucional.</p>
                         </div>
                     )}
-
                     {!query && !loading && (
                         <div className="p-10 border-b border-imi-50">
                             <p className="text-[10px] font-bold text-imi-400 uppercase tracking-[0.2em] mb-8">Fluxos Estratégicos</p>
@@ -277,14 +247,12 @@ export default function GlobalSearch() {
                             </div>
                         </div>
                     )}
-
                     {results.length > 0 && (
                         <div className="py-6">
                             <p className="px-10 py-4 text-[10px] font-bold text-imi-400 uppercase tracking-[0.2em]">Resultados da Auditoria</p>
                             {results.map((result, index) => {
                                 const Icon = result.icon
                                 const isSelected = index === selectedIndex
-
                                 return (
                                     <button
                                         key={`${result.type}-${result.id}`}
@@ -295,11 +263,9 @@ export default function GlobalSearch() {
                                         {isSelected && (
                                             <div className="absolute left-0 w-1.5 h-12 bg-imi-500 rounded-full ml-2" />
                                         )}
-
                                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all border duration-300 ${isSelected ? 'bg-white shadow-md border-imi-100' : 'bg-imi-50 border-transparent shadow-inner'}`}>
                                             <Icon size={20} className="text-imi-600" strokeWidth={1.5} />
                                         </div>
-
                                         <div className="flex-1 min-w-0 text-left">
                                             <div className="flex items-center gap-3 mb-1.5">
                                                 <span className="text-[9px] font-bold text-imi-500 uppercase tracking-[0.1em] px-2 py-0.5 bg-white border border-imi-100 rounded-md shadow-sm">
@@ -315,7 +281,6 @@ export default function GlobalSearch() {
                                                 </div>
                                             )}
                                         </div>
-
                                         {isSelected && (
                                             <div className="flex items-center gap-3 text-imi-600 px-4 py-2 bg-white rounded-xl border border-imi-100 shadow-sm animate-in fade-in slide-in-from-right-4 duration-300">
                                                 <span className="text-[10px] font-bold tracking-widest uppercase">Consultar</span>
@@ -328,7 +293,6 @@ export default function GlobalSearch() {
                         </div>
                     )}
                 </div>
-
                 {/* Footer - Institutional Stability */}
                 <div className="px-10 py-6 border-t border-imi-50 bg-imi-50/30 flex items-center justify-between text-[11px] font-bold text-imi-400 uppercase tracking-widest">
                     <div className="flex items-center gap-10">

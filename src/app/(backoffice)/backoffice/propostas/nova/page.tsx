@@ -97,7 +97,7 @@ function Field({ label, children, hint }: { label: string; children: React.React
   )
 }
 
-function Input({ value, onChange, placeholder, type = 'text', ...rest }: any) {
+function Input({ value, onChange, placeholder, type = 'text', ...rest }: { value: string; onChange: (v: string) => void; placeholder?: string; type?: string } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type'>) {
   return (
     <input
       type={type}
@@ -116,7 +116,7 @@ function Input({ value, onChange, placeholder, type = 'text', ...rest }: any) {
   )
 }
 
-function Select({ value, onChange, children }: any) {
+function Select({ value, onChange, children }: { value: string; onChange: (v: string) => void; children: React.ReactNode }) {
   return (
     <select
       value={value}
@@ -160,7 +160,7 @@ function StepCard({ title, children }: { title: string; children: React.ReactNod
   )
 }
 
-function PaymentTag({ active, onClick, icon: Icon, label }: any) {
+function PaymentTag({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: React.ComponentType<{ size?: number }>; label: string }) {
   return (
     <button
       onClick={onClick}
@@ -192,12 +192,12 @@ export default function NovaPropostaPage() {
     property_id: params.get('property_id') ?? '',
     lead_id: params.get('lead_id') ?? '',
   })
-  const [imoveis, setImoveis] = useState<any[]>([])
-  const [leads, setLeads] = useState<any[]>([])
+  const [imoveis, setImoveis] = useState<{ id: string; name: string; price_min?: number; address?: string }[]>([])
+  const [leads, setLeads] = useState<{ id: string; name: string; email?: string; phone?: string }[]>([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  const set = (key: keyof FormData) => (val: any) =>
+  const set = (key: keyof FormData) => (val: string | BalloonInstallment[]) =>
     setForm(prev => ({ ...prev, [key]: val }))
 
   useEffect(() => {
@@ -314,8 +314,8 @@ export default function NovaPropostaPage() {
       }
 
       router.push(`/backoffice/propostas/${data.id}`)
-    } catch (e: any) {
-      setError(e.message || 'Erro ao salvar proposta')
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Erro ao salvar proposta')
     } finally {
       setSaving(false)
     }
@@ -455,7 +455,7 @@ export default function NovaPropostaPage() {
                 <PaymentTag
                   key={key}
                   active={form.payment_type === key}
-                  onClick={() => set('payment_type')(key as any)}
+                  onClick={() => set('payment_type')(key)}
                   icon={icon}
                   label={label}
                 />

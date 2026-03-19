@@ -1,11 +1,8 @@
-
 import { createClient } from '@/lib/supabase/server'
 import ImoveisClient from './ImoveisClient'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
-
 // ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
 export const revalidate = 60
-
 export default async function ImoveisPage({
     params,
     searchParams,
@@ -14,14 +11,12 @@ export default async function ImoveisPage({
     searchParams: { construtora?: string }
 }) {
     const supabase = await createClient()
-
     let query = supabase
         .from('developments')
         .select('*')
         .eq('status_commercial', 'published')
         .order('is_highlighted', { ascending: false })
         .order('created_at', { ascending: false })
-
     // Filter by construtora slug if provided
     if (searchParams.construtora) {
         const { data: dev } = await supabase
@@ -33,15 +28,10 @@ export default async function ImoveisPage({
             query = query.eq('developer_id', dev.id)
         }
     }
-
     const { data, error } = await query
-
     if (error) {
-        console.error('Falha na integração com Supabase:', error.message)
     }
-
     const developments = (data || []).map(mapDbPropertyToDevelopment)
-
     return (
         <ImoveisClient
             initialDevelopments={developments}

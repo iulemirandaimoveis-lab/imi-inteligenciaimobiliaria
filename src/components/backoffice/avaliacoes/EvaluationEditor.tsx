@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import {
     Sparkles,
@@ -12,7 +11,6 @@ import {
     FileText
 } from 'lucide-react'
 import { toast } from 'sonner'
-
 interface EvaluationEditorProps {
     evaluationId: string
     documents: Array<{ url: string; name: string; type: string }>
@@ -27,7 +25,6 @@ interface EvaluationEditorProps {
     }
     onSave: (content: string) => Promise<void>
 }
-
 export default function EvaluationEditor({
     evaluationId,
     documents,
@@ -38,19 +35,15 @@ export default function EvaluationEditor({
     const [generating, setGenerating] = useState(false)
     const [saving, setSaving] = useState(false)
     const [generationProgress, setGenerationProgress] = useState('')
-
     const generateDraft = async () => {
         if (documents.length === 0) {
             toast.error('Adicione pelo menos um documento antes de gerar o laudo')
             return
         }
-
         setGenerating(true)
         setGenerationProgress('Analisando documentos...')
-
         try {
             setGenerationProgress('Gerando laudo técnico NBR 14653...')
-
             // Chamar API do Claude
             const response = await fetch('/api/claude/generate-evaluation', {
                 method: 'POST',
@@ -61,34 +54,26 @@ export default function EvaluationEditor({
                     documents: documents.map(d => ({ url: d.url, name: d.name, type: d.type }))
                 })
             })
-
             if (!response.ok) {
                 throw new Error('Erro ao gerar laudo')
             }
-
             const data = await response.json()
-
             setGenerationProgress('Finalizando...')
             setContent(data.content)
-
             toast.success('Laudo técnico gerado com sucesso!')
             toast.info('Revise o conteúdo antes de finalizar')
-
         } catch (error: any) {
-            console.error('Erro ao gerar draft:', error)
             toast.error(error.message || 'Erro ao gerar laudo')
         } finally {
             setGenerating(false)
             setGenerationProgress('')
         }
     }
-
     const handleSave = async () => {
         if (!content.trim()) {
             toast.error('Adicione conteúdo antes de salvar')
             return
         }
-
         setSaving(true)
         try {
             await onSave(content)
@@ -99,12 +84,10 @@ export default function EvaluationEditor({
             setSaving(false)
         }
     }
-
     const handleExportPDF = async () => {
         toast.info('Gerando PDF... (funcionalidade em desenvolvimento)')
         // Implementar export para PDF
     }
-
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -113,7 +96,6 @@ export default function EvaluationEditor({
                     <h3 className="text-lg font-bold text-imi-900">Laudo Técnico de Avaliação</h3>
                     <p className="text-sm text-imi-600 mt-1">NBR 14653-2</p>
                 </div>
-
                 <div className="flex items-center gap-3">
                     {content && (
                         <>
@@ -145,7 +127,6 @@ export default function EvaluationEditor({
                     )}
                 </div>
             </div>
-
             {/* Generate Button */}
             {!content && !generating && (
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-dashed border-purple-300 rounded-2xl p-12 text-center">
@@ -165,7 +146,6 @@ export default function EvaluationEditor({
                         <Sparkles size={24} />
                         Gerar Laudo Automático
                     </button>
-
                     {documents.length === 0 && (
                         <div className="mt-6 flex items-center justify-center gap-2 text-sm text-imi-500">
                             <AlertCircle size={16} />
@@ -174,7 +154,6 @@ export default function EvaluationEditor({
                     )}
                 </div>
             )}
-
             {/* Generating */}
             {generating && (
                 <div className="bg-white rounded-2xl border border-imi-100 p-12 text-center">
@@ -193,7 +172,6 @@ export default function EvaluationEditor({
                     </p>
                 </div>
             )}
-
             {/* Editor */}
             {content && !generating && (
                 <div className="space-y-4">
@@ -208,7 +186,6 @@ export default function EvaluationEditor({
                             </p>
                         </div>
                     </div>
-
                     {/* Actions Bar */}
                     <div className="flex items-center justify-between bg-white border border-imi-100 rounded-xl p-4">
                         <div className="flex items-center gap-2 text-sm text-imi-600">
@@ -225,7 +202,6 @@ export default function EvaluationEditor({
                             Regenerar
                         </button>
                     </div>
-
                     {/* Text Editor */}
                     <div className="bg-white rounded-2xl border border-imi-100 p-6">
                         <textarea
@@ -235,7 +211,6 @@ export default function EvaluationEditor({
                             placeholder="O laudo será exibido aqui..."
                         />
                     </div>
-
                     {/* Word Count */}
                     <div className="text-center text-xs text-imi-500">
                         Clique em "Salvar" para finalizar e arquivar este laudo

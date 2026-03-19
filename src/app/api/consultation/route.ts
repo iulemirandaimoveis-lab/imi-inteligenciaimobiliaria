@@ -1,11 +1,8 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createLead } from '@/lib/leads-service'
-
 export async function POST(request: NextRequest) {
     try {
         const data = await request.json()
-
         // Validate required fields
         const requiredFields = ['name', 'phone', 'consultationType']
         for (const field of requiredFields) {
@@ -16,7 +13,6 @@ export async function POST(request: NextRequest) {
                 )
             }
         }
-
         // Use the unified lead service
         // This handles:
         // 1. Finding/Creating Lead
@@ -34,18 +30,14 @@ export async function POST(request: NextRequest) {
             investmentProfile: data.investmentProfile,
             budgetRange: data.budgetRange
         });
-
         if (!result.success) {
-            console.error('Lead service error:', result.error)
             return NextResponse.json({ error: 'Erro ao salvar lead / consulta.' }, { status: 500 })
         }
-
         return NextResponse.json(
             { success: true, message: 'Solicitação recebida com sucesso', leadId: result.leadId },
             { status: 200 }
         )
     } catch (error) {
-        console.error('Error processing consultation request:', error)
         return NextResponse.json(
             { error: 'Erro ao processar solicitação' },
             { status: 500 }

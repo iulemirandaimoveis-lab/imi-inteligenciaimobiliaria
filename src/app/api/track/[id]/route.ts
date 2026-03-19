@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const supabase = await createClient()
   const { id } = params
-
   try {
     // Fetch the QR link
     const { data: link } = await supabase
@@ -18,11 +15,9 @@ export async function GET(
       .select('destination_url, property_id, source, campaign_name, id')
       .eq('id', id)
       .single()
-
     if (!link) {
       return NextResponse.redirect(new URL('/', req.url))
     }
-
     // Log the scan — await before redirect (serverless terminates on response return)
     const ua = req.headers.get('user-agent') ?? ''
     const referer = req.headers.get('referer') ?? ''
@@ -30,7 +25,6 @@ export async function GET(
     const isMobile = /Mobile|Android|iPhone|iPad/.test(ua)
     const country = req.headers.get('x-vercel-ip-country') ?? ''
     const city = req.headers.get('x-vercel-ip-city') ?? ''
-
     const [scanResult, rpcResult] = await Promise.allSettled([
       supabase.from('qr_scans').insert({
         qr_link_id: id,
@@ -47,24 +41,17 @@ export async function GET(
       }),
       supabase.rpc('increment_qr_scans', { link_id: id }),
     ])
-
     // Log failures for debugging (visible in Vercel function logs)
     if (scanResult.status === 'rejected') {
-      console.error('[QR-TRACKING] qr_scans INSERT rejected:', id, scanResult.reason)
     } else if (scanResult.value?.error) {
-      console.error('[QR-TRACKING] qr_scans INSERT error:', id, scanResult.value.error)
     }
     if (rpcResult.status === 'rejected') {
-      console.error('[QR-TRACKING] increment_qr_scans rejected:', id, rpcResult.reason)
     } else if (rpcResult.value?.error) {
-      console.error('[QR-TRACKING] increment_qr_scans error:', id, rpcResult.value.error)
     }
-
     // Redirect to destination
     const dest = link.destination_url.startsWith('http')
       ? link.destination_url
       : `https://${link.destination_url}`
-
     return NextResponse.redirect(dest, { status: 302 })
   } catch {
     return NextResponse.redirect(new URL('/', req.url))

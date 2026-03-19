@@ -8,7 +8,15 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-async function getGoogleTokens(supabase: any) {
+interface GoogleTokenConfig {
+    access_token: string
+    refresh_token: string
+    expires_at?: number
+    email?: string
+    [key: string]: unknown
+}
+
+async function getGoogleTokens(supabase: Awaited<ReturnType<typeof createClient>>): Promise<GoogleTokenConfig | null> {
     const { data } = await supabase
         .from('integration_configs')
         .select('config')
@@ -66,14 +74,14 @@ export async function GET(req: NextRequest) {
 
         // Fetch each message's metadata
         const messages = await Promise.all(
-            listData.messages.slice(0, 20).map(async (m: any) => {
+            listData.messages.slice(0, 20).map(async (m: { id: string }) => {
                 const msgRes = await fetch(
                     `https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject&metadataHeaders=Date`,
                     { headers: { Authorization: `Bearer ${tokens.access_token}` } }
                 )
                 const msg = await msgRes.json()
                 const headers = msg.payload?.headers || []
-                const get = (name: string) => headers.find((h: any) => h.name === name)?.value || ''
+                const get = (name: string) => headers.find((h: { name: string; value: string }) => h.name === name)?.value || ''
                 return {
                     id: m.id,
                     threadId: msg.threadId,
@@ -89,8 +97,9 @@ export async function GET(req: NextRequest) {
         )
 
         return NextResponse.json({ messages, nextPageToken: listData.nextPageToken || null, account: tokens.email })
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        const errMsg = e instanceof Error ? e.message : String(e)
+        return NextResponse.json({ error: errMsg }, { status: 500 })
     }
 }
 
@@ -112,7 +121,7 @@ export async function POST(req: NextRequest) {
 
         const raw = btoa(unescape(encodeURIComponent(`${headers}\r\n\r\n${body}`))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 
-        const sendBody: any = { raw }
+        const sendBody: Record<string, string> = { raw }
         if (threadId) sendBody.threadId = threadId
 
         const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
@@ -125,7 +134,8 @@ export async function POST(req: NextRequest) {
         if (data.error) return NextResponse.json({ error: data.error.message }, { status: 500 })
 
         return NextResponse.json({ success: true, messageId: data.id, threadId: data.threadId })
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        const errMsg = e instanceof Error ? e.message : String(e)
+        return NextResponse.json({ error: errMsg }, { status: 500 })
     }
 }

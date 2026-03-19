@@ -1,11 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import ConstrutorasClient from './ConstrutorasClient';
-
 export const dynamic = 'force-dynamic';
-
 export default async function ConstrutorasPage({ params: { lang } }: { params: { lang: string } }) {
     const supabase = await createClient();
-
     // Fetch active developers with their developments count
     const { data: developersData, error } = await supabase
         .from('developers')
@@ -23,11 +20,8 @@ export default async function ConstrutorasPage({ params: { lang } }: { params: {
         `)
         .eq('is_active', true)
         .order('name', { ascending: true });
-
     if (error) {
-        console.error('Falha ao buscar construtoras na pagina pública:', error.message);
     }
-
     // Mapear os dados para focar no contrato Frontend esperado
     const developers = (developersData || []).map((dev) => ({
         id: dev.id,
@@ -40,7 +34,6 @@ export default async function ConstrutorasPage({ params: { lang } }: { params: {
         description: dev.description,
         development_count: Array.isArray(dev.developments) ? dev.developments.length : 0,
     }));
-
     return (
         <ConstrutorasClient developers={developers} lang={lang || 'pt'} />
     );

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { limiters, getClientIP } from '@/lib/rate-limit'
-
 export async function POST(request: NextRequest) {
     try {
         // Rate limiting: 10 requests / 10s per IP (public endpoint)
@@ -13,17 +12,14 @@ export async function POST(request: NextRequest) {
                 { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetTime - Date.now()) / 1000)) } }
             )
         }
-
         const body = await request.json()
         const {
             name, email, phone, interest, development_id,
             attribution, sessionId,
         } = body
-
         if (!name || (!email && !phone)) {
             return NextResponse.json({ error: 'Identificação básica obrigatória' }, { status: 400 })
         }
-
         // Deduplication: same email submitted within last 5 minutes → return existing lead
         if (email) {
             const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
@@ -34,7 +30,6 @@ export async function POST(request: NextRequest) {
                 .gte('created_at', fiveMinAgo)
                 .limit(1)
                 .maybeSingle()
-
             if (existing) {
                 return NextResponse.json({
                     success: true,
@@ -44,7 +39,6 @@ export async function POST(request: NextRequest) {
                 })
             }
         }
-
         // 1. Create lead with full UTM attribution
         const { data: lead, error: leadError } = await supabaseAdmin
             .from('leads')
@@ -69,9 +63,7 @@ export async function POST(request: NextRequest) {
             })
             .select()
             .single()
-
         if (leadError) throw leadError
-
         // 2. Link session to lead if sessionId provided
         if (sessionId) {
             void supabaseAdmin
@@ -79,13 +71,11 @@ export async function POST(request: NextRequest) {
                 .update({ lead_id: lead.id })
                 .eq('session_id', sessionId)
         }
-
         // 3. Create notification for new lead
         // Resolve admin user_id (first user in auth system = admin Iule)
         let adminId: string | null = null
         const { data: adminUser } = await supabaseAdmin.from('profiles').select('id').limit(1).single()
         if (adminUser) adminId = adminUser.id
-
         const devName = development_id ? '(imóvel vinculado)' : ''
         void supabaseAdmin
             .from('notifications')
@@ -102,7 +92,6 @@ export async function POST(request: NextRequest) {
                 },
                 read: false,
             })
-
         // 3b. Round-robin assignment to active team members (fewest-leads approach, non-blocking)
         void (async () => {
             try {
@@ -111,16 +100,13 @@ export async function POST(request: NextRequest) {
                     .from('team_members')
                     .select('id')
                     .eq('status', 'active')
-
                 if (!members || members.length === 0) return
-
                 // Count leads currently assigned to each active member
                 const memberIds = members.map((m) => m.id)
                 const { data: counts } = await supabaseAdmin
                     .from('leads')
                     .select('assigned_to')
                     .in('assigned_to', memberIds)
-
                 // Build a map of member_id -> lead count, starting at 0 for everyone
                 const countMap: Record<string, number> = {}
                 for (const m of members) {
@@ -133,13 +119,11 @@ export async function POST(request: NextRequest) {
                         }
                     }
                 }
-
                 // Pick the member with the fewest leads (first by id for stable tie-breaking)
                 const sorted = members
                     .slice()
                     .sort((a, b) => countMap[a.id] - countMap[b.id] || a.id.localeCompare(b.id))
                 const assignee = sorted[0]
-
                 // Assign the lead
                 await supabaseAdmin
                     .from('leads')
@@ -149,7 +133,6 @@ export async function POST(request: NextRequest) {
                 // Assignment failure is non-critical
             }
         })()
-
         // 4. AI qualification (non-blocking, soft fail)
         try {
             const { qualifyLeadWithClaude } = await import('@/lib/ai/lead-qualifier')
@@ -161,14 +144,12 @@ export async function POST(request: NextRequest) {
         } catch {
             // AI module might not be available — that's fine
         }
-
         return NextResponse.json({
             success: true,
             lead_id: lead.id,
             message: 'Lead capturado com sucesso',
         })
     } catch (err) {
-        console.error('Lead Capture Error:', err)
         return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
     }
 }

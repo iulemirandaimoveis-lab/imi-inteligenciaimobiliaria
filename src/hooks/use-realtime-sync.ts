@@ -304,7 +304,6 @@ export function useOnlinePresence(roomName: string = 'online-users') {
  */
 export async function requestNotificationPermission(): Promise<boolean> {
     if (typeof window === 'undefined' || !('Notification' in window)) {
-        console.warn('Browser não suporta notificações')
         return false
     }
 

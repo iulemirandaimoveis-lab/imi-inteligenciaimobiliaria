@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -16,37 +15,31 @@ import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 import { Stepper } from '@/app/(backoffice)/components/ui/Stepper'
 import type { Step } from '@/app/(backoffice)/components/ui/Stepper'
 import { T } from '@/app/(backoffice)/lib/theme'
-
 const STATUS_CFG: Record<string, { label: string; statusKey: string }> = {
   concluida:      { label: 'Concluída',     statusKey: 'done'   },
   em_andamento:   { label: 'Em Andamento',  statusKey: 'active' },
   aguardando_docs:{ label: 'Aguard. Docs',  statusKey: 'pend'   },
   cancelada:      { label: 'Cancelada',     statusKey: 'cancel' },
 }
-
 const HONOR_CFG: Record<string, { label: string; color: string }> = {
   pago:     { label: 'Pago',     color: 'var(--success)' },
   parcial:  { label: 'Parcial',  color: 'var(--warning)' },
   pendente: { label: 'Pendente', color: 'var(--warning)'  },
 }
-
 const fmt = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
-
 const QUICK_ACTIONS = [
   { label: 'Nova Avaliação',    href: '/backoffice/avaliacoes/nova',             icon: Plus      },
   { label: 'Email + Honorários',href: '/backoffice/avaliacoes/email-honorarios', icon: Mail      },
   { label: 'Exercícios NBR',    href: '/backoffice/avaliacoes/exercicios',       icon: BookOpen  },
   { label: 'Motor NBR 14653',   href: '/backoffice/avaliacoes/motor',            icon: Brain     },
 ]
-
 export default function AvaliacoesPage() {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [tab, setTab] = useState('todos')
   const [avaliacoes, setAvaliacoes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-
   useEffect(() => {
     async function fetchAvaliacoes() {
       try {
@@ -55,7 +48,6 @@ export default function AvaliacoesPage() {
         const result = await res.json()
         setAvaliacoes(result.data || [])
       } catch (err) {
-        console.error('Erro ao buscar avaliações:', err)
         setAvaliacoes([])
       } finally {
         setLoading(false)
@@ -63,12 +55,10 @@ export default function AvaliacoesPage() {
     }
     fetchAvaliacoes()
   }, [])
-
   const honorariosPago = avaliacoes.filter(a => a.honorarios_status === 'pago').reduce((s, a) => s + (Number(a.honorarios) || 0), 0)
   const honorariosPendente = avaliacoes.filter(a => a.honorarios_status !== 'pago').reduce((s, a) => s + (Number(a.honorarios) || 0), 0)
   const emAndamento = avaliacoes.filter(a => a.status === 'em_andamento' || a.status === 'aguardando_docs').length
   const concluidas = avaliacoes.filter(a => a.status === 'concluida').length
-
   const filtered = avaliacoes.filter(a => {
     const q = search.toLowerCase()
     const matchSearch = !q ||
@@ -78,17 +68,14 @@ export default function AvaliacoesPage() {
     const matchTab = tab === 'todos' || a.status === tab
     return matchSearch && matchTab
   })
-
   const filterTabs: FilterTab[] = [
     { id: 'todos',          label: 'Todos',       count: avaliacoes.length },
     { id: 'em_andamento',   label: 'Andamento',   count: avaliacoes.filter(a => a.status === 'em_andamento').length,    dotColor: 'var(--warning)' },
     { id: 'aguardando_docs',label: 'Docs',         count: avaliacoes.filter(a => a.status === 'aguardando_docs').length, dotColor: 'var(--info)' },
     { id: 'concluida',      label: 'Concluídas',  count: avaliacoes.filter(a => a.status === 'concluida').length,        dotColor: 'var(--success)' },
   ]
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <PageIntelHeader
@@ -115,7 +102,6 @@ export default function AvaliacoesPage() {
           }
         />
       </motion.div>
-
       {/* KPI row */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
@@ -128,7 +114,6 @@ export default function AvaliacoesPage() {
         <KPICard label="Em Andamento" value={loading ? '—' : String(emAndamento)} sublabel="laudos ativos" icon={<Clock size={16} />} accent="blue" />
         <KPICard label="Concluídas" value={loading ? '—' : String(concluidas)} sublabel="laudos entregues" icon={<CheckCircle size={16} />} accent="ai" />
       </motion.div>
-
       {/* Workflow Pipeline */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
@@ -155,7 +140,6 @@ export default function AvaliacoesPage() {
           ]}
         />
       </motion.div>
-
       {/* Quick Actions */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
@@ -185,7 +169,6 @@ export default function AvaliacoesPage() {
           </Link>
         ))}
       </motion.div>
-
       {/* Filter + Search */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -208,7 +191,6 @@ export default function AvaliacoesPage() {
         </div>
         <FilterTabs tabs={filterTabs} active={tab} onChange={setTab} />
       </motion.div>
-
       {/* Loading skeletons */}
       {loading && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -232,7 +214,6 @@ export default function AvaliacoesPage() {
           ))}
         </div>
       )}
-
       {/* List */}
       {!loading && filtered.length > 0 && (
         <>
@@ -269,7 +250,6 @@ export default function AvaliacoesPage() {
                       : <Clock size={18} color="var(--warning)" />
                     }
                   </div>
-
                   {/* Content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
@@ -285,7 +265,6 @@ export default function AvaliacoesPage() {
                       {[av.tipo_imovel, av.bairro, av.area_privativa ? `${av.area_privativa}m²` : null, av.metodologia].filter(Boolean).join(' · ')}
                     </p>
                   </div>
-
                   {/* Value */}
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     {av.honorarios && (
@@ -309,7 +288,6 @@ export default function AvaliacoesPage() {
           </div>
         </>
       )}
-
       {/* Empty state */}
       {!loading && filtered.length === 0 && (
         <motion.div

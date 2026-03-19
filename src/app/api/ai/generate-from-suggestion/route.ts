@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generatePostContent } from '@/lib/ai/claude';
 import { ContentType, SocialPlatform } from '@/types/commercial-system';
-
 export const runtime = 'nodejs'
 interface GenerateFromSuggestionRequest {
     tenant_id: string;
@@ -13,23 +12,18 @@ interface GenerateFromSuggestionRequest {
     suggested_date?: string;
     platforms?: SocialPlatform[];
 }
-
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient();
-
         // Verifica autenticação
         const {
             data: { user },
             error: authError,
         } = await supabase.auth.getUser();
-
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-
         const body: GenerateFromSuggestionRequest = await request.json();
-
         // Verifica se user tem acesso ao tenant
         const { data: tenantUser } = await supabase
             .from('tenant_users')
@@ -37,11 +31,9 @@ export async function POST(request: NextRequest) {
             .eq('tenant_id', body.tenant_id)
             .eq('user_id', user.id)
             .single();
-
         if (!tenantUser) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
-
         // Verifica se já existe post com esse tópico neste calendário
         const { data: existingPost } = await supabase
             .from('content_items')
@@ -49,14 +41,12 @@ export async function POST(request: NextRequest) {
             .eq('calendar_id', body.calendar_id)
             .eq('topic', body.topic)
             .single();
-
         if (existingPost) {
             return NextResponse.json(
                 { error: 'Post já criado para este tópico', post_id: existingPost.id },
                 { status: 400 }
             );
         }
-
         // Contexto adicional baseado no plano do calendário
         let additional_context = '';
         if (body.content_pillar) {
@@ -68,7 +58,6 @@ export async function POST(request: NextRequest) {
         if (body.suggested_date) {
             additional_context += `Data sugerida: ${body.suggested_date}. `;
         }
-
         // Gera conteúdo com Claude
         const aiResult = await generatePostContent({
             tenant_id: body.tenant_id,
@@ -78,7 +67,6 @@ export async function POST(request: NextRequest) {
             additional_context,
             requested_by: user.id,
         });
-
         // Cria content item
         const { data: contentItem, error: createError } = await supabase
             .from('content_items')
@@ -98,11 +86,9 @@ export async function POST(request: NextRequest) {
             })
             .select('id')
             .single();
-
         if (createError) {
             throw new Error(`Failed to create content item: ${createError.message}`);
         }
-
         // Cria variants para cada plataforma
         const variants = [];
         for (const platform of body.platforms || ['instagram_feed', 'facebook']) {
@@ -118,12 +104,10 @@ export async function POST(request: NextRequest) {
                 })
                 .select()
                 .single();
-
             if (variant) {
                 variants.push(variant);
             }
         }
-
         return NextResponse.json({
             content_item_id: contentItem.id,
             base_copy: aiResult.base_copy,
@@ -135,7 +119,6 @@ export async function POST(request: NextRequest) {
             cost_usd: aiResult.cost_usd,
         });
     } catch (error: any) {
-        console.error('Error in /api/ai/generate-from-suggestion:', error);
         return NextResponse.json(
             { error: error.message || 'Internal Server Error' },
             { status: 500 }

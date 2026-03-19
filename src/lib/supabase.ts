@@ -8,9 +8,7 @@ export const supabase = (supabaseUrl && supabaseAnonKey && supabaseUrl.startsWit
     ? createClient(supabaseUrl, supabaseAnonKey)
     : createClient('https://placeholder.supabase.co', 'placeholder');
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase environment variables are missing or invalid.');
-}
+// Supabase environment variables validated at import time
 
 export async function signIn(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({

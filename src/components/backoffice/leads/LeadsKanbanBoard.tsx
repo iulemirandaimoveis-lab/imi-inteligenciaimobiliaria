@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState, useEffect } from 'react'
 import {
     Users,
@@ -32,9 +31,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import LeadFormModal from './LeadFormModal'
-
 const supabase = createClient()
-
 interface Lead {
     id: string
     name: string
@@ -57,7 +54,6 @@ interface Lead {
         name: string
     }
 }
-
 const STAGES = [
     { id: 'new', name: 'Novo', color: 'bg-blue-500', lightColor: 'bg-blue-50', textColor: 'text-blue-700' },
     { id: 'contacted', name: 'Contatado', color: 'bg-yellow-500', lightColor: 'bg-yellow-50', textColor: 'text-yellow-700' },
@@ -67,7 +63,6 @@ const STAGES = [
     { id: 'won', name: 'Ganho', color: 'bg-green-500', lightColor: 'bg-green-50', textColor: 'text-green-700' },
     { id: 'lost', name: 'Perdido', color: 'bg-red-500', lightColor: 'bg-red-50', textColor: 'text-red-700' }
 ]
-
 function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
     const {
         attributes,
@@ -77,13 +72,11 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
         transition,
         isDragging
     } = useSortable({ id: lead.id })
-
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1
     }
-
     return (
         <div
             ref={setNodeRef}
@@ -97,7 +90,6 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
             <div className={`absolute left-0 top-0 bottom-0 w-1 ${lead.score >= 80 ? 'bg-green-500' :
                     lead.score >= 50 ? 'bg-yellow-500' : 'bg-red-500'
                 }`} />
-
             {/* Header */}
             <div className="flex items-start justify-between mb-3 pl-2">
                 <div className="flex-1 min-w-0">
@@ -116,7 +108,6 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
                     <MoreVertical size={16} className="text-gray-400" />
                 </button>
             </div>
-
             {/* Info */}
             <div className="space-y-2 text-xs text-gray-600 dark:text-gray-400 pl-2">
                 {lead.email && (
@@ -125,14 +116,12 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
                         <span className="truncate">{lead.email}</span>
                     </div>
                 )}
-
                 {lead.phone && (
                     <div className="flex items-center gap-2">
                         <Phone size={12} className="flex-shrink-0 opacity-70" />
                         <span>{lead.phone}</span>
                     </div>
                 )}
-
                 {lead.capital > 0 && (
                     <div className="flex items-center gap-2 font-medium text-gray-900 dark:text-gray-300">
                         <DollarSign size={12} className="flex-shrink-0 opacity-70" />
@@ -145,7 +134,6 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
                         </span>
                     </div>
                 )}
-
                 {lead.development?.name && (
                     <div className="flex items-center gap-2 truncate text-primary font-medium">
                         <Building2 size={12} className="flex-shrink-0" />
@@ -153,13 +141,11 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
                     </div>
                 )}
             </div>
-
             {/* Footer */}
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 dark:border-white/5 pl-2">
                 <div className="text-[10px] text-gray-400">
                     {new Date(lead.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                 </div>
-
                 {lead.assigned_user?.name ? (
                     <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-white/5 px-2 py-1 rounded-full">
                         <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[8px] font-bold text-primary">
@@ -176,16 +162,13 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
         </div>
     )
 }
-
 function KanbanColumn({ stage, leads, onAddLead }: {
     stage: typeof STAGES[0]
     leads: Lead[]
     onAddLead: () => void
 }) {
     const { setNodeRef } = useSortable({ id: stage.id })
-
     const totalValue = leads.reduce((sum, lead) => sum + (lead.capital || 0), 0)
-
     return (
         <div className="flex-shrink-0 w-80 flex flex-col h-full">
             {/* Column Header */}
@@ -204,7 +187,6 @@ function KanbanColumn({ stage, leads, onAddLead }: {
                         <Plus size={16} />
                     </button>
                 </div>
-
                 {/* Stats */}
                 {leads.length > 0 && (
                     <div className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -217,7 +199,6 @@ function KanbanColumn({ stage, leads, onAddLead }: {
                     </div>
                 )}
             </div>
-
             {/* Column Body */}
             <div
                 ref={setNodeRef}
@@ -228,7 +209,6 @@ function KanbanColumn({ stage, leads, onAddLead }: {
                         <LeadCard key={lead.id} lead={lead} onClick={() => { }} />
                     ))}
                 </SortableContext>
-
                 {leads.length === 0 && (
                     <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-white/5 rounded-xl">
                         <div className={`w-12 h-12 rounded-full ${stage.lightColor} flex items-center justify-center mx-auto mb-3`}>
@@ -241,7 +221,6 @@ function KanbanColumn({ stage, leads, onAddLead }: {
         </div>
     )
 }
-
 export default function LeadsKanbanBoard() {
     const [leads, setLeads] = useState<Lead[]>([])
     const [loading, setLoading] = useState(true)
@@ -251,7 +230,6 @@ export default function LeadsKanbanBoard() {
     const [modalStage, setModalStage] = useState<string>('new')
     const [isMobile, setIsMobile] = useState(false)
     const [activeTab, setActiveTab] = useState('new')
-
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -259,18 +237,15 @@ export default function LeadsKanbanBoard() {
             }
         })
     )
-
     useEffect(() => {
         loadLeads()
     }, [])
-
     useEffect(() => {
         const check = () => setIsMobile(window.innerWidth < 768)
         check()
         window.addEventListener('resize', check)
         return () => window.removeEventListener('resize', check)
     }, [])
-
     const loadLeads = async () => {
         setLoading(true)
         const { data, error } = await (supabase as any)
@@ -281,28 +256,21 @@ export default function LeadsKanbanBoard() {
         assigned_user:auth.users(name)
       `)
             .order('created_at', { ascending: false })
-
         if (error) {
-            console.error('Error loading leads:', error)
             toast.error('Erro ao carregar leads')
         } else {
             setLeads(data || [])
         }
         setLoading(false)
     }
-
     const handleDragStart = (event: DragStartEvent) => {
         setActiveId(event.active.id as string)
     }
-
     const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event
-
         if (!over) return
-
         const leadId = active.id as string
         const newStage = over.id as string
-
         // Se mudou de coluna
         const lead = leads.find(l => l.id === leadId)
         if (lead && lead.status !== newStage) {
@@ -312,7 +280,6 @@ export default function LeadsKanbanBoard() {
                     l.id === leadId ? { ...l, status: newStage } : l
                 )
             )
-
             // Atualizar no banco
             const { error } = await supabase
                 .from('leads')
@@ -321,9 +288,7 @@ export default function LeadsKanbanBoard() {
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', leadId)
-
             if (error) {
-                console.error('Error updating lead:', error)
                 toast.error('Erro ao mover lead')
                 // Reverter mudança
                 loadLeads()
@@ -332,15 +297,12 @@ export default function LeadsKanbanBoard() {
                 toast.success(`Lead movido para ${stageName}`)
             }
         }
-
         setActiveId(null)
     }
-
     const handleAddLead = (stage: string) => {
         setModalStage(stage)
         setShowModal(true)
     }
-
     const filteredLeads = searchTerm
         ? leads.filter(lead =>
             lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -348,12 +310,10 @@ export default function LeadsKanbanBoard() {
             lead.phone?.includes(searchTerm)
         )
         : leads
-
     const groupedLeads = STAGES.map(stage => ({
         stage,
         leads: filteredLeads.filter(lead => lead.status === stage.id)
     }))
-
     // Calcular estatísticas
     const stats = {
         total: leads.length,
@@ -364,7 +324,6 @@ export default function LeadsKanbanBoard() {
             ? ((leads.filter(l => l.status === 'won').length / leads.length) * 100).toFixed(1)
             : 0
     }
-
     if (loading) {
         return (
             <div className="flex items-center justify-center h-96">
@@ -375,7 +334,6 @@ export default function LeadsKanbanBoard() {
             </div>
         )
     }
-
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             {/* Stats */}
@@ -397,7 +355,6 @@ export default function LeadsKanbanBoard() {
                     <div className="text-sm text-purple-600 dark:text-purple-300 mt-1">Taxa Conversão</div>
                 </div>
             </div>
-
             {/* Filtros */}
             <div className="flex items-center gap-4">
                 <div className="flex-1 relative">
@@ -415,7 +372,6 @@ export default function LeadsKanbanBoard() {
                     Filtros
                 </button>
             </div>
-
             {/* Kanban Board — Mobile: tabs+lista, Desktop: DnD kanban */}
             {isMobile ? (
                 <div className="space-y-4">
@@ -438,7 +394,6 @@ export default function LeadsKanbanBoard() {
                             )
                         })}
                     </div>
-
                     {/* Lista da coluna ativa */}
                     <div className="space-y-3">
                         {groupedLeads.find(g => g.stage.id === activeTab)?.leads.map(lead => (
@@ -494,7 +449,6 @@ export default function LeadsKanbanBoard() {
                             />
                         ))}
                     </div>
-
                     <DragOverlay>
                         {activeId ? (
                             <div className="bg-white dark:bg-card-dark rounded-xl border-2 border-primary p-4 shadow-2xl opacity-90 rotate-3 cursor-grabbing w-[300px]">
@@ -507,7 +461,6 @@ export default function LeadsKanbanBoard() {
                     </DragOverlay>
                 </DndContext>
             )}
-
             {/* Modal - Renderizado condicionalmente para garantir que não pese na renderização inicial */}
             {showModal && (
                 <LeadFormModal

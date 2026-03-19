@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -12,9 +11,7 @@ import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 import { toast } from 'sonner'
-
 export const dynamic = 'force-dynamic'
-
 interface UserRow {
   id: string
   name: string
@@ -26,7 +23,6 @@ interface UserRow {
   ultimoAcesso: string
   criadoEm: string
 }
-
 interface EditModal {
   open: boolean
   user: UserRow | null
@@ -34,13 +30,11 @@ interface EditModal {
   role: string
   saving: boolean
 }
-
 interface DeactivateModal {
   open: boolean
   user: UserRow | null
   saving: boolean
 }
-
 export default function UsuariosPage() {
   const router = useRouter()
   const [usuariosData, setUsuariosData] = useState<UserRow[]>([])
@@ -48,14 +42,12 @@ export default function UsuariosPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
-
   const [editModal, setEditModal] = useState<EditModal>({
     open: false, user: null, name: '', role: '', saving: false,
   })
   const [deactivateModal, setDeactivateModal] = useState<DeactivateModal>({
     open: false, user: null, saving: false,
   })
-
   async function loadUsers() {
     try {
       const res = await fetch('/api/backoffice/users')
@@ -88,18 +80,14 @@ export default function UsuariosPage() {
         }
       }
     } catch (err) {
-      console.error('Error loading users:', err)
     }
     setLoading(false)
   }
-
   useEffect(() => { loadUsers() }, [])
-
   // ── Edit handlers ─────────────────────────────────────────────
   function openEdit(user: UserRow) {
     setEditModal({ open: true, user, name: user.name, role: user.role, saving: false })
   }
-
   async function handleSaveEdit() {
     if (!editModal.user) return
     setEditModal(m => ({ ...m, saving: true }))
@@ -120,12 +108,10 @@ export default function UsuariosPage() {
       setEditModal(m => ({ ...m, saving: false }))
     }
   }
-
   // ── Deactivate handlers ────────────────────────────────────────
   function openDeactivate(user: UserRow) {
     setDeactivateModal({ open: true, user, saving: false })
   }
-
   async function handleDeactivate() {
     if (!deactivateModal.user) return
     setDeactivateModal(m => ({ ...m, saving: true }))
@@ -144,7 +130,6 @@ export default function UsuariosPage() {
       setDeactivateModal(m => ({ ...m, saving: false }))
     }
   }
-
   const filteredUsuarios = usuariosData.filter(user => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -155,7 +140,6 @@ export default function UsuariosPage() {
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter
     return matchesSearch && matchesRole && matchesStatus
   })
-
   const stats = {
     total: usuariosData.length,
     ativos: usuariosData.filter(u => u.status === 'ativo').length,
@@ -168,7 +152,6 @@ export default function UsuariosPage() {
       Marketing: usuariosData.filter(u => u.role?.toUpperCase() === 'MARKETING').length,
     },
   }
-
   const getRoleBadge = (role: string) => {
     const r = role?.toUpperCase()
     if (r === 'ADMIN') return { bg: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)', border: 'rgba(229,115,115,0.2)' }
@@ -177,7 +160,6 @@ export default function UsuariosPage() {
     if (r === 'MARKETING') return { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)', border: 'rgba(107,184,123,0.2)' }
     return { bg: 'rgba(72,101,129,0.12)', color: 'var(--text-secondary)', border: 'rgba(72,101,129,0.2)' }
   }
-
   const getTimeAgo = (dateStr: string) => {
     if (!dateStr) return '-'
     const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000)
@@ -185,12 +167,10 @@ export default function UsuariosPage() {
     if (diff < 1440) return `${Math.floor(diff / 60)}h atrás`
     return `${Math.floor(diff / 1440)}d atrás`
   }
-
   const inputStyle: React.CSSProperties = {
     background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
     height: '44px', borderRadius: '6px', padding: '0 12px', fontSize: '13px', outline: 'none',
   }
-
   return (
     <div className="space-y-5">
       {/* Header */}
@@ -209,7 +189,6 @@ export default function UsuariosPage() {
           </button>
         }
       />
-
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <KPICard label="Total" value={loading ? '—' : String(stats.total)} icon={<Shield size={14} />} size="sm" />
@@ -217,7 +196,6 @@ export default function UsuariosPage() {
         <KPICard label="Inativos" value={loading ? '—' : String(stats.inativos)} icon={<XCircle size={14} />} size="sm" />
         <KPICard label="Admins" value={loading ? '—' : String(stats.porRole.Admin)} icon={<Shield size={14} />} accent="hot" size="sm" />
       </div>
-
       {/* Filtros */}
       <div className="rounded-lg p-4 space-y-3" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
         <div className="relative">
@@ -256,7 +234,6 @@ export default function UsuariosPage() {
           </select>
         </div>
       </div>
-
       {loading ? (
         <div className="space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -291,7 +268,6 @@ export default function UsuariosPage() {
                         >
                           {user.avatar}
                         </div>
-
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2.5 mb-1">
@@ -319,7 +295,6 @@ export default function UsuariosPage() {
                             </span>
                           </div>
                         </div>
-
                         {/* Actions */}
                         <div className="flex items-center gap-1 flex-shrink-0">
                           {/* Editar */}
@@ -332,7 +307,6 @@ export default function UsuariosPage() {
                             <Edit size={13} />
                             <span className="hidden sm:inline">Editar</span>
                           </button>
-
                           {/* Desativar */}
                           {user.status === 'ativo' && (
                             <button
@@ -355,7 +329,6 @@ export default function UsuariosPage() {
           </div>
         </>
       )}
-
       {/* ── Edit Modal ────────────────────────────────────────────── */}
       {editModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
@@ -374,7 +347,6 @@ export default function UsuariosPage() {
                 <X size={14} />
               </button>
             </div>
-
             {/* Name */}
             <div>
               <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textMuted }}>Nome</label>
@@ -386,7 +358,6 @@ export default function UsuariosPage() {
                 style={{ ...inputStyle, padding: '0 14px', borderRadius: '10px' }}
               />
             </div>
-
             {/* Role */}
             <div>
               <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textMuted }}>Nível de Acesso</label>
@@ -404,7 +375,6 @@ export default function UsuariosPage() {
                 <option value="MARKETING">Marketing</option>
               </select>
             </div>
-
             {/* Buttons */}
             <div className="flex gap-3 pt-1">
               <button
@@ -428,7 +398,6 @@ export default function UsuariosPage() {
           </div>
         </div>
       )}
-
       {/* ── Deactivate Confirmation Modal ─────────────────────────── */}
       {deactivateModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
@@ -452,7 +421,6 @@ export default function UsuariosPage() {
                 </p>
               </div>
             </div>
-
             <div className="flex gap-3">
               <button
                 onClick={() => setDeactivateModal({ open: false, user: null, saving: false })}

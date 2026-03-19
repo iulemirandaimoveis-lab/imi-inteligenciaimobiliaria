@@ -1,12 +1,9 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { X, Save, User, Mail, Phone, DollarSign, Building2, Tag, Calendar, UserPlus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-
 const supabase = createClient()
-
 interface LeadFormData {
     name: string
     email: string
@@ -20,7 +17,6 @@ interface LeadFormData {
     assigned_to: string | null
     tags: string[]
 }
-
 const INITIAL_FORM_DATA: LeadFormData = {
     name: '',
     email: '',
@@ -34,7 +30,6 @@ const INITIAL_FORM_DATA: LeadFormData = {
     assigned_to: null,
     tags: []
 }
-
 const SOURCES = [
     { value: 'website', label: 'Website' },
     { value: 'whatsapp', label: 'WhatsApp' },
@@ -45,7 +40,6 @@ const SOURCES = [
     { value: 'event', label: 'Evento' },
     { value: 'other', label: 'Outro' }
 ]
-
 const INTERESTS = [
     { value: 'apartment_2q', label: 'Apartamento 2Q' },
     { value: 'apartment_3q', label: 'Apartamento 3Q' },
@@ -56,7 +50,6 @@ const INTERESTS = [
     { value: 'investment', label: 'Investimento' },
     { value: 'other', label: 'Outro' }
 ]
-
 const TAGS = [
     'Alto Padrão',
     'Primeira Compra',
@@ -67,14 +60,12 @@ const TAGS = [
     'À Vista',
     'Permuta'
 ]
-
 interface LeadFormModalProps {
     leadId?: string
     initialStatus?: string
     onClose: () => void
     onSuccess: () => void
 }
-
 export default function LeadFormModal({ leadId, initialStatus, onClose, onSuccess }: LeadFormModalProps) {
     const [formData, setFormData] = useState<LeadFormData>({
         ...INITIAL_FORM_DATA,
@@ -84,14 +75,12 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
     const [developments, setDevelopments] = useState<any[]>([])
     const [brokers, setBrokers] = useState<any[]>([])
     const [errors, setErrors] = useState<Record<string, string>>({})
-
     useEffect(() => {
         loadDependencies()
         if (leadId) {
             loadLead(leadId)
         }
     }, [leadId])
-
     const loadDependencies = async () => {
         // Carregar empreendimentos
         const { data: devs } = await supabase
@@ -99,19 +88,15 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
             .select('id, name')
             .eq('status', 'published')
             .order('name')
-
         setDevelopments(devs || [])
-
         // Carregar corretores
         const { data: brokerData } = await supabase
             .from('brokers')
             .select('user_id, name')
             .eq('status', 'active')
             .order('name')
-
         setBrokers(brokerData || [])
     }
-
     const loadLead = async (id: string) => {
         setLoading(true)
         const { data, error } = await supabase
@@ -119,13 +104,11 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
             .select('*')
             .eq('id', id)
             .single()
-
         if (error) {
             toast.error('Erro ao carregar lead')
             onClose()
             return
         }
-
         if (data) {
             setFormData({
                 name: data.name || '',
@@ -141,10 +124,8 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                 tags: data.tags || []
             })
         }
-
         setLoading(false)
     }
-
     const handleInputChange = (field: keyof LeadFormData, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }))
         if (errors[field]) {
@@ -155,7 +136,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
             })
         }
     }
-
     const toggleTag = (tag: string) => {
         setFormData(prev => ({
             ...prev,
@@ -164,60 +144,45 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                 : [...prev.tags, tag]
         }))
     }
-
     const validate = (): boolean => {
         const newErrors: Record<string, string> = {}
-
         if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório'
-
         if (!formData.email.trim()) {
             newErrors.email = 'E-mail é obrigatório'
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
             newErrors.email = 'E-mail inválido'
         }
-
         if (!formData.phone.trim()) {
             newErrors.phone = 'Telefone é obrigatório'
         }
-
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
-
     const calculateScore = (): number => {
         let score = 50 // Base score
-
         // Capital disponível (+30 points)
         if (formData.capital) {
             if (formData.capital >= 1000000) score += 30
             else if (formData.capital >= 500000) score += 20
             else if (formData.capital >= 200000) score += 10
         }
-
         // Interesse específico (+10 points)
         if (formData.interest && formData.interest !== 'other') score += 10
-
         // Desenvolvimento específico (+10 points)
         if (formData.development_id) score += 10
-
         // Tags de qualidade
         if (formData.tags.includes('Alto Padrão')) score += 15
         if (formData.tags.includes('Urgente')) score += 10
         if (formData.tags.includes('À Vista')) score += 15
-
         return Math.min(100, score)
     }
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
         if (!validate()) {
             toast.error('Por favor, corrija os erros no formulário')
             return
         }
-
         setLoading(true)
-
         try {
             const score = calculateScore()
             const dataToSave = {
@@ -225,14 +190,12 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                 score,
                 updated_at: new Date().toISOString()
             }
-
             if (leadId) {
                 // Atualizar
                 const { error } = await supabase
                     .from('leads')
                     .update(dataToSave)
                     .eq('id', leadId)
-
                 if (error) throw error
                 toast.success('Lead atualizado com sucesso!')
             } else {
@@ -243,20 +206,16 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                         ...dataToSave,
                         created_at: new Date().toISOString()
                     })
-
                 if (error) throw error
                 toast.success('Lead criado com sucesso!')
             }
-
             onSuccess()
         } catch (error: any) {
-            console.error('Erro ao salvar lead:', error)
             toast.error(error.message || 'Erro ao salvar lead')
         } finally {
             setLoading(false)
         }
     }
-
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white dark:bg-card-dark rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
@@ -273,7 +232,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                         <X size={20} />
                     </button>
                 </div>
-
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     {/* Informações Básicas */}
@@ -282,7 +240,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                             <User size={18} className="text-primary" />
                             Informações Básicas
                         </h4>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -298,7 +255,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                                 />
                                 {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     E-mail *
@@ -316,7 +272,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                                 </div>
                                 {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Telefone *
@@ -336,14 +291,12 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                             </div>
                         </div>
                     </div>
-
                     {/* Qualificação */}
                     <div>
                         <h4 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2 border-b border-gray-100 dark:border-white/5 pb-2">
                             <DollarSign size={18} className="text-green-600" />
                             Qualificação
                         </h4>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -361,7 +314,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                                     />
                                 </div>
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Interesse
@@ -379,7 +331,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                                     ))}
                                 </select>
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Empreendimento
@@ -397,7 +348,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                                     ))}
                                 </select>
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Origem
@@ -416,7 +366,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                             </div>
                         </div>
                     </div>
-
                     {/* Tags */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
@@ -439,7 +388,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                             ))}
                         </div>
                     </div>
-
                     {/* Atribuição */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -461,7 +409,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                             </select>
                         </div>
                     </div>
-
                     {/* Mensagem */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -475,7 +422,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                             placeholder="Observações sobre o lead..."
                         />
                     </div>
-
                     {/* Score Preview */}
                     <div className="bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/30 rounded-xl p-4">
                         <div className="flex items-center justify-between">
@@ -487,7 +433,6 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                             </span>
                         </div>
                     </div>
-
                     {/* Actions */}
                     <div className="flex gap-3 pt-6 border-t border-gray-100 dark:border-white/5">
                         <button

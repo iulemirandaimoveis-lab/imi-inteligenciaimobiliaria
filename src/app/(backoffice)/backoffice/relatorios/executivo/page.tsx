@@ -67,7 +67,7 @@ export default function RelatoriosExecutivoPage() {
         setTotalProperties(propsCount || 0)
 
         if (revenues) {
-          const rev = revenues.reduce((s: number, r: any) => s + (Number(r.amount) || 0), 0)
+          const rev = revenues.reduce((s: number, r: { amount: number | string }) => s + (Number(r.amount) || 0), 0)
           setMonthRevenue(rev)
         }
 
@@ -78,7 +78,7 @@ export default function RelatoriosExecutivoPage() {
           .from('leads').select('capital, budget')
           .in('status', ['hot', 'warm', 'negociacao', 'proposta', 'qualified', 'qualificado'])
         if (hotLeads && hotLeads.length > 0) {
-          const pipeVal = hotLeads.reduce((s: number, l: any) => s + (l.capital || l.budget || 0), 0)
+          const pipeVal = hotLeads.reduce((s: number, l: { capital?: number; budget?: number }) => s + (l.capital || l.budget || 0), 0)
           if (pipeVal >= 1_000_000) setPipeline((pipeVal / 1_000_000).toFixed(1))
           else if (pipeVal > 0) setPipeline((pipeVal / 1_000).toFixed(0) + 'k')
         }
@@ -86,7 +86,7 @@ export default function RelatoriosExecutivoPage() {
         // ── Velocity: monthly lead counts normalized to % of peak ──────────
         if (leadsTimeline && leadsTimeline.length > 0) {
           const monthly = new Array(12).fill(0)
-          leadsTimeline.forEach((l: any) => {
+          leadsTimeline.forEach((l: { created_at: string }) => {
             const m = new Date(l.created_at).getMonth()
             monthly[m]++
           })
@@ -110,7 +110,7 @@ export default function RelatoriosExecutivoPage() {
         // ── Channel: leads grouped by source ───────────────────────────────
         if (leadSources && leadSources.length > 0) {
           const counts: Record<string, number> = {}
-          leadSources.forEach((l: any) => {
+          leadSources.forEach((l: { source?: string }) => {
             const src = l.source || 'Direto'
             counts[src] = (counts[src] || 0) + 1
           })
@@ -128,11 +128,11 @@ export default function RelatoriosExecutivoPage() {
 
         // ── Top agents: brokers with lead counts ───────────────────────────
         if (brokersRaw && brokersRaw.length > 0) {
-          const agentPromises = brokersRaw.slice(0, 3).map((b: any) =>
+          const agentPromises = brokersRaw.slice(0, 3).map((b: { id: string }) =>
             supabase.from('leads').select('*', { count: 'exact', head: true }).eq('broker_id', b.id)
           )
           const agentLeadCounts = await Promise.all(agentPromises)
-          const agents: AgentItem[] = brokersRaw.slice(0, 3).map((b: any, i: number) => {
+          const agents: AgentItem[] = brokersRaw.slice(0, 3).map((b: { id: string; name?: string; email?: string }, i: number) => {
             const lc = agentLeadCounts[i]?.count || 0
             const parts = (b.name || b.email || 'AG').split(' ')
             const initials = parts.length >= 2 ? parts[0][0] + parts[1][0] : parts[0].slice(0, 2)

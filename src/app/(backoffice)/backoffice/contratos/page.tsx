@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -18,7 +17,6 @@ import { Stepper } from '@/app/(backoffice)/components/ui/Stepper'
 import type { Step } from '@/app/(backoffice)/components/ui/Stepper'
 import { Timeline } from '@/app/(backoffice)/components/ui/Timeline'
 import type { TimelineEvent } from '@/app/(backoffice)/components/ui/Timeline'
-
 // Derive STATUS_CFG from centralized constants
 const STATUS_ICONS: Record<string, any> = {
     rascunho: FileText, gerado: CheckCircle, aguardando_assinatura: Clock,
@@ -30,7 +28,6 @@ const STATUS_CFG = Object.fromEntries(
         return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS[key] || FileText }]
     })
 ) as Record<string, { label: string; text: string; bg: string; icon: any }>
-
 function StatusBadge({ status }: { status: string }) {
     const cfg = STATUS_CFG[status] || STATUS_CFG.rascunho
     const Icon = cfg.icon
@@ -41,7 +38,6 @@ function StatusBadge({ status }: { status: string }) {
         </span>
     )
 }
-
 export default function ContratosPage() {
     const router = useRouter()
     const [search, setSearch] = useState('')
@@ -49,7 +45,6 @@ export default function ContratosPage() {
     const [activeTab, setActiveTab] = useState<'lista' | 'modelos'>('lista')
     const [contratos, setContratos] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
-
     const loadContratos = async () => {
         setLoading(true)
         try {
@@ -58,15 +53,12 @@ export default function ContratosPage() {
             const result = await res.json()
             setContratos(result.data || [])
         } catch (err) {
-            console.error('Erro ao buscar contratos:', err)
             setContratos([])
         } finally {
             setLoading(false)
         }
     }
-
     useEffect(() => { loadContratos() }, [])
-
     const updateContratoStatus = async (id: string, status: string, successMsg: string) => {
         try {
             const res = await fetch('/api/contratos', {
@@ -78,7 +70,6 @@ export default function ContratosPage() {
             else toast.error('Erro ao atualizar')
         } catch { toast.error('Erro de conexão') }
     }
-
     const cancelContrato = async (id: string) => {
         try {
             const res = await fetch(`/api/contratos?id=${id}`, { method: 'DELETE' })
@@ -86,7 +77,6 @@ export default function ContratosPage() {
             else toast.error('Erro ao cancelar')
         } catch { toast.error('Erro de conexão') }
     }
-
     const filtered = contratos.filter(c => {
         const q = search.toLowerCase()
         const ok = (c.numero || '').toLowerCase().includes(q) ||
@@ -95,14 +85,12 @@ export default function ContratosPage() {
         const status = filterStatus === 'todos' || c.status === filterStatus
         return ok && status
     })
-
     const kpiValues = {
         total: contratos.length,
         assinados: contratos.filter(c => c.status === 'assinado').length,
         aguardando: contratos.filter(c => c.status === 'aguardando_assinatura').length,
         internacionais: contratos.filter(c => c.idioma && c.idioma !== 'pt').length,
     }
-
     return (
         <div className="space-y-5 max-w-7xl mx-auto">
             {/* Header */}
@@ -128,7 +116,6 @@ export default function ContratosPage() {
                     }
                 />
             </motion.div>
-
             {/* KPIs */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <KPICard
@@ -162,7 +149,6 @@ export default function ContratosPage() {
                     size="sm"
                 />
             </div>
-
             {/* Contract Activity Timeline */}
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -192,7 +178,6 @@ export default function ContratosPage() {
                 ]}
               />
             </motion.div>
-
             {/* Tabs — equal-width on mobile, auto on desktop */}
             <div className="flex gap-2">
                 {[
@@ -213,7 +198,6 @@ export default function ContratosPage() {
                     </button>
                 ))}
             </div>
-
             <AnimatePresence mode="wait">
                 {activeTab === 'lista' && (
                     <motion.div key="lista" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
@@ -240,7 +224,6 @@ export default function ContratosPage() {
                                 />
                             </div>
                         </div>
-
                         {loading && (
                             <div className="space-y-2">
                                 {[...Array(4)].map((_, i) => (
@@ -260,7 +243,6 @@ export default function ContratosPage() {
                                 ))}
                             </div>
                         )}
-
                         {!loading && (
                             <div data-tour="contratos-list" className="space-y-2">
                                 {filtered.map((c, i) => {
@@ -315,7 +297,6 @@ export default function ContratosPage() {
                                 })}
                             </div>
                         )}
-
                         {!loading && filtered.length === 0 && (
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
@@ -348,7 +329,6 @@ export default function ContratosPage() {
                         )}
                     </motion.div>
                 )}
-
                 {activeTab === 'modelos' && (
                     <motion.div key="modelos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                         {Object.entries(CATEGORIAS_LABEL).map(([cat, label]) => {

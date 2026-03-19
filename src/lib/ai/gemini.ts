@@ -1,9 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { AIProvider } from '@/types/commercial-system';
-
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
-
 export interface GeminiImageRequest {
     tenant_id: string;
     prompt: string;
@@ -13,14 +11,12 @@ export interface GeminiImageRequest {
     related_entity_id?: string;
     requested_by?: string;
 }
-
 export interface GeminiImageResponse {
     image_url: string;
     image_data: string; // base64 data URI
     ai_request_id: string;
     cost_usd: number;
 }
-
 /**
  * Gera imagem usando Gemini 2.0 Flash Experimental (geração nativa de imagens)
  * Requer GOOGLE_AI_API_KEY configurada no .env
@@ -29,14 +25,11 @@ export async function generateImage(params: GeminiImageRequest): Promise<GeminiI
     const startTime = Date.now();
     const supabase = await createClient();
     const apiKey = process.env.GOOGLE_AI_API_KEY;
-
     if (!apiKey) throw new Error('GOOGLE_AI_API_KEY não configurada');
-
     let status: 'success' | 'error' | 'timeout' = 'success';
     let error_message: string | null = null;
     let image_data = '';
     let image_url = '';
-
     // Step 1: Otimizar prompt para geração de imagem
     let optimized_prompt = params.prompt;
     try {
@@ -47,13 +40,11 @@ export async function generateImage(params: GeminiImageRequest): Promise<GeminiI
     } catch {
         // Continua com prompt original
     }
-
     // Step 2: Gerar imagem com Gemini 2.0 Flash Experimental
     const fullPrompt = `${optimized_prompt}. 
 Real estate photography, premium quality, professional lighting, high resolution.
 Aspect ratio: ${params.aspect_ratio || '1:1'}.
 Style: ${params.style || 'architectural photography, clean, sophisticated, luxury real estate in Recife Brazil'}.`;
-
     try {
         const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
@@ -72,25 +63,20 @@ Style: ${params.style || 'architectural photography, clean, sophisticated, luxur
                 })
             }
         );
-
         if (!response.ok) {
             const errText = await response.text();
             throw new Error(`Gemini API ${response.status}: ${errText}`);
         }
-
         const data = await response.json();
         const parts: any[] = data.candidates?.[0]?.content?.parts || [];
-
         // Encontra a parte de imagem na resposta
         const imagePart = parts.find((p: any) => p.inlineData?.mimeType?.startsWith('image/'));
         if (!imagePart?.inlineData) {
             throw new Error('Gemini não retornou imagem — verifique se o modelo suporta image generation');
         }
-
         const { mimeType, data: b64 } = imagePart.inlineData;
         image_data = `data:${mimeType};base64,${b64}`;
         image_url = ''; // será preenchido após upload no storage
-
     } catch (err: any) {
         status = 'error';
         error_message = err.message;
@@ -101,12 +87,9 @@ Style: ${params.style || 'architectural photography, clean, sophisticated, luxur
         const [w, h] = dims[params.aspect_ratio || '1:1'] || [1080, 1080];
         image_url = `https://placehold.co/${w}x${h}/0d1117/486581?text=Gemini+Image+Gen&font=montserrat`;
         image_data = `data:image/jpeg;base64,/9j/4AAQSkZJRg==`; // minimal placeholder base64
-        console.error('Gemini image generation failed, using placeholder:', err.message);
     }
-
     const latency_ms = Date.now() - startTime;
     const cost_usd = status === 'success' ? 0.02 : 0;
-
     // Log no banco
     const { data: aiRequest } = await supabase
         .from('ai_requests')
@@ -129,7 +112,6 @@ Style: ${params.style || 'architectural photography, clean, sophisticated, luxur
         })
         .select('id')
         .single();
-
     return {
         image_url,
         image_data,
@@ -137,7 +119,6 @@ Style: ${params.style || 'architectural photography, clean, sophisticated, luxur
         cost_usd,
     };
 }
-
 /**
  * Upload de imagem gerada para Supabase Storage
  */
@@ -148,51 +129,39 @@ export async function uploadGeneratedImage(
     format: 'png' | 'jpg' = 'jpg'
 ): Promise<string> {
     const supabase = await createClient();
-
     const base64Data = image_data.replace(/^data:image\/\w+;base64,/, '');
     if (!base64Data || base64Data === '/9j/4AAQSkZJRg==') {
         return image_data.startsWith('http') ? image_data : '';
     }
-
     const buffer = Buffer.from(base64Data, 'base64');
     const filename = `${tenant_id}/content/${content_item_id}_${Date.now()}.${format}`;
-
     const { data, error } = await supabase.storage
         .from('media')
         .upload(filename, buffer, {
             contentType: `image/${format}`,
             upsert: false,
         });
-
     if (error) throw new Error(`Failed to upload image: ${error.message}`);
-
     const { data: publicUrlData } = supabase.storage.from('media').getPublicUrl(data.path);
     return publicUrlData.publicUrl;
 }
-
 export { optimizeImagePrompt };
-
 /**
  * Otimiza prompt de imagem usando Gemini Flash
  */
 async function optimizeImagePrompt(original_prompt: string, context?: string): Promise<string> {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-
     const result = await model.generateContent({
         contents: [{
             role: 'user',
             parts: [{
                 text: `Optimize this image generation prompt for high-quality real estate photography:
-
 "${original_prompt}"
-
 ${context ? `Context: ${context}` : ''}
-
 Return ONLY the optimized prompt in English. Include: composition, lighting, style, atmosphere, technical quality.
 Focus on luxury real estate in tropical coastal city (Recife, Brazil). Max 200 words.`,
             }],
         }],
     });
-
     return result.response.text().trim();
 }

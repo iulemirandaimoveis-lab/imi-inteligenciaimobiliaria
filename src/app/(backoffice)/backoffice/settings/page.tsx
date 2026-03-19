@@ -241,7 +241,7 @@ export default function SettingsPage() {
     whatsappApi: '',
   })
 
-  const set = (field: keyof SettingsData, value: any) => {
+  const set = (field: keyof SettingsData, value: string) => {
     setSettings(prev => ({ ...prev, [field]: value }))
     setSaveError('')
   }
@@ -260,8 +260,8 @@ export default function SettingsPage() {
         set('logoUrl', url)
         try { localStorage.setItem('imi-company-logo', url) } catch {}
       } else throw new Error('URL não retornada')
-    } catch (e: any) {
-      setSaveError('Erro no upload: ' + (e.message || ''))
+    } catch (e: unknown) {
+      setSaveError('Erro no upload: ' + (e instanceof Error ? e.message : ''))
     } finally {
       setUploadingLogo(false)
     }
@@ -294,8 +294,8 @@ export default function SettingsPage() {
       }
       setShowSuccess(true)
       setTimeout(() => setShowSuccess(false), 3000)
-    } catch (e: any) {
-      setSaveError(e.message || 'Erro ao salvar')
+    } catch (e: unknown) {
+      setSaveError(e instanceof Error ? e.message : 'Erro ao salvar')
     } finally {
       setIsSaving(false)
     }
@@ -711,7 +711,7 @@ export default function SettingsPage() {
                   <Label>{f.label}</Label>
                   <input
                     type={f.type}
-                    value={(settings as any)[f.key]}
+                    value={settings[f.key as keyof SettingsData]}
                     onChange={e => set(f.key as keyof SettingsData, e.target.value)}
                     style={inputBase}
                     onFocus={e => (e.currentTarget.style.borderColor = 'var(--border-focus)')}
@@ -762,7 +762,7 @@ export default function SettingsPage() {
                     <button
                       key={opt.id}
                       onClick={() => {
-                        set('theme', opt.id as any)
+                        set('theme', opt.id)
                         setTheme(opt.id)
                       }}
                       style={{
@@ -1017,7 +1017,7 @@ export default function SettingsPage() {
                     }} />
                     <input
                       type="text"
-                      value={(settings as any)[f.key]}
+                      value={settings[f.key as keyof SettingsData]}
                       onChange={e => set(f.key as keyof SettingsData, e.target.value)}
                       placeholder={f.placeholder}
                       style={{ ...inputBase, paddingLeft: 38, fontFamily: 'var(--font-mono)', fontSize: 13 }}

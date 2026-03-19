@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import {
     Building2,
@@ -17,39 +16,32 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRealtimeDevelopments, useRealtimeLeads } from '@/hooks/use-realtime-sync'
-
 const supabase = createClient()
-
 interface DashboardStats {
     // Empreendimentos
     totalDevelopments: number
     developmentsByCountry: Record<string, number>
     publishedDevelopments: number
     featuredDevelopments: number
-
     // Leads
     totalLeads: number
     leadsThisMonth: number
     leadsLastMonth: number
     avgScore: number
     leadsByStatus: Record<string, number>
-
     // Conversão
     conversionRate: number
     wonDeals: number
-
     // Financeiro
     pipelineValue: number
     avgTicket: number
     ticketByCountry: Record<string, number>
     projectedRevenue: number
-
     // Performance
     topSource: string
     topDevelopment: string
     topPerformingCountry: string
 }
-
 interface KPICardProps {
     title: string
     value: string | number
@@ -60,7 +52,6 @@ interface KPICardProps {
     color?: string
     bgColor?: string
 }
-
 function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color = 'text-imi-600', bgColor = 'bg-imi-50' }: KPICardProps) {
     return (
         <div className="rounded-2xl p-8 transition-all duration-300 group flex flex-col h-full"
@@ -83,7 +74,6 @@ function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color 
                     </div>
                 )}
             </div>
-
             <div className="flex-1">
                 <div className="text-sm font-bold uppercase tracking-[0.15em] mb-2 leading-none" style={{ color: 'var(--bo-text-muted)' }}>
                     {title}
@@ -92,7 +82,6 @@ function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color 
                     {value}
                 </div>
             </div>
-
             {(subtitle) && (
                 <div className="mt-8 pt-6 flex items-center justify-between" style={{ borderTop: '1px solid var(--bo-border)' }}>
                     <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--bo-text-muted)' }}>{subtitle}</span>
@@ -101,20 +90,16 @@ function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color 
         </div>
     )
 }
-
 export default function DashboardKPIs() {
     const [stats, setStats] = useState<DashboardStats | null>(null)
     const [loading, setLoading] = useState(true)
     const [alerts, setAlerts] = useState<Array<{ type: string; message: string; severity: 'high' | 'medium' | 'low' }>>([])
-
     // Real-time updates
     useRealtimeDevelopments(() => loadStats())
     useRealtimeLeads(() => loadStats())
-
     useEffect(() => {
         loadStats()
     }, [])
-
     const loadStats = async () => {
         setLoading(true)
         try {
@@ -122,57 +107,46 @@ export default function DashboardKPIs() {
             const { data: developments, error: devError } = await supabase
                 .from('developments')
                 .select('id, name, status, region, featured, leads_count, views_count')
-
             if (devError) throw devError
-
             // Buscar leads
             const { data: leads, error: leadsError } = await supabase
                 .from('leads')
                 .select('id, status, score, capital, source, created_at, development_id')
-
             if (leadsError) throw leadsError
-
             // Calcular estatísticas
             const now = new Date()
             const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1)
             const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
             const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0)
-
             // Empreendimentos por país
             const devsByCountry: Record<string, number> = {}
             developments?.forEach(dev => {
                 const country = getCountryFromRegion(dev.region)
                 devsByCountry[country] = (devsByCountry[country] || 0) + 1
             })
-
             // Leads por período
             const leadsThisMonth = leads?.filter(l => new Date(l.created_at) >= thisMonth).length || 0
             const leadsLastMonth = leads?.filter(l => {
                 const date = new Date(l.created_at)
                 return date >= lastMonth && date <= lastMonthEnd
             }).length || 0
-
             // Leads por status
             const leadsByStatus: Record<string, number> = {}
             leads?.forEach(lead => {
                 leadsByStatus[lead.status] = (leadsByStatus[lead.status] || 0) + 1
             })
-
             // Score médio
             const avgScore = leads && leads.length > 0
                 ? leads.reduce((sum, l) => sum + (l.score || 0), 0) / leads.length
                 : 0
-
             // Valor do pipeline
             const pipelineValue = leads
                 ?.filter(l => l.status !== 'lost' && l.status !== 'won')
                 .reduce((sum, l) => sum + (l.capital || 0), 0) || 0
-
             // Ticket médio
             const avgTicket = leads && leads.length > 0
                 ? leads.reduce((sum, l) => sum + (l.capital || 0), 0) / leads.length
                 : 0
-
             // Ticket por país (baseado em development vinculado)
             const ticketByCountry: Record<string, number> = {}
             leads?.forEach(lead => {
@@ -185,14 +159,12 @@ export default function DashboardKPIs() {
                     }
                 }
             })
-
             // Top source
             const sourceCount: Record<string, number> = {}
             leads?.forEach(lead => {
                 sourceCount[lead.source] = (sourceCount[lead.source] || 0) + 1
             })
             const topSource = Object.entries(sourceCount).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
-
             // Top development (mais leads)
             const devLeadsCount: Record<string, { name: string; count: number }> = {}
             leads?.forEach(lead => {
@@ -208,42 +180,33 @@ export default function DashboardKPIs() {
             })
             const topDev = Object.values(devLeadsCount).sort((a, b) => b.count - a.count)[0]
             const topDevelopment = topDev?.name || 'N/A'
-
             // País com melhor performance
             const topPerformingCountry = Object.entries(devsByCountry).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Brasil'
-
             // Taxa de conversão
             const wonCount = leadsByStatus['won'] || 0
             const conversionRate = leads && leads.length > 0 ? (wonCount / leads.length) * 100 : 0
-
             // Receita projetada (pipeline * taxa de conversão estimada)
             const projectedRevenue = pipelineValue * (conversionRate / 100)
-
             setStats({
                 totalDevelopments: developments?.length || 0,
                 developmentsByCountry: devsByCountry,
                 publishedDevelopments: developments?.filter(d => d.status === 'published').length || 0,
                 featuredDevelopments: developments?.filter(d => d.featured).length || 0,
-
                 totalLeads: leads?.length || 0,
                 leadsThisMonth,
                 leadsLastMonth,
                 avgScore: Math.round(avgScore),
                 leadsByStatus,
-
                 conversionRate: parseFloat(conversionRate.toFixed(1)),
                 wonDeals: wonCount,
-
                 pipelineValue,
                 avgTicket,
                 ticketByCountry,
                 projectedRevenue,
-
                 topSource,
                 topDevelopment,
                 topPerformingCountry
             })
-
             // Gerar alertas
             generateAlerts(developments || [], leads || [], {
                 leadsThisMonth,
@@ -251,17 +214,13 @@ export default function DashboardKPIs() {
                 avgScore,
                 conversionRate
             })
-
         } catch (error) {
-            console.error('Erro ao carregar estatísticas:', error)
         } finally {
             setLoading(false)
         }
     }
-
     const generateAlerts = (developments: any[], leads: any[], metrics: any) => {
         const newAlerts: typeof alerts = []
-
         // Alert: Leads em queda
         if (metrics.leadsThisMonth < metrics.leadsLastMonth * 0.8) {
             newAlerts.push({
@@ -270,7 +229,6 @@ export default function DashboardKPIs() {
                 severity: 'high'
             })
         }
-
         // Alert: Score médio baixo
         if (metrics.avgScore < 50) {
             newAlerts.push({
@@ -279,7 +237,6 @@ export default function DashboardKPIs() {
                 severity: 'medium'
             })
         }
-
         // Alert: Conversão baixa
         if (metrics.conversionRate < 5 && leads.length > 10) {
             newAlerts.push({
@@ -288,7 +245,6 @@ export default function DashboardKPIs() {
                 severity: 'high'
             })
         }
-
         // Alert: Empreendimentos sem leads
         const devsWithoutLeads = developments.filter(d =>
             d.status === 'published' && (!d.leads_count || d.leads_count === 0)
@@ -300,10 +256,8 @@ export default function DashboardKPIs() {
                 severity: 'medium'
             })
         }
-
         setAlerts(newAlerts)
     }
-
     const getCountryFromRegion = (region: string): string => {
         if (!region) return 'Brasil'
         const regionLower = region.toLowerCase()
@@ -311,7 +265,6 @@ export default function DashboardKPIs() {
         if (regionLower.includes('dubai') || regionLower.includes('uae') || regionLower.includes('emirados')) return 'Dubai'
         return 'Brasil'
     }
-
     const getTrend = (current: number, previous: number): { trend: 'up' | 'down' | 'neutral'; value: string } => {
         if (previous === 0) return { trend: 'neutral', value: '—' }
         const diff = ((current - previous) / previous) * 100
@@ -321,7 +274,6 @@ export default function DashboardKPIs() {
             value: `${Math.abs(Math.round(diff))}%`
         }
     }
-
     if (loading) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -335,11 +287,8 @@ export default function DashboardKPIs() {
             </div>
         )
     }
-
     if (!stats) return null
-
     const leadsTrend = getTrend(stats.leadsThisMonth, stats.leadsLastMonth)
-
     return (
         <div className="space-y-6">
             {/* Alertas Críticos */}
@@ -366,7 +315,6 @@ export default function DashboardKPIs() {
                     ))}
                 </div>
             )}
-
             {/* KPIs Principais */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <KPICard
@@ -377,7 +325,6 @@ export default function DashboardKPIs() {
                     color="text-blue-600"
                     bgColor="bg-blue-50"
                 />
-
                 <KPICard
                     title="Leads Ativos"
                     value={stats.totalLeads}
@@ -388,7 +335,6 @@ export default function DashboardKPIs() {
                     color="text-purple-600"
                     bgColor="bg-purple-50"
                 />
-
                 <KPICard
                     title="Taxa de Conversão"
                     value={`${stats.conversionRate}%`}
@@ -397,7 +343,6 @@ export default function DashboardKPIs() {
                     color="text-green-600"
                     bgColor="bg-green-50"
                 />
-
                 <KPICard
                     title="Score Médio"
                     value={stats.avgScore}
@@ -407,7 +352,6 @@ export default function DashboardKPIs() {
                     bgColor="bg-orange-50"
                 />
             </div>
-
             {/* Performance por Jurisdição - Structured & Precise */}
             <div className="rounded-3xl p-8 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
                 <div className="flex items-center justify-between mb-10">
@@ -420,13 +364,11 @@ export default function DashboardKPIs() {
                         Consolidado Global
                     </div>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {['Brasil', 'EUA', 'Dubai'].map((country) => {
                         const devCount = stats.developmentsByCountry[country] || 0
                         const ticket = stats.ticketByCountry[country] || 0
                         const avgTicketCountry = ticket > 0 ? ticket / (devCount || 1) : 0
-
                         return (
                             <div key={country} className="rounded-3xl p-6 transition-colors group"
                                 style={{ border: '1px solid var(--bo-border)' }}
@@ -444,7 +386,6 @@ export default function DashboardKPIs() {
                                         <div className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: 'var(--bo-text-muted)' }}>{devCount} Unidades</div>
                                     </div>
                                 </div>
-
                                 <div className="pt-6 space-y-4" style={{ borderTop: '1px solid var(--bo-border)' }}>
                                     <div className="flex justify-between items-end">
                                         <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-text-muted)' }}>Investimento Médio</span>
@@ -468,19 +409,16 @@ export default function DashboardKPIs() {
                     })}
                 </div>
             </div>
-
             {/* Financeiro - Depth & Distinction */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="bg-navy-950 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
-
                     <div className="flex items-center gap-4 mb-10">
                         <div className="w-12 h-12 rounded-xl bg-green-500/20 border border-green-500/30 flex items-center justify-center">
                             <DollarSign size={20} className="text-green-500" />
                         </div>
                         <div className="text-[11px] font-bold text-green-500/80 uppercase tracking-widest">Valor do Pipeline</div>
                     </div>
-
                     <div className="text-4xl font-display font-bold text-white tracking-tighter tabular-nums mb-3">
                         {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
@@ -490,17 +428,14 @@ export default function DashboardKPIs() {
                     </div>
                     <p className="text-xs text-imi-500 font-medium tracking-tight">Potencial total sob gestão estratégica</p>
                 </div>
-
                 <div className="bg-navy-950 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-imi-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
-
                     <div className="flex items-center gap-4 mb-10">
                         <div className="w-12 h-12 rounded-xl bg-imi-500/20 border border-imi-500/30 flex items-center justify-center">
                             <TrendingUp size={20} className="text-imi-500" />
                         </div>
                         <div className="text-[11px] font-bold text-imi-500/80 uppercase tracking-widest">Receita Projetada</div>
                     </div>
-
                     <div className="text-4xl font-display font-bold text-white tracking-tighter tabular-nums mb-3">
                         {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
@@ -510,7 +445,6 @@ export default function DashboardKPIs() {
                     </div>
                     <p className="text-xs text-imi-500 font-medium tracking-tight">Projeção conservadora baseada em conversão</p>
                 </div>
-
                 <div className="rounded-3xl p-8 shadow-sm group" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
                     <div className="flex items-center gap-4 mb-10">
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--bo-active-bg)', border: '1px solid var(--bo-border)' }}>
@@ -518,7 +452,6 @@ export default function DashboardKPIs() {
                         </div>
                         <div className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--accent-500)' }}>Ticket Médio Institucional</div>
                     </div>
-
                     <div className="text-4xl font-display font-bold tracking-tighter tabular-nums mb-3" style={{ color: 'var(--bo-text)' }}>
                         {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
@@ -529,16 +462,13 @@ export default function DashboardKPIs() {
                     <p className="text-xs text-imi-500 font-medium tracking-tight">Valor médio negociado globalmente</p>
                 </div>
             </div>
-
             {/* Strategic Insights - Refined & Clear */}
             <div className="bg-imi-950 rounded-[40px] p-10 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(26,26,46,0.1),transparent_70%)]" />
-
                 <h3 className="text-xl font-bold text-white mb-10 relative z-10 flex items-center gap-3">
                     <Sparkles size={20} className="text-imi-500" />
                     Insights de Inteligência
                 </h3>
-
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
                     <div className="space-y-2">
                         <div className="text-[10px] font-bold text-imi-500 uppercase tracking-[0.2em] mb-4 opacity-80">Principal Canal</div>

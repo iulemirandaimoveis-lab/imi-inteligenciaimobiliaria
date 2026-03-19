@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState, useEffect } from 'react' // Import React
 import {
     Plus,
@@ -13,9 +12,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-
 const supabase = createClient()
-
 interface Unit {
     id: string
     development_id: string
@@ -34,12 +31,10 @@ interface Unit {
     created_at: string
     updated_at: string
 }
-
 interface UnitsManagerProps {
     developmentId: string
     developmentName: string
 }
-
 export default function UnitsManager({ developmentId, developmentName }: UnitsManagerProps) {
     const [units, setUnits] = useState<Unit[]>([])
     const [loading, setLoading] = useState(true)
@@ -59,11 +54,9 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
         features: [],
         floor_plan_url: null
     })
-
     useEffect(() => {
         loadUnits()
     }, [developmentId])
-
     const loadUnits = async () => {
         setLoading(true)
         const { data, error } = await supabase
@@ -73,16 +66,13 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
             .order('tower', { ascending: true })
             .order('floor', { ascending: true })
             .order('unit_number', { ascending: true })
-
         if (error) {
             toast.error('Erro ao carregar unidades')
-            console.error(error)
         } else {
             setUnits(data || [])
         }
         setLoading(false)
     }
-
     const handleOpenModal = (unit?: Unit) => {
         if (unit) {
             setEditingUnit(unit)
@@ -106,7 +96,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
         }
         setShowModal(true)
     }
-
     const handleCloseModal = () => {
         setShowModal(false)
         setEditingUnit(null)
@@ -125,85 +114,65 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
             floor_plan_url: null
         })
     }
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
         if (!formData.unit_number || !formData.type) {
             toast.error('Preencha os campos obrigatórios')
             return
         }
-
         const dataToSave = {
             ...formData,
             development_id: developmentId,
             updated_at: new Date().toISOString()
         }
-
         if (editingUnit) {
             // Atualizar
             const { error } = await supabase
                 .from('development_units')
                 .update(dataToSave)
                 .eq('id', editingUnit.id)
-
             if (error) {
                 toast.error('Erro ao atualizar unidade')
-                console.error(error)
                 return
             }
-
             toast.success('Unidade atualizada!')
         } else {
             // Criar
             const { error } = await supabase
                 .from('development_units')
                 .insert(dataToSave)
-
             if (error) {
                 toast.error('Erro ao criar unidade')
-                console.error(error)
                 return
             }
-
             toast.success('Unidade criada!')
         }
-
         handleCloseModal()
         loadUnits()
     }
-
     const handleDelete = async (unitId: string) => {
         if (!confirm('Tem certeza que deseja deletar esta unidade?')) return
-
         const { error } = await supabase
             .from('development_units')
             .delete()
             .eq('id', unitId)
-
         if (error) {
             toast.error('Erro ao deletar unidade')
-            console.error(error)
             return
         }
-
         toast.success('Unidade deletada!')
         loadUnits()
     }
-
     const handleBulkCreate = async () => {
         const quantity = prompt('Quantas unidades deseja criar?')
         if (!quantity) return
-
         const count = parseInt(quantity)
         if (isNaN(count) || count < 1 || count > 100) {
             toast.error('Quantidade inválida (máximo 100)')
             return
         }
-
         const startFloor = parseInt(prompt('Andar inicial?') || '1')
         const tower = prompt('Torre? (deixe em branco se não houver)')
-
         const unitsToCreate = []
         for (let i = 0; i < count; i++) {
             // Exemplo simples de numeração: 101, 102, 103, 104, 201...
@@ -212,7 +181,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
             const currentFloor = startFloor + Math.floor(i / unitsPerFloor)
             const unitSuffix = (i % unitsPerFloor) + 1
             const unitNumber = `${currentFloor}0${unitSuffix}`
-
             unitsToCreate.push({
                 development_id: developmentId,
                 unit_number: unitNumber,
@@ -229,28 +197,22 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                 floor_plan_url: null
             })
         }
-
         const { error } = await supabase
             .from('development_units')
             .insert(unitsToCreate)
-
         if (error) {
             toast.error('Erro ao criar unidades')
-            console.error(error)
             return
         }
-
         toast.success(`${count} unidades criadas!`)
         loadUnits()
     }
-
     const stats = {
         total: units.length,
         available: units.filter(u => u.status === 'available').length,
         reserved: units.filter(u => u.status === 'reserved').length,
         sold: units.filter(u => u.status === 'sold').length
     }
-
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -261,7 +223,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
             </div>
         )
     }
-
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -286,7 +247,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                     </button>
                 </div>
             </div>
-
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-6 shadow-soft">
@@ -306,7 +266,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                     <div className="text-sm text-red-600 dark:text-red-500 mt-1">Vendidas</div>
                 </div>
             </div>
-
             {/* Lista de Unidades */}
             {units.length === 0 ? (
                 <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-16 text-center shadow-soft">
@@ -332,7 +291,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                         <div className="col-span-2">Status</div>
                         <div className="col-span-3">Ações</div>
                     </div>
-
                     {/* Table Body */}
                     <div className="divide-y divide-gray-100 dark:divide-white/5">
                         {units.map((unit) => (
@@ -350,7 +308,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                         </div>
                                         <div className="text-xs text-gray-500">Andar {unit.floor}</div>
                                     </div>
-
                                     {/* Tipo */}
                                     <div className="col-span-2">
                                         <div className="text-sm text-gray-700 dark:text-gray-300">{unit.type}</div>
@@ -358,12 +315,10 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                             {unit.bedrooms} Q • {unit.bathrooms} B • {unit.parking_spaces} V
                                         </div>
                                     </div>
-
                                     {/* Área */}
                                     <div className="col-span-1">
                                         <div className="text-sm font-medium text-gray-900 dark:text-white">{unit.area}m²</div>
                                     </div>
-
                                     {/* Preço */}
                                     <div className="col-span-2">
                                         <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -374,7 +329,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                             }).format(unit.price)}
                                         </div>
                                     </div>
-
                                     {/* Status */}
                                     <div className="col-span-2">
                                         {unit.status === 'available' && (
@@ -395,7 +349,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                             </div>
                                         )}
                                     </div>
-
                                     {/* Ações */}
                                     <div className="col-span-3 flex items-center gap-2">
                                         <button
@@ -414,7 +367,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                         </button>
                                     </div>
                                 </div>
-
                                 {/* Mobile Layout */}
                                 <div className="md:hidden space-y-3">
                                     <div className="flex items-start justify-between">
@@ -443,13 +395,11 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                             </div>
                                         )}
                                     </div>
-
                                     <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                                         <span>{unit.area}m²</span>
                                         <span>•</span>
                                         <span>{unit.bedrooms}Q {unit.bathrooms}B {unit.parking_spaces}V</span>
                                     </div>
-
                                     <div className="text-lg font-bold text-gray-900 dark:text-white">
                                         {new Intl.NumberFormat('pt-BR', {
                                             style: 'currency',
@@ -457,7 +407,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                             minimumFractionDigits: 0
                                         }).format(unit.price)}
                                     </div>
-
                                     <div className="flex gap-2 pt-2 border-t border-gray-100 dark:border-white/5">
                                         <button
                                             onClick={() => handleOpenModal(unit)}
@@ -480,7 +429,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                     </div>
                 </div>
             )}
-
             {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -496,7 +444,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                 <X size={20} />
                             </button>
                         </div>
-
                         <form onSubmit={handleSubmit} className="p-6 space-y-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -512,7 +459,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                         required
                                     />
                                 </div>
-
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                         Andar
@@ -526,7 +472,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                     />
                                 </div>
                             </div>
-
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
@@ -540,7 +485,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                         placeholder="A"
                                     />
                                 </div>
-
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                         Tipo *
@@ -555,7 +499,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                     />
                                 </div>
                             </div>
-
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
@@ -569,7 +512,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                         min="0"
                                     />
                                 </div>
-
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                         Banheiros
@@ -582,7 +524,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                         min="0"
                                     />
                                 </div>
-
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                         Vagas
@@ -596,7 +537,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                     />
                                 </div>
                             </div>
-
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
@@ -611,7 +551,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                         min="0"
                                     />
                                 </div>
-
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                         Preço (R$)
@@ -626,7 +565,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                     />
                                 </div>
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                     Status
@@ -641,7 +579,6 @@ export default function UnitsManager({ developmentId, developmentName }: UnitsMa
                                     <option value="sold">Vendida</option>
                                 </select>
                             </div>
-
                             <div className="flex gap-3 pt-6 border-t border-gray-100 dark:border-white/5">
                                 <div className="flex-1 flex gap-3">
                                     <button

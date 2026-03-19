@@ -2,61 +2,49 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { limiters, getClientIP } from '@/lib/rate-limit'
-
 function parseUA(ua: string) {
     let deviceType = 'desktop'
     if (/mobile|android|iphone|ipod/i.test(ua)) deviceType = 'mobile'
     else if (/tablet|ipad/i.test(ua)) deviceType = 'tablet'
-
     let browser = 'other'
     if (/chrome/i.test(ua) && !/edge|opr/i.test(ua)) browser = 'Chrome'
     else if (/safari/i.test(ua) && !/chrome/i.test(ua)) browser = 'Safari'
     else if (/firefox/i.test(ua)) browser = 'Firefox'
     else if (/edge/i.test(ua)) browser = 'Edge'
     else if (/opr|opera/i.test(ua)) browser = 'Opera'
-
     let os = 'other'
     if (/windows/i.test(ua)) os = 'Windows'
     else if (/mac os|macintosh/i.test(ua) && !/iphone|ipad/i.test(ua)) os = 'macOS'
     else if (/iphone|ipad|ipod/i.test(ua)) os = 'iOS'
     else if (/android/i.test(ua)) os = 'Android'
     else if (/linux/i.test(ua)) os = 'Linux'
-
     return { deviceType, browser, os }
 }
-
 function isBot(ua: string): boolean {
     return /bot|crawl|spider|slurp|bingpreview|mediapartners|facebookexternalhit|bytespider/i.test(ua)
 }
-
 export async function POST(request: NextRequest) {
     try {
         const ip = getClientIP(request)
-
         // Rate limiting: 30 pageviews / 10s per IP (generous for real users, blocks bots)
         const rl = await limiters.public(ip)
         if (!rl.success) {
             return NextResponse.json({ ok: true }) // Silently drop — never fail client-side tracking
         }
-
         const body = await request.json()
         const {
             sessionId, pageUrl, pagePath, referrer,
             utmSource, utmMedium, utmCampaign, utmContent,
             screenWidth, developmentSlug, duration, scrollDepth,
         } = body
-
         if (!sessionId || !pagePath) {
             return NextResponse.json({ error: 'sessionId and pagePath required' }, { status: 400 })
         }
-
         const ua = request.headers.get('user-agent') || ''
         if (isBot(ua)) {
             return NextResponse.json({ ok: true, bot: true })
         }
-
         const { deviceType, browser, os } = parseUA(ua)
-
         // 1. Record page view
         await supabaseAdmin.from('page_views').insert({
             session_id: sessionId,
@@ -76,14 +64,12 @@ export async function POST(request: NextRequest) {
             duration_seconds: duration ? Number(duration) : 0,
             scroll_depth: scrollDepth ? Number(scrollDepth) : 0,
         })
-
         // 2. Upsert session
         const { data: existingSession } = await supabaseAdmin
             .from('tracking_sessions')
             .select('id, page_count')
             .eq('session_id', sessionId)
             .single()
-
         if (existingSession) {
             await supabaseAdmin
                 .from('tracking_sessions')
@@ -111,7 +97,6 @@ export async function POST(request: NextRequest) {
                 is_bot: false,
             })
         }
-
         // 3. Hot lead detection — notify if visitor views 3+ property pages
         if (developmentSlug && existingSession) {
             const { count } = await supabaseAdmin
@@ -119,7 +104,6 @@ export async function POST(request: NextRequest) {
                 .select('*', { count: 'exact', head: true })
                 .eq('session_id', sessionId)
                 .not('development_slug', 'is', null)
-
             if (count && count >= 3) {
                 // Check if we already sent a notification for this session
                 const { data: existingNotif } = await supabaseAdmin
@@ -128,7 +112,6 @@ export async function POST(request: NextRequest) {
                     .eq('type', 'hot_lead')
                     .contains('data', { session_id: sessionId })
                     .limit(1)
-
                 if (!existingNotif || existingNotif.length === 0) {
                     // Resolve admin user (first registered user = admin)
                     const { data: adminProfile } = await supabaseAdmin.from('profiles').select('id').limit(1).single()
@@ -150,10 +133,8 @@ export async function POST(request: NextRequest) {
                 }
             }
         }
-
         return NextResponse.json({ ok: true })
     } catch (err: any) {
-        console.error('Pageview tracking error:', err)
         return NextResponse.json({ ok: true }) // Never fail client-side tracking
     }
 }

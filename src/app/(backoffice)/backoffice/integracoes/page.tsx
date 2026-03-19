@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -16,14 +15,12 @@ import type { Integracao, IntegracaoStatus } from '@/types/contratos'
 import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
 import { getStatusConfig } from '../../lib/constants'
-
 const ICONES: Record<string, any> = {
     Shield, PenTool, Mail, Server, MessageCircle, HardDrive,
     Database, Calendar, BarChart2, Facebook, Instagram,
     CreditCard, Zap, Globe, Settings, Linkedin, Music2,
     Sparkles,
 }
-
 const STATUS_ICONS_INT: Record<string, any> = {
     conectado: CheckCircle, desconectado: XCircle, erro: AlertCircle, pendente: Clock, nao_configurado: XCircle,
 }
@@ -33,7 +30,6 @@ const STATUS_CFG = Object.fromEntries(
         return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS_INT[key] || Clock, dot: cfg.dot }]
     })
 ) as Record<IntegracaoStatus, { label: string; text: string; bg: string; icon: any; dot: string }>
-
 function StatusBadge({ status }: { status: IntegracaoStatus }) {
     const cfg = STATUS_CFG[status]
     const Icon = cfg.icon
@@ -45,7 +41,6 @@ function StatusBadge({ status }: { status: IntegracaoStatus }) {
         </span>
     )
 }
-
 // ── Modal de configuração ─────────────────────────────────────
 function ConfigModal({
     integracao,
@@ -61,9 +56,7 @@ function ConfigModal({
     const [testing, setTesting] = useState(false)
     const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null)
     const [saving, setSaving] = useState(false)
-
     const Icon = ICONES[integracao.icon] || Settings
-
     const handleTest = async () => {
         setTesting(true)
         setTestResult(null)
@@ -81,7 +74,6 @@ function ConfigModal({
             setTesting(false)
         }
     }
-
     const handleSave = async () => {
         setSaving(true)
         try {
@@ -92,17 +84,14 @@ function ConfigModal({
             })
             if (!res.ok) {
                 const err = await res.json()
-                console.error('Integração save error:', err)
             }
         } catch (e) {
-            console.error('Integração save:', e)
         } finally {
             setSaving(false)
             onSave(integracao.id, values)
             onClose()
         }
     }
-
     return (
         <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -134,7 +123,6 @@ function ConfigModal({
                         <X size={14} style={{ color: T.textDim }} />
                     </button>
                 </div>
-
                 {/* Campos */}
                 <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
                     {integracao.id === 'supabase_storage' ? (
@@ -199,7 +187,6 @@ function ConfigModal({
                             )
                         })
                     )}
-
                     {/* Resultado do teste */}
                     {testResult && (
                         <div className="rounded-lg p-3 text-xs"
@@ -212,7 +199,6 @@ function ConfigModal({
                         </div>
                     )}
                 </div>
-
                 {/* Footer */}
                 <div className="flex gap-3 p-6" style={{ borderTop: `1px solid ${T.border}` }}>
                     {integracao.docs_url && (
@@ -222,7 +208,6 @@ function ConfigModal({
                             <ExternalLink size={12} /> Docs
                         </a>
                     )}
-
                     {integracao.campos_config.length > 0 && integracao.id !== 'supabase_storage' && (
                         <button onClick={handleTest} disabled={testing}
                             className="flex items-center gap-1.5 px-4 h-10 rounded-[6px] text-xs font-medium"
@@ -231,7 +216,6 @@ function ConfigModal({
                             Testar Conexão
                         </button>
                     )}
-
                     <button onClick={handleSave} disabled={saving}
                         className="flex-1 h-10 rounded-[6px] text-sm font-semibold text-white"
                         style={{ background: 'var(--btn-primary-bg)' }}>
@@ -242,14 +226,12 @@ function ConfigModal({
         </motion.div>
     )
 }
-
 // ── Página principal ──────────────────────────────────────────
 export default function IntegracoesPage() {
     const [categoriaAtiva, setCategoriaAtiva] = useState('todas')
     const [integracaoAberta, setIntegracaoAberta] = useState<Integracao | null>(null)
     const [statusOverride, setStatusOverride] = useState<Record<string, IntegracaoStatus>>({})
     const [loadingStatus, setLoadingStatus] = useState(true)
-
     // Fetch saved integration statuses from DB on mount
     useEffect(() => {
         async function loadSavedStatuses() {
@@ -269,28 +251,22 @@ export default function IntegracoesPage() {
                     }
                 }
             } catch (err) {
-                console.error('[integracoes] Failed to load saved statuses:', err)
             } finally {
                 setLoadingStatus(false)
             }
         }
         loadSavedStatuses()
     }, [])
-
     const handleSave = (id: string, _values: Record<string, string>) => {
         setStatusOverride(prev => ({ ...prev, [id]: 'conectado' }))
     }
-
     const getStatus = (int: Integracao): IntegracaoStatus =>
         statusOverride[int.id] || int.status
-
     const filtradas = categoriaAtiva === 'todas'
         ? INTEGRACOES
         : INTEGRACOES.filter(i => i.categoria === categoriaAtiva)
-
     const conectadas = INTEGRACOES.filter(i => getStatus(i) === 'conectado').length
     const configurar = INTEGRACOES.filter(i => getStatus(i) === 'nao_configurado').length
-
     if (loadingStatus) return (
         <div className="space-y-5 max-w-7xl mx-auto">
             <div><div className="skeleton h-6 w-48 mb-2" /><div className="skeleton h-4 w-72" /></div>
@@ -320,25 +296,21 @@ export default function IntegracoesPage() {
             </div>
         </div>
     )
-
     return (
         <>
             <div className="space-y-5 max-w-7xl mx-auto">
-
                 {/* Header */}
                 <PageIntelHeader
                     moduleLabel="INTEGRAÇÕES"
                     title="Integrações"
                     subtitle="Conecte todas as plataformas — assinatura, email, WhatsApp, storage, redes sociais e pagamento"
                 />
-
                 {/* Status geral */}
                 <div className="grid grid-cols-3 gap-2 sm:gap-3">
                     <KPICard label="Conectadas" value={String(conectadas)} icon={<CheckCircle size={16} />} accent="green" size="sm" />
                     <KPICard label="Disponíveis" value={String(INTEGRACOES.length)} icon={<Plug size={16} />} accent="blue" size="sm" />
                     <KPICard label="A configurar" value={String(configurar)} icon={<Settings size={16} />} accent="warm" size="sm" />
                 </div>
-
                 {/* Categorias */}
                 <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1">
                     {[{ key: 'todas', label: 'Todas' }, ...Object.entries(CATEGORIAS_INTEGRACAO).map(([k, v]) => ({ key: k, label: v.label }))].map(cat => (
@@ -353,14 +325,12 @@ export default function IntegracoesPage() {
                         </button>
                     ))}
                 </div>
-
                 {/* Grid de integrações */}
                 <div data-tour="integrations" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {filtradas.map((integ, i) => {
                         const status = getStatus(integ)
                         const Icon = ICONES[integ.icon] || Settings
                         const connected = status === 'conectado'
-
                         return (
                             <motion.div key={integ.id}
                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
@@ -370,7 +340,6 @@ export default function IntegracoesPage() {
                                     background: connected ? 'rgba(107,184,123,0.05)' : T.surface,
                                     border: `1px solid ${connected ? 'rgba(107,184,123,0.22)' : T.border}`,
                                 }}
-
                             >
                                 {/* Top */}
                                 <div className="flex items-start gap-3 mb-4">
@@ -385,7 +354,6 @@ export default function IntegracoesPage() {
                                         </p>
                                     </div>
                                 </div>
-
                                 {/* Meta */}
                                 <div className="flex items-center justify-between">
                                     <StatusBadge status={status} />
@@ -403,7 +371,6 @@ export default function IntegracoesPage() {
                                         )}
                                     </div>
                                 </div>
-
                                 {/* Action */}
                                 <button
                                     onClick={() => setIntegracaoAberta(integ)}
@@ -420,7 +387,6 @@ export default function IntegracoesPage() {
                         )
                     })}
                 </div>
-
                 {/* Info .env */}
                 <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: T.textDim }}>
@@ -460,7 +426,6 @@ export default function IntegracoesPage() {
                     </div>
                 </div>
             </div>
-
             {/* Modal de configuração */}
             <AnimatePresence>
                 {integracaoAberta && (

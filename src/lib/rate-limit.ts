@@ -125,7 +125,6 @@ export async function rateLimit(
             }
         } catch (err) {
             // Redis down → graceful fallback to in-memory
-            console.warn('[rate-limit] Upstash error, falling back to memory:', err)
             return memRateLimit(identifier, { limit, windowMs })
         }
     }

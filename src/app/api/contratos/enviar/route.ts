@@ -1,12 +1,9 @@
 // src/app/api/contratos/enviar/route.ts
 // ── Envio: Email (Resend/SMTP) + WhatsApp (Evolution/Z-API) ──
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 export const runtime = 'nodejs'
 export const maxDuration = 30
-
 // ── Templates multiidioma ──────────────────────────────────────
 const getTpl = (idioma: string) => ({
   pt: {
@@ -73,13 +70,11 @@ const getTpl = (idioma: string) => ({
   email: (n: string, t: string, url: string, by: string) => `<p>${t} por ${by}: <a href="${url}">${url}</a></p>`,
   whatsapp: (n: string, t: string, url: string, _by: string) => `${t}: ${url}`,
 } as any)
-
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
     const {
       canal,
       destinatario_email,
@@ -91,20 +86,16 @@ export async function POST(req: NextRequest) {
       idioma = 'pt',
       mensagem_personalizada,
     } = await req.json()
-
     if (!canal || !contrato_url) {
       return NextResponse.json({ error: 'canal e contrato_url são obrigatórios' }, { status: 400 })
     }
-
     const tpl = getTpl(idioma)
     const results: Record<string, any> = {}
-
     // ── EMAIL ───────────────────────────────────────────────
     if ((canal === 'email' || canal === 'ambos') && destinatario_email) {
       const resendKey = process.env.RESEND_API_KEY
       const fromEmail = process.env.RESEND_FROM_EMAIL || 'contratos@imi.imb.br'
       const fromName  = process.env.RESEND_FROM_NAME  || 'IMI Inteligência Imobiliária'
-
       if (!resendKey) {
         results.email = {
           success: false,
@@ -116,7 +107,6 @@ export async function POST(req: NextRequest) {
         const html = mensagem_personalizada
           ? `<p style="font-family:sans-serif;color:#8B93A7">${mensagem_personalizada}</p><br/>${tpl.email(contrato_numero, contrato_tipo, contrato_url, criado_por_nome)}`
           : tpl.email(contrato_numero, contrato_tipo, contrato_url, criado_por_nome)
-
         const emailRes = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
@@ -130,14 +120,12 @@ export async function POST(req: NextRequest) {
             html,
           }),
         })
-
         const emailData = await emailRes.json()
         results.email = emailRes.ok
           ? { success: true, id: emailData.id }
           : { success: false, error: emailData.message }
       }
     }
-
     // ── WHATSAPP ────────────────────────────────────────────
     if ((canal === 'whatsapp' || canal === 'ambos') && destinatario_telefone) {
       const evolutionUrl  = process.env.EVOLUTION_API_URL
@@ -146,13 +134,10 @@ export async function POST(req: NextRequest) {
       const zapiInstance  = process.env.ZAPI_INSTANCE
       const zapiToken     = process.env.ZAPI_TOKEN
       const zapiClientId  = process.env.ZAPI_CLIENT_ID
-
       const message = mensagem_personalizada
         ? `${mensagem_personalizada}\n\n${tpl.whatsapp(contrato_numero, contrato_tipo, contrato_url, criado_por_nome)}`
         : tpl.whatsapp(contrato_numero, contrato_tipo, contrato_url, criado_por_nome)
-
       const phone = destinatario_telefone.replace(/\D/g, '')
-
       if (evolutionUrl && evolutionKey) {
         // Evolution API
         const waRes = await fetch(`${evolutionUrl}/message/sendText/${evolutionInst}`, {
@@ -168,7 +153,6 @@ export async function POST(req: NextRequest) {
         results.whatsapp = waRes.ok
           ? { success: true, provider: 'evolution', id: waData.key?.id }
           : { success: false, error: 'Falha Evolution API' }
-
       } else if (zapiInstance && zapiToken && zapiClientId) {
         // Z-API fallback
         const zapiRes = await fetch(`https://api.z-api.io/instances/${zapiInstance}/token/${zapiToken}/send-text`, {
@@ -180,7 +164,6 @@ export async function POST(req: NextRequest) {
         results.whatsapp = zapiRes.ok
           ? { success: true, provider: 'zapi', id: zapiData.id }
           : { success: false, error: 'Falha Z-API' }
-
       } else {
         // Fallback: wa.me link
         const msgEncoded = encodeURIComponent(message)
@@ -192,11 +175,8 @@ export async function POST(req: NextRequest) {
         }
       }
     }
-
     return NextResponse.json({ success: true, results, timestamp: new Date().toISOString() })
-
   } catch (error: any) {
-    console.error('enviar-contrato error:', error)
     return NextResponse.json({ error: error.message || 'Erro ao enviar' }, { status: 500 })
   }
 }

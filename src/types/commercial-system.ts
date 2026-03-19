@@ -91,7 +91,7 @@ export interface PlaybookVersion {
     playbook_id: string;
     version: number;
     changes_summary: string | null;
-    snapshot: any;
+    snapshot: Record<string, unknown>;
     changed_by: string | null;
     created_at: string;
 }
@@ -129,7 +129,7 @@ export interface AIRequest {
     temperature: number | null;
     max_tokens: number | null;
     response: string | null;
-    raw_response: any;
+    raw_response: Record<string, unknown> | null;
     tokens_input: number | null;
     tokens_output: number | null;
     tokens_total: number | null;
@@ -333,7 +333,7 @@ export interface AdsAccount {
     access_token: string | null;
     refresh_token: string | null;
     token_expires_at: string | null;
-    account_metadata: any;
+    account_metadata: Record<string, unknown> | null;
     status: AdsAccountStatus;
     last_sync_at: string | null;
     sync_frequency_hours: number;
@@ -356,8 +356,8 @@ export interface AdsCampaign {
     currency: string;
     start_date: string | null;
     end_date: string | null;
-    campaign_metadata: any;
-    ai_analysis: any | null;
+    campaign_metadata: Record<string, unknown> | null;
+    ai_analysis: Record<string, unknown> | null;
     ai_recommendations: string[];
     last_analyzed_at: string | null;
     created_at: string;
@@ -387,7 +387,7 @@ export interface AdsMetrics {
     cpa: number;
     roas: number;
     revenue: number;
-    raw_data: any;
+    raw_data: Record<string, unknown> | null;
     created_at: string;
     updated_at: string;
 }
@@ -448,7 +448,7 @@ export interface AnalyzeCampaignRequest {
 export interface AnalyzeCampaignResponse {
     campaign_id: string;
     insights: AdsInsight[];
-    ai_analysis: any;
+    ai_analysis: Record<string, unknown>;
     recommendations: string[];
     ai_request_id: string;
     cost_usd: number;
@@ -507,8 +507,8 @@ export interface LeadInteraction {
     notes: string | null;
     outcome: string | null;
     duration_seconds: number | null;
-    attachments: any[];
-    metadata: any;
+    attachments: Record<string, unknown>[];
+    metadata: Record<string, unknown> | null;
     ai_sentiment: SentimentType | null;
     ai_summary: string | null;
     ai_extracted_intent: string | null;
@@ -542,7 +542,7 @@ export interface LeadScoringHistory {
     new_score: number;
     score_change: number | null;
     change_reason: string | null;
-    change_factors: any;
+    change_factors: Record<string, unknown> | null;
     ai_analysis: string | null;
     ai_request_id: string | null;
     created_at: string;
@@ -623,7 +623,7 @@ export interface SocialAccount {
     status: SocialAccountStatus;
     last_used_at: string | null;
     error_message: string | null;
-    account_metadata: any;
+    account_metadata: Record<string, unknown> | null;
     connected_by: string | null;
     created_at: string;
     updated_at: string;
@@ -653,7 +653,7 @@ export interface ContentPublication {
     shares: number;
     comments: number;
     likes: number;
-    publication_metadata: any;
+    publication_metadata: Record<string, unknown> | null;
     published_by: string | null;
     created_at: string;
     updated_at: string;
@@ -669,7 +669,7 @@ export interface PublishingQueueItem {
     status: QueueStatus;
     processing_started_at: string | null;
     processing_completed_at: string | null;
-    error_logs: any[];
+    error_logs: Record<string, unknown>[];
     created_at: string;
     updated_at: string;
 }

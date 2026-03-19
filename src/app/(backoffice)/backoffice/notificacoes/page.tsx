@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
@@ -9,7 +8,6 @@ import {
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
-
 interface Notification {
     id: string
     type: string
@@ -19,7 +17,6 @@ interface Notification {
     read_at: string | null
     created_at: string
 }
-
 const TYPE_ICONS: Record<string, any> = {
     lead: User, imovel: Home, financeiro: DollarSign, contrato: FileText,
     alerta: AlertCircle, info: Info, sucesso: CheckCircle,
@@ -32,7 +29,6 @@ const TYPE_COLORS: Record<string, string> = {
     system: 'var(--imi-gold-500)', development: 'var(--bo-success)', evaluation: 'var(--warning)', comment: 'var(--bo-text-muted)',
     update: 'var(--success)',
 }
-
 const timeAgo = (d: string) => {
     const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
     if (diff < 1) return 'agora'
@@ -40,12 +36,10 @@ const timeAgo = (d: string) => {
     if (diff < 1440) return `${Math.floor(diff / 60)}h`
     return `${Math.floor(diff / 1440)}d atrás`
 }
-
 export default function NotificacoesPage() {
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState<'all' | 'unread'>('all')
-
     const fetchNotifications = async () => {
         try {
             const res = await fetch('/api/notifications?limit=100')
@@ -54,12 +48,10 @@ export default function NotificacoesPage() {
                 // API returns { data: [...], pagination: {...} }
                 setNotifications(Array.isArray(json) ? json : (json.data || []))
             }
-        } catch (err) { console.error(err) }
+        } catch (err) { /* handled silently */ }
         finally { setLoading(false) }
     }
-
     useEffect(() => { fetchNotifications() }, [])
-
     const markRead = async (id: string) => {
         await fetch('/api/notifications', {
             method: 'PUT',
@@ -68,7 +60,6 @@ export default function NotificacoesPage() {
         })
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
     }
-
     const markAllRead = async () => {
         await fetch('/api/notifications', {
             method: 'PUT',
@@ -77,10 +68,8 @@ export default function NotificacoesPage() {
         })
         setNotifications(prev => prev.map(n => ({ ...n, read: true })))
     }
-
     const filtered = notifications.filter(n => filter === 'all' || !n.read)
     const unreadCount = notifications.filter(n => !n.read).length
-
     if (loading) {
         return (
             <div className="space-y-5 max-w-3xl mx-auto">
@@ -105,7 +94,6 @@ export default function NotificacoesPage() {
             </div>
         )
     }
-
     return (
         <div className="space-y-5 max-w-3xl mx-auto">
             {/* Header */}
@@ -128,7 +116,6 @@ export default function NotificacoesPage() {
                     }
                 />
             </motion.div>
-
             {/* Filter */}
             <div className="flex gap-2">
                 {(['all', 'unread'] as const).map(f => (
@@ -143,7 +130,6 @@ export default function NotificacoesPage() {
                     </button>
                 ))}
             </div>
-
             {/* List */}
             {filtered.length === 0 ? (
                 <motion.div

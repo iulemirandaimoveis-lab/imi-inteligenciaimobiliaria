@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -10,7 +9,6 @@ import {
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
-
 interface Analytics {
     kpis: {
         totalPageViews: number
@@ -31,36 +29,29 @@ interface Analytics {
     topProperties: Array<{ slug: string; views: number }>
     topCampaigns: Array<{ campaign: string; clicks: number; leads: number; conversionRate: number }>
 }
-
 function formatDuration(seconds: number): string {
     if (seconds < 60) return `${seconds}s`
     const m = Math.floor(seconds / 60)
     const s = seconds % 60
     return `${m}m ${s}s`
 }
-
 export default function TrackingDashboardPage() {
     const router = useRouter()
     const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d')
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState<Analytics | null>(null)
-
     useEffect(() => { load() }, [timeRange])
-
     const load = async () => {
         setLoading(true)
         try {
             const res = await fetch(`/api/tracking/analytics?time_range=${timeRange}`)
             if (res.ok) setData(await res.json())
         } catch (err) {
-            console.error('Analytics load error:', err)
         } finally {
             setLoading(false)
         }
     }
-
     const deviceIcons: Record<string, any> = { mobile: Smartphone, desktop: Monitor, tablet: Tablet }
-
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
             {/* Header */}
@@ -90,7 +81,6 @@ export default function TrackingDashboardPage() {
                     }
                 />
             </motion.div>
-
             {/* Time Range + Refresh */}
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
@@ -117,7 +107,6 @@ export default function TrackingDashboardPage() {
                     <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
                 </button>
             </div>
-
             {loading ? (
                 <div className="flex items-center justify-center h-64">
                     <Loader2 size={28} className="animate-spin" style={{ color: T.accent }} />
@@ -138,7 +127,6 @@ export default function TrackingDashboardPage() {
                         <KPICard label="Tempo Médio" value={formatDuration(data.kpis.avgDurationSeconds)} icon={<Timer size={14} />} accent="gold" size="sm" />
                         <KPICard label="Conversão" value={`${data.kpis.conversionRate}%`} icon={<Percent size={14} />} accent="gold" size="sm" />
                     </motion.div>
-
                     {/* ── KPIs Row 2 (secondary) ── */}
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}
@@ -162,7 +150,6 @@ export default function TrackingDashboardPage() {
                             </div>
                         ))}
                     </motion.div>
-
                     {/* ── Daily Timeline ── */}
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}
@@ -206,7 +193,6 @@ export default function TrackingDashboardPage() {
                             </div>
                         </div>
                     </motion.div>
-
                     {/* ── Source + Device Row ── */}
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}
@@ -246,7 +232,6 @@ export default function TrackingDashboardPage() {
                                 )}
                             </div>
                         </div>
-
                         {/* By Device */}
                         <div className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Sessões por Dispositivo</h3>
@@ -288,7 +273,6 @@ export default function TrackingDashboardPage() {
                             </div>
                         </div>
                     </motion.div>
-
                     {/* ── Top Pages + Properties Row ── */}
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}
@@ -326,7 +310,6 @@ export default function TrackingDashboardPage() {
                                 )}
                             </div>
                         </div>
-
                         {/* Top Properties */}
                         <div className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Imóveis Mais Visualizados</h3>
@@ -360,7 +343,6 @@ export default function TrackingDashboardPage() {
                             </div>
                         </div>
                     </motion.div>
-
                     {/* ── Top Campaigns ── */}
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}

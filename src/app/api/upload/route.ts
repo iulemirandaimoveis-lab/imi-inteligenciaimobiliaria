@@ -2,13 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { nanoid } from 'nanoid'
-
 export const runtime = 'nodejs';
-
 // Use admin client when service role key is available, otherwise fall back to
 // the authenticated server client (user must be logged in either way).
 const hasServiceKey = !!(process.env.SUPABASE_SERVICE_ROLE_KEY)
-
 /**
  * POST /api/upload
  * Upload de imagens para Supabase Storage
@@ -24,20 +21,17 @@ export async function POST(request: NextRequest) {
         if (authError || !user) {
             return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 })
         }
-
         const formData = await request.formData()
         const file = formData.get('file') as File
         const { searchParams } = new URL(request.url)
         const folder = searchParams.get('folder') || 'properties'
         const bucketParam = searchParams.get('bucket')
-
         if (!file) {
             return NextResponse.json(
                 { success: false, error: 'Nenhum arquivo enviado' },
                 { status: 400 }
             )
         }
-
         // Valida tipo de arquivo
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4', 'video/quicktime']
         if (!allowedTypes.includes(file.type)) {
@@ -46,7 +40,6 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             )
         }
-
         // Valida tamanho (máx 50MB)
         const maxSize = 50 * 1024 * 1024 // 50MB
         if (file.size > maxSize) {
@@ -55,7 +48,6 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             )
         }
-
         // Gera nome único
         const ext = file.name.split('.').pop()
         const timestamp = Date.now()
@@ -63,14 +55,11 @@ export async function POST(request: NextRequest) {
         const isDedicatedBucket = ['developers', 'avatars', 'media'].includes(folder)
         const bucket = bucketParam || (isDedicatedBucket ? folder : 'media')
         const filePath = (isDedicatedBucket && !bucketParam) ? `${timestamp}-${nanoid(8)}.${ext}` : `${folder}/${nanoid(16)}.${ext}`
-
         // Converte File para ArrayBuffer
         const arrayBuffer = await file.arrayBuffer()
         const buffer = Buffer.from(arrayBuffer)
-
         // Seleciona cliente de storage: admin (bypassa RLS) ou autenticado (usa RLS)
         const storageClient = hasServiceKey ? supabaseAdmin : supabase
-
         // Upload para Supabase
         const { data, error } = await storageClient.storage
             .from(bucket)
@@ -79,20 +68,16 @@ export async function POST(request: NextRequest) {
                 cacheControl: '3600',
                 upsert: false
             })
-
         if (error) {
-            console.error('Supabase upload error:', error)
             return NextResponse.json(
                 { success: false, error: 'Erro ao fazer upload: ' + error.message },
                 { status: 500 }
             )
         }
-
         // Gera URL pública
         const { data: publicData } = storageClient.storage
             .from(bucket)
             .getPublicUrl(filePath)
-
         return NextResponse.json({
             success: true,
             data: {
@@ -103,14 +88,12 @@ export async function POST(request: NextRequest) {
             }
         })
     } catch (error) {
-        console.error('Error uploading file:', error)
         return NextResponse.json(
             { success: false, error: 'Erro ao processar upload' },
             { status: 500 }
         )
     }
 }
-
 /**
  * DELETE /api/upload
  * Deleta uma imagem do Supabase Storage
@@ -124,36 +107,29 @@ export async function DELETE(request: NextRequest) {
         if (authError || !user) {
             return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 })
         }
-
         const body = await request.json()
         const { fileName } = body
-
         if (!fileName) {
             return NextResponse.json(
                 { success: false, error: 'fileName é obrigatório' },
                 { status: 400 }
             )
         }
-
         const storageClient = hasServiceKey ? supabaseAdmin : supabase
         const { error } = await storageClient.storage
             .from('media')
             .remove([fileName])
-
         if (error) {
-            console.error('Supabase delete error:', error)
             return NextResponse.json(
                 { success: false, error: 'Erro ao deletar arquivo' },
                 { status: 500 }
             )
         }
-
         return NextResponse.json({
             success: true,
             message: 'Arquivo deletado com sucesso'
         })
     } catch (error) {
-        console.error('Error deleting file:', error)
         return NextResponse.json(
             { success: false, error: 'Erro ao processar deleção' },
             { status: 500 }

@@ -1,6 +1,5 @@
 'use client'
 export const dynamic = 'force-dynamic'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -9,7 +8,6 @@ import {
     Building2, Briefcase, CheckCircle2, ArrowRight, ArrowLeft,
     Loader2, Home, TrendingUp, Globe, Star,
 } from 'lucide-react'
-
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface OnboardingData {
     companyName: string
@@ -20,7 +18,6 @@ interface OnboardingData {
     state: string
     plan: string
 }
-
 const NICHES = [
     { value: 'imoveis_premium', label: 'Imóveis Premium', icon: Star, desc: 'Alto padrão e luxo' },
     { value: 'imoveis_lancamentos', label: 'Lançamentos', icon: Building2, desc: 'Pré-venda e lançamentos' },
@@ -29,16 +26,13 @@ const NICHES = [
     { value: 'imoveis_comerciais', label: 'Comercial', icon: Home, desc: 'Salas e galpões' },
     { value: 'investimento_internacional', label: 'Internacional', icon: Globe, desc: 'Dubai, EUA e Europa' },
 ]
-
 const STATES = ['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO']
-
 // ─── Steps ───────────────────────────────────────────────────────────────────
 const STEPS = [
     { id: 1, title: 'Sua Empresa', subtitle: 'Dados básicos da organização' },
     { id: 2, title: 'Segmento', subtitle: 'Como você atua no mercado' },
     { id: 3, title: 'Tudo pronto!', subtitle: 'Bem-vindo à plataforma' },
 ]
-
 // ─── Input style ─────────────────────────────────────────────────────────────
 const inp: React.CSSProperties = {
     width: '100%', height: '48px', padding: '0 14px',
@@ -49,7 +43,6 @@ const inp: React.CSSProperties = {
     outline: 'none', boxSizing: 'border-box',
     transition: 'border-color 0.18s',
 }
-
 export default function OnboardingPage() {
     const [step, setStep] = useState(1)
     const [saving, setSaving] = useState(false)
@@ -59,22 +52,17 @@ export default function OnboardingPage() {
     })
     const router = useRouter()
     const supabase = createClient()
-
     const set = (k: keyof OnboardingData, v: string) =>
         setData(prev => ({ ...prev, [k]: v }))
-
     const step1Valid = data.companyName.trim().length >= 2 && data.ownerName.trim().length >= 2
     const step2Valid = data.niche !== '' && data.city.trim().length >= 2
-
     const handleFinish = async () => {
         setSaving(true)
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error('Not authenticated')
-
             // Trial period: 14 days from onboarding
             const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
-
             // Upsert tenant record
             const { data: tenant, error: tenantErr } = await supabase
                 .from('tenants')
@@ -92,9 +80,7 @@ export default function OnboardingPage() {
                 }, { onConflict: 'created_by' })
                 .select('id')
                 .single()
-
             if (tenantErr) throw tenantErr
-
             // Link user to tenant as owner
             if (tenant?.id) {
                 await supabase
@@ -107,7 +93,6 @@ export default function OnboardingPage() {
                         phone: data.phone || null,
                     }, { onConflict: 'tenant_id,user_id' })
             }
-
             // Update user metadata with onboarding complete flag + trial info
             await supabase.auth.updateUser({
                 data: {
@@ -118,30 +103,25 @@ export default function OnboardingPage() {
                     tenant_id: tenant?.id || null,
                 },
             })
-
             setStep(3)
         } catch (err) {
-            console.error('[onboarding]', err)
             // Still proceed — non-critical
             setStep(3)
         } finally {
             setSaving(false)
         }
     }
-
     const labelStyle: React.CSSProperties = {
         fontSize: '11px', fontWeight: 700, textTransform: 'uppercase',
         letterSpacing: '0.1em', color: 'var(--text-secondary)',
         display: 'block', marginBottom: '6px',
     }
-
     return (
         <div style={{
             minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: 'var(--bg-surface)', padding: '24px',
         }}>
             <div style={{ width: '100%', maxWidth: '520px' }}>
-
                 {/* Progress bar */}
                 <div style={{ marginBottom: '32px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
@@ -169,7 +149,6 @@ export default function OnboardingPage() {
                         ))}
                     </div>
                 </div>
-
                 {/* Card */}
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
@@ -207,7 +186,6 @@ export default function OnboardingPage() {
                             </div>
                         </div>
                     </div>
-
                     {/* Content */}
                     <AnimatePresence mode="wait">
                         {/* STEP 1: Company info */}
@@ -249,7 +227,6 @@ export default function OnboardingPage() {
                                 </div>
                             </motion.div>
                         )}
-
                         {/* STEP 2: Niche + location */}
                         {step === 2 && (
                             <motion.div
@@ -280,7 +257,6 @@ export default function OnboardingPage() {
                                         ))}
                                     </div>
                                 </div>
-
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px' }}>
                                     <div>
                                         <label style={labelStyle}>Cidade *</label>
@@ -306,7 +282,6 @@ export default function OnboardingPage() {
                                 </div>
                             </motion.div>
                         )}
-
                         {/* STEP 3: Done */}
                         {step === 3 && (
                             <motion.div
@@ -352,7 +327,6 @@ export default function OnboardingPage() {
                             </motion.div>
                         )}
                     </AnimatePresence>
-
                     {/* Footer actions */}
                     <div style={{
                         padding: '16px 28px', borderTop: '1px solid var(--border-default)',
@@ -377,7 +351,6 @@ export default function OnboardingPage() {
                                 ) : (
                                     <div />
                                 )}
-
                                 <button
                                     onClick={step === 2 ? handleFinish : () => setStep(s => s + 1)}
                                     disabled={(step === 1 && !step1Valid) || (step === 2 && !step2Valid) || saving}
@@ -419,7 +392,6 @@ export default function OnboardingPage() {
                         )}
                     </div>
                 </motion.div>
-
                 <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '11px', color: 'var(--text-secondary)' }}>
                     Você pode editar essas informações depois em <strong>Organização</strong>
                 </p>

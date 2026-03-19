@@ -1,8 +1,6 @@
 export const dynamic = 'force-dynamic'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 // Cron job: processar follow-ups pendentes e atualizar canais
 // Schedule: */15 * * * * (a cada 15 minutos)
 export async function GET(request: NextRequest) {
@@ -11,10 +9,8 @@ export async function GET(request: NextRequest) {
         if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-
         const supabase = await createClient()
         const now = new Date().toISOString()
-
         // Busca follow-ups pendentes com scheduled_at vencido
         const { data: followUps, error } = await supabase
             .from('lead_follow_ups')
@@ -22,9 +18,7 @@ export async function GET(request: NextRequest) {
             .eq('status', 'pending')
             .lte('scheduled_at', now)
             .limit(100)
-
         if (error) throw error
-
         if (!followUps || followUps.length === 0) {
             return NextResponse.json({
                 success: true,
@@ -32,10 +26,8 @@ export async function GET(request: NextRequest) {
                 message: 'Nenhum follow-up pendente',
             })
         }
-
         let processed = 0
         const errors: string[] = []
-
         for (const followUp of followUps) {
             try {
                 // Marcar follow-up como completed
@@ -43,9 +35,7 @@ export async function GET(request: NextRequest) {
                     .from('lead_follow_ups')
                     .update({ status: 'completed', updated_at: now })
                     .eq('id', followUp.id)
-
                 if (updateError) throw updateError
-
                 // Atualizar last_message_at no canal associado ao lead
                 if (followUp.lead_id) {
                     await supabase
@@ -53,7 +43,6 @@ export async function GET(request: NextRequest) {
                         .update({ last_message_at: now })
                         .eq('lead_id', followUp.lead_id)
                 }
-
                 processed++
             } catch (err) {
                 errors.push(
@@ -61,7 +50,6 @@ export async function GET(request: NextRequest) {
                 )
             }
         }
-
         return NextResponse.json({
             success: true,
             processed,
@@ -69,7 +57,6 @@ export async function GET(request: NextRequest) {
             errors: errors.length > 0 ? errors : undefined,
         })
     } catch (error) {
-        console.error('Error in cron/follow-ups:', error)
         return NextResponse.json(
             { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }

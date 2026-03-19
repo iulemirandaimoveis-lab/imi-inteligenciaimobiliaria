@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import {
     BarChart,
@@ -20,9 +19,7 @@ import {
 } from 'recharts'
 import { createClient } from '@/lib/supabase/client'
 import Badge from '@/components/ui/Badge'
-
 const supabase = createClient()
-
 const COLORS = {
     primary: '#486581',
     blue: '#486581',
@@ -33,7 +30,6 @@ const COLORS = {
     pink: '#EC4899',
     yellow: '#F59E0B'
 }
-
 const STAGE_COLORS = {
     new: COLORS.blue,
     contacted: COLORS.yellow,
@@ -43,7 +39,6 @@ const STAGE_COLORS = {
     won: COLORS.green,
     lost: COLORS.red
 }
-
 export default function DashboardCharts() {
     const [funnelData, setFunnelData] = useState<any[]>([])
     const [sourceData, setSourceData] = useState<any[]>([])
@@ -51,27 +46,21 @@ export default function DashboardCharts() {
     const [timelineData, setTimelineData] = useState<any[]>([])
     const [scoreData, setScoreData] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
-
     useEffect(() => {
         loadChartData()
     }, [])
-
     const loadChartData = async () => {
         setLoading(true)
-
         try {
             // Buscar leads
             const { data: leads } = await supabase
                 .from('leads')
                 .select('id, status, source, score, capital, created_at, development_id')
-
             // Buscar developments
             const { data: developments } = await supabase
                 .from('developments')
                 .select('id, name, region, status')
-
             if (!leads || !developments) return
-
             // 1. FUNIL DE CONVERSÃO
             const funnelStages = [
                 { name: 'Novo', key: 'new', color: STAGE_COLORS.new },
@@ -82,40 +71,32 @@ export default function DashboardCharts() {
                 { name: 'Ganho', key: 'won', color: STAGE_COLORS.won },
                 { name: 'Perdido', key: 'lost', color: STAGE_COLORS.lost }
             ]
-
             const funnel = funnelStages.map(stage => ({
                 name: stage.name,
                 count: leads.filter(l => l.status === stage.key).length,
                 color: stage.color
             }))
-
             setFunnelData(funnel)
-
             // 2. ORIGEM DOS LEADS
             const sourceCounts: Record<string, number> = {}
             leads.forEach(lead => {
                 const source = lead.source || 'Desconhecido'
                 sourceCounts[source] = (sourceCounts[source] || 0) + 1
             })
-
             const sources = Object.entries(sourceCounts)
                 .map(([name, value]) => ({ name: formatSourceName(name), value }))
                 .sort((a, b) => b.value - a.value)
-
             setSourceData(sources)
-
             // 3. PERFORMANCE POR PAÍS
             const countryStats: Record<string, { leads: number; value: number; developments: number }> = {
                 'Brasil': { leads: 0, value: 0, developments: 0 },
                 'EUA': { leads: 0, value: 0, developments: 0 },
                 'Dubai': { leads: 0, value: 0, developments: 0 }
             }
-
             developments.forEach(dev => {
                 const country = getCountryFromRegion(dev.region)
                 countryStats[country].developments++
             })
-
             leads.forEach(lead => {
                 if (lead.development_id) {
                     const dev = developments.find(d => d.id === lead.development_id)
@@ -126,7 +107,6 @@ export default function DashboardCharts() {
                     }
                 }
             })
-
             const countries = Object.entries(countryStats).map(([name, stats]) => ({
                 name,
                 leads: stats.leads,
@@ -134,25 +114,20 @@ export default function DashboardCharts() {
                 value: stats.value / 1000000, // Converter para milhões
                 icon: name === 'Brasil' ? '🇧🇷' : name === 'EUA' ? '🇺🇸' : '🇦🇪'
             }))
-
             setCountryData(countries)
-
             // 4. TIMELINE DE LEADS (últimos 6 meses)
             const months = []
             const now = new Date()
             for (let i = 5; i >= 0; i--) {
                 const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
                 const monthStr = date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })
-
                 const monthLeads = leads.filter(l => {
                     const leadDate = new Date(l.created_at)
                     return leadDate.getMonth() === date.getMonth() &&
                         leadDate.getFullYear() === date.getFullYear()
                 })
-
                 const wonLeads = monthLeads.filter(l => l.status === 'won')
                 const totalValue = wonLeads.reduce((sum, l) => sum + (l.capital || 0), 0)
-
                 months.push({
                     month: monthStr,
                     leads: monthLeads.length,
@@ -160,9 +135,7 @@ export default function DashboardCharts() {
                     valor: totalValue / 1000 // Converter para milhares
                 })
             }
-
             setTimelineData(months)
-
             // 5. DISTRIBUIÇÃO DE SCORE
             const scoreRanges = [
                 { range: '0-20', min: 0, max: 20, count: 0 },
@@ -171,22 +144,17 @@ export default function DashboardCharts() {
                 { range: '61-80', min: 61, max: 80, count: 0 },
                 { range: '81-100', min: 81, max: 100, count: 0 }
             ]
-
             leads.forEach(lead => {
                 const score = lead.score || 0
                 const range = scoreRanges.find(r => score >= r.min && score <= r.max)
                 if (range) range.count++
             })
-
             setScoreData(scoreRanges.map(r => ({ name: r.range, value: r.count })))
-
         } catch (error) {
-            console.error('Erro ao carregar dados dos gráficos:', error)
         } finally {
             setLoading(false)
         }
     }
-
     const getCountryFromRegion = (region: string): string => {
         if (!region) return 'Brasil'
         const regionLower = region.toLowerCase()
@@ -194,7 +162,6 @@ export default function DashboardCharts() {
         if (regionLower.includes('dubai') || regionLower.includes('uae')) return 'Dubai'
         return 'Brasil'
     }
-
     const formatSourceName = (source: string): string => {
         const names: Record<string, string> = {
             website: 'Website',
@@ -208,7 +175,6 @@ export default function DashboardCharts() {
         }
         return names[source] || source
     }
-
     if (loading) {
         return (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -221,7 +187,6 @@ export default function DashboardCharts() {
             </div>
         )
     }
-
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
@@ -238,7 +203,6 @@ export default function DashboardCharts() {
         }
         return null
     }
-
     return (
         <div className="space-y-8">
             {/* Row 1: Funil + Origem */}
@@ -273,7 +237,6 @@ export default function DashboardCharts() {
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
-
                 {/* Origem dos Leads */}
                 <div className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
                     <div className="flex items-center justify-between mb-10">
@@ -312,7 +275,6 @@ export default function DashboardCharts() {
                     </ResponsiveContainer>
                 </div>
             </div>
-
             {/* Row 2: Performance por País */}
             <div className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
                 <div className="flex items-center justify-between mb-10">
@@ -346,7 +308,6 @@ export default function DashboardCharts() {
                     </BarChart>
                 </ResponsiveContainer>
             </div>
-
             {/* Row 3: Timeline + Score */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Timeline de Performance */}
@@ -406,7 +367,6 @@ export default function DashboardCharts() {
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
-
                 {/* Distribuição de Score */}
                 <div className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
                     <div className="flex items-center justify-between mb-10">

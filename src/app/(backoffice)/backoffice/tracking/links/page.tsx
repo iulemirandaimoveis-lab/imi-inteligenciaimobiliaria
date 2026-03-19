@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -10,9 +9,7 @@ import QRCode from 'qrcode'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-
 export const dynamic = 'force-dynamic'
-
 export default function TrackingLinksPage() {
     const router = useRouter()
     const [links, setLinks] = useState<any[]>([])
@@ -22,7 +19,6 @@ export default function TrackingLinksPage() {
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
     const [secondsAgo, setSecondsAgo] = useState(0)
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
     const loadLinks = useCallback(async (silent = false) => {
         if (!silent) setLoading(true)
         try {
@@ -34,15 +30,12 @@ export default function TrackingLinksPage() {
                 setSecondsAgo(0)
             }
         } catch (err) {
-            console.error('Error loading links:', err)
         } finally {
             if (!silent) setLoading(false)
         }
     }, [])
-
     // Initial load
     useEffect(() => { loadLinks() }, [loadLinks])
-
     // Auto-refresh every 30s when page is visible
     useEffect(() => {
         const refreshInterval = setInterval(() => {
@@ -52,7 +45,6 @@ export default function TrackingLinksPage() {
         }, 30_000)
         return () => clearInterval(refreshInterval)
     }, [loadLinks])
-
     // Update "seconds ago" counter every second
     useEffect(() => {
         intervalRef.current = setInterval(() => {
@@ -62,14 +54,12 @@ export default function TrackingLinksPage() {
         }, 1000)
         return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
     }, [lastUpdated])
-
     const handleCopy = (text: string, id: string) => {
         navigator.clipboard.writeText(text)
         setCopiedId(id)
         toast.success('Link copiado!')
         setTimeout(() => setCopiedId(null), 2000)
     }
-
     const handleDelete = async (id: string, campaignName: string) => {
         toast.warning(`Excluir "${campaignName || 'este link'}"?`, {
             action: {
@@ -91,7 +81,6 @@ export default function TrackingLinksPage() {
             duration: 6000,
         })
     }
-
     const handleDownloadQR = async (url: string, name: string) => {
         try {
             const qr = await QRCode.toDataURL(url, {
@@ -111,12 +100,10 @@ export default function TrackingLinksPage() {
             toast.error('Erro ao gerar QR Code')
         }
     }
-
     const filtered = links.filter(l =>
         !search || (l.campaign_name || '').toLowerCase().includes(search.toLowerCase()) ||
         (l.short_code || '').toLowerCase().includes(search.toLowerCase())
     )
-
     return (
         <div className="space-y-6 max-w-6xl mx-auto">
             {/* Header */}
@@ -144,7 +131,6 @@ export default function TrackingLinksPage() {
                     </div>
                 }
             />
-
             {/* Search + Refresh */}
             <div className="flex gap-2">
                 <div className="relative flex-1">
@@ -171,7 +157,6 @@ export default function TrackingLinksPage() {
                     <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
                 </button>
             </div>
-
             {/* Links List */}
             {loading ? (
                 <div className="flex items-center justify-center h-48">
@@ -231,14 +216,12 @@ export default function TrackingLinksPage() {
                                         </span>
                                     </div>
                                 </div>
-
                                 {/* Stats */}
                                 <div className="flex items-center gap-4">
                                     <div className="text-center">
                                         <p className="text-lg font-bold" style={{ color: T.text }}>{link.clicks || 0}</p>
                                         <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: T.textMuted }}>Cliques</p>
                                     </div>
-
                                     {/* Actions */}
                                     <div className="flex items-center gap-1">
                                         <button

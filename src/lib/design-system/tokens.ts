@@ -1,3 +1,9 @@
+/**
+ * @deprecated Use Token T from '@/app/(backoffice)/lib/theme' instead.
+ * This file uses static px values that don't respond to dark/light mode.
+ * Will be removed in a future cleanup.
+ */
+
 // lib/design-system/tokens.ts
 // Sistema de Design IMI - Padrão Institucional Premium
 // Aplique estes tokens em todos os componentes

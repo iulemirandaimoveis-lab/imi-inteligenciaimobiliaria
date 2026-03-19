@@ -1,55 +1,44 @@
 'use client';
-
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { X, Upload, Loader2, Image as ImageIcon } from 'lucide-react';
 import { uploadMultipleFiles, deleteFile } from '@/lib/supabase-storage';
 import Image from 'next/image';
-
 interface PropertyImageUploadProps {
     propertyId?: string;
     existingImages?: string[];
     onChange: (images: string[]) => void;
     maxImages?: number;
 }
-
 export function PropertyImageUpload({
     propertyId = 'temp',
     existingImages = [],
     onChange,
     maxImages = 10
 }: PropertyImageUploadProps) {
-
     const [images, setImages] = useState<string[]>(existingImages);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         if (images.length + acceptedFiles.length > maxImages) {
             setError(`Máximo de ${maxImages} imagens permitido`);
             return;
         }
-
         setUploading(true);
         setError(null);
-
         try {
             // Upload para Supabase Storage
             const results = await uploadMultipleFiles(acceptedFiles, 'media', `properties/${propertyId}`);
             const uploadedUrls = results.map(r => r.url);
-
             const newImages = [...images, ...uploadedUrls];
             setImages(newImages);
             onChange(newImages);
-
         } catch (err: any) {
             setError(err.message || 'Erro ao fazer upload');
-            console.error('Upload error:', err);
         } finally {
             setUploading(false);
         }
     }, [images, propertyId, maxImages, onChange]);
-
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: {
@@ -58,26 +47,21 @@ export function PropertyImageUpload({
         maxSize: 5242880, // 5MB
         disabled: uploading || images.length >= maxImages
     });
-
     const handleRemove = async (url: string, index: number) => {
         try {
             // Deletar do Supabase
             const path = url.split('/media/')[1];
             if (path) await deleteFile(path, 'media');
-
             // Atualizar estado
             const newImages = images.filter((_, i) => i !== index);
             setImages(newImages);
             onChange(newImages);
-
         } catch (err: any) {
             setError(err.message || 'Erro ao deletar imagem');
         }
     };
-
     return (
         <div className="space-y-4">
-
             {/* Área de upload */}
             <div
                 {...getRootProps()}
@@ -89,7 +73,6 @@ export function PropertyImageUpload({
         `}
             >
                 <input {...getInputProps()} />
-
                 <div className="flex flex-col items-center gap-2">
                     {uploading ? (
                         <>
@@ -112,14 +95,12 @@ export function PropertyImageUpload({
                     )}
                 </div>
             </div>
-
             {/* Mensagem de erro */}
             {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
                     {error}
                 </div>
             )}
-
             {/* Grid de imagens */}
             {images.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -131,7 +112,6 @@ export function PropertyImageUpload({
                                 fill
                                 className="object-cover rounded-lg"
                             />
-
                             {/* Botão remover */}
                             <button
                                 onClick={() => handleRemove(url, index)}
@@ -140,7 +120,6 @@ export function PropertyImageUpload({
                             >
                                 <X className="w-4 h-4" />
                             </button>
-
                             {/* Badge de ordem */}
                             <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded">
                                 #{index + 1}
@@ -149,7 +128,6 @@ export function PropertyImageUpload({
                     ))}
                 </div>
             )}
-
         </div>
     );
 }

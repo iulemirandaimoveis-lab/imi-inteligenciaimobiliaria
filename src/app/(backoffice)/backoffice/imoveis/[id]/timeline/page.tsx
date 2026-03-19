@@ -27,7 +27,7 @@ import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-
 
 const supabase = createClient()
 
-const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: any }> = {
+const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }> }> = {
     creation:       { color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Plus },
     price_change:   { color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
     campaign_start: { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: Activity },
@@ -84,9 +84,24 @@ function DesktopTimelineLoading() {
 
 // ─── Mobile Timeline ───────────────────────────────────────────────────────────
 
+interface PropertyTimelineEvent {
+    id: string
+    event_type: string
+    title: string
+    description?: string
+    event_date: string
+    [key: string]: unknown
+}
+
+interface PropertyRecord {
+    id: string
+    name?: string
+    [key: string]: unknown
+}
+
 interface MobileTimelineProps {
-    property: any
-    events: any[]
+    property: PropertyRecord | null
+    events: PropertyTimelineEvent[]
     eventsLoading: boolean
     id: string
 }
@@ -149,7 +164,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                         }} />
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                            {(events as any[]).map((event: any, i: number) => {
+                            {events.map((event, i) => {
                                 const cfg = EVENT_CONFIG[event.event_type as keyof typeof EVENT_CONFIG] || EVENT_CONFIG.creation
                                 const Icon = cfg.icon
 
@@ -328,8 +343,8 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
 // ─── Desktop Timeline ──────────────────────────────────────────────────────────
 
 interface DesktopTimelineProps {
-    property: any
-    events: any[]
+    property: PropertyRecord | null
+    events: PropertyTimelineEvent[]
     eventsLoading: boolean
     id: string | string[]
 }
@@ -393,7 +408,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                 )}
 
                 <div className="space-y-4">
-                    {events.length > 0 ? (events as any[]).map((event: any, i: number) => {
+                    {events.length > 0 ? events.map((event, i) => {
                         const cfg = EVENT_CONFIG[event.event_type as keyof typeof EVENT_CONFIG] || EVENT_CONFIG.creation
                         const Icon = cfg.icon
 
@@ -528,6 +543,6 @@ export default function PropertyTimelinePage() {
     }
 
     return isMobile
-        ? <MobileTimeline property={property} events={events as any[]} eventsLoading={eventsLoading} id={String(id)} />
-        : <DesktopTimeline property={property} events={events as any[]} eventsLoading={eventsLoading} id={id!} />
+        ? <MobileTimeline property={property as PropertyRecord} events={(events ?? []) as PropertyTimelineEvent[]} eventsLoading={eventsLoading} id={String(id)} />
+        : <DesktopTimeline property={property as PropertyRecord} events={(events ?? []) as PropertyTimelineEvent[]} eventsLoading={eventsLoading} id={id!} />
 }

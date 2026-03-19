@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import {
     Users,
@@ -18,9 +17,7 @@ import { useRealtimeDevelopments, useRealtimeLeads } from '@/hooks/use-realtime-
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import Link from 'next/link'
-
 const supabase = createClient()
-
 interface Activity {
     id: string
     type: 'lead' | 'development' | 'status_change' | 'evaluation' | 'consultation' | 'meeting' | 'high_score'
@@ -33,11 +30,9 @@ interface Activity {
     bgColor: string
     priority: 'high' | 'medium' | 'low'
 }
-
 export default function DashboardRecentActivity() {
     const [activities, setActivities] = useState<Activity[]>([])
     const [loading, setLoading] = useState(true)
-
     // Real-time updates
     useRealtimeDevelopments((dev) => {
         addActivity({
@@ -49,10 +44,8 @@ export default function DashboardRecentActivity() {
             priority: 'medium'
         })
     })
-
     useRealtimeLeads((lead) => {
         const isHighScore = (Number(lead.score) || 0) >= 80
-
         addActivity({
             type: isHighScore ? 'high_score' : 'lead',
             title: isHighScore ? 'Lead Qualificado!' : 'Novo Lead',
@@ -62,27 +55,22 @@ export default function DashboardRecentActivity() {
             priority: isHighScore ? 'high' : 'low'
         })
     })
-
     useEffect(() => {
         loadActivities()
     }, [])
-
     const loadActivities = async () => {
         setLoading(true)
         try {
             const allActivities: Activity[] = []
-
             // 1. Buscar leads recentes (últimas 24h)
             const oneDayAgo = new Date()
             oneDayAgo.setDate(oneDayAgo.getDate() - 1)
-
             const { data: recentLeads } = await supabase
                 .from('leads')
                 .select('id, name, score, created_at, status')
                 .gte('created_at', oneDayAgo.toISOString())
                 .order('created_at', { ascending: false })
                 .limit(10)
-
             recentLeads?.forEach(lead => {
                 const isHighScore = (Number(lead.score) || 0) >= 80
                 allActivities.push({
@@ -98,7 +86,6 @@ export default function DashboardRecentActivity() {
                     priority: isHighScore ? 'high' : 'low'
                 })
             })
-
             // 2. Buscar mudanças de status (últimas 24h)
             const { data: statusChanges } = await supabase
                 .from('leads')
@@ -107,7 +94,6 @@ export default function DashboardRecentActivity() {
                 .neq('created_at', 'updated_at') // Apenas atualizações, não criações
                 .order('updated_at', { ascending: false })
                 .limit(8)
-
             statusChanges?.forEach(lead => {
                 const isWon = lead.status === 'won'
                 allActivities.push({
@@ -123,7 +109,6 @@ export default function DashboardRecentActivity() {
                     priority: isWon ? 'high' : 'medium'
                 })
             })
-
             // 3. Buscar empreendimentos recentes
             const { data: recentDevs } = await supabase
                 .from('developments')
@@ -131,7 +116,6 @@ export default function DashboardRecentActivity() {
                 .gte('created_at', oneDayAgo.toISOString())
                 .order('created_at', { ascending: false })
                 .limit(5)
-
             recentDevs?.forEach(dev => {
                 const isPublished = dev.status === 'published'
                 allActivities.push({
@@ -147,7 +131,6 @@ export default function DashboardRecentActivity() {
                     priority: isPublished ? 'medium' : 'low'
                 })
             })
-
             // 4. Buscar avaliações recentes
             const { data: evaluations } = await supabase
                 .from('property_evaluations')
@@ -155,7 +138,6 @@ export default function DashboardRecentActivity() {
                 .gte('created_at', oneDayAgo.toISOString())
                 .order('created_at', { ascending: false })
                 .limit(5)
-
             evaluations?.forEach(val => {
                 allActivities.push({
                     id: `eval-${val.id}`,
@@ -170,7 +152,6 @@ export default function DashboardRecentActivity() {
                     priority: 'medium'
                 })
             })
-
             // 5. Buscar consultorias recentes
             const { data: consultations } = await supabase
                 .from('consultations')
@@ -178,7 +159,6 @@ export default function DashboardRecentActivity() {
                 .gte('created_at', oneDayAgo.toISOString())
                 .order('created_at', { ascending: false })
                 .limit(5)
-
             consultations?.forEach(cons => {
                 allActivities.push({
                     id: `cons-${cons.id}`,
@@ -193,7 +173,6 @@ export default function DashboardRecentActivity() {
                     priority: 'high'
                 })
             })
-
             // Ordenar por timestamp e prioridade
             allActivities.sort((a, b) => {
                 // Primeiro por prioridade
@@ -204,16 +183,12 @@ export default function DashboardRecentActivity() {
                 // Depois por timestamp
                 return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
             })
-
             setActivities(allActivities.slice(0, 15)) // Mostrar apenas os 15 mais relevantes
-
         } catch (error) {
-            console.error('Erro ao carregar atividades:', error)
         } finally {
             setLoading(false)
         }
     }
-
     const addActivity = (activity: Omit<Activity, 'id' | 'icon' | 'color' | 'bgColor'>) => {
         const config = getActivityConfig(activity.type)
         const newActivity: Activity = {
@@ -223,10 +198,8 @@ export default function DashboardRecentActivity() {
             color: config.color,
             bgColor: config.bgColor
         }
-
         setActivities(prev => [newActivity, ...prev].slice(0, 15))
     }
-
     const getActivityConfig = (type: Activity['type']) => {
         const configs = {
             lead: { icon: Users, color: 'text-blue-600', bgColor: 'bg-blue-50' },
@@ -239,7 +212,6 @@ export default function DashboardRecentActivity() {
         }
         return (configs as any)[type] || configs.lead
     }
-
     const getStatusName = (status: string): string => {
         const names: Record<string, string> = {
             new: 'Novo',
@@ -252,7 +224,6 @@ export default function DashboardRecentActivity() {
         }
         return names[status] || status
     }
-
     if (loading) {
         return (
             <div className="bg-white rounded-2xl border border-imi-100 p-6">
@@ -271,7 +242,6 @@ export default function DashboardRecentActivity() {
             </div>
         )
     }
-
     return (
         <div className="bg-white rounded-2xl border border-imi-100 p-6">
             <div className="flex items-center justify-between mb-6">
@@ -281,7 +251,6 @@ export default function DashboardRecentActivity() {
                 </h3>
                 <div className="text-xs text-imi-500">Últimas 24h</div>
             </div>
-
             {activities.length === 0 ? (
                 <div className="text-center py-12">
                     <Clock size={48} className="text-imi-300 mx-auto mb-4" />
@@ -292,7 +261,6 @@ export default function DashboardRecentActivity() {
                     {activities.map((activity, index) => {
                         const Icon = activity.icon
                         const isRecent = new Date().getTime() - new Date(activity.timestamp).getTime() < 3600000 // < 1 hora
-
                         return (
                             <Link
                                 key={activity.id}
@@ -307,7 +275,6 @@ export default function DashboardRecentActivity() {
                                     <div className={`w-12 h-12 rounded-xl ${activity.bgColor} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
                                         <Icon size={20} className={activity.color} />
                                     </div>
-
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-2">
@@ -332,7 +299,6 @@ export default function DashboardRecentActivity() {
                                                 </p>
                                             </div>
                                         </div>
-
                                         <div className="flex items-center gap-2 mt-2">
                                             <span className="text-xs text-imi-500">
                                                 {formatDistanceToNow(new Date(activity.timestamp), {
@@ -352,7 +318,6 @@ export default function DashboardRecentActivity() {
                     })}
                 </div>
             )}
-
             {/* Footer Stats */}
             <div className="mt-6 pt-6 border-t border-imi-100 grid grid-cols-3 gap-4 text-center">
                 <div>

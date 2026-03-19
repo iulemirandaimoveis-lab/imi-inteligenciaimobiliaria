@@ -64,12 +64,12 @@ function useLeadsTemporal() {
 function useLeadsByDev() {
     return useSWR('leads-by-dev', async () => {
         const supabase = createClient()
-        const { data, error } = await (supabase as any)
+        const { data, error } = await supabase
             .from('leads')
             .select('development:developments(name)')
         if (error) throw error
         const counts: Record<string, number> = {}
-        for (const row of (data as any[]) || []) {
+        for (const row of (data as { development: { name: string } | null }[]) || []) {
             const name = row.development?.name || 'Sem imóvel'
             counts[name] = (counts[name] || 0) + 1
         }
@@ -108,13 +108,19 @@ const TABS = [
     { key: 'relatorios', label: 'Relatórios', icon: FileSpreadsheet },
 ]
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipPayload {
+    color: string
+    name: string
+    value: number
+}
+
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: TooltipPayload[]; label?: string }) => {
     if (!active || !payload?.length) return null
     return (
         <div className="rounded-lg px-3 py-2 text-xs shadow-lg"
             style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }}>
             <p className="font-semibold mb-1">{label}</p>
-            {payload.map((p: any, i: number) => (
+            {payload.map((p, i) => (
                 <p key={i} style={{ color: p.color }}>{p.name}: <strong>{p.value}</strong></p>
             ))}
         </div>
@@ -156,8 +162,8 @@ export default function RelatoriosPage() {
             document.body.removeChild(a)
             URL.revokeObjectURL(url)
             toast.success(`${relatorio.label} exportado com sucesso!`)
-        } catch (err: any) {
-            toast.error(err.message || 'Erro ao gerar relatório')
+        } catch (err: unknown) {
+            toast.error(err instanceof Error ? err.message : 'Erro ao gerar relatório')
         } finally {
             setGerando(null)
         }
@@ -178,7 +184,7 @@ export default function RelatoriosPage() {
                 {TABS.map(t => (
                     <button
                         key={t.key}
-                        onClick={() => setTab(t.key as any)}
+                        onClick={() => setTab(t.key as 'analytics' | 'relatorios')}
                         className="flex items-center gap-2 px-4 h-9 rounded-[6px] text-sm font-medium transition-all"
                         style={{
                             background: tab === t.key ? 'var(--bo-accent)' : 'transparent',

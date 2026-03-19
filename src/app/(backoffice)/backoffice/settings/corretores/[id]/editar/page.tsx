@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useEffect } from 'react'
 import { UserCog, Shield, CheckCircle, Smartphone, Mail, User, CheckSquare } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -10,9 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useBroker, updateBroker } from '@/hooks/use-brokers'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-
 export const dynamic = 'force-dynamic'
-
 const schema = z.object({
     name: z.string().min(3, 'Nome muito curto'),
     phone: z.string().min(10, 'Telefone inválido').optional().or(z.literal('')),
@@ -20,9 +17,7 @@ const schema = z.object({
     status: z.enum(['active', 'inactive']),
     permissions: z.array(z.string()).min(1, 'Selecione pelo menos um módulo'),
 })
-
 type FormData = z.infer<typeof schema>
-
 const modules = [
     {
         category: 'Operação',
@@ -56,11 +51,9 @@ const modules = [
         ]
     }
 ]
-
 export default function EditarCorretorPage({ params }: { params: { id: string } }) {
     const router = useRouter()
     const { broker, isLoading, isError } = useBroker(params.id)
-
     const { register, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -71,7 +64,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
             permissions: ['dashboard'],
         }
     })
-
     // Pre-fill form once broker data is loaded
     useEffect(() => {
         if (broker) {
@@ -84,12 +76,9 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
             })
         }
     }, [broker, reset])
-
     const selectedPermissions = watch('permissions') || []
-
     const togglePermission = (id: string) => {
         if (id === 'dashboard') return // Dashboard is locked
-
         const current = selectedPermissions
         if (current.includes(id)) {
             setValue('permissions', current.filter(p => p !== id))
@@ -97,11 +86,9 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
             setValue('permissions', [...current, id])
         }
     }
-
     const toggleCategory = (items: { id: string }[]) => {
         const itemIds = items.map(i => i.id)
         const allSelected = itemIds.every(id => selectedPermissions.includes(id))
-
         if (allSelected) {
             setValue('permissions', selectedPermissions.filter(p => !itemIds.includes(p)))
         } else {
@@ -109,7 +96,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
             setValue('permissions', newPermissions)
         }
     }
-
     const onSubmit = async (data: FormData) => {
         try {
             await updateBroker(params.id, {
@@ -122,13 +108,10 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
             toast.success('Corretor atualizado com sucesso!')
             router.push('/backoffice/equipe')
         } catch (error: any) {
-            console.error(error)
             toast.error(error.message || 'Erro ao atualizar corretor')
         }
     }
-
     const fieldStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
-
     if (isLoading) {
         return (
             <div className="space-y-6 pb-20 max-w-5xl mx-auto">
@@ -137,7 +120,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
             </div>
         )
     }
-
     if (isError || !broker) {
         return (
             <div className="space-y-6 pb-20 max-w-5xl mx-auto">
@@ -154,7 +136,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
             </div>
         )
     }
-
     return (
         <div className="space-y-6 pb-20 max-w-5xl mx-auto">
             <PageIntelHeader
@@ -168,7 +149,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                     </button>
                 }
             />
-
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left Column: Personal Data */}
@@ -235,7 +215,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                             </div>
                         </div>
                     </div>
-
                     {/* Right Column: Permissions */}
                     <div className="lg:col-span-1">
                         <div className="rounded-lg overflow-hidden sticky top-6"
@@ -246,7 +225,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                 </h3>
                                 <p className="text-xs mt-1" style={{ color: T.textMuted }}>Selecione os módulos que este corretor poderá acessar.</p>
                             </div>
-
                             <div className="p-6 space-y-6 max-h-[600px] overflow-y-auto custom-scrollbar">
                                 {/* Mandatory Dashboard */}
                                 <div className="p-4 rounded-lg flex items-center justify-between"
@@ -256,7 +234,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                     </span>
                                     <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Obrigatório</span>
                                 </div>
-
                                 {modules.map((module) => (
                                     <div key={module.category} className="space-y-3">
                                         <div className="flex items-center justify-between">
@@ -302,7 +279,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                     </div>
                                 ))}
                             </div>
-
                             <div className="p-4" style={{ background: T.elevated, borderTop: `1px solid ${T.border}` }}>
                                 <p className="text-xs text-center" style={{ color: T.textMuted }}>
                                     {selectedPermissions.length} módulos selecionados
@@ -311,7 +287,6 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                         </div>
                     </div>
                 </div>
-
                 <div className="flex justify-end gap-3 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
                     <button type="button" onClick={() => router.back()}
                         className="h-11 px-6 rounded-[6px] text-sm font-medium transition-all"

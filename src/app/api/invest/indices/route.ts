@@ -1,17 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAllBrazilIndices } from '@/lib/invest/data/providers/bcb'
-
 export const revalidate = 3600 // 1 hour ISR cache
-
 export async function GET() {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
     const data = await getAllBrazilIndices()
-
     const format = (series: { date: string; value: number }[], name: string, unit: string) => {
       const latest = series[series.length - 1]
       const prev = series[series.length - 2]
@@ -24,7 +20,6 @@ export async function GET() {
         updatedAt: latest?.date || '',
       }
     }
-
     const indices = {
       selic: format(data.selic, 'SELIC', '% a.a.'),
       ipca: format(data.ipca, 'IPCA', '% a.m.'),
@@ -33,13 +28,10 @@ export async function GET() {
       usdBrl: format(data.usdBrl, 'USD/BRL', 'R$'),
       housingRate: format(data.housingRate, 'Crédito Imobiliário', '% a.a.'),
     }
-
     // IPCA acumulado 12 meses
     const ipca12m = data.ipca.reduce((acc, item) => (1 + acc / 100) * (1 + item.value / 100) - 1, 0) * 100
-
     return NextResponse.json({ indices, ipca12m, source: 'Banco Central do Brasil (BCB)', fetchedAt: new Date().toISOString() })
   } catch (error) {
-    console.error('Indices fetch error:', error)
     return NextResponse.json({ error: 'Erro ao buscar índices', indices: {} }, { status: 500 })
   }
 }

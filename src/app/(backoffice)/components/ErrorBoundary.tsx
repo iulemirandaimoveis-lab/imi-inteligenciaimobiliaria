@@ -2,27 +2,21 @@
 // Error Boundary for backoffice pages — catches render errors gracefully
 import { Component, ReactNode } from 'react'
 import { AlertTriangle, RefreshCcw } from 'lucide-react'
-
 interface Props {
     children: ReactNode
     fallback?: ReactNode
     resetLabel?: string
 }
-
 interface State {
     hasError: boolean
     error?: Error
 }
-
 export class ErrorBoundary extends Component<Props, State> {
     state: State = { hasError: false, error: undefined }
-
     static getDerivedStateFromError(error: Error): State {
         return { hasError: true, error }
     }
-
     componentDidCatch(error: Error, info: { componentStack: string }) {
-        console.error('[ErrorBoundary] Caught error:', error, info.componentStack)
         // Auto-report error to backend for auditing
         try {
             fetch('/api/system/report-error', {
@@ -39,15 +33,12 @@ export class ErrorBoundary extends Component<Props, State> {
             }).catch(() => {}) // fire-and-forget
         } catch {}
     }
-
     handleReset = () => {
         this.setState({ hasError: false, error: undefined })
     }
-
     render() {
         if (this.state.hasError) {
             if (this.props.fallback) return this.props.fallback
-
             return (
                 <div
                     className="flex flex-col items-center justify-center min-h-[400px] gap-4 rounded-lg p-8"
@@ -62,7 +53,6 @@ export class ErrorBoundary extends Component<Props, State> {
                     >
                         <AlertTriangle size={28} style={{ color: 'var(--bo-error)' }} />
                     </div>
-
                     <div className="text-center max-w-md">
                         <p
                             className="text-lg font-bold mb-1"
@@ -77,7 +67,6 @@ export class ErrorBoundary extends Component<Props, State> {
                             {this.state.error?.message || 'Erro inesperado no componente.'}
                         </p>
                     </div>
-
                     <div className="flex gap-3">
                         <button
                             onClick={this.handleReset}
@@ -102,11 +91,9 @@ export class ErrorBoundary extends Component<Props, State> {
                 </div>
             )
         }
-
         return this.props.children
     }
 }
-
 // Lightweight functional wrapper for async components
 export function withErrorBoundary<T extends object>(
     Component: React.ComponentType<T>,

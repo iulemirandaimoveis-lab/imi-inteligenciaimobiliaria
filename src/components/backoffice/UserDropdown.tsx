@@ -1,17 +1,14 @@
 'use client'
-
 import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { User, LogOut, Settings, HelpCircle, ChevronDown, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
 export default function UserDropdown() {
     const [isOpen, setIsOpen] = useState(false)
     const router = useRouter()
     const supabase = createClient()
     const dropdownRef = useRef<HTMLDivElement>(null)
-
     // Close on click outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -22,17 +19,14 @@ export default function UserDropdown() {
         document.addEventListener('mousedown', handleClickOutside)
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
-
     const handleLogout = async () => {
         try {
             await supabase.auth.signOut()
             router.push('/login')
             router.refresh()
         } catch (error) {
-            console.error('Error logging out:', error)
         }
     }
-
     return (
         <div className="relative" ref={dropdownRef}>
             <button
@@ -58,7 +52,6 @@ export default function UserDropdown() {
                 </div>
                 <ChevronDown size={14} className={`text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
-
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -72,7 +65,6 @@ export default function UserDropdown() {
                             <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Logado como</p>
                             <p className="text-sm font-bold text-gray-900 dark:text-white truncate">admin@imi.intelligence.com</p>
                         </div>
-
                         <div className="p-1 space-y-0.5">
                             <button
                                 onClick={() => router.push('/backoffice/profile')}
@@ -96,9 +88,7 @@ export default function UserDropdown() {
                                 Suporte / Ajuda
                             </button>
                         </div>
-
                         <div className="h-px bg-gradient-to-r from-transparent via-gray-100 dark:via-white/10 to-transparent my-1" />
-
                         <div className="p-1">
                             <button
                                 onClick={handleLogout}

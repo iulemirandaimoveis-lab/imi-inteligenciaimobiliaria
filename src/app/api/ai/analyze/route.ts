@@ -1,19 +1,15 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
-
 export const runtime = 'nodejs'
 export const maxDuration = 30
-
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 })
-
 const SYSTEM_PROMPT = `Você é o assistente de inteligência da IMI — Inteligência Imobiliária.
 Especialista em mercado imobiliário premium brasileiro.
 Responda SEMPRE em JSON válido, nunca em markdown.
 Seja direto, preciso e acionável. Máximo de 2 frases por campo de texto.`
-
 function buildLeadPrompt(data: any): string {
   return `Analise este lead imobiliário e retorne JSON no formato exato:
 {
@@ -26,7 +22,6 @@ function buildLeadPrompt(data: any): string {
   "keyRisk": "principal risco ou obstáculo identificado",
   "approach": "instagram" | "whatsapp" | "email" | "ligacao" | "visita"
 }
-
 DADOS DO LEAD:
 - Nome: ${data.name}
 - Email: ${data.email || 'N/A'}
@@ -44,11 +39,9 @@ DADOS DO LEAD:
 - Tags: ${Array.isArray(data.tags) ? data.tags.join(', ') : 'Nenhuma'}
 - Notas: ${data.notes || 'Nenhuma'}`
 }
-
 function buildCampanhaPrompt(data: any): string {
   const cpl = data.leads > 0 && data.cost > 0 ? (data.cost / data.leads).toFixed(2) : null
   const roi = data.revenue > 0 && data.cost > 0 ? (((data.revenue - data.cost) / data.cost) * 100).toFixed(1) : null
-
   return `Analise esta campanha de marketing imobiliário e retorne JSON no formato exato:
 {
   "insight": "análise de performance em 1-2 frases",
@@ -60,7 +53,6 @@ function buildCampanhaPrompt(data: any): string {
   "budgetSuggestion": "sugestão de ajuste de budget",
   "keyInsight": "insight principal sobre a campanha"
 }
-
 DADOS DA CAMPANHA:
 - Nome: ${data.name || data.title}
 - Canal: ${data.channel || data.type || 'N/A'}
@@ -76,7 +68,6 @@ DADOS DA CAMPANHA:
 - CTR: ${data.impressions && data.clicks ? `${((data.clicks / data.impressions) * 100).toFixed(2)}%` : 'N/A'}
 - Período: ${data.start_date ? new Date(data.start_date).toLocaleDateString('pt-BR') : 'N/A'} → ${data.end_date ? new Date(data.end_date).toLocaleDateString('pt-BR') : 'Em andamento'}`
 }
-
 function buildAvaliacaoPrompt(data: any): string {
   return `Analise esta avaliação imobiliária e retorne JSON no formato exato:
 {
@@ -89,7 +80,6 @@ function buildAvaliacaoPrompt(data: any): string {
   "keyFactor": "principal fator que influencia o valor",
   "recommendation": "recomendação para o cliente"
 }
-
 DADOS DA AVALIAÇÃO:
 - Imóvel: ${data.property_address || data.address || 'N/A'}
 - Tipo: ${data.property_type || 'N/A'}
@@ -104,22 +94,17 @@ DADOS DA AVALIAÇÃO:
 - Solicitante: ${data.client_name || 'N/A'}
 - Notas: ${data.notes || 'Nenhuma'}`
 }
-
 export async function POST(req: Request) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     const { type, data } = await req.json()
-
     if (!type || !data) {
       return NextResponse.json({ error: 'type e data são obrigatórios' }, { status: 400 })
     }
-
     let prompt: string
     switch (type) {
       case 'lead':
@@ -134,9 +119,7 @@ export async function POST(req: Request) {
       default:
         return NextResponse.json({ error: `Tipo inválido: ${type}` }, { status: 400 })
     }
-
     const startTime = Date.now()
-
     const response = await anthropic.messages.create({
       model: 'claude-3-5-haiku-20241022', // Haiku for speed + cost
       max_tokens: 1024,
@@ -144,11 +127,9 @@ export async function POST(req: Request) {
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: prompt }],
     })
-
     const latency = Date.now() - startTime
     const textBlock = response.content.find(b => b.type === 'text')
     const rawText = textBlock && 'text' in textBlock ? textBlock.text : '{}'
-
     // Parse JSON from Claude's response
     let analysis: any
     try {
@@ -159,7 +140,6 @@ export async function POST(req: Request) {
       // Fallback: return raw text as insight
       analysis = { insight: rawText.slice(0, 300), nextAction: 'Revisar dados e tentar novamente' }
     }
-
     // Log to ai_requests (best effort — don't fail if this errors)
     try {
       // Get tenant_id if available
@@ -168,7 +148,6 @@ export async function POST(req: Request) {
         .select('tenant_id')
         .eq('user_id', user.id)
         .single()
-
       await supabase.from('ai_requests').insert({
         tenant_id: tenantUser?.tenant_id ?? null,
         provider: 'anthropic',
@@ -187,10 +166,8 @@ export async function POST(req: Request) {
     } catch {
       // Non-critical — don't fail the response
     }
-
     return NextResponse.json({ analysis, latency })
   } catch (err: any) {
-    console.error('[api/ai/analyze]', err)
     // Return helpful error message
     if (err?.message?.includes('API key')) {
       return NextResponse.json({ error: 'Claude API não configurada. Verifique ANTHROPIC_API_KEY.' }, { status: 503 })

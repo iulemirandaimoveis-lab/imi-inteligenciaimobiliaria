@@ -1,5 +1,4 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
 // Cliente Supabase Service Role para operações privilegiadas (bypass RLS se necessário)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _supabase: SupabaseClient<any> | null = null
@@ -12,7 +11,6 @@ function getSupabase(): SupabaseClient<any> {
     }
     return _supabase!
 }
-
 export interface CreateLeadData {
     name: string;
     email?: string;
@@ -25,10 +23,8 @@ export interface CreateLeadData {
     investmentProfile?: string;
     budgetRange?: string;
 }
-
 export async function createLead(data: CreateLeadData) {
     try {
-
         // 1. Obter Tenant ID (IMI)
         // Cachear isso seria ideal, mas por enquanto vamos buscar
         const { data: tenant } = await getSupabase()
@@ -36,16 +32,12 @@ export async function createLead(data: CreateLeadData) {
             .select('id')
             .limit(1)
             .single();
-
         if (!tenant) {
             throw new Error('No tenant found active system.');
         }
-
         const tenantId = tenant.id;
-
         // 2. Verificar se Lead já existe
         let leadId: string;
-
         // Tenta buscar por email
         const { data: existingLead } = await getSupabase()
             .from('leads')
@@ -53,10 +45,8 @@ export async function createLead(data: CreateLeadData) {
             .eq('tenant_id', tenantId)
             .eq('email', data.email)
             .maybeSingle();
-
         if (existingLead) {
             leadId = existingLead.id;
-
             // Atualizar dados de contato se necessário
             await getSupabase().from('leads').update({
                 name: data.name,
@@ -79,11 +69,9 @@ export async function createLead(data: CreateLeadData) {
                 })
                 .select('id')
                 .single();
-
             if (createError) throw createError;
             leadId = newLead.id;
         }
-
         // 3. Registrar Consulta (Consultation)
         if (data.consultationType) {
             await getSupabase().from('consultations').insert({
@@ -100,7 +88,6 @@ export async function createLead(data: CreateLeadData) {
                 created_at: new Date().toISOString()
             });
         }
-
         // 4. Registrar Interação no CRM (Lead Interactions)
         await getSupabase().from('lead_interactions').insert({
             lead_id: leadId,
@@ -110,11 +97,8 @@ export async function createLead(data: CreateLeadData) {
             notes: `Tipo: ${data.consultationType}. Mensagem: ${data.message}`,
             created_at: new Date().toISOString()
         });
-
         return { success: true, leadId };
-
     } catch (error: any) {
-        console.error('Error in createLead service:', error);
         return { success: false, error: error.message };
     }
 }

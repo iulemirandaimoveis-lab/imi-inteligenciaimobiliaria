@@ -2,33 +2,26 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { logAudit, getRequestMeta } from '@/lib/governance'
 import { parseBody, leadSchema } from '@/lib/schemas'
-
 export async function GET(request: Request) {
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
-
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 401 });
         }
-
         const { searchParams } = new URL(request.url)
         const page = parseInt(searchParams.get('page') || '1')
         const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
         const offset = (page - 1) * limit
-
         const { data: leads, error, count } = await supabase
             .from('leads')
             .select('id, name, email, phone, source, origin, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, capital, utm_source, country, currency, language, tags, notes, assigned_to', { count: 'exact' })
             .not('status', 'eq', 'archived')
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
-
         if (error) {
-            console.error('Error fetching leads:', error);
             return NextResponse.json({ error: error.message, data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
         }
-
         // Map to the format the frontend expects
         const formatted = (leads || []).map((l: any) => ({
             id: l.id,
@@ -54,7 +47,6 @@ export async function GET(request: Request) {
             created_at: l.created_at || new Date().toISOString(),
             updated_at: l.updated_at || l.created_at || new Date().toISOString(),
         }));
-
         return NextResponse.json({
             data: formatted,
             pagination: {
@@ -65,11 +57,9 @@ export async function GET(request: Request) {
             },
         });
     } catch (error) {
-        console.error('Error in GET /api/leads:', error);
         return NextResponse.json({ error: 'Internal Server Error', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 500 });
     }
 }
-
 function mapStatus(status: string | null): string {
     if (!status) return 'warm';
     const s = status.toLowerCase();
@@ -77,7 +67,6 @@ function mapStatus(status: string | null): string {
     if (['cold', 'frio', 'lost', 'inactive'].includes(s)) return 'cold';
     return 'warm';
 }
-
 function formatBudget(min: number | null, max: number | null): string {
     if (!min && !max) return 'N/A';
     const fmt = (v: number) => {
@@ -90,16 +79,13 @@ function formatBudget(min: number | null, max: number | null): string {
     if (max) return `Até ${fmt(max)}`;
     return 'N/A';
 }
-
 export async function POST(request: Request) {
     try {
         const supabase = await createClient()
         const { data: { session } } = await supabase.auth.getSession()
-
         const parsed = await parseBody(request, leadSchema)
         if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
         const body = parsed.data
-
         const { data: lead, error } = await supabase
             .from('leads')
             .insert({
@@ -126,12 +112,9 @@ export async function POST(request: Request) {
             })
             .select()
             .single()
-
         if (error) {
-            console.error('Error creating lead:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-
         // Audit log
         const meta = getRequestMeta(request)
         logAudit({
@@ -142,7 +125,6 @@ export async function POST(request: Request) {
             new_data: { name: body.name, email: body.email, source: body.source },
             ...meta,
         })
-
         // Non-blocking auto-score calculation
         const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
         fetch(`${baseUrl}/api/ai/auto-score`, {
@@ -150,35 +132,27 @@ export async function POST(request: Request) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ lead_id: lead.id }),
         }).catch(() => {}) // Fire-and-forget
-
         return NextResponse.json({ success: true, lead })
     } catch (error) {
-        console.error('Error in POST /api/leads:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
-
 export async function DELETE(request: Request) {
     try {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
-
         // Soft delete — set status to archived
         const { error } = await supabase
             .from('leads')
             .update({ status: 'archived', updated_at: new Date().toISOString() })
             .eq('id', id)
-
         if (error) {
-            console.error('Error archiving lead:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-
         const meta = getRequestMeta(request)
         logAudit({
             user_id: user.id,
@@ -187,25 +161,19 @@ export async function DELETE(request: Request) {
             entity_id: id,
             ...meta,
         })
-
         return NextResponse.json({ success: true })
     } catch (error) {
-        console.error('Error in DELETE /api/leads:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
-
 export async function PUT(request: Request) {
     try {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
         const body = await request.json()
         const { id, ...updates } = body
-
         if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
-
         // Map form fields → DB columns
         const payload: Record<string, any> = {
             updated_at: new Date().toISOString(),
@@ -225,7 +193,6 @@ export async function PUT(request: Request) {
         if (updates.children !== undefined)          payload.children = updates.children ? parseInt(updates.children) : null
         if (updates.preferredContact !== undefined)  payload.preferred_contact = updates.preferredContact || null
         if (updates.bestTime !== undefined)          payload.best_time = updates.bestTime || null
-
         // Parse orcamento range → budget_min/budget_max
         if (updates.orcamento !== undefined) {
             const budgetMap: Record<string, [number, number]> = {
@@ -242,22 +209,17 @@ export async function PUT(request: Request) {
                 payload.capital = range[0]
             }
         }
-
         const { data, error } = await supabase
             .from('leads')
             .update(payload)
             .eq('id', id)
             .select()
             .single()
-
         if (error) {
-            console.error('Error updating lead:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
-
         return NextResponse.json({ success: true, lead: data })
     } catch (error) {
-        console.error('Error in PUT /api/leads:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

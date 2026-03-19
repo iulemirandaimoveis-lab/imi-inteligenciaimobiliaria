@@ -2,7 +2,6 @@
 // SCRIPT 0 — API ROUTE: AI ROUTER UNIFICADO
 // ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
 // ============================================
-
 /**
  * SALVAR EM: src/app/api/ai/router/route.ts
  *
@@ -10,13 +9,10 @@
  * Suporta: Claude (Anthropic), GPT (OpenAI), Gemini (Google), Grok (xAI), Kling (video)
  * Cada task_type é mapeado para o modelo ideal com fallback automático.
  */
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 export const runtime = 'nodejs'
 // ─── Tipos ────────────────────────────────────────────────────────────────────
-
 export type AIModel =
     | 'claude-sonnet'
     | 'claude-haiku'
@@ -26,7 +22,6 @@ export type AIModel =
     | 'gemini-flash'
     | 'grok-2'
     | 'kling'
-
 export type TaskType =
     | 'tema'           // Geração de tema/pauta
     | 'roteiro'        // Roteiro longo, copywriting
@@ -39,7 +34,6 @@ export type TaskType =
     | 'video'          // Geração de vídeo curto (Kling)
     | 'analise_lead'   // Qualificação de lead
     | 'custom'         // Qualquer prompt personalizado
-
 export interface AIRouterRequest {
     task_type: TaskType
     prompt: string
@@ -51,7 +45,6 @@ export interface AIRouterRequest {
     platform?: 'instagram' | 'linkedin' | 'facebook' | 'youtube' | 'email' | 'blog'
     tenant_id?: string
 }
-
 export interface AIRouterResponse {
     success: boolean
     result: string
@@ -64,9 +57,7 @@ export interface AIRouterResponse {
     fallback_used?: boolean
     error?: string
 }
-
 // ─── Mapeamento de modelo por task ─────────────────────────────────────────
-
 const MODEL_ROUTING: Record<TaskType, { primary: AIModel; fallback: AIModel }> = {
     tema: { primary: 'claude-haiku', fallback: 'gemini-flash' },
     roteiro: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
@@ -80,14 +71,11 @@ const MODEL_ROUTING: Record<TaskType, { primary: AIModel; fallback: AIModel }> =
     analise_lead: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
     custom: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
 }
-
 // ─── System prompts por task ────────────────────────────────────────────────
-
 function buildSystemPrompt(task_type: TaskType, platform?: string): string {
     const base = `Você é um especialista em marketing imobiliário de alto padrão para o mercado de Recife/Pernambuco, Brasil.
 A empresa é IMI — Iule Miranda Imóveis, focada em imóveis premium (R$ 400k–R$ 5M+) nos bairros Boa Viagem, Pina, Piedade, Setúbal e Candeias.
 Tom: institucional, sofisticado, sem exageros. Nunca use clichês como "seu sonho" ou "o lar perfeito".`
-
     const taskInstructions: Record<TaskType, string> = {
         tema: 'Gere pautas estratégicas e relevantes para o público-alvo (investidores, família de alta renda, compradores internacionais). Responda em JSON com: {titulo, objetivo, publico_alvo, formato_sugerido, palavras_chave}',
         roteiro: 'Crie roteiros de conteúdo detalhados, com estrutura clara: gancho, desenvolvimento, CTA. Adapte ao contexto fornecido.',
@@ -101,12 +89,9 @@ Tom: institucional, sofisticado, sem exageros. Nunca use clichês como "seu sonh
         analise_lead: 'Analise o perfil do lead e retorne JSON com: {score (0-100), perfil, necessidades, imovel_ideal, proximo_passo, urgencia}',
         custom: 'Execute a tarefa conforme o prompt fornecido.',
     }
-
     return `${base}\n\n${taskInstructions[task_type]}`
 }
-
 // ─── Chamada Claude ─────────────────────────────────────────────────────────
-
 async function callClaude(
     prompt: string,
     systemPrompt: string,
@@ -116,9 +101,7 @@ async function callClaude(
 ): Promise<{ result: string; tokens_input: number; tokens_output: number; cost_usd: number }> {
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) throw new Error('ANTHROPIC_API_KEY não configurada')
-
     const modelId = model === 'claude-sonnet' ? 'claude-sonnet-4-6' : 'claude-haiku-4-5-20251001'
-
     const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -134,23 +117,18 @@ async function callClaude(
             messages: [{ role: 'user', content: prompt }],
         }),
     })
-
     if (!response.ok) {
         const err = await response.text()
         throw new Error(`Claude API error: ${response.status} ${err}`)
     }
-
     const data = await response.json()
     const inputTokens = data.usage?.input_tokens || 0
     const outputTokens = data.usage?.output_tokens || 0
-
     // Custo estimado (Sonnet: $3/$15 por M tokens; Haiku: $0.25/$1.25)
     const costPer1M = model === 'claude-sonnet'
         ? { input: 3, output: 15 }
         : { input: 0.25, output: 1.25 }
-
     const cost_usd = (inputTokens * costPer1M.input + outputTokens * costPer1M.output) / 1_000_000
-
     return {
         result: data.content?.[0]?.text || '',
         tokens_input: inputTokens,
@@ -158,9 +136,7 @@ async function callClaude(
         cost_usd,
     }
 }
-
 // ─── Chamada GPT ─────────────────────────────────────────────────────────────
-
 async function callGPT(
     prompt: string,
     systemPrompt: string,
@@ -170,9 +146,7 @@ async function callGPT(
 ): Promise<{ result: string; tokens_input: number; tokens_output: number; cost_usd: number }> {
     const apiKey = process.env.OPENAI_API_KEY
     if (!apiKey) throw new Error('OPENAI_API_KEY não configurada')
-
     const modelId = model === 'gpt-4o' ? 'gpt-4o' : 'gpt-4o-mini'
-
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -189,23 +163,18 @@ async function callGPT(
             ],
         }),
     })
-
     if (!response.ok) {
         const err = await response.text()
         throw new Error(`OpenAI API error: ${response.status} ${err}`)
     }
-
     const data = await response.json()
     const inputTokens = data.usage?.prompt_tokens || 0
     const outputTokens = data.usage?.completion_tokens || 0
-
     // Custo estimado (gpt-4o: $2.50/$10; mini: $0.15/$0.60)
     const costPer1M = model === 'gpt-4o'
         ? { input: 2.5, output: 10 }
         : { input: 0.15, output: 0.60 }
-
     const cost_usd = (inputTokens * costPer1M.input + outputTokens * costPer1M.output) / 1_000_000
-
     return {
         result: data.choices?.[0]?.message?.content || '',
         tokens_input: inputTokens,
@@ -213,9 +182,7 @@ async function callGPT(
         cost_usd,
     }
 }
-
 // ─── Chamada Grok ─────────────────────────────────────────────────────────────
-
 async function callGrok(
     prompt: string,
     systemPrompt: string,
@@ -225,7 +192,6 @@ async function callGrok(
 ): Promise<{ result: string; tokens_input: number; tokens_output: number; cost_usd: number }> {
     const apiKey = process.env.XAI_API_KEY
     if (!apiKey) throw new Error('XAI_API_KEY não configurada')
-
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -242,19 +208,15 @@ async function callGrok(
             ],
         }),
     })
-
     if (!response.ok) {
         const err = await response.text()
         throw new Error(`Grok API error: ${response.status} ${err}`)
     }
-
     const data = await response.json()
     const inputTokens = data.usage?.prompt_tokens || 0
     const outputTokens = data.usage?.completion_tokens || 0
-
     // Grok-2: ~$2/$10 por 1M tokens (similar ao GPT-4o)
     const cost_usd = (inputTokens * 2 + outputTokens * 10) / 1_000_000
-
     return {
         result: data.choices?.[0]?.message?.content || '',
         tokens_input: inputTokens,
@@ -262,9 +224,7 @@ async function callGrok(
         cost_usd,
     }
 }
-
 // ─── Chamada Gemini ──────────────────────────────────────────────────────────
-
 async function callGemini(
     prompt: string,
     systemPrompt: string,
@@ -274,9 +234,7 @@ async function callGemini(
 ): Promise<{ result: string; tokens_input: number; tokens_output: number; cost_usd: number }> {
     const apiKey = process.env.GOOGLE_AI_API_KEY
     if (!apiKey) throw new Error('GOOGLE_AI_API_KEY não configurada')
-
     const modelId = model === 'gemini-pro' ? 'gemini-2.0-pro' : 'gemini-2.0-flash'
-
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`,
         {
@@ -292,23 +250,18 @@ async function callGemini(
             }),
         }
     )
-
     if (!response.ok) {
         const err = await response.text()
         throw new Error(`Gemini API error: ${response.status} ${err}`)
     }
-
     const data = await response.json()
     const inputTokens = data.usageMetadata?.promptTokenCount || 0
     const outputTokens = data.usageMetadata?.candidatesTokenCount || 0
-
     // Gemini Flash é praticamente gratuito; Pro: ~$0.07/$0.30 por 1M tokens
     const costPer1M = model === 'gemini-pro'
         ? { input: 0.07, output: 0.30 }
         : { input: 0.00, output: 0.00 }
-
     const cost_usd = (inputTokens * costPer1M.input + outputTokens * costPer1M.output) / 1_000_000
-
     return {
         result: data.candidates?.[0]?.content?.parts?.[0]?.text || '',
         tokens_input: inputTokens,
@@ -316,13 +269,10 @@ async function callGemini(
         cost_usd,
     }
 }
-
 // ─── Stub Kling (video) ──────────────────────────────────────────────────────
-
 async function callKling(prompt: string): Promise<{ result: string; cost_usd: number }> {
     // TODO: Integrar Kling API quando disponível
     // https://klingai.com/api (aguardando acesso)
-    console.warn('Kling API não configurada — retornando stub')
     return {
         result: JSON.stringify({
             status: 'queued',
@@ -334,9 +284,7 @@ async function callKling(prompt: string): Promise<{ result: string; cost_usd: nu
         cost_usd: 0,
     }
 }
-
 // ─── Handler principal ───────────────────────────────────────────────────────
-
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient()
@@ -344,26 +292,20 @@ export async function POST(request: NextRequest) {
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-
         const body: AIRouterRequest = await request.json()
-
         if (!body.task_type || !body.prompt) {
             return NextResponse.json({ error: 'task_type e prompt são obrigatórios' }, { status: 400 })
         }
-
         const routing = MODEL_ROUTING[body.task_type]
         const model = body.model_override || routing.primary
         const temperature = body.temperature ?? 0.7
         const max_tokens = body.max_tokens || 2048
         const systemPrompt = buildSystemPrompt(body.task_type, body.platform)
-
         const fullPrompt = body.context
             ? `${body.context}\n\n---\n\n${body.prompt}`
             : body.prompt
-
         let result: AIRouterResponse
         let fallback_used = false
-
         async function executeWithFallback(primaryModel: AIModel): Promise<{
             result: string
             tokens_input?: number
@@ -391,23 +333,18 @@ export async function POST(request: NextRequest) {
                 }
                 throw new Error(`Modelo desconhecido: ${m}`)
             }
-
             try {
                 return await tryModel(primaryModel)
             } catch (primaryErr) {
-                console.error(`Primary model ${primaryModel} failed:`, primaryErr)
                 const fallbackModel = routing.fallback
                 if (fallbackModel !== primaryModel) {
                     fallback_used = true
-                    console.warn(`Falling back to ${fallbackModel}`)
                     return await tryModel(fallbackModel)
                 }
                 throw primaryErr
             }
         }
-
         const execution = await executeWithFallback(model)
-
         result = {
             success: true,
             result: execution.result,
@@ -419,10 +356,8 @@ export async function POST(request: NextRequest) {
             image_url: execution.image_url,
             fallback_used,
         }
-
         return NextResponse.json(result)
     } catch (error: any) {
-        console.error('AI Router error:', error)
         return NextResponse.json(
             {
                 success: false,
@@ -435,7 +370,6 @@ export async function POST(request: NextRequest) {
         )
     }
 }
-
 export async function GET() {
     return NextResponse.json({
         status: 'ok',

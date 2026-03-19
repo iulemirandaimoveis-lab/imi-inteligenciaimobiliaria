@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -11,20 +10,16 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-
 export const dynamic = 'force-dynamic'
-
 const STEPS = [
     { id: 1, name: 'Cliente', description: 'Dados pessoais', icon: User },
     { id: 2, name: 'Imóvel', description: 'Informações do registro', icon: Home },
     { id: 3, name: 'Engenharia de Crédito', description: 'Análise de capacidade', icon: Calculator },
     { id: 4, name: 'Dossiê', description: 'Instruções finais', icon: FileText },
 ]
-
 const inputClass = 'w-full h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all'
 const inputStyle = { background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }
 const inputErrorStyle = { background: 'var(--bo-elevated)', border: `1px solid ${T.error}`, color: 'var(--bo-text)' }
-
 function Label({ children }: { children: React.ReactNode }) {
     return (
         <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: T.textMuted }}>
@@ -32,7 +27,6 @@ function Label({ children }: { children: React.ReactNode }) {
         </label>
     )
 }
-
 function FieldError({ msg }: { msg?: string }) {
     if (!msg) return null
     return (
@@ -41,12 +35,10 @@ function FieldError({ msg }: { msg?: string }) {
         </p>
     )
 }
-
 export default function CreditoNovoPage() {
     const router = useRouter()
     const [currentStep, setCurrentStep] = useState(1)
     const [isSubmitting, setIsSubmitting] = useState(false)
-
     const [formData, setFormData] = useState({
         client_name: '',
         client_email: '',
@@ -67,15 +59,12 @@ export default function CreditoNovoPage() {
         fgts_value: '',
         notes: '',
     })
-
     const [errors, setErrors] = useState<Record<string, string>>({})
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
     }
-
     const validateStep = (step: number) => {
         const newErrors: Record<string, string> = {}
         if (step === 1) {
@@ -97,7 +86,6 @@ export default function CreditoNovoPage() {
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
-
     const handleNext = () => {
         if (validateStep(currentStep)) {
             setCurrentStep(prev => Math.min(prev + 1, STEPS.length))
@@ -106,12 +94,10 @@ export default function CreditoNovoPage() {
             toast.error('Por favor, preencha todos os campos obrigatórios.')
         }
     }
-
     const handlePrevious = () => {
         setCurrentStep(prev => Math.max(prev - 1, 1))
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
-
     const handleSubmit = async () => {
         if (!validateStep(currentStep)) return
         setIsSubmitting(true)
@@ -120,7 +106,6 @@ export default function CreditoNovoPage() {
             // Build full address from parts
             const fullAddress = [formData.property_address, formData.property_city, formData.property_state]
                 .filter(Boolean).join(', ')
-
             const { error } = await supabase.from('credit_applications').insert({
                 client_name: formData.client_name,
                 client_email: formData.client_email,
@@ -151,17 +136,14 @@ export default function CreditoNovoPage() {
             toast.success('Solicitação de crédito enviada para análise com sucesso!')
             router.push('/backoffice/credito')
         } catch (error: any) {
-            console.error('Erro ao salvar:', error)
             toast.error(`Falha ao processar solicitação: ${error.message || 'Erro de conexão'}`)
         } finally {
             setIsSubmitting(false)
         }
     }
-
     const progress = (currentStep / STEPS.length) * 100
     const currentStepData = STEPS[currentStep - 1]
     const StepIcon = currentStepData.icon
-
     return (
         <div className="space-y-6">
             <PageIntelHeader
@@ -173,7 +155,6 @@ export default function CreditoNovoPage() {
                     { label: 'Novo' },
                 ]}
             />
-
             {/* Sticky step header */}
             <div className="sticky top-0 z-20 rounded-lg px-5 py-4"
                 style={{ background: T.surface, border: `1px solid ${T.border}`, backdropFilter: 'blur(12px)' }}>
@@ -224,7 +205,6 @@ export default function CreditoNovoPage() {
                         style={{ width: `${progress}%`, background: T.accent }} />
                 </div>
             </div>
-
             {/* Form card */}
             <div className="rounded-lg" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 {/* Card header */}
@@ -235,7 +215,6 @@ export default function CreditoNovoPage() {
                     <h2 className="text-base font-bold" style={{ color: T.text }}>{currentStepData.name}</h2>
                     <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{currentStepData.description}</p>
                 </div>
-
                 <div className="p-8">
                     {/* Step 1: Cliente */}
                     {currentStep === 1 && (
@@ -248,7 +227,6 @@ export default function CreditoNovoPage() {
                                     style={errors.client_name ? inputErrorStyle : inputStyle} />
                                 <FieldError msg={errors.client_name} />
                             </div>
-
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <Label>E-mail de Notificação *</Label>
@@ -265,7 +243,6 @@ export default function CreditoNovoPage() {
                                     <FieldError msg={errors.client_phone} />
                                 </div>
                             </div>
-
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <Label>CPF Individual *</Label>
@@ -280,7 +257,6 @@ export default function CreditoNovoPage() {
                                         className={inputClass} style={inputStyle} />
                                 </div>
                             </div>
-
                             <div>
                                 <Label>Estado Civil</Label>
                                 <select name="client_marital_status" value={formData.client_marital_status} onChange={handleChange}
@@ -294,7 +270,6 @@ export default function CreditoNovoPage() {
                             </div>
                         </div>
                     )}
-
                     {/* Step 2: Imóvel */}
                     {currentStep === 2 && (
                         <div className="space-y-6">
@@ -320,14 +295,12 @@ export default function CreditoNovoPage() {
                                     <FieldError msg={errors.property_value} />
                                 </div>
                             </div>
-
                             <div>
                                 <Label>Endereço da Garantia</Label>
                                 <input name="property_address" type="text" value={formData.property_address} onChange={handleChange}
                                     placeholder="Rua, número, bairro e complemento"
                                     className={inputClass} style={inputStyle} />
                             </div>
-
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <Label>Cidade *</Label>
@@ -351,7 +324,6 @@ export default function CreditoNovoPage() {
                             </div>
                         </div>
                     )}
-
                     {/* Step 3: Engenharia de Crédito */}
                     {currentStep === 3 && (
                         <div className="space-y-6">
@@ -365,7 +337,6 @@ export default function CreditoNovoPage() {
                                 </p>
                                 <FieldError msg={errors.requested_amount} />
                             </div>
-
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <Label>Renda Mensal Comprovada (R$) *</Label>
@@ -388,14 +359,12 @@ export default function CreditoNovoPage() {
                                     <FieldError msg={errors.employment_type} />
                                 </div>
                             </div>
-
                             <div>
                                 <Label>Tempo de Atividade no Cargo / Empresa</Label>
                                 <input name="employment_time" type="text" value={formData.employment_time} onChange={handleChange}
                                     placeholder="Ex: 5 anos e 2 meses"
                                     className={inputClass} style={inputStyle} />
                             </div>
-
                             <div className="rounded-lg p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 <div className="flex flex-col md:flex-row items-start gap-6">
                                     <div className="flex-1">
@@ -418,7 +387,6 @@ export default function CreditoNovoPage() {
                             </div>
                         </div>
                     )}
-
                     {/* Step 4: Dossiê */}
                     {currentStep === 4 && (
                         <div className="space-y-6">
@@ -434,7 +402,6 @@ export default function CreditoNovoPage() {
                                     style={inputStyle}
                                 />
                             </div>
-
                             <div className="rounded-lg p-6"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}` }}>
                                 <div className="flex items-start gap-4">
@@ -468,7 +435,6 @@ export default function CreditoNovoPage() {
                         </div>
                     )}
                 </div>
-
                 {/* Footer navigation */}
                 <div className="px-8 py-5 flex items-center justify-between"
                     style={{ borderTop: `1px solid ${T.border}` }}>
@@ -482,7 +448,6 @@ export default function CreditoNovoPage() {
                         <ArrowLeft size={18} />
                         Etapa Anterior
                     </button>
-
                     {currentStep < STEPS.length ? (
                         <button
                             type="button"

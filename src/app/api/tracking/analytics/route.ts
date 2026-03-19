@@ -1,21 +1,17 @@
 export const dynamic = 'force-dynamic'
-
 // GET /api/tracking/analytics — Unified tracking analytics for the backoffice
 // Combines: page_views + tracking_sessions + link_events + leads
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 export async function GET(request: NextRequest) {
     try {
         const supabase = await createClient()
         const { searchParams } = new URL(request.url)
         const timeRange = searchParams.get('time_range') || '30d'
         const daysAgo = timeRange === '7d' ? 7 : timeRange === '90d' ? 90 : 30
-
         const startDate = new Date()
         startDate.setDate(startDate.getDate() - daysAgo)
         const startISO = startDate.toISOString()
-
         // Fetch all data in parallel
         const [
             { data: pageViews },
@@ -50,19 +46,16 @@ export async function GET(request: NextRequest) {
                 .order('created_at', { ascending: false })
                 .limit(100),
         ])
-
         const pvs = pageViews || []
         const sess = sessions || []
         const evts = linkEvents || []
         const lds = leads || []
-
         // ── KPIs ──
         const totalPageViews = pvs.length
         const totalSessions = sess.length
         const totalClicks = evts.length
         const totalLeads = lds.length
         const convertedLeads = lds.filter(l => l.status === 'converted' || l.status === 'won').length
-
         const avgPagesPerSession = totalSessions > 0
             ? Math.round((sess.reduce((s, se) => s + (se.page_count || 0), 0) / totalSessions) * 10) / 10
             : 0
@@ -75,7 +68,6 @@ export async function GET(request: NextRequest) {
         const conversionRate = totalSessions > 0
             ? parseFloat(((totalLeads / totalSessions) * 100).toFixed(2))
             : 0
-
         // ── By Day ──
         const dayData: Record<string, { views: number; sessions: number; clicks: number; leads: number }> = {}
         for (let i = daysAgo - 1; i >= 0; i--) {
@@ -89,7 +81,6 @@ export async function GET(request: NextRequest) {
         evts.forEach(e => { const d = e.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].clicks++ })
         lds.forEach(l => { const d = l.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].leads++ })
         const dailyTimeline = Object.entries(dayData).map(([day, data]) => ({ day, ...data }))
-
         // ── By Source ──
         const sourceMap: Record<string, { sessions: number; clicks: number; leads: number }> = {}
         sess.forEach(s => {
@@ -111,7 +102,6 @@ export async function GET(request: NextRequest) {
             .map(([name, d]) => ({ name, ...d, total: d.sessions + d.clicks }))
             .sort((a, b) => b.total - a.total)
             .slice(0, 10)
-
         // ── By Device ──
         const deviceMap: Record<string, number> = {}
         sess.forEach(s => { const d = s.device_type || 'desktop'; deviceMap[d] = (deviceMap[d] || 0) + 1 })
@@ -120,7 +110,6 @@ export async function GET(request: NextRequest) {
                 name, value,
                 percentage: totalSessions > 0 ? Math.round((value / totalSessions) * 100) : 0,
             }))
-
         // ── Top Pages ──
         const pageMap: Record<string, { views: number; avgDuration: number; totalDuration: number }> = {}
         pvs.forEach(pv => {
@@ -137,7 +126,6 @@ export async function GET(request: NextRequest) {
             }))
             .sort((a, b) => b.views - a.views)
             .slice(0, 15)
-
         // ── Top Properties ──
         const propMap: Record<string, number> = {}
         pvs.forEach(pv => {
@@ -147,7 +135,6 @@ export async function GET(request: NextRequest) {
             .map(([slug, views]) => ({ slug, views }))
             .sort((a, b) => b.views - a.views)
             .slice(0, 10)
-
         // ── Top Campaigns ──
         const campaignMap: Record<string, { clicks: number; leads: number }> = {}
         evts.forEach(e => {
@@ -169,7 +156,6 @@ export async function GET(request: NextRequest) {
             }))
             .sort((a, b) => b.clicks - a.clicks)
             .slice(0, 10)
-
         return NextResponse.json({
             kpis: {
                 totalPageViews,
@@ -191,7 +177,6 @@ export async function GET(request: NextRequest) {
             topCampaigns,
         })
     } catch (err: unknown) {
-        console.error('Tracking analytics error:', err)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

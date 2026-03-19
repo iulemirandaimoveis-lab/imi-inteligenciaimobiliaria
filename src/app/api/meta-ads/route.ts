@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 // ─── Meta Graph API ───────────────────────────────────────────────────────────
 const META_BASE = 'https://graph.facebook.com/v20.0'
-
 const META_TOKEN = process.env.META_ACCESS_TOKEN
 const META_ACCOUNT = process.env.META_AD_ACCOUNT_ID // format: act_XXXXXXXXX
-
 // ─── Type helpers ─────────────────────────────────────────────────────────────
 interface MetaCampaign {
   id: string
@@ -18,7 +15,6 @@ interface MetaCampaign {
   daily_budget?: string    // in cents (Meta returns strings)
   lifetime_budget?: string // in cents
 }
-
 interface MetaInsight {
   impressions?: string
   clicks?: string
@@ -28,7 +24,6 @@ interface MetaInsight {
   actions?: Array<{ action_type: string; value: string }>
   cost_per_action_type?: Array<{ action_type: string; value: string }>
 }
-
 // ─── Meta API fetch helpers ───────────────────────────────────────────────────
 async function fetchMetaCampaigns(token: string, adAccountId: string): Promise<MetaCampaign[]> {
   const fields = 'id,name,status,objective,start_time,stop_time,daily_budget,lifetime_budget'
@@ -38,7 +33,6 @@ async function fetchMetaCampaigns(token: string, adAccountId: string): Promise<M
   if (data.error) throw new Error(`Meta API: ${data.error.message}`)
   return (data.data ?? []) as MetaCampaign[]
 }
-
 async function fetchCampaignInsights(token: string, campaignId: string): Promise<MetaInsight | null> {
   const fields = 'impressions,clicks,spend,reach,ctr,actions,cost_per_action_type'
   const url = `${META_BASE}/${campaignId}/insights?fields=${fields}&date_preset=lifetime&access_token=${token}`
@@ -47,7 +41,6 @@ async function fetchCampaignInsights(token: string, campaignId: string): Promise
   if (data.error) throw new Error(`Meta Insights API: ${data.error.message}`)
   return data.data?.[0] ?? null
 }
-
 // ─── Mapping helpers ──────────────────────────────────────────────────────────
 function metaStatusToDb(s: string): string {
   if (s === 'ACTIVE') return 'active'
@@ -55,14 +48,12 @@ function metaStatusToDb(s: string): string {
   if (s === 'ARCHIVED') return 'archived'
   return 'draft'
 }
-
 function metaObjectiveToChannel(objective: string): string {
   const lower = objective.toLowerCase()
   if (lower.includes('instagram')) return 'instagram'
   // Default to facebook for all Meta campaigns
   return 'facebook'
 }
-
 function getActionValue(actions: MetaInsight['actions'] | undefined, ...types: string[]): number {
   if (!actions) return 0
   for (const type of types) {
@@ -71,20 +62,17 @@ function getActionValue(actions: MetaInsight['actions'] | undefined, ...types: s
   }
   return 0
 }
-
 function centsToBRL(cents: string | undefined): number | null {
   if (!cents) return null
   const val = Number(cents) / 100
   return isNaN(val) ? null : val
 }
-
 // ─── GET /api/meta-ads — Fetch campaigns from Meta (preview) ─────────────────
 export async function GET() {
   try {
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
     if (!META_TOKEN || !META_ACCOUNT) {
       return NextResponse.json({
         connected: false,
@@ -92,7 +80,6 @@ export async function GET() {
         campaigns: [],
       })
     }
-
     const campaigns = await fetchMetaCampaigns(META_TOKEN, META_ACCOUNT)
     return NextResponse.json({
       connected: true,
@@ -106,39 +93,32 @@ export async function GET() {
       })),
     })
   } catch (err) {
-    console.error('[meta-ads] GET error:', err)
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Erro ao conectar com Meta API' },
       { status: 500 }
     )
   }
 }
-
 // ─── POST /api/meta-ads — Sync campaigns to DB ───────────────────────────────
 export async function POST() {
   try {
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
     if (!META_TOKEN || !META_ACCOUNT) {
       return NextResponse.json({
         error: 'META_ACCESS_TOKEN e META_AD_ACCOUNT_ID não configurados nas variáveis de ambiente',
       }, { status: 400 })
     }
-
     // 1. Fetch all campaigns from Meta
     const metaCampaigns = await fetchMetaCampaigns(META_TOKEN, META_ACCOUNT)
-
     let synced = 0
     let errors = 0
     const results: Array<{ id: string; name: string; status: string; action: 'upserted' | 'error' }> = []
-
     for (const mc of metaCampaigns) {
       try {
         // 2. Fetch insights for this campaign
         const insights = await fetchCampaignInsights(META_TOKEN, mc.id)
-
         const leads = getActionValue(
           insights?.actions,
           'lead',
@@ -153,10 +133,8 @@ export async function POST() {
           a => a.action_type === 'lead' || a.action_type === 'offsite_conversion.fb_pixel_lead'
         )
         const costPerLead = cpl ? Number(cpl.value) : (leads > 0 ? spent / leads : null)
-
         const dbStatus = metaStatusToDb(mc.status)
         const channel = metaObjectiveToChannel(mc.objective)
-
         // 3. Upsert: match by utm_campaign (= Meta campaign ID) + utm_source = 'meta'
         const { error: upsertErr } = await supabase
           .from('campaigns')
@@ -183,7 +161,6 @@ export async function POST() {
             onConflict: 'utm_source,utm_campaign',
             ignoreDuplicates: false,
           })
-
         if (upsertErr) {
           // Fallback: try INSERT OR UPDATE by name
           const { error: fallbackErr } = await supabase
@@ -203,16 +180,13 @@ export async function POST() {
             })
           if (fallbackErr) throw fallbackErr
         }
-
         synced++
         results.push({ id: mc.id, name: mc.name, status: dbStatus, action: 'upserted' })
       } catch (err) {
         errors++
-        console.error(`[meta-ads] Campaign ${mc.id} sync error:`, err)
         results.push({ id: mc.id, name: mc.name, status: mc.status, action: 'error' })
       }
     }
-
     return NextResponse.json({
       success: true,
       total: metaCampaigns.length,
@@ -222,7 +196,6 @@ export async function POST() {
       results,
     })
   } catch (err) {
-    console.error('[meta-ads] POST error:', err)
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Erro na sincronização Meta Ads' },
       { status: 500 }

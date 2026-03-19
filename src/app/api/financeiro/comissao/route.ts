@@ -3,13 +3,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
         const body = await request.json()
         const {
             contrato_id,
@@ -19,11 +17,9 @@ export async function POST(request: NextRequest) {
             due_date,
             notes,
         } = body
-
         if (!valor_venda || valor_venda <= 0) {
             return NextResponse.json({ error: 'Valor de venda inválido' }, { status: 400 })
         }
-
         // Default: pegar percentual de comissão das settings do tenant
         let pct = percentual_comissao
         if (!pct) {
@@ -34,11 +30,9 @@ export async function POST(request: NextRequest) {
                 .maybeSingle()
             pct = setting ? parseFloat(setting.value as string) : 5
         }
-
         const comissaoTotal = Math.round((valor_venda * pct) / 100 * 100) / 100
         const dueDateStr = due_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
         const created: any[] = []
-
         if (splits && splits.length > 0) {
             // Registrar comissão dividida
             for (const split of splits) {
@@ -65,7 +59,6 @@ export async function POST(request: NextRequest) {
                     })
                     .select()
                     .single()
-
                 if (!error && data) created.push(data)
             }
         } else {
@@ -90,10 +83,8 @@ export async function POST(request: NextRequest) {
                 })
                 .select()
                 .single()
-
             if (!error && data) created.push(data)
         }
-
         return NextResponse.json({
             success: true,
             comissao_total: comissaoTotal,
@@ -102,7 +93,6 @@ export async function POST(request: NextRequest) {
             transactions: created,
         }, { status: 201 })
     } catch (err) {
-        console.error('Comissao Error:', err)
         return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
     }
 }

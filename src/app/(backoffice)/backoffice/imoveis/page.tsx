@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -24,33 +23,26 @@ import {
   MobilePropertyCard, MobilePropertyCardSkeleton,
   MobileBottomSheet, MobileEmptyState, MobileBottomNav, MobileSortChips,
 } from './mobile-ui'
-
 export const dynamic = 'force-dynamic'
-
 type ViewMode = 'grid' | 'list'
 type SortField = 'price' | 'imi_score' | 'area' | 'created_at' | 'yield_est'
 type SortDir = 'asc' | 'desc'
-
 // ─── Shared helpers ────────────────────────────────────────────────────────────
-
 function fmt(n?: number | null): string {
   if (!n) return '—'
   if (n >= 1_000_000) return `R$ ${(n / 1_000_000).toFixed(2).replace('.', ',')}M`
   if (n >= 1_000) return `R$ ${(n / 1_000).toFixed(0)}K`
   return `R$ ${n.toLocaleString('pt-BR')}`
 }
-
 const DB_STATUS_MAP: Record<string, string> = {
   launch: 'lancamento', available: 'disponivel', under_construction: 'em_construcao',
   ready: 'disponivel', sold: 'vendido', reserved: 'reservado',
   negotiating: 'em_negociacao', published: 'disponivel', draft: 'rascunho',
   campaign: 'lancamento', private: 'privado',
 }
-
 function normalizeStatus(s: string): string {
   return DB_STATUS_MAP[s?.toLowerCase()] ?? s?.toLowerCase() ?? 'disponivel'
 }
-
 const STATUS_CONFIGS: Record<string, { label: string; color: string }> = {
   disponivel:     { label: 'Disponível',     color: 'var(--success)' },
   lancamento:     { label: 'Lançamento',     color: 'var(--info)' },
@@ -61,9 +53,7 @@ const STATUS_CONFIGS: Record<string, { label: string; color: string }> = {
   arquivado:      { label: 'Arquivado',      color: 'var(--text-tertiary)' },
   rascunho:       { label: 'Rascunho',       color: 'var(--text-tertiary)' },
 }
-
 // ─── Shared props interface ─────────────────────────────────────────────────────
-
 interface SharedProps {
   properties: IMIProperty[]
   filtered: IMIProperty[]
@@ -86,11 +76,9 @@ interface SharedProps {
   market: 'BR' | 'US' | 'AE'
   setMarket: (m: 'BR' | 'US' | 'AE') => void
 }
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // DESKTOP SUB-COMPONENTS
 // ═══════════════════════════════════════════════════════════════════════════════
-
 function KPIStrip({ properties }: { properties: IMIProperty[] }) {
   const total = properties.length
   const avgScore = total > 0 ? Math.round(properties.reduce((a, p) => a + (p.imi_score ?? 0), 0) / total) : 0
@@ -99,7 +87,6 @@ function KPIStrip({ properties }: { properties: IMIProperty[] }) {
     : '0'
   const totalVGV = properties.reduce((a, p) => a + (p.price ?? 0), 0)
   const disponivel = properties.filter(p => p.status === 'disponivel').length
-
   const kpis = [
     { label: 'Total', value: total.toString(), icon: Building2, color: 'var(--text-secondary)' },
     { label: 'Score', value: avgScore.toString(), icon: Sparkles, color: 'var(--imi-gold-500)' },
@@ -107,7 +94,6 @@ function KPIStrip({ properties }: { properties: IMIProperty[] }) {
     { label: 'VGV', value: fmt(totalVGV), icon: BarChart2, color: 'var(--info)' },
     { label: 'Disponíveis', value: disponivel.toString(), icon: Building2, color: 'var(--success)' },
   ]
-
   return (
     <div className="imi-kpi-strip">
       {kpis.map(kpi => (
@@ -124,7 +110,6 @@ function KPIStrip({ properties }: { properties: IMIProperty[] }) {
     </div>
   )
 }
-
 function SortDropdown({ field, dir, onChange }: {
   field: SortField; dir: SortDir
   onChange: (f: SortField, d: SortDir) => void
@@ -166,7 +151,6 @@ function SortDropdown({ field, dir, onChange }: {
     </div>
   )
 }
-
 function PropertyCardSkeleton() {
   return (
     <div className="imi-skeleton-card">
@@ -179,9 +163,7 @@ function PropertyCardSkeleton() {
     </div>
   )
 }
-
 // ─── Desktop list component ────────────────────────────────────────────────────
-
 function DesktopImoveisList(props: SharedProps) {
   const {
     properties, filtered, loading, searchInput, setSearchInput,
@@ -189,7 +171,6 @@ function DesktopImoveisList(props: SharedProps) {
     compareIds, favorites, toggleCompare, clearCompare, toggleFavorite,
     fetchProperties, activeFiltersCount, market, setMarket,
   } = props
-
   const router = useRouter()
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
@@ -197,7 +178,6 @@ function DesktopImoveisList(props: SharedProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [shortcutPanelOpen, setShortcutPanelOpen] = useState(false)
   const shortcutBtnRef = useRef<HTMLButtonElement>(null)
-
   // ── Bulk selection helpers ───────────────────────────────
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds(prev => {
@@ -206,11 +186,9 @@ function DesktopImoveisList(props: SharedProps) {
       return next
     })
   }, [])
-
   const clearSelection = useCallback(() => {
     setSelectedIds(new Set())
   }, [])
-
   // ── CSV export ───────────────────────────────────────────
   const exportCSV = useCallback(() => {
     const selected = filtered.filter(p => selectedIds.has(p.id))
@@ -225,7 +203,6 @@ function DesktopImoveisList(props: SharedProps) {
     a.href = url; a.download = 'imoveis.csv'; a.click()
     URL.revokeObjectURL(url)
   }, [filtered, selectedIds])
-
   // ── Keyboard shortcuts ───────────────────────────────────
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -244,10 +221,8 @@ function DesktopImoveisList(props: SharedProps) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [router, bulkMode, selectedIds, clearSelection])
-
   return (
     <div className="imi-page">
-
       {/* ── HEADER ─────────────────────────────────── */}
       <header className="imi-header">
         <div className="imi-header-bg-grid" />
@@ -265,7 +240,6 @@ function DesktopImoveisList(props: SharedProps) {
             <span className="imi-breadcrumb-sep">›</span>
             <span className="imi-breadcrumb-page" style={{ color: 'var(--imi-gold-500)', opacity: 0.9 }}>Imóveis</span>
           </div>
-
           <div className="imi-header-row">
             <div>
               <h1 className="imi-page-title">
@@ -275,7 +249,6 @@ function DesktopImoveisList(props: SharedProps) {
                 Inteligência de mercado · Avaliação · Análise de investimento
               </p>
             </div>
-
             {/* Desktop action buttons */}
             <div className="imi-header-actions">
               <Link href="/backoffice/imoveis/explorer">
@@ -332,7 +305,6 @@ function DesktopImoveisList(props: SharedProps) {
               </Link>
             </div>
           </div>
-
           {/* Mobile quick nav chips */}
           <div className="imi-mobile-chips">
             <Link href="/backoffice/imoveis/explorer">
@@ -347,10 +319,8 @@ function DesktopImoveisList(props: SharedProps) {
           </div>
         </div>
       </header>
-
       {/* ── KPI STRIP ────────────────────────────────── */}
       <KPIStrip properties={properties} />
-
       {/* ── MARKET SELECTOR ──────────────────────────── */}
       {/* TODO: filter by market when DB supports country field */}
       <div style={{ display: 'flex', gap: 6, padding: '12px 28px 4px' }}>
@@ -378,7 +348,6 @@ function DesktopImoveisList(props: SharedProps) {
           </button>
         ))}
       </div>
-
       {/* ── TOOLBAR ──────────────────────────────────── */}
       <div className="imi-toolbar">
         {/* Search row */}
@@ -398,7 +367,6 @@ function DesktopImoveisList(props: SharedProps) {
             )}
           </div>
         </div>
-
         {/* Controls row */}
         <div className="imi-toolbar-controls">
           {/* Mobile filter button */}
@@ -412,19 +380,15 @@ function DesktopImoveisList(props: SharedProps) {
               <span className="imi-filter-badge">{activeFiltersCount}</span>
             )}
           </button>
-
           <span className="imi-results-count">
             {filtered.length} imóvel{filtered.length !== 1 ? 's' : ''}
           </span>
-
           <div style={{ flex: 1 }} />
-
           <SortDropdown
             field={sortField}
             dir={sortDir}
             onChange={(f, d) => { setSortField(f); setSortDir(d) }}
           />
-
           <div className="imi-view-toggle">
             {([
               { mode: 'grid' as ViewMode, Icon: Grid3X3 },
@@ -439,7 +403,6 @@ function DesktopImoveisList(props: SharedProps) {
               </button>
             ))}
           </div>
-
           {/* Bulk mode toggle */}
           <button
             onClick={() => { setBulkMode(o => !o); if (bulkMode) clearSelection() }}
@@ -452,16 +415,13 @@ function DesktopImoveisList(props: SharedProps) {
           >
             <CheckSquare size={13} />
           </button>
-
           <button onClick={fetchProperties} disabled={loading} className="imi-refresh-btn">
             <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
           </button>
         </div>
       </div>
-
       {/* ── BODY: sidebar filter + content ─────────── */}
       <div className="imi-body">
-
         {/* Desktop sidebar filter */}
         <div className="imi-filter-sidebar">
           <AdvancedFilterPanel
@@ -471,7 +431,6 @@ function DesktopImoveisList(props: SharedProps) {
             filteredCount={filtered.length}
           />
         </div>
-
         {/* Mobile filter bottom sheet */}
         {filterSheetOpen && (
           <div className="imi-sheet-overlay" onClick={() => setFilterSheetOpen(false)}>
@@ -507,7 +466,6 @@ function DesktopImoveisList(props: SharedProps) {
             </div>
           </div>
         )}
-
         {/* Content */}
         <div className="imi-content">
           {loading ? (
@@ -562,12 +520,10 @@ function DesktopImoveisList(props: SharedProps) {
           )}
         </div>
       </div>
-
       {/* ── MOBILE FAB ────────────────────────────────── */}
       <Link href="/backoffice/imoveis/novo" className="imi-fab">
         <Plus size={22} />
       </Link>
-
       {/* ── BULK ACTION BAR ───────────────────────────── */}
       {selectedIds.size > 0 && (
         <div style={{
@@ -589,18 +545,14 @@ function DesktopImoveisList(props: SharedProps) {
           }}>
             {selectedIds.size} imóvel{selectedIds.size !== 1 ? 's' : ''} selecionado{selectedIds.size !== 1 ? 's' : ''}
           </span>
-
           <div style={{ width: 1, height: 20, background: 'rgba(184,148,58,0.2)' }} />
-
           {/* Center: action buttons */}
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="imi-bulk-btn imi-bulk-btn-publish">Publicar</button>
             <button className="imi-bulk-btn imi-bulk-btn-archive">Arquivar</button>
             <button className="imi-bulk-btn imi-bulk-btn-export" onClick={exportCSV}>Exportar CSV</button>
           </div>
-
           <div style={{ width: 1, height: 20, background: 'rgba(184,148,58,0.2)' }} />
-
           {/* Right: close */}
           <button
             onClick={() => { clearSelection(); setBulkMode(false) }}
@@ -615,7 +567,6 @@ function DesktopImoveisList(props: SharedProps) {
           </button>
         </div>
       )}
-
       {/* ── COMPARE BAR ───────────────────────────────── */}
       {compareIds.size > 0 && (
         <div className="imi-compare-bar">
@@ -630,7 +581,6 @@ function DesktopImoveisList(props: SharedProps) {
           </button>
         </div>
       )}
-
       <style suppressHydrationWarning>{`
         /* ═══ PAGE BASE ═══ */
         .imi-page {
@@ -639,7 +589,6 @@ function DesktopImoveisList(props: SharedProps) {
           min-height: 100vh;
           background: var(--bg-base);
         }
-
         /* ═══ HEADER ═══ */
         .imi-header {
           padding: 24px 28px 0;
@@ -695,7 +644,6 @@ function DesktopImoveisList(props: SharedProps) {
           display: flex; gap: 8px; align-items: center; flex-shrink: 0;
         }
         .imi-mobile-chips { display: none; }
-
         /* ═══ BUTTONS ═══ */
         .imi-btn-ghost {
           display: flex; align-items: center; gap: 6px;
@@ -726,7 +674,6 @@ function DesktopImoveisList(props: SharedProps) {
           min-height: 36px;
         }
         .imi-btn-primary:hover { background: var(--imi-gold-400); }
-
         /* ═══ KPI STRIP ═══ */
         .imi-kpi-strip {
           display: flex; gap: 1px;
@@ -752,7 +699,6 @@ function DesktopImoveisList(props: SharedProps) {
           font-variant-numeric: tabular-nums;
           letter-spacing: -0.5px; line-height: 1;
         }
-
         /* ═══ TOOLBAR ═══ */
         .imi-toolbar {
           display: flex; flex-direction: column; gap: 0;
@@ -863,7 +809,6 @@ function DesktopImoveisList(props: SharedProps) {
           color: var(--text-tertiary);
           flex-shrink: 0;
         }
-
         /* ═══ BODY ═══ */
         .imi-body {
           display: flex; flex: 1; min-height: 0;
@@ -877,7 +822,6 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-content {
           flex: 1; padding: 20px; overflow-y: auto; min-width: 0;
         }
-
         /* ═══ GRID / LIST ═══ */
         .imi-grid {
           display: grid;
@@ -901,7 +845,6 @@ function DesktopImoveisList(props: SharedProps) {
           text-transform: uppercase; color: var(--text-tertiary);
           font-family: var(--font-montserrat, sans-serif);
         }
-
         /* ═══ EMPTY STATE ═══ */
         .imi-empty {
           display: flex; flex-direction: column; align-items: center;
@@ -922,7 +865,6 @@ function DesktopImoveisList(props: SharedProps) {
           font-family: var(--font-montserrat, sans-serif);
           margin-top: -8px;
         }
-
         /* ═══ SKELETON ═══ */
         .imi-skeleton-card {
           background: var(--bo-card);
@@ -941,7 +883,6 @@ function DesktopImoveisList(props: SharedProps) {
           background-size: 200% 100%;
           animation: skeletonPulse 1.5s ease-in-out infinite;
         }
-
         /* ═══ MOBILE FAB ═══ */
         .imi-fab {
           display: none;
@@ -952,7 +893,6 @@ function DesktopImoveisList(props: SharedProps) {
           box-shadow: var(--shadow-gold);
           z-index: 90; text-decoration: none;
         }
-
         /* ═══ FILTER BOTTOM SHEET ═══ */
         .imi-sheet-overlay {
           display: none;
@@ -1010,7 +950,6 @@ function DesktopImoveisList(props: SharedProps) {
           text-transform: uppercase; cursor: pointer;
           font-family: var(--font-montserrat, sans-serif);
         }
-
         /* ═══ KEYBOARD HELP BUTTON ═══ */
         .imi-kbd-help-btn {
           width: 36px; height: 36px;
@@ -1055,7 +994,6 @@ function DesktopImoveisList(props: SharedProps) {
           font-family: var(--font-montserrat, sans-serif);
           font-size: 11px; color: var(--text-secondary);
         }
-
         /* ═══ BULK ACTION BAR BUTTONS ═══ */
         .imi-bulk-btn {
           padding: 7px 14px; border-radius: 6px; cursor: pointer;
@@ -1084,7 +1022,6 @@ function DesktopImoveisList(props: SharedProps) {
           color: var(--imi-gold-500);
         }
         .imi-bulk-btn-export:hover { background: rgba(184,148,58,0.10); }
-
         /* ═══ COMPARE BAR ═══ */
         .imi-compare-bar {
           position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
@@ -1117,7 +1054,6 @@ function DesktopImoveisList(props: SharedProps) {
           background: rgba(255,255,255,0.06); border: none; cursor: pointer;
           color: var(--text-secondary);
         }
-
         /* ═══ CHIP ═══ */
         .imi-chip {
           display: flex; align-items: center; gap: 5px;
@@ -1130,12 +1066,10 @@ function DesktopImoveisList(props: SharedProps) {
           cursor: pointer; white-space: nowrap;
           min-height: 32px;
         }
-
         /* ═══ ANIMATIONS ═══ */
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes skeletonPulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
         /* ═══ LIGHT THEME ═══ */
         .light .imi-page, [data-theme="light"] .imi-page {
           background: var(--bg-base);
@@ -1145,7 +1079,6 @@ function DesktopImoveisList(props: SharedProps) {
           border-color: rgba(168,132,42,0.20);
           color: var(--text-primary);
         }
-
         /* ═══════════════════════════════════════════
            MOBILE — ≤ 767px
         ═══════════════════════════════════════════ */
@@ -1165,7 +1098,6 @@ function DesktopImoveisList(props: SharedProps) {
             scrollbar-width: none;
           }
           .imi-mobile-chips::-webkit-scrollbar { display: none; }
-
           /* KPI strip mobile — horizontal scroll */
           .imi-kpi-strip {
             overflow-x: auto;
@@ -1181,35 +1113,29 @@ function DesktopImoveisList(props: SharedProps) {
           }
           .imi-kpi-value { font-size: 16px; }
           .imi-kpi-label { font-size: 11px; }
-
           /* Toolbar mobile */
           .imi-toolbar-search-row { padding: 10px 14px 0; }
           .imi-toolbar-controls { padding: 8px 14px 10px; gap: 8px; }
           .imi-filter-btn { display: flex; }
           .imi-sort-label { display: none; }
-
           /* Body mobile — no sidebar */
           .imi-filter-sidebar { display: none; }
           .imi-sheet-overlay { display: flex; }
           .imi-sheet { animation: slideUp 0.3s cubic-bezier(0.16,1,0.3,1); }
           .imi-content { padding: 12px 14px; }
-
           /* Grid mobile — single column */
           .imi-grid {
             grid-template-columns: 1fr;
             gap: 12px;
           }
-
           /* List view — scroll horizontally on mobile */
           .imi-list-wrap { overflow-x: auto; }
           .imi-list-header {
             min-width: 700px;
             grid-template-columns: 1.5fr 90px 80px 70px 70px 70px 44px 100px;
           }
-
           /* FAB mobile */
           .imi-fab { display: flex; }
-
           /* Compare bar mobile */
           .imi-compare-bar {
             bottom: 70px;
@@ -1217,7 +1143,6 @@ function DesktopImoveisList(props: SharedProps) {
             border-radius: 10px;
           }
         }
-
         /* ═══════════════════════════════════════════
            TABLET — 768px–1023px
         ═══════════════════════════════════════════ */
@@ -1235,11 +1160,9 @@ function DesktopImoveisList(props: SharedProps) {
     </div>
   )
 }
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // MOBILE TREE (native proptech app)
 // ═══════════════════════════════════════════════════════════════════════════════
-
 const STATUS_FILTER_CHIPS = [
   { value: '', label: 'Todos' },
   { value: 'disponivel', label: 'Disponível' },
@@ -1248,7 +1171,6 @@ const STATUS_FILTER_CHIPS = [
   { value: 'reservado', label: 'Reservado' },
   { value: 'vendido', label: 'Vendido' },
 ]
-
 const SORT_CHIPS = [
   { field: 'imi_score', dir: 'desc' as const, label: 'Maior Score' },
   { field: 'created_at', dir: 'desc' as const, label: 'Mais Novo' },
@@ -1256,7 +1178,6 @@ const SORT_CHIPS = [
   { field: 'price', dir: 'desc' as const, label: 'Maior Preço' },
   { field: 'yield_est', dir: 'desc' as const, label: 'Maior Yield' },
 ]
-
 function MobileImoveisList(props: SharedProps) {
   const {
     filtered, loading, searchInput, setSearchInput,
@@ -1264,19 +1185,15 @@ function MobileImoveisList(props: SharedProps) {
     toggleFavorite, activeFiltersCount, sortField, setSortField, sortDir, setSortDir,
     properties, market, setMarket,
   } = props
-
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState('')
-
   useEffect(() => {
     setFilters({ ...filters, status: statusFilter ? [statusFilter] : [] })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter])
-
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 56, paddingBottom: 120 }}>
       <MobileGlobalStyles />
-
       {/* ── APP BAR ── */}
       <MobileAppBar
         title="Imóveis"
@@ -1289,7 +1206,6 @@ function MobileImoveisList(props: SharedProps) {
           </>
         }
       />
-
       {/* ── STICKY SEARCH + FILTERS ── */}
       <div style={{
         position: 'sticky', top: 56, zIndex: 90,
@@ -1306,7 +1222,6 @@ function MobileImoveisList(props: SharedProps) {
             placeholder="Buscar imóveis, bairros..."
           />
         </div>
-
         {/* Mobile Market Selector */}
         {/* TODO: filter by market when DB supports country field */}
         <div style={{ display: 'flex', gap: 6, padding: '4px 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
@@ -1334,7 +1249,6 @@ function MobileImoveisList(props: SharedProps) {
             </button>
           ))}
         </div>
-
         {/* Status chips */}
         <MobileFilterChips
           chips={STATUS_FILTER_CHIPS}
@@ -1342,7 +1256,6 @@ function MobileImoveisList(props: SharedProps) {
           onChange={setStatusFilter}
         />
       </div>
-
       {/* ── RESULTS ROW + SORT ── */}
       <div style={{ padding: '10px 16px 6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{
@@ -1354,7 +1267,6 @@ function MobileImoveisList(props: SharedProps) {
         </span>
         <MobileFiltersButton count={activeFiltersCount} onClick={() => setFilterSheetOpen(true)} />
       </div>
-
       {/* Sort chips */}
       <div style={{ paddingBottom: 8 }}>
         <MobileSortChips
@@ -1364,7 +1276,6 @@ function MobileImoveisList(props: SharedProps) {
           onChange={(f, d) => { setSortField(f as any); setSortDir(d) }}
         />
       </div>
-
       {/* ── PROPERTY LIST ── */}
       <div style={{ padding: '4px 16px 16px' }}>
         {loading ? (
@@ -1387,7 +1298,6 @@ function MobileImoveisList(props: SharedProps) {
           ))
         )}
       </div>
-
       {/* ── FILTER BOTTOM SHEET ── */}
       <MobileBottomSheet
         isOpen={filterSheetOpen}
@@ -1432,20 +1342,16 @@ function MobileImoveisList(props: SharedProps) {
           filteredCount={filtered.length}
         />
       </MobileBottomSheet>
-
       {/* ── BOTTOM NAVIGATION ── */}
       <MobileBottomNav />
     </div>
   )
 }
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN PAGE EXPORT
 // ═══════════════════════════════════════════════════════════════════════════════
-
 export default function ImoveisPage() {
   const isMobile = useIsMobile()
-
   const [properties, setProperties] = useState<IMIProperty[]>([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState<PropertyFilters>(DEFAULT_FILTERS)
@@ -1461,7 +1367,6 @@ export default function ImoveisPage() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
   const [searchInput, setSearchInput] = useState('')
   const [market, setMarket] = useState<'BR' | 'US' | 'AE'>('BR')
-
   const fetchProperties = useCallback(async () => {
     setLoading(true)
     try {
@@ -1470,20 +1375,15 @@ export default function ImoveisPage() {
         .from('developments')
         .select('*')
         .order('created_at', { ascending: false })
-
       if (error) throw error
-
       const normalized: IMIProperty[] = (data ?? []).map(mapDevToProperty)
       setProperties(normalized.map(enrichProperty))
     } catch (err) {
-      console.error('Erro ao carregar imóveis:', err)
     } finally {
       setLoading(false)
     }
   }, [])
-
   useEffect(() => { fetchProperties() }, [fetchProperties])
-
   const filtered = useMemo(() => {
     let list = [...properties]
     const q = (filters.search || searchInput).toLowerCase()
@@ -1517,7 +1417,6 @@ export default function ImoveisPage() {
     })
     return list
   }, [properties, filters, searchInput, sortField, sortDir])
-
   const activeFiltersCount = useMemo(() => {
     let c = 0
     if (filters.status.length > 0) c++
@@ -1532,7 +1431,6 @@ export default function ImoveisPage() {
     if (filters.belowMarket) c++
     return c
   }, [filters])
-
   const toggleCompare = useCallback((id: string) => {
     setCompareIds(prev => {
       const next = new Set(prev)
@@ -1541,7 +1439,6 @@ export default function ImoveisPage() {
       return next
     })
   }, [])
-
   const toggleFavorite = useCallback((id: string) => {
     setFavorites(prev => {
       const next = new Set(prev)
@@ -1549,7 +1446,6 @@ export default function ImoveisPage() {
       return next
     })
   }, [])
-
   const sharedProps: SharedProps = {
     properties,
     filtered,
@@ -1575,7 +1471,6 @@ export default function ImoveisPage() {
     market,
     setMarket,
   }
-
   if (isMobile) return <MobileImoveisList {...sharedProps} />
   return <DesktopImoveisList {...sharedProps} />
 }

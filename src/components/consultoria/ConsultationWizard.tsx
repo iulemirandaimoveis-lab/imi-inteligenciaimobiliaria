@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -15,40 +14,32 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-
 const supabase = createClient()
-
 interface ConsultationFormData {
     // Cliente
     client_name: string
     client_email: string
     client_phone: string
     client_type: 'individual' | 'business' | 'family_office'
-
     // Perfil
     estimated_patrimony: string
     has_international_income: boolean
     occupation: string
-
     // Objetivos
     consultation_type: 'acquisition' | 'holding' | 'llc' | 'dubai' | 'succession' | 'governance' | 'full_structure'
     jurisdictions: string[] // Brasil, EUA, Dubai, Paraguai, Panama
     main_goal: string
-
     // Estruturação
     needs_lawyer: boolean
     needs_accountant: boolean
     needs_bpo: boolean
-
     // Timing
     urgency: 'immediate' | 'short_term' | 'medium_term' | 'long_term'
     budget_range: string
-
     // Detalhes
     message: string
     preferred_contact: 'email' | 'phone' | 'whatsapp' | 'meeting'
 }
-
 const INITIAL_FORM: ConsultationFormData = {
     client_name: '',
     client_email: '',
@@ -68,7 +59,6 @@ const INITIAL_FORM: ConsultationFormData = {
     message: '',
     preferred_contact: 'whatsapp'
 }
-
 const CONSULTATION_TYPES = [
     {
         value: 'acquisition',
@@ -120,7 +110,6 @@ const CONSULTATION_TYPES = [
         color: 'yellow'
     }
 ]
-
 const JURISDICTIONS = [
     { value: 'brasil', label: 'Brasil 🇧🇷', description: 'Holding e planejamento local' },
     { value: 'usa', label: 'EUA 🇺🇸', description: 'LLC, renda passiva, green card' },
@@ -128,14 +117,12 @@ const JURISDICTIONS = [
     { value: 'paraguai', label: 'Paraguai 🇵🇾', description: 'Residência facilitada' },
     { value: 'panama', label: 'Panamá 🇵🇦', description: 'Estruturas offshore' }
 ]
-
 export default function ConsultationWizard() {
     const router = useRouter()
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState<ConsultationFormData>(INITIAL_FORM)
     const [loading, setLoading] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({})
-
     const handleInputChange = (field: keyof ConsultationFormData, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }))
         if (errors[field]) {
@@ -146,7 +133,6 @@ export default function ConsultationWizard() {
             })
         }
     }
-
     const toggleJurisdiction = (jurisdiction: string) => {
         setFormData(prev => ({
             ...prev,
@@ -155,34 +141,27 @@ export default function ConsultationWizard() {
                 : [...prev.jurisdictions, jurisdiction]
         }))
     }
-
     const validateStep = (currentStep: number): boolean => {
         const newErrors: Record<string, string> = {}
-
         if (currentStep === 1) {
             if (!formData.client_name.trim()) newErrors.client_name = 'Nome obrigatório'
             if (!formData.client_email.trim()) newErrors.client_email = 'E-mail obrigatório'
             if (!formData.client_phone.trim()) newErrors.client_phone = 'Telefone obrigatório'
         }
-
         if (currentStep === 2) {
             if (!formData.consultation_type) newErrors.consultation_type = 'Selecione um tipo'
             if (formData.jurisdictions.length === 0) newErrors.jurisdictions = 'Selecione ao menos uma jurisdição'
         }
-
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
-
     const handleNext = () => {
         if (validateStep(step)) {
             setStep(prev => prev + 1)
         }
     }
-
     const handleSubmit = async () => {
         if (!validateStep(step)) return
-
         setLoading(true)
         try {
             const { data, error } = await supabase
@@ -194,29 +173,22 @@ export default function ConsultationWizard() {
                 })
                 .select()
                 .single()
-
             if (error) throw error
-
             toast.success('Solicitação enviada com sucesso!')
             toast.info('Entraremos em contato em até 24h')
-
             router.push(`/backoffice/consultations/${data.id}`)
-
         } catch (error: any) {
-            console.error('Erro ao criar consultoria:', error)
             toast.error('Erro ao enviar solicitação')
         } finally {
             setLoading(false)
         }
     }
-
     const renderStep1 = () => (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="text-center mb-8">
                 <h2 className="text-2xl font-bold text-imi-900 mb-2">Dados do Cliente</h2>
                 <p className="text-imi-600">Informações básicas para início da consultoria</p>
             </div>
-
             <div>
                 <label className="block text-sm font-medium text-imi-700 mb-2">
                     Nome Completo *
@@ -231,7 +203,6 @@ export default function ConsultationWizard() {
                 />
                 {errors.client_name && <p className="mt-1 text-sm text-red-600">{errors.client_name}</p>}
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="block text-sm font-medium text-imi-700 mb-2">
@@ -247,7 +218,6 @@ export default function ConsultationWizard() {
                     />
                     {errors.client_email && <p className="mt-1 text-sm text-red-600">{errors.client_email}</p>}
                 </div>
-
                 <div>
                     <label className="block text-sm font-medium text-imi-700 mb-2">
                         Telefone/WhatsApp *
@@ -263,7 +233,6 @@ export default function ConsultationWizard() {
                     {errors.client_phone && <p className="mt-1 text-sm text-red-600">{errors.client_phone}</p>}
                 </div>
             </div>
-
             <div>
                 <label className="block text-sm font-medium text-imi-700 mb-2">
                     Perfil do Cliente
@@ -288,7 +257,6 @@ export default function ConsultationWizard() {
                     ))}
                 </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="block text-sm font-medium text-imi-700 mb-2">
@@ -307,7 +275,6 @@ export default function ConsultationWizard() {
                         <option value="10m+">Acima de R$ 10M</option>
                     </select>
                 </div>
-
                 <div>
                     <label className="block text-sm font-medium text-imi-700 mb-2">
                         Profissão/Ocupação
@@ -321,7 +288,6 @@ export default function ConsultationWizard() {
                     />
                 </div>
             </div>
-
             <div>
                 <label className="flex items-center gap-3 cursor-pointer p-4 border border-imi-100 rounded-xl hover:bg-imi-50 transition-colors">
                     <input
@@ -337,24 +303,20 @@ export default function ConsultationWizard() {
             </div>
         </div>
     )
-
     const renderStep2 = () => (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="text-center mb-8">
                 <h2 className="text-2xl font-bold text-imi-900 mb-2">Tipo de Estruturação</h2>
                 <p className="text-imi-600">Selecione o tipo de consultoria desejada</p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {CONSULTATION_TYPES.map((type) => {
                     const Icon = type.icon
                     const isSelected = formData.consultation_type === type.value
-
                     // Helper para cores dinâmicas (Tailwind precisa de classes completas ou safelist, 
                     // mas vamos usar estilo inline para simplicidade/garantia aqui ou classes fixas)
                     // Usando classes fixas baseadas na prop color seria o ideal se configurado no tailwind.config
                     // Vou usar classes padrão do Tailwind condicionalmente.
-
                     let bgClass = 'bg-gray-100 text-gray-600'
                     if (type.color === 'blue') bgClass = 'bg-blue-100 text-blue-600'
                     if (type.color === 'green') bgClass = 'bg-green-100 text-green-600'
@@ -363,11 +325,9 @@ export default function ConsultationWizard() {
                     if (type.color === 'pink') bgClass = 'bg-pink-100 text-pink-600'
                     if (type.color === 'indigo') bgClass = 'bg-indigo-100 text-indigo-600'
                     if (type.color === 'yellow') bgClass = 'bg-yellow-100 text-yellow-600'
-
                     if (isSelected) {
                         bgClass = 'bg-accent-500 text-white'
                     }
-
                     return (
                         <button
                             key={type.value}
@@ -395,7 +355,6 @@ export default function ConsultationWizard() {
                 })}
             </div>
             {errors.consultation_type && <p className="text-sm text-red-600 text-center">{errors.consultation_type}</p>}
-
             <div>
                 <label className="block text-sm font-medium text-imi-700 mb-3">
                     Jurisdições de Interesse *
@@ -403,7 +362,6 @@ export default function ConsultationWizard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {JURISDICTIONS.map((jurisdiction) => {
                         const isSelected = formData.jurisdictions.includes(jurisdiction.value)
-
                         return (
                             <button
                                 key={jurisdiction.value}
@@ -425,7 +383,6 @@ export default function ConsultationWizard() {
                 </div>
                 {errors.jurisdictions && <p className="mt-2 text-sm text-red-600">{errors.jurisdictions}</p>}
             </div>
-
             <div>
                 <label className="block text-sm font-medium text-imi-700 mb-2">
                     Objetivo Principal
@@ -440,14 +397,12 @@ export default function ConsultationWizard() {
             </div>
         </div>
     )
-
     const renderStep3 = () => (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="text-center mb-8">
                 <h2 className="text-2xl font-bold text-imi-900 mb-2">Coordenação Multidisciplinar</h2>
                 <p className="text-imi-600">Estrutura de apoio necessária</p>
             </div>
-
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6">
                 <div className="flex gap-3">
                     <AlertCircle size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
@@ -460,7 +415,6 @@ export default function ConsultationWizard() {
                     </div>
                 </div>
             </div>
-
             <div className="space-y-4">
                 <label className={`flex items-start gap-3 cursor-pointer p-4 border rounded-xl transition-all ${formData.needs_lawyer ? 'border-accent-500 bg-accent-50' : 'border-imi-200 hover:bg-imi-50'
                     }`}>
@@ -475,7 +429,6 @@ export default function ConsultationWizard() {
                         <span className="text-sm text-imi-600">Estruturação jurídica e compliance</span>
                     </div>
                 </label>
-
                 <label className={`flex items-start gap-3 cursor-pointer p-4 border rounded-xl transition-all ${formData.needs_accountant ? 'border-accent-500 bg-accent-50' : 'border-imi-200 hover:bg-imi-50'
                     }`}>
                     <input
@@ -489,7 +442,6 @@ export default function ConsultationWizard() {
                         <span className="text-sm text-imi-600">Holdings, LLCs e operações internacionais</span>
                     </div>
                 </label>
-
                 <label className={`flex items-start gap-3 cursor-pointer p-4 border rounded-xl transition-all ${formData.needs_bpo ? 'border-accent-500 bg-accent-50' : 'border-imi-200 hover:bg-imi-50'
                     }`}>
                     <input
@@ -504,7 +456,6 @@ export default function ConsultationWizard() {
                     </div>
                 </label>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="block text-sm font-medium text-imi-700 mb-2">
@@ -521,7 +472,6 @@ export default function ConsultationWizard() {
                         <option value="long_term">Longo Prazo ({'>'} 6 meses)</option>
                     </select>
                 </div>
-
                 <div>
                     <label className="block text-sm font-medium text-imi-700 mb-2">
                         Orçamento Disponível
@@ -539,7 +489,6 @@ export default function ConsultationWizard() {
                     </select>
                 </div>
             </div>
-
             <div>
                 <label className="block text-sm font-medium text-imi-700 mb-2">
                     Forma de Contato Preferencial
@@ -565,7 +514,6 @@ export default function ConsultationWizard() {
                     ))}
                 </div>
             </div>
-
             <div>
                 <label className="block text-sm font-medium text-imi-700 mb-2">
                     Informações Adicionais
@@ -580,7 +528,6 @@ export default function ConsultationWizard() {
             </div>
         </div>
     )
-
     return (
         <div className="max-w-4xl mx-auto">
             {/* Progress */}
@@ -606,13 +553,11 @@ export default function ConsultationWizard() {
                     Passo {step} de 3
                 </div>
             </div>
-
             {/* Form */}
             <div className="bg-white rounded-2xl border border-imi-100 p-8 shadow-sm">
                 {step === 1 && renderStep1()}
                 {step === 2 && renderStep2()}
                 {step === 3 && renderStep3()}
-
                 {/* Navigation */}
                 <div className="flex justify-between pt-8 border-t border-imi-100 mt-8">
                     {step > 1 ? (
@@ -624,7 +569,6 @@ export default function ConsultationWizard() {
                             ← Voltar
                         </button>
                     ) : <div />}
-
                     {step < 3 ? (
                         <button
                             type="button"

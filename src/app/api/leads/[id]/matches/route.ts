@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 export const runtime = 'nodejs'
-
 /**
  * GET /api/leads/[id]/matches
  *
@@ -21,32 +19,27 @@ export async function GET(
     try {
         const { id: leadId } = await params
         const supabase = await createClient()
-
         // --- Auth check ---
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
-
         // --- Load lead preferences ---
         const { data: lead, error: leadError } = await supabase
             .from('leads')
             .select('id, interest_type, interest_location, budget_min, budget_max, capital')
             .eq('id', leadId)
             .single()
-
         if (leadError || !lead) {
             return NextResponse.json(
                 { error: 'Lead não encontrado' },
                 { status: 404 },
             )
         }
-
         const leadBudgetMin = lead.budget_min ?? lead.capital ?? null
         const leadBudgetMax = lead.budget_max ?? null
         const leadType = (lead.interest_type ?? '').toLowerCase().trim()
         const leadLocation = (lead.interest_location ?? '').toLowerCase().trim()
-
         // --- Fetch all developments ---
         const { data: developments, error: devError } = await supabase
             .from('developments')
@@ -54,12 +47,9 @@ export async function GET(
                 'id, name, slug, type, tipo, property_type, city, neighborhood, state, bedrooms, ' +
                 'price_min, price_max, price_from, price_to, status, status_commercial, image_url, gallery_images',
             )
-
         if (devError) {
-            console.error('Error fetching developments:', devError)
             return NextResponse.json({ error: devError.message }, { status: 500 })
         }
-
         // --- Type-matching helpers ---
         // Normalise the various type representations to a canonical group key.
         const TYPE_GROUPS: Record<string, string[]> = {
@@ -69,7 +59,6 @@ export async function GET(
             comercial: ['comercial', 'commercial'],
             resort: ['resort'],
         }
-
         function normaliseType(raw: string | null | undefined): string {
             if (!raw) return ''
             const lower = raw.toLowerCase().trim()
@@ -78,7 +67,6 @@ export async function GET(
             }
             return lower
         }
-
         // --- Score each development ---
         interface ScoredMatch {
             id: string
@@ -102,26 +90,21 @@ export async function GET(
                 quartos: number
             }
         }
-
         const scored: ScoredMatch[] = (developments ?? []).map((dev: any) => {
             let valorScore = 0
             let tipoScore = 0
             let localizacaoScore = 0
             let quartosScore = 0
-
             // ---- 1. Faixa de valor (40 pts) ----
             const devMin = dev.price_min ?? dev.price_from ?? null
             const devMax = dev.price_max ?? dev.price_to ?? null
-
             if ((devMin !== null || devMax !== null) && (leadBudgetMin !== null || leadBudgetMax !== null)) {
                 const lMin = leadBudgetMin ?? 0
                 const lMax = leadBudgetMax ?? Infinity
                 const dMin = devMin ?? 0
                 const dMax = devMax ?? Infinity
-
                 const overlapStart = Math.max(lMin, dMin)
                 const overlapEnd = Math.min(lMax, dMax)
-
                 if (overlapStart <= overlapEnd) {
                     // Ranges overlap — compute how much of the lead range is covered
                     const leadRange = lMax === Infinity ? (dMax === Infinity ? 1 : dMax - dMin || 1) : lMax - lMin || 1
@@ -140,7 +123,6 @@ export async function GET(
                     }
                 }
             }
-
             // ---- 2. Tipo (30 pts) ----
             if (leadType) {
                 const normLead = normaliseType(leadType)
@@ -149,13 +131,11 @@ export async function GET(
                     tipoScore = 30
                 }
             }
-
             // ---- 3. Localização (20 pts) ----
             if (leadLocation) {
                 const devCity = (dev.city ?? '').toLowerCase().trim()
                 const devNeighborhood = (dev.neighborhood ?? '').toLowerCase().trim()
                 const devState = (dev.state ?? '').toLowerCase().trim()
-
                 if (devNeighborhood && (leadLocation.includes(devNeighborhood) || devNeighborhood.includes(leadLocation))) {
                     localizacaoScore = 20
                 } else if (devCity && (leadLocation.includes(devCity) || devCity.includes(leadLocation))) {
@@ -164,22 +144,18 @@ export async function GET(
                     localizacaoScore = 5
                 }
             }
-
             // ---- 4. Quartos (10 pts) ----
             // The leads table doesn't have a dedicated bedrooms column, but interest_type
             // may contain a reference like "apartamento 3 quartos". Try to extract it.
             const quartosMatch = (lead.interest_type ?? '').match(/(\d+)\s*(?:quartos?|dorm|suítes?|rooms?|bed)/i)
             const leadQuartos = quartosMatch ? parseInt(quartosMatch[1], 10) : null
-
             if (leadQuartos !== null && dev.bedrooms != null) {
                 const diff = Math.abs(leadQuartos - dev.bedrooms)
                 if (diff === 0) quartosScore = 10
                 else if (diff === 1) quartosScore = 5
                 else if (diff === 2) quartosScore = 2
             }
-
             const totalScore = valorScore + tipoScore + localizacaoScore + quartosScore
-
             return {
                 id: dev.id,
                 name: dev.name,
@@ -203,18 +179,15 @@ export async function GET(
                 },
             }
         })
-
         // --- Sort by score descending and return top 10 ---
         scored.sort((a, b) => b.score - a.score)
         const top10 = scored.slice(0, 10)
-
         return NextResponse.json({
             lead_id: leadId,
             total_evaluated: scored.length,
             matches: top10,
         })
     } catch (error) {
-        console.error('Error in GET /api/leads/[id]/matches:', error)
         return NextResponse.json(
             { error: 'Internal Server Error' },
             { status: 500 },

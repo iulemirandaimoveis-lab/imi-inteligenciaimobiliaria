@@ -5,12 +5,9 @@
 // GET /api/export?module=contratos&format=csv
 // GET /api/export?module=leads&format=pdf
 // Exports data as CSV or PDF (HTML print-ready) — no external dependencies
-
 export const dynamic = 'force-dynamic'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 function toCSV(rows: Record<string, unknown>[]): string {
     if (!rows || rows.length === 0) return ''
     const headers = Object.keys(rows[0])
@@ -25,20 +22,16 @@ function toCSV(rows: Record<string, unknown>[]): string {
     ]
     return lines.join('\n')
 }
-
 export async function GET(request: NextRequest) {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
         const { searchParams } = new URL(request.url)
         const moduleName = searchParams.get('module') || 'leads'
         const month = searchParams.get('month') // e.g. '2026-03'
-
         let rows: Record<string, unknown>[] = []
         let filename = `export-${moduleName}-${new Date().toISOString().split('T')[0]}.csv`
-
         switch (moduleName) {
             case 'leads': {
                 let query = supabase
@@ -57,7 +50,6 @@ export async function GET(request: NextRequest) {
                 filename = `leads-${month || 'todos'}.csv`
                 break
             }
-
             case 'financeiro': {
                 let query = supabase
                     .from('financial_transactions')
@@ -75,7 +67,6 @@ export async function GET(request: NextRequest) {
                 filename = `financeiro-${month || 'todos'}.csv`
                 break
             }
-
             case 'avaliacoes': {
                 let query = supabase
                     .from('avaliacoes')
@@ -93,7 +84,6 @@ export async function GET(request: NextRequest) {
                 filename = `avaliacoes-${month || 'todos'}.csv`
                 break
             }
-
             case 'campanhas': {
                 const { data } = await supabase
                     .from('campaigns')
@@ -104,7 +94,6 @@ export async function GET(request: NextRequest) {
                 filename = `campanhas-export.csv`
                 break
             }
-
             case 'contratos': {
                 const { data } = await supabase
                     .from('contratos')
@@ -115,23 +104,18 @@ export async function GET(request: NextRequest) {
                 filename = `contratos-export.csv`
                 break
             }
-
             default:
                 return NextResponse.json({ error: `Módulo '${module}' não suportado. Use: leads, financeiro, avaliacoes, campanhas, contratos` }, { status: 400 })
         }
-
         const format = searchParams.get('format') || 'csv'
-
         if (format === 'pdf') {
             const pdfFilename = filename.replace('.csv', '.html')
             const headers = rows.length > 0 ? Object.keys(rows[0]) : []
             const moduleLabel = moduleName.charAt(0).toUpperCase() + moduleName.slice(1)
             const dateStr = new Date().toLocaleDateString('pt-BR')
-
             const tableRows = rows.map(row =>
                 `<tr>${headers.map(h => `<td>${row[h] ?? ''}</td>`).join('')}</tr>`
             ).join('\n')
-
             const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -159,7 +143,6 @@ export async function GET(request: NextRequest) {
 <script>window.onload = function(){ window.print(); }</script>
 </body>
 </html>`
-
             return new NextResponse(html, {
                 status: 200,
                 headers: {
@@ -169,9 +152,7 @@ export async function GET(request: NextRequest) {
                 },
             })
         }
-
         const csv = toCSV(rows)
-
         return new NextResponse(csv, {
             status: 200,
             headers: {
@@ -181,7 +162,6 @@ export async function GET(request: NextRequest) {
             },
         })
     } catch (err: unknown) {
-        console.error('Export error:', err)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

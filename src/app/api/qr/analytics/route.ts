@@ -1,52 +1,38 @@
 export const dynamic = 'force-dynamic'
-
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url)
         const developmentId = searchParams.get('development_id')
         const timeRange = searchParams.get('time_range') || '30d'
-
         const supabase = await createClient()
-
         const daysAgo = timeRange === '7d' ? 7 : timeRange === '90d' ? 90 : 30
         const startDate = new Date()
         startDate.setDate(startDate.getDate() - daysAgo)
-
         // Get tracked links for this development (or all)
         let linksQuery = supabase
             .from('tracked_links')
             .select('id, development_id, campaign_name, short_code, clicks, utm_params, created_at')
             .order('created_at', { ascending: false })
-
         if (developmentId) {
             linksQuery = linksQuery.eq('development_id', developmentId)
         }
-
         const { data: links, error: linksError } = await linksQuery
-
         if (linksError) {
-            console.error('Error fetching links:', linksError)
             return NextResponse.json({ error: linksError.message }, { status: 500 })
         }
-
         // Get link events
         let eventsQuery = supabase
             .from('link_events')
             .select('*')
             .gte('created_at', startDate.toISOString())
-
         if (developmentId && links && links.length > 0) {
             const linkIds = links.map(l => l.id)
             eventsQuery = eventsQuery.in('tracked_link_id', linkIds)
         }
-
         const { data: events, error: eventsError } = await eventsQuery
-
         if (eventsError) {
-            console.error('Error fetching events:', eventsError)
             // Return empty analytics if events table doesn't exist yet
             return NextResponse.json({
                 totalClicks: links?.reduce((s, l) => s + (l.clicks || 0), 0) || 0,
@@ -64,7 +50,6 @@ export async function GET(request: Request) {
                 events: []
             })
         }
-
         // Aggregate analytics
         const totalClicks = events?.length || 0
         
@@ -77,7 +62,6 @@ export async function GET(request: Request) {
         const clicksBySource = Object.entries(sourceCounts)
             .map(([name, value]) => ({ name, value, percentage: totalClicks > 0 ? Math.round((value / totalClicks) * 100) : 0 }))
             .sort((a, b) => b.value - a.value)
-
         // By device
         const deviceCounts: Record<string, number> = {}
         events?.forEach(e => {
@@ -86,7 +70,6 @@ export async function GET(request: Request) {
         })
         const clicksByDevice = Object.entries(deviceCounts)
             .map(([name, value]) => ({ name, value, percentage: totalClicks > 0 ? Math.round((value / totalClicks) * 100) : 0 }))
-
         // By day
         const dayMap: Record<string, number> = {}
         events?.forEach(e => {
@@ -100,7 +83,6 @@ export async function GET(request: Request) {
             const key = d.toISOString().split('T')[0]
             clicksByDay.push({ day: key, clicks: dayMap[key] || 0 })
         }
-
         // Top campaigns
         const campaignMap: Record<string, { clicks: number; conversions: number }> = {}
         events?.forEach(e => {
@@ -118,7 +100,6 @@ export async function GET(request: Request) {
             }))
             .sort((a, b) => b.clicks - a.clicks)
             .slice(0, 10)
-
         // Top locations
         const locationMap: Record<string, number> = {}
         events?.forEach(e => {
@@ -129,7 +110,6 @@ export async function GET(request: Request) {
             .map(([city, clicks]) => ({ city, clicks }))
             .sort((a, b) => b.clicks - a.clicks)
             .slice(0, 5)
-
         return NextResponse.json({
             totalClicks,
             totalLinks: links?.length || 0,
@@ -139,9 +119,7 @@ export async function GET(request: Request) {
             topCampaigns,
             topLocations,
         })
-
     } catch (error: any) {
-        console.error('Error in /api/qr/analytics:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

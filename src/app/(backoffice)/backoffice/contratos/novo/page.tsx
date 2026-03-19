@@ -36,14 +36,25 @@ const SEC_LABELS: Record<string, string> = {
     objeto: '📦 Objeto', valores: '💰 Valores', prazos: '📅 Prazos',
     condicoes: '📋 Condições', garantias: '🛡️ Garantias',
 }
-const st = (extra?: any): React.CSSProperties => ({
+const st = (extra?: React.CSSProperties): React.CSSProperties => ({
     width: '100%', background: T.elevated, border: `1px solid ${T.border}`,
     borderRadius: 6, color: T.text, fontSize: 13, padding: '10px 14px', outline: 'none', ...extra
 })
-const onF = (e: any) => (e.target.style.border = `1px solid ${T.borderGold}`)
-const onB = (e: any) => (e.target.style.border = `1px solid ${T.border}`)
+const onF = (e: React.FocusEvent<HTMLElement>) => ((e.target as HTMLElement).style.border = `1px solid ${T.borderGold}`)
+const onB = (e: React.FocusEvent<HTMLElement>) => ((e.target as HTMLElement).style.border = `1px solid ${T.border}`)
 
-function Campo({ campo, value, onChange }: any) {
+interface CampoConfig {
+    tipo?: string
+    label: string
+    placeholder?: string
+    opcoes?: string[]
+    key: string
+    required?: boolean
+    section?: string
+    width?: string
+}
+
+function Campo({ campo, value, onChange }: { campo: CampoConfig; value: string | number; onChange: (v: string | number) => void }) {
     if (campo.tipo === 'textarea')
         return <textarea value={value || ''} onChange={e => onChange(e.target.value)}
             placeholder={campo.placeholder || campo.label} rows={3} onFocus={onF} onBlur={onB}
@@ -64,8 +75,24 @@ function Campo({ campo, value, onChange }: any) {
         placeholder={campo.placeholder || campo.label} onFocus={onF} onBlur={onB} style={st()} />
 }
 
-function FormParte({ titulo, parte, onChange }: { titulo: string; parte: any; onChange: (p: any) => void }) {
-    const set = (k: string) => (v: any) => onChange({ ...parte, [k]: v })
+interface ParteData {
+    tipo: 'pessoa_fisica' | 'pessoa_juridica'
+    nome?: string
+    email?: string
+    telefone?: string
+    endereco?: string
+    cpf_cnpj?: string
+    razao_social?: string
+    representante?: string
+    cargo_representante?: string
+    estado_civil?: string
+    profissao?: string
+    nacionalidade?: string
+    [key: string]: string | undefined
+}
+
+function FormParte({ titulo, parte, onChange }: { titulo: string; parte: ParteData; onChange: (p: ParteData) => void }) {
+    const set = (k: string) => (v: string) => onChange({ ...parte, [k]: v })
     const LB = ({ ch }: { ch: string }) => <label className="text-[11px] font-semibold mb-1.5 block" style={{ color: T.textDim }}>{ch}</label>
     return (
         <div className="space-y-4">
@@ -119,25 +146,30 @@ function NovoContratoInner() {
     const pm = sp.get('modelo')
 
     const [step, setStep] = useState(pm ? 1 : 0)
-    const [modelo, setModelo] = useState<any>(pm ? getModeloById(pm) || null : null)
+    const [modelo, setModelo] = useState<ReturnType<typeof getModeloById> | null>(pm ? getModeloById(pm) || null : null)
     const [catF, setCatF] = useState('todos')
     const [busca, setBusca] = useState('')
     const [idiomasSel, setIdiomasSel] = useState<string[]>(['pt'])
     const [idiomaPrim, setIdiomaPrim] = useState('pt')
     const [plat, setPlat] = useState('sem_assinatura')
-    const [contratante, setContratante] = useState<any>({ tipo: 'pessoa_fisica' })
-    const [contratado, setContratado] = useState<any>({
+    const [contratante, setContratante] = useState<ParteData>({ tipo: 'pessoa_fisica' })
+    const [contratado, setContratado] = useState<ParteData>({
         tipo: 'pessoa_juridica', nome: 'Iule Miranda', razao_social: 'IMI — Iule Miranda Imóveis',
         cpf_cnpj: '00.000.000/0001-00', email: 'iulemirandaimoveis@gmail.com',
         telefone: '+55 (81) 99999-9999', representante: 'Iule Miranda',
         cargo_representante: 'CRECI 17933 — Corretor de Imóveis', endereco: 'Recife, PE',
     })
-    const [dados, setDados] = useState<any>({})
+    const [dados, setDados] = useState<Record<string, string | number>>({})
     const [notas, setNotas] = useState('')
     const [gerando, setGerando] = useState(false)
     const [gerado, setGerado] = useState(false)
     const [erro, setErro] = useState<string | null>(null)
-    const [resultado, setResultado] = useState<any>(null)
+    interface ContratoResultado {
+        numero: string
+        conteudo_markdown: string
+        pdf_url?: string
+    }
+    const [resultado, setResultado] = useState<ContratoResultado | null>(null)
     const [enviando, setEnviando] = useState(false)
     const [envioOk, setEnvioOk] = useState(false)
     const [canal, setCanal] = useState<'email' | 'whatsapp' | 'ambos'>('email')
@@ -154,7 +186,7 @@ function NovoContratoInner() {
         if (step === 1) return idiomasSel.length > 0
         if (step === 2) return !!(contratante.nome && contratante.email)
         if (step === 3) return !!(contratado.nome && contratado.email)
-        if (step === 4) return (modelo?.campos.filter((c: any) => c.required) || []).every((c: any) => dados[c.key])
+        if (step === 4) return (modelo?.campos.filter((c: CampoConfig) => c.required) || []).every((c: CampoConfig) => dados[c.key])
         return true
     }
 
@@ -172,7 +204,7 @@ function NovoContratoInner() {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...d, modelo_id: modelo?.id, modelo_nome: modelo?.nome, categoria: modelo?.categoria, idioma: lang, contratante, contratado, dados_contrato: dados, criado_por: 'iule@imi.imb.br', criado_por_nome: 'Iule Miranda', notas }),
             })
-        } catch (e: any) { setErro(e.message) }
+        } catch (e: unknown) { setErro(e instanceof Error ? e.message : String(e)) }
         finally { setGerando(false) }
     }
 
@@ -225,7 +257,7 @@ function NovoContratoInner() {
                                 {['todos', ...Object.keys(CATEGORIAS_LABEL)].map(cat => (
                                     <button key={cat} onClick={() => setCatF(cat)} className="px-3 h-8 rounded text-xs font-semibold flex-shrink-0 transition-all"
                                         style={{ background: catF === cat ? 'var(--bo-accent)' : T.elevated, color: catF === cat ? 'white' : T.textDim, border: `1px solid ${catF === cat ? T.borderGold : T.border}` }}>
-                                        {cat === 'todos' ? 'Todos' : `${ICONES_CAT[cat] || ''} ${(CATEGORIAS_LABEL as any)[cat]}`}
+                                        {cat === 'todos' ? 'Todos' : `${ICONES_CAT[cat] || ''} ${(CATEGORIAS_LABEL as Record<string, string>)[cat]}`}
                                     </button>
                                 ))}
                             </div>
@@ -246,7 +278,7 @@ function NovoContratoInner() {
                                                     {m.internacional && <span className="text-[9px]" style={{ color: 'var(--warning)' }}>🌐</span>}
                                                 </div>
                                                 <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>
-                                                <div className="flex gap-1 mt-1.5">{m.idiomas.map((l: string) => <span key={l} className="text-[10px]">{(IDIOMAS_LABEL as any)[l]?.flag}</span>)}</div>
+                                                <div className="flex gap-1 mt-1.5">{m.idiomas.map((l: string) => <span key={l} className="text-[10px]">{(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[l]?.flag}</span>)}</div>
                                             </div>
                                         </div>
                                     </motion.button>
@@ -262,7 +294,7 @@ function NovoContratoInner() {
                             <h3 className="text-sm font-bold mb-1" style={{ color: T.text }}>Idioma(s) do contrato</h3>
                             <p className="text-xs mb-4" style={{ color: T.textDim }}>PT-BR obrigatório. Selecione os idiomas adicionais disponíveis neste modelo.</p>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                {Object.entries(IDIOMAS_LABEL).map(([lang, cfg]: any) => {
+                                {Object.entries(IDIOMAS_LABEL).map(([lang, cfg]) => {
                                     const disp = modelo.idiomas.includes(lang)
                                     const sel = idiomasSel.includes(lang)
                                     const obrig = lang === 'pt'
@@ -287,7 +319,7 @@ function NovoContratoInner() {
                                         {idiomasSel.map(l => (
                                             <button key={l} onClick={() => setIdiomaPrim(l)} className="flex items-center gap-1.5 px-3 h-8 rounded text-xs font-semibold transition-all"
                                                 style={{ background: idiomaPrim === l ? 'var(--bo-accent)' : T.elevated, color: idiomaPrim === l ? 'white' : T.textDim, border: `1px solid ${idiomaPrim === l ? T.borderGold : T.border}` }}>
-                                                {(IDIOMAS_LABEL as any)[l]?.flag} {(IDIOMAS_LABEL as any)[l]?.label}
+                                                {(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[l]?.flag} {(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[l]?.label}
                                             </button>
                                         ))}
                                     </div>
@@ -337,18 +369,18 @@ function NovoContratoInner() {
                 {!gerado && step === 4 && modelo && (
                     <motion.div key="s4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="rounded-lg p-5 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         {(['objeto', 'valores', 'prazos', 'condicoes', 'garantias'] as const).map(sec => {
-                            const campos = modelo.campos.filter((c: any) => c.section === sec)
+                            const campos = modelo.campos.filter((c: CampoConfig) => c.section === sec)
                             if (!campos.length) return null
                             return (
                                 <div key={sec}>
                                     <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: T.textDim }}>{SEC_LABELS[sec]}</h4>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        {campos.map((c: any) => (
+                                        {campos.map((c: CampoConfig) => (
                                             <div key={c.key} className={c.width === 'full' ? 'sm:col-span-2' : ''}>
                                                 <label className="text-[11px] font-semibold mb-1.5 block" style={{ color: T.textDim }}>
                                                     {c.label}{c.required && <span style={{ color: 'var(--bo-error)' }}> *</span>}
                                                 </label>
-                                                <Campo campo={c} value={dados[c.key]} onChange={(v: any) => setDados((p: any) => ({ ...p, [c.key]: v }))} />
+                                                <Campo campo={c} value={dados[c.key]} onChange={(v: string | number) => setDados(p => ({ ...p, [c.key]: v }))} />
                                             </div>
                                         ))}
                                     </div>
@@ -372,7 +404,7 @@ function NovoContratoInner() {
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Resumo</h3>
                             <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-xs">
                                 <div><p style={{ color: T.textDim }}>Modelo</p><p className="font-semibold mt-0.5 truncate" style={{ color: T.text }}>{modelo?.nome}</p></div>
-                                <div><p style={{ color: T.textDim }}>Idiomas</p><p className="font-semibold mt-0.5" style={{ color: T.text }}>{idiomasSel.map(l => (IDIOMAS_LABEL as any)[l]?.flag).join(' ')}</p></div>
+                                <div><p style={{ color: T.textDim }}>Idiomas</p><p className="font-semibold mt-0.5" style={{ color: T.text }}>{idiomasSel.map(l => (IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[l]?.flag).join(' ')}</p></div>
                                 <div><p style={{ color: T.textDim }}>Contratante</p><p className="font-semibold mt-0.5 truncate" style={{ color: T.text }}>{contratante.nome || '—'}</p></div>
                                 <div><p style={{ color: T.textDim }}>Contratado</p><p className="font-semibold mt-0.5 truncate" style={{ color: T.text }}>{contratado.nome || '—'}</p></div>
                                 <div className="col-span-2"><p style={{ color: T.textDim }}>Assinatura</p><p className="font-semibold mt-0.5" style={{ color: T.accent }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</p></div>
@@ -393,7 +425,7 @@ function NovoContratoInner() {
                                     style={{ background: gerando ? 'var(--bo-hover)' : 'var(--bo-accent)', boxShadow: gerando ? 'none' : '0 1px 2px rgba(0,0,0,0.1)' }}>
                                     <div className="flex items-center gap-3">
                                         {gerando ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-                                        <span>Gerar em {(IDIOMAS_LABEL as any)[lang]?.flag} {(IDIOMAS_LABEL as any)[lang]?.label}</span>
+                                        <span>Gerar em {(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[lang]?.flag} {(IDIOMAS_LABEL as Record<string, { flag: string; label: string }>)[lang]?.label}</span>
                                     </div>
                                     {!gerando && <ChevronRight size={16} />}
                                 </motion.button>

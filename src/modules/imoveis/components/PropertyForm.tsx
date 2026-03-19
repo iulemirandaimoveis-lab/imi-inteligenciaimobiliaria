@@ -1,5 +1,4 @@
 'use client'
-
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Sparkles, Loader2 } from 'lucide-react'
@@ -12,19 +11,16 @@ import Button from '@/components/ui/Button'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import MediaUploader from '@/components/ui/MediaUploader'
-
 interface PropertyFormProps {
     property?: Property
     onSubmit: (data: PropertyFormData) => Promise<void>
     onCancel: () => void
     isSubmitting?: boolean
 }
-
 export default function PropertyForm({ property, onSubmit, onCancel, isSubmitting }: PropertyFormProps) {
     const supabase = createClient()
     const [developers, setDevelopers] = useState<Array<{ id: string; name: string }>>([])
     const [isGenerating, setIsGenerating] = useState(false)
-
     const {
         register,
         handleSubmit,
@@ -77,21 +73,17 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
             floor_plans: [],
         },
     })
-
     useEffect(() => {
         fetchDevelopers()
     }, [])
-
     async function fetchDevelopers() {
         const { data } = await supabase
             .from('developers')
             .select('id, name')
             .eq('active', true)
             .order('name')
-
         if (data) setDevelopers(data)
     }
-
     // Auto-gerar slug a partir do nome
     const name = watch('name')
     useEffect(() => {
@@ -105,14 +97,12 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
             setValue('slug', slug)
         }
     }, [name, property, setValue])
-
     async function handleGenerateAIDescription() {
         const values = watch()
         if (!values.name) {
             alert('Por favor, preencha o nome do empreendimento primeiro.')
             return
         }
-
         setIsGenerating(true)
         try {
             const response = await fetch('/api/ai/generate-description', {
@@ -130,18 +120,15 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     ].filter(Boolean)
                 })
             })
-
             const data = await response.json()
             if (data.description) {
                 setValue('description', data.description)
             }
         } catch (err) {
-            console.error('IA Description fail:', err)
         } finally {
             setIsGenerating(false)
         }
     }
-
     return (
         <form onSubmit={handleSubmit((data) => onSubmit(data as unknown as PropertyFormData))} className="space-y-8">
             {/* Informações Básicas */}
@@ -153,13 +140,11 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         {...register('name')}
                         error={errors.name?.message}
                     />
-
                     <Input
                         label="Slug (URL amigável) *"
                         {...register('slug')}
                         error={errors.slug?.message}
                     />
-
                     <Select
                         label="Construtora *"
                         {...register('developer_id')}
@@ -169,7 +154,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                             ...developers.map(dev => ({ value: dev.id, label: dev.name }))
                         ]}
                     />
-
                     <Select
                         label="Tipo *"
                         {...register('type')}
@@ -184,7 +168,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                             { value: 'resort', label: 'Resort/Hotel' },
                         ]}
                     />
-
                     <Select
                         label="Status Interno *"
                         {...register('status')}
@@ -196,7 +179,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                             { value: 'sold', label: 'Vendido' },
                         ]}
                     />
-
                     <Select
                         label="Status Comercial (Site) *"
                         {...register('status_commercial')}
@@ -209,7 +191,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                             { value: 'sold', label: 'Vendido' },
                         ]}
                     />
-
                     <div className="md:col-span-2 space-y-2">
                         <div className="flex items-center justify-between">
                             <label className="text-sm font-bold text-imi-900 uppercase tracking-widest">Descrição *</label>
@@ -231,7 +212,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     </div>
                 </div>
             </div>
-
             {/* Localização */}
             <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
                 <h3 className="text-sm font-bold text-imi-900 uppercase tracking-widest mb-6">Localização</h3>
@@ -243,19 +223,16 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                             error={errors.address?.message}
                         />
                     </div>
-
                     <Input
                         label="Bairro *"
                         {...register('neighborhood')}
                         error={errors.neighborhood?.message}
                     />
-
                     <Input
                         label="Cidade *"
                         {...register('city')}
                         error={errors.city?.message}
                     />
-
                     <Input
                         label="Estado (UF) *"
                         {...register('state')}
@@ -263,14 +240,12 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         maxLength={2}
                         placeholder="PE"
                     />
-
                     <Input
                         label="País *"
                         {...register('country')}
                         error={errors.country?.message}
                         placeholder="Brasil"
                     />
-
                     <Select
                         label="Região Estratégica *"
                         {...register('region')}
@@ -284,7 +259,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                             { value: 'other', label: 'Outras Regiões' },
                         ]}
                     />
-
                     <Input
                         label="CEP"
                         {...register('zipcode')}
@@ -293,7 +267,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     />
                 </div>
             </div>
-
             {/* Valores */}
             <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
                 <h3 className="text-sm font-bold text-imi-900 uppercase tracking-widest mb-6">Valores</h3>
@@ -306,7 +279,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         error={errors.price_from?.message}
                         placeholder="500000"
                     />
-
                     <Input
                         label="Preço Até"
                         type="number"
@@ -319,7 +291,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     />
                 </div>
             </div>
-
             {/* Características */}
             <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
                 <h3 className="text-sm font-bold text-imi-900 uppercase tracking-widest mb-6">Características</h3>
@@ -333,7 +304,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         error={errors.bedrooms?.message}
                         min={0}
                     />
-
                     <Input
                         label="Banheiros"
                         type="number"
@@ -343,7 +313,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         error={errors.bathrooms?.message}
                         min={0}
                     />
-
                     <Input
                         label="Vagas de Garagem"
                         type="number"
@@ -353,7 +322,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         error={errors.parking_spaces?.message}
                         min={0}
                     />
-
                     <Input
                         label="Área A Partir De (m²)"
                         type="number"
@@ -363,7 +331,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         })}
                         error={errors.area_from?.message}
                     />
-
                     <Input
                         label="Área Até (m²)"
                         type="number"
@@ -373,7 +340,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         })}
                         error={errors.area_to?.message}
                     />
-
                     <Input
                         label="Número de Unidades *"
                         type="number"
@@ -381,7 +347,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         error={errors.units?.message}
                         min={1}
                     />
-
                     <Input
                         label="Número de Andares"
                         type="number"
@@ -393,7 +358,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     />
                 </div>
             </div>
-
             {/* Datas */}
             <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
                 <h3 className="text-sm font-bold text-imi-900 uppercase tracking-widest mb-6">Datas</h3>
@@ -404,7 +368,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                         {...register('delivery')}
                         error={errors.delivery?.message}
                     />
-
                     <Input
                         label="Data de Lançamento"
                         type="date"
@@ -413,18 +376,15 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     />
                 </div>
             </div>
-
             {/* Mídia e Público */}
             <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-8">
                 <h3 className="text-sm font-bold text-imi-900 uppercase tracking-widest mb-6">Mídia e Público-Alvo</h3>
-
                 <MediaUploader
                     label="Imagem Principal (Thumbnail)"
                     value={watch('image') ?? ''}
                     onChange={(url) => setValue('image', url as string)}
                     folder="properties/thumbnails"
                 />
-
                 <MediaUploader
                     label="Galeria de Fotos"
                     multiple
@@ -432,7 +392,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     onChange={(urls) => setValue('gallery_images', urls as string[])}
                     folder="properties/gallery"
                 />
-
                 <MediaUploader
                     label="Plantas Humanizadas"
                     multiple
@@ -440,7 +399,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     onChange={(urls) => setValue('floor_plans', urls as string[])}
                     folder="properties/floor-plans"
                 />
-
                 <div className="grid md:grid-cols-2 gap-6 pt-4">
                     <Input
                         label="Público-Alvo"
@@ -450,7 +408,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     />
                 </div>
             </div>
-
             {/* Destaque */}
             <div className="flex items-center gap-2 p-4 bg-imi-50 rounded-lg border border-imi-100">
                 <input
@@ -463,7 +420,6 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                     Marcar como destaque comercial
                 </label>
             </div>
-
             {/* Ações */}
             <div className="flex gap-4 pt-6">
                 <Button type="submit" className="flex-1" disabled={isSubmitting}>

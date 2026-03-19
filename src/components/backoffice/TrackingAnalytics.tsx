@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import {
     BarChart,
@@ -18,11 +17,8 @@ import {
 } from 'recharts'
 import { createClient } from '@/lib/supabase/client'
 import { TrendingUp, Users, Eye, Clock, MapPin, Smartphone } from 'lucide-react'
-
 const supabase = createClient()
-
 const COLORS = ['#486581', '#7B9EC4', '#6BB87B', '#E8A87C', '#A89EC4', '#E57373']
-
 interface TrackingAnalytics {
     totalClicks: number
     totalViews: number
@@ -36,62 +32,49 @@ interface TrackingAnalytics {
     clicksByDay: Array<{ day: string; clicks: number }>
     topCampaigns: Array<{ campaign: string; clicks: number; conversions: number; roi: number }>
 }
-
 export default function TrackingAnalytics({ developmentId }: { developmentId?: string }) {
     const [analytics, setAnalytics] = useState<TrackingAnalytics | null>(null)
     const [loading, setLoading] = useState(true)
     const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d')
-
     useEffect(() => {
         loadAnalytics()
     }, [developmentId, timeRange])
-
     const loadAnalytics = async () => {
         setLoading(true)
-
         try {
             const daysAgo = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90
             const startDate = new Date()
             startDate.setDate(startDate.getDate() - daysAgo)
-
             // Buscar eventos de tracking
             let query = supabase
                 .from('link_events')
                 .select('*, tracked_link:tracked_links(*)')
                 .gte('created_at', startDate.toISOString())
-
             if (developmentId) {
                 // We need to filter by tracked_link.development_id. 
                 // Supabase join filtering syntax: !inner join to filter parent by child condition
                 // But here we are filtering child (link_events) by parent (tracked_link) property?
                 // Actually, link_events has tracked_link_id. We need to find tracked_links for this developmentId first if we want to be efficient,
                 // OR use the relationship filter. 
-
                 // Let's use the straightforward approach supported by storing tracked_link_id directly or join filtering.
                 // Assuming we are querying link_events, we can filter by the joined table column if we use !inner
                 query = query.eq('tracked_link.development_id', developmentId)
                 // Note: For this to work in Supabase/PostgREST, we normally need !inner on the select if filtering by referenced table.
                 // select('*, tracked_link!inner(*)')
             }
-
             // To be safe and generic for now, let's adjust the query slightly to ensure it works with standard PostgREST
             // Re-constructing the query
             let baseQuery = supabase
                 .from('link_events')
                 .select('*, tracked_link:tracked_links!inner(*)') // !inner is required to filter by joined table properties
                 .gte('created_at', startDate.toISOString())
-
             if (developmentId) {
                 baseQuery = baseQuery.eq('tracked_link.development_id', developmentId)
             }
-
             const { data: events, error } = await baseQuery
-
             if (error) {
-                console.error('Error fetching analytics:', error)
                 throw error
             }
-
             if (!events || events.length === 0) {
                 setAnalytics({
                     totalClicks: 0,
@@ -109,20 +92,16 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                 setLoading(false)
                 return
             }
-
             // Processar dados
             const totalClicks = events.length
             const totalViews = events.filter(e => e.event_type === 'page_view').length
-
             // Tempo médio (simulado - em produção viria de um campo real)
             const avgTimeOnPage = events
                 .filter(e => e.metadata?.time_on_page)
                 .reduce((sum, e) => sum + (e.metadata.time_on_page || 0), 0) / (totalViews || 1) || 0
-
             // Conversões (leads gerados a partir de links)
             const conversions = events.filter(e => e.metadata?.converted).length
             const conversionRate = totalClicks > 0 ? (conversions / totalClicks) * 100 : 0
-
             // Top source
             const sourceCounts: Record<string, number> = {}
             events.forEach(e => {
@@ -130,7 +109,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                 sourceCounts[source] = (sourceCounts[source] || 0) + 1
             })
             const topSource = Object.entries(sourceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
-
             // Top device
             const deviceCounts: Record<string, number> = {}
             events.forEach(e => {
@@ -138,7 +116,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                 deviceCounts[device] = (deviceCounts[device] || 0) + 1
             })
             const topDevice = Object.entries(deviceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
-
             // Top location
             const locationCounts: Record<string, number> = {}
             events.forEach(e => {
@@ -146,30 +123,25 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                 locationCounts[location] = (locationCounts[location] || 0) + 1
             })
             const topLocation = Object.entries(locationCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
-
             // Clicks by source
             const clicksBySource = Object.entries(sourceCounts)
                 .map(([name, value]) => ({ name, value }))
                 .sort((a, b) => b.value - a.value)
                 .slice(0, 5)
-
             // Clicks by device
             const clicksByDevice = Object.entries(deviceCounts)
                 .map(([name, value]) => ({
                     name: name === 'mobile' ? 'Mobile' : name === 'desktop' ? 'Desktop' : 'Tablet',
                     value
                 }))
-
             // Clicks by day (últimos 7 dias)
             const lastDaysCount = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90
             // For chart readability, if 90 days, maybe group by week? Keeping simple for now.
-
             const clicksByDayMap: Record<string, number> = {}
             events.forEach(e => {
                 const day = e.created_at.split('T')[0]
                 clicksByDayMap[day] = (clicksByDayMap[day] || 0) + 1
             })
-
             // Generate dates for the range
             const clicksByDay = []
             for (let i = lastDaysCount - 1; i >= 0; i--) {
@@ -181,7 +153,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                     clicks: clicksByDayMap[dayKey] || 0
                 })
             }
-
             // Top campaigns
             const campaignStats: Record<string, { clicks: number; conversions: number }> = {}
             events.forEach(e => {
@@ -194,7 +165,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                     campaignStats[campaign].conversions++
                 }
             })
-
             const topCampaigns = Object.entries(campaignStats)
                 .map(([campaign, stats]) => ({
                     campaign,
@@ -204,7 +174,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                 }))
                 .sort((a, b) => b.clicks - a.clicks)
                 .slice(0, 5)
-
             setAnalytics({
                 totalClicks,
                 totalViews,
@@ -218,14 +187,11 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                 clicksByDay,
                 topCampaigns
             })
-
         } catch (error) {
-            console.error('Erro ao carregar analytics:', error)
         } finally {
             setLoading(false)
         }
     }
-
     if (loading) {
         return (
             <div className="flex items-center justify-center h-96">
@@ -236,9 +202,7 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
             </div>
         )
     }
-
     if (!analytics) return null
-
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Time Range Selector */}
@@ -264,7 +228,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                     ))}
                 </div>
             </div>
-
             {/* KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
@@ -283,7 +246,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                     </div>
                 ))}
             </div>
-
             {/* Charts Row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Clicks by Source */}
@@ -313,7 +275,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                         </ResponsiveContainer>
                     </div>
                 </div>
-
                 {/* Clicks by Device */}
                 <div className="rounded-2xl p-6 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
                     <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Tráfego por Dispositivo</h3>
@@ -333,7 +294,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                     </div>
                 </div>
             </div>
-
             {/* Timeline */}
             <div className="rounded-2xl p-6 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
                 <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Evolução Diária</h3>
@@ -359,7 +319,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                     </ResponsiveContainer>
                 </div>
             </div>
-
             {/* Top Campaigns */}
             <div className="rounded-2xl p-6 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
                 <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Top Campanhas</h3>
@@ -404,7 +363,6 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                     </table>
                 </div>
             </div>
-
             {/* Top Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[

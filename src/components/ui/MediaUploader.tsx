@@ -1,11 +1,8 @@
-
 'use client'
-
 import { useState, useRef } from 'react'
 import { Upload, X, Image as ImageIcon, Loader2, Plus } from 'lucide-react'
 import { uploadMultipleMedia } from '@/lib/supabase/storage'
 import Image from 'next/image'
-
 interface MediaUploaderProps {
     label: string
     value: string | string[]
@@ -13,17 +10,13 @@ interface MediaUploaderProps {
     multiple?: boolean
     folder?: string
 }
-
 export default function MediaUploader({ label, value, onChange, multiple = false, folder = 'properties' }: MediaUploaderProps) {
     const [isUploading, setIsUploading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
-
     const values = Array.isArray(value) ? value : (value ? [value] : [])
-
     async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         const files = e.target.files
         if (!files || files.length === 0) return
-
         setIsUploading(true)
         try {
             const urls = await uploadMultipleMedia(files, folder)
@@ -33,14 +26,12 @@ export default function MediaUploader({ label, value, onChange, multiple = false
                 onChange(urls[0])
             }
         } catch (err) {
-            console.error('Upload error:', err)
             alert('Erro ao fazer upload das imagens.')
         } finally {
             setIsUploading(false)
             if (fileInputRef.current) fileInputRef.current.value = ''
         }
     }
-
     function removeImage(index: number) {
         if (multiple) {
             const newValues = values.filter((_, i) => i !== index)
@@ -49,11 +40,9 @@ export default function MediaUploader({ label, value, onChange, multiple = false
             onChange('')
         }
     }
-
     return (
         <div className="space-y-4">
             <label className="text-sm font-bold text-imi-900 uppercase tracking-widest">{label}</label>
-
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {values.map((url, index) => (
                     <div key={index} className="relative aspect-square rounded-xl overflow-hidden group border border-slate-100 bg-slate-50">
@@ -72,7 +61,6 @@ export default function MediaUploader({ label, value, onChange, multiple = false
                         </button>
                     </div>
                 ))}
-
                 {(multiple || values.length === 0) && (
                     <button
                         type="button"
@@ -96,7 +84,6 @@ export default function MediaUploader({ label, value, onChange, multiple = false
                     </button>
                 )}
             </div>
-
             <input
                 type="file"
                 ref={fileInputRef}

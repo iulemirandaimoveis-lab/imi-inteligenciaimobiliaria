@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -11,13 +10,10 @@ import {
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-
 // ============================================================
 // TIPOS E CONSTANTES NBR 14653
 // ============================================================
-
 type Step = 1 | 2 | 3 | 4 | 5
-
 interface Comparable {
   id: string
   endereco: string
@@ -34,7 +30,6 @@ interface Comparable {
   dataColeta: string
   distanciaKm: number
 }
-
 interface FormData {
   // Step 1 - Imóvel
   endereco: string
@@ -55,7 +50,6 @@ interface FormData {
   padrao: string
   estado_conservacao: string
   caracteristicas: string[]
-
   // Step 2 - Cliente / Solicitante
   clienteNome: string
   clienteEmail: string
@@ -63,7 +57,6 @@ interface FormData {
   clienteCPFCNPJ: string
   clienteTipo: 'PF' | 'PJ'
   solicitanteInstituicao: string
-
   // Step 3 - Avaliação
   finalidade: string
   metodologia: string
@@ -73,20 +66,16 @@ interface FormData {
   valorHonorarios: string
   formaPagamento: string
   observacoes: string
-
   // Step 4 - Comparáveis
   comparaveis: Comparable[]
-
   // Step 5 - Documentos
   documentos: File[]
 }
-
 const TIPOS_IMOVEL = [
   'Apartamento', 'Casa', 'Cobertura', 'Studio', 'Flat', 'Loft',
   'Terreno Urbano', 'Terreno Rural', 'Comercial - Sala', 'Comercial - Loja',
   'Galpão/Armazém', 'Hotel/Pousada', 'Fazenda/Sítio'
 ]
-
 const FINALIDADES = [
   { value: 'compra_venda', label: 'Compra e Venda', subtitulo: 'Alienação voluntária' },
   { value: 'financiamento', label: 'Financiamento Bancário', subtitulo: 'Garantia hipotecária / SFH' },
@@ -101,7 +90,6 @@ const FINALIDADES = [
   { value: 'fundo', label: 'Fundo de Investimento', subtitulo: 'FII / Marcação a mercado' },
   { value: 'outro', label: 'Outra Finalidade', subtitulo: '' },
 ]
-
 const METODOLOGIAS = [
   {
     value: 'comparativo',
@@ -139,23 +127,19 @@ const METODOLOGIAS = [
     icone: Calculator
   },
 ]
-
 const PADROES = ['Baixo', 'Normal', 'Alto', 'Luxo']
 const ESTADOS_CONSERVACAO = ['Novo', 'Entre Novo e Regular', 'Regular', 'Entre Regular e Reparos Simples', 'Reparos Simples', 'Entre Reparos Simples e Importantes', 'Reparos Importantes', 'Entre Reparos Importantes e Sem Valor', 'Sem Valor']
 const GRAUS_FUNDAMENTACAO = ['I', 'II', 'III']
 const GRAUS_PRECISAO = ['III', 'II', 'I']
-
 const CARACTERISTICAS = [
   'Varanda/Sacada', 'Varanda Gourmet', 'Piscina', 'Academia', 'Salão de Festas',
   'Portaria 24h', 'Gerador', 'Playground', 'Quadra Esportiva', 'Armários Planejados',
   'Ar-condicionado', 'Piso Porcelanato', 'Vista Mar', 'Vista para Parque',
   'Cobertura com Terraço', 'Duplex', 'Andar Alto', 'Área de Serviço',
 ]
-
 // ============================================================
 // CÁLCULO DE HONORÁRIOS NBR 14653 (baseado no PDF)
 // ============================================================
-
 function calcularHonorarios(valorEstimado: number, finalidade: string, metodologia: string): {
   minimo: number
   recomendado: number
@@ -165,31 +149,25 @@ function calcularHonorarios(valorEstimado: number, finalidade: string, metodolog
 } {
   // Tabela base IBAPE/SP adaptada
   let percentBase = 0.003 // 0.3% base
-
   if (valorEstimado <= 200000) percentBase = 0.008
   else if (valorEstimado <= 500000) percentBase = 0.006
   else if (valorEstimado <= 1000000) percentBase = 0.004
   else if (valorEstimado <= 5000000) percentBase = 0.003
   else percentBase = 0.002
-
   // Multiplicador por finalidade
   let multiplicador = 1.0
   if (finalidade === 'judicial') multiplicador = 1.5
   else if (finalidade === 'desapropriacao') multiplicador = 1.4
   else if (finalidade === 'fundo') multiplicador = 1.3
   else if (finalidade === 'financiamento') multiplicador = 1.1
-
   // Multiplicador por metodologia
   if (metodologia === 'involutivo' || metodologia === 'renda') multiplicador *= 1.2
   if (metodologia === 'evolutivo') multiplicador *= 1.1
-
   const recomendado = Math.max(800, valorEstimado * percentBase * multiplicador)
   const minimo = recomendado * 0.7
   const maximo = recomendado * 1.5
-
   const justificativa = `Calculado conforme IBAPE — ${(percentBase * 100).toFixed(2)}% sobre valor estimado` +
     (multiplicador > 1 ? ` com fator de complexidade ${multiplicador.toFixed(1)}x` : '')
-
   return {
     minimo: Math.round(minimo),
     recomendado: Math.round(recomendado),
@@ -198,15 +176,12 @@ function calcularHonorarios(valorEstimado: number, finalidade: string, metodolog
     justificativa
   }
 }
-
 // ============================================================
 // T-OBJECT — Dark theme tokens
 // ============================================================
-
 // ============================================================
 // COMPONENTES AUXILIARES
 // ============================================================
-
 function FieldError({ message }: { message?: string }) {
   if (!message) return null
   return (
@@ -216,7 +191,6 @@ function FieldError({ message }: { message?: string }) {
     </p>
   )
 }
-
 function Label({ children, required }: { children: React.ReactNode; required?: boolean }) {
   return (
     <label className="block text-sm font-medium mb-1.5" style={{ color: T.text }}>
@@ -225,8 +199,7 @@ function Label({ children, required }: { children: React.ReactNode; required?: b
     </label>
   )
 }
-
-function InputField({ icon: Icon, error, ...props }: any) {
+function InputField({ icon: Icon, error, ...props }: { icon?: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className="relative">
       {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textMuted }} />}
@@ -238,11 +211,9 @@ function InputField({ icon: Icon, error, ...props }: any) {
     </div>
   )
 }
-
 // ============================================================
 // PÁGINA PRINCIPAL
 // ============================================================
-
 export default function NovaAvaliacaoPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<Step>(1)
@@ -250,7 +221,6 @@ export default function NovaAvaliacaoPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showHonorarios, setShowHonorarios] = useState(false)
   const [valorEstimadoHonorarios, setValorEstimadoHonorarios] = useState(500000)
-
   const [formData, setFormData] = useState<FormData>({
     endereco: '', complemento: '', bairro: '', cidade: 'Recife', estado: 'PE', cep: '',
     tipo: '', areaPrivativa: '', areaTotal: '', quartos: '', banheiros: '',
@@ -269,12 +239,10 @@ export default function NovaAvaliacaoPage() {
     ],
     documentos: [],
   })
-
-  const handleChange = (field: keyof FormData, value: any) => {
+  const handleChange = (field: keyof FormData, value: FormData[keyof FormData]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }))
   }
-
   const toggleCaracteristica = (item: string) => {
     setFormData(prev => ({
       ...prev,
@@ -283,7 +251,6 @@ export default function NovaAvaliacaoPage() {
         : [...prev.caracteristicas, item]
     }))
   }
-
   const addComparavel = () => {
     const novo: Comparable = {
       id: Date.now().toString(), endereco: '', tipo: 'Apartamento', area: 0,
@@ -293,24 +260,20 @@ export default function NovaAvaliacaoPage() {
     }
     setFormData(prev => ({ ...prev, comparaveis: [...prev.comparaveis, novo] }))
   }
-
-  const updateComparavel = (id: string, field: keyof Comparable, value: any) => {
+  const updateComparavel = (id: string, field: keyof Comparable, value: Comparable[keyof Comparable]) => {
     setFormData(prev => ({
       ...prev,
       comparaveis: prev.comparaveis.map(c => c.id === id ? { ...c, [field]: value } : c)
     }))
   }
-
   const removeComparavel = (id: string) => {
     setFormData(prev => ({
       ...prev,
       comparaveis: prev.comparaveis.filter(c => c.id !== id)
     }))
   }
-
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
-
   const validateStep = (step: Step): boolean => {
     const e: Record<string, string> = {}
     if (step === 1) {
@@ -330,14 +293,11 @@ export default function NovaAvaliacaoPage() {
     setErrors(e)
     return Object.keys(e).length === 0
   }
-
   const handleNext = () => { if (validateStep(currentStep)) setCurrentStep(prev => Math.min(5, prev + 1) as Step) }
   const handlePrev = () => setCurrentStep(prev => Math.max(1, prev - 1) as Step)
-
   const handleSubmit = async () => {
     if (!validateStep(currentStep)) return
     setIsSubmitting(true)
-
     try {
       const response = await fetch('/api/avaliacoes', {
         method: 'POST',
@@ -348,11 +308,9 @@ export default function NovaAvaliacaoPage() {
       if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
       router.push('/backoffice/avaliacoes')
     } catch (error) {
-      console.error('Erro ao salvar avaliação:', error)
       setIsSubmitting(false)
     }
   }
-
   const STEPS = [
     { n: 1, label: 'Imóvel', icon: Building2 },
     { n: 2, label: 'Cliente', icon: User },
@@ -360,9 +318,7 @@ export default function NovaAvaliacaoPage() {
     { n: 4, label: 'Comparáveis', icon: BarChart2 },
     { n: 5, label: 'Documentos', icon: FileText },
   ]
-
   const honorarios = calcularHonorarios(valorEstimadoHonorarios, formData.finalidade, formData.metodologia)
-
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
       {/* Header */}
@@ -388,7 +344,6 @@ export default function NovaAvaliacaoPage() {
           </div>
         }
       />
-
       {/* Steps */}
       <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center">
@@ -422,40 +377,36 @@ export default function NovaAvaliacaoPage() {
           })}
         </div>
       </div>
-
       {/* Form */}
       <div className="rounded-lg p-6 sm:p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-
         {/* ===== STEP 1: IMÓVEL ===== */}
         {currentStep === 1 && (
           <div className="space-y-6">
             <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Dados do Imóvel</h2>
-
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="sm:col-span-2">
                 <Label required>Endereço</Label>
-                <InputField icon={MapPin} value={formData.endereco} onChange={(e: any) => handleChange('endereco', e.target.value)} placeholder="Rua, número" error={errors.endereco} />
+                <InputField icon={MapPin} value={formData.endereco} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('endereco', e.target.value)} placeholder="Rua, número" error={errors.endereco} />
                 <FieldError message={errors.endereco} />
               </div>
               <div>
                 <Label>Complemento</Label>
-                <InputField value={formData.complemento} onChange={(e: any) => handleChange('complemento', e.target.value)} placeholder="Apto, bloco..." />
+                <InputField value={formData.complemento} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('complemento', e.target.value)} placeholder="Apto, bloco..." />
               </div>
               <div>
                 <Label required>Bairro</Label>
-                <InputField value={formData.bairro} onChange={(e: any) => handleChange('bairro', e.target.value)} placeholder="Boa Viagem" error={errors.bairro} />
+                <InputField value={formData.bairro} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('bairro', e.target.value)} placeholder="Boa Viagem" error={errors.bairro} />
                 <FieldError message={errors.bairro} />
               </div>
               <div>
                 <Label>Cidade</Label>
-                <InputField value={formData.cidade} onChange={(e: any) => handleChange('cidade', e.target.value)} placeholder="Recife" />
+                <InputField value={formData.cidade} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('cidade', e.target.value)} placeholder="Recife" />
               </div>
               <div>
                 <Label>CEP</Label>
-                <InputField value={formData.cep} onChange={(e: any) => handleChange('cep', e.target.value)} placeholder="50000-000" />
+                <InputField value={formData.cep} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('cep', e.target.value)} placeholder="50000-000" />
               </div>
             </div>
-
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="col-span-2">
                 <Label required>Tipo de Imóvel</Label>
@@ -469,38 +420,36 @@ export default function NovaAvaliacaoPage() {
               </div>
               <div>
                 <Label required>Área Privativa (m²)</Label>
-                <InputField icon={Ruler} type="number" value={formData.areaPrivativa} onChange={(e: any) => handleChange('areaPrivativa', e.target.value)} placeholder="95" error={errors.areaPrivativa} />
+                <InputField icon={Ruler} type="number" value={formData.areaPrivativa} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('areaPrivativa', e.target.value)} placeholder="95" error={errors.areaPrivativa} />
                 <FieldError message={errors.areaPrivativa} />
               </div>
               <div>
                 <Label>Área Total (m²)</Label>
-                <InputField type="number" value={formData.areaTotal} onChange={(e: any) => handleChange('areaTotal', e.target.value)} placeholder="110" />
+                <InputField type="number" value={formData.areaTotal} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('areaTotal', e.target.value)} placeholder="110" />
               </div>
             </div>
-
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
               <div>
                 <Label>Quartos</Label>
-                <InputField type="number" value={formData.quartos} onChange={(e: any) => handleChange('quartos', e.target.value)} placeholder="3" />
+                <InputField type="number" value={formData.quartos} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('quartos', e.target.value)} placeholder="3" />
               </div>
               <div>
                 <Label>Banheiros</Label>
-                <InputField type="number" value={formData.banheiros} onChange={(e: any) => handleChange('banheiros', e.target.value)} placeholder="2" />
+                <InputField type="number" value={formData.banheiros} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('banheiros', e.target.value)} placeholder="2" />
               </div>
               <div>
                 <Label>Vagas</Label>
-                <InputField icon={Car} type="number" value={formData.vagas} onChange={(e: any) => handleChange('vagas', e.target.value)} placeholder="2" />
+                <InputField icon={Car} type="number" value={formData.vagas} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('vagas', e.target.value)} placeholder="2" />
               </div>
               <div>
                 <Label>Andar</Label>
-                <InputField type="number" value={formData.andar} onChange={(e: any) => handleChange('andar', e.target.value)} placeholder="8" />
+                <InputField type="number" value={formData.andar} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('andar', e.target.value)} placeholder="8" />
               </div>
               <div>
                 <Label>Ano Constr.</Label>
-                <InputField type="number" value={formData.anoContrucao} onChange={(e: any) => handleChange('anoContrucao', e.target.value)} placeholder="2018" />
+                <InputField type="number" value={formData.anoContrucao} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('anoContrucao', e.target.value)} placeholder="2018" />
               </div>
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label>Padrão Construtivo</Label>
@@ -519,7 +468,6 @@ export default function NovaAvaliacaoPage() {
                 </select>
               </div>
             </div>
-
             <div>
               <Label>Características (selecione todas que se aplicam)</Label>
               <div className="flex flex-wrap gap-2 mt-1">
@@ -536,12 +484,10 @@ export default function NovaAvaliacaoPage() {
             </div>
           </div>
         )}
-
         {/* ===== STEP 2: CLIENTE ===== */}
         {currentStep === 2 && (
           <div className="space-y-6">
             <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Dados do Solicitante</h2>
-
             <div className="flex gap-3">
               {(['PF', 'PJ'] as const).map(t => (
                 <button key={t} type="button" onClick={() => handleChange('clienteTipo', t)}
@@ -553,32 +499,30 @@ export default function NovaAvaliacaoPage() {
                 </button>
               ))}
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <Label required>{formData.clienteTipo === 'PF' ? 'Nome Completo' : 'Razão Social'}</Label>
-                <InputField icon={User} value={formData.clienteNome} onChange={(e: any) => handleChange('clienteNome', e.target.value)} error={errors.clienteNome} />
+                <InputField icon={User} value={formData.clienteNome} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('clienteNome', e.target.value)} error={errors.clienteNome} />
                 <FieldError message={errors.clienteNome} />
               </div>
               <div>
                 <Label required>Email</Label>
-                <InputField icon={Mail} type="email" value={formData.clienteEmail} onChange={(e: any) => handleChange('clienteEmail', e.target.value)} error={errors.clienteEmail} />
+                <InputField icon={Mail} type="email" value={formData.clienteEmail} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('clienteEmail', e.target.value)} error={errors.clienteEmail} />
                 <FieldError message={errors.clienteEmail} />
               </div>
               <div>
                 <Label>Telefone</Label>
-                <InputField icon={Phone} value={formData.clienteTelefone} onChange={(e: any) => handleChange('clienteTelefone', e.target.value)} placeholder="(81) 99999-9999" />
+                <InputField icon={Phone} value={formData.clienteTelefone} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('clienteTelefone', e.target.value)} placeholder="(81) 99999-9999" />
               </div>
               <div>
                 <Label>{formData.clienteTipo === 'PF' ? 'CPF' : 'CNPJ'}</Label>
-                <InputField icon={Hash} value={formData.clienteCPFCNPJ} onChange={(e: any) => handleChange('clienteCPFCNPJ', e.target.value)} placeholder={formData.clienteTipo === 'PF' ? '000.000.000-00' : '00.000.000/0001-00'} />
+                <InputField icon={Hash} value={formData.clienteCPFCNPJ} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('clienteCPFCNPJ', e.target.value)} placeholder={formData.clienteTipo === 'PF' ? '000.000.000-00' : '00.000.000/0001-00'} />
               </div>
               <div>
                 <Label>Instituição / Banco (se financiamento)</Label>
-                <InputField icon={Landmark} value={formData.solicitanteInstituicao} onChange={(e: any) => handleChange('solicitanteInstituicao', e.target.value)} placeholder="CEF, Bradesco, Particular..." />
+                <InputField icon={Landmark} value={formData.solicitanteInstituicao} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('solicitanteInstituicao', e.target.value)} placeholder="CEF, Bradesco, Particular..." />
               </div>
             </div>
-
             {/* Info Box */}
             <div className="flex gap-3 p-4 rounded-lg" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
               <Info size={18} style={{ color: 'var(--bo-accent)', flexShrink: 0, marginTop: 1 }} />
@@ -589,12 +533,10 @@ export default function NovaAvaliacaoPage() {
             </div>
           </div>
         )}
-
         {/* ===== STEP 3: AVALIAÇÃO + HONORÁRIOS ===== */}
         {currentStep === 3 && (
           <div className="space-y-6">
             <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Parâmetros da Avaliação</h2>
-
             {/* Finalidade */}
             <div>
               <Label required>Finalidade da Avaliação</Label>
@@ -621,7 +563,6 @@ export default function NovaAvaliacaoPage() {
               </div>
               <FieldError message={errors.finalidade} />
             </div>
-
             {/* Metodologia */}
             <div>
               <Label required>Metodologia (NBR 14653)</Label>
@@ -652,7 +593,6 @@ export default function NovaAvaliacaoPage() {
                 })}
               </div>
             </div>
-
             {/* Graus */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
@@ -673,10 +613,9 @@ export default function NovaAvaliacaoPage() {
               </div>
               <div>
                 <Label>Prazo de Entrega</Label>
-                <InputField icon={Calendar} type="date" value={formData.prazoEntrega} onChange={(e: any) => handleChange('prazoEntrega', e.target.value)} />
+                <InputField icon={Calendar} type="date" value={formData.prazoEntrega} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('prazoEntrega', e.target.value)} />
               </div>
             </div>
-
             {/* Calculadora de Honorários */}
             <div className="rounded-lg overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)', background: T.card }}>
               <button type="button" onClick={() => setShowHonorarios(!showHonorarios)}
@@ -688,15 +627,13 @@ export default function NovaAvaliacaoPage() {
                 </div>
                 {showHonorarios ? <ChevronDown size={18} style={{ color: 'var(--warning)' }} /> : <ChevronRight size={18} style={{ color: 'var(--warning)' }} />}
               </button>
-
               {showHonorarios && (
                 <div className="p-4 space-y-4" style={{ background: T.surface }}>
                   <div>
                     <Label>Valor Estimado do Imóvel (para cálculo)</Label>
                     <InputField icon={DollarSign} type="number" value={valorEstimadoHonorarios}
-                      onChange={(e: any) => setValorEstimadoHonorarios(Number(e.target.value))} placeholder="500000" />
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValorEstimadoHonorarios(Number(e.target.value))} placeholder="500000" />
                   </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                       { label: 'Mínimo', value: honorarios.minimo, color: T.text },
@@ -709,9 +646,7 @@ export default function NovaAvaliacaoPage() {
                       </div>
                     ))}
                   </div>
-
                   <p className="text-xs italic" style={{ color: T.textMuted }}>{honorarios.justificativa}</p>
-
                   <button type="button" onClick={() => handleChange('valorHonorarios', honorarios.recomendado.toString())}
                     className="w-full py-2 text-white rounded-[6px] text-sm font-semibold transition-all hover:opacity-80"
                     style={{ background: 'var(--btn-primary-bg)' }}>
@@ -720,13 +655,12 @@ export default function NovaAvaliacaoPage() {
                 </div>
               )}
             </div>
-
             {/* Honorários + Pagamento */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label>Valor dos Honorários (R$)</Label>
                 <InputField icon={DollarSign} type="number" value={formData.valorHonorarios}
-                  onChange={(e: any) => handleChange('valorHonorarios', e.target.value)} placeholder="1500" />
+                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('valorHonorarios', e.target.value)} placeholder="1500" />
               </div>
               <div>
                 <Label>Forma de Pagamento</Label>
@@ -740,7 +674,6 @@ export default function NovaAvaliacaoPage() {
                 </select>
               </div>
             </div>
-
             <div>
               <Label>Observações</Label>
               <textarea value={formData.observacoes} onChange={e => handleChange('observacoes', e.target.value)}
@@ -750,7 +683,6 @@ export default function NovaAvaliacaoPage() {
             </div>
           </div>
         )}
-
         {/* ===== STEP 4: COMPARÁVEIS ===== */}
         {currentStep === 4 && (
           <div className="space-y-6">
@@ -765,7 +697,6 @@ export default function NovaAvaliacaoPage() {
                 + Adicionar
               </button>
             </div>
-
             {/* Status de amostras */}
             <div
               className="flex items-center gap-3 p-3 rounded-lg"
@@ -792,7 +723,6 @@ export default function NovaAvaliacaoPage() {
                 <p className="text-xs" style={{ color: T.textMuted }}>Amostras coletadas</p>
               </div>
             </div>
-
             {formData.comparaveis.map((comp, idx) => (
               <div key={comp.id} className="rounded-lg p-4 space-y-3" style={{ border: `1px solid ${T.border}`, background: T.elevated }}>
                 <div className="flex items-center justify-between">
@@ -803,7 +733,6 @@ export default function NovaAvaliacaoPage() {
                     </button>
                   )}
                 </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="sm:col-span-2">
                     <Label>Endereço / Referência</Label>
@@ -847,7 +776,6 @@ export default function NovaAvaliacaoPage() {
                       style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
                   </div>
                 </div>
-
                 {/* Valor m² calculado */}
                 {comp.area > 0 && comp.valorVenda > 0 && (
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: T.surface }}>
@@ -859,7 +787,6 @@ export default function NovaAvaliacaoPage() {
                 )}
               </div>
             ))}
-
             {/* Resumo estatístico */}
             {formData.comparaveis.length >= 3 && formData.comparaveis.every(c => c.area > 0 && c.valorVenda > 0) && (
               <div className="rounded-lg p-4" style={{ background: "var(--bo-elevated)", border: "1px solid var(--bo-border)" }}>
@@ -890,12 +817,10 @@ export default function NovaAvaliacaoPage() {
             )}
           </div>
         )}
-
         {/* ===== STEP 5: DOCUMENTOS ===== */}
         {currentStep === 5 && (
           <div className="space-y-6">
             <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Documentação</h2>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-lg" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
               <p className="text-sm font-semibold col-span-2" style={{ color: T.text }}>Documentos Necessários (NBR 14653)</p>
               {['Matrícula do imóvel (RI Digital / ONR)', 'IPTU vigente', 'Plantas / Croquis', 'Memorial descritivo', 'Fotos do imóvel (mín. 8 fotos)', 'Habite-se (edificações)'].map(d => (
@@ -907,7 +832,6 @@ export default function NovaAvaliacaoPage() {
                 </div>
               ))}
             </div>
-
             <label className="block cursor-pointer">
               <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onChange={e => {
                 const files = Array.from(e.target.files || [])
@@ -919,7 +843,6 @@ export default function NovaAvaliacaoPage() {
                 <p className="text-xs mt-1" style={{ color: T.textMuted }}>PDF, JPG, PNG, DOC — máx. 10MB cada</p>
               </div>
             </label>
-
             {formData.documentos.length > 0 && (
               <div className="space-y-2">
                 {formData.documentos.map((f, i) => (
@@ -935,7 +858,6 @@ export default function NovaAvaliacaoPage() {
                 ))}
               </div>
             )}
-
             {/* Links úteis */}
             <div className="rounded-lg p-4 space-y-2" style={{ border: `1px solid ${T.border}` }}>
               <p className="text-sm font-semibold mb-3" style={{ color: T.text }}>Links de Consulta</p>
@@ -964,7 +886,6 @@ export default function NovaAvaliacaoPage() {
                 </div>
               </a>
             </div>
-
             {/* Resumo Final */}
             <div className="rounded-lg p-5 space-y-3" style={{ background: "var(--bo-elevated)", border: "1px solid var(--bo-border)" }}>
               <p className="text-sm font-semibold" style={{ color: "var(--bo-text)" }}>Resumo da Avaliação</p>
@@ -980,7 +901,6 @@ export default function NovaAvaliacaoPage() {
           </div>
         )}
       </div>
-
       {/* Navigation */}
       <div className="flex items-center justify-between">
         <button type="button" onClick={handlePrev} disabled={currentStep === 1}
@@ -988,7 +908,6 @@ export default function NovaAvaliacaoPage() {
           style={{ border: `1px solid ${T.border}`, color: T.text }}>
           <ArrowLeft size={18} /> Anterior
         </button>
-
         {currentStep < 5 ? (
           <button type="button" onClick={handleNext}
             className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold transition-all hover:opacity-80"

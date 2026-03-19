@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import {
@@ -29,9 +28,7 @@ import {
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-
 type Step = 1 | 2 | 3
-
 interface FormData {
   // Básico
   name: string
@@ -39,32 +36,27 @@ interface FormData {
   channel: string
   startDate: string
   endDate: string
-
   // Orçamento
   budget: string
   dailyBudget: string
   expectedLeads: string
   costPerLead: string
-
   // Segmentação
   targetAudience: string
   ageRange: string
   location: string[]
   interests: string[]
-
   // Criativos
   adTitle: string
   adDescription: string
   callToAction: string
   landingPageUrl: string
   images: File[]
-
   // Tracking
   utmSource: string
   utmMedium: string
   utmCampaign: string
 }
-
 const canais = [
   { value: 'instagram', label: 'Instagram Ads', icon: Instagram, color: 'bg-pink-500' },
   { value: 'facebook', label: 'Facebook Ads', icon: Facebook, color: 'bg-blue-600' },
@@ -73,7 +65,6 @@ const canais = [
   { value: 'whatsapp', label: 'WhatsApp Business', icon: MessageSquare, color: 'bg-green-600' },
   { value: 'site', label: 'Site/Blog', icon: Globe, color: 'bg-purple-500' },
 ]
-
 const objetivos = [
   'Geração de Leads',
   'Reconhecimento de Marca',
@@ -82,7 +73,6 @@ const objetivos = [
   'Engajamento',
   'Visualizações de Vídeo',
 ]
-
 const localizacoes = [
   'Boa Viagem',
   'Pina',
@@ -93,7 +83,6 @@ const localizacoes = [
   'Recife (Toda cidade)',
   'Região Metropolitana',
 ]
-
 const interessesOptions = [
   'Imóveis de Luxo',
   'Primeira Casa',
@@ -104,7 +93,6 @@ const interessesOptions = [
   'Praia',
   'Financiamento',
 ]
-
 export default function EditarCampanhaPage() {
   const router = useRouter()
   const params = useParams()
@@ -112,7 +100,6 @@ export default function EditarCampanhaPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-
   const [formData, setFormData] = useState<FormData>({
     name: '',
     objective: '',
@@ -136,7 +123,6 @@ export default function EditarCampanhaPage() {
     utmMedium: '',
     utmCampaign: '',
   })
-
   // Load campaign data on mount
   useEffect(() => {
     fetch(`/api/campanhas?id=${params.id}`)
@@ -162,13 +148,11 @@ export default function EditarCampanhaPage() {
       .catch(() => { toast.error('Erro ao carregar dados da campanha') })
       .finally(() => setIsLoading(false))
   }, [params.id])
-
   const handleChange = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
     }
-
     // Auto-calculate
     if (field === 'budget' || field === 'expectedLeads') {
       const budget = field === 'budget' ? Number(value) : Number(formData.budget)
@@ -178,7 +162,6 @@ export default function EditarCampanhaPage() {
       }
     }
   }
-
   const toggleLocation = (loc: string) => {
     setFormData(prev => ({
       ...prev,
@@ -187,7 +170,6 @@ export default function EditarCampanhaPage() {
         : [...prev.location, loc]
     }))
   }
-
   const toggleInterest = (interest: string) => {
     setFormData(prev => ({
       ...prev,
@@ -196,58 +178,46 @@ export default function EditarCampanhaPage() {
         : [...prev.interests, interest]
     }))
   }
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }))
   }
-
   const removeImage = (index: number) => {
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
     }))
   }
-
   const validateStep = (step: Step): boolean => {
     const newErrors: Record<string, string> = {}
-
     if (step === 1) {
       if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório'
       if (!formData.objective) newErrors.objective = 'Objetivo é obrigatório'
       if (!formData.channel) newErrors.channel = 'Canal é obrigatório'
       if (!formData.startDate) newErrors.startDate = 'Data de início é obrigatória'
     }
-
     if (step === 2) {
       if (!formData.budget) newErrors.budget = 'Orçamento é obrigatório'
       if (!formData.expectedLeads) newErrors.expectedLeads = 'Meta de leads é obrigatória'
     }
-
     if (step === 3) {
       if (!formData.adTitle.trim()) newErrors.adTitle = 'Título é obrigatório'
       if (!formData.adDescription.trim()) newErrors.adDescription = 'Descrição é obrigatória'
     }
-
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
-
   const handleNext = () => {
     if (validateStep(currentStep)) {
       setCurrentStep((prev) => Math.min(3, prev + 1) as Step)
     }
   }
-
   const handlePrev = () => {
     setCurrentStep((prev) => Math.max(1, prev - 1) as Step)
   }
-
   const handleSubmit = async () => {
     if (!validateStep(currentStep)) return
-
     setIsSubmitting(true)
-
     try {
       const response = await fetch('/api/campanhas', {
         method: 'PUT',
@@ -256,14 +226,11 @@ export default function EditarCampanhaPage() {
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Erro ao atualizar')
-
       router.push(`/backoffice/campanhas`)
     } catch (error) {
-      console.error('Erro ao atualizar campanha:', error)
       setIsSubmitting(false)
     }
   }
-
   const formatCurrency = (value: string) => {
     const numbers = value.replace(/\D/g, '')
     return new Intl.NumberFormat('pt-BR', {
@@ -272,21 +239,16 @@ export default function EditarCampanhaPage() {
       minimumFractionDigits: 0,
     }).format(Number(numbers))
   }
-
   const steps = [
     { number: 1, label: 'Configuração', icon: Target },
     { number: 2, label: 'Orçamento', icon: DollarSign },
     { number: 3, label: 'Criativos', icon: ImageIcon },
   ]
-
   const progress = (currentStep / 3) * 100
-
   const selectedChannel = canais.find(c => c.value === formData.channel)
-
   const inputClass = "w-full h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
   const inputStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
   const inputErrorStyle = { background: T.elevated, border: '1px solid #EF4444', color: T.text }
-
   return (
     <div className="space-y-6">
       <PageIntelHeader
@@ -304,7 +266,6 @@ export default function EditarCampanhaPage() {
           </div>
         ) : undefined}
       />
-
       {/* Progress Bar */}
       <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between mb-4">
@@ -312,7 +273,6 @@ export default function EditarCampanhaPage() {
             const StepIcon = step.icon
             const isActive = currentStep === step.number
             const isCompleted = currentStep > step.number
-
             return (
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
@@ -352,14 +312,12 @@ export default function EditarCampanhaPage() {
           />
         </div>
       </div>
-
       {/* Form Content */}
       <div className="rounded-lg p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Step 1: Configuração */}
         {currentStep === 1 && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Configuração da Campanha</h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Nome */}
               <div className="md:col-span-2">
@@ -384,7 +342,6 @@ export default function EditarCampanhaPage() {
                   </p>
                 )}
               </div>
-
               {/* Objetivo */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -408,7 +365,6 @@ export default function EditarCampanhaPage() {
                   </p>
                 )}
               </div>
-
               {/* Canal */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -432,7 +388,6 @@ export default function EditarCampanhaPage() {
                   </p>
                 )}
               </div>
-
               {/* Data Início */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -449,7 +404,6 @@ export default function EditarCampanhaPage() {
                   />
                 </div>
               </div>
-
               {/* Data Fim */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -469,12 +423,10 @@ export default function EditarCampanhaPage() {
             </div>
           </div>
         )}
-
         {/* Step 2: Orçamento */}
         {currentStep === 2 && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Orçamento e Metas</h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Orçamento Total */}
               <div>
@@ -504,7 +456,6 @@ export default function EditarCampanhaPage() {
                   </p>
                 )}
               </div>
-
               {/* Orçamento Diário */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -527,7 +478,6 @@ export default function EditarCampanhaPage() {
                   </p>
                 )}
               </div>
-
               {/* Meta de Leads */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -551,7 +501,6 @@ export default function EditarCampanhaPage() {
                   </p>
                 )}
               </div>
-
               {/* CPL Estimado */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -570,11 +519,9 @@ export default function EditarCampanhaPage() {
                 </div>
               </div>
             </div>
-
             {/* Segmentação */}
             <div className="pt-6 space-y-6" style={{ borderTop: `1px solid ${T.border}` }}>
               <h3 className="text-lg font-bold" style={{ color: T.text }}>Segmentação</h3>
-
               {/* Público-Alvo */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -589,7 +536,6 @@ export default function EditarCampanhaPage() {
                   style={inputStyle}
                 />
               </div>
-
               {/* Faixa Etária */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -609,7 +555,6 @@ export default function EditarCampanhaPage() {
                   <option value="18-65">Todas as idades</option>
                 </select>
               </div>
-
               {/* Localização */}
               <div>
                 <label className="block text-sm font-medium mb-3" style={{ color: T.textMuted }}>
@@ -635,7 +580,6 @@ export default function EditarCampanhaPage() {
                   {formData.location.length} localização(ões) selecionada(s)
                 </p>
               </div>
-
               {/* Interesses */}
               <div>
                 <label className="block text-sm font-medium mb-3" style={{ color: T.textMuted }}>
@@ -664,12 +608,10 @@ export default function EditarCampanhaPage() {
             </div>
           </div>
         )}
-
         {/* Step 3: Criativos */}
         {currentStep === 3 && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Criativos e Tracking</h2>
-
             <div className="grid grid-cols-1 gap-6">
               {/* Título */}
               <div>
@@ -695,7 +637,6 @@ export default function EditarCampanhaPage() {
                   </p>
                 )}
               </div>
-
               {/* Descrição */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -720,7 +661,6 @@ export default function EditarCampanhaPage() {
                   </p>
                 )}
               </div>
-
               {/* CTA */}
               <div className="grid grid-cols-2 gap-6">
                 <div>
@@ -740,7 +680,6 @@ export default function EditarCampanhaPage() {
                     <option value="Simular Financiamento">Simular Financiamento</option>
                   </select>
                 </div>
-
                 {/* Landing Page */}
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>
@@ -759,7 +698,6 @@ export default function EditarCampanhaPage() {
                   </div>
                 </div>
               </div>
-
               {/* Upload Imagens */}
               <div>
                 <label className="block text-sm font-medium mb-3" style={{ color: T.textMuted }}>
@@ -786,7 +724,6 @@ export default function EditarCampanhaPage() {
                     </p>
                   </div>
                 </label>
-
                 {formData.images.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                     {formData.images.map((file, index) => (
@@ -808,7 +745,6 @@ export default function EditarCampanhaPage() {
                   </div>
                 )}
               </div>
-
               {/* UTM Parameters */}
               <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
                 <h3 className="text-sm font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
@@ -861,7 +797,6 @@ export default function EditarCampanhaPage() {
           </div>
         )}
       </div>
-
       {/* Navigation */}
       <div className="flex items-center justify-between">
         <button
@@ -874,7 +809,6 @@ export default function EditarCampanhaPage() {
           <ArrowLeft size={20} />
           Anterior
         </button>
-
         {currentStep < 3 ? (
           <button
             type="button"

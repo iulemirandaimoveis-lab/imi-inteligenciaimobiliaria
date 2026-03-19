@@ -17,7 +17,7 @@ import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-
 
 // ─── Shared Config ────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }> }> = {
     available:  { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
     disponivel: { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
     reserved:   { label: 'Reservada',  color: '#F59E0B', bg: 'rgba(245,158,11,0.14)',  icon: Clock },
@@ -57,11 +57,34 @@ function DesktopLoading() {
 
 // ─── Mobile Unidades ──────────────────────────────────────────────────────────
 
+interface DevelopmentRecord {
+    id: string
+    name?: string
+    slug?: string
+    [key: string]: unknown
+}
+
+interface UnitRecord {
+    id: string
+    unit_name?: string
+    unit_type?: string
+    status?: string
+    area?: number
+    bedrooms?: number
+    bathrooms?: number
+    total_price: number
+    position?: string
+    tower?: string
+    is_highlighted?: boolean
+    notes?: string
+    [key: string]: unknown
+}
+
 interface MobileUnidadesProps {
     id: string
-    development: any
-    filtered: any[]
-    unidades: any[]
+    development: DevelopmentRecord | null
+    filtered: UnitRecord[]
+    unidades: UnitRecord[]
     stats: { total: number; disponiveis: number; reservadas: number; vendidas: number }
     searchTerm: string
     setSearchTerm: (v: string) => void
@@ -498,9 +521,9 @@ function MobileUnidades({
 
 interface DesktopUnidadesProps {
     id: string
-    development: any
-    filtered: any[]
-    unidades: any[]
+    development: DevelopmentRecord | null
+    filtered: UnitRecord[]
+    unidades: UnitRecord[]
     stats: { total: number; disponiveis: number; reservadas: number; vendidas: number }
     tipos: string[]
     searchTerm: string
@@ -785,8 +808,8 @@ export default function ImoveisUnidadesPage() {
     const id = params?.id as string
     const isMobile = useIsMobile()
 
-    const [development, setDevelopment] = useState<any>(null)
-    const [unidades, setUnidades] = useState<any[]>([])
+    const [development, setDevelopment] = useState<DevelopmentRecord | null>(null)
+    const [unidades, setUnidades] = useState<UnitRecord[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [statusFilter, setStatusFilter] = useState('all')

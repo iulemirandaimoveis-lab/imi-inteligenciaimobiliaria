@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState } from 'react'
 import { UserPlus, Shield, CheckCircle, Smartphone, Mail, Key, User, CheckSquare } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -10,9 +9,7 @@ import { useRouter } from 'next/navigation'
 import { createBroker, BrokerFormData } from '@/hooks/use-brokers'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-
 export const dynamic = 'force-dynamic'
-
 const schema = z.object({
     name: z.string().min(3, 'Nome muito curto'),
     email: z.string().email('Email inválido'),
@@ -26,9 +23,7 @@ const schema = z.object({
     message: 'Senhas não conferem',
     path: ['confirmPassword'],
 })
-
 type FormData = z.infer<typeof schema>
-
 const modules = [
     {
         category: 'Operação',
@@ -62,7 +57,6 @@ const modules = [
         ]
     }
 ]
-
 export default function NovoCorretorPage() {
     const router = useRouter()
     const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm<FormData>({
@@ -72,12 +66,9 @@ export default function NovoCorretorPage() {
             permissions: ['dashboard'], // Dashboard is mandatory
         }
     })
-
     const selectedPermissions = watch('permissions') || []
-
     const togglePermission = (id: string) => {
         if (id === 'dashboard') return // Dashboard is locked
-
         const current = selectedPermissions
         if (current.includes(id)) {
             setValue('permissions', current.filter(p => p !== id))
@@ -85,11 +76,9 @@ export default function NovoCorretorPage() {
             setValue('permissions', [...current, id])
         }
     }
-
     const toggleCategory = (items: { id: string }[]) => {
         const itemIds = items.map(i => i.id)
         const allSelected = itemIds.every(id => selectedPermissions.includes(id))
-
         if (allSelected) {
             // Deselect all
             setValue('permissions', selectedPermissions.filter(p => !itemIds.includes(p)))
@@ -99,20 +88,16 @@ export default function NovoCorretorPage() {
             setValue('permissions', newPermissions)
         }
     }
-
     const onSubmit = async (data: FormData) => {
         try {
             await createBroker(data as BrokerFormData)
             toast.success('Corretor cadastrado com sucesso!')
             router.push('/backoffice/settings/corretores')
         } catch (error: any) {
-            console.error(error)
             toast.error(error.message || 'Erro ao criar corretor')
         }
     }
-
     const fieldStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
-
     return (
         <div className="space-y-6 pb-20 max-w-5xl mx-auto">
             <PageIntelHeader
@@ -126,7 +111,6 @@ export default function NovoCorretorPage() {
                     </button>
                 }
             />
-
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left Column: Personal Data */}
@@ -186,7 +170,6 @@ export default function NovoCorretorPage() {
                                 </div>
                             </div>
                         </div>
-
                         {/* Segurança */}
                         <div className="rounded-lg p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Segurança</h2>
@@ -214,7 +197,6 @@ export default function NovoCorretorPage() {
                             </div>
                         </div>
                     </div>
-
                     {/* Right Column: Permissions */}
                     <div className="lg:col-span-1">
                         <div className="rounded-lg overflow-hidden sticky top-6"
@@ -225,7 +207,6 @@ export default function NovoCorretorPage() {
                                 </h3>
                                 <p className="text-xs mt-1" style={{ color: T.textMuted }}>Selecione os módulos que este corretor poderá acessar.</p>
                             </div>
-
                             <div className="p-6 space-y-6 max-h-[600px] overflow-y-auto custom-scrollbar">
                                 {/* Mandatory Dashboard */}
                                 <div className="p-4 rounded-lg flex items-center justify-between"
@@ -235,7 +216,6 @@ export default function NovoCorretorPage() {
                                     </span>
                                     <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Obrigatório</span>
                                 </div>
-
                                 {modules.map((module) => (
                                     <div key={module.category} className="space-y-3">
                                         <div className="flex items-center justify-between">
@@ -281,7 +261,6 @@ export default function NovoCorretorPage() {
                                     </div>
                                 ))}
                             </div>
-
                             <div className="p-4" style={{ background: T.elevated, borderTop: `1px solid ${T.border}` }}>
                                 <p className="text-xs text-center" style={{ color: T.textMuted }}>
                                     {selectedPermissions.length} módulos selecionados
@@ -290,7 +269,6 @@ export default function NovoCorretorPage() {
                         </div>
                     </div>
                 </div>
-
                 <div className="flex justify-end gap-3 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
                     <button type="button" onClick={() => router.back()}
                         className="h-11 px-6 rounded-[6px] text-sm font-medium transition-all"

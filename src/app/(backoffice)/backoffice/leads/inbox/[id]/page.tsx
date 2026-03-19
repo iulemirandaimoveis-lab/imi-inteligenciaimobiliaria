@@ -12,7 +12,24 @@ import Link from 'next/link'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-function getScore(lead: any): number {
+interface LeadData {
+    id: string
+    name?: string
+    email?: string
+    phone?: string
+    status?: string
+    score?: number
+    budget?: number
+    budget_min?: number
+    capital?: number
+    interest?: string
+    interest_type?: string
+    location?: string
+    source?: string
+    [key: string]: unknown
+}
+
+function getScore(lead: LeadData): number {
     if (lead.score && lead.score > 0) return lead.score
     let s = 50
     if (lead.status === 'hot') s = 88
@@ -26,13 +43,13 @@ function getScore(lead: any): number {
     return Math.min(s, 99)
 }
 
-function getUrgency(lead: any, score: number): { label: string; dots: number; color: string } {
+function getUrgency(lead: LeadData, score: number): { label: string; dots: number; color: string } {
     if (score >= 80 || lead.status === 'hot') return { label: 'Alta', dots: 3, color: 'var(--bo-success)' }
     if (score >= 60 || lead.status === 'warm' || lead.status === 'contacted') return { label: 'Média', dots: 2, color: 'var(--bo-warning)' }
     return { label: 'Baixa', dots: 1, color: '#94A3B8' }
 }
 
-function getBudgetLabel(lead: any): string {
+function getBudgetLabel(lead: LeadData): string {
     if (lead.budget && lead.budget > 0) {
         const lo = (lead.budget * 0.85 / 1_000_000).toFixed(1)
         const hi = (lead.budget / 1_000_000).toFixed(1)
@@ -41,7 +58,7 @@ function getBudgetLabel(lead: any): string {
     return 'R$ 2.5M – 4.0M'
 }
 
-function getAbordagem(lead: any, score: number): string {
+function getAbordagem(lead: LeadData, score: number): string {
     const firstName = lead.name?.split(' ')[0] || 'cliente'
     const interest = lead.interest || 'imóveis premium'
     if (score >= 80) {
@@ -53,7 +70,7 @@ function getAbordagem(lead: any, score: number): string {
     return `${firstName} necessita qualificação adicional. Foco em entender necessidades específicas e orçamento real antes de apresentar opções. Estratégia nurturing recomendada.`
 }
 
-function generateBotResponse(userMessage: string, lead: any, score: number): string {
+function generateBotResponse(userMessage: string, lead: LeadData | null, score: number): string {
     const firstName = lead?.name?.split(' ')[0] || 'cliente'
     const lower = userMessage.toLowerCase()
 
@@ -84,7 +101,7 @@ function generateBotResponse(userMessage: string, lead: any, score: number): str
         : `Compreendi! Vou preparar uma curadoria personalizada para ${firstName} com as opções mais alinhadas ao seu perfil. Você prefere receber por WhatsApp ou e-mail?`
 }
 
-function buildMessages(lead: any) {
+function buildMessages(lead: LeadData | null) {
     if (!lead) return []
     const firstName = lead.name?.split(' ')[0] || 'Cliente'
     const interest = lead.interest || 'imóveis de alto padrão'
@@ -134,9 +151,9 @@ export default function LeadInboxDetailPage() {
     const id = params?.id as string
     const chatEndRef = useRef<HTMLDivElement>(null)
 
-    const [lead, setLead] = useState<any>(null)
+    const [lead, setLead] = useState<LeadData | null>(null)
     const [loading, setLoading] = useState(true)
-    const [messages, setMessages] = useState<any[]>([])
+    const [messages, setMessages] = useState<{ id: string | number; role: 'bot' | 'user'; text: string; time: string }[]>([])
     const [chatInput, setChatInput] = useState('')
     const [sending, setSending] = useState(false)
     const [assumed, setAssumed] = useState(false)
@@ -155,7 +172,7 @@ export default function LeadInboxDetailPage() {
             setLead(leadRes.data)
             // Use persisted interactions if available, else build from lead data
             if (intRes.data && intRes.data.length > 0) {
-                const mapped = intRes.data.map((i: any) => ({
+                const mapped = intRes.data.map((i: Record<string, unknown>) => ({
                     id: i.id,
                     role: i.direction === 'inbound' ? 'bot' : 'user',
                     text: i.content || i.notes || '',
@@ -353,7 +370,7 @@ export default function LeadInboxDetailPage() {
                             color: T.text,
                         },
                         { label: 'TIPOLOGIA', value: lead.interest || 'Cobertura 3+ suítes', color: T.text },
-                    ].map((item: any, i) => (
+                    ].map((item, i) => (
                         <div key={i} style={{
                             padding: '10px 12px', borderRadius: 12,
                             background: 'rgba(255,255,255,0.03)',
@@ -422,7 +439,7 @@ export default function LeadInboxDetailPage() {
                         bg: 'rgba(167,139,250,0.12)',
                         border: 'rgba(167,139,250,0.25)',
                     },
-                ].filter(Boolean).map((action: any, i) => (
+                ].filter(Boolean).map((action, i) => (
                     <a
                         key={i}
                         href={action.href}

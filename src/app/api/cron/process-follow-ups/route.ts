@@ -1,8 +1,6 @@
 export const dynamic = 'force-dynamic'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-
 // Cron job: processar follow-ups pendentes de leads
 // Schedule: 0 * * * * (a cada hora)
 export async function GET(request: NextRequest) {
@@ -11,9 +9,7 @@ export async function GET(request: NextRequest) {
         if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-
         const now = new Date().toISOString()
-
         // Busca follow-ups pendentes vencidos
         const { data: followUps, error } = await supabaseAdmin
             .from('lead_follow_ups')
@@ -28,27 +24,22 @@ export async function GET(request: NextRequest) {
             .eq('status', 'pending')
             .lte('scheduled_at', now)
             .limit(50)
-
         if (error) throw error
         if (!followUps || followUps.length === 0) {
             return NextResponse.json({ success: true, processed: 0, message: 'Nenhum follow-up pendente' })
         }
-
         let processed = 0
         let failed = 0
         const errors: string[] = []
-
         for (const fu of followUps) {
             try {
                 const lead = fu.leads as any
                 const assignedTo = fu.assigned_to
-
                 // Marcar como em processamento para evitar double-processing
                 await supabaseAdmin
                     .from('lead_follow_ups')
                     .update({ status: 'in_progress', updated_at: now })
                     .eq('id', fu.id)
-
                 // Criar notificação para o agente responsável
                 if (assignedTo) {
                     await supabaseAdmin
@@ -66,7 +57,6 @@ export async function GET(request: NextRequest) {
                             read: false,
                         })
                 }
-
                 // Se tipo email e lead tem email, enviar via API de email
                 if (fu.type === 'email' && lead?.email) {
                     try {
@@ -86,13 +76,11 @@ export async function GET(request: NextRequest) {
                         // Email falhou — não bloqueia o processamento
                     }
                 }
-
                 // Marcar como concluído
                 await supabaseAdmin
                     .from('lead_follow_ups')
                     .update({ status: 'completed', updated_at: now })
                     .eq('id', fu.id)
-
                 // Registrar interação no lead
                 await supabaseAdmin
                     .from('lead_interactions')
@@ -102,7 +90,6 @@ export async function GET(request: NextRequest) {
                         notes: `[Auto] Follow-up processado automaticamente: ${fu.notes || ''}`,
                         created_by: assignedTo || null,
                     })
-
                 processed++
             } catch (err) {
                 failed++
@@ -114,7 +101,6 @@ export async function GET(request: NextRequest) {
                     .eq('id', fu.id)
             }
         }
-
         return NextResponse.json({
             success: true,
             processed,
@@ -123,7 +109,6 @@ export async function GET(request: NextRequest) {
             errors: errors.length > 0 ? errors : undefined,
         })
     } catch (error: any) {
-        console.error('Error in cron/process-follow-ups:', error)
         return NextResponse.json(
             { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }

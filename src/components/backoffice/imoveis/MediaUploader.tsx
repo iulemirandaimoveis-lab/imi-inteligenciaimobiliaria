@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState } from 'react'
 import {
     Image as ImageIcon,
@@ -30,7 +29,6 @@ import {
     useSortable
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-
 // Interfaces
 interface MediaUploaderProps {
     type: 'gallery' | 'videos' | 'floorplans' | 'logo'
@@ -42,14 +40,12 @@ interface MediaUploaderProps {
     entityId?: string // Renamed from developmentId to be generic
     entityType?: 'development' | 'developer' // New prop
 }
-
 interface SortableImageProps {
     id: string
     url: string
     onDelete: (id: string) => void
     onView: (url: string) => void
 }
-
 // Subcomponente SortableImage
 function SortableImage({ id, url, onDelete, onView }: SortableImageProps) {
     const {
@@ -60,14 +56,12 @@ function SortableImage({ id, url, onDelete, onView }: SortableImageProps) {
         transition,
         isDragging
     } = useSortable({ id })
-
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
         zIndex: isDragging ? 10 : 1
     }
-
     return (
         <div
             ref={setNodeRef}
@@ -81,7 +75,6 @@ function SortableImage({ id, url, onDelete, onView }: SortableImageProps) {
                 alt="Media"
                 className="w-full h-full object-cover"
             />
-
             {/* Overlay com ações */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
                 <div className="flex items-center justify-end gap-2">
@@ -111,7 +104,6 @@ function SortableImage({ id, url, onDelete, onView }: SortableImageProps) {
                     </button>
                 </div>
             </div>
-
             {/* Badge de índice */}
             <div className="absolute top-2 left-2 pointer-events-none">
                 <div className="w-6 h-6 rounded bg-black/50 backdrop-blur-sm flex items-center justify-center text-xs font-bold text-white border border-white/10">
@@ -121,7 +113,6 @@ function SortableImage({ id, url, onDelete, onView }: SortableImageProps) {
         </div>
     )
 }
-
 // Componente Principal
 export default function MediaUploader({
     type,
@@ -138,20 +129,16 @@ export default function MediaUploader({
     const [uploading, setUploading] = useState(false)
     const [progress, setProgress] = useState(0)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-
     // Handle backward compatibility
     const actualEntityId = entityId || props.developmentId
-
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates
         })
     )
-
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event
-
         if (over && active.id !== over.id) {
             const oldIndex = parseInt(active.id as string)
             const newIndex = parseInt(over.id as string)
@@ -160,36 +147,26 @@ export default function MediaUploader({
             toast.success('Ordem atualizada!')
         }
     }
-
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || [])
-
         if (files.length === 0) return
-
         if (value.length + files.length > maxFiles) {
             toast.error(`Máximo de ${maxFiles} arquivos permitidos`)
             return
         }
-
         setUploading(true)
         const uploadedUrls: string[] = []
-
         // Calcula progresso total baseado no número de arquivos
         const totalFiles = files.length
-
         for (let i = 0; i < totalFiles; i++) {
             const file = files[i]
-
             // Atualiza progresso geral (simplificado)
             setProgress(Math.round(((i) / totalFiles) * 100))
-
             try {
                 let result
-
                 // Define a pasta base (pluraliza o entityType para o nome do bucket/pasta)
                 const folderName = entityType === 'developer' ? 'developers' : 'developments'
                 const folderPath = `${folderName}/${actualEntityId || 'temp'}/${type}`
-
                 if (type === 'videos') {
                     // Upload de vídeo
                     result = await uploadFile(
@@ -206,36 +183,29 @@ export default function MediaUploader({
                         quality: 0.85
                     })
                 }
-
                 if (result.error) {
                     toast.error(`Erro no arquivo ${file.name}: ${result.error}`)
                 } else {
                     uploadedUrls.push(result.url)
                 }
             } catch (error) {
-                console.error('Erro no upload:', error)
                 toast.error(`Erro ao enviar ${file.name}`)
             }
         }
-
         if (uploadedUrls.length > 0) {
             // Adiciona novos URLs à lista existente
             onChange([...value, ...uploadedUrls])
             toast.success(`${uploadedUrls.length} arquivo(s) enviado(s)!`)
         }
-
         setUploading(false)
         setProgress(0)
-
         // Limpar input para permitir selecionar o mesmo arquivo novamente se necessário
         e.target.value = ''
     }
-
     const handleDelete = async (id: string) => {
         const index = parseInt(id)
         if (confirm('Tem certeza que deseja remover este arquivo?')) {
             const urlToDelete = value[index]
-
             // Tentar extrair path do URL para deletar do storage
             try {
                 const urlObj = new URL(urlToDelete)
@@ -245,24 +215,20 @@ export default function MediaUploader({
                     await deleteFile(path, 'media')
                 }
             } catch (err) {
-                console.warn('Não foi possível extrair o caminho do arquivo para deleção física (ignorando)', err)
+                // File path extraction failed — non-critical, ignoring
             }
-
             const newUrls = value.filter((_, i) => i !== index)
             onChange(newUrls)
             toast.success('Arquivo removido!')
         }
     }
-
     const handleView = (url: string) => {
         setPreviewUrl(url)
     }
-
     // Determina ícone e tipos aceitos
     let Icon = ImageIcon
     let accept = 'image/*'
     let hint = 'JPG, PNG ou WEBP (máx 10MB)'
-
     if (type === 'videos') {
         Icon = Video
         accept = 'video/mp4,video/quicktime'
@@ -276,10 +242,8 @@ export default function MediaUploader({
         accept = 'image/*'
         hint = 'Logo em PNG ou SVG preferencialmente'
     }
-
     // IDs para DnD (índices como string)
     const items = value.map((_, i) => i.toString())
-
     return (
         <div className="space-y-4">
             {/* Header */}
@@ -296,7 +260,6 @@ export default function MediaUploader({
                     {value.length} / {maxFiles}
                 </div>
             </div>
-
             {/* Upload Area */}
             {value.length < maxFiles && (
                 <label className="block group">
@@ -361,7 +324,6 @@ export default function MediaUploader({
                     </div>
                 </label>
             )}
-
             {/* Gallery Grid (Sortable) */}
             {value.length > 0 && (
                 <DndContext
@@ -388,7 +350,6 @@ export default function MediaUploader({
                     </SortableContext>
                 </DndContext>
             )}
-
             {/* Hint de reordenação */}
             {value.length > 1 && (
                 <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 px-1">
@@ -396,7 +357,6 @@ export default function MediaUploader({
                     <span>Arraste para reordenar</span>
                 </div>
             )}
-
             {/* Preview Modal */}
             {previewUrl && (
                 <div
@@ -410,7 +370,6 @@ export default function MediaUploader({
                         >
                             <X size={24} />
                         </button>
-
                         {type === 'videos' ? (
                             <video
                                 src={previewUrl}
