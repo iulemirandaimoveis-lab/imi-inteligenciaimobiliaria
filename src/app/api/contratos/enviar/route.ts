@@ -69,7 +69,7 @@ const getTpl = (idioma: string) => ({
   subject: (n: string, t: string) => `📄 Contrato ${n} | IMI`,
   email: (n: string, t: string, url: string, by: string) => `<p>${t} por ${by}: <a href="${url}">${url}</a></p>`,
   whatsapp: (n: string, t: string, url: string, _by: string) => `${t}: ${url}`,
-} as any)
+} as { subject: (n: string, t: string) => string; email: (n: string, t: string, url: string, by: string) => string; whatsapp: (n: string, t: string, url: string, by: string) => string })
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
@@ -176,7 +176,7 @@ export async function POST(req: NextRequest) {
       }
     }
     return NextResponse.json({ success: true, results, timestamp: new Date().toISOString() })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Erro ao enviar' }, { status: 500 })
+  } catch (error: unknown) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro ao enviar' }, { status: 500 })
   }
 }

@@ -50,8 +50,9 @@ export async function POST(req: Request) {
     }
     // Look up user by email in auth.users (admin API)
     const supabaseAdmin = await createClient()
-    const { data: { users }, error: searchErr } = await (supabaseAdmin as any).auth.admin.listUsers()
-    const targetUser = users?.find((u: any) => u.email === email)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- admin API not exposed on SupabaseClient type
+    const { data: { users }, error: searchErr } = await (supabaseAdmin as unknown as { auth: { admin: { listUsers: () => Promise<{ data: { users: Array<{ id: string; email: string }> }; error: unknown }> } } }).auth.admin.listUsers()
+    const targetUser = users?.find((u: { email: string }) => u.email === email)
     if (!targetUser) {
       return NextResponse.json({ error: 'Usuário não encontrado. O usuário precisa ter uma conta IMI.' }, { status: 404 })
     }

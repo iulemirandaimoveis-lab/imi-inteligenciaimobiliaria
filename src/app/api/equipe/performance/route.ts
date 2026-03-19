@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
             team_totals: { totalLeads, totalSales, totalRevenue, avgConversion, memberCount: members?.length || 0 },
             performance,
         })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }

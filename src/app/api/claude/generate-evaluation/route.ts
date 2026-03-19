@@ -81,8 +81,8 @@ COMPLIANCE:
         const data = await response.json()
         // Extrair conteúdo da resposta
         const content = data.content
-            .filter((block: any) => block.type === 'text')
-            .map((block: any) => block.text)
+            .filter((block: { type: string }) => block.type === 'text')
+            .map((block: { type: string; text: string }) => block.text)
             .join('\n\n')
         // Auditoria
         return NextResponse.json({
@@ -91,11 +91,11 @@ COMPLIANCE:
             model: data.model,
             generatedAt: new Date().toISOString()
         })
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
             {
                 error: 'Erro ao gerar laudo técnico',
-                details: error.message
+                details: error instanceof Error ? error.message : String(error)
             },
             { status: 500 }
         )

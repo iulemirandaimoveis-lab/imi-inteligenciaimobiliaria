@@ -90,7 +90,7 @@ export async function GET(
                 quartos: number
             }
         }
-        const scored: ScoredMatch[] = (developments ?? []).map((dev: any) => {
+        const scored: ScoredMatch[] = (developments ?? []).map((dev: Record<string, unknown>) => {
             let valorScore = 0
             let tipoScore = 0
             let localizacaoScore = 0

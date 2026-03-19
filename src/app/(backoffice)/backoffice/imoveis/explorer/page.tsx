@@ -180,11 +180,11 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
           <div style={{ flex: 1 }}>
             <p style={{
               fontSize: 13, fontWeight: 600, color: 'var(--bo-text, #EBE7E0)',
-              fontFamily: 'var(--font-montserrat, sans-serif)',
+              fontFamily: 'var(--font-outfit, sans-serif)',
             }}>
               Análise IA — {property.name}
             </p>
-            <p style={{ fontSize: 11, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat)' }}>
+            <p style={{ fontSize: 11, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
               {property.neighborhood ?? ''} · {fmt(property.price)}
             </p>
           </div>
@@ -203,7 +203,7 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
                 borderTopColor: 'var(--imi-gold-500)',
                 animation: 'ai-spin 0.8s linear infinite',
               }} />
-              <p style={{ fontSize: 12, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)' }}>
+              <p style={{ fontSize: 12, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
                 Analisando com IA…
               </p>
             </div>
@@ -223,7 +223,7 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
                   }}>
                     {insight.investmentScore}
                   </div>
-                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)', marginTop: 4 }}>
+                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 4 }}>
                     IMI Score
                   </div>
                 </div>
@@ -236,7 +236,7 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
                       transition: 'width 1s ease',
                     }} />
                   </div>
-                  <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', fontFamily: 'var(--font-montserrat)', marginTop: 6 }}>
+                  <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 6 }}>
                     Potencial de investimento {insight.investmentScore >= 80 ? 'excelente' : insight.investmentScore >= 65 ? 'bom' : 'moderado'}
                   </p>
                 </div>
@@ -249,10 +249,10 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
                 { label: 'Ângulo de Marketing', value: insight.marketingAngle, color: 'var(--success)' },
               ].map(item => (
                 <div key={item.label} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: item.color, fontFamily: 'var(--font-montserrat)', fontWeight: 700 }}>
+                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: item.color, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>
                     {item.label}
                   </div>
-                  <p style={{ fontSize: 12, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-montserrat)', lineHeight: 1.6 }}>
+                  <p style={{ fontSize: 12, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', lineHeight: 1.6 }}>
                     {item.value}
                   </p>
                 </div>
@@ -266,7 +266,7 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
                     background: 'var(--btn-primary-bg, var(--imi-gold-500))',
                     border: 'none', color: '#0B1120',
                     fontSize: 11, fontWeight: 700, letterSpacing: '1.5px',
-                    textTransform: 'uppercase', fontFamily: 'var(--font-montserrat)',
+                    textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   }}>
                     <Wand2 size={12} /> Gerar Conteúdo
@@ -278,7 +278,7 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
                     background: 'transparent',
                     border: '1px solid rgba(184,148,58,0.3)', color: 'var(--imi-gold-500)',
                     fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
-                    textTransform: 'uppercase', fontFamily: 'var(--font-montserrat)',
+                    textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
                     cursor: 'pointer',
                   }}>
                     Ver Imóvel
@@ -378,13 +378,13 @@ function MarketPanel({ properties, activeNeighborhoods }: {
           border: '1px solid rgba(184,148,58,0.12)',
           borderRadius: 6, padding: '12px 14px',
         }}>
-          <div style={{ fontSize: 8.5, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat)', fontWeight: 700, marginBottom: 6 }}>
+          <div style={{ fontSize: 8.5, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, marginBottom: 6 }}>
             {s.label}
           </div>
           <div style={{ fontSize: 20, fontFamily: 'var(--font-dm-mono, monospace)', color: s.color, lineHeight: 1, marginBottom: 4 }}>
             {s.value}
           </div>
-          <div style={{ fontSize: 10, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat)' }}>
+          <div style={{ fontSize: 10, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
             {s.sub}
           </div>
         </div>
@@ -445,7 +445,7 @@ function FiltersPanel({ filters, onChange, properties }: {
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(184,148,58,0.2)',
               color: 'var(--bo-text, #EBE7E0)',
-              fontSize: 12, fontFamily: 'var(--font-montserrat)',
+              fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)',
               outline: 'none',
             }}
           />
@@ -460,7 +460,7 @@ function FiltersPanel({ filters, onChange, properties }: {
               border: '1px solid rgba(224,107,107,0.25)',
               color: 'var(--error)', fontSize: 11, fontWeight: 600,
               letterSpacing: 1, textTransform: 'uppercase',
-              fontFamily: 'var(--font-montserrat)', cursor: 'pointer',
+              fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
             }}
           >
             <X size={11} /> Limpar ({activeCount})
@@ -472,7 +472,7 @@ function FiltersPanel({ filters, onChange, properties }: {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         {/* Neighborhood multi-select */}
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)', alignSelf: 'center', marginRight: 2 }}>Bairro:</span>
+          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', alignSelf: 'center', marginRight: 2 }}>Bairro:</span>
           {allNeighborhoods.slice(0, 8).map(n => (
             <button
               key={n}
@@ -482,7 +482,7 @@ function FiltersPanel({ filters, onChange, properties }: {
                 background: filters.neighborhoods.includes(n) ? 'rgba(184,148,58,0.18)' : 'rgba(255,255,255,0.04)',
                 border: filters.neighborhoods.includes(n) ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)',
                 color: filters.neighborhoods.includes(n) ? 'var(--imi-gold-500)' : 'var(--bo-text-muted, #9FAAB8)',
-                fontFamily: 'var(--font-montserrat)', cursor: 'pointer', transition: 'all 0.15s',
+                fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s',
               }}
             >
               {n}
@@ -495,7 +495,7 @@ function FiltersPanel({ filters, onChange, properties }: {
 
         {/* Type chips */}
         <div style={{ display: 'flex', gap: 4 }}>
-          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)', alignSelf: 'center', marginRight: 2 }}>Tipo:</span>
+          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', alignSelf: 'center', marginRight: 2 }}>Tipo:</span>
           {types.map(t => (
             <button
               key={t}
@@ -505,7 +505,7 @@ function FiltersPanel({ filters, onChange, properties }: {
                 background: filters.types.includes(t.toLowerCase()) ? 'rgba(91,155,213,0.15)' : 'rgba(255,255,255,0.04)',
                 border: filters.types.includes(t.toLowerCase()) ? '1px solid rgba(91,155,213,0.4)' : '1px solid rgba(255,255,255,0.08)',
                 color: filters.types.includes(t.toLowerCase()) ? '#5B9BD5' : 'var(--bo-text-muted, #9FAAB8)',
-                fontFamily: 'var(--font-montserrat)', cursor: 'pointer', transition: 'all 0.15s',
+                fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s',
               }}
             >
               {t}
@@ -518,7 +518,7 @@ function FiltersPanel({ filters, onChange, properties }: {
 
         {/* Bedrooms */}
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)' }}>Quartos:</span>
+          <span style={{ fontSize: 10, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Quartos:</span>
           {[1, 2, 3, 4, 5].map(b => (
             <button
               key={b}
@@ -550,7 +550,7 @@ function FiltersPanel({ filters, onChange, properties }: {
                 background: filters.statuses.includes(s.value) ? `${STATUS_COLORS[s.value]}18` : 'rgba(255,255,255,0.04)',
                 border: filters.statuses.includes(s.value) ? `1px solid ${STATUS_COLORS[s.value]}40` : '1px solid rgba(255,255,255,0.08)',
                 color: filters.statuses.includes(s.value) ? STATUS_COLORS[s.value] : 'var(--bo-text-muted)',
-                fontFamily: 'var(--font-montserrat)', cursor: 'pointer', transition: 'all 0.15s',
+                fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s',
               }}
             >
               {s.label}
@@ -567,7 +567,7 @@ function FiltersPanel({ filters, onChange, properties }: {
             background: filters.destaque ? 'rgba(184,148,58,0.18)' : 'rgba(255,255,255,0.04)',
             border: filters.destaque ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)',
             color: filters.destaque ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)',
-            fontFamily: 'var(--font-montserrat)', cursor: 'pointer', transition: 'all 0.15s',
+            fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s',
           }}
         >
           <Star size={11} fill={filters.destaque ? 'currentColor' : 'none'} /> Destaques
@@ -634,10 +634,10 @@ function PropertyCard({
 
           {/* Name / neighborhood */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-montserrat)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>
+            <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>
               {property.name}
             </p>
-            <p style={{ fontSize: 11, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat)' }}>
+            <p style={{ fontSize: 11, color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
               {[property.neighborhood, property.type].filter(Boolean).join(' · ')}
             </p>
           </div>
@@ -657,7 +657,7 @@ function PropertyCard({
             display: 'inline-flex', padding: '2px 7px', borderRadius: 6,
             background: `${stColor}18`, border: `1px solid ${stColor}35`,
             fontSize: 9, fontWeight: 700, letterSpacing: 0.5,
-            color: stColor, fontFamily: 'var(--font-montserrat)',
+            color: stColor, fontFamily: 'var(--font-outfit, sans-serif)',
             textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0,
           }}>
             {stLabel}
@@ -674,7 +674,7 @@ function PropertyCard({
             border: '1px solid rgba(184,148,58,0.2)',
             color: 'var(--imi-gold-500)',
             fontSize: 10, fontWeight: 700, letterSpacing: 1,
-            fontFamily: 'var(--font-montserrat)', cursor: 'pointer',
+            fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
             flexShrink: 0, whiteSpace: 'nowrap',
           }}
         >
@@ -721,7 +721,7 @@ function PropertyCard({
           position: 'absolute', top: 8, right: 8,
           display: 'inline-flex', padding: '3px 7px', borderRadius: 6,
           background: `${stColor}cc`, fontSize: 9, fontWeight: 700, letterSpacing: 0.5,
-          color: '#fff', fontFamily: 'var(--font-montserrat)', textTransform: 'uppercase',
+          color: '#fff', fontFamily: 'var(--font-outfit, sans-serif)', textTransform: 'uppercase',
         }}>
           {stLabel}
         </span>
@@ -741,10 +741,10 @@ function PropertyCard({
       {/* Card body */}
       <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div>
-          <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-montserrat)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {property.name}
           </p>
-          <p style={{ fontSize: 11, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)', marginTop: 2 }}>
+          <p style={{ fontSize: 11, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 2 }}>
             {property.neighborhood ?? '—'} · {property.type ?? '—'}
           </p>
         </div>
@@ -755,13 +755,13 @@ function PropertyCard({
               {fmt(property.price)}
             </div>
             {property.yield_est && (
-              <div style={{ fontSize: 10, color: 'var(--success)', fontFamily: 'var(--font-montserrat)', marginTop: 2 }}>
+              <div style={{ fontSize: 10, color: 'var(--success)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 2 }}>
                 Yield: {property.yield_est.toFixed(1)}% a.a.
               </div>
             )}
           </div>
           {property.area && (
-            <div style={{ fontSize: 11, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)' }}>
+            <div style={{ fontSize: 11, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
               {property.area}m²
             </div>
           )}
@@ -778,7 +778,7 @@ function PropertyCard({
               border: '1px solid rgba(184,148,58,0.2)',
               color: 'var(--imi-gold-500)',
               fontSize: 10, fontWeight: 700, letterSpacing: 1,
-              fontFamily: 'var(--font-montserrat)', cursor: 'pointer',
+              fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
             }}
           >
             <Sparkles size={10} /> Ver análise IA
@@ -789,7 +789,7 @@ function PropertyCard({
               background: 'transparent',
               border: '1px solid rgba(184,148,58,0.15)',
               color: 'var(--bo-text-muted)',
-              fontSize: 10, fontFamily: 'var(--font-montserrat)',
+              fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)',
               cursor: 'pointer',
             }}>
               <ChevronRight size={12} />
@@ -879,12 +879,12 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
         borderBottom: '1px solid rgba(184,148,58,0.08)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: 'var(--bo-text-muted)', fontFamily: 'var(--font-montserrat)' }}>
+          <span style={{ fontSize: 12, color: 'var(--bo-text-muted)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
             {loading ? 'Carregando…' : `${filtered.length} imóveis`}
             {selected.length > 0 && ` · ${selected.length} selecionados`}
           </span>
           {selected.length > 0 && (
-            <button onClick={() => setSelected([])} style={{ fontSize: 10, color: 'var(--bo-text-dim)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-montserrat)' }}>
+            <button onClick={() => setSelected([])} style={{ fontSize: 10, color: 'var(--bo-text-dim)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-outfit, sans-serif)' }}>
               limpar seleção
             </button>
           )}
@@ -899,7 +899,7 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
               background: 'transparent', border: '1px solid rgba(184,148,58,0.2)',
               color: 'var(--bo-text-muted)', fontSize: 11, fontWeight: 600,
               letterSpacing: 1, textTransform: 'uppercase',
-              fontFamily: 'var(--font-montserrat)', cursor: 'pointer',
+              fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
             }}
           >
             <Map size={12} /> Mapa
@@ -915,7 +915,7 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
                   background: view === v ? 'rgba(184,148,58,0.12)' : 'transparent',
                   border: 'none', cursor: 'pointer',
                   color: view === v ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)',
-                  fontSize: 11, fontFamily: 'var(--font-montserrat)',
+                  fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)',
                 }}
               >
                 {v === 'grid' ? '⊞' : '☰'}
@@ -931,7 +931,7 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
               background: 'transparent', border: '1px solid rgba(184,148,58,0.2)',
               color: 'var(--bo-text-muted)', fontSize: 11, fontWeight: 600,
               letterSpacing: 1, textTransform: 'uppercase',
-              fontFamily: 'var(--font-montserrat)', cursor: 'pointer',
+              fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
             }}
           >
             <Download size={12} /> Exportar CSV
@@ -945,7 +945,7 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
               background: 'transparent', border: '1px solid rgba(184,148,58,0.2)',
               color: 'var(--bo-text-muted)', fontSize: 11, fontWeight: 600,
               letterSpacing: 1, textTransform: 'uppercase',
-              fontFamily: 'var(--font-montserrat)', cursor: 'pointer',
+              fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
             }}
           >
             <Share2 size={12} /> Compartilhar
@@ -960,7 +960,7 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
               border: 'none', color: '#0B1120',
               fontSize: 11, fontWeight: 700,
               letterSpacing: 1, textTransform: 'uppercase',
-              fontFamily: 'var(--font-montserrat)', cursor: 'pointer',
+              fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
             }}
           >
             <Wand2 size={12} /> Gerar conteúdo
@@ -972,13 +972,13 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
       {loading ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', gap: 12 }}>
           <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid rgba(184,148,58,0.2)', borderTopColor: 'var(--imi-gold-500)', animation: 'spin 0.8s linear infinite' }} />
-          <span style={{ color: 'var(--bo-text-muted)', fontSize: 12, fontFamily: 'var(--font-montserrat)' }}>Carregando imóveis…</span>
+          <span style={{ color: 'var(--bo-text-muted)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)' }}>Carregando imóveis…</span>
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center' }}>
           <Building2 size={40} style={{ color: 'rgba(184,148,58,0.2)' }} />
           <p style={{ fontSize: 16, color: 'var(--bo-text)', fontFamily: 'var(--font-playfair, serif)' }}>Nenhum imóvel encontrado</p>
-          <p style={{ fontSize: 12, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)' }}>Ajuste os filtros para ver mais resultados.</p>
+          <p style={{ fontSize: 12, color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Ajuste os filtros para ver mais resultados.</p>
         </div>
       ) : view === 'list' ? (
         <div style={{ background: 'var(--bo-card, #162040)', flex: 1 }}>
@@ -986,10 +986,10 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '8px 16px', borderBottom: '1px solid rgba(184,148,58,0.08)', background: 'rgba(184,148,58,0.03)' }}>
             <div style={{ width: 18 }} />
             <div style={{ width: 48 }} />
-            <div style={{ flex: 1, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)' }}>Imóvel</div>
-            <div style={{ width: 80, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)' }}>Preço</div>
-            <div style={{ width: 32, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)', textAlign: 'center' }}>Score</div>
-            <div style={{ width: 76, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-montserrat)' }}>Status</div>
+            <div style={{ flex: 1, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Imóvel</div>
+            <div style={{ width: 80, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Preço</div>
+            <div style={{ width: 32, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)', textAlign: 'center' }}>Score</div>
+            <div style={{ width: 76, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--bo-text-dim)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Status</div>
             <div style={{ width: 100 }} />
           </div>
           {filtered.map(p => (
@@ -1019,7 +1019,7 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
           border: '1px solid rgba(184,148,58,0.3)',
           borderRadius: 6, padding: '10px 16px',
           fontSize: 12, color: 'var(--bo-text, #EBE7E0)',
-          fontFamily: 'var(--font-montserrat)',
+          fontFamily: 'var(--font-outfit, sans-serif)',
           boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
         }}>
           {toastMsg}
@@ -1032,7 +1032,7 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
 /* ─── Eyebrow / TabBtn / StatCard ────────────────────────────────── */
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--bo-accent, var(--imi-gold-500))', fontFamily: 'var(--font-montserrat, sans-serif)', fontWeight: 700 }}>
+    <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--bo-accent, var(--imi-gold-500))', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>
       {children}
     </span>
   )
@@ -1048,7 +1048,7 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
         border: active ? '1px solid rgba(184,148,58,0.35)' : '1px solid transparent',
         color: active ? 'var(--bo-accent, var(--imi-gold-500))' : 'var(--bo-text-muted, #9FAAB8)',
         fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
-        textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
+        textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
         cursor: 'pointer', transition: 'all 0.2s',
       }}
     >
@@ -1064,7 +1064,7 @@ function StatCard({ label, value, sub, color }: { label: string; value: string; 
       <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '22px', fontWeight: 400, color, letterSpacing: '-0.5px', lineHeight: 1, display: 'block', marginBottom: sub ? 6 : 0 }}>
         {value}
       </span>
-      {sub && <span style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>{sub}</span>}
+      {sub && <span style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{sub}</span>}
     </div>
   )
 }
@@ -1081,7 +1081,7 @@ function RankingTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+        <p style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
           {neighborhoods.length} bairros · dados de benchmark IMI
         </p>
         <div style={{ display: 'flex', gap: 6 }}>
@@ -1093,13 +1093,13 @@ function RankingTab() {
       <div style={{ background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, overflow: 'hidden' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr', padding: '10px 20px', background: 'rgba(184,148,58,0.04)', borderBottom: '1px solid rgba(184,148,58,0.10)', gap: 12 }}>
           {['#', 'Bairro', 'Preço Médio/m²', 'Yield Est.', 'Tendência 12m', 'Distribuição'].map(h => (
-            <span key={h} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>{h}</span>
+            <span key={h} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{h}</span>
           ))}
         </div>
         {sorted.map((d, i) => (
           <div key={d.name} style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr', padding: '12px 20px', borderBottom: i < sorted.length - 1 ? '1px solid rgba(184,148,58,0.05)' : 'none', gap: 12, alignItems: 'center' }}>
             <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: i === 0 ? 'var(--imi-gold-500)' : i === 1 ? 'var(--text-tertiary)' : i === 2 ? '#D4913A' : 'var(--bo-text-dim, #5C6B7D)', fontWeight: i < 3 ? 600 : 400 }}>{i + 1}</span>
-            <span style={{ fontSize: '12px', color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-montserrat, sans-serif)', fontWeight: 500 }}>{d.name}</span>
+            <span style={{ fontSize: '12px', color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 500 }}>{d.name}</span>
             <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', color: 'var(--bo-accent, var(--imi-gold-500))', fontWeight: 400 }}>R$ {d.avgSqm.toLocaleString('pt-BR')}/m²</span>
             <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', color: 'var(--success)' }}>{d.yield.toFixed(1)}% a.a.</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -1169,7 +1169,7 @@ function AnaliseTab() {
               <div key={n} style={{ flex: 1, background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, padding: '20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-montserrat, sans-serif)', marginBottom: 2 }}>{n}</p>
+                    <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', marginBottom: 2 }}>{n}</p>
                     <p style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: chartColors[i] }}>R$ {curPrice.toLocaleString('pt-BR')}/m²</p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 3, padding: '4px 8px', borderRadius: 6, background: trend12m >= 0 ? 'rgba(93,184,135,0.12)' : 'rgba(224,107,107,0.12)', border: `1px solid ${trend12m >= 0 ? 'rgba(93,184,135,0.3)' : 'rgba(224,107,107,0.3)'}` }}>
@@ -1188,12 +1188,12 @@ function AnaliseTab() {
         <div style={{ marginBottom: 14 }}><Eyebrow>Heatmap de Indicadores por Bairro</Eyebrow></div>
         <div style={{ background: 'var(--bo-card, #162040)', border: '1px solid rgba(184,148,58,0.18)', borderRadius: 6, overflow: 'hidden' }}>
           <div style={{ display: 'grid', gridTemplateColumns: `160px repeat(${metrics.length}, 1fr)`, padding: '10px 16px', background: 'rgba(184,148,58,0.04)', borderBottom: '1px solid rgba(184,148,58,0.10)', gap: 8 }}>
-            <span style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>Bairro</span>
-            {metrics.map(m => <span key={m} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>{m}</span>)}
+            <span style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Bairro</span>
+            {metrics.map(m => <span key={m} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{m}</span>)}
           </div>
           {heatmapNeighs.map((n, ri) => (
             <div key={n} style={{ display: 'grid', gridTemplateColumns: `160px repeat(${metrics.length}, 1fr)`, padding: '10px 16px', borderBottom: ri < heatmapNeighs.length - 1 ? '1px solid rgba(184,148,58,0.05)' : 'none', gap: 8, alignItems: 'center' }}>
-              <span style={{ fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-montserrat, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n}</span>
+              <span style={{ fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n}</span>
               {metrics.map((m, mi) => {
                 const val = getMetricValue(n, m)
                 const { min, max } = metricRanges[mi]
@@ -1224,7 +1224,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
         </div>
         <p style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '18px', color: 'var(--bo-text, #EBE7E0)' }}>Sem imóveis cadastrados</p>
         <Link href="/backoffice/imoveis/novo">
-          <button style={{ padding: '8px 16px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--imi-gold-500))', border: 'none', color: '#0B1120', fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)', cursor: 'pointer' }}>
+          <button style={{ padding: '8px 16px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--imi-gold-500))', border: 'none', color: '#0B1120', fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>
             Cadastrar Imóvel
           </button>
         </Link>
@@ -1245,16 +1245,16 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
         <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', width: 24, flexShrink: 0, textAlign: 'center', color: rank <= 3 ? 'var(--imi-gold-500)' : 'var(--bo-text-dim, #5C6B7D)', fontWeight: rank <= 3 ? 600 : 400 }}>{rank}</span>
         <Link href={`/backoffice/imoveis/${p.id}`} style={{ flex: 1, minWidth: 0 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: '11px', fontWeight: 500, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-montserrat, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
-            <p style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>{[p.neighborhood, p.city].filter(Boolean).join(', ')}</p>
+            <p style={{ fontSize: '11px', fontWeight: 500, color: 'var(--bo-text, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
+            <p style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{[p.neighborhood, p.city].filter(Boolean).join(', ')}</p>
           </div>
         </Link>
         <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)', flexShrink: 0 }}>{fmt(p.price)}</span>
         {metric === 'score' && <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', fontWeight: 600, color: scColor, flexShrink: 0, width: 40, textAlign: 'right' }}>{sc}</span>}
         {metric === 'delta' && <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--success)', flexShrink: 0, width: 52, textAlign: 'right' }}>+{(p.market_delta_pct ?? 0).toFixed(1)}%</span>}
         {metric === 'yield' && <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--success)', flexShrink: 0, width: 56, textAlign: 'right' }}>{(p.yield_est ?? 0).toFixed(2)}%</span>}
-        <span style={{ display: 'inline-flex', padding: '2px 7px', borderRadius: 6, background: `${stColor}15`, border: `1px solid ${stColor}30`, fontSize: '7.5px', fontWeight: 600, letterSpacing: '0.5px', color: stColor, fontFamily: 'var(--font-montserrat, sans-serif)', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{STATUS_LABELS[p.status] ?? p.status}</span>
-        <button onClick={() => setAiProperty(p)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--imi-gold-500)', fontSize: 10, fontFamily: 'var(--font-montserrat)', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
+        <span style={{ display: 'inline-flex', padding: '2px 7px', borderRadius: 6, background: `${stColor}15`, border: `1px solid ${stColor}30`, fontSize: '7.5px', fontWeight: 600, letterSpacing: '0.5px', color: stColor, fontFamily: 'var(--font-outfit, sans-serif)', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{STATUS_LABELS[p.status] ?? p.status}</span>
+        <button onClick={() => setAiProperty(p)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--imi-gold-500)', fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
           <Sparkles size={9} /> IA
         </button>
       </div>
@@ -1267,10 +1267,10 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
         <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(184,148,58,0.10)', display: 'flex', alignItems: 'center', gap: 10 }}>
           <Eyebrow>{eyebrow}</Eyebrow>
           <span style={{ width: 1, height: 12, background: 'rgba(184,148,58,0.2)', display: 'inline-block' }} />
-          <span style={{ fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>{title}</span>
+          <span style={{ fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{title}</span>
         </div>
         {items.length === 0
-          ? <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: '11px' }}>{emptyMsg}</div>
+          ? <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontSize: '11px' }}>{emptyMsg}</div>
           : items.map((p, i) => <PropertyRow key={p.id} p={p} rank={i + 1} metric={metric} />)
         }
       </div>
@@ -1327,7 +1327,7 @@ function MobileExplorer() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-montserrat, sans-serif)', paddingBottom: 56 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-outfit, sans-serif)', paddingBottom: 56 }}>
       <MobileGlobalStyles />
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, height: 56, background: 'var(--bg-elevated)', borderBottom: '1px solid rgba(184,148,58,0.15)', display: 'flex', alignItems: 'center', paddingLeft: 4, paddingRight: 16, gap: 4 }}>
         <button onClick={() => router.push('/backoffice/imoveis')} style={{ width: 44, height: 44, borderRadius: 6, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
@@ -1338,7 +1338,7 @@ function MobileExplorer() {
 
       <div style={{ position: 'fixed', top: 56, left: 0, right: 0, zIndex: 99, height: 48, background: 'var(--bg-surface)', borderBottom: '1px solid rgba(184,148,58,0.10)', display: 'flex', alignItems: 'center', overflowX: 'auto', scrollbarWidth: 'none', paddingLeft: 14, paddingRight: 14, gap: 0 }}>
         {TABS.map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ height: 44, paddingLeft: 16, paddingRight: 16, background: 'transparent', border: 'none', borderBottom: activeTab === tab.id ? '2px solid var(--imi-gold-500)' : '2px solid transparent', color: activeTab === tab.id ? 'var(--imi-gold-500)' : 'var(--text-tertiary)', fontSize: '12px', fontWeight: activeTab === tab.id ? 700 : 500, letterSpacing: '0.5px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0, fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ height: 44, paddingLeft: 16, paddingRight: 16, background: 'transparent', border: 'none', borderBottom: activeTab === tab.id ? '2px solid var(--imi-gold-500)' : '2px solid transparent', color: activeTab === tab.id ? 'var(--imi-gold-500)' : 'var(--text-tertiary)', fontSize: '12px', fontWeight: activeTab === tab.id ? 700 : 500, letterSpacing: '0.5px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0, fontFamily: 'var(--font-outfit, sans-serif)' }}>
             {tab.label}
           </button>
         ))}
@@ -1348,7 +1348,7 @@ function MobileExplorer() {
         {activeTab === 'search' && (
           <>
             <div style={{ paddingTop: 4 }}>
-              <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontWeight: 700, fontFamily: 'var(--font-montserrat)' }}>Todos os Imóveis</span>
+              <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)' }}>Todos os Imóveis</span>
             </div>
             {loadingProps ? (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px', gap: 10 }}>
@@ -1364,11 +1364,11 @@ function MobileExplorer() {
                       {p.cover_image_url ? <img src={p.cover_image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Building2 size={20} style={{ color: 'rgba(184,148,58,0.3)' }} />}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)', fontFamily: 'var(--font-montserrat)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
-                      <p style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'var(--font-montserrat)' }}>{[p.neighborhood, fmt(p.price)].filter(Boolean).join(' · ')}</p>
+                      <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
+                      <p style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{[p.neighborhood, fmt(p.price)].filter(Boolean).join(' · ')}</p>
                     </div>
                     <span style={{ fontFamily: 'var(--font-dm-mono)', fontSize: '13px', fontWeight: 700, color: getScoreColor(p.imi_score ?? 0), flexShrink: 0 }}>{p.imi_score ?? '—'}</span>
-                    <span style={{ display: 'inline-flex', padding: '3px 7px', borderRadius: 6, background: `${stColor}18`, border: `1px solid ${stColor}35`, fontSize: '10px', fontWeight: 600, color: stColor, fontFamily: 'var(--font-montserrat)', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{STATUS_LABELS[p.status] ?? p.status}</span>
+                    <span style={{ display: 'inline-flex', padding: '3px 7px', borderRadius: 6, background: `${stColor}18`, border: `1px solid ${stColor}35`, fontSize: '10px', fontWeight: 600, color: stColor, fontFamily: 'var(--font-outfit, sans-serif)', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{STATUS_LABELS[p.status] ?? p.status}</span>
                   </div>
                 </Link>
               )
@@ -1380,7 +1380,7 @@ function MobileExplorer() {
           <>
             <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
               {(['yield', 'price'] as RankSort[]).map(s => (
-                <button key={s} onClick={() => setRankSort(s)} style={{ flex: 1, height: 40, background: rankSort === s ? 'rgba(184,148,58,0.12)' : '#162040', border: rankSort === s ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(184,148,58,0.12)', borderRadius: 6, color: rankSort === s ? 'var(--imi-gold-500)' : 'var(--text-tertiary)', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'var(--font-montserrat)' }}>
+                <button key={s} onClick={() => setRankSort(s)} style={{ flex: 1, height: 40, background: rankSort === s ? 'rgba(184,148,58,0.12)' : '#162040', border: rankSort === s ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(184,148,58,0.12)', borderRadius: 6, color: rankSort === s ? 'var(--imi-gold-500)' : 'var(--text-tertiary)', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'var(--font-outfit, sans-serif)' }}>
                   {s === 'yield' ? 'Yield' : 'Preço/m²'}
                 </button>
               ))}
@@ -1388,7 +1388,7 @@ function MobileExplorer() {
             {sortedRanking.map((d, i) => (
               <div key={d.name} style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.12)', borderRadius: 6, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
                 <span style={{ fontFamily: 'var(--font-dm-mono)', fontSize: '14px', fontWeight: i < 3 ? 700 : 400, color: i === 0 ? 'var(--imi-gold-500)' : i === 1 ? 'var(--text-tertiary)' : i === 2 ? '#D4913A' : 'var(--text-secondary)', width: 24, flexShrink: 0, textAlign: 'center' }}>{i + 1}</span>
-                <span style={{ flex: 1, fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)', fontFamily: 'var(--font-montserrat)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.name}</span>
+                <span style={{ flex: 1, fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.name}</span>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
                   <div style={{ fontFamily: 'var(--font-dm-mono)', fontSize: '12px', color: 'var(--imi-gold-500)' }}>R$ {d.avgSqm.toLocaleString('pt-BR')}/m²</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 3, justifyContent: 'flex-end', marginTop: 2 }}>
@@ -1411,7 +1411,7 @@ function MobileExplorer() {
                 { label: 'Menor Preço/m²', value: bestPriceNeigh[0], color: '#D4913A' },
               ].map(stat => (
                 <div key={stat.label} style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.12)', borderRadius: 6, padding: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <span style={{ fontSize: '8.5px', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 700, fontFamily: 'var(--font-montserrat)' }}>{stat.label}</span>
+                  <span style={{ fontSize: '8.5px', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)' }}>{stat.label}</span>
                   <span style={{ fontFamily: 'var(--font-dm-mono)', fontSize: '20px', color: stat.color, lineHeight: 1, letterSpacing: '-0.5px' }}>{stat.value}</span>
                 </div>
               ))}
@@ -1431,7 +1431,7 @@ function MobileExplorer() {
             </div>
           ) : (
             <>
-              <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontWeight: 700, fontFamily: 'var(--font-montserrat)', paddingTop: 4 }}>Top IMI Score</span>
+              <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)', paddingTop: 4 }}>Top IMI Score</span>
               {top10Score.map((p, i) => {
                 const sc = p.imi_score ?? 0
                 return (
@@ -1439,22 +1439,22 @@ function MobileExplorer() {
                     <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.12)', borderRadius: 6, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
                       <span style={{ fontFamily: 'var(--font-dm-mono)', fontSize: '13px', width: 22, flexShrink: 0, textAlign: 'center', color: i < 3 ? 'var(--imi-gold-500)' : 'var(--text-secondary)', fontWeight: i < 3 ? 700 : 400 }}>{i + 1}</span>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)', fontFamily: 'var(--font-montserrat)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
-                        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'var(--font-montserrat)' }}>{[p.neighborhood, p.city].filter(Boolean).join(', ')}</p>
+                        <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
+                        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{[p.neighborhood, p.city].filter(Boolean).join(', ')}</p>
                       </div>
                       <span style={{ fontFamily: 'var(--font-dm-mono)', fontSize: '14px', fontWeight: 700, color: getScoreColor(sc) }}>{sc}</span>
                     </div>
                   </Link>
                 )
               })}
-              <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontWeight: 700, fontFamily: 'var(--font-montserrat)', paddingTop: 8 }}>Maior Yield Estimado</span>
+              <span style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)', paddingTop: 8 }}>Maior Yield Estimado</span>
               {top5Yield.map((p, i) => (
                 <Link key={p.id} href={`/backoffice/imoveis/${p.id}`}>
                   <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.12)', borderRadius: 6, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <span style={{ fontFamily: 'var(--font-dm-mono)', fontSize: '13px', width: 22, flexShrink: 0, textAlign: 'center', color: i < 3 ? 'var(--imi-gold-500)' : 'var(--text-secondary)', fontWeight: i < 3 ? 700 : 400 }}>{i + 1}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)', fontFamily: 'var(--font-montserrat)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
-                      <p style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'var(--font-montserrat)' }}>{fmt(p.price)}</p>
+                      <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>
+                      <p style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{fmt(p.price)}</p>
                     </div>
                     <span style={{ fontFamily: 'var(--font-dm-mono)', fontSize: '14px', fontWeight: 600, color: 'var(--success)' }}>{(p.yield_est ?? 0).toFixed(2)}%</span>
                   </div>
@@ -1493,7 +1493,7 @@ function DesktopExplorer() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
             <Eyebrow>IMI</Eyebrow>
             <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
-            <Link href="/backoffice/imoveis"><span style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)', cursor: 'pointer' }}>Imóveis</span></Link>
+            <Link href="/backoffice/imoveis"><span style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Imóveis</span></Link>
             <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
             <Eyebrow>Market Intelligence</Eyebrow>
           </div>
@@ -1502,12 +1502,12 @@ function DesktopExplorer() {
               <h1 style={{ fontFamily: 'var(--font-playfair, "Libre Baskerville", serif)', fontSize: '28px', fontWeight: 600, color: 'var(--bo-text, #EBE7E0)', marginBottom: 4, lineHeight: 1.1 }}>
                 Explorer de <em style={{ fontStyle: 'italic', color: 'var(--bo-accent, var(--imi-gold-500))' }}>Mercado</em>
               </h1>
-              <p style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)', fontWeight: 300 }}>
+              <p style={{ fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 300 }}>
                 Busca inteligente · análise de mercado · ranking de bairros · oportunidades de investimento
               </p>
             </div>
             <Link href="/backoffice/imoveis">
-              <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.25)', color: 'var(--imi-gold-500)', fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)', cursor: 'pointer' }}>
+              <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.25)', color: 'var(--imi-gold-500)', fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>
                 <ArrowLeft size={12} /> Voltar
               </button>
             </Link>
@@ -1533,7 +1533,7 @@ function DesktopExplorer() {
             {loadingProps ? (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', gap: 12 }}>
                 <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid rgba(184,148,58,0.2)', borderTopColor: 'var(--imi-gold-500)', animation: 'spin 0.8s linear infinite' }} />
-                <span style={{ fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: '12px', color: 'var(--bo-text-muted)' }}>Carregando imóveis…</span>
+                <span style={{ fontFamily: 'var(--font-outfit, sans-serif)', fontSize: '12px', color: 'var(--bo-text-muted)' }}>Carregando imóveis…</span>
               </div>
             ) : <OportunidadesTab properties={properties} />}
           </div>

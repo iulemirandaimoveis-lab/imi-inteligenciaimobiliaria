@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         }
         const dims = FORMAT_DIMS[format] || FORMAT_DIMS.tiktok
         const { renderId, bucketName } = await renderMediaOnLambda({
-            region: awsRegion as any,
+            region: awsRegion as string,
             functionName,
             serveUrl,
             composition: template,
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
                 renderId,
                 bucketName,
                 functionName,
-                region: awsRegion as any,
+                region: awsRegion as string,
             })
             progress = result.overallProgress
             if (result.done) {
@@ -97,9 +97,9 @@ export async function POST(req: NextRequest) {
             requested_by: user.id,
         })
         return NextResponse.json({ video_url: videoUrl, render_id: renderId })
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json(
-            { error: err.message || 'Render failed' },
+            { error: err instanceof Error ? err.message : 'Render failed' },
             { status: 500 }
         )
     }

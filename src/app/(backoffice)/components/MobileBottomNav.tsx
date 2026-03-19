@@ -279,7 +279,8 @@ export function MobileBottomNav() {
     return (
         <>
             {/* ── Bottom Bar ─────────────────────────────────────── */}
-            <div
+            <nav
+                aria-label="Navegação principal mobile"
                 className="lg:hidden fixed bottom-0 inset-x-0 z-50"
                 style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
@@ -302,7 +303,7 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[0]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1">
+                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -330,7 +331,7 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[1]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1">
+                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -358,6 +359,8 @@ export function MobileBottomNav() {
                             <motion.button
                                 whileTap={{ scale: 0.88 }}
                                 onClick={() => setOpen(v => !v)}
+                                aria-label={open ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
+                                aria-expanded={open}
                                 className="flex items-center justify-center"
                                 style={{
                                     width: 44,
@@ -407,7 +410,7 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[2]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1">
+                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -435,7 +438,7 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[3]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1">
+                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -458,7 +461,7 @@ export function MobileBottomNav() {
 
                     </div>
                 </div>
-            </div>
+            </nav>
 
             {/* ── Mega Menu Drawer ───────────────────────────────── */}
             <AnimatePresence>

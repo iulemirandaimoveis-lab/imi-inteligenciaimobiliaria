@@ -150,7 +150,7 @@ export function PropertyCard({
               fontSize: '8.5px', fontWeight: 600,
               letterSpacing: '1px', textTransform: 'uppercase',
               color: statusColor,
-              fontFamily: 'var(--font-montserrat, sans-serif)',
+              fontFamily: 'var(--font-outfit, sans-serif)',
             }}>
               <span style={{ width: 4, height: 4, borderRadius: '50%', background: statusColor }} />
               {statusLabel}
@@ -170,6 +170,7 @@ export function PropertyCard({
                 onClick={(e) => { e.preventDefault(); onFavorite(p.id) }}
                 className="prop-action-btn"
                 title="Favoritar"
+                aria-label={isFavorited ? 'Remover dos favoritos' : 'Favoritar imóvel'}
                 style={{
                   border: `1px solid ${isFavorited ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.1)'}`,
                 }}
@@ -182,6 +183,7 @@ export function PropertyCard({
                 onClick={(e) => { e.preventDefault(); onCompare(p.id) }}
                 className="prop-action-btn"
                 title="Comparar"
+                aria-label={isComparing ? 'Remover da comparação' : 'Comparar imóvel'}
                 style={{
                   border: `1px solid ${isComparing ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.1)'}`,
                 }}
@@ -194,6 +196,7 @@ export function PropertyCard({
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/backoffice/imoveis/${p.id}`) }}
               className="prop-action-btn"
               title="Ver detalhes"
+              aria-label="Ver detalhes do imóvel"
               style={{
                 border: '1px solid rgba(200,164,74,0.35)',
               }}
@@ -204,6 +207,7 @@ export function PropertyCard({
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/backoffice/tracking/qr?property=${p.id}`) }}
               className="prop-action-btn"
               title="Gerar QR Code"
+              aria-label="Gerar QR Code do imóvel"
               style={{
                 border: '1px solid rgba(255,255,255,0.1)',
               }}
@@ -214,6 +218,7 @@ export function PropertyCard({
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/backoffice/conteudo/criador?property=${p.id}`) }}
               className="prop-action-btn"
               title="Gerar Conteúdo"
+              aria-label="Gerar conteúdo para o imóvel"
               style={{
                 border: '1px solid rgba(255,255,255,0.1)',
               }}
@@ -279,7 +284,7 @@ export function PropertyCard({
               fontSize: '12px',
               fontWeight: 600,
               color: 'var(--bo-text, #EBE7E0)',
-              fontFamily: 'var(--font-montserrat, sans-serif)',
+              fontFamily: 'var(--font-outfit, sans-serif)',
               lineHeight: 1.3,
               marginBottom: 3,
               whiteSpace: 'nowrap',
@@ -292,7 +297,7 @@ export function PropertyCard({
               display: 'flex', alignItems: 'center', gap: 4,
               fontSize: '10px',
               color: 'var(--bo-text-muted, #9FAAB8)',
-              fontFamily: 'var(--font-montserrat, sans-serif)',
+              fontFamily: 'var(--font-outfit, sans-serif)',
             }}>
               <MapPin size={9} style={{ flexShrink: 0 }} />
               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -375,7 +380,7 @@ export function PropertyCard({
   }
 
   return (
-    <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+    <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none', display: 'block' }} aria-label={`Ver detalhes de ${p.name}`}>
       {cardContent}
     </Link>
   )
@@ -426,7 +431,7 @@ function Chip({ icon, label }: { icon: React.ReactNode; label: string }) {
       border: '1px solid var(--bo-border, rgba(200,164,74,0.12))',
       fontSize: '10px',
       color: 'var(--bo-text-muted, #9FAAB8)',
-      fontFamily: 'var(--font-montserrat, sans-serif)',
+      fontFamily: 'var(--font-outfit, sans-serif)',
     }}>
       {icon}
       {label}
@@ -439,7 +444,7 @@ function MetricPill({ label, value, color }: { label: string; value: string; col
     <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
       <span style={{
         fontSize: '7.5px',
-        fontFamily: 'var(--font-montserrat, sans-serif)',
+        fontFamily: 'var(--font-outfit, sans-serif)',
         fontWeight: 600,
         letterSpacing: '1.5px',
         textTransform: 'uppercase',
@@ -503,14 +508,14 @@ export function PropertyListRow({
           <div style={{
             fontSize: '12px', fontWeight: 600,
             color: 'var(--bo-text, #EBE7E0)',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>
             {p.name}
           </div>
           <div style={{
             fontSize: '10px', color: 'var(--bo-text-dim, #5C6B7D)',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             {[p.neighborhood, p.city].filter(Boolean).join(' · ') || '—'}
           </div>
@@ -556,7 +561,7 @@ export function PropertyListRow({
             fontSize: '8px', fontWeight: 600,
             letterSpacing: '0.8px', textTransform: 'uppercase',
             color: statusColor,
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             {statusLabel}
           </span>
@@ -583,6 +588,7 @@ export function PropertyListRow({
         <Link
           href={`/backoffice/imoveis/${p.id}`}
           title="Ver detalhes"
+          aria-label="Ver detalhes do imóvel"
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             width: 28, height: 28, borderRadius: 6,
@@ -596,6 +602,7 @@ export function PropertyListRow({
         <Link
           href={`/backoffice/tracking/qr?property=${p.id}`}
           title="Gerar QR Code"
+          aria-label="Gerar QR Code do imóvel"
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             width: 28, height: 28, borderRadius: 6,
@@ -609,6 +616,7 @@ export function PropertyListRow({
         <Link
           href={`/backoffice/conteudo/criador?property=${p.id}`}
           title="Gerar Conteúdo"
+          aria-label="Gerar conteúdo para o imóvel"
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             width: 28, height: 28, borderRadius: 6,

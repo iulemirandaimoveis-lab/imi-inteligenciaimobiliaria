@@ -33,7 +33,7 @@ export async function GET(request: Request) {
             short_url: link.short_code ? `${BASE_URL}/l/${link.short_code}` : null
         }))
         return NextResponse.json({ links: enrichedLinks })
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
                 short_url: `${BASE_URL}/l/${shortCode}`,
             },
         }, { status: 201 })
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
@@ -140,7 +140,7 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
         return NextResponse.json({ success: true })
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

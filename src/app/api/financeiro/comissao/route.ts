@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
         }
         const comissaoTotal = Math.round((valor_venda * pct) / 100 * 100) / 100
         const dueDateStr = due_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        const created: any[] = []
+        const created: Record<string, unknown>[] = []
         if (splits && splits.length > 0) {
             // Registrar comissão dividida
             for (const split of splits) {

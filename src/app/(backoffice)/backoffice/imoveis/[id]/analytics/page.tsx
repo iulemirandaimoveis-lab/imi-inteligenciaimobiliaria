@@ -95,7 +95,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                     background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
                                     border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
                                     color: isActive ? T.text : 'var(--text-tertiary)',
-                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                    fontFamily: 'var(--font-outfit, sans-serif)',
                                     fontSize: 12, fontWeight: isActive ? 700 : 500,
                                     cursor: 'pointer',
                                     letterSpacing: '0.3px',
@@ -146,7 +146,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                             </div>
                             {/* Label */}
                             <div style={{
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 11, fontWeight: 600,
                                 letterSpacing: '2px',
                                 textTransform: 'uppercase',
@@ -175,7 +175,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                             Performance Temporal
                         </div>
                         <div style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 11, color: 'var(--text-secondary)',
                             marginBottom: 14,
                         }}>
@@ -184,7 +184,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         {recentDays.length === 0 || recentDays.every(d => d.clicks === 0) ? (
                             <div style={{
                                 textAlign: 'center', padding: '20px 0',
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 12, color: 'var(--text-secondary)',
                             }}>
                                 Sem dados de tracking nesse período
@@ -205,7 +205,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                             </linearGradient>
                                         </defs>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(184,148,58,0.08)" vertical={false} />
-                                        <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-montserrat)' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+                                        <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
                                         <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
                                         <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 6, fontSize: 11, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(184,148,58,0.2)' }} />
                                         <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--imi-gold-500)" strokeWidth={2} fill="url(#mobileViewsGrad)" dot={false} />
@@ -233,7 +233,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                             Fontes de Tráfego
                         </div>
                         <div style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 11, color: 'var(--text-secondary)',
                             marginBottom: 14,
                         }}>
@@ -242,7 +242,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                         {fontesTrafico.length === 0 ? (
                             <div style={{
                                 textAlign: 'center', padding: '16px 0',
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 12, color: 'var(--text-secondary)',
                             }}>
                                 Sem dados de fonte
@@ -257,7 +257,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                             marginBottom: 5,
                                         }}>
                                             <span style={{
-                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontFamily: 'var(--font-outfit, sans-serif)',
                                                 fontSize: 12, fontWeight: 600, color: 'var(--imi-cream)',
                                             }}>{f.source}</span>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -266,7 +266,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                     fontSize: 12, fontWeight: 700, color: 'var(--imi-cream)',
                                                 }}>{f.visits}</span>
                                                 <span style={{
-                                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                    fontFamily: 'var(--font-outfit, sans-serif)',
                                                     fontSize: 11, fontWeight: 700,
                                                     color: 'var(--imi-gold-500)',
                                                     background: 'rgba(184,148,58,0.12)',
@@ -310,7 +310,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                 Top Localizações
                             </div>
                             <div style={{
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 11, color: 'var(--text-secondary)',
                                 marginBottom: 14,
                             }}>
@@ -336,7 +336,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                 <MapPin size={12} style={{ color: 'var(--imi-gold-500)' }} />
                                             </div>
                                             <span style={{
-                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontFamily: 'var(--font-outfit, sans-serif)',
                                                 fontSize: 12, fontWeight: 500, color: 'var(--imi-cream)',
                                             }}>{loc.city}</span>
                                         </div>
@@ -372,7 +372,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                 Dispositivos
                             </div>
                             <div style={{
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 11, color: 'var(--text-secondary)',
                                 marginBottom: 14,
                             }}>
@@ -387,7 +387,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                             marginBottom: 5,
                                         }}>
                                             <span style={{
-                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontFamily: 'var(--font-outfit, sans-serif)',
                                                 fontSize: 12, fontWeight: 600, color: 'var(--imi-cream)',
                                             }}>{d.device}</span>
                                             <span style={{
@@ -430,7 +430,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                 Top Campanhas
                             </div>
                             <div style={{
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 11, color: 'var(--text-secondary)',
                                 marginBottom: 14,
                             }}>
@@ -458,7 +458,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                 {idx + 1}
                                             </div>
                                             <span style={{
-                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontFamily: 'var(--font-outfit, sans-serif)',
                                                 fontSize: 12, fontWeight: 500, color: 'var(--imi-cream)',
                                                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                             }}>{c.name}</span>
@@ -473,7 +473,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                     fontSize: 12, fontWeight: 700, color: 'var(--imi-cream)',
                                                 }}>{c.clicks}</div>
                                                 <div style={{
-                                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                    fontFamily: 'var(--font-outfit, sans-serif)',
                                                     fontSize: 11, color: 'var(--text-secondary)',
                                                 }}>cliques</div>
                                             </div>
@@ -483,7 +483,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                     fontSize: 12, fontWeight: 700, color: 'var(--success)',
                                                 }}>{c.leads}</div>
                                                 <div style={{
-                                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                    fontFamily: 'var(--font-outfit, sans-serif)',
                                                     fontSize: 11, color: 'var(--text-secondary)',
                                                 }}>leads</div>
                                             </div>
@@ -509,7 +509,7 @@ function MobileLoading() {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                 <Loader2 size={28} style={{ color: 'var(--imi-gold-500)', animation: 'spin 1s linear infinite' }} />
                 <style suppressHydrationWarning>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-                <span style={{ fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 12, color: 'var(--text-secondary)' }}>
+                <span style={{ fontFamily: 'var(--font-outfit, sans-serif)', fontSize: 12, color: 'var(--text-secondary)' }}>
                     Carregando analytics...
                 </span>
             </div>
@@ -525,7 +525,7 @@ function MobileEmpty({ onBack }: { onBack: () => void }) {
                 <div style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: 18, fontWeight: 600, color: 'var(--imi-cream)', marginBottom: 6 }}>
                     Sem dados de analytics
                 </div>
-                <div style={{ fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 12, color: 'var(--text-secondary)' }}>
+                <div style={{ fontFamily: 'var(--font-outfit, sans-serif)', fontSize: 12, color: 'var(--text-secondary)' }}>
                     Nenhum dado de analytics encontrado
                 </div>
             </div>
@@ -536,7 +536,7 @@ function MobileEmpty({ onBack }: { onBack: () => void }) {
                     background: 'rgba(184,148,58,0.12)',
                     border: '1px solid rgba(184,148,58,0.25)',
                     color: 'var(--imi-gold-500)',
-                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                    fontFamily: 'var(--font-outfit, sans-serif)',
                     fontSize: 12, fontWeight: 700,
                     cursor: 'pointer',
                 }}
@@ -731,7 +731,7 @@ export default function ImovelAnalyticsPage() {
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(184,148,58,0.08)" vertical={false} />
-                                <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-montserrat)' }} axisLine={false} tickLine={false} />
+                                <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }} axisLine={false} tickLine={false} />
                                 <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
                                 <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(184,148,58,0.2)' }} />
                                 <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--imi-gold-500)" strokeWidth={2} fill="url(#viewsGrad)" dot={false} />

@@ -271,8 +271,8 @@ async function callGemini(
 }
 // ─── Stub Kling (video) ──────────────────────────────────────────────────────
 async function callKling(prompt: string): Promise<{ result: string; cost_usd: number }> {
-    // TODO: Integrar Kling API quando disponível
-    // https://klingai.com/api (aguardando acesso)
+    // Stub: Kling video API not yet available — returns queued placeholder
+    // See https://klingai.com/api
     return {
         result: JSON.stringify({
             status: 'queued',
@@ -357,11 +357,11 @@ export async function POST(request: NextRequest) {
             fallback_used,
         }
         return NextResponse.json(result)
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
             {
                 success: false,
-                error: error.message || 'Erro interno no AI Router',
+                error: error instanceof Error ? error.message : 'Erro interno no AI Router',
                 result: '',
                 model_used: 'claude-sonnet' as AIModel,
                 task_type: 'custom' as TaskType,

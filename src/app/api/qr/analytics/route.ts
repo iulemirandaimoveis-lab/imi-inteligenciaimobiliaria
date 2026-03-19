@@ -119,7 +119,7 @@ export async function GET(request: Request) {
             topCampaigns,
             topLocations,
         })
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

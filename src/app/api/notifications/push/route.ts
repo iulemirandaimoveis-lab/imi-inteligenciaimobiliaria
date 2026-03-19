@@ -82,7 +82,7 @@ async function sendToSubscription(
             JSON.stringify(payload)
         )
         return true
-    } catch (err: any) {
+    } catch (err: unknown) {
         const statusCode = err?.statusCode ?? err?.status
         if (statusCode === 410 || statusCode === 404) {
             // Subscription is expired or no longer valid — remove it
@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
             failed,
             total: results.length,
         })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }

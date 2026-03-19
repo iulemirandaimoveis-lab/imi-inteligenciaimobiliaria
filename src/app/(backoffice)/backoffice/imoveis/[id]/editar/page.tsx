@@ -635,7 +635,7 @@ export default function EditarImovelPage() {
             <p style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: 15, color: 'var(--imi-cream)', margin: 0, lineHeight: 1.2 }}>
               Editar Imóvel
             </p>
-            <p style={{ fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 11, color: 'var(--text-tertiary)', margin: 0 }}>
+            <p style={{ fontFamily: 'var(--font-outfit, sans-serif)', fontSize: 11, color: 'var(--text-tertiary)', margin: 0 }}>
               {currentTabIndex + 1}/{totalTabs} — {TABS[currentTabIndex]?.label}
             </p>
           </div>
@@ -1028,7 +1028,7 @@ export default function EditarImovelPage() {
                 flex: '0 0 auto', height: 52, paddingLeft: 20, paddingRight: 20,
                 borderRadius: 6, background: 'rgba(184,148,58,0.08)',
                 border: '1px solid rgba(184,148,58,0.25)', color: 'var(--imi-gold-500)',
-                fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 13, fontWeight: 700,
+                fontFamily: 'var(--font-outfit, sans-serif)', fontSize: 13, fontWeight: 700,
                 letterSpacing: '0.5px', cursor: 'pointer', touchAction: 'manipulation',
               }}
             >
@@ -1041,7 +1041,7 @@ export default function EditarImovelPage() {
               flex: 1, height: 52, borderRadius: 6,
               background: currentTabIndex < totalTabs - 1 ? 'var(--imi-gold-500)' : 'var(--success)',
               border: 'none', color: currentTabIndex < totalTabs - 1 ? T.text : 'white',
-              fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 13, fontWeight: 800,
+              fontFamily: 'var(--font-outfit, sans-serif)', fontSize: 13, fontWeight: 800,
               letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', touchAction: 'manipulation',
             }}
           >

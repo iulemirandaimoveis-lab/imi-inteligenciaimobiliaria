@@ -104,7 +104,7 @@ Responda APENAS com o JSON válido.`
         } catch {
             return NextResponse.json({ error: 'Não foi possível extrair dados estruturados do PDF. Tente outro arquivo.' }, { status: 422 })
         }
-    } catch (err: any) {
-        return NextResponse.json({ error: 'Falha ao processar o PDF: ' + (err.message || 'erro desconhecido') }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: 'Falha ao processar o PDF: ' + (err instanceof Error ? err.message : 'erro desconhecido') }, { status: 500 })
     }
 }

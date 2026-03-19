@@ -88,7 +88,7 @@ BASE DE CONHECIMENTO: Vazia — responda com base no seu treinamento sobre ABNT 
                 'Cache-Control': 'no-cache',
             },
         })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message || 'Erro interno' }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Erro interno' }, { status: 500 })
     }
 }

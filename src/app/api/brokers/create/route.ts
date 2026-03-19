@@ -109,7 +109,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: brokerError.message }, { status: 500 })
         }
         return NextResponse.json(broker, { status: 201 })
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

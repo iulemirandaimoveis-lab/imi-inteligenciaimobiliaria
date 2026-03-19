@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
             ai_request_id: imageResult.ai_request_id,
             cost_usd: imageResult.cost_usd,
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         // Tenta reverter status em caso de erro
         try {
             const body: GenerateImageRequest = await request.json();
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
                 .eq('id', body.content_item_id);
         } catch { }
         return NextResponse.json(
-            { error: error.message || 'Internal Server Error' },
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }
         );
     }

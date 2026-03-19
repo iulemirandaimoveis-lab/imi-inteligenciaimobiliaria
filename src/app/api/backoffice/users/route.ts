@@ -116,9 +116,9 @@ export async function POST(request: Request) {
                 message: 'Usuário criado com sucesso.'
             })
         }
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
-            { error: error.message || 'Erro interno no servidor' },
+            { error: error instanceof Error ? error.message : 'Erro interno no servidor' },
             { status: 500 }
         )
     }
@@ -141,7 +141,7 @@ export async function PUT(request: Request) {
         const body = await request.json()
         const { id, name, role, is_active } = body
         if (!id) return NextResponse.json({ error: 'ID do usuário é obrigatório' }, { status: 400 })
-        const updates: Record<string, any> = {}
+        const updates: Record<string, unknown> = {}
         if (name !== undefined) updates.name = name
         if (role !== undefined) updates.role = role
         if (is_active !== undefined) updates.is_active = is_active
@@ -149,14 +149,14 @@ export async function PUT(request: Request) {
         const { error: profileErr } = await client.from('profiles').update(updates).eq('id', id)
         // profileErr handled via response
         // Update users table (camelCase role, no is_active in that table typically)
-        const userUpdates: Record<string, any> = {}
+        const userUpdates: Record<string, unknown> = {}
         if (name !== undefined) userUpdates.name = name
         if (role !== undefined) userUpdates.role = role
         if (is_active !== undefined) userUpdates.active = is_active
         await client.from('users').update(userUpdates).eq('id', id)
         return NextResponse.json({ success: true })
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message || 'Erro interno' }, { status: 500 })
+    } catch (error: unknown) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
     }
 }
 export async function DELETE(request: Request) {
@@ -183,8 +183,8 @@ export async function DELETE(request: Request) {
         await client.from('profiles').update({ is_active: false }).eq('id', id)
         await client.from('users').update({ active: false }).eq('id', id)
         return NextResponse.json({ success: true })
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message || 'Erro interno' }, { status: 500 })
+    } catch (error: unknown) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
     }
 }
 export async function GET(request: Request) {
@@ -210,7 +210,7 @@ export async function GET(request: Request) {
             return NextResponse.json({ users: usersData || [] })
         }
         return NextResponse.json({ users: data || [] })
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
+    } catch (error: unknown) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 })
     }
 }

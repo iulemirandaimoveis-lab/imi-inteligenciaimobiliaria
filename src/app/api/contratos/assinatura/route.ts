@@ -20,7 +20,7 @@ class GovBrProvider {
     this.clientId     = process.env.GOVBR_CLIENT_ID || ''
     this.clientSecret = process.env.GOVBR_CLIENT_SECRET || ''
     this.redirectUri  = process.env.GOVBR_REDIRECT_URI || ''
-    this.env          = (process.env.GOVBR_ENVIRONMENT as any) || 'staging'
+    this.env          = (process.env.GOVBR_ENVIRONMENT as string) || 'staging'
     this.baseUrl      = this.env === 'production'
       ? 'https://sso.acesso.gov.br'
       : 'https://sso.staging.acesso.gov.br'
@@ -96,7 +96,7 @@ class ClickSignProvider {
   private baseUrl: string
   constructor() {
     this.token   = process.env.CLICKSIGN_ACCESS_TOKEN || ''
-    this.env     = (process.env.CLICKSIGN_ENVIRONMENT as any) || 'sandbox'
+    this.env     = (process.env.CLICKSIGN_ENVIRONMENT as 'sandbox' | 'production') || 'sandbox'
     this.baseUrl = this.env === 'production'
       ? 'https://app.clicksign.com'
       : 'https://sandbox.clicksign.com'
@@ -104,7 +104,7 @@ class ClickSignProvider {
   isConfigured(): boolean {
     return !!this.token
   }
-  private async request(path: string, method: string, body?: any) {
+  private async request(path: string, method: string, body?: Record<string, unknown>) {
     const url = `${this.baseUrl}${path}?access_token=${this.token}`
     const res = await fetch(url, {
       method,
@@ -186,7 +186,7 @@ class ClickSignProvider {
     return {
       status: doc.status,
       all_signed: doc.status === 'closed',
-      signers: doc.signers?.map((s: any) => ({
+      signers: doc.signers?.map((s: Record<string, unknown>) => ({
         name: s.name,
         email: s.email,
         signed: s.signed,
@@ -278,8 +278,8 @@ export async function POST(req: NextRequest) {
       }
     }
     return NextResponse.json({ error: `Provider '${provider}' não suportado` }, { status: 400 })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Erro na assinatura digital' }, { status: 500 })
+  } catch (error: unknown) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro na assinatura digital' }, { status: 500 })
   }
 }
 // ── Webhook Gov.br / ClickSign ─────────────────────────────

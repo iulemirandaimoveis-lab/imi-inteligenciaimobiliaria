@@ -32,7 +32,7 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: deleteAuthError.message }, { status: 500 })
         }
         return NextResponse.json({ success: true })
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

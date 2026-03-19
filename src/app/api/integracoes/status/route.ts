@@ -47,7 +47,7 @@ export async function GET() {
 
   // Start with env-detected statuses
   const envStatuses = getEnvDetectedStatuses()
-  const envEntries: Array<{ integration_id: string; status: string; config: any; updated_at: string | null; source: string }> = Object.entries(envStatuses).map(([id, status]) => ({
+  const envEntries: Array<{ integration_id: string; status: string; config: Record<string, unknown> | null; updated_at: string | null; source: string }> = Object.entries(envStatuses).map(([id, status]) => ({
     integration_id: id,
     status,
     config: null,

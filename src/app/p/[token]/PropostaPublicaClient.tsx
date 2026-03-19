@@ -130,8 +130,8 @@ export default function PropostaPublicaClient({ proposal }: Props) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: C.bg, color: C.text, fontFamily: "'Montserrat', sans-serif", fontSize: 14 }}>
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <div style={{ minHeight: '100vh', background: C.bg, color: C.text, fontFamily: "'Outfit', sans-serif", fontSize: 14 }}>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
       {/* Expired banner */}
       {isExpired && !accepted && (
@@ -406,7 +406,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
               style={{
                 width: '100%', padding: '16px', borderRadius: 10, cursor: 'pointer',
                 background: C.gold, border: 'none', color: '#000',
-                fontWeight: 700, fontSize: 15, fontFamily: "'Montserrat', sans-serif",
+                fontWeight: 700, fontSize: 15, fontFamily: "'Outfit', sans-serif",
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
               }}
             >
@@ -425,7 +425,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     padding: '12px', borderRadius: 10, textDecoration: 'none',
                     background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.25)',
-                    color: '#34d399', fontWeight: 600, fontSize: 13, fontFamily: "'Montserrat', sans-serif",
+                    color: '#34d399', fontWeight: 600, fontSize: 13, fontFamily: "'Outfit', sans-serif",
                   }}
                 >
                   <MessageCircle size={15} /> Falar com Corretor
@@ -441,7 +441,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '12px', borderRadius: 10, cursor: 'pointer',
                   background: 'rgba(201,168,76,0.08)', border: `1px solid ${C.border}`,
-                  color: C.gold, fontWeight: 600, fontSize: 13, fontFamily: "'Montserrat', sans-serif",
+                  color: C.gold, fontWeight: 600, fontSize: 13, fontFamily: "'Outfit', sans-serif",
                 }}
               >
                 <RefreshCw size={15} /> Fazer Contraproposta
@@ -467,7 +467,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                         value={counterValue}
                         onChange={e => setCounterValue(e.target.value)}
                         placeholder="R$ 0"
-                        style={{ width: '100%', padding: '10px 12px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, fontSize: 13, outline: 'none', fontFamily: "'Montserrat', sans-serif" }}
+                        style={{ width: '100%', padding: '10px 12px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, fontSize: 13, outline: 'none', fontFamily: "'Outfit', sans-serif" }}
                       />
                     </div>
                     <div>
@@ -479,12 +479,12 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                         onChange={e => setCounterConditions(e.target.value)}
                         rows={3}
                         placeholder="Ex.: aceito com inclusão de armários embutidos..."
-                        style={{ width: '100%', padding: '10px 12px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, fontSize: 13, outline: 'none', fontFamily: "'Montserrat', sans-serif", resize: 'vertical', lineHeight: 1.6 }}
+                        style={{ width: '100%', padding: '10px 12px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, color: C.text, fontSize: 13, outline: 'none', fontFamily: "'Outfit', sans-serif", resize: 'vertical', lineHeight: 1.6 }}
                       />
                     </div>
                     <button
                       onClick={handleCounter}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '11px', background: C.gold, border: 'none', borderRadius: 8, color: '#000', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: "'Montserrat', sans-serif" }}
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '11px', background: C.gold, border: 'none', borderRadius: 8, color: '#000', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
                     >
                       <Send size={14} /> Enviar Contraproposta
                     </button>

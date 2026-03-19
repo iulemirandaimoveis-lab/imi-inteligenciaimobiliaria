@@ -161,7 +161,7 @@ function MobileUnidades({
                                 {card.value}
                             </div>
                             <div style={{
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 9,
                                 fontWeight: 600,
                                 letterSpacing: '1.2px',
@@ -209,7 +209,7 @@ function MobileUnidades({
                             background: 'transparent',
                             border: 'none',
                             outline: 'none',
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 14,
                             color: '#EBE7E0',
                         }}
@@ -258,7 +258,7 @@ function MobileUnidades({
                                 background: isActive ? 'var(--imi-gold-500)' : 'transparent',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 12,
                                 fontWeight: isActive ? 700 : 500,
                                 cursor: 'pointer',
@@ -300,7 +300,7 @@ function MobileUnidades({
                                 Nenhuma unidade encontrada
                             </div>
                             <div style={{
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 13, color: '#5C6B7D', lineHeight: 1.5,
                             }}>
                                 {unidades.length === 0
@@ -315,7 +315,7 @@ function MobileUnidades({
                                 style={{
                                     height: 44, padding: '0 24px', borderRadius: 10,
                                     background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer',
-                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                    fontFamily: 'var(--font-outfit, sans-serif)',
                                     fontSize: 12, fontWeight: 700, letterSpacing: '1px',
                                     textTransform: 'uppercase', color: '#0B1120',
                                 }}
@@ -363,7 +363,7 @@ function MobileUnidades({
                                                 )}
                                             </div>
                                             <div style={{
-                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontFamily: 'var(--font-outfit, sans-serif)',
                                                 fontSize: 11,
                                                 color: '#5C6B7D',
                                             }}>
@@ -384,7 +384,7 @@ function MobileUnidades({
                                             borderRadius: 6,
                                             background: st.bg,
                                             color: st.color,
-                                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                                            fontFamily: 'var(--font-outfit, sans-serif)',
                                             fontSize: 10,
                                             fontWeight: 700,
                                             letterSpacing: '0.2px',
@@ -443,7 +443,7 @@ function MobileUnidades({
                                     {/* Price row */}
                                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                                         <span style={{
-                                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                                            fontFamily: 'var(--font-outfit, sans-serif)',
                                             fontSize: 9,
                                             fontWeight: 600,
                                             letterSpacing: '1px',
@@ -465,7 +465,7 @@ function MobileUnidades({
                                     {unidade.notes && (
                                         <div style={{
                                             marginTop: 8,
-                                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                                            fontFamily: 'var(--font-outfit, sans-serif)',
                                             fontSize: 11,
                                             color: '#5C6B7D',
                                             overflow: 'hidden',
@@ -500,7 +500,7 @@ function MobileUnidades({
                     alignItems: 'center',
                     gap: 8,
                     color: '#0B1120',
-                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                    fontFamily: 'var(--font-outfit, sans-serif)',
                     fontSize: 13,
                     fontWeight: 700,
                     boxShadow: '0 4px 20px rgba(184,148,58,0.35)',

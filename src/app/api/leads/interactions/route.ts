@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 async function getAuthenticatedSupabase() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { supabase: null as any, user: null }
+    if (!user) return { supabase: null as unknown as Awaited<ReturnType<typeof createClient>>, user: null }
     return { supabase, user }
 }
 export async function POST(request: Request) {

@@ -227,10 +227,10 @@ export async function POST(req: NextRequest) {
           message: `Configuração salva para ${integration_id}. Teste real disponível após deploy.`,
         })
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json({
       success: false,
-      message: error.message || 'Erro ao testar conexão',
+      message: error instanceof Error ? error.message : 'Erro ao testar conexão',
     }, { status: 500 })
   }
 }

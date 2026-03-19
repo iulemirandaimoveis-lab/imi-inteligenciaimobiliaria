@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: dbError.message }, { status: 500 })
         }
         return NextResponse.json({ ok: true })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 // DELETE /api/notifications/subscribe
@@ -61,7 +61,7 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: dbError.message }, { status: 500 })
         }
         return NextResponse.json({ ok: true })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }

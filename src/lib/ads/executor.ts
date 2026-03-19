@@ -308,10 +308,10 @@ export async function syncCampaigns(account_id: string) {
     }
 }
 async function syncGoogleAdsCampaigns(_account: AdsAccountRecord): Promise<number> {
-    // TODO: Implementar
+    // Stub: Google Ads sync not yet implemented — returns 0 synced campaigns
     return 0;
 }
 async function syncMetaAdsCampaigns(_account: AdsAccountRecord): Promise<number> {
-    // TODO: Implementar
+    // Stub: Meta Ads sync not yet implemented — returns 0 synced campaigns
     return 0;
 }

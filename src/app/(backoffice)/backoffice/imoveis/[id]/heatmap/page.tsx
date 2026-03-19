@@ -77,7 +77,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                 background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
                                 color: isActive ? T.text : 'var(--text-tertiary)',
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 12, fontWeight: isActive ? 700 : 500,
                                 cursor: 'pointer',
                                 letterSpacing: '0.3px',
@@ -103,7 +103,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                         marginBottom: 12,
                     }}>
                         <div style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 11, fontWeight: 700,
                             letterSpacing: '2px', textTransform: 'uppercase',
                             color: 'var(--text-secondary)', marginBottom: 3,
@@ -119,7 +119,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                         </div>
                         {development.neighborhood && (
                             <div style={{
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 11, color: 'var(--text-secondary)', marginTop: 2,
                             }}>
                                 {development.neighborhood}, {development.city}
@@ -164,7 +164,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                                 {section.label}
                                             </div>
                                             <div style={{
-                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontFamily: 'var(--font-outfit, sans-serif)',
                                                 fontSize: 11, color: 'var(--text-secondary)', marginTop: 1,
                                             }}>
                                                 {section.detail}
@@ -216,7 +216,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                     <Zap size={14} style={{ color: 'var(--warning)', flexShrink: 0, marginTop: 1 }} />
                     <div>
                         <div style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 11, fontWeight: 700,
                             letterSpacing: '2px', textTransform: 'uppercase',
                             color: 'var(--warning)', marginBottom: 4,
@@ -224,7 +224,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                             Insight IA
                         </div>
                         <div style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.5,
                         }}>
                             Usuários saem na seção &quot;Preços&quot;. Considere adicionar labels &quot;Financiamento Facilitado&quot; próximo para reter interesse.

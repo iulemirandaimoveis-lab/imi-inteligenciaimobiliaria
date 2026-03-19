@@ -30,8 +30,8 @@ export async function GET(req: NextRequest) {
         const { data, error } = await query.limit(200)
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data || [])
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -54,8 +54,8 @@ export async function POST(req: NextRequest) {
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -69,13 +69,13 @@ export async function PUT(req: NextRequest) {
         if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
         const { id, ...updates } = parsed.data
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
-        ;(updates as any).updated_at = new Date().toISOString()
+        ;(updates as Record<string, unknown>).updated_at = new Date().toISOString()
 
         const { data, error } = await supabase.from('calendar_events').update(updates).eq('id', id).select().single()
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data)
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -90,7 +90,7 @@ export async function DELETE(req: NextRequest) {
         const { error } = await supabase.from('calendar_events').delete().eq('id', id)
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json({ success: true })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }

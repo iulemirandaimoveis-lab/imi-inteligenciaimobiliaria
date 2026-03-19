@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             count: data?.length || 0,
             message: `Notificação enviada para ${data?.length || 0} usuários`,
         }, { status: 201 })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }

@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
         const linkIds = (trackedLinks || []).map(l => l.id)
         const totalClicks = (trackedLinks || []).reduce((sum, l) => sum + (l.clicks || 0), 0)
         // 3. Get link events for these tracked links within time range
-        let events: any[] = []
+        let events: Record<string, unknown>[] = []
         if (linkIds.length > 0) {
             const { data: eventsData } = await supabase
                 .from('link_events')
@@ -154,8 +154,8 @@ export async function GET(request: NextRequest) {
             topCampaigns,
             timeRange,
         })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message || 'Internal error' }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal error' }, { status: 500 })
     }
 }
 function formatSourceName(source: string): string {

@@ -142,7 +142,7 @@ const EYEBROW: React.CSSProperties = {
   letterSpacing: '3px',
   textTransform: 'uppercase',
   color: 'var(--imi-gold-500)',
-  fontFamily: 'var(--font-montserrat, Figtree, sans-serif)',
+  fontFamily: 'var(--font-outfit, sans-serif)',
   fontWeight: 700,
 }
 
@@ -159,7 +159,7 @@ const BTN_PRIMARY: React.CSSProperties = {
   letterSpacing: '1.8px',
   textTransform: 'uppercase',
   fontWeight: 700,
-  fontFamily: 'var(--font-montserrat, Figtree, sans-serif)',
+  fontFamily: 'var(--font-outfit, sans-serif)',
   fontSize: '11px',
   padding: '10px 20px',
   border: 'none',
@@ -178,7 +178,7 @@ const BTN_SECONDARY: React.CSSProperties = {
   letterSpacing: '1.8px',
   textTransform: 'uppercase',
   fontWeight: 700,
-  fontFamily: 'var(--font-montserrat, Figtree, sans-serif)',
+  fontFamily: 'var(--font-outfit, sans-serif)',
   fontSize: '11px',
   padding: '10px 20px',
   cursor: 'pointer',
@@ -735,7 +735,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
 
         {/* ── ATIVIDADE RECENTE ─────────────────────────────────────────── */}
         <div style={{ marginTop: 24 }}>
-          <div style={{ fontSize: 10, fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12 }}>Atividade Recente</div>
+          <div style={{ fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12 }}>Atividade Recente</div>
           {[
             { icon: '👁', label: 'Visualizações esta semana', value: '—', color: 'var(--text-secondary)' },
             { icon: '📋', label: 'Leads este mês', value: '—', color: 'var(--text-secondary)' },
@@ -744,7 +744,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
             <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(184,148,58,0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 14 }}>{icon}</span>
-                <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{label}</span>
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{label}</span>
               </div>
               <span style={{ fontSize: 11, fontFamily: 'var(--font-mono,monospace)', color }}>{value}</span>
             </div>
@@ -1007,7 +1007,7 @@ function DesktopImovelDetail({
             background: getStatusConfig(localStatus).bg, color: getStatusConfig(localStatus).color,
             fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px',
             textTransform: 'uppercase',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: getStatusConfig(localStatus).dot }} />
             {getStatusConfig(localStatus).label}
@@ -1050,7 +1050,7 @@ function DesktopImovelDetail({
                     padding: '8px 14px', background: 'transparent', border: 'none',
                     cursor: 'pointer', textAlign: 'left',
                     color: localStatus === opt.value ? opt.color : '#9FAAB8',
-                    fontSize: 12, fontFamily: 'var(--font-montserrat, sans-serif)',
+                    fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)',
                     fontWeight: localStatus === opt.value ? 700 : 400,
                     transition: 'background 0.1s',
                   }}
@@ -1196,7 +1196,7 @@ function DesktopImovelDetail({
                     border: 'none',
                     borderBottom: `2px solid ${activeTab === tab.key ? 'var(--gold, var(--imi-gold-500))' : 'transparent'}`,
                     color: activeTab === tab.key ? 'var(--gold, var(--imi-gold-500))' : T.textMuted,
-                    fontFamily: 'var(--font-montserrat, Figtree, sans-serif)',
+                    fontFamily: 'var(--font-outfit, sans-serif)',
                     fontWeight: 700,
                     fontSize: 11,
                     letterSpacing: '1.5px',
@@ -1268,7 +1268,7 @@ function DesktopImovelDetail({
                         background: 'rgba(184,148,58,0.08)',
                         border: '1px solid rgba(184,148,58,0.18)',
                         color: T.textMuted, fontSize: 12,
-                        fontFamily: 'var(--font-montserrat, sans-serif)',
+                        fontFamily: 'var(--font-outfit, sans-serif)',
                         fontWeight: 500,
                       }}>
                         {item}
@@ -1520,7 +1520,7 @@ function DesktopImovelDetail({
                   ].map(({ label, roi, color }) => (
                     <div key={label}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                        <span style={{ fontSize: 13, color: T.textMuted, fontFamily: 'var(--font-montserrat, sans-serif)' }}>{label}</span>
+                        <span style={{ fontSize: 13, color: T.textMuted, fontFamily: 'var(--font-outfit, sans-serif)' }}>{label}</span>
                         <span style={{ ...MONO, fontSize: 13, color, fontWeight: 500 }}>+{roi.toFixed(1)}%</span>
                       </div>
                       <div style={{ height: 6, background: 'rgba(184,148,58,0.1)', borderRadius: 999, overflow: 'hidden' }}>
@@ -1690,7 +1690,7 @@ function DesktopImovelDetail({
                   return (
                     <div key={label}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                        <span style={{ fontSize: 9, fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-tertiary)' }}>{label}</span>
+                        <span style={{ fontSize: 9, fontFamily: 'var(--font-outfit, sans-serif)', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-tertiary)' }}>{label}</span>
                         <span style={{ fontSize: 9, fontFamily: 'var(--font-mono,monospace)', color: 'var(--text-secondary)' }}>{pct}</span>
                       </div>
                       <div style={{ height: 3, background: 'rgba(255,255,255,0.05)', borderRadius: 2, overflow: 'hidden' }}>
@@ -1707,7 +1707,7 @@ function DesktopImovelDetail({
             {/* Yield + Market delta */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-outfit, sans-serif)' }}>
                   Yield Estimado
                 </span>
                 <span style={{ ...MONO, fontSize: 14, color: '#5DB887', fontWeight: 500 }}>
@@ -1715,7 +1715,7 @@ function DesktopImovelDetail({
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-outfit, sans-serif)' }}>
                   vs Mercado
                 </span>
                 <span style={{
@@ -1731,7 +1731,7 @@ function DesktopImovelDetail({
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-outfit, sans-serif)' }}>
                   Liquidez
                 </span>
                 <span style={{ ...MONO, fontSize: 13, color: '#5B9BD5' }}>

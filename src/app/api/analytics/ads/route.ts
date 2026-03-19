@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
             .gte('date', subDays(new Date(), 30).toISOString())
             .order('date', { ascending: true })
         // 2. Aggregate by date
-        const timelineObj = metrics?.reduce((acc: any, curr) => {
+        const timelineObj = metrics?.reduce((acc: Record<string, { date: string; spend: number; conversions: number }>, curr) => {
             const date = format(new Date(curr.date), 'dd/MM')
             if (!acc[date]) {
                 acc[date] = { date, spend: 0, conversions: 0 }
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
             acc[date].conversions += Number(curr.conversions) || 0
             return acc
         }, {})
-        const timeline = Object.values(timelineObj || {}).sort((a: any, b: any) => {
+        const timeline = Object.values(timelineObj || {}).sort((a: { date: string }, b: { date: string }) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime()
         })
         // 3. Campaign summary
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
             timeline,
             campaigns
         })
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }

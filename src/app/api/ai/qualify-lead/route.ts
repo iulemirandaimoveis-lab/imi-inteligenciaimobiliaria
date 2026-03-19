@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
             ai_request_id: result.ai_request_id,
             cost_usd: result.cost_usd,
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
-            { error: error.message || 'Internal Server Error' },
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }
         );
     }

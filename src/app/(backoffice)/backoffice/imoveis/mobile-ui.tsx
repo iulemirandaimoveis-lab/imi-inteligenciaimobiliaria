@@ -300,6 +300,7 @@ export function MobileSearchBar({ value, onChange, placeholder = 'Buscar...', au
         onBlur={() => setFocused(false)}
         placeholder={placeholder}
         autoFocus={autoFocus}
+        aria-label="Buscar imóveis por nome, bairro ou cidade"
         style={{
           flex: 1, background: 'transparent', border: 'none', outline: 'none',
           fontFamily: 'var(--font-sans)',
@@ -310,6 +311,7 @@ export function MobileSearchBar({ value, onChange, placeholder = 'Buscar...', au
         <button
           onClick={() => onChange('')}
           className="mob-btn-tap"
+          aria-label="Limpar busca"
           style={{
             width: 20, height: 20, borderRadius: 'var(--r-full)',
             background: 'var(--text-tertiary)', border: 'none', cursor: 'pointer',
@@ -352,6 +354,8 @@ export function MobileFilterChips({ chips, active, onChange }: MobileFilterChips
             key={chip.value}
             onClick={() => onChange(isActive ? '' : chip.value)}
             className="mob-chip-tap"
+            aria-label={`Filtrar por ${chip.label}`}
+            aria-pressed={isActive}
             style={{
               flexShrink: 0,
               display: 'flex', alignItems: 'center', gap: 5,
@@ -400,6 +404,7 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
     <Link
       href={`/backoffice/imoveis/${property.id}`}
       className="mob-card-link"
+      aria-label={`Ver detalhes de ${property.name}`}
       style={{ animationDelay: `${animationDelay}ms` }}
     >
       <div
@@ -475,6 +480,7 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
             <button
               onClick={e => { e.preventDefault(); e.stopPropagation(); onFavorite() }}
               className="mob-btn-tap"
+              aria-label="Favoritar imóvel"
               style={{
                 position: 'absolute', bottom: 56, right: 10,
                 width: 36, height: 36,

@@ -22,8 +22,8 @@ export async function GET(req: NextRequest) {
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data || [])
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
             const { projeto_id, unidades } = body
             if (!projeto_id) return NextResponse.json({ error: 'projeto_id é obrigatório' }, { status: 400 })
 
-            const rows = unidades.map((u: any) => ({
+            const rows = unidades.map((u: Record<string, unknown>) => ({
                 projeto_id,
                 torre: u.torre || null,
                 andar: u.andar || null,
@@ -80,8 +80,8 @@ export async function POST(req: NextRequest) {
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -107,8 +107,8 @@ export async function PUT(req: NextRequest) {
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data)
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -130,7 +130,7 @@ export async function DELETE(req: NextRequest) {
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json({ success: true })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }

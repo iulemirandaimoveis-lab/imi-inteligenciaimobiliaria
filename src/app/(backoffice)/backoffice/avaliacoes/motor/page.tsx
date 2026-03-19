@@ -66,7 +66,7 @@ export default function MotorAvaliacoesPage() {
   const [tab, setTab] = useState<Tab>('consultar')
 
   return (
-    <div style={{ minHeight: '100vh', color: T.text, fontFamily: 'var(--font-ui, var(--font-montserrat, sans-serif))' }}>
+    <div style={{ minHeight: '100vh', color: T.text, fontFamily: 'var(--font-ui, var(--font-outfit, sans-serif))' }}>
       <style>{`
         .mi::placeholder { color: ${T.textDim}; }
         .mi:focus { outline: none; border-color: ${T.gold} !important; box-shadow: 0 0 0 3px rgba(184,148,58,0.12); }

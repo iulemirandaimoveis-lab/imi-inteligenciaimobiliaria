@@ -88,7 +88,7 @@ function DonutChart({ capitalPct, rentalPct, size = 110 }: DonutProps) {
                 ROI
             </text>
             <text x={cx} y={cy + size * 0.12} textAnchor="middle" fontSize={size * 0.11}
-                fill="var(--bo-text-muted)" fontFamily="Montserrat, sans-serif">
+                fill="var(--bo-text-muted)" fontFamily="var(--font-outfit, sans-serif)">
                 total
             </text>
         </svg>

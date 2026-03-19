@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         const result = await executeAdAction({
             tenant_id: campaign.tenant_id,
             campaign_id,
-            platform: campaign.account.platform as any,
+            platform: campaign.account.platform as string,
             action_type: 'pause',
             params: {},
             reason: reason || 'Manual pause',
@@ -41,9 +41,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: result.error }, { status: 500 });
         }
         return NextResponse.json({ success: true, message: result.message });
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
-            { error: error.message || 'Internal Server Error' },
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }
         );
     }

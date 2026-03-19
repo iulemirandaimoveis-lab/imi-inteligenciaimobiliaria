@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
                 pages: Math.ceil((count || 0) / limit),
             },
         })
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 500 })
     }
 }

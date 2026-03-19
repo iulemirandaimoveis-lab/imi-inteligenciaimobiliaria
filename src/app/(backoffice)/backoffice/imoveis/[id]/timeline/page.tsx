@@ -138,7 +138,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             borderRadius: 6,
                             background: 'rgba(184,148,58,0.10)',
                             border: '1px solid rgba(184,148,58,0.28)',
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 11,
                             fontWeight: 700,
                             color: 'var(--imi-gold-500)',
@@ -210,7 +210,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                                 padding: '2px 8px',
                                                 borderRadius: 6,
                                                 background: cfg.bg,
-                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontFamily: 'var(--font-outfit, sans-serif)',
                                                 fontSize: 11,
                                                 fontWeight: 700,
                                                 letterSpacing: '0.8px',
@@ -246,7 +246,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                             {/* Description */}
                                             {event.description && (
                                                 <div style={{
-                                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                    fontFamily: 'var(--font-outfit, sans-serif)',
                                                     fontSize: 12,
                                                     color: 'var(--text-tertiary)',
                                                     lineHeight: 1.5,
@@ -294,7 +294,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             Sem histórico registrado
                         </div>
                         <div style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 13,
                             color: 'var(--text-tertiary)',
                             lineHeight: 1.6,
@@ -323,7 +323,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                     display: 'flex',
                     alignItems: 'center',
                     gap: 6,
-                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                    fontFamily: 'var(--font-outfit, sans-serif)',
                     fontSize: 13,
                     fontWeight: 700,
                     letterSpacing: '0.3px',

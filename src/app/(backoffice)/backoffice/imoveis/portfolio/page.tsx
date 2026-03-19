@@ -175,7 +175,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: DT.bg, color: DT.text, fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+    <div style={{ minHeight: '100vh', background: DT.bg, color: DT.text, fontFamily: 'var(--font-outfit, sans-serif)' }}>
       <style suppressHydrationWarning>{`
         .desk-row:hover { background: rgba(184,148,58,0.04) !important; }
         .desk-action-btn:hover { background: rgba(184,148,58,0.14) !important; color: var(--imi-gold-500) !important; }
@@ -419,7 +419,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                               borderRadius: 6, padding: '5px 10px',
                               cursor: 'pointer', color: DT.textSub,
                               fontSize: 11, fontWeight: 500,
-                              fontFamily: 'var(--font-montserrat, sans-serif)',
+                              fontFamily: 'var(--font-outfit, sans-serif)',
                               transition: 'background 0.15s, color 0.15s',
                             }}>
                               <Eye size={12} />
@@ -434,7 +434,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                               borderRadius: 6, padding: '5px 10px',
                               cursor: 'pointer', color: DT.textSub,
                               fontSize: 11, fontWeight: 500,
-                              fontFamily: 'var(--font-montserrat, sans-serif)',
+                              fontFamily: 'var(--font-outfit, sans-serif)',
                               transition: 'background 0.15s, color 0.15s',
                             }}>
                               <Edit size={12} />
@@ -522,7 +522,7 @@ function MobilePortfolio({ properties, loading }: { properties: IMIProperty[]; l
                 border: 'none', borderRadius: 6,
                 padding: '6px 12px', cursor: 'pointer',
                 fontSize: 12, fontWeight: 600,
-                fontFamily: 'var(--font-montserrat, sans-serif)',
+                fontFamily: 'var(--font-outfit, sans-serif)',
               }}>
                 <Plus size={12} />
                 Novo

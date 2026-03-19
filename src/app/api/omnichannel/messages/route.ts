@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
         .order('created_at', { ascending: false })
         .limit(limit)
 
-    const messages = (waMessages || []).map((m: any) => ({
+    const messages = (waMessages || []).map((m: Record<string, unknown>) => ({
         id: m.id,
         channel: 'whatsapp',
         from: m.whatsapp_conversations?.phone_number || 'Desconhecido',

@@ -188,7 +188,7 @@ export async function POST(req: NextRequest) {
       gdrive_url: gdriveUrl,
       results,
     })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Erro ao salvar' }, { status: 500 })
+  } catch (error: unknown) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro ao salvar' }, { status: 500 })
   }
 }

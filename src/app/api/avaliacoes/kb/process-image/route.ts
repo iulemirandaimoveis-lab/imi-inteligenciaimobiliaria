@@ -72,7 +72,7 @@ Responda APENAS em JSON válido com esta estrutura:
         })
         const text = response.content[0].type === 'text' ? response.content[0].text : ''
         // 2. Parse JSON from response
-        let extracted: any
+        let extracted: Record<string, unknown>
         try {
             const jsonMatch = text.match(/\{[\s\S]*\}/)
             extracted = JSON.parse(jsonMatch?.[0] || '{}')
@@ -96,7 +96,7 @@ Responda APENAS em JSON válido com esta estrutura:
         }
         // 4. Save topics
         if (extracted.topics?.length > 0) {
-            const topicsToInsert = extracted.topics.map((t: any) => ({
+            const topicsToInsert = (extracted.topics as Array<Record<string, unknown>>).map((t) => ({
                 page_id: page.id,
                 title: t.title,
                 content: t.content,
@@ -121,7 +121,7 @@ Responda APENAS em JSON válido com esta estrutura:
             topics_count: extracted.topics?.length || 0,
             page_title: extracted.page_title,
         })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message || 'Erro interno' }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Erro interno' }, { status: 500 })
     }
 }

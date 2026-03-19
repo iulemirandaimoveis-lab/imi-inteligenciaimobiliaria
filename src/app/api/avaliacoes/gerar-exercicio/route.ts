@@ -65,7 +65,7 @@ Regras:
     }
     const data = await response.json()
     const rawText = data.content?.[0]?.text || ''
-    let exercicios: any[]
+    let exercicios: Record<string, unknown>[]
     try {
       const clean = rawText.replace(/```json\n?|\n?```/g, '').trim()
       exercicios = JSON.parse(clean)

@@ -92,13 +92,13 @@ export function MarketTrendChart({
         }}>
           <span style={{
             fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             {data[0].label}
           </span>
           <span style={{
             fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             {data[data.length - 1].label}
           </span>
@@ -150,7 +150,7 @@ export function NeighborhoodBars({ data, metric }: {
           <span style={{
             width: 90, fontSize: '10px',
             color: 'var(--bo-text-muted, #9FAAB8)',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
             textAlign: 'right', flexShrink: 0,
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>

@@ -34,7 +34,7 @@ function FilterGroup({ title, children, defaultOpen = true }: {
         <span style={{
           fontSize: '8.5px', fontWeight: 700, letterSpacing: '2.5px',
           textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
-          fontFamily: 'var(--font-montserrat, sans-serif)',
+          fontFamily: 'var(--font-outfit, sans-serif)',
         }}>
           {title}
         </span>
@@ -75,7 +75,7 @@ function ChipSelect({ options, value, onChange, multi = true }: {
               border: `1px solid ${active ? 'rgba(200,164,74,0.40)' : 'rgba(255,255,255,0.08)'}`,
               color: active ? '#C8A44A' : 'var(--bo-text-muted, #9FAAB8)',
               fontSize: '12px', fontWeight: active ? 600 : 400,
-              fontFamily: 'var(--font-montserrat, sans-serif)',
+              fontFamily: 'var(--font-outfit, sans-serif)',
               cursor: 'pointer',
               transition: 'all 150ms ease',
               minHeight: 36,
@@ -102,7 +102,7 @@ function RangeRow({ labelMin, labelMax, min, max, onMin, onMax, prefix = '' }: {
         <label style={{
           display: 'block', fontSize: '8px', letterSpacing: '1.5px',
           textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
-          marginBottom: 3, fontFamily: 'var(--font-montserrat, sans-serif)',
+          marginBottom: 3, fontFamily: 'var(--font-outfit, sans-serif)',
         }}>
           {labelMin}
         </label>
@@ -125,7 +125,7 @@ function RangeRow({ labelMin, labelMax, min, max, onMin, onMax, prefix = '' }: {
         <label style={{
           display: 'block', fontSize: '8px', letterSpacing: '1.5px',
           textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
-          marginBottom: 3, fontFamily: 'var(--font-montserrat, sans-serif)',
+          marginBottom: 3, fontFamily: 'var(--font-outfit, sans-serif)',
         }}>
           {labelMax}
         </label>
@@ -154,7 +154,7 @@ function ScoreSlider({ value, onChange }: { value: number | null; onChange: (v: 
   return (
     <div style={{ marginTop: 8 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-        <span style={{ fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+        <span style={{ fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
           Score mínimo
         </span>
         <span style={{
@@ -171,8 +171,8 @@ function ScoreSlider({ value, onChange }: { value: number | null; onChange: (v: 
         style={{ width: '100%', accentColor: color }}
       />
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
-        <span style={{ fontSize: '8px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>0</span>
-        <span style={{ fontSize: '8px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>100</span>
+        <span style={{ fontSize: '8px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>0</span>
+        <span style={{ fontSize: '8px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>100</span>
       </div>
     </div>
   )
@@ -224,7 +224,7 @@ export function AdvancedFilterPanel({
           <span style={{
             fontSize: '9px', fontWeight: 700, letterSpacing: '2px',
             textTransform: 'uppercase', color: 'var(--bo-text, #EBE7E0)',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             Filtros
           </span>
@@ -247,7 +247,7 @@ export function AdvancedFilterPanel({
               display: 'flex', alignItems: 'center', gap: 3,
               fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)',
               background: 'none', border: 'none', cursor: 'pointer',
-              fontFamily: 'var(--font-montserrat, sans-serif)',
+              fontFamily: 'var(--font-outfit, sans-serif)',
             }}
           >
             <X size={10} /> Limpar
@@ -262,7 +262,7 @@ export function AdvancedFilterPanel({
         border: '1px solid rgba(200,164,74,0.12)',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        <span style={{ fontSize: '10px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+        <span style={{ fontSize: '10px', color: 'var(--bo-text-muted, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
           Resultados
         </span>
         <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: '#C8A44A' }}>
@@ -300,7 +300,7 @@ export function AdvancedFilterPanel({
                 background: 'var(--bo-surface, rgba(255,255,255,0.04))',
                 border: '1px solid rgba(200,164,74,0.18)',
                 borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
-                fontSize: '13px', fontFamily: 'var(--font-montserrat, sans-serif)',
+                fontSize: '13px', fontFamily: 'var(--font-outfit, sans-serif)',
                 outline: 'none', minHeight: 40, width: '100%',
               }}
             />
@@ -314,7 +314,7 @@ export function AdvancedFilterPanel({
                 background: 'var(--bo-surface, rgba(255,255,255,0.04))',
                 border: '1px solid rgba(200,164,74,0.18)',
                 borderRadius: 6, color: 'var(--bo-text, #EBE7E0)',
-                fontSize: '13px', fontFamily: 'var(--font-montserrat, sans-serif)',
+                fontSize: '13px', fontFamily: 'var(--font-outfit, sans-serif)',
                 outline: 'none', minHeight: 40, width: '100%',
               }}
             />
@@ -354,7 +354,7 @@ export function AdvancedFilterPanel({
 
           <div style={{ marginTop: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span style={{ fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+              <span style={{ fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
                 Yield mínimo (%)
               </span>
               <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: '#5DB887' }}>
@@ -385,7 +385,7 @@ export function AdvancedFilterPanel({
               <span style={{
                 fontSize: '10px', fontWeight: 500,
                 color: filters.belowMarket ? '#5DB887' : 'var(--bo-text-muted, #9FAAB8)',
-                fontFamily: 'var(--font-montserrat, sans-serif)',
+                fontFamily: 'var(--font-outfit, sans-serif)',
               }}>
                 Abaixo do mercado
               </span>

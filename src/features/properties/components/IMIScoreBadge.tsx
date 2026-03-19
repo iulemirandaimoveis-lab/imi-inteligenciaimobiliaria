@@ -45,7 +45,7 @@ export function IMIScoreBadge({ score, size = 'sm', showLabel = false, className
       {showLabel && (
         <span style={{
           fontSize: dims.lFont,
-          fontFamily: 'var(--font-montserrat, sans-serif)',
+          fontFamily: 'var(--font-outfit, sans-serif)',
           fontWeight: 600,
           letterSpacing: '1.5px',
           textTransform: 'uppercase',
@@ -98,7 +98,7 @@ export function IMIScoreDisplay({ score }: { score: number }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <span style={{
             fontSize: '8px',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
             fontWeight: 700,
             letterSpacing: '2px',
             textTransform: 'uppercase',
@@ -108,7 +108,7 @@ export function IMIScoreDisplay({ score }: { score: number }) {
           </span>
           <span style={{
             fontSize: '8px',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
             fontWeight: 600,
             letterSpacing: '1.5px',
             textTransform: 'uppercase',
@@ -135,7 +135,7 @@ export function IMIScoreDisplay({ score }: { score: number }) {
       </div>
       <span style={{
         fontSize: '9px',
-        fontFamily: 'var(--font-montserrat, sans-serif)',
+        fontFamily: 'var(--font-outfit, sans-serif)',
         color: 'var(--bo-text-dim, #5C6B7D)',
         letterSpacing: '0.3px',
       }}>

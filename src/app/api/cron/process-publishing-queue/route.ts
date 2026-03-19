@@ -12,9 +12,9 @@ export async function GET(request: NextRequest) {
         }
         const result = await processPublishingQueue();
         return NextResponse.json(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
-            { error: error.message || 'Internal Server Error' },
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }
         );
     }

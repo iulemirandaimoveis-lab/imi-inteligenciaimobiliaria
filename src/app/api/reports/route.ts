@@ -39,8 +39,8 @@ export async function GET(request: NextRequest) {
             data: data || [],
             pagination: { page, limit, total: count || 0, pages: Math.ceil((count || 0) / limit) },
         })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -87,8 +87,8 @@ export async function PATCH(request: NextRequest) {
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data)
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }
 
@@ -109,7 +109,7 @@ export async function DELETE(request: NextRequest) {
             .eq('id', id)
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json({ success: true })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
 }

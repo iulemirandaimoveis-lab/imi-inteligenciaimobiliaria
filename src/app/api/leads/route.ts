@@ -23,7 +23,7 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: error.message, data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
         }
         // Map to the format the frontend expects
-        const formatted = (leads || []).map((l: any) => ({
+        const formatted = (leads || []).map((l: Record<string, unknown>) => ({
             id: l.id,
             name: l.name || 'Sem nome',
             email: l.email || '',

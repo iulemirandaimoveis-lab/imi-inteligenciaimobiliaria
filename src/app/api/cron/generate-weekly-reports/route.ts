@@ -46,9 +46,9 @@ export async function GET(request: NextRequest) {
             reports_generated: reports.length,
             report_ids: reports,
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
-            { error: error.message || 'Internal Server Error' },
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }
         );
     }

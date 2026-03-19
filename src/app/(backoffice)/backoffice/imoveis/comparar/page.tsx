@@ -88,7 +88,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
     <span style={{
       fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase',
-      color: 'var(--bo-accent, var(--imi-gold-500))', fontFamily: 'var(--font-montserrat, sans-serif)',
+      color: 'var(--bo-accent, var(--imi-gold-500))', fontFamily: 'var(--font-outfit, sans-serif)',
       fontWeight: 700,
     }}>
       {children}
@@ -122,7 +122,7 @@ function EmptyState() {
         </p>
         <p style={{
           fontSize: '12px', color: 'var(--bo-text-muted, #9FAAB8)',
-          fontFamily: 'var(--font-montserrat, sans-serif)',
+          fontFamily: 'var(--font-outfit, sans-serif)',
           maxWidth: 380, lineHeight: 1.6,
         }}>
           Para comparar imóveis, acesse a lista e marque até 5 propriedades usando o botão
@@ -136,7 +136,7 @@ function EmptyState() {
           background: 'var(--gold, var(--imi-gold-500))', border: 'none',
           color: 'var(--navy, #0B1120)',
           fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px',
-          textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
+          textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
           cursor: 'pointer',
         }}>
           <ArrowLeft size={13} />
@@ -227,7 +227,7 @@ function MobileComparar() {
             <p style={{ fontFamily: 'var(--font-playfair, "Libre Baskerville", serif)', fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>
               Nenhum imóvel selecionado
             </p>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'var(--font-montserrat, sans-serif)', lineHeight: 1.6, maxWidth: 300 }}>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)', lineHeight: 1.6, maxWidth: 300 }}>
               Acesse a lista e marque até 5 propriedades usando o botão "Comparar".
             </p>
           </div>
@@ -236,7 +236,7 @@ function MobileComparar() {
               height: 44, paddingLeft: 20, paddingRight: 20, borderRadius: 6,
               background: 'var(--imi-gold-500)', border: 'none', color: 'var(--bg-base)', fontSize: '11px', fontWeight: 700,
               letterSpacing: '1.5px', textTransform: 'uppercase',
-              fontFamily: 'var(--font-montserrat, sans-serif)',
+              fontFamily: 'var(--font-outfit, sans-serif)',
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
             }}>
               <ArrowLeft size={14} /> Ver Imóveis
@@ -252,7 +252,7 @@ function MobileComparar() {
     <div style={{
       minHeight: '100vh', background: 'var(--bg-base)',
       display: 'flex', flexDirection: 'column',
-      fontFamily: 'var(--font-montserrat, sans-serif)',
+      fontFamily: 'var(--font-outfit, sans-serif)',
       paddingBottom: 56,
     }}>
       <MobileGlobalStyles />
@@ -479,7 +479,7 @@ function MobileComparar() {
                         <p style={{
                           fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)',
                           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                          fontFamily: 'var(--font-montserrat, sans-serif)',
+                          fontFamily: 'var(--font-outfit, sans-serif)',
                         }}>
                           {p.name}
                         </p>
@@ -503,7 +503,7 @@ function MobileComparar() {
                           <span style={{
                             fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px',
                             textTransform: 'uppercase', color: 'var(--text-tertiary)',
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                           }}>
                             {group}
                           </span>
@@ -532,7 +532,7 @@ function MobileComparar() {
                               }}>
                                 <span style={{
                                   fontSize: '11px', color: 'var(--text-secondary)',
-                                  fontFamily: 'var(--font-montserrat, sans-serif)',
+                                  fontFamily: 'var(--font-outfit, sans-serif)',
                                 }}>
                                   {row.label}
                                 </span>
@@ -563,7 +563,7 @@ function MobileComparar() {
                                     <span style={{
                                       fontFamily: row.type === 'numeric'
                                         ? 'var(--font-dm-mono, monospace)'
-                                        : 'var(--font-montserrat, sans-serif)',
+                                        : 'var(--font-outfit, sans-serif)',
                                       fontSize: '11px',
                                       color: isBest ? 'var(--imi-gold-500)' : 'var(--text-primary)',
                                       fontWeight: isBest ? 600 : 400,
@@ -604,7 +604,7 @@ function MobileComparar() {
             color: 'var(--imi-gold-500)',
             fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
             textTransform: 'uppercase', cursor: 'pointer',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
           }}
         >
           Limpar
@@ -616,7 +616,7 @@ function MobileComparar() {
             color: 'var(--bg-base)',
             fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
             textTransform: 'uppercase', cursor: 'pointer',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             Ver Imóveis
           </button>
@@ -718,7 +718,7 @@ function DesktopComparar() {
               <span style={{
                 fontSize: '11px', fontWeight: 500, letterSpacing: '2px',
                 textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
-                fontFamily: 'var(--font-montserrat, sans-serif)', cursor: 'pointer',
+                fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
               }}>Imóveis</span>
             </Link>
             <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
@@ -736,7 +736,7 @@ function DesktopComparar() {
               </h1>
               <p style={{
                 fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)',
-                fontFamily: 'var(--font-montserrat, sans-serif)', fontWeight: 300,
+                fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 300,
               }}>
                 {properties.length} de 5 imóveis · análise comparativa IMI Intelligence
               </p>
@@ -750,7 +750,7 @@ function DesktopComparar() {
                   border: '1px solid rgba(184,148,58,0.25)',
                   color: 'var(--gold, var(--imi-gold-500))',
                   fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px',
-                  textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
+                  textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
                   cursor: 'pointer',
                 }}>
                   <ArrowLeft size={12} />
@@ -765,7 +765,7 @@ function DesktopComparar() {
                     background: 'var(--gold, var(--imi-gold-500))', border: 'none',
                     color: 'var(--navy, #0B1120)',
                     fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
-                    textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
+                    textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
                     cursor: 'pointer',
                   }}>
                     <Plus size={12} />
@@ -786,14 +786,14 @@ function DesktopComparar() {
             padding: '80px', gap: 12, color: 'var(--bo-text-muted, #9FAAB8)',
           }}>
             <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
-            <span style={{ fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: '12px' }}>
+            <span style={{ fontFamily: 'var(--font-outfit, sans-serif)', fontSize: '12px' }}>
               Carregando imóveis…
             </span>
           </div>
         ) : error ? (
           <div style={{
             padding: '40px', textAlign: 'center',
-            color: 'var(--error)', fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: '12px',
+            color: 'var(--error)', fontFamily: 'var(--font-outfit, sans-serif)', fontSize: '12px',
           }}>
             Erro ao carregar: {error}
           </div>
@@ -881,7 +881,7 @@ function DesktopComparar() {
                       {p.developer?.name && (
                         <p style={{
                           fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)',
-                          fontFamily: 'var(--font-montserrat, sans-serif)',
+                          fontFamily: 'var(--font-outfit, sans-serif)',
                         }}>
                           {p.developer.name}
                         </p>
@@ -905,7 +905,7 @@ function DesktopComparar() {
                       </span>
                       <span style={{
                         fontSize: '11px', color: scoreColor, opacity: 0.7,
-                        fontFamily: 'var(--font-montserrat, sans-serif)',
+                        fontFamily: 'var(--font-outfit, sans-serif)',
                         letterSpacing: '1px', textTransform: 'uppercase',
                       }}>
                         IMI
@@ -954,7 +954,7 @@ function DesktopComparar() {
                         }}>
                           <span style={{
                             fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)',
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                           }}>
                             {row.label}
                           </span>
@@ -991,7 +991,7 @@ function DesktopComparar() {
                               <span style={{
                                 fontFamily: row.type === 'numeric'
                                   ? 'var(--font-dm-mono, monospace)'
-                                  : 'var(--font-montserrat, sans-serif)',
+                                  : 'var(--font-outfit, sans-serif)',
                                 fontSize: row.type === 'numeric' ? '12px' : '11px',
                                 color: isBest
                                   ? 'var(--bo-accent, var(--imi-gold-500))'
@@ -1031,7 +1031,7 @@ function DesktopComparar() {
                       border: '1px dashed rgba(184,148,58,0.35)',
                       color: 'var(--gold, var(--imi-gold-500))',
                       fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px',
-                      textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
+                      textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
                       cursor: 'pointer',
                     }}>
                       <Plus size={11} />

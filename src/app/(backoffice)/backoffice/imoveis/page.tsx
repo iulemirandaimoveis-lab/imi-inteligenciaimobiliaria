@@ -322,7 +322,7 @@ function DesktopImoveisList(props: SharedProps) {
       {/* ── KPI STRIP ────────────────────────────────── */}
       <KPIStrip properties={properties} />
       {/* ── MARKET SELECTOR ──────────────────────────── */}
-      {/* TODO: filter by market when DB supports country field */}
+      {/* Market selector — client-side only; DB filtering pending country column */}
       <div style={{ display: 'flex', gap: 6, padding: '12px 28px 4px' }}>
         {[
           { id: 'BR', flag: '🇧🇷', label: 'Brasil' },
@@ -617,13 +617,13 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-breadcrumb-root {
           font-size: 8px; font-weight: 700; letter-spacing: 3px;
           text-transform: uppercase; color: var(--imi-gold-500);
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
         }
         .imi-breadcrumb-sep { color: rgba(184,148,58,0.3); font-size: 11px; }
         .imi-breadcrumb-page {
           font-size: 8px; font-weight: 500; letter-spacing: 2px;
           text-transform: uppercase; color: var(--text-tertiary);
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
         }
         .imi-header-row {
           display: flex; align-items: flex-end; justify-content: space-between;
@@ -638,7 +638,7 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-page-title em { font-style: italic; color: var(--imi-gold-500); }
         .imi-page-subtitle {
           font-size: 11px; color: var(--text-tertiary);
-          font-family: var(--font-montserrat, sans-serif); font-weight: 300;
+          font-family: var(--font-outfit, sans-serif); font-weight: 300;
         }
         .imi-header-actions {
           display: flex; gap: 8px; align-items: center; flex-shrink: 0;
@@ -653,7 +653,7 @@ function DesktopImoveisList(props: SharedProps) {
           color: var(--imi-gold-500);
           font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase;
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           cursor: pointer;
           white-space: nowrap;
           transition: background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
@@ -667,7 +667,7 @@ function DesktopImoveisList(props: SharedProps) {
           color: var(--bg-base);
           font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
           text-transform: uppercase;
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           cursor: pointer;
           box-shadow: var(--shadow-sm);
           white-space: nowrap;
@@ -691,7 +691,7 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-kpi-label {
           font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase; color: var(--text-tertiary);
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
         }
         .imi-kpi-value {
           font-family: var(--font-mono);
@@ -726,7 +726,7 @@ function DesktopImoveisList(props: SharedProps) {
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.15);
           color: var(--text-primary);
-          font-size: 13px; font-family: var(--font-montserrat, sans-serif);
+          font-size: 13px; font-family: var(--font-outfit, sans-serif);
           outline: none;
         }
         .imi-search-input:focus { border-color: rgba(184,148,58,0.35); }
@@ -739,7 +739,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-results-count {
           font-size: 11px; color: var(--text-tertiary);
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           white-space: nowrap; flex-shrink: 0;
         }
         .imi-filter-btn {
@@ -749,7 +749,7 @@ function DesktopImoveisList(props: SharedProps) {
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.20);
           color: var(--text-secondary);
-          font-size: 12px; font-family: var(--font-montserrat, sans-serif);
+          font-size: 12px; font-family: var(--font-outfit, sans-serif);
           cursor: pointer; white-space: nowrap; flex-shrink: 0;
           min-height: 44px;
         }
@@ -764,7 +764,7 @@ function DesktopImoveisList(props: SharedProps) {
           background: var(--bo-surface, rgba(255,255,255,0.04));
           border: 1px solid rgba(184,148,58,0.18);
           color: var(--text-secondary);
-          font-size: 11px; font-family: var(--font-montserrat, sans-serif);
+          font-size: 11px; font-family: var(--font-outfit, sans-serif);
           cursor: pointer; white-space: nowrap;
           min-height: 36px;
         }
@@ -781,7 +781,7 @@ function DesktopImoveisList(props: SharedProps) {
           padding: 10px 12px; border-radius: 6px;
           background: transparent; border: none;
           color: var(--text-secondary);
-          font-size: 12px; font-family: var(--font-montserrat, sans-serif);
+          font-size: 12px; font-family: var(--font-outfit, sans-serif);
           cursor: pointer; display: block; min-height: 40px;
         }
         .imi-dropdown-item.active { background: rgba(184,148,58,0.08); color: var(--imi-gold-500); }
@@ -843,7 +843,7 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-list-th {
           font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase; color: var(--text-tertiary);
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
         }
         /* ═══ EMPTY STATE ═══ */
         .imi-empty {
@@ -862,7 +862,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-empty-subtitle {
           font-size: 12px; color: var(--text-tertiary);
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           margin-top: -8px;
         }
         /* ═══ SKELETON ═══ */
@@ -917,7 +917,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-sheet-title {
           font-size: 14px; font-weight: 600; color: var(--text-primary);
-          font-family: var(--font-montserrat, sans-serif); letter-spacing: 0.5px;
+          font-family: var(--font-outfit, sans-serif); letter-spacing: 0.5px;
         }
         .imi-sheet-close {
           width: 36px; height: 36px; border-radius: 50%;
@@ -940,7 +940,7 @@ function DesktopImoveisList(props: SharedProps) {
           color: var(--imi-gold-500);
           font-size: 12px; font-weight: 600; letter-spacing: 1px;
           text-transform: uppercase; cursor: pointer;
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
         }
         .imi-sheet-apply-btn {
           flex: 2; height: 48px; border-radius: 6px;
@@ -948,7 +948,7 @@ function DesktopImoveisList(props: SharedProps) {
           color: var(--bg-base);
           font-size: 12px; font-weight: 700; letter-spacing: 1px;
           text-transform: uppercase; cursor: pointer;
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
         }
         /* ═══ KEYBOARD HELP BUTTON ═══ */
         .imi-kbd-help-btn {
@@ -973,7 +973,7 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-kbd-panel-title {
           font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase; color: var(--imi-gold-500);
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           margin-bottom: 12px;
         }
         .imi-kbd-row {
@@ -991,13 +991,13 @@ function DesktopImoveisList(props: SharedProps) {
           flex-shrink: 0;
         }
         .imi-kbd-desc {
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           font-size: 11px; color: var(--text-secondary);
         }
         /* ═══ BULK ACTION BAR BUTTONS ═══ */
         .imi-bulk-btn {
           padding: 7px 14px; border-radius: 6px; cursor: pointer;
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase;
           border: none;
@@ -1036,7 +1036,7 @@ function DesktopImoveisList(props: SharedProps) {
         }
         .imi-compare-label {
           font-size: 11px; color: var(--imi-gold-500);
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           font-weight: 600;
         }
         .imi-compare-btn {
@@ -1045,7 +1045,7 @@ function DesktopImoveisList(props: SharedProps) {
           color: var(--bg-base);
           font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
           text-transform: uppercase; cursor: pointer;
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           min-height: 36px;
         }
         .imi-compare-clear {
@@ -1062,7 +1062,7 @@ function DesktopImoveisList(props: SharedProps) {
           border: 1px solid rgba(184,148,58,0.22);
           color: var(--imi-gold-500);
           font-size: 11px; font-weight: 500;
-          font-family: var(--font-montserrat, sans-serif);
+          font-family: var(--font-outfit, sans-serif);
           cursor: pointer; white-space: nowrap;
           min-height: 32px;
         }
@@ -1223,7 +1223,7 @@ function MobileImoveisList(props: SharedProps) {
           />
         </div>
         {/* Mobile Market Selector */}
-        {/* TODO: filter by market when DB supports country field */}
+        {/* Market selector (mobile) — client-side only; DB filtering pending country column */}
         <div style={{ display: 'flex', gap: 6, padding: '4px 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
           {[
             { id: 'BR', flag: '🇧🇷', label: 'Brasil' },

@@ -100,7 +100,7 @@ Regras:
             ai_request_id: response.ai_request_id,
             cost_usd: response.cost_usd,
         })
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message || 'Erro ao processar PDF' }, { status: 500 })
+    } catch (error: unknown) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro ao processar PDF' }, { status: 500 })
     }
 }

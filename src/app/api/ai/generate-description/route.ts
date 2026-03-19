@@ -36,7 +36,7 @@ REGRAS:
         })
         const description = message.content[0].type === 'text' ? message.content[0].text : ''
         return NextResponse.json({ description })
-    } catch (err: any) {
+    } catch (err: unknown) {
         const message = err?.message || String(err)
         // Return the real error in development; generic in production
         return NextResponse.json({

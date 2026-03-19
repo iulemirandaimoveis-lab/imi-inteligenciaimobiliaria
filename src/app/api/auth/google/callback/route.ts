@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
             updated_at: new Date().toISOString(),
         }, { onConflict: 'integration_id' })
         return NextResponse.redirect(`${appUrl}/backoffice/integracoes?success=google`)
-    } catch (e: any) {
+    } catch (e: unknown) {
         return NextResponse.redirect(`${appUrl}/backoffice/integracoes?error=google_error`)
     }
 }

@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
             }
         }
         return NextResponse.json({ ok: true })
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json({ ok: true }) // Never fail client-side tracking
     }
 }

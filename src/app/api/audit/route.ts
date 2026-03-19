@@ -47,7 +47,7 @@ export async function GET(request: Request) {
             limit,
             offset,
         })
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
         }
 
         return NextResponse.json(data, { status: 201 })
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

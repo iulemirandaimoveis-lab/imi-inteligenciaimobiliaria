@@ -20,7 +20,7 @@ RESUMO DA EQUIPE:
 - Receita total: R$ ${(team_totals?.totalRevenue || 0).toLocaleString('pt-BR')}
 - Taxa conversão média: ${team_totals?.avgConversion || 0}%
 PERFORMANCE INDIVIDUAL:
-${performance.map((m: any) => `- ${m.name} (${m.role}): ${m.leads} leads, ${m.sales} vendas, R$ ${m.revenue.toLocaleString('pt-BR')} receita, ${m.conversion_rate}% conversão | Meta leads: ${m.pct_leads ?? 'N/A'}%, Meta vendas: ${m.pct_vendas ?? 'N/A'}%, Meta receita: ${m.pct_receita ?? 'N/A'}%`).join('\n')}
+${performance.map((m: Record<string, unknown>) => `- ${m.name} (${m.role}): ${m.leads} leads, ${m.sales} vendas, R$ ${(m.revenue as number).toLocaleString('pt-BR')} receita, ${m.conversion_rate}% conversão | Meta leads: ${m.pct_leads ?? 'N/A'}%, Meta vendas: ${m.pct_vendas ?? 'N/A'}%, Meta receita: ${m.pct_receita ?? 'N/A'}%`).join('\n')}
 `.trim()
         const response = await callClaude({
             tenant_id: tenant_id || 'default',
@@ -52,7 +52,7 @@ Regras:
             ai_request_id: response.ai_request_id,
             cost_usd: response.cost_usd,
         })
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
+    } catch (error: unknown) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 })
     }
 }

@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
       notified: notifications.length,
       version: entry.version
     })
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 })
+  } catch (err: unknown) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
   }
 }

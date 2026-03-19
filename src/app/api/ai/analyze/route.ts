@@ -10,7 +10,7 @@ const SYSTEM_PROMPT = `Você é o assistente de inteligência da IMI — Intelig
 Especialista em mercado imobiliário premium brasileiro.
 Responda SEMPRE em JSON válido, nunca em markdown.
 Seja direto, preciso e acionável. Máximo de 2 frases por campo de texto.`
-function buildLeadPrompt(data: any): string {
+function buildLeadPrompt(data: Record<string, unknown>): string {
   return `Analise este lead imobiliário e retorne JSON no formato exato:
 {
   "insight": "análise do potencial de conversão em 1-2 frases",
@@ -39,7 +39,7 @@ DADOS DO LEAD:
 - Tags: ${Array.isArray(data.tags) ? data.tags.join(', ') : 'Nenhuma'}
 - Notas: ${data.notes || 'Nenhuma'}`
 }
-function buildCampanhaPrompt(data: any): string {
+function buildCampanhaPrompt(data: Record<string, unknown>): string {
   const cpl = data.leads > 0 && data.cost > 0 ? (data.cost / data.leads).toFixed(2) : null
   const roi = data.revenue > 0 && data.cost > 0 ? (((data.revenue - data.cost) / data.cost) * 100).toFixed(1) : null
   return `Analise esta campanha de marketing imobiliário e retorne JSON no formato exato:
@@ -68,7 +68,7 @@ DADOS DA CAMPANHA:
 - CTR: ${data.impressions && data.clicks ? `${((data.clicks / data.impressions) * 100).toFixed(2)}%` : 'N/A'}
 - Período: ${data.start_date ? new Date(data.start_date).toLocaleDateString('pt-BR') : 'N/A'} → ${data.end_date ? new Date(data.end_date).toLocaleDateString('pt-BR') : 'Em andamento'}`
 }
-function buildAvaliacaoPrompt(data: any): string {
+function buildAvaliacaoPrompt(data: Record<string, unknown>): string {
   return `Analise esta avaliação imobiliária e retorne JSON no formato exato:
 {
   "insight": "análise do imóvel e seu valor de mercado em 1-2 frases",
@@ -131,7 +131,7 @@ export async function POST(req: Request) {
     const textBlock = response.content.find(b => b.type === 'text')
     const rawText = textBlock && 'text' in textBlock ? textBlock.text : '{}'
     // Parse JSON from Claude's response
-    let analysis: any
+    let analysis: Record<string, unknown>
     try {
       // Claude sometimes wraps in ```json blocks — strip them
       const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
@@ -167,11 +167,11 @@ export async function POST(req: Request) {
       // Non-critical — don't fail the response
     }
     return NextResponse.json({ analysis, latency })
-  } catch (err: any) {
+  } catch (err: unknown) {
     // Return helpful error message
-    if (err?.message?.includes('API key')) {
+    if (err instanceof Error && err.message?.includes('API key')) {
       return NextResponse.json({ error: 'Claude API não configurada. Verifique ANTHROPIC_API_KEY.' }, { status: 503 })
     }
-    return NextResponse.json({ error: err.message || 'Erro ao processar análise IA' }, { status: 500 })
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Erro ao processar análise IA' }, { status: 500 })
   }
 }

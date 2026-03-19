@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         const errors: string[] = []
         for (const fu of followUps) {
             try {
-                const lead = fu.leads as any
+                const lead = fu.leads as Record<string, unknown>
                 const assignedTo = fu.assigned_to
                 // Marcar como em processamento para evitar double-processing
                 await supabaseAdmin
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
             total: followUps.length,
             errors: errors.length > 0 ? errors : undefined,
         })
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
             { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }

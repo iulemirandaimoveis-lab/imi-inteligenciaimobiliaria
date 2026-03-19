@@ -174,7 +174,7 @@ function MobileInventario({
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
                             textTransform: 'uppercase' as const, color: '#5C6B7D',
                         }}>Total</span>
@@ -194,7 +194,7 @@ function MobileInventario({
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
                             textTransform: 'uppercase' as const, color: '#5C6B7D',
                         }}>Publicados</span>
@@ -214,7 +214,7 @@ function MobileInventario({
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
                             textTransform: 'uppercase' as const, color: '#5C6B7D',
                         }}>Vendidos</span>
@@ -234,7 +234,7 @@ function MobileInventario({
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
                             textTransform: 'uppercase' as const, color: '#5C6B7D',
                         }}>Em Campanha</span>
@@ -272,7 +272,7 @@ function MobileInventario({
                         border: '1px solid rgba(184,148,58,0.15)',
                         borderRadius: 10,
                         padding: '0 14px 0 40px',
-                        fontFamily: 'var(--font-montserrat, sans-serif)',
+                        fontFamily: 'var(--font-outfit, sans-serif)',
                         fontSize: 14, color: '#EBE7E0',
                         outline: 'none',
                         touchAction: 'manipulation',
@@ -303,7 +303,7 @@ function MobileInventario({
                                 background: isActive ? 'var(--imi-gold-500)' : 'transparent',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 11, fontWeight: isActive ? 700 : 500,
                                 cursor: 'pointer',
                                 touchAction: 'manipulation',
@@ -390,7 +390,7 @@ function MobileInventario({
                                 fontSize: 18, fontWeight: 600, color: '#EBE7E0', marginBottom: 6,
                             }}>Nenhum empreendimento</div>
                             <div style={{
-                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 13, color: '#5C6B7D', lineHeight: 1.6,
                             }}>
                                 {busca ? 'Nenhum resultado para sua busca.' : 'Adicione seu primeiro imóvel.'}
@@ -402,7 +402,7 @@ function MobileInventario({
                                 style={{
                                     height: 44, padding: '0 24px', borderRadius: 10,
                                     background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer',
-                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                    fontFamily: 'var(--font-outfit, sans-serif)',
                                     fontSize: 12, fontWeight: 700, letterSpacing: '1px',
                                     textTransform: 'uppercase' as const, color: '#0B1120',
                                     touchAction: 'manipulation',
@@ -471,7 +471,7 @@ function MobileInventario({
                                     {/* Status badge — top-left */}
                                     <div style={{ position: 'absolute', top: 10, left: 10 }}>
                                         <span style={{
-                                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                                            fontFamily: 'var(--font-outfit, sans-serif)',
                                             fontSize: 9, fontWeight: 700, letterSpacing: '0.8px',
                                             textTransform: 'uppercase' as const,
                                             color: status.color,

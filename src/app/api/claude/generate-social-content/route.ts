@@ -72,8 +72,8 @@ Retorne EXATAMENTE este JSON (sem markdown, sem código, só o objeto JSON puro)
         }
         const data = await response.json()
         const rawText = data.content
-            .filter((b: any) => b.type === 'text')
-            .map((b: any) => b.text)
+            .filter((b: { type: string }) => b.type === 'text')
+            .map((b: { type: string; text: string }) => b.text)
             .join('')
         let parsed: { legenda: string; reels: string; prompt: string }
         try {
@@ -95,9 +95,9 @@ Retorne EXATAMENTE este JSON (sem markdown, sem código, só o objeto JSON puro)
             model: data.model,
             tokens: data.usage?.output_tokens,
         })
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json(
-            { error: 'Erro ao gerar conteúdo', details: error.message },
+            { error: 'Erro ao gerar conteúdo', details: error instanceof Error ? error.message : String(error) },
             { status: 500 }
         )
     }

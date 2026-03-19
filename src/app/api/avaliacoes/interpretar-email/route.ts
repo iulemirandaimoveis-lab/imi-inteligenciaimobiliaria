@@ -59,7 +59,7 @@ Retorne APENAS este JSON (sem explicações, sem markdown):
     const data = await response.json()
     const rawText = data.content?.[0]?.text || ''
     // Parse JSON seguro
-    let parsed: any
+    let parsed: Record<string, unknown>
     try {
       // Remove possíveis backticks se o modelo os incluiu
       const clean = rawText.replace(/```json\n?|\n?```/g, '').trim()

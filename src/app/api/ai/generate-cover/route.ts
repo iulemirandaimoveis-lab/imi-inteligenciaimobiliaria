@@ -44,7 +44,7 @@ High quality, print-ready design.`
         })
         if (!res.ok) {
             const err = await res.json().catch(() => ({}))
-            throw new Error((err as any)?.error?.message || `OpenAI error ${res.status}`)
+            throw new Error((err as Record<string, Record<string, string>>)?.error?.message || `OpenAI error ${res.status}`)
         }
         const response = await res.json()
         const imageUrl = response.data?.[0]?.url
@@ -52,7 +52,7 @@ High quality, print-ready design.`
         // Log usage (best-effort, ignore errors)
         try { await supabase.from('ai_requests').insert({ user_id: user.id, type: 'ebook_cover', model: 'dall-e-3', cost_cents: 12 }) } catch { /* ignore */ }
         return NextResponse.json({ success: true, url: imageUrl, revised_prompt: response.data?.[0]?.revised_prompt })
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message || 'Erro na geração da capa' }, { status: 500 })
+    } catch (err: unknown) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Erro na geração da capa' }, { status: 500 })
     }
 }

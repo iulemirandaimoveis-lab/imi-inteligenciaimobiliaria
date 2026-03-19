@@ -93,7 +93,7 @@ export async function POST(request: Request) {
                 qr_data_url: qrDataUrl,
             }
         })
-    } catch (error: any) {
+    } catch (error: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
