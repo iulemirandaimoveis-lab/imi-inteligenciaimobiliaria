@@ -1,10 +1,16 @@
 // src/app/api/integracoes/test-connection/route.ts
 // ── Testa conectividade das integrações ─────────────────────
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 export const runtime = 'nodejs'
 export const maxDuration = 15
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const { integration_id, values } = await req.json()
     switch (integration_id) {
       case 'resend': {

@@ -29,7 +29,7 @@ export async function GET() {
         checks.auth = !!process.env.NEXT_PUBLIC_SUPABASE_URL
         // AI check — Anthropic key configured
         checks.ai = !!process.env.ANTHROPIC_API_KEY
-    } catch (err) {
+    } catch (err: unknown) {
     }
     const serviceChecks = [checks.database, checks.storage, checks.auth, checks.ai]
     const allHealthy = serviceChecks.every(v => v === true)

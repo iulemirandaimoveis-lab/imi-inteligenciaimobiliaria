@@ -2,10 +2,16 @@
 // ── Interpretador de e-mail de solicitação de avaliação ───────
 // Chama Anthropic server-side — API key nunca exposta ao cliente
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 export const runtime = 'nodejs'
 export const maxDuration = 30
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const { emailText } = await req.json()
     if (!emailText || emailText.trim().length < 20) {
       return NextResponse.json({ error: 'Texto do e-mail muito curto' }, { status: 400 })
