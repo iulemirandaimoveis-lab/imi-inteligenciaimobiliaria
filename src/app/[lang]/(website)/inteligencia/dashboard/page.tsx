@@ -5,6 +5,11 @@ import { TrendingUp, TrendingDown, Minus, ArrowUpRight, BarChart3, Clock } from 
 export const metadata: Metadata = {
     title: 'Dashboard de Mercado | Inteligência IMI',
     description: 'Indicadores imobiliários em tempo real — valorização, liquidez, custo médio m² e tendências macroeconômicas para João Pessoa e região.',
+    openGraph: {
+        title: 'Dashboard de Mercado | Inteligência IMI',
+        description: 'Indicadores imobiliários em tempo real — valorização, liquidez, custo médio m² e tendências macro.',
+        type: 'website',
+    },
 }
 
 type Indicator = {

@@ -5,6 +5,11 @@ import { TrendingUp, ArrowUpRight, Info } from 'lucide-react'
 export const metadata: Metadata = {
     title: 'Índices IMI | Inteligência de Mercado',
     description: 'O Índice Imobiliário IMI — metodologia proprietária de precificação, tendência e liquidez para João Pessoa e região.',
+    openGraph: {
+        title: 'Índices IMI | Inteligência de Mercado',
+        description: 'Índice Imobiliário IMI — metodologia proprietária de precificação, tendência e liquidez.',
+        type: 'website',
+    },
 }
 
 type MarketIndex = {

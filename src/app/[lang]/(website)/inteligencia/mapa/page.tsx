@@ -4,6 +4,11 @@ import { Map, Clock, Layers, TrendingUp, Home } from 'lucide-react'
 export const metadata: Metadata = {
     title: 'Mapa de Calor | Inteligência IMI',
     description: 'Visualização geográfica de valorização imobiliária, densidade de oferta e liquidez por bairro em João Pessoa e litoral da Paraíba.',
+    openGraph: {
+        title: 'Mapa de Calor | Inteligência IMI',
+        description: 'Visualização geográfica de valorização imobiliária, densidade de oferta e liquidez por bairro.',
+        type: 'website',
+    },
 }
 
 const LAYERS = [

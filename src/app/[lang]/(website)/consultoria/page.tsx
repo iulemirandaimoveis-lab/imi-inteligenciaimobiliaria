@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { HeroSection } from '@/components/consultoria/HeroSection';
 import { ForWhom } from '@/components/consultoria/ForWhom';
 import { LocationsSection } from '@/components/consultoria/LocationsSection';
@@ -9,9 +10,14 @@ import { LegalDisclaimer } from '@/components/consultoria/LegalDisclaimer';
 import { consultingCities } from './data/cities';
 import Link from 'next/link';
 
-export const metadata = {
+export const metadata: Metadata = {
     title: 'Consultoria - Renda Imobiliária Internacional | IMI',
-    description: 'Gere renda em dólar com imóveis internacionais. Estrutura jurídica, gestão profissional e crédito inteligente.'
+    description: 'Gere renda em dólar com imóveis internacionais. Estrutura jurídica, gestão profissional e crédito inteligente.',
+    openGraph: {
+        title: 'Consultoria - Renda Imobiliária Internacional | IMI',
+        description: 'Gere renda em dólar com imóveis internacionais. Estrutura jurídica, gestão profissional e crédito inteligente.',
+        type: 'website',
+    },
 };
 
 interface PageProps {

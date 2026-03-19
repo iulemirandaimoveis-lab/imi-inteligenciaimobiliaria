@@ -5,6 +5,11 @@ import { BarChart3, TrendingUp, Map, FileText, ArrowUpRight, Brain, Database, Li
 export const metadata: Metadata = {
     title: 'Inteligência de Mercado | IMI — Iule Miranda Imóveis',
     description: 'Centro de inteligência imobiliária da IMI. Dashboards, índices de mercado, mapa de calor e relatórios técnicos para fundamentar seus investimentos.',
+    openGraph: {
+        title: 'Inteligência de Mercado | IMI — Iule Miranda Imóveis',
+        description: 'Centro de inteligência imobiliária da IMI. Dashboards, índices de mercado, mapa de calor e relatórios técnicos.',
+        type: 'website',
+    },
 }
 
 const SECTIONS = [

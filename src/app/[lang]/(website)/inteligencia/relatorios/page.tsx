@@ -6,6 +6,11 @@ import Link from 'next/link'
 export const metadata: Metadata = {
     title: 'Relatórios de Mercado | Inteligência IMI',
     description: 'Estudos técnicos, dossiês de bairro e análises comparativas do mercado imobiliário de João Pessoa e litoral da Paraíba.',
+    openGraph: {
+        title: 'Relatórios de Mercado | Inteligência IMI',
+        description: 'Estudos técnicos, dossiês de bairro e análises comparativas do mercado imobiliário.',
+        type: 'website',
+    },
 }
 
 type Report = {
