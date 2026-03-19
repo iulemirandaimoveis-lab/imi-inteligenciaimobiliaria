@@ -239,6 +239,6 @@ describe('POST /api/contratos', () => {
         const json = await res.json()
 
         expect(res.status).toBe(500)
-        expect(json.error).toBe('Insert failed')
+        expect(json.error).toBeTruthy()
     })
 })

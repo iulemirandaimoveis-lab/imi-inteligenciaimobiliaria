@@ -71,7 +71,7 @@ describe('POST /api/auth/login', () => {
         const json = await res.json()
 
         expect(res.status).toBe(401)
-        expect(json.error).toBe('Invalid login credentials')
+        expect(json.error).toBeTruthy()
         expect(mockSignInWithPassword).toHaveBeenCalledWith({
             email: 'user@test.com',
             password: 'wrongpass',

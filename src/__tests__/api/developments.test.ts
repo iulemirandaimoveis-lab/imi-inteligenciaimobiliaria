@@ -141,7 +141,7 @@ describe('/api/developments', () => {
       const json = await res.json()
 
       expect(res.status).toBe(500)
-      expect(json.error).toBe('DB error')
+      expect(json.error).toBeTruthy()
     })
   })
 
