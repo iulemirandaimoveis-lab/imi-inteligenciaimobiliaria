@@ -11,7 +11,6 @@ import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 import { toast } from 'sonner'
-export const dynamic = 'force-dynamic'
 interface UserRow {
   id: string
   name: string
@@ -158,7 +157,7 @@ export default function UsuariosPage() {
     const r = role?.toUpperCase()
     if (r === 'ADMIN') return { bg: 'rgba(229,115,115,0.12)', color: 'var(--error)', border: 'rgba(229,115,115,0.2)' }
     if (r === 'GESTOR') return { bg: 'rgba(232,168,124,0.12)', color: 'var(--warning)', border: 'rgba(232,168,124,0.2)' }
-    if (r === 'AVALIADOR') return { bg: 'rgba(167,139,250,0.12)', color: 'var(--imi-gold-400)', border: 'rgba(167,139,250,0.2)' }
+    if (r === 'AVALIADOR') return { bg: 'rgba(167,139,250,0.12)', color: 'var(--platinum-400)', border: 'rgba(167,139,250,0.2)' }
     if (r === 'MARKETING') return { bg: 'rgba(107,184,123,0.12)', color: 'var(--success)', border: 'rgba(107,184,123,0.2)' }
     return { bg: 'rgba(72,101,129,0.12)', color: 'var(--text-secondary)', border: 'rgba(72,101,129,0.2)' }
   }
@@ -391,7 +390,7 @@ export default function UsuariosPage() {
                 onClick={handleSaveEdit}
                 disabled={editModal.saving}
                 className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
-                style={{ background: 'var(--btn-primary-bg, var(--imi-gold-500))' }}
+                style={{ background: 'var(--btn-primary-bg, var(--accent-400))' }}
               >
                 {editModal.saving && <Loader2 size={14} className="animate-spin" />}
                 {editModal.saving ? 'Salvando...' : 'Salvar'}

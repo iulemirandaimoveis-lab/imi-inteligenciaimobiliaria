@@ -163,6 +163,8 @@ export async function GET(request: NextRequest) {
             topLocations,
             topCampaigns,
             timeRange,
+        }, {
+            headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
         })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal error' }, { status: 500 })

@@ -9,11 +9,11 @@ export interface Development {
   condition?: string
   price_from?: number
   price_to?: number
-  area_min?: number
-  area_max?: number
-  bedrooms_from?: number
-  bathrooms_from?: number
-  parking_from?: number
+  area_from?: number
+  area_to?: number
+  bedrooms?: number
+  bathrooms?: number
+  parking_spaces?: number
   neighborhood?: string
   city?: string
   state?: string
@@ -23,8 +23,11 @@ export interface Development {
   cep?: string
   description?: string
   features?: string[] | null
-  amenities?: string[] | null
+  gallery_images?: string[] | null
+  image?: string | null
+  /** @deprecated use gallery_images */
   image_urls?: string[] | null
+  /** @deprecated use image */
   cover_image_url?: string | null
   video_url?: string | null
   slug?: string

@@ -1,7 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { enrichProperty } from '@/features/properties/services/score.service'
@@ -42,13 +40,13 @@ export default function ImovelDetailPage() {
         .from('developments')
         .select(`
           id, name, type, status, status_commercial, condition,
-          price_from, price_to, area_min, area_max,
-          bedrooms_from, bathrooms_from, parking_from,
+          price_from, price_to, area_from, area_to,
+          bedrooms, bathrooms, parking_spaces,
           neighborhood, city, state, country, address, street_number,
-          cep, description, features, amenities,
-          image_urls, cover_image_url, images, video_url, slug,
+          cep, description, features,
+          gallery_images, image, video_url, slug,
           created_at, updated_at, latitude, longitude,
-          developer:developers!left(id, name, logo_url)
+          developer:developers!developer_id(id, name, logo_url)
         `)
         .eq('id', id)
         .maybeSingle()

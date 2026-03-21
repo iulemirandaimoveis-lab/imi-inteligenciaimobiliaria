@@ -50,7 +50,7 @@ export default function ReportDetailPage() {
         <FileText className="w-10 h-10 text-white/20 mx-auto mb-3" />
         <h3 className="text-white/70 font-medium mb-1">Relatorio nao encontrado</h3>
         <p className="text-white/40 text-sm mb-4">ID: {id}</p>
-        <a href="/backoffice/invest/relatorios" className="text-[#C8A44A] text-sm hover:underline">Voltar para lista</a>
+        <a href="/backoffice/invest/relatorios" className="text-[#3D6FFF] text-sm hover:underline">Voltar para lista</a>
       </div>
     )
   }
@@ -59,7 +59,7 @@ export default function ReportDetailPage() {
     <div className="space-y-6 max-w-4xl">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <a href="/backoffice/invest/relatorios" className="p-2 rounded-lg border border-white/10 hover:border-[#C8A44A]/30 transition-colors">
+        <a href="/backoffice/invest/relatorios" className="p-2 rounded-lg border border-white/10 hover:border-[#3D6FFF]/30 transition-colors">
           <ArrowLeft className="w-4 h-4 text-white/50" />
         </a>
         <div className="flex-1">
@@ -78,7 +78,7 @@ export default function ReportDetailPage() {
           <button className="p-2 rounded-[6px] border border-white/10 hover:border-white/20 transition-colors">
             <Printer className="w-4 h-4 text-white/50" />
           </button>
-          <button className="flex items-center gap-2 px-3 py-2 rounded-[6px] text-sm font-medium text-[#0B1928]" style={{ background: '#C8A44A' }}>
+          <button className="flex items-center gap-2 px-3 py-2 rounded-[6px] text-sm font-medium text-[#0B1928]" style={{ background: '#3D6FFF' }}>
             <Download className="w-4 h-4" />
             PDF
           </button>
@@ -97,8 +97,8 @@ export default function ReportDetailPage() {
       )}
 
       {/* Summary */}
-      <div className="rounded-lg border border-[#C8A44A]/20 p-5" style={{ background: 'rgba(200,164,74,0.05)' }}>
-        <h3 className="text-xs text-[#C8A44A] font-semibold mb-2">RESUMO EXECUTIVO</h3>
+      <div className="rounded-lg border border-[#3D6FFF]/20 p-5" style={{ background: 'rgba(200,164,74,0.05)' }}>
+        <h3 className="text-xs text-[#3D6FFF] font-semibold mb-2">RESUMO EXECUTIVO</h3>
         <p className="text-sm text-white/70 leading-relaxed">{report.summary}</p>
       </div>
 

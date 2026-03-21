@@ -16,9 +16,9 @@ interface WidgetConfig {
 type Toast = { type: 'success' | 'error'; message: string } | null
 
 const CATEGORY_STYLE: Record<string, { bg: string; color: string; label: string }> = {
-  market:  { bg: 'rgba(184,148,58,0.12)',  color: 'var(--imi-gold-500)', label: 'Mercado'   },
+  market:  { bg: 'rgba(61,111,255,0.12)',  color: 'var(--accent-400)', label: 'Mercado'   },
   finance: { bg: 'rgba(59,130,246,0.12)',  color: 'var(--info)',                  label: 'Finanças'  },
-  compare: { bg: 'rgba(139,92,246,0.12)',  color: 'var(--imi-gold-500)',                  label: 'Comparação' },
+  compare: { bg: 'rgba(139,92,246,0.12)',  color: 'var(--accent-400)',                  label: 'Comparação' },
   risk:    { bg: 'rgba(239,68,68,0.12)',   color: '#EF4444',                  label: 'Risco'     },
 }
 
@@ -28,7 +28,7 @@ function ToggleSwitch({ enabled, onChange }: { enabled: boolean; onChange: (v: b
       onClick={() => onChange(!enabled)}
       style={{
         width: 44, height: 24, borderRadius: 6, border: 'none', cursor: 'pointer',
-        background: enabled ? 'var(--imi-gold-500)' : 'var(--border-default,#2a3a4a)',
+        background: enabled ? 'var(--accent-400)' : 'var(--border-default,#2a3a4a)',
         position: 'relative', transition: 'background 200ms', flexShrink: 0,
       }}
       aria-checked={enabled}
@@ -90,7 +90,7 @@ function ToastMessage({ toast, onDismiss }: { toast: NonNullable<Toast>; onDismi
       position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
       padding: '12px 20px',
       borderRadius: 'var(--r-sm,4px)',
-      background: toast.type === 'success' ? 'var(--imi-gold-500)' : '#EF4444',
+      background: toast.type === 'success' ? 'var(--accent-400)' : '#EF4444',
       color: toast.type === 'success' ? '#1a1a1a' : '#fff',
       fontFamily: 'var(--font-ui,"Figtree",sans-serif)',
       fontSize: 14,
@@ -222,7 +222,7 @@ export default function WidgetsPage() {
               borderRadius: 'var(--r-sm,4px)',
               padding: '6px 14px',
             }}>
-              <span style={{ color: 'var(--imi-gold-500)', fontWeight: 700 }}>{activeCount}</span>
+              <span style={{ color: 'var(--accent-400)', fontWeight: 700 }}>{activeCount}</span>
               <span style={{ margin: '0 4px' }}>de</span>
               <span style={{ fontWeight: 600 }}>{totalCount}</span>
               <span style={{ marginLeft: 4 }}>widgets ativos</span>

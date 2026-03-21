@@ -7,8 +7,8 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
     const supabase = await createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { data, error } = await supabase
         .from('widgets_config')
@@ -16,13 +16,15 @@ export async function GET() {
         .order('display_order', { ascending: true })
 
     if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-    return NextResponse.json(data ?? [])
+    return NextResponse.json(data ?? [], {
+        headers: { 'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1800' },
+    })
 }
 
 export async function PUT(req: NextRequest) {
     const supabase = await createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json() as { widget_id: string; enabled?: boolean; display_order?: number; config?: Record<string, unknown> }[]
 

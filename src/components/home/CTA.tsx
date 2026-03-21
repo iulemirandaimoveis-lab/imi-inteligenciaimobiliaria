@@ -21,15 +21,15 @@ export default function CTA({ dict }: CTAProps) {
         setIsModalOpen(false)
     }
     return (
-        <section className="py-24 relative overflow-hidden" style={{ background: 'var(--imi-navy-950)' }}>
+        <section className="py-24 relative overflow-hidden" style={{ background: 'var(--bg-base)' }}>
             {/* Background elements for premium aesthetic */}
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at center, var(--imi-navy-600) 0%, transparent 70%)', filter: 'blur(100px)' }} />
+            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at center, var(--border-subtle) 0%, transparent 70%)', filter: 'blur(100px)' }} />
 
             <div className="container-custom text-center relative z-10">
                 <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
                     {dict.final_cta_title}
                 </h2>
-                <p className="text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed" style={{ color: 'var(--imi-navy-200)', fontFamily: 'var(--font-sans)' }}>
+                <p className="text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}>
                     {dict.final_cta_desc}
                 </p>
                 <ButtonPrimary

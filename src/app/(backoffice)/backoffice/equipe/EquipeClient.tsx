@@ -576,7 +576,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                             disabled={saving}
                                             className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all"
                                             style={{
-                                                background: saving ? 'var(--bg-elevated)' : 'var(--imi-gold-500)',
+                                                background: saving ? 'var(--bg-elevated)' : 'var(--accent-400)',
                                                 boxShadow: saving ? 'none' : '0 2px 8px rgba(30,58,95,0.4)',
                                             }}>
                                             {saving && <Loader2 size={15} className="animate-spin" />}

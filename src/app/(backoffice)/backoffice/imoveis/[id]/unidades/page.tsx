@@ -40,7 +40,7 @@ function MobileUnidadesLoading() {
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <MobileGlobalStyles />
-            <Loader2 size={28} style={{ color: 'var(--imi-gold-500)', animation: 'spin 1s linear infinite' }} />
+            <Loader2 size={28} style={{ color: 'var(--accent-400)', animation: 'spin 1s linear infinite' }} />
             <style suppressHydrationWarning>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
         </div>
     )
@@ -147,7 +147,7 @@ function MobileUnidades({
                                 background: 'var(--bg-elevated)',
                                 borderRadius: 12,
                                 padding: 14,
-                                border: '1px solid rgba(184,148,58,0.10)',
+                                border: '1px solid rgba(61,111,255,0.10)',
                             }}
                         >
                             <div style={{
@@ -184,7 +184,7 @@ function MobileUnidades({
                     gap: 10,
                     height: 44,
                     background: 'var(--bg-elevated)',
-                    border: `1px solid ${searchFocused ? 'rgba(184,148,58,0.5)' : 'rgba(184,148,58,0.15)'}`,
+                    border: `1px solid ${searchFocused ? 'rgba(61,111,255,0.5)' : 'rgba(61,111,255,0.15)'}`,
                     borderRadius: 10,
                     padding: '0 14px',
                     transition: 'border-color 150ms ease',
@@ -194,7 +194,7 @@ function MobileUnidades({
                         viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" strokeWidth="2"
                         strokeLinecap="round" strokeLinejoin="round"
-                        style={{ color: searchFocused ? 'var(--imi-gold-500)' : '#5C6B7D', flexShrink: 0, transition: 'color 150ms ease' }}
+                        style={{ color: searchFocused ? 'var(--accent-400)' : '#5C6B7D', flexShrink: 0, transition: 'color 150ms ease' }}
                     >
                         <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
                     </svg>
@@ -256,8 +256,8 @@ function MobileUnidades({
                                 height: 32,
                                 padding: '0 14px',
                                 borderRadius: 6,
-                                background: isActive ? 'var(--imi-gold-500)' : 'transparent',
-                                border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
+                                background: isActive ? 'var(--accent-400)' : 'transparent',
+                                border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.3)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
                                 fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 12,
@@ -287,11 +287,11 @@ function MobileUnidades({
                     }}>
                         <div style={{
                             width: 64, height: 64, borderRadius: 16,
-                            background: 'rgba(184,148,58,0.06)',
-                            border: '1px solid rgba(184,148,58,0.18)',
+                            background: 'rgba(61,111,255,0.06)',
+                            border: '1px solid rgba(61,111,255,0.18)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
-                            <Building2 size={28} style={{ color: 'rgba(184,148,58,0.35)' }} />
+                            <Building2 size={28} style={{ color: 'rgba(61,111,255,0.35)' }} />
                         </div>
                         <div>
                             <div style={{
@@ -339,8 +339,8 @@ function MobileUnidades({
                                         borderRadius: 12,
                                         padding: 14,
                                         border: unidade.is_highlighted
-                                            ? '1px solid rgba(184,148,58,0.55)'
-                                            : '1px solid rgba(184,148,58,0.12)',
+                                            ? '1px solid rgba(61,111,255,0.55)'
+                                            : '1px solid rgba(61,111,255,0.12)',
                                         cursor: 'pointer',
                                     }}
                                 >
@@ -360,7 +360,7 @@ function MobileUnidades({
                                                     {unidade.unit_name || 'Unidade'}
                                                 </span>
                                                 {unidade.is_highlighted && (
-                                                    <Star size={11} style={{ fill: 'var(--imi-gold-500)', color: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                                                    <Star size={11} style={{ fill: 'var(--accent-400)', color: 'var(--accent-400)', flexShrink: 0 }} />
                                                 )}
                                             </div>
                                             <div style={{
@@ -404,7 +404,7 @@ function MobileUnidades({
                                             gap: 14,
                                             marginBottom: 10,
                                             paddingBottom: 10,
-                                            borderBottom: '1px solid rgba(184,148,58,0.08)',
+                                            borderBottom: '1px solid rgba(61,111,255,0.08)',
                                         }}>
                                             {(unidade.area ?? 0) > 0 && (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -455,7 +455,7 @@ function MobileUnidades({
                                             fontFamily: 'var(--font-dm-mono, monospace)',
                                             fontSize: 18,
                                             fontWeight: 400,
-                                            color: 'var(--imi-gold-500)',
+                                            color: 'var(--accent-400)',
                                             fontVariantNumeric: 'tabular-nums',
                                         }}>
                                             {formatPrice(unidade.total_price)}
@@ -494,7 +494,7 @@ function MobileUnidades({
                     height: 52,
                     padding: '0 20px',
                     borderRadius: 26,
-                    background: 'var(--imi-gold-500)',
+                    background: 'var(--accent-400)',
                     border: 'none',
                     cursor: 'pointer',
                     display: 'flex',
@@ -504,7 +504,7 @@ function MobileUnidades({
                     fontFamily: 'var(--font-outfit, sans-serif)',
                     fontSize: 13,
                     fontWeight: 700,
-                    boxShadow: '0 4px 20px rgba(184,148,58,0.35)',
+                    boxShadow: '0 4px 20px rgba(61,111,255,0.35)',
                     zIndex: 90,
                     letterSpacing: '0.2px',
                 }}

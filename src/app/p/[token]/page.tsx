@@ -22,7 +22,7 @@ export default async function PropostaPublicaPage({ params }: Props) {
   if (proposal.development_id) {
     const { data: dev } = await supabase
       .from('developments')
-      .select('name, description, neighborhood, city, state, images, gallery_images, image, area_min, area_from, bedrooms, bathrooms, parking_spaces')
+      .select('name, description, neighborhood, city, state, images, gallery_images, image, area_from, bedrooms, bathrooms, parking_spaces')
       .eq('id', proposal.development_id)
       .single()
     development = dev

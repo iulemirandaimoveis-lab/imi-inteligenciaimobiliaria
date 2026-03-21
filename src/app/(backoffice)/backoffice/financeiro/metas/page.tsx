@@ -205,7 +205,7 @@ export default function MetasPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <ProgressBar pct={revPct} color={revPct >= 100 ? 'var(--success)' : revPct >= 60 ? 'var(--imi-gold-500)' : '#E8A87C'} />
+                                    <ProgressBar pct={revPct} color={revPct >= 100 ? 'var(--success)' : revPct >= 60 ? 'var(--accent-400)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs" style={{ color: T.textMuted }}>
                                             Meta: {revTarget > 0 ? fmt(revTarget) : 'não definida'}
@@ -224,7 +224,7 @@ export default function MetasPage() {
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Scale size={15} style={{ color: 'var(--imi-gold-500)' }} />
+                                        <Scale size={15} style={{ color: 'var(--accent-400)' }} />
                                         <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Avaliações/Honorários</span>
                                     </div>
                                     <p className="text-2xl font-bold" style={{ color: T.text }}>{actuals.avaliacoes}</p>
@@ -250,7 +250,7 @@ export default function MetasPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? 'var(--success)' : avalPct >= 60 ? 'var(--imi-gold-500)' : '#E8A87C'} />
+                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? 'var(--success)' : avalPct >= 60 ? 'var(--accent-400)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs" style={{ color: T.textMuted }}>
                                             Meta: {avalTarget > 0 ? `${avalTarget} lançamentos` : 'não definida'}

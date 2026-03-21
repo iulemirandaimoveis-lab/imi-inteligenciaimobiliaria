@@ -161,14 +161,14 @@ export default function SmartNotifications() {
         style={{
           background: open ? 'var(--bg-elevated)' : 'transparent',
           border: `1px solid ${open ? 'var(--border-focus)' : 'transparent'}`,
-          color: open ? 'var(--imi-gold-500)' : 'var(--text-tertiary)',
+          color: open ? 'var(--accent-400)' : 'var(--text-tertiary)',
         }}
       >
         <Bell size={16} />
         {unreadCount > 0 && (
           <span
             className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-[10px] font-bold text-white rounded-full flex items-center justify-center"
-            style={{ background: 'var(--imi-gold-500)', boxShadow: '0 0 0 2px var(--bg-surface)' }}
+            style={{ background: 'var(--accent-400)', boxShadow: '0 0 0 2px var(--bg-surface)' }}
           >
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
@@ -203,13 +203,13 @@ export default function SmartNotifications() {
           style={{ borderBottom: '1px solid var(--border-default)' }}
         >
           <div className="flex items-center gap-2">
-            <Sparkles size={16} style={{ color: 'var(--imi-gold-500)' }} />
+            <Sparkles size={16} style={{ color: 'var(--accent-400)' }} />
             <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
               Assistente IA
             </span>
             <span
               className="px-2 py-0.5 rounded-[6px] text-[10px] font-bold"
-              style={{ background: 'rgba(184,148,58,0.15)', color: 'var(--imi-gold-500)' }}
+              style={{ background: 'rgba(61,111,255,0.15)', color: 'var(--accent-400)' }}
             >
               BETA
             </span>
@@ -234,8 +234,8 @@ export default function SmartNotifications() {
             <div
               className="rounded-lg p-4"
               style={{
-                background: 'rgba(184,148,58,0.06)',
-                border: '1px solid rgba(184,148,58,0.18)',
+                background: 'rgba(61,111,255,0.06)',
+                border: '1px solid rgba(61,111,255,0.18)',
               }}
             >
               {dailySummary.loading ? (
@@ -313,7 +313,7 @@ export default function SmartNotifications() {
                 <div className="flex items-center gap-3">
                   <div
                     className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'rgba(184,148,58,0.12)', color: 'var(--imi-gold-500)' }}
+                    style={{ background: 'rgba(61,111,255,0.12)', color: 'var(--accent-400)' }}
                   >
                     {actionLoading === 'qualify'
                       ? <Loader2 size={13} className="animate-spin" />

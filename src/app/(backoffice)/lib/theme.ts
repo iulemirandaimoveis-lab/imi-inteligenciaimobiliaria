@@ -19,8 +19,8 @@ export const T = {
     borderLight: 'var(--border-subtle)',
     borderSubtle: 'var(--border-subtle)',
     borderStrong: 'var(--border-strong)',
-    borderGold: 'rgba(184,148,58,0.25)',
-    borderActive: 'rgba(184,148,58,0.25)',
+    borderGold: 'rgba(61,111,255,0.25)',
+    borderActive: 'rgba(61,111,255,0.25)',
     borderFocus: 'var(--border-focus)',
     // Text — DS3 semantic
     text: 'var(--text-primary)',
@@ -33,11 +33,11 @@ export const T = {
     // Aliases (for legacy compat)
     sub: 'var(--text-secondary)',
     // Accent
-    accent: 'var(--imi-gold-500)',
-    accentDim: 'rgba(184,148,58,0.6)',
+    accent: 'var(--accent-400)',
+    accentDim: 'rgba(61,111,255,0.6)',
     accentBg: 'var(--bg-active)',
     activeBg: 'var(--bg-active)',
-    gold: 'var(--imi-gold-500)',
+    gold: 'var(--accent-400)',
     // States
     hover: 'var(--bg-hover)',
     active: 'var(--bg-active)',

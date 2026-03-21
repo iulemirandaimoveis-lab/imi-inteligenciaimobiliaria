@@ -39,11 +39,11 @@ DADOS DO IMÓVEL:
 - Endereço: ${property.address || 'N/A'}
 - Bairro: ${property.neighborhood || 'N/A'}
 - Cidade: ${property.city || 'N/A'} / ${property.state || 'N/A'}
-- Preço Mín: R$ ${property.price_min?.toLocaleString('pt-BR') || 'N/A'}
-- Preço Máx: R$ ${property.price_max?.toLocaleString('pt-BR') || 'N/A'}
-- Área: ${property.area_min || 'N/A'} - ${property.area_max || 'N/A'} m²
-- Quartos: ${property.bedrooms_min || 'N/A'} - ${property.bedrooms_max || 'N/A'}
-- Vagas: ${property.parking_min || property.parking || 'N/A'}
+- Preço Mín: R$ ${property.price_from?.toLocaleString('pt-BR') || 'N/A'}
+- Preço Máx: R$ ${property.price_to?.toLocaleString('pt-BR') || 'N/A'}
+- Área: ${property.area_from || 'N/A'} - ${property.area_to || 'N/A'} m²
+- Quartos: ${property.bedrooms || 'N/A'}
+- Vagas: ${property.parking_spaces || 'N/A'}
 - Suítes: ${property.suites || 'N/A'}
 - Total de Unidades: ${property.units_count || 'N/A'}
 - Unidades Disponíveis: ${property.available_units || 'N/A'}

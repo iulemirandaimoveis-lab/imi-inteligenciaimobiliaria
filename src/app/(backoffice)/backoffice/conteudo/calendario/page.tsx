@@ -27,7 +27,7 @@ const TIPO_CONFIG: Record<string, { icon: React.ElementType; label: string; colo
     linkedin:  { icon: Linkedin,  label: 'LinkedIn',  color: 'var(--info)', bg: 'rgba(59,130,246,0.12)' },
     facebook:  { icon: Facebook,  label: 'Facebook',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
     email:     { icon: Mail,      label: 'E-mail',    color: 'var(--success)', bg: 'rgba(16,185,129,0.12)' },
-    blog:      { icon: Globe,     label: 'Blog',      color: 'var(--imi-gold-500)', bg: 'rgba(72,101,129,0.12)' },
+    blog:      { icon: Globe,     label: 'Blog',      color: 'var(--accent-400)', bg: 'rgba(72,101,129,0.12)' },
     youtube:   { icon: Youtube,   label: 'YouTube',   color: 'var(--error)', bg: 'rgba(239,68,68,0.12)' },
 }
 

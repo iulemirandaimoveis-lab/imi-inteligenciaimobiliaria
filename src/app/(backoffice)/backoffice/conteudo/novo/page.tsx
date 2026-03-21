@@ -281,7 +281,7 @@ export default function NovoConteudoPage() {
         throw new Error(err.error || 'Erro ao salvar')
       }
       toast.success('Conteúdo salvo com sucesso!')
-      setTimeout(() => router.push('/backoffice/conteudos'), 800)
+      setTimeout(() => router.push('/backoffice/conteudo'), 800)
     } catch (err: unknown) {
       toast.error((err instanceof Error ? err.message : 'Erro desconhecido') || 'Erro ao salvar conteúdo')
       setSalvo(false)
@@ -504,7 +504,7 @@ export default function NovoConteudoPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: T.accent }}>
-                    <div className="w-2 h-2 bg-[var(--imi-gold-500)] rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-[var(--accent-400)] rounded-full animate-pulse" />
                     Backup Automático Ativo
                   </div>
                 </div>
@@ -581,7 +581,7 @@ export default function NovoConteudoPage() {
               {aiPanel.loading ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-5">
                   <div className="relative">
-                    <Loader2 size={48} className="animate-spin text-[var(--imi-gold-500)]" />
+                    <Loader2 size={48} className="animate-spin text-[var(--accent-400)]" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-2 h-2 rounded-full" style={{ background: T.accent }} />
                     </div>

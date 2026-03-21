@@ -22,8 +22,8 @@ interface Development {
     developer?: { name?: string; logo_url?: string }
     total_units?: number
     available_units?: number
-    area_min?: number
-    area_max?: number
+    area_from?: number
+    area_to?: number
 }
 
 interface Props {
@@ -145,10 +145,10 @@ export default function LandingPageClient({ development: dev, code }: Props) {
                                 {dev.bedrooms_options.join(', ')} quartos
                             </span>
                         )}
-                        {(dev.area_min || dev.area_max) && (
+                        {(dev.area_from || dev.area_to) && (
                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <Maximize2 size={13} />
-                                {dev.area_min}{dev.area_max && dev.area_max !== dev.area_min ? `–${dev.area_max}` : ''} m²
+                                {dev.area_from}{dev.area_to && dev.area_to !== dev.area_from ? `–${dev.area_to}` : ''} m²
                             </span>
                         )}
                     </div>

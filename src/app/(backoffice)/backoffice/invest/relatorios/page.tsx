@@ -49,7 +49,7 @@ export default function RelatoriosPage() {
           </h1>
           <p className="text-sm text-white/50 mt-1">Relatorios de investimento e analises de mercado</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium text-[#0B1928]" style={{ background: '#C8A44A' }}>
+        <button className="flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium text-[#0B1928]" style={{ background: '#3D6FFF' }}>
           <Plus className="w-4 h-4" />
           Novo Relatorio
         </button>

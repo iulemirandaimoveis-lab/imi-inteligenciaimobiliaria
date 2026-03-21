@@ -133,7 +133,27 @@ export async function POST(request: NextRequest) {
                 // Assignment failure is non-critical
             }
         })()
-        // 4. AI qualification (non-blocking, soft fail)
+        // 4. Auto-create follow-up event in agenda (24h from now)
+        void (async () => {
+            try {
+                const followUpTime = new Date(Date.now() + 24 * 60 * 60 * 1000)
+                const endTime = new Date(followUpTime.getTime() + 30 * 60 * 1000)
+                await supabaseAdmin.from('calendar_events').insert({
+                    title: `Follow-up: ${name}`,
+                    description: `Lead capturado via ${attribution?.source || 'site'}. ${email ? `Email: ${email}` : ''} ${phone ? `Tel: ${phone}` : ''}`.trim(),
+                    start_time: followUpTime.toISOString(),
+                    end_time: endTime.toISOString(),
+                    type: 'follow_up',
+                    status: 'pending',
+                    user_id: adminId,
+                    metadata: { lead_id: lead.id, auto_generated: true },
+                })
+            } catch {
+                // Follow-up creation is non-critical
+            }
+        })()
+
+        // 5. AI qualification (non-blocking, soft fail)
         try {
             const { qualifyLeadWithClaude } = await import('@/lib/ai/lead-qualifier')
             qualifyLeadWithClaude({

@@ -16,6 +16,7 @@ import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/compone
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../mobile-ui'
+import { getScoreStyle } from '@/hooks/useScore'
 
 // Derive status config from centralized constants
 const buildStatus = (key: string) => {
@@ -72,8 +73,8 @@ interface InventoryDevelopment {
     address?: string
     bedrooms_min?: number
     bedrooms_max?: number
-    area_min?: number
-    area_max?: number
+    area_from?: number
+    area_to?: number
     units_total?: number
     units_available?: number
     bedrooms?: number
@@ -151,10 +152,10 @@ function MobileInventario({
                             className="mob-btn-tap"
                             style={{
                                 width: 44, height: 44, borderRadius: 10,
-                                background: 'rgba(184,148,58,0.15)',
+                                background: 'rgba(61,111,255,0.15)',
                                 border: 'none', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: 'var(--imi-gold-500)',
+                                color: 'var(--accent-400)',
                                 touchAction: 'manipulation',
                                 WebkitTapHighlightColor: 'transparent',
                             } as React.CSSProperties}
@@ -241,7 +242,7 @@ function MobileInventario({
                             fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
                             textTransform: 'uppercase' as const, color: '#5C6B7D',
                         }}>Em Campanha</span>
-                        <KpiIcon color="var(--imi-gold-500)"><Tag size={14} /></KpiIcon>
+                        <KpiIcon color="var(--accent-400)"><Tag size={14} /></KpiIcon>
                     </div>
                     <span style={{
                         fontFamily: 'var(--font-dm-mono, monospace)',
@@ -272,7 +273,7 @@ function MobileInventario({
                     style={{
                         width: '100%', height: 44, boxSizing: 'border-box',
                         background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(184,148,58,0.15)',
+                        border: '1px solid rgba(61,111,255,0.15)',
                         borderRadius: 10,
                         padding: '0 14px 0 40px',
                         fontFamily: 'var(--font-outfit, sans-serif)',
@@ -303,8 +304,8 @@ function MobileInventario({
                                 display: 'flex', alignItems: 'center', gap: 5,
                                 height: 32, padding: '0 12px',
                                 borderRadius: 6,
-                                background: isActive ? 'var(--imi-gold-500)' : 'transparent',
-                                border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
+                                background: isActive ? 'var(--accent-400)' : 'transparent',
+                                border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.3)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
                                 fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 11, fontWeight: isActive ? 700 : 500,
@@ -342,7 +343,7 @@ function MobileInventario({
                                 borderRadius: 12, overflow: 'hidden',
                                 marginBottom: 12,
                                 background: 'var(--bg-elevated)',
-                                border: '1px solid rgba(184,148,58,0.12)',
+                                border: '1px solid rgba(61,111,255,0.12)',
                             }}>
                                 {/* Image skeleton */}
                                 <div style={{
@@ -381,11 +382,11 @@ function MobileInventario({
                     }}>
                         <div style={{
                             width: 72, height: 72, borderRadius: 20,
-                            background: 'rgba(184,148,58,0.06)',
-                            border: '1px solid rgba(184,148,58,0.18)',
+                            background: 'rgba(61,111,255,0.06)',
+                            border: '1px solid rgba(61,111,255,0.18)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
-                            <Building2 size={32} style={{ color: 'rgba(184,148,58,0.4)' }} />
+                            <Building2 size={32} style={{ color: 'rgba(61,111,255,0.4)' }} />
                         </div>
                         <div>
                             <div style={{
@@ -438,7 +439,7 @@ function MobileInventario({
                                 style={{
                                     background: 'var(--bg-elevated)',
                                     borderRadius: 12,
-                                    border: '1px solid rgba(184,148,58,0.12)',
+                                    border: '1px solid rgba(61,111,255,0.12)',
                                     overflow: 'hidden',
                                     touchAction: 'manipulation',
                                     WebkitTapHighlightColor: 'transparent',
@@ -460,7 +461,7 @@ function MobileInventario({
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             background: 'linear-gradient(135deg, #162040 0%, #1A3250 100%)',
                                         }}>
-                                            <Building2 size={44} style={{ color: 'rgba(184,148,58,0.15)' }} />
+                                            <Building2 size={44} style={{ color: 'rgba(61,111,255,0.15)' }} />
                                         </div>
                                     )}
 
@@ -505,7 +506,7 @@ function MobileInventario({
                                     {price && (
                                         <div style={{
                                             fontFamily: 'var(--font-dm-mono, monospace)',
-                                            fontSize: 16, fontWeight: 400, color: 'var(--imi-gold-500)',
+                                            fontSize: 16, fontWeight: 400, color: 'var(--accent-400)',
                                             fontVariantNumeric: 'tabular-nums',
                                             marginBottom: 8,
                                         }}>{price}</div>
@@ -570,7 +571,7 @@ export default function InventarioPage() {
         Promise.all([
             supabase
                 .from('developments')
-                .select('id, name, slug, price_min, price_max, tipo, type, status_commercial, status_comercial, gallery_images, bedrooms, bathrooms, area, views')
+                .select('id, name, slug, price_min, price_max, tipo, type, status_commercial, status_comercial, gallery_images, bedrooms, bathrooms, area, views, imi_score')
                 .order('created_at', { ascending: false }),
             supabase
                 .from('page_views')
@@ -873,8 +874,8 @@ export default function InventarioPage() {
             {!loading && filtered.length > 0 && activeView === 'performance' && (
                 <div className="space-y-2">
                     {/* Header row */}
-                    <div className="grid grid-cols-[1fr_100px_130px] gap-3 px-4 pb-1">
-                        {['Imóvel', 'Visitas (30d)', 'Analytics'].map(h => (
+                    <div className="grid grid-cols-[1fr_80px_100px_130px] gap-3 px-4 pb-1">
+                        {['Imóvel', 'Score', 'Visitas (30d)', 'Analytics'].map(h => (
                             <p key={h} className="text-[9px] font-bold uppercase tracking-[0.12em]"
                                 style={{ color: T.textMuted }}>
                                 {h}
@@ -886,6 +887,8 @@ export default function InventarioPage() {
                         const status = getStatus(d)
                         const views = getViews(d)
                         const image = getImage(d)
+                        const score = d.imi_score ?? 0
+                        const scoreStyle = getScoreStyle(score)
 
                         return (
                             <motion.div
@@ -896,7 +899,7 @@ export default function InventarioPage() {
                                 whileHover={{ x: 2, transition: { duration: 0.12 } }}
                             >
                                 <div
-                                    className="grid grid-cols-[1fr_100px_130px] gap-3 items-center px-4 py-3.5 rounded-lg"
+                                    className="grid grid-cols-[1fr_80px_100px_130px] gap-3 items-center px-4 py-3.5 rounded-lg"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                 >
                                     {/* Property info */}
@@ -922,6 +925,24 @@ export default function InventarioPage() {
                                                 {status.label}
                                             </span>
                                         </div>
+                                    </div>
+
+                                    {/* IMI Score */}
+                                    <div>
+                                        {score > 0 ? (
+                                            <span
+                                                className="text-xs font-bold px-2 py-1 rounded-[6px]"
+                                                style={{
+                                                    color: scoreStyle.color,
+                                                    background: scoreStyle.bg,
+                                                    border: `1px solid ${scoreStyle.color}30`,
+                                                }}
+                                            >
+                                                {score}
+                                            </span>
+                                        ) : (
+                                            <span className="text-xs" style={{ color: T.textMuted }}>—</span>
+                                        )}
                                     </div>
 
                                     {/* Views */}

@@ -29,6 +29,7 @@ import { AvatarGroup, AvatarGroupTooltip } from '@/components/animate-ui/compone
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { staggerContainer, cardVariants } from '@/lib/motion-config'
+import { createClient } from '@/lib/supabase/client'
 
 // ── Avatar helpers ─────────────────────────────────────────────
 function getInitials(name: string) {
@@ -103,16 +104,61 @@ const fmtCompact = (v: number) => {
     return fmt(v)
 }
 
-// ── Widget 1: Taxa de Conversão por Fonte ─────────────────────
-const CONVERSION_DATA = [
-    { fonte: 'Referral',  pct: 42, color: 'var(--success)' },
-    { fonte: 'WhatsApp',  pct: 31, color: 'var(--info)' },
-    { fonte: 'Instagram', pct: 24, color: 'var(--accent-purple, #A78BFA)' },
-    { fonte: 'Facebook',  pct: 18, color: 'var(--warning)' },
-    { fonte: 'Orgânico',  pct: 12, color: 'var(--accent-pink, #F472B6)' },
-]
+// ── Widget 1: Taxa de Conversão por Fonte (live from DB) ──────
+const SOURCE_COLORS: Record<string, string> = {
+    referral: 'var(--success)',
+    whatsapp: 'var(--info)',
+    instagram: 'var(--accent-purple, #A78BFA)',
+    facebook: 'var(--warning)',
+    organico: 'var(--accent-pink, #F472B6)',
+    google: 'var(--accent-400)',
+    email: 'var(--info)',
+    site: 'var(--success)',
+    outro: 'var(--text-tertiary)',
+}
+const SOURCE_LABELS: Record<string, string> = {
+    referral: 'Referral', whatsapp: 'WhatsApp', instagram: 'Instagram',
+    facebook: 'Facebook', organico: 'Orgânico', google: 'Google',
+    email: 'Email', site: 'Site', outro: 'Outro',
+}
 
 function ConversaoFonteWidget() {
+    const [data, setData] = useState<{ fonte: string; count: number; pct: number; color: string }[]>([])
+
+    useEffect(() => {
+        (async () => {
+            const supabase = createClient()
+            // Try to get real data from leads source field
+            const { data: leads } = await supabase
+                .from('leads')
+                .select('source')
+            if (leads && leads.length > 0) {
+                const counts: Record<string, number> = {}
+                for (const l of leads) {
+                    const src = (l.source || 'outro').toLowerCase()
+                    counts[src] = (counts[src] || 0) + 1
+                }
+                const total = leads.length
+                const sorted = Object.entries(counts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5)
+                    .map(([key, count]) => ({
+                        fonte: SOURCE_LABELS[key] || key.charAt(0).toUpperCase() + key.slice(1),
+                        count,
+                        pct: Math.round((count / total) * 100),
+                        color: SOURCE_COLORS[key] || 'var(--text-tertiary)',
+                    }))
+                setData(sorted)
+            } else {
+                // Fallback when no leads exist
+                setData([
+                    { fonte: 'Referral', count: 0, pct: 0, color: 'var(--success)' },
+                    { fonte: 'WhatsApp', count: 0, pct: 0, color: 'var(--info)' },
+                ])
+            }
+        })()
+    }, [])
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -133,7 +179,9 @@ function ConversaoFonteWidget() {
                 </span>
             </div>
             <div className="space-y-2.5">
-                {CONVERSION_DATA.map((item) => (
+                {data.length === 0 ? (
+                    <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Sem dados de fonte ainda</p>
+                ) : data.map((item) => (
                     <div key={item.fonte}>
                         <div className="flex items-center justify-between mb-1">
                             <span className="text-[11px] font-medium" style={{ color: 'var(--text-secondary)' }}>
@@ -162,11 +210,15 @@ function ConversaoFonteWidget() {
 // ── Widget 2: Próximos Compromissos ──────────────────────────
 interface AgendaItem {
     id: string
-    titulo: string
-    data: string
-    hora: string
-    local?: string
-    tipo?: string
+    title: string
+    description: string | null
+    event_type: string
+    start_time: string
+    end_time: string | null
+    all_day: boolean
+    location: string | null
+    color: string
+    created_at: string
 }
 
 function ProximosCompromissosWidget() {
@@ -214,7 +266,7 @@ function ProximosCompromissosWidget() {
                 </div>
                 <Link href="/backoffice/agenda">
                     <span className="text-[11px] font-semibold flex items-center gap-1"
-                        style={{ color: 'var(--imi-gold-500)' }}>
+                        style={{ color: 'var(--accent-400)' }}>
                         Ver agenda <ArrowUpRight size={10} />
                     </span>
                 </Link>
@@ -241,23 +293,23 @@ function ProximosCompromissosWidget() {
                                     border: '1px solid var(--info-border, rgba(96,165,250,0.20))',
                                 }}>
                                 <span className="text-[11px] font-bold tabular-nums leading-none" style={{ color: 'var(--info)' }}>
-                                    {new Date(item.data).getDate()}
+                                    {new Date(item.start_time).getDate()}
                                 </span>
                                 <span className="text-[11px] uppercase" style={{ color: 'var(--text-muted)' }}>
-                                    {['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][new Date(item.data).getMonth()]}
+                                    {['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][new Date(item.start_time).getMonth()]}
                                 </span>
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
-                                    {item.titulo}
+                                    {item.title || 'Sem título'}
                                 </p>
                                 <div className="flex items-center gap-2 mt-0.5">
                                     <span className="flex items-center gap-1 text-[11px]" style={{ color: 'var(--text-muted)' }}>
-                                        <Clock size={9} /> {item.hora}
+                                        <Clock size={9} /> {new Date(item.start_time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Recife' })}
                                     </span>
-                                    {item.local && (
+                                    {item.location && (
                                         <span className="flex items-center gap-1 text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>
-                                            <MapPin size={9} /> {item.local}
+                                            <MapPin size={9} /> {item.location}
                                         </span>
                                     )}
                                 </div>
@@ -306,7 +358,7 @@ function TopImoveisWidget() {
             .catch(() => {})
     }, [])
 
-    const barColors = ['var(--imi-gold-500)','var(--info)','var(--success)','var(--accent-purple, #A78BFA)']
+    const barColors = ['var(--accent-400)','var(--info)','var(--success)','var(--accent-purple, #A78BFA)']
 
     return (
         <motion.div
@@ -323,14 +375,14 @@ function TopImoveisWidget() {
         >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                    <Building2 size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                    <Building2 size={13} style={{ color: 'var(--accent-400)' }} />
                     <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Top Imóveis com Interesse
                     </span>
                 </div>
                 <Link href="/backoffice/imoveis">
                     <span className="text-[11px] font-semibold flex items-center gap-1"
-                        style={{ color: 'var(--imi-gold-500)' }}>
+                        style={{ color: 'var(--accent-400)' }}>
                         Ver todos <ArrowUpRight size={10} />
                     </span>
                 </Link>
@@ -517,7 +569,7 @@ function AIDailySummary() {
             style={{
                 background: 'linear-gradient(135deg, var(--surface-raised, var(--bg-surface)) 0%, rgba(200,164,74,0.06) 100%)',
                 border: '1px solid var(--surface-border-gold, rgba(200,164,74,0.30))',
-                borderLeft: '3px solid var(--color-gold, var(--imi-gold-500))',
+                borderLeft: '3px solid var(--color-gold, var(--accent-400))',
                 boxShadow: 'var(--shadow-gold-glow, 0 0 30px rgba(200,164,74,0.20))',
             }}
         >
@@ -529,13 +581,13 @@ function AIDailySummary() {
             ) : summary ? (
                 <div>
                     <div className="flex items-center gap-2 mb-3">
-                        <span style={{ color: 'var(--color-gold, var(--imi-gold-500))', fontSize: '16px' }}>✦</span>
+                        <span style={{ color: 'var(--color-gold, var(--accent-400))', fontSize: '16px' }}>✦</span>
                         <span style={{
                             fontFamily: 'var(--font-display)',
                             fontSize: '18px',
                             fontStyle: 'italic',
                             fontWeight: 400,
-                            color: 'var(--color-gold, var(--imi-gold-500))',
+                            color: 'var(--color-gold, var(--accent-400))',
                         }}>
                             Briefing IA
                         </span>
@@ -578,7 +630,7 @@ export default function DashboardClient({
     const dateStr = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]}`
 
     const ACTIONS = [
-        { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale,    color: 'rgba(59,130,246,0.12)',  fg: 'var(--imi-gold-500)', raw: '59,130,246' },
+        { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale,    color: 'rgba(59,130,246,0.12)',  fg: 'var(--accent-400)', raw: '59,130,246' },
         { label: 'Novo Lead',       href: '/backoffice/leads/novo',      icon: Users,    color: 'rgba(74,222,128,0.10)',  fg: 'var(--success)',          raw: '74,222,128' },
         { label: 'Novo Imóvel',     href: '/backoffice/imoveis/novo',    icon: Building2,color: 'rgba(34,211,238,0.10)',  fg: 'var(--info)',          raw: '34,211,238' },
         { label: 'Ver Relatórios',  href: '/backoffice/relatorios',      icon: BarChart2,color: 'rgba(251,191,36,0.10)',  fg: 'var(--warning)',          raw: '251,191,36' },
@@ -599,6 +651,19 @@ export default function DashboardClient({
         ? Math.round((avStats.concluidas / avStats.total) * 100)
         : 0
 
+    const uniqueLeads = recentLeads ? recentLeads.filter((l: any, i: number, arr: any[]) => arr.findIndex((x: any) => x.id === l.id) === i) : []
+    const uniqueAvaliacoes = recentAvaliacoes ? recentAvaliacoes.filter((a: any, i: number, arr: any[]) => arr.findIndex((x: any) => x.id === a.id) === i) : []
+
+    const [isRealtimeConnected, setIsRealtimeConnected] = useState(false)
+    useEffect(() => {
+        const supabase = createClient()
+        const channel = supabase.channel('dashboard-presence')
+        channel.subscribe((status) => {
+            setIsRealtimeConnected(status === 'SUBSCRIBED')
+        })
+        return () => { supabase.removeChannel(channel) }
+    }, [])
+
     return (
         <div className="space-y-4 max-w-7xl mx-auto">
 
@@ -613,28 +678,30 @@ export default function DashboardClient({
                     <div className="flex items-center gap-2">
                         <span style={{
                             width: 4, height: 4, borderRadius: '50%',
-                            background: 'var(--imi-gold-500)',
-                            boxShadow: '0 0 8px var(--imi-gold-500)',
+                            background: 'var(--accent-400)',
+                            boxShadow: '0 0 8px var(--accent-400)',
                             display: 'inline-block', flexShrink: 0,
                         }} />
                         <span style={{
                             fontSize: '11px', fontWeight: 700,
-                            color: 'var(--imi-gold-500)',
+                            color: 'var(--accent-400)',
                             textTransform: 'uppercase', letterSpacing: '0.14em',
                         }}>
                             INTELLIGENCE OS
                         </span>
-                        <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-[6px]" style={{
-                            background: 'rgba(74,222,128,0.10)',
-                            border: '1px solid rgba(74,222,128,0.22)',
-                        }}>
-                            <span className="live-dot" />
-                            <span style={{
-                                fontSize: '11px', fontWeight: 700,
-                                color: 'var(--imi-ai-green)',
-                                textTransform: 'uppercase', letterSpacing: '0.05em',
-                            }}>LIVE</span>
-                        </span>
+                        {isRealtimeConnected && (
+                            <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-[6px]" style={{
+                                background: 'rgba(74,222,128,0.10)',
+                                border: '1px solid rgba(74,222,128,0.22)',
+                            }}>
+                                <span className="live-dot" />
+                                <span style={{
+                                    fontSize: '11px', fontWeight: 700,
+                                    color: 'var(--imi-ai-green)',
+                                    textTransform: 'uppercase', letterSpacing: '0.05em',
+                                }}>LIVE</span>
+                            </span>
+                        )}
                     </div>
                     {/* Avatars — only on sm+ */}
                     {brokers.length > 0 && (
@@ -1000,7 +1067,7 @@ export default function DashboardClient({
                                     label={`#${i + 1} ${item.canal}`}
                                     value={item.pct}
                                     valueLabel={`${item.leads} leads · ${item.pct}%`}
-                                    color="var(--imi-gold-500)"
+                                    color="var(--accent-400)"
                                 />
                             ))}
                         </div>
@@ -1028,20 +1095,20 @@ export default function DashboardClient({
                     <div className="flex items-center justify-between px-4 py-3"
                         style={{ borderBottom: '1px solid var(--border-default)' }}>
                         <div className="flex items-center gap-2">
-                            <Users size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                            <Users size={13} style={{ color: 'var(--accent-400)' }} />
                             <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                 Leads Recentes
                             </span>
                         </div>
                         <Link href="/backoffice/leads">
                             <span className="text-[11px] font-semibold flex items-center gap-1"
-                                style={{ color: 'var(--imi-gold-500)' }}>
+                                style={{ color: 'var(--accent-400)' }}>
                                 Ver todos <ArrowUpRight size={10} />
                             </span>
                         </Link>
                     </div>
                     <div>
-                        {recentLeads.length > 0 ? recentLeads.slice(0, 4).map((lead: any) => {
+                        {uniqueLeads.length > 0 ? uniqueLeads.slice(0, 4).map((lead: any) => {
                             const s = LEAD_STATUS_MAP[lead.status] ?? { statusKey: 'cold', label: lead.status }
                             return (
                                 <Link key={lead.id} href={`/backoffice/leads/${lead.id}`}>
@@ -1051,7 +1118,7 @@ export default function DashboardClient({
                                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
                                         <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
-                                            style={{ background: 'var(--info-bg, rgba(59,130,246,0.14))', color: 'var(--imi-gold-500)' }}>
+                                            style={{ background: 'var(--info-bg, rgba(59,130,246,0.14))', color: 'var(--accent-400)' }}>
                                             {lead.name?.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -1098,13 +1165,13 @@ export default function DashboardClient({
                         </div>
                         <Link href="/backoffice/avaliacoes">
                             <span className="text-[11px] font-semibold flex items-center gap-1"
-                                style={{ color: 'var(--imi-gold-500)' }}>
+                                style={{ color: 'var(--accent-400)' }}>
                                 Ver todas <ArrowUpRight size={10} />
                             </span>
                         </Link>
                     </div>
                     <div>
-                        {recentAvaliacoes.length > 0 ? recentAvaliacoes.slice(0, 4).map((av: any) => {
+                        {uniqueAvaliacoes.length > 0 ? uniqueAvaliacoes.slice(0, 4).map((av: any) => {
                             const s = AV_STATUS_MAP[av.status] ?? { statusKey: 'pend', label: av.status }
                             return (
                                 <div key={av.id}
@@ -1152,7 +1219,7 @@ export default function DashboardClient({
             >
                 {/* Section header */}
                 <div className="flex items-center gap-3 mb-3">
-                    <div style={{ width: 4, height: 14, borderRadius: 6, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                    <div style={{ width: 4, height: 14, borderRadius: 6, background: 'var(--accent-400)', flexShrink: 0 }} />
                     <span style={{
                         fontSize: '11px', fontWeight: 700,
                         color: 'var(--text-tertiary)',

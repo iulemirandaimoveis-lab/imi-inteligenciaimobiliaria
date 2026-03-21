@@ -52,8 +52,8 @@ export function IntegrationRequired({
           width: 80,
           height: 80,
           borderRadius: 'var(--r-xl, 4px)',
-          background: 'rgba(184,148,58,0.08)',
-          border: '1px solid rgba(184,148,58,0.20)',
+          background: 'rgba(61,111,255,0.08)',
+          border: '1px solid rgba(61,111,255,0.20)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -62,9 +62,9 @@ export function IntegrationRequired({
         }}
       >
         {Icon ? (
-          <Icon size={36} style={{ color: 'var(--imi-gold-500)', opacity: 0.9 }} />
+          <Icon size={36} style={{ color: 'var(--accent-400)', opacity: 0.9 }} />
         ) : (
-          <Plug size={36} style={{ color: 'var(--imi-gold-500)', opacity: 0.9 }} />
+          <Plug size={36} style={{ color: 'var(--accent-400)', opacity: 0.9 }} />
         )}
 
         {badge && (
@@ -73,7 +73,7 @@ export function IntegrationRequired({
               position: 'absolute',
               top: -10,
               right: -10,
-              background: badgeColor ?? 'var(--imi-gold-500)',
+              background: badgeColor ?? 'var(--accent-400)',
               color: 'var(--text-inverse)',
               fontSize: 11,
               fontWeight: 700,
@@ -96,7 +96,7 @@ export function IntegrationRequired({
           fontSize: 11,
           letterSpacing: '3px',
           textTransform: 'uppercase',
-          color: 'var(--imi-gold-500)',
+          color: 'var(--accent-400)',
           fontFamily: 'var(--font-mono)',
           fontWeight: 700,
           marginBottom: 8,
@@ -138,7 +138,7 @@ export function IntegrationRequired({
         <div
           style={{
             background: 'var(--bg-muted)',
-            border: '1px solid rgba(184,148,58,0.12)',
+            border: '1px solid rgba(61,111,255,0.12)',
             borderRadius: 'var(--r-xl, 4px)',
             padding: '20px 24px',
             maxWidth: 440,
@@ -152,7 +152,7 @@ export function IntegrationRequired({
               fontSize: 11,
               letterSpacing: '2px',
               textTransform: 'uppercase',
-              color: 'var(--imi-gold-500)',
+              color: 'var(--accent-400)',
               fontWeight: 700,
               fontFamily: 'var(--font-mono)',
               marginBottom: 14,
@@ -168,14 +168,14 @@ export function IntegrationRequired({
                     minWidth: 22,
                     height: 22,
                     borderRadius: '50%',
-                    background: 'rgba(184,148,58,0.15)',
-                    border: '1px solid rgba(184,148,58,0.25)',
+                    background: 'rgba(61,111,255,0.15)',
+                    border: '1px solid rgba(61,111,255,0.25)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: 11,
                     fontWeight: 700,
-                    color: 'var(--imi-gold-500)',
+                    color: 'var(--accent-400)',
                     fontFamily: 'var(--font-mono)',
                     marginTop: 1,
                   }}
@@ -200,7 +200,7 @@ export function IntegrationRequired({
               gap: 8,
               height: 44,
               padding: '0 20px',
-              background: 'var(--imi-gold-500)',
+              background: 'var(--accent-400)',
               color: 'var(--text-inverse)',
               borderRadius: 'var(--r-md, 4px)',
               fontSize: 13,
@@ -228,9 +228,9 @@ export function IntegrationRequired({
               gap: 8,
               height: 44,
               padding: '0 20px',
-              background: 'rgba(184,148,58,0.08)',
-              border: '1px solid rgba(184,148,58,0.20)',
-              color: 'var(--imi-gold-500)',
+              background: 'rgba(61,111,255,0.08)',
+              border: '1px solid rgba(61,111,255,0.20)',
+              color: 'var(--accent-400)',
               borderRadius: 'var(--r-md, 4px)',
               fontSize: 13,
               fontWeight: 500,
@@ -256,9 +256,9 @@ export function IntegrationRequired({
               gap: 8,
               height: 44,
               padding: '0 20px',
-              background: 'rgba(184,148,58,0.08)',
-              border: '1px solid rgba(184,148,58,0.20)',
-              color: 'var(--imi-gold-500)',
+              background: 'rgba(61,111,255,0.08)',
+              border: '1px solid rgba(61,111,255,0.20)',
+              color: 'var(--accent-400)',
               borderRadius: 'var(--r-md, 4px)',
               fontSize: 13,
               fontWeight: 500,

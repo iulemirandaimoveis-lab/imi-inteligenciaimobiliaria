@@ -66,7 +66,7 @@ export default function PageHeader({
                             {crumb.href ? (
                                 <Link href={crumb.href}>
                                     <span
-                                        className="text-xs font-medium transition-colors duration-120 hover:text-[var(--imi-gold-500)]"
+                                        className="text-xs font-medium transition-colors duration-120 hover:text-[var(--accent-400)]"
                                         style={{ color: 'var(--text-secondary)' }}
                                     >
                                         {crumb.label}

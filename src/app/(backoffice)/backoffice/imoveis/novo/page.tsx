@@ -1,5 +1,4 @@
 'use client'
-export const dynamic = 'force-dynamic'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -239,7 +238,7 @@ function DesktopNovo({ step, setStep, saving, draftSaved, next, prev, handleSave
     <div style={{ minHeight: '100vh', background: T.navy, color: T.text }}>
       <style suppressHydrationWarning>{`
         .ni::placeholder { color: var(--text-tertiary) }
-        .ni:focus { outline: none; border-color: var(--imi-gold-500) !important; box-shadow: var(--shadow-xs); }
+        .ni:focus { outline: none; border-color: var(--accent-400) !important; box-shadow: var(--shadow-xs); }
         .ni option { background: var(--bg-elevated); color: var(--text-primary); }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
@@ -267,7 +266,7 @@ function DesktopNovo({ step, setStep, saving, draftSaved, next, prev, handleSave
           <div style={{ background: T.surface, borderRadius: 6, border: `1px solid ${T.border}`, padding: 18, marginBottom: 16 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'var(--font-sans)', marginBottom: 12 }}>Progresso</div>
             {STEP_META.map((meta, i) => { const n = i + 1; const done = step > n; const active = step === n; return (
-              <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', borderBottom: n < 4 ? '1px solid rgba(184,148,58,0.06)' : 'none' }}>
+              <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', borderBottom: n < 4 ? '1px solid rgba(61,111,255,0.06)' : 'none' }}>
                 <div style={{ width: 20, height: 20, borderRadius: '50%', background: done ? T.gold : active ? T.goldBg : T.elevated, border: `1.5px solid ${done || active ? T.gold : T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {done ? <Check size={11} color={T.navy} /> : <span style={{ fontSize: 11, fontWeight: 700, color: active ? T.gold : T.textDim, fontFamily: 'var(--font-mono)' }}>{n}</span>}
                 </div>
@@ -283,7 +282,7 @@ function DesktopNovo({ step, setStep, saving, draftSaved, next, prev, handleSave
       </div>
       {uploadVisible && <div style={{ position: 'fixed', bottom: 88, right: 24, width: 320, zIndex: 200 }}><UploadProgressPanel files={uploadFiles} total={uploadFiles.length} visible={uploadVisible} /></div>}
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: T.surface, borderTop: `1px solid ${T.border}`, padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 90 }}>
-        <button type="button" onClick={prev} disabled={step === 1} style={{ background: 'transparent', border: `1px solid ${step === 1 ? 'rgba(184,148,58,0.08)' : T.border}`, borderRadius: 6, padding: '10px 20px', fontSize: 13, fontWeight: 600, color: step === 1 ? T.textDim : T.textSub, cursor: step === 1 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', transition: 'all var(--dur-2) var(--ease)' }}><ArrowLeft size={14} />Voltar</button>
+        <button type="button" onClick={prev} disabled={step === 1} style={{ background: 'transparent', border: `1px solid ${step === 1 ? 'rgba(61,111,255,0.08)' : T.border}`, borderRadius: 6, padding: '10px 20px', fontSize: 13, fontWeight: 600, color: step === 1 ? T.textDim : T.textSub, cursor: step === 1 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', transition: 'all var(--dur-2) var(--ease)' }}><ArrowLeft size={14} />Voltar</button>
         <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums' }}>Passo {step} / 4</span>
         {step < 4 ? (
           <button type="button" onClick={next} style={{ background: T.gold, border: 'none', borderRadius: 6, padding: '10px 24px', fontSize: 13, fontWeight: 700, color: T.navy, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', boxShadow: 'var(--shadow-gold)', transition: 'opacity var(--dur-2) var(--ease)' }}>Continuar<ArrowRight size={14} /></button>
@@ -309,7 +308,7 @@ function MobileNovo({ step, saving, draftSaved, next, prev, handleSave, uploadFi
       <MobileGlobalStyles />
       <style suppressHydrationWarning>{`
         .ni::placeholder { color: var(--text-tertiary) }
-        .ni:focus { outline: none; border-color: var(--imi-gold-500) !important; box-shadow: var(--shadow-xs); }
+        .ni:focus { outline: none; border-color: var(--accent-400) !important; box-shadow: var(--shadow-xs); }
         .ni option { background: var(--bg-elevated); color: var(--text-primary); }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
@@ -329,7 +328,7 @@ function MobileNovo({ step, saving, draftSaved, next, prev, handleSave, uploadFi
       <div style={{ paddingTop: 104, paddingBottom: 140, padding: '104px 16px 140px', animation: 'slideDown 220ms ease both' }}>{renderStep(true)}</div>
       {uploadVisible && <div style={{ position: 'fixed', bottom: 130, left: 16, right: 16, zIndex: 200 }}><UploadProgressPanel files={uploadFiles} total={uploadFiles.length} visible={uploadVisible} /></div>}
       <div style={{ position: 'fixed', bottom: 56, left: 0, right: 0, background: T.surface, borderTop: `1px solid ${T.border}`, padding: '12px 16px', display: 'flex', gap: 10, zIndex: 90 }}>
-        <button type="button" onClick={prev} disabled={step === 1} style={{ flex: '0 0 auto', width: 48, height: 48, borderRadius: 6, background: 'transparent', border: `1px solid ${step === 1 ? 'rgba(184,148,58,0.08)' : T.border}`, cursor: step === 1 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: step === 1 ? T.textDim : T.textSub }}><ArrowLeft size={18} /></button>
+        <button type="button" onClick={prev} disabled={step === 1} style={{ flex: '0 0 auto', width: 48, height: 48, borderRadius: 6, background: 'transparent', border: `1px solid ${step === 1 ? 'rgba(61,111,255,0.08)' : T.border}`, cursor: step === 1 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: step === 1 ? T.textDim : T.textSub }}><ArrowLeft size={18} /></button>
         {step < 4 ? (
           <button type="button" onClick={next} style={{ flex: 1, height: 48, borderRadius: 6, background: T.gold, border: 'none', fontSize: 14, fontWeight: 700, color: T.navy, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: 'var(--font-sans)', boxShadow: 'var(--shadow-gold)' }}>Continuar<ArrowRight size={16} /></button>
         ) : (

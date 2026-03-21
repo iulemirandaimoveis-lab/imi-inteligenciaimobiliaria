@@ -215,8 +215,8 @@ export default function EmailHonorariosPage() {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
   const ENTITY_BADGE: Record<string, { bg: string; color: string }> = {
-    tribunal: { bg: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)' },
-    banco: { bg: 'rgba(72,101,129,0.12)', color: 'var(--imi-gold-500)' },
+    tribunal: { bg: 'rgba(139,92,246,0.12)', color: 'var(--platinum-400)' },
+    banco: { bg: 'rgba(72,101,129,0.12)', color: 'var(--accent-400)' },
     particular: { bg: 'rgba(107,184,123,0.12)', color: 'var(--success)' },
     escritorio: { bg: 'rgba(245,158,11,0.12)', color: 'var(--warning)' },
     outro: { bg: 'rgba(255,255,255,0.05)', color: T.textMuted },
@@ -255,7 +255,7 @@ export default function EmailHonorariosPage() {
           <div className="flex gap-2">
             {EXEMPLOS.map(ex => (
               <button key={ex.label} onClick={() => setEmailText(ex.conteudo)}
-                className="text-xs px-2.5 py-1 rounded-lg hover:border-navy-600 hover:text-[var(--imi-gold-500)] transition-colors"
+                className="text-xs px-2.5 py-1 rounded-lg hover:border-transparent hover:text-[var(--accent-400)] transition-colors"
                 style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>
                 {ex.label}
               </button>
@@ -265,7 +265,7 @@ export default function EmailHonorariosPage() {
 
         <textarea value={emailText} onChange={e => setEmailText(e.target.value)}
           rows={7} placeholder="Cole aqui o conteúdo do email recebido do tribunal, banco ou cliente..."
-          className="w-full px-3 py-2.5 rounded-[6px] text-sm font-mono focus:outline-none focus:border-navy-600 resize-none"
+          className="w-full px-3 py-2.5 rounded-[6px] text-sm font-mono focus:outline-none focus:border-transparent resize-none"
           style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
 
         {error && (
@@ -289,8 +289,8 @@ export default function EmailHonorariosPage() {
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className="px-5 py-3 text-sm font-medium transition-colors"
                 style={{
-                  borderBottom: `2px solid ${activeTab === tab ? 'var(--imi-gold-500)' : 'transparent'}`,
-                  color: activeTab === tab ? 'var(--imi-gold-500)' : T.textMuted,
+                  borderBottom: `2px solid ${activeTab === tab ? 'var(--accent-400)' : 'transparent'}`,
+                  color: activeTab === tab ? 'var(--accent-400)' : T.textMuted,
                 }}>
                 {tab === 'analise' ? '📊 Análise do Email' : '✉ Rascunho de Resposta'}
               </button>
@@ -405,7 +405,7 @@ export default function EmailHonorariosPage() {
               </div>
               {editing
                 ? <textarea value={editedDraft} onChange={e => setEditedDraft(e.target.value)}
-                  rows={22} className="w-full px-3 py-2.5 rounded-[6px] text-sm font-mono focus:outline-none focus:border-navy-600 resize-none"
+                  rows={22} className="w-full px-3 py-2.5 rounded-[6px] text-sm font-mono focus:outline-none focus:border-transparent resize-none"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
                 : <pre className="whitespace-pre-wrap text-sm rounded-lg p-4 font-sans leading-relaxed" style={{ background: T.elevated, color: T.text }}>{editing ? editedDraft : draft}</pre>
               }

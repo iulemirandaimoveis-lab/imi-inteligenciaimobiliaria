@@ -7,7 +7,7 @@ import {
   ArrowLeft, MapPin, Building2, Bed, Bath, Car, Ruler, Edit, QrCode,
   BarChart2, Layers, Clock, TrendingUp, TrendingDown, Copy, MessageSquare,
   ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles,
-  Activity, CheckSquare, Zap,
+  Activity, CheckSquare, Zap, Scale,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -82,9 +82,13 @@ export function DesktopImovelDetail({
 
   // Derived values
   const images: string[] = (() => {
+    // Primary: gallery_images (saved by edit form)
+    if (dev.gallery_images && dev.gallery_images.length > 0) return dev.gallery_images
+    // Fallback: legacy cover + image_urls
     const list: string[] = []
-    if (dev.cover_image_url) list.push(dev.cover_image_url)
-    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== dev.cover_image_url))
+    const cover = dev.image ?? dev.cover_image_url
+    if (cover) list.push(cover)
+    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== cover))
     return list
   })()
 
@@ -92,7 +96,7 @@ export function DesktopImovelDetail({
   const statusCfg = getStatusConfig(displayStatus)
 
   const price = dev.price_from
-  const priceSqm = enriched.price_per_sqm ?? calcPricePerSqm(price, dev.area_min) ?? null
+  const priceSqm = enriched.price_per_sqm ?? calcPricePerSqm(price, dev.area_from) ?? null
   const score = enriched.imi_score ?? calcIMIScore(enriched)
   const scoreColor = getScoreColor(score)
   const yieldEst = enriched.yield_est ?? calcYieldEst(enriched)
@@ -148,7 +152,7 @@ export function DesktopImovelDetail({
             title="Alterar status"
             style={{
               width: 24, height: 24, borderRadius: 6,
-              background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.2)',
+              background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s',
             }}
@@ -159,7 +163,7 @@ export function DesktopImovelDetail({
             <div style={{
               position: 'absolute', top: '110%', right: 0, zIndex: 100,
               background: 'rgba(11,25,40,0.97)', backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(184,148,58,0.2)', borderRadius: 10, padding: '6px 0',
+              border: '1px solid rgba(61,111,255,0.2)', borderRadius: 10, padding: '6px 0',
               minWidth: 160, boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
             }}>
               {STATUS_OPTIONS.map(opt => (
@@ -179,7 +183,7 @@ export function DesktopImovelDetail({
                     fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)',
                     fontWeight: localStatus === opt.value ? 700 : 400, transition: 'background 0.1s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(184,148,58,0.06)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(61,111,255,0.06)' }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
                   <span style={{ width: 7, height: 7, borderRadius: '50%', background: opt.color, flexShrink: 0 }} />
@@ -208,9 +212,9 @@ export function DesktopImovelDetail({
             </div>
             {images.length > 1 && (
               <>
-                <button onClick={() => setGalleryIdx(i => (i - 1 + images.length) % images.length)} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(184,148,58,0.3)', color: '#EBE7E0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronLeft size={18} /></button>
-                <button onClick={() => setGalleryIdx(i => (i + 1) % images.length)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(184,148,58,0.3)', color: '#EBE7E0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronRight size={18} /></button>
-                <div style={{ position: 'absolute', top: 14, right: 14, background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(184,148,58,0.2)', borderRadius: 6, padding: '4px 10px', ...MONO, fontSize: 11, color: 'rgba(235,231,224,0.8)' }}>{galleryIdx + 1} / {images.length}</div>
+                <button onClick={() => setGalleryIdx(i => (i - 1 + images.length) % images.length)} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(61,111,255,0.3)', color: '#EBE7E0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronLeft size={18} /></button>
+                <button onClick={() => setGalleryIdx(i => (i + 1) % images.length)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(61,111,255,0.3)', color: '#EBE7E0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronRight size={18} /></button>
+                <div style={{ position: 'absolute', top: 14, right: 14, background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(61,111,255,0.2)', borderRadius: 6, padding: '4px 10px', ...MONO, fontSize: 11, color: 'rgba(235,231,224,0.8)' }}>{galleryIdx + 1} / {images.length}</div>
               </>
             )}
           </>
@@ -225,7 +229,7 @@ export function DesktopImovelDetail({
       {images.length > 1 && (
         <div style={{ display: 'flex', gap: 6, marginTop: 8, overflowX: 'auto', paddingBottom: 4 }}>
           {images.slice(0, 8).map((img, idx) => (
-            <button key={idx} onClick={() => setGalleryIdx(idx)} style={{ flexShrink: 0, width: 60, height: 40, borderRadius: 6, overflow: 'hidden', border: `2px solid ${idx === galleryIdx ? 'var(--gold, var(--imi-gold-500))' : 'transparent'}`, cursor: 'pointer', position: 'relative', background: T.surface, opacity: idx === galleryIdx ? 1 : 0.6, transition: 'all 150ms ease' }}>
+            <button key={idx} onClick={() => setGalleryIdx(idx)} style={{ flexShrink: 0, width: 60, height: 40, borderRadius: 6, overflow: 'hidden', border: `2px solid ${idx === galleryIdx ? 'var(--gold, var(--accent-400))' : 'transparent'}`, cursor: 'pointer', position: 'relative', background: T.surface, opacity: idx === galleryIdx ? 1 : 0.6, transition: 'all 150ms ease' }}>
               <Image src={img} alt="" fill sizes="60px" style={{ objectFit: 'cover' }} loading="lazy" />
             </button>
           ))}
@@ -237,10 +241,10 @@ export function DesktopImovelDetail({
         {/* LEFT COLUMN */}
         <div>
           {/* Sticky tab bar */}
-          <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--bg-base, var(--navy, #0B1120))', borderBottom: '1px solid rgba(184,148,58,0.14)', marginBottom: 20 }}>
+          <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--bg-base, var(--navy, #0B1120))', borderBottom: '1px solid rgba(61,111,255,0.14)', marginBottom: 20 }}>
             <div className="imovel-tabs" style={{ display: 'flex', gap: 0, overflowX: 'auto', scrollbarWidth: 'none' }}>
               {TABS.map(tab => (
-                <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ padding: '12px 20px', background: 'transparent', border: 'none', borderBottom: `2px solid ${activeTab === tab.key ? 'var(--gold, var(--imi-gold-500))' : 'transparent'}`, color: activeTab === tab.key ? 'var(--gold, var(--imi-gold-500))' : T.textMuted, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 200ms ease', marginBottom: '-1px' }}>
+                <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ padding: '12px 20px', background: 'transparent', border: 'none', borderBottom: `2px solid ${activeTab === tab.key ? 'var(--gold, var(--accent-400))' : 'transparent'}`, color: activeTab === tab.key ? 'var(--gold, var(--accent-400))' : T.textMuted, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 200ms ease', marginBottom: '-1px' }}>
                   {tab.label}
                 </button>
               ))}
@@ -260,10 +264,10 @@ export function DesktopImovelDetail({
                 <p style={{ ...EYEBROW, marginBottom: 16 }}>Especificações</p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
                   {[
-                    { icon: Ruler, label: 'Área', value: dev.area_min ? `${dev.area_min}${dev.area_max && dev.area_max !== dev.area_min ? `–${dev.area_max}` : ''} m²` : '—' },
-                    { icon: Bed, label: 'Quartos', value: dev.bedrooms_from ? `${dev.bedrooms_from}+` : '—' },
-                    { icon: Bath, label: 'Banheiros', value: dev.bathrooms_from ? `${dev.bathrooms_from}+` : '—' },
-                    { icon: Car, label: 'Vagas', value: dev.parking_from ? `${dev.parking_from}+` : '—' },
+                    { icon: Ruler, label: 'Área', value: dev.area_from ? `${dev.area_from}${dev.area_to && dev.area_to !== dev.area_from ? `–${dev.area_to}` : ''} m²` : '—' },
+                    { icon: Bed, label: 'Quartos', value: dev.bedrooms ? `${dev.bedrooms}+` : '—' },
+                    { icon: Bath, label: 'Banheiros', value: dev.bathrooms ? `${dev.bathrooms}+` : '—' },
+                    { icon: Car, label: 'Vagas', value: dev.parking_spaces ? `${dev.parking_spaces}+` : '—' },
                     { icon: Building2, label: 'Tipo', value: dev.type ?? '—' },
                     { icon: Activity, label: 'Condição', value: dev.condition ?? '—' },
                     { icon: CheckSquare, label: 'Status', value: statusCfg.label },
@@ -271,9 +275,9 @@ export function DesktopImovelDetail({
                     { icon: MapPin, label: 'Bairro', value: dev.neighborhood ?? '—' },
                     { icon: Home, label: 'CEP', value: dev.cep ?? '—' },
                   ].map(({ icon: Icon, label, value }) => (
-                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '12px 14px' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8, padding: '12px 14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
-                        <Icon size={12} style={{ color: 'var(--gold, var(--imi-gold-500))', flexShrink: 0 }} />
+                        <Icon size={12} style={{ color: 'var(--gold, var(--accent-400))', flexShrink: 0 }} />
                         <span style={{ ...EYEBROW, fontSize: '8px' }}>{label}</span>
                       </div>
                       <span style={{ ...MONO, fontSize: 14, fontWeight: 500, color: T.text }}>{value}</span>
@@ -281,19 +285,19 @@ export function DesktopImovelDetail({
                   ))}
                 </div>
               </div>
-              {((dev.features && dev.features.length > 0) || (dev.amenities && dev.amenities.length > 0)) && (
+              {(dev.features && dev.features.length > 0) && (
                 <div style={{ ...CARD, padding: 24 }}>
                   <p style={{ ...EYEBROW, marginBottom: 16 }}>Diferenciais & Comodidades</p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {[...(dev.features ?? []), ...(dev.amenities ?? [])].map((item, i) => (
-                      <span key={i} style={{ padding: '5px 12px', borderRadius: 6, background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.18)', color: T.textMuted, fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 500 }}>{item}</span>
+                    {(dev.features ?? []).map((item, i) => (
+                      <span key={i} style={{ padding: '5px 12px', borderRadius: 6, background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.18)', color: T.textMuted, fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 500 }}>{item}</span>
                     ))}
                   </div>
                 </div>
               )}
               <div style={{ ...CARD, padding: 24 }}>
                 <p style={{ ...EYEBROW, marginBottom: 16 }}>Localização</p>
-                <div style={{ background: 'var(--bg-surface)', borderRadius: 8, overflow: 'hidden', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(184,148,58,0.1)', flexDirection: 'column', gap: 8, color: T.textDim }}>
+                <div style={{ background: 'var(--bg-surface)', borderRadius: 8, overflow: 'hidden', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(61,111,255,0.1)', flexDirection: 'column', gap: 8, color: T.textDim }}>
                   <MapPin size={28} style={{ opacity: 0.3 }} />
                   <span style={{ fontSize: 12 }}>{fullAddress || 'Endereço não informado'}</span>
                   {dev.latitude && dev.longitude && (
@@ -317,21 +321,21 @@ export function DesktopImovelDetail({
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid rgba(184,148,58,0.14)' }}>
+                      <tr style={{ borderBottom: '1px solid rgba(61,111,255,0.14)' }}>
                         {['Empreendimento', 'Área', 'Preço/m²', 'Δ Mercado'].map(h => (
                           <th key={h} style={{ ...EYEBROW, fontSize: '8px', textAlign: 'left', padding: '6px 12px 8px' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ background: 'rgba(184,148,58,0.06)', borderBottom: '1px solid rgba(184,148,58,0.1)' }}>
-                        <td style={{ padding: '10px 12px', color: 'var(--gold, var(--imi-gold-500))', fontWeight: 600 }}>{dev.name} <span style={{ fontSize: 10, opacity: 0.7 }}>(este)</span></td>
-                        <td style={{ ...MONO, padding: '10px 12px', color: T.text }}>{dev.area_min ? `${dev.area_min} m²` : '—'}</td>
+                      <tr style={{ background: 'rgba(61,111,255,0.06)', borderBottom: '1px solid rgba(61,111,255,0.1)' }}>
+                        <td style={{ padding: '10px 12px', color: 'var(--gold, var(--accent-400))', fontWeight: 600 }}>{dev.name} <span style={{ fontSize: 10, opacity: 0.7 }}>(este)</span></td>
+                        <td style={{ ...MONO, padding: '10px 12px', color: T.text }}>{dev.area_from ? `${dev.area_from} m²` : '—'}</td>
                         <td style={{ ...MONO, padding: '10px 12px', color: T.text }}>{priceSqm ? `R$ ${fmtNum(priceSqm)}` : '—'}</td>
                         <td style={{ ...MONO, padding: '10px 12px', color: T.textDim }}>—</td>
                       </tr>
                       {comparables.map((comp, i) => (
-                        <tr key={i} style={{ borderBottom: '1px solid rgba(184,148,58,0.06)' }}>
+                        <tr key={i} style={{ borderBottom: '1px solid rgba(61,111,255,0.06)' }}>
                           <td style={{ padding: '10px 12px', color: T.text }}>{comp.name}</td>
                           <td style={{ ...MONO, padding: '10px 12px', color: T.textMuted }}>{comp.area} m²</td>
                           <td style={{ ...MONO, padding: '10px 12px', color: T.textMuted }}>R$ {fmtNum(comp.priceSqm)}</td>
@@ -364,7 +368,7 @@ export function DesktopImovelDetail({
                     { label: 'ROI 12m Estimado', value: `${enriched.roi_12m?.toFixed(1) ?? '—'}%`, unit: '', color: '#D4B86A' },
                     { label: 'Preço/m²', value: priceSqm ? `R$ ${fmtNum(priceSqm)}` : '—', unit: '', color: T.text as string },
                   ].map(({ label, value, unit, color }) => (
-                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '16px 18px' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8, padding: '16px 18px' }}>
                       <p style={{ ...EYEBROW, fontSize: '8px', marginBottom: 8 }}>{label}</p>
                       <p style={{ ...MONO, fontSize: 24, fontWeight: 400, color, lineHeight: 1, margin: 0 }}>
                         {value}
@@ -403,7 +407,7 @@ export function DesktopImovelDetail({
                   ].map(({ label, value, onChange }) => (
                     <div key={label}>
                       <label style={{ ...EYEBROW, fontSize: '8px', display: 'block', marginBottom: 6 }}>{label}</label>
-                      <input type="number" value={value} onChange={e => onChange(Number(e.target.value))} min={0} max={label.includes('%') ? 100 : undefined} style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.2)', color: T.text, outline: 'none', ...MONO, fontSize: 14, boxSizing: 'border-box' }} />
+                      <input type="number" value={value} onChange={e => onChange(Number(e.target.value))} min={0} max={label.includes('%') ? 100 : undefined} style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.2)', color: T.text, outline: 'none', ...MONO, fontSize: 14, boxSizing: 'border-box' }} />
                     </div>
                   ))}
                 </div>
@@ -411,9 +415,9 @@ export function DesktopImovelDetail({
                   {[
                     { label: 'Yield Bruto', value: `${grossYield.toFixed(2)}%`, color: '#5DB887' },
                     { label: 'Yield Líquido', value: `${netYield.toFixed(2)}%`, color: '#5B9BD5' },
-                    { label: 'Cashflow Mensal', value: fmtCurrency(monthlyCashflow), color: 'var(--gold, var(--imi-gold-500))' },
+                    { label: 'Cashflow Mensal', value: fmtCurrency(monthlyCashflow), color: 'var(--gold, var(--accent-400))' },
                   ].map(({ label, value, color }) => (
-                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8, padding: '14px 16px', textAlign: 'center' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8, padding: '14px 16px', textAlign: 'center' }}>
                       <div style={{ ...EYEBROW, fontSize: '8px', marginBottom: 6 }}>{label}</div>
                       <div style={{ ...MONO, fontSize: 20, color, fontWeight: 400 }}>{value}</div>
                     </div>
@@ -426,14 +430,14 @@ export function DesktopImovelDetail({
                   {[
                     { label: '12 meses', roi: yieldEst * 1.0, color: '#5B9BD5' },
                     { label: '24 meses', roi: yieldEst * 2.1, color: '#5DB887' },
-                    { label: '36 meses', roi: yieldEst * 3.4, color: 'var(--gold, var(--imi-gold-500))' },
+                    { label: '36 meses', roi: yieldEst * 3.4, color: 'var(--gold, var(--accent-400))' },
                   ].map(({ label, roi, color }) => (
                     <div key={label}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                         <span style={{ fontSize: 13, color: T.textMuted, fontFamily: 'var(--font-outfit, sans-serif)' }}>{label}</span>
                         <span style={{ ...MONO, fontSize: 13, color, fontWeight: 500 }}>+{roi.toFixed(1)}%</span>
                       </div>
-                      <div style={{ height: 6, background: 'rgba(184,148,58,0.1)', borderRadius: 6, overflow: 'hidden' }}>
+                      <div style={{ height: 6, background: 'rgba(61,111,255,0.1)', borderRadius: 6, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${Math.min(100, (roi / 30) * 100)}%`, background: color, borderRadius: 6, transition: 'width 1s cubic-bezier(0.16,1,0.3,1)' }} />
                       </div>
                       <div style={{ fontSize: 11, color: T.textDim, marginTop: 3 }}>Estimativa acumulada com apreciação</div>
@@ -443,7 +447,7 @@ export function DesktopImovelDetail({
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }} className="max-lg:grid-cols-1">
                 <YieldCalculator propertyValue={dev?.price_from || 800000} monthlyRent={rentInput > 0 ? rentInput : undefined} annualExpenses={undefined} />
-                <ValuationEngine estimatedValue={priceSqm && dev.area_min ? Math.round(priceSqm) : 14500} confidence={72} methodology="Hedônico + Comparativo (NBR 14653)" lastUpdated="há 3 dias" comparables={[
+                <ValuationEngine estimatedValue={priceSqm && dev.area_from ? Math.round(priceSqm) : 14500} confidence={72} methodology="Hedônico + Comparativo (NBR 14653)" lastUpdated="há 3 dias" comparables={[
                   { address: 'Imóvel similar próximo', value: 15200, distance: '150m', diff: 4.8 },
                   { address: 'Ref. mesmo bairro', value: 13800, distance: '300m', diff: -4.8 },
                   { address: 'Lançamento vizinho', value: 16500, distance: '500m', diff: 13.8 },
@@ -455,7 +459,7 @@ export function DesktopImovelDetail({
           {/* TAB: ANALYTICS */}
           {activeTab === 'analytics' && (
             <div style={{ ...CARD, padding: 32, textAlign: 'center' }}>
-              <BarChart2 size={40} style={{ color: 'var(--gold, var(--imi-gold-500))', margin: '0 auto 16px', display: 'block' }} />
+              <BarChart2 size={40} style={{ color: 'var(--gold, var(--accent-400))', margin: '0 auto 16px', display: 'block' }} />
               <p style={{ ...EYEBROW, marginBottom: 8 }}>Analytics de Performance</p>
               <p style={{ color: T.textMuted, fontSize: 14, marginBottom: 24, maxWidth: 420, margin: '0 auto 24px' }}>Veja cliques, leads gerados, conversões, fontes de tráfego e muito mais na página de analytics dedicada.</p>
               <Link href={`/backoffice/imoveis/${id}/analytics`} style={BTN_PRIMARY}><BarChart2 size={14} /> Abrir Analytics Completo</Link>
@@ -470,6 +474,7 @@ export function DesktopImovelDetail({
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
                   {[
                     { icon: Edit, label: 'Editar Imóvel', href: `/backoffice/imoveis/${id}/editar`, primary: true },
+                    { icon: Scale, label: 'Solicitar Avaliação', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}`, primary: true },
                     { icon: Layers, label: 'Ver Unidades', href: `/backoffice/imoveis/${id}/unidades`, primary: false },
                     { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics`, primary: false },
                     { icon: Clock, label: 'Timeline', href: `/backoffice/imoveis/${id}/timeline`, primary: false },
@@ -493,7 +498,7 @@ export function DesktopImovelDetail({
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                     Instagram (copiar caption)
                   </button>
-                  <Link href={`/backoffice/conteudo/novo?property=${id}`} style={{ ...BTN_SECONDARY, textDecoration: 'none', borderColor: 'rgba(200,164,74,0.4)', color: 'var(--imi-gold-500)' }}><Sparkles size={13} /> Gerar Conteúdo IA</Link>
+                  <Link href={`/backoffice/conteudo/novo?property=${id}`} style={{ ...BTN_SECONDARY, textDecoration: 'none', borderColor: 'rgba(200,164,74,0.4)', color: 'var(--accent-400)' }}><Sparkles size={13} /> Gerar Conteúdo IA</Link>
                 </div>
               </div>
               <div style={{ ...CARD, padding: 24 }}>
@@ -520,7 +525,7 @@ export function DesktopImovelDetail({
         <div style={{ position: 'sticky', top: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ ...CARD, padding: 24 }}>
             <p style={{ ...EYEBROW, marginBottom: 8 }}>Preço</p>
-            <div style={{ ...MONO, fontSize: 30, fontWeight: 400, color: 'var(--gold, var(--imi-gold-500))', lineHeight: 1.1, letterSpacing: '-0.5px' }}>{fmtCurrency(price)}</div>
+            <div style={{ ...MONO, fontSize: 30, fontWeight: 400, color: 'var(--gold, var(--accent-400))', lineHeight: 1.1, letterSpacing: '-0.5px' }}>{fmtCurrency(price)}</div>
             {dev.price_to && dev.price_to !== dev.price_from && (
               <div style={{ ...MONO, fontSize: 14, color: T.textMuted, marginTop: 2 }}>até {fmtCurrency(dev.price_to)}</div>
             )}
@@ -530,7 +535,7 @@ export function DesktopImovelDetail({
                 <span style={{ ...MONO, fontSize: 13, color: T.textMuted }}>R$ {fmtNum(priceSqm)}</span>
               </div>
             )}
-            <div style={{ height: '1px', background: 'rgba(184,148,58,0.14)', margin: '16px 0' }} />
+            <div style={{ height: '1px', background: 'rgba(61,111,255,0.14)', margin: '16px 0' }} />
             <IMIScoreDisplay score={score} />
             {score > 0 && (
               <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -547,14 +552,14 @@ export function DesktopImovelDetail({
                         <span style={{ fontSize: 9, fontFamily: 'var(--font-mono,monospace)', color: 'var(--text-secondary)' }}>{pct}</span>
                       </div>
                       <div style={{ height: 3, background: 'rgba(255,255,255,0.05)', borderRadius: 2, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${pct}%`, background: pct >= 70 ? 'var(--imi-gold-500)' : pct >= 50 ? '#E8A87C' : '#9FAAB8', borderRadius: 2, transition: 'width 0.8s ease' }} />
+                        <div style={{ height: '100%', width: `${pct}%`, background: pct >= 70 ? 'var(--accent-400)' : pct >= 50 ? '#E8A87C' : '#9FAAB8', borderRadius: 2, transition: 'width 0.8s ease' }} />
                       </div>
                     </div>
                   )
                 })}
               </div>
             )}
-            <div style={{ height: '1px', background: 'rgba(184,148,58,0.14)', margin: '16px 0' }} />
+            <div style={{ height: '1px', background: 'rgba(61,111,255,0.14)', margin: '16px 0' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-outfit, sans-serif)' }}>Yield Estimado</span>
@@ -604,8 +609,8 @@ export function DesktopImovelDetail({
                     <Image src={dev.developer.logo_url} alt={dev.developer.name} fill sizes="36px" style={{ objectFit: 'contain' }} loading="lazy" />
                   </div>
                 ) : (
-                  <div style={{ width: 36, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(184,148,58,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Building2 size={16} style={{ color: 'var(--gold, var(--imi-gold-500))' }} />
+                  <div style={{ width: 36, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(61,111,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Building2 size={16} style={{ color: 'var(--gold, var(--accent-400))' }} />
                   </div>
                 )}
                 <div>

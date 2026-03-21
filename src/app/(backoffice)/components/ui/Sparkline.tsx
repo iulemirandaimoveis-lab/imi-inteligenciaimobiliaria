@@ -17,7 +17,7 @@ export interface SparklineProps {
   height?: number
   /**
    * Stroke/fill color as a CSS variable string.
-   * Default: 'var(--imi-gold-500)'
+   * Default: 'var(--accent-400)'
    * Overridden by trend auto-color when `color` is not set and `trend` is provided.
    */
   color?: string
@@ -42,7 +42,7 @@ function computeTrend(data: number[]): 'up' | 'down' | 'flat' {
 function trendColor(trend: 'up' | 'down' | 'flat'): string {
   if (trend === 'up') return 'var(--success)'
   if (trend === 'down') return 'var(--error)'
-  return 'var(--imi-gold-500)'
+  return 'var(--accent-400)'
 }
 
 /** Map data values to SVG pixel coordinates with padding. */

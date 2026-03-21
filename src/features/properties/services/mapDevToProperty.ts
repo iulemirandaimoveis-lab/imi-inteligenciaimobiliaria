@@ -5,7 +5,7 @@ import type { IMIProperty } from '@/features/properties/types'
  * Handles ALL column-name variations across schemas:
  *  - Original migration: title, area_from, bedrooms, image, gallery_images
  *  - Website schema: name, images (JSONB), specs (JSONB), price_min, price_max
- *  - Backoffice schema: area_min, bedrooms_from, image_urls, cover_image_url
+ *  - Backoffice schema: area_from, bedrooms, image_urls, cover_image_url
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- DB row has 30+ dynamic columns from multiple schema versions
 export function mapDevToProperty(d: Record<string, any>): IMIProperty {
@@ -15,7 +15,7 @@ export function mapDevToProperty(d: Record<string, any>): IMIProperty {
   const cover = imagesObj?.main ?? d.image ?? d.cover_image_url ?? null
 
   // Area: handle multiple naming conventions
-  const area = d.area_from ?? d.area_min ?? d.area ?? null
+  const area = d.area_from ?? d.area ?? null
 
   // Price: handle multiple naming conventions
   const price = d.price_from ?? d.price_min ?? d.price ?? null
@@ -38,9 +38,9 @@ export function mapDevToProperty(d: Record<string, any>): IMIProperty {
     status: normalizeStatus(d.status_commercial ?? d.status_comercial ?? d.status ?? 'disponivel'),
     price,
     area,
-    bedrooms: d.bedrooms ?? d.bedrooms_from ?? (d.specs?.bedroomsRange ? parseInt(d.specs.bedroomsRange) : null) ?? null,
-    bathrooms: d.bathrooms ?? d.bathrooms_from ?? null,
-    parking: d.parking_spaces ?? d.parking_from ?? null,
+    bedrooms: d.bedrooms ?? (d.specs?.bedroomsRange ? parseInt(d.specs.bedroomsRange) : null) ?? null,
+    bathrooms: d.bathrooms ?? null,
+    parking: d.parking_spaces ?? null,
     neighborhood: d.neighborhood,
     city: d.city,
     state: d.state,

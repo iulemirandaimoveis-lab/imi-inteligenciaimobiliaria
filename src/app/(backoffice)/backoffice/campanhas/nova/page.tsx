@@ -75,7 +75,7 @@ const canais = [
   { value: 'google', label: 'Google Ads', icon: Search, hex: '#EA4335' },
   { value: 'email', label: 'Email Marketing', icon: Mail, hex: 'var(--success)' },
   { value: 'whatsapp', label: 'WhatsApp Business', icon: MessageSquare, hex: '#25D366' },
-  { value: 'site', label: 'Site/Blog', icon: Globe, hex: 'var(--imi-gold-500)' },
+  { value: 'site', label: 'Site/Blog', icon: Globe, hex: 'var(--accent-400)' },
 ]
 
 const objetivos = [
@@ -281,7 +281,7 @@ export default function NovaCampanhaPage() {
     border: `1px solid ${errKey && errors[errKey] ? 'var(--error)' : T.border}`,
     color: T.text,
   })
-  const inputClass = 'focus:outline-none focus:ring-2 focus:ring-[rgba(184,148,58,0.25)]'
+  const inputClass = 'focus:outline-none focus:ring-2 focus:ring-[rgba(61,111,255,0.25)]'
 
   return (
     <div className="space-y-6">

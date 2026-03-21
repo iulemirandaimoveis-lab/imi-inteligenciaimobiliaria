@@ -286,7 +286,7 @@ export default function SocialInboxPage() {
                     className="flex-shrink-0 px-3 py-1.5 rounded-[6px] text-[11px] font-semibold transition-all"
                     style={{
                         background: channel === 'all' ? 'var(--bg-active)' : 'rgba(255,255,255,0.04)',
-                        color: channel === 'all' ? 'var(--imi-gold-500)' : T.textMuted,
+                        color: channel === 'all' ? 'var(--accent-400)' : T.textMuted,
                     }}>
                     Todos {messages.length > 0 && `(${messages.length})`}
                 </button>
@@ -441,7 +441,7 @@ export default function SocialInboxPage() {
                                         style={{ borderTop: `1px solid ${T.border}` }}>
                                         <button onClick={handleAiSuggest} disabled={aiLoading}
                                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-50"
-                                            style={{ background: 'rgba(167,139,250,0.12)', color: 'var(--imi-gold-400)' }}>
+                                            style={{ background: 'rgba(167,139,250,0.12)', color: 'var(--platinum-400)' }}>
                                             {aiLoading ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                                             Sugerir com IA
                                         </button>

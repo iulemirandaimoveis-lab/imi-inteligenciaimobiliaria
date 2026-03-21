@@ -67,7 +67,7 @@ export default function InvestLeadsPage() {
           </h1>
           <p className="text-sm text-white/50 mt-1">Leads qualificados para investimento imobiliario</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium text-navy-900" style={{ background: '#C8A44A' }}>
+        <button className="flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium text-navy-900" style={{ background: '#3D6FFF' }}>
           <Plus className="w-4 h-4" />
           Novo Lead
         </button>
@@ -148,7 +148,7 @@ export default function InvestLeadsPage() {
                 <div className="flex items-center gap-6">
                   <div>
                     <div className="text-xs text-white/30 mb-1">Engajamento</div>
-                    <ScoreBar value={lead.engagementScore} color="#C8A44A" />
+                    <ScoreBar value={lead.engagementScore} color="#3D6FFF" />
                   </div>
                   <div>
                     <div className="text-xs text-white/30 mb-1">Prontidao</div>

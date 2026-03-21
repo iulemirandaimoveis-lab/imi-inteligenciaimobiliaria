@@ -27,7 +27,7 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
         <section className="py-14 md:py-20" style={{ background: '#0B1928', borderTop: '1px solid rgba(200,164,74,0.08)' }}>
             <div className="container-custom">
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
+                    <div className="w-1 h-6 rounded-full" style={{ background: '#3D6FFF' }} />
                     <h2
                         className="text-xl md:text-2xl font-bold tracking-tight"
                         style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif", color: '#EBE7E0' }}
@@ -74,7 +74,7 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
                                         {dev.name}
                                     </h3>
                                     <div className="flex items-center gap-1 text-xs mb-3" style={{ color: '#627D98' }}>
-                                        <MapPin size={10} style={{ color: '#C8A44A', opacity: 0.6 }} />
+                                        <MapPin size={10} style={{ color: '#3D6FFF', opacity: 0.6 }} />
                                         <span className="truncate">{dev.location.neighborhood}, {dev.location.city}</span>
                                     </div>
 
@@ -95,7 +95,7 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
                                     {/* Price */}
                                     {dev.priceRange.min > 0 && (
                                         <div>
-                                            <p className="text-[9px] uppercase tracking-wider font-semibold" style={{ color: '#C8A44A', opacity: 0.6 }}>A partir de</p>
+                                            <p className="text-[9px] uppercase tracking-wider font-semibold" style={{ color: '#3D6FFF', opacity: 0.6 }}>A partir de</p>
                                             <p className="text-base font-bold" style={{ color: '#EBE7E0', fontFamily: "'Libre Baskerville', Georgia, serif" }}>
                                                 {formatPrice(dev.priceRange.min)}
                                             </p>

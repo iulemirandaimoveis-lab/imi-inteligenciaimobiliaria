@@ -37,7 +37,7 @@ function getMetrics(value: number): MarketMetrics[] {
 const markets = [
   { key: 'brasil', label: 'Brasil', flag: '🇧🇷', color: '#34d399' },
   { key: 'eua', label: 'EUA', flag: '🇺🇸', color: '#60a5fa' },
-  { key: 'dubai', label: 'Dubai', flag: '🇦🇪', color: '#C8A44A' },
+  { key: 'dubai', label: 'Dubai', flag: '🇦🇪', color: '#3D6FFF' },
 ]
 
 export default function ComparadorPage() {

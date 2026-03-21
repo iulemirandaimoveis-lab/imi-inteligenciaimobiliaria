@@ -139,7 +139,7 @@ export default function AgendaPage() {
           id: `new-${recent.id}`,
           title: 'Novo Lead – Primeiro Contato',
           desc: `${recent.name} se cadastrou há menos de 3 dias. Janela ideal para primeiro contato.`,
-          action: 'Agendar Ligação', icon: Phone, color: 'var(--imi-gold-500)',
+          action: 'Agendar Ligação', icon: Phone, color: 'var(--accent-400)',
         })
 
         setSmartSuggestions(suggestions.slice(0, 3))
@@ -152,11 +152,11 @@ export default function AgendaPage() {
   const getWeekDays = () => {
     const sel = new Date(selectedDay + 'T12:00:00')
     const dow = sel.getDay()
-    const mon = new Date(sel)
-    mon.setDate(sel.getDate() - dow + (dow === 0 ? -6 : 1))
-    return Array.from({ length: 6 }, (_, i) => {
-      const d = new Date(mon)
-      d.setDate(mon.getDate() + i)
+    const sun = new Date(sel)
+    sun.setDate(sel.getDate() - dow) // go to Sunday
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(sun)
+      d.setDate(sun.getDate() + i)
       return d.toISOString().split('T')[0]
     })
   }
@@ -176,7 +176,7 @@ export default function AgendaPage() {
   const getDayNum = (s: string) => parseInt(s.split('-')[2])
 
   const formatTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Recife' })
 
   const getTypeCfg = (t: string) => EVENT_TYPES[t] || EVENT_TYPES.outro
 
@@ -254,7 +254,7 @@ export default function AgendaPage() {
   const selectedDayLabel = isToday(selectedDay)
     ? 'Hoje'
     : new Date(selectedDay + 'T12:00:00').toLocaleDateString('pt-BR', {
-        weekday: 'long', day: 'numeric', month: 'long',
+        weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Recife',
       })
 
   if (loading) return <AgendaSkeleton />
@@ -283,7 +283,7 @@ export default function AgendaPage() {
                       height: '30px', padding: '0 12px', borderRadius: '9px',
                       fontSize: '12px', fontWeight: 600, cursor: 'pointer', border: 'none',
                       transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
-                      background: viewMode === mode ? 'var(--imi-gold-500)' : 'transparent',
+                      background: viewMode === mode ? 'var(--accent-400)' : 'transparent',
                       color: viewMode === mode ? '#fff' : 'var(--text-secondary)',
                       boxShadow: viewMode === mode ? '0 0 12px rgba(59,130,246,0.2)' : 'none',
                     }}
@@ -351,7 +351,7 @@ export default function AgendaPage() {
           </div>
 
           {/* Day buttons */}
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-1">
+          <div className="flex gap-1 overflow-x-auto scrollbar-hide">
             {weekDays.map(dayStr => {
               const isSelected = dayStr === selectedDay
               const todayBool = isToday(dayStr)
@@ -365,7 +365,7 @@ export default function AgendaPage() {
                     padding: '10px 4px', borderRadius: '14px', border: 'none', cursor: 'pointer',
                     transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                     background: isSelected
-                      ? 'var(--imi-gold-500)'
+                      ? 'var(--accent-400)'
                       : todayBool
                         ? 'rgba(59,130,246,0.1)'
                         : 'transparent',
@@ -575,7 +575,7 @@ export default function AgendaPage() {
                 <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-default)' }}>
                   <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Visão Geral da Semana</span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
                   {weekDays.map((dayStr, i) => {
                     const dayEvts = eventsByDay[dayStr] || []
                     const isSelected = dayStr === selectedDay
@@ -586,7 +586,7 @@ export default function AgendaPage() {
                         onClick={() => setSelectedDay(dayStr)}
                         style={{
                           padding: '12px 8px',
-                          borderRight: i < 5 ? '1px solid var(--border-default)' : 'none',
+                          borderRight: i < 6 ? '1px solid var(--border-default)' : 'none',
                           cursor: 'pointer',
                           background: isSelected ? 'rgba(59,130,246,0.06)' : 'transparent',
                           transition: 'background 0.15s',

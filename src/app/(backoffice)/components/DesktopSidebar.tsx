@@ -34,7 +34,7 @@ interface NavSection {
 
 // ── Section colors for visual differentiation ──
 const SECTION_COLORS: Record<string, string> = {
-    'Operações Diárias': 'var(--imi-gold-500)',
+    'Operações Diárias': 'var(--accent-400)',
     'Captação': 'var(--warning)',
     'Conversão': '#4ADE80',
     'Portfólio': '#D4A929',
@@ -51,10 +51,11 @@ const SECTIONS: NavSection[] = [
         alwaysOpen: true,
         items: [
             { label: 'Hoje',      href: '/backoffice/hoje',      icon: Sun             },
-            { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard, badge: 'NEW' },
-            { label: 'Leads',     href: '/backoffice/leads',     icon: Users,           badge: 'NEW' },
+            { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
+            { label: 'Leads',     href: '/backoffice/leads',     icon: Users            },
+            { label: 'Parcerias', href: '/backoffice/parcerias', icon: Handshake, badge: 'NEW' },
             { label: 'Agenda',    href: '/backoffice/agenda',    icon: CalendarDays    },
-            { label: 'Imóveis',   href: '/backoffice/imoveis',   icon: Building2,       badge: 'NEW' },
+            { label: 'Imóveis',   href: '/backoffice/imoveis',   icon: Building2        },
         ]
     },
     {
@@ -64,22 +65,20 @@ const SECTIONS: NavSection[] = [
                 label: 'Leads', icon: Users,
                 children: [
                     { label: 'Todos os Leads',  href: '/backoffice/leads',          icon: Users    },
-                    { label: 'Inbox IA',        href: '/backoffice/leads/inbox',    icon: Sparkles, badge: 'NEW' },
+                    { label: 'Inbox IA',        href: '/backoffice/leads/inbox',    icon: Sparkles },
                     { label: 'Comportamento',   href: '/backoffice/leads/behavior', icon: BarChart3 },
                     { label: 'Novo Lead',       href: '/backoffice/leads/novo',     icon: Users    },
                 ]
             },
             {
-                label: 'Campanhas', icon: Megaphone, badge: 'NEW',
+                label: 'Campanhas', icon: Megaphone,
                 children: [
                     { label: 'Todas',           href: '/backoffice/campanhas',     icon: Megaphone },
                     { label: 'Ads Performance', href: '/backoffice/campanhas/ads', icon: BarChart2 },
                     { label: 'Nova',            href: '/backoffice/campanhas/nova',icon: Megaphone },
                 ]
             },
-            { label: 'QR Tracking',  href: '/backoffice/tracking/qr',     icon: QrCode,        badge: 'NEW'   },
-            { label: 'Social Inbox', href: '/backoffice/omnichannel/inbox',icon: Layers,        badge: 'BREVE' },
-            { label: 'WhatsApp',     href: '/backoffice/whatsapp',         icon: MessageSquare, badge: 'BREVE' },
+            { label: 'QR Tracking',  href: '/backoffice/tracking/qr',     icon: QrCode        },
         ]
     },
     {
@@ -97,22 +96,22 @@ const SECTIONS: NavSection[] = [
                 label: 'Imóveis', icon: Building2,
                 children: [
                     { label: 'Listagem',       href: '/backoffice/imoveis',                icon: Building2 },
-                    { label: 'Explorer',       href: '/backoffice/imoveis/explorer',       icon: BarChart2, badge: 'NEW' },
+                    { label: 'Explorer',       href: '/backoffice/imoveis/explorer',       icon: BarChart2 },
                     { label: 'Portfolio',      href: '/backoffice/imoveis/portfolio',      icon: LineChart },
                     { label: 'Comparar',       href: '/backoffice/imoveis/comparar',       icon: Scale },
                     { label: 'Inventário',     href: '/backoffice/imoveis/inventario',     icon: List  },
                     { label: 'Novo Imóvel',    href: '/backoffice/imoveis/novo',           icon: Building2 },
                 ]
             },
-            { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building,   badge: 'NEW' },
-            { label: 'Projetos',     href: '/backoffice/projetos',     icon: FolderOpen, badge: 'NEW' },
+            { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building   },
+            { label: 'Projetos',     href: '/backoffice/projetos',     icon: FolderOpen },
             {
                 label: 'Conteúdo', icon: FileText,
                 children: [
-                    { label: 'Publicações', href: '/backoffice/conteudos',          icon: FileText,   badge: 'NEW'   },
-                    { label: 'Criador IA',  href: '/backoffice/conteudo/criador',   icon: Wand2,      badge: 'NEW'   },
-                    { label: 'eBook IA',    href: '/backoffice/conteudo/ebook',     icon: BookMarked, badge: 'NEW'   },
-                    { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },
+                    { label: 'Publicações', href: '/backoffice/conteudo',           icon: FileText   },
+                    { label: 'Criador IA',  href: '/backoffice/conteudo/criador',   icon: Wand2      },
+                    { label: 'eBook IA',    href: '/backoffice/conteudo/ebook',     icon: BookMarked },
+                    { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',     icon: Video      },
                     { label: 'Automação',   href: '/backoffice/conteudo/automacao', icon: Zap       },
                 ]
             },
@@ -122,7 +121,7 @@ const SECTIONS: NavSection[] = [
         label: 'Operação',
         items: [
             {
-                label: 'Avaliações', icon: Scale, badge: 'NEW',
+                label: 'Avaliações', icon: Scale,
                 children: [
                     { label: 'Todas',               href: '/backoffice/avaliacoes',                  icon: Scale    },
                     { label: 'Nova',                href: '/backoffice/avaliacoes/nova',             icon: Scale    },
@@ -164,7 +163,7 @@ const SECTIONS: NavSection[] = [
     {
         label: 'Financeiro',
         items: [
-            { label: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote,    badge: 'NEW' },
+            { label: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote    },
             { label: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp  },
             { label: 'A Pagar',     href: '/backoffice/financeiro/pagar',   icon: TrendingDown },
             { label: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target      },
@@ -174,28 +173,29 @@ const SECTIONS: NavSection[] = [
         label: 'Inteligência',
         items: [
             { label: 'Ebooks',       href: '/backoffice/inteligencia/ebooks',      icon: BookOpen  },
-            { label: 'Relatórios',   href: '/backoffice/inteligencia/relatorios',  icon: FileStack, badge: 'NEW' },
+            { label: 'Relatórios',   href: '/backoffice/inteligencia/relatorios',  icon: FileStack },
             { label: 'Indicadores',  href: '/backoffice/inteligencia/indicadores', icon: LineChart },
-            { label: 'Índices IMI',  href: '/backoffice/inteligencia/indices',     icon: Brain,     badge: 'NEW' },
-            { label: 'Widgets',      href: '/backoffice/inteligencia/widgets',     icon: Layers, badge: 'NEW' },
+            { label: 'Índices IMI',  href: '/backoffice/inteligencia/indices',     icon: Brain     },
+            { label: 'Widgets',      href: '/backoffice/inteligencia/widgets',     icon: Layers    },
             { label: 'Central de IA',href: '/backoffice/ia',                        icon: Sparkles  },
-            { label: 'Agentes IA',   href: '/backoffice/ia/agentes',               icon: Bot, badge: 'NEW' },
-            { label: 'Automações',   href: '/backoffice/automacoes',               icon: Zap,       badge: 'BREVE' },
+            { label: 'Agentes IA',   href: '/backoffice/ia/agentes',               icon: Bot       },
+            { label: 'Automações',   href: '/backoffice/automacoes',               icon: Zap       },
             { label: 'Analytics',    href: '/backoffice/tracking',                  icon: BarChart2 },
         ]
     },
     {
         label: 'Configurações',
         items: [
-            { label: 'Organização',  href: '/backoffice/organizacao',         icon: Building,  badge: 'BREVE' },
+            { label: 'Organização',  href: '/backoffice/organizacao',         icon: Building   },
             {
-                label: 'Equipe', icon: Users, badge: 'NEW',
+                label: 'Equipe', icon: Users,
                 children: [
                     { label: 'Visão Geral',  href: '/backoffice/equipe',              icon: Users },
-                    { label: 'Colaboração',  href: '/backoffice/equipe/colaboracao',  icon: Handshake, badge: 'NEW' },
+                    { label: 'Canais',       href: '/backoffice/canais',              icon: MessageSquare },
+                    { label: 'Colaboração',  href: '/backoffice/equipe/colaboracao',  icon: Handshake },
                 ]
             },
-            { label: 'Usuários',     href: '/backoffice/settings/usuarios',   icon: Users,     badge: 'NEW'   },
+            { label: 'Usuários',     href: '/backoffice/settings/usuarios',   icon: Users      },
             { label: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
             {
                 label: 'Configurações', icon: Settings,
@@ -228,7 +228,7 @@ function badgeStyle(badge: string | number) {
         return { ...base, background: '#2D8F5C', color: 'var(--text-inverse)', border: 'none', boxShadow: '0 1px 4px rgba(45,143,92,0.25)' }
     }
     if (badge === 'IA') {
-        return { ...base, background: 'var(--imi-gold-500)', color: 'var(--bg-base)', border: 'none', boxShadow: '0 1px 4px rgba(184,148,58,0.25)' }
+        return { ...base, background: 'var(--accent-400)', color: 'var(--bg-base)', border: 'none', boxShadow: '0 1px 4px rgba(61,111,255,0.25)' }
     }
     if (badge === 'BREVE') {
         return { ...base, fontSize: 11, background: 'rgba(148,163,184,0.15)', color: 'var(--text-tertiary)', border: '1px solid rgba(148,163,184,0.15)' }
@@ -265,8 +265,8 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     style={{
                         fontFamily: 'var(--font-sans)',
                         fontSize: 14,
-                        color: isParentActive || open ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
-                        background: isParentActive || open ? 'rgba(184,148,58,0.10)' : 'transparent',
+                        color: isParentActive || open ? 'var(--accent-400)' : 'var(--text-secondary)',
+                        background: isParentActive || open ? 'rgba(61,111,255,0.10)' : 'transparent',
                         fontWeight: isParentActive ? 600 : 500,
                     }}
                 >
@@ -320,13 +320,13 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             style={{
                 fontFamily: 'var(--font-sans)',
                 fontSize: 13,
-                color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
-                background: isActive ? 'rgba(184,148,58,0.10)' : 'transparent',
+                color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)',
+                background: isActive ? 'rgba(61,111,255,0.10)' : 'transparent',
                 fontWeight: isActive ? 600 : 400,
             }}
             onMouseEnter={(e) => {
                 if (!isActive) {
-                    e.currentTarget.style.background = 'rgba(184,148,58,0.06)'
+                    e.currentTarget.style.background = 'rgba(61,111,255,0.06)'
                     e.currentTarget.style.transform = 'translateX(2px)'
                 }
             }}
@@ -342,11 +342,11 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 <motion.div
                     layoutId="sidebar-active"
                     className="absolute -left-[11px] top-1/2 w-[4px] h-5 rounded-full"
-                    style={{ background: 'var(--imi-gold-500)', transform: 'translateY(-50%)', boxShadow: '0 0 8px rgba(184,148,58,0.4)' }}
+                    style={{ background: 'var(--accent-400)', transform: 'translateY(-50%)', boxShadow: '0 0 8px rgba(61,111,255,0.4)' }}
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 />
             )}
-            <item.icon size={16} className="flex-shrink-0" style={{ color: isActive ? 'var(--imi-gold-400)' : undefined }} />
+            <item.icon size={16} className="flex-shrink-0" style={{ color: isActive ? 'var(--platinum-400)' : undefined }} />
             <span className="flex-1">{item.label}</span>
             {item.badge && (
                 <span style={badgeStyle(item.badge)}>
@@ -445,42 +445,45 @@ export function DesktopSidebar() {
             className="hidden lg:flex flex-col h-screen fixed left-0 top-0 z-40"
             style={{
                 width: 248,
-                background: 'var(--imi-navy-900)',
+                background: 'var(--bg-void)',
                 borderRight: '1px solid var(--border-subtle)',
             }}
         >
-            {/* Logo — IMI Brand DS3 */}
+            {/* Logo — IMI Brand Identity */}
             <div
                 className="flex items-center gap-3 px-5 h-16 flex-shrink-0"
                 style={{ borderBottom: '1px solid var(--border-subtle)' }}
             >
+                {/* Wordmark: Cormorant Garamond Bold — matches brand reference exactly */}
                 <span
                     className="text-white leading-none select-none"
                     style={{
-                        fontFamily: 'var(--font-serif)',
-                        fontSize: 26,
+                        fontFamily: 'var(--font-cormorant), "Cormorant Garamond", Georgia, serif',
+                        fontSize: 28,
                         fontWeight: 700,
-                        letterSpacing: '0.08em',
+                        letterSpacing: '0.04em',
                     }}
                 >
                     IMI
                 </span>
+                {/* Thin gold separator */}
                 <div
                     className="flex-shrink-0"
-                    style={{ width: 1, height: 38, background: 'var(--imi-gold-500)' }}
+                    style={{ width: 1, height: 38, background: 'var(--accent-400)' }}
                 />
+                {/* Tagline: sans-serif, uppercase, wide tracking */}
                 <span
-                    className="leading-[1.35] select-none"
+                    className="leading-[1.3] select-none"
                     style={{
                         fontFamily: 'var(--font-sans)',
-                        fontSize: 11,
-                        fontWeight: 500,
+                        fontSize: 10,
+                        fontWeight: 400,
                         letterSpacing: '0.22em',
                         textTransform: 'uppercase',
-                        color: 'var(--imi-gold-500)',
+                        color: 'var(--accent-400)',
                     }}
                 >
-                    Inteligência<br />Imobiliária
+                    INTELIGÊNCIA<br />IMOBILIÁRIA
                 </span>
             </div>
 

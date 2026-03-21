@@ -9,7 +9,6 @@ import QRCode from 'qrcode'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-export const dynamic = 'force-dynamic'
 export default function TrackingLinksPage() {
     const router = useRouter()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

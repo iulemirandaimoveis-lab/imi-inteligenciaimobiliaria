@@ -49,21 +49,23 @@
   --imi-stone-50:  #F2F0E4;
   --imi-cream:     #F8F6EE;
 
-  /* ── Typography — DS3.1 Upgrade ── */
-  --font-serif: var(--font-cormorant), Georgia, serif;
-  --font-sans:  var(--font-outfit), system-ui, sans-serif;
-  --font-mono:  var(--font-dm-mono), 'SF Mono', monospace;
+  /* ── Typography — DS v6 Precision Dark ── */
+  /* DS v6 primary fonts: Geist (UI) + Geist Mono (data) */
+  --font-sans:  var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono:  var(--font-geist-mono), 'SF Mono', monospace;
+  --font-serif: var(--font-syne), var(--font-cormorant), Georgia, serif;
 
   /* Semantic role aliases */
   --font-display: var(--font-serif);
   --font-ui:      var(--font-sans);
   --font-data:    var(--font-mono);
 
-  /* Legacy compat aliases (old variable names → new fonts) */
+  /* Legacy compat aliases (old variable names → DS v6 fonts) */
   --font-libre-baskerville: var(--font-cormorant);
-  --font-figtree: var(--font-outfit);
-  --font-jetbrains-mono: var(--font-dm-mono);
-  --font-inter: var(--font-outfit);
+  --font-figtree:           var(--font-sans);
+  --font-jetbrains-mono:    var(--font-mono);
+  --font-inter:             var(--font-sans);
+  --font-outfit:            var(--font-sans);
 
   /* ── Type Scale ── */
   --t-10: 10px; --t-11: 11px; --t-12: 12px; --t-13: 13px;
@@ -267,47 +269,54 @@
   /* Chart tokens */
   --chart-grid:  rgba(11,17,32,0.06);
   --chart-label: var(--imi-stone-400);
+
+  /* ── DS v6 Precision Dark palette (raw values) ── */
+  --bg-void:     #05080F;
+  --ds6-base:    #080D18;
+  --ds6-surface: #0D1424;
+  --ds6-elevated:#121B2E;
+  --ds6-overlay: #1A2540;
 }
 
 .dark {
-  /* ══ DARK THEME — Navy × Gold DS3 ══ */
-  --bg-base:      var(--imi-navy-900);
-  --bg-surface:   var(--imi-navy-800);
-  --bg-elevated:  var(--imi-navy-700);
+  /* ══ DARK THEME — DS v6 Precision Dark ══ */
+  --bg-base:      #080D18;
+  --bg-surface:   #0D1424;
+  --bg-elevated:  #121B2E;
   --bg-subtle:    rgba(255,255,255,0.04);
   --bg-muted:     rgba(255,255,255,0.02);
   --bg-overlay:   rgba(255,255,255,0.06);
   --bg-hover:     rgba(255,255,255,0.08);
   --bg-active:    rgba(255,255,255,0.12);
 
-  --border-subtle:  rgba(255,255,255,0.06);
-  --border-default: rgba(255,255,255,0.10);
-  --border-strong:  rgba(255,255,255,0.18);
-  --border-focus:   var(--imi-gold-400);
+  --border-subtle:  #1A2540;
+  --border-default: #243050;
+  --border-strong:  #2E3D63;
+  --border-focus:   #3D6FFF;
 
-  --text-primary:   #F0F2F8;
-  --text-secondary: var(--imi-navy-200);
-  --text-tertiary:  var(--imi-navy-300);
-  --text-disabled:  var(--imi-navy-400);
-  --text-inverse:   var(--imi-navy-900);
-  --text-gold:      var(--imi-gold-400);
+  --text-primary:   #E8EEFF;
+  --text-secondary: #8899BB;
+  --text-tertiary:  #4A5A7A;
+  --text-disabled:  #2E3D63;
+  --text-inverse:   #05080F;
+  --text-gold:      #F0B429;
 
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
-  --shadow-lg: 0 16px 40px rgba(0,0,0,0.6);
-  --shadow-xl: 0 32px 64px rgba(0,0,0,0.7);
-  --shadow-gold: 0 4px 20px rgba(201,166,96,0.2);
-  --shadow-glow: 0 0 16px rgba(201,166,96,0.15);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.4), 0 0 0 1px #1A2540;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px #243050;
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px #243050;
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.7), 0 0 0 1px #2E3D63;
+  --shadow-xl: 0 32px 64px rgba(0,0,0,0.8), 0 0 0 1px #2E3D63;
+  --shadow-gold: 0 0 20px rgba(240,180,41,0.20);
+  --shadow-glow: 0 0 20px rgba(61,111,255,0.30);
 
-  --success:    #34C475;
-  --success-bg: rgba(52,196,117,0.12);
-  --warning:    #F0B840;
-  --warning-bg: rgba(240,184,64,0.12);
-  --error:      #F05858;
-  --error-bg:   rgba(240,88,88,0.12);
-  --info:       #60A8F8;
-  --info-bg:    rgba(96,168,248,0.12);
+  --success:    #00D68F;
+  --success-bg: rgba(0,214,143,0.12);
+  --warning:    #F0B429;
+  --warning-bg: rgba(240,180,41,0.12);
+  --error:      #FF4D6A;
+  --error-bg:   rgba(255,77,106,0.12);
+  --info:       #3D6FFF;
+  --info-bg:    rgba(61,111,255,0.12);
 
   /* ── Legacy backoffice aliases ── */
   --bo-bg:             var(--bg-base);
@@ -333,8 +342,8 @@
   --bo-drawer-bg:      var(--imi-navy-900);
   --header-bg:         rgba(11,17,32,0.97);
   --backdrop-bg:       rgba(5,8,15,0.85);
-  --btn-primary-bg:    var(--imi-navy-700);
-  --btn-primary-hover: var(--imi-navy-600);
+  --btn-primary-bg:    #3D6FFF;
+  --btn-primary-hover: #2550E8;
   --btn-primary-text:  #FFFFFF;
   --bo-accent:         var(--imi-gold-500);
   --bo-accent-dim:     var(--imi-gold-700);
@@ -344,7 +353,7 @@
   --bo-border-strong:  rgba(184,148,58,0.30);
   --nav-bg:            rgba(11,17,32,0.98);
   --nav-border:        rgba(184,148,58,0.15);
-  --nav-active:        var(--imi-gold-500);
+  --nav-active:        #3D6FFF;
   --nav-inactive:      var(--imi-navy-400);
   --bo-success:        var(--success);
   --bo-success-bg:     var(--success-bg);
@@ -366,6 +375,36 @@
 
   --chart-grid:  rgba(255,255,255,0.06);
   --chart-label: var(--imi-navy-300);
+
+  /* ── DS v6 Precision Dark — Electric Blue accent ── */
+  --accent-100: #EBF2FF;
+  --accent-200: #A8C4FF;
+  --accent-300: #6B9FFF;
+  --accent-400: #3D6FFF;
+  --accent-500: #2550E8;
+  --accent-600: #1A3BC0;
+  --accent-glow: rgba(61,111,255,0.30);
+
+  /* ── DS v6 Warm Platinum (replaces Gold for premium elements) ── */
+  --platinum-100: #FFF8E8;
+  --platinum-200: #FFE8A8;
+  --platinum-300: #FFD166;
+  --platinum-400: #F0B429;
+  --platinum-500: #D4960A;
+  --platinum-glow: rgba(240,180,41,0.20);
+
+  /* ── DS v6 Lead temperature ── */
+  --lead-hot:    #FF4D6A;
+  --lead-warm:   #F0B429;
+  --lead-neutral:#3D6FFF;
+  --lead-cold:   #4A5A7A;
+
+  /* ── DS v6 Border radius ── */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
 }
 
 /* ── BASE RESETS ────────────────────────────────────────────── */

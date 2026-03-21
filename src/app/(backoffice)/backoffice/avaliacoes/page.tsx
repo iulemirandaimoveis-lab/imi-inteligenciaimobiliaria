@@ -91,7 +91,7 @@ export default function AvaliacoesPage() {
                 display: 'flex', alignItems: 'center', gap: '6px',
                 height: '44px', padding: '0 20px', borderRadius: '6px',
                 fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
-                background: 'var(--imi-gold-500)',
+                background: 'var(--accent-400)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                 border: 'none', cursor: 'pointer',
                 flexShrink: 0,
@@ -162,7 +162,7 @@ export default function AvaliacoesPage() {
                 width: '28px', height: '28px', borderRadius: '6px',
                 background: 'rgba(184,148,58,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <a.icon size={13} color="var(--imi-gold-500)" />
+                <a.icon size={13} color="var(--accent-400)" />
               </div>
               <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{a.label}</span>
               <ChevronRight size={12} color="var(--text-tertiary)" />
@@ -269,7 +269,7 @@ export default function AvaliacoesPage() {
                   {/* Value */}
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     {av.honorarios && (
-                      <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--imi-gold-500)', marginBottom: '3px', fontVariantNumeric: 'tabular-nums' }}>
+                      <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent-400)', marginBottom: '3px', fontVariantNumeric: 'tabular-nums' }}>
                         {fmt(Number(av.honorarios))}
                       </p>
                     )}
@@ -312,7 +312,7 @@ export default function AvaliacoesPage() {
                 marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
                 height: '44px', padding: '0 20px', borderRadius: '6px',
                 fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
-                background: 'var(--imi-gold-500)',
+                background: 'var(--accent-400)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.22)',
                 border: 'none', cursor: 'pointer',
               }}

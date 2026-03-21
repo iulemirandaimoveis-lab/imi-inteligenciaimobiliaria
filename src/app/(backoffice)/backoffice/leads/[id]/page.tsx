@@ -223,7 +223,7 @@ export default function LeadDetailPage() {
             <button
               onClick={() => router.push(`/backoffice/propostas/nova?lead_id=${id}`)}
               className="bo-btn bo-btn-sm"
-              style={{ background: 'rgba(184,148,58,0.12)', color: 'var(--imi-gold-500)', borderColor: 'rgba(184,148,58,0.25)' }}
+              style={{ background: 'rgba(61,111,255,0.12)', color: 'var(--accent-400)', borderColor: 'rgba(61,111,255,0.25)' }}
               title="Criar Proposta"
             >
               <FileText size={13} />
@@ -323,12 +323,12 @@ export default function LeadDetailPage() {
                         background: leadStatus === s.key ? 'var(--bg-hover)' : 'transparent',
                         border: 'none', cursor: 'pointer', fontSize: '13px',
                         fontWeight: leadStatus === s.key ? 700 : 500,
-                        color: leadStatus === s.key ? 'var(--imi-gold-500)' : 'var(--text-primary)',
+                        color: leadStatus === s.key ? 'var(--accent-400)' : 'var(--text-primary)',
                         textAlign: 'left',
                       }}
                     >
                       <span>{s.label}</span>
-                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '11px', color: 'var(--imi-gold-500)' }}>✓</span>}
+                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '11px', color: 'var(--accent-400)' }}>✓</span>}
                     </button>
                   ))}
                 </motion.div>
@@ -357,11 +357,11 @@ export default function LeadDetailPage() {
         <div style={{
           position: 'absolute', top: '-30px', right: '-20px',
           width: '100px', height: '100px', borderRadius: '50%',
-          background: 'rgba(184,148,58,0.10)', filter: 'blur(30px)', pointerEvents: 'none',
+          background: 'rgba(61,111,255,0.10)', filter: 'blur(30px)', pointerEvents: 'none',
         }} />
 
         {/* Label */}
-        <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px', position: 'relative' }}>
+        <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--accent-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px', position: 'relative' }}>
           LEAD PROFILE
         </div>
 
@@ -396,12 +396,12 @@ export default function LeadDetailPage() {
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               background: 'var(--bg-elevated)',
-              border: '1px solid rgba(184,148,58,0.25)',
+              border: '1px solid rgba(61,111,255,0.25)',
               borderRadius: '6px', padding: '12px',
               flexShrink: 0,
             }}
           >
-            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--accent-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
               AI Intent
             </span>
             <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
@@ -421,7 +421,7 @@ export default function LeadDetailPage() {
               border: '1px solid var(--border-default)', textDecoration: 'none',
             }}
           >
-            <Phone size={14} style={{ color: 'var(--imi-gold-500)' }} /> Ligar
+            <Phone size={14} style={{ color: 'var(--accent-400)' }} /> Ligar
           </a>
           <a
             href={`https://wa.me/55${(lead.phone ?? '').replace(/\D/g, '')}`}
@@ -444,7 +444,7 @@ export default function LeadDetailPage() {
               border: '1px solid var(--border-default)', cursor: 'pointer',
             }}
           >
-            <Calendar size={14} style={{ color: 'var(--imi-gold-500)' }} /> Agendar
+            <Calendar size={14} style={{ color: 'var(--accent-400)' }} /> Agendar
           </button>
         </div>
 
@@ -559,7 +559,7 @@ export default function LeadDetailPage() {
                     </span>
                   )}
                   {aiAnalysis.approach && (
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-gold-500)', background: 'var(--info-bg)', padding: '2px 8px', borderRadius: '6px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-400)', background: 'var(--info-bg)', padding: '2px 8px', borderRadius: '6px' }}>
                       via {aiAnalysis.approach}
                     </span>
                   )}
@@ -607,10 +607,10 @@ export default function LeadDetailPage() {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                  color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)',
                   background: 'none',
                   border: 'none',
-                  borderBottom: `2px solid ${isActive ? 'var(--imi-gold-500)' : 'transparent'}`,
+                  borderBottom: `2px solid ${isActive ? 'var(--accent-400)' : 'transparent'}`,
                   cursor: 'pointer',
                   transition: 'all var(--dur-2) var(--ease)',
                 }}
@@ -647,14 +647,14 @@ export default function LeadDetailPage() {
                           position: 'relative', zIndex: 1,
                           width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
                           background: event.accent
-                            ? 'rgba(184,148,58,0.10)'
+                            ? 'rgba(61,111,255,0.10)'
                             : 'rgba(255,255,255,0.04)',
-                          border: `2px solid ${event.accent ? 'rgba(184,148,58,0.25)' : 'var(--border-default)'}`,
+                          border: `2px solid ${event.accent ? 'rgba(61,111,255,0.25)' : 'var(--border-default)'}`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
                           <event.icon
                             size={14}
-                            style={{ color: event.accent ? 'var(--imi-gold-500)' : 'var(--text-secondary)' }}
+                            style={{ color: event.accent ? 'var(--accent-400)' : 'var(--text-secondary)' }}
                           />
                         </div>
 
@@ -772,7 +772,7 @@ export default function LeadDetailPage() {
                   }}
                   style={{
                     width: '44px', height: '44px', borderRadius: '6px',
-                    background: note.trim() ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
+                    background: note.trim() ? 'var(--accent-400)' : 'var(--bg-elevated)',
                     border: 'none', cursor: note.trim() ? 'pointer' : 'default',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     opacity: note.trim() ? 1 : 0.4,
@@ -830,16 +830,16 @@ export default function LeadDetailPage() {
                   style={{
                     display: 'flex', alignItems: 'flex-start', gap: '12px',
                     padding: '12px', borderRadius: '6px', marginBottom: '8px',
-                    background: i === 0 ? 'rgba(184,148,58,0.07)' : 'rgba(255,255,255,0.03)',
-                    border: `1px solid ${i === 0 ? 'rgba(184,148,58,0.2)' : 'var(--border-default)'}`,
+                    background: i === 0 ? 'rgba(61,111,255,0.07)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${i === 0 ? 'rgba(61,111,255,0.2)' : 'var(--border-default)'}`,
                   }}
                 >
                   <div style={{
                     minWidth: '40px', height: '40px', borderRadius: '6px',
-                    background: i === 0 ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.05)',
+                    background: i === 0 ? 'rgba(61,111,255,0.15)' : 'rgba(255,255,255,0.05)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <Building2 size={16} style={{ color: i === 0 ? 'var(--imi-gold-500)' : 'var(--text-secondary)' }} />
+                    <Building2 size={16} style={{ color: i === 0 ? 'var(--accent-400)' : 'var(--text-secondary)' }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>

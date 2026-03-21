@@ -63,7 +63,7 @@ export default function Hero({ dict }: HeroProps) {
   }
 
   return (
-    <section className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--imi-navy-800)' }}>
+    <section className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
       {/* Background image */}
       <div className="absolute inset-0">
         <div
@@ -71,7 +71,7 @@ export default function Hero({ dict }: HeroProps) {
           style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
         {/* Dark overlay gradient - stronger on the left for text readibility */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--imi-navy-800) 0%, rgba(16,24,48,0.8) 50%, transparent 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg-base) 0%, rgba(16,24,48,0.8) 50%, transparent 100%)' }} />
       </div>
 
       {/* Gold glow orb */}
@@ -181,7 +181,7 @@ export default function Hero({ dict }: HeroProps) {
                   className="group flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all duration-200"
                   style={{
                     borderRadius: 6,
-                    background: 'var(--imi-gold-500)',
+                    background: 'var(--accent-400)',
                     border: '1px solid transparent',
                     color: '#0A1017',
                   }}

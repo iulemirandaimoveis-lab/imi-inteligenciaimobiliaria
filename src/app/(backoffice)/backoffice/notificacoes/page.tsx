@@ -24,9 +24,9 @@ const TYPE_ICONS: Record<string, any> = {
     update: Rocket,
 }
 const TYPE_COLORS: Record<string, string> = {
-    lead: 'var(--info)', imovel: 'var(--success)', financeiro: 'var(--imi-gold-500)', contrato: 'var(--text-secondary)',
+    lead: 'var(--info)', imovel: 'var(--success)', financeiro: 'var(--accent-400)', contrato: 'var(--text-secondary)',
     alerta: 'var(--error)', info: 'var(--info)', sucesso: 'var(--success)',
-    system: 'var(--imi-gold-500)', development: 'var(--success)', evaluation: 'var(--warning)', comment: 'var(--text-secondary)',
+    system: 'var(--accent-400)', development: 'var(--success)', evaluation: 'var(--warning)', comment: 'var(--text-secondary)',
     update: 'var(--success)',
 }
 const timeAgo = (d: string) => {

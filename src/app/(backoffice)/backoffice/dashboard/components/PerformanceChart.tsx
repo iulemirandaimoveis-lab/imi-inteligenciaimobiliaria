@@ -29,7 +29,7 @@ export default function PerformanceChart({ chartData }: PerformanceChartProps) {
             <div className="flex items-start justify-between gap-3 mb-4">
                 <div>
                     <div className="flex items-center gap-2">
-                        <Activity size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                        <Activity size={13} style={{ color: 'var(--accent-400)' }} />
                         <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             Performance
                         </span>
@@ -55,7 +55,7 @@ export default function PerformanceChart({ chartData }: PerformanceChartProps) {
                             className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
                             style={{
                                 background: period === opt.value ? 'rgba(59,130,246,0.18)' : 'transparent',
-                                color: period === opt.value ? 'var(--imi-gold-500)' : 'var(--text-muted)',
+                                color: period === opt.value ? 'var(--accent-400)' : 'var(--text-muted)',
                             }}
                         >
                             {opt.label}

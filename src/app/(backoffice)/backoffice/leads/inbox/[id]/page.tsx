@@ -542,7 +542,7 @@ export default function LeadInboxDetailPage() {
                                         borderRadius: isBot ? '4px 16px 16px 16px' : '16px 4px 16px 16px',
                                         background: isBot
                                             ? 'rgba(255,255,255,0.05)'
-                                            : 'var(--imi-gold-500)',
+                                            : 'var(--accent-400)',
                                     }}>
                                         <p style={{
                                             fontSize: 13, lineHeight: 1.6,

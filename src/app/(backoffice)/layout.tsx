@@ -17,8 +17,8 @@ export default async function BackofficeLayout({
     children: React.ReactNode
 }) {
     const supabase = await createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) redirect('/login')
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) redirect('/login')
 
     return (
         <div
@@ -59,7 +59,7 @@ export default async function BackofficeLayout({
                     duration: 4000,
                     style: {
                         background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(184,148,58,0.20)',
+                        border: '1px solid rgba(61,111,255,0.20)',
                         color: 'var(--text-primary)',
                         fontFamily: 'var(--font-sans)',
                         fontSize: '13px',

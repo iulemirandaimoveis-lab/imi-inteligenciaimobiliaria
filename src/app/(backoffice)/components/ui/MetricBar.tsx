@@ -16,7 +16,7 @@ interface MetricBarProps {
 }
 
 export function MetricBar({ label, value, valueLabel, color, className = '' }: MetricBarProps) {
-  const barColor = color ?? 'var(--imi-gold-500)'
+  const barColor = color ?? 'var(--accent-400)'
   const clamped = Math.max(0, Math.min(100, value))
 
   return (

@@ -293,7 +293,7 @@ export function YieldCalculator({
         >
           Calculadora de Yield
         </span>
-        <Calculator size={16} style={{ color: 'var(--imi-gold-500)' }} />
+        <Calculator size={16} style={{ color: 'var(--accent-400)' }} />
       </div>
 
       {/* Inputs */}
@@ -329,8 +329,8 @@ export function YieldCalculator({
         style={{
           width: '100%',
           height: 40,
-          background: 'var(--imi-gold-500)',
-          color: 'var(--imi-navy-900)',
+          background: 'var(--accent-400)',
+          color: 'var(--bg-void)',
           border: 'none',
           borderRadius: 'var(--r-md, 4px)',
           fontFamily: 'var(--font-mono)',

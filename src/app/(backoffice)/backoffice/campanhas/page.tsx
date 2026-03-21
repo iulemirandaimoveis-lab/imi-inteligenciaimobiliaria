@@ -19,8 +19,6 @@ import { MetricBar } from '@/app/(backoffice)/components/ui/MetricBar'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { T } from '@/app/(backoffice)/lib/theme'
 
-export const dynamic = 'force-dynamic'
-
 export interface Campaign {
   id: string
   name: string
@@ -126,7 +124,7 @@ function CampaignCard({ c, index, onClick }: { c: Campaign; index: number; onCli
   const budgetPct = c.budget ? Math.min(100, Math.round((c.spent / c.budget) * 100)) : 0
   const convPct = c.leads ? Math.min(100, Math.round((c.conversions / c.leads) * 100)) : 0
   const statusCfg = STATUS_MAP[c.status] ?? STATUS_MAP.draft
-  const budgetColor = budgetPct >= 90 ? 'var(--error)' : budgetPct >= 70 ? 'var(--warning)' : 'var(--imi-gold-500)'
+  const budgetColor = budgetPct >= 90 ? 'var(--error)' : budgetPct >= 70 ? 'var(--warning)' : 'var(--accent-400)'
 
   return (
     <motion.div

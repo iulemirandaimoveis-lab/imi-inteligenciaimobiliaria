@@ -11,7 +11,9 @@ export async function GET() {
             .neq('status', 'inactive')
             .order('name', { ascending: true })
         if (error) throw error
-        return NextResponse.json({ data: data || [] })
+        return NextResponse.json({ data: data || [] }, {
+            headers: { 'Cache-Control': 'private, s-maxage=60, stale-while-revalidate=300' },
+        })
     } catch (err) {
         return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }

@@ -25,10 +25,10 @@ function SearchBar() {
                 borderRadius: 'var(--r-xl)',
                 background: 'var(--bg-surface)',
                 border: `1px solid ${focused ? 'var(--border-focus)' : 'var(--border-default)'}`,
-                boxShadow: focused ? '0 0 0 3px rgba(184,148,58,0.12)' : 'none',
+                boxShadow: focused ? '0 0 0 3px rgba(61,111,255,0.12)' : 'none',
             }}
         >
-            <Search size={14} style={{ color: focused ? 'var(--imi-gold-500)' : 'var(--text-tertiary)' }} className="flex-shrink-0 transition-colors" />
+            <Search size={14} style={{ color: focused ? 'var(--accent-400)' : 'var(--text-tertiary)' }} className="flex-shrink-0 transition-colors" />
             <span className="text-sm flex-1 text-left" style={{ color: 'var(--text-tertiary)' }}>
                 Buscar...
             </span>
@@ -101,7 +101,7 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
             />
         ) : (
             <div className="rounded-full font-bold text-white flex items-center justify-center flex-shrink-0"
-                style={{ width: px, height: px, minWidth: px, minHeight: px, aspectRatio: '1/1', background: 'var(--imi-gold-500)', fontSize: size === 'lg' ? 14 : 10 }}>
+                style={{ width: px, height: px, minWidth: px, minHeight: px, aspectRatio: '1/1', background: 'var(--accent-400)', fontSize: size === 'lg' ? 14 : 10 }}>
                 IM
             </div>
         )
@@ -170,7 +170,7 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                                     </button>
                                     <div className="min-w-0">
                                         <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>Iule Miranda</p>
-                                        <p className="text-[10px] font-semibold mt-0.5" style={{ color: 'var(--imi-gold-500)' }}>CRECI 17933 · Admin</p>
+                                        <p className="text-[10px] font-semibold mt-0.5" style={{ color: 'var(--accent-400)' }}>CRECI 17933 · Admin</p>
                                         <button
                                             onClick={() => fileInputRef.current?.click()}
                                             disabled={uploading}

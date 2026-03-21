@@ -106,7 +106,7 @@ export function DataTable<T extends Record<string, unknown>>({
       )
     }
     return (
-      <span style={{ color: 'var(--imi-gold-500)', marginLeft: 4, fontSize: 11 }}>
+      <span style={{ color: 'var(--accent-400)', marginLeft: 4, fontSize: 11 }}>
         {sortDir === 'asc' ? '▲' : '▼'}
       </span>
     )

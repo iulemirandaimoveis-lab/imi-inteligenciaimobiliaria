@@ -22,8 +22,8 @@ interface KPICardProps {
 }
 
 const ACCENT_CONFIG: Record<string, { border: string; iconBg: string; iconColor: string }> = {
-  gold:    { border: 'var(--imi-gold-500)',  iconBg: 'rgba(184,148,58,0.10)',  iconColor: 'var(--imi-gold-500)' },
-  navy:    { border: 'var(--imi-navy-700)',  iconBg: 'rgba(37,53,101,0.12)',   iconColor: 'var(--imi-navy-400)' },
+  gold:    { border: 'var(--accent-400)',  iconBg: 'rgba(61,111,255,0.10)',  iconColor: 'var(--accent-400)' },
+  navy:    { border: 'var(--bg-elevated, #162040)',  iconBg: 'rgba(37,53,101,0.12)',   iconColor: 'var(--text-secondary)' },
   success: { border: 'var(--success)',       iconBg: 'var(--success-bg)',       iconColor: 'var(--success)' },
   warning: { border: 'var(--warning)',       iconBg: 'var(--warning-bg)',       iconColor: 'var(--warning)' },
   error:   { border: 'var(--error)',         iconBg: 'var(--error-bg)',         iconColor: 'var(--error)' },
@@ -33,7 +33,7 @@ const ACCENT_CONFIG: Record<string, { border: string; iconBg: string; iconColor:
   hot:     { border: 'var(--error)',         iconBg: 'var(--error-bg)',         iconColor: 'var(--error)' },
   warm:    { border: 'var(--warning)',       iconBg: 'var(--warning-bg)',       iconColor: 'var(--warning)' },
   cold:    { border: 'var(--info)',          iconBg: 'var(--info-bg)',          iconColor: 'var(--info)' },
-  ai:      { border: 'var(--imi-gold-500)',  iconBg: 'rgba(184,148,58,0.10)',  iconColor: 'var(--imi-gold-500)' },
+  ai:      { border: 'var(--accent-400)',  iconBg: 'rgba(61,111,255,0.10)',  iconColor: 'var(--accent-400)' },
   green:   { border: 'var(--success)',       iconBg: 'var(--success-bg)',       iconColor: 'var(--success)' },
 }
 

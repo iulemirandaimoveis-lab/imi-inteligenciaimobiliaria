@@ -166,7 +166,7 @@ export default function ContextualTooltip({
                         width: pos.spotlightRect.width + 8,
                         height: pos.spotlightRect.height + 8,
                         boxShadow: '0 0 0 9999px rgba(0,0,0,0.45), 0 0 20px rgba(59,130,246,0.3)',
-                        border: '2px solid var(--imi-gold-500)',
+                        border: '2px solid var(--accent-400)',
                     }}
                 />
             )}
@@ -199,7 +199,7 @@ export default function ContextualTooltip({
                         {/* Header */}
                         <div className="flex items-center justify-between px-4 pt-3 pb-1">
                             <div className="flex items-center gap-1.5">
-                                <Lightbulb size={11} style={{ color: 'var(--imi-gold-500)' }} />
+                                <Lightbulb size={11} style={{ color: 'var(--accent-400)' }} />
                                 <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>
                                     Dica {currentIndex + 1}/{totalTips}
                                 </span>
@@ -235,7 +235,7 @@ export default function ContextualTooltip({
                                         style={{
                                             width: i === currentIndex ? 14 : 5,
                                             height: 5,
-                                            background: i <= currentIndex ? 'var(--imi-gold-500)' : 'var(--border-default)',
+                                            background: i <= currentIndex ? 'var(--accent-400)' : 'var(--border-default)',
                                             opacity: i <= currentIndex ? 1 : 0.4,
                                         }}
                                     />
@@ -257,7 +257,7 @@ export default function ContextualTooltip({
                                 <button
                                     onClick={onNext}
                                     className="h-7 px-3 rounded-lg text-[11px] font-bold text-white flex items-center gap-1 transition-all hover:brightness-110"
-                                    style={{ background: 'var(--imi-gold-500)' }}
+                                    style={{ background: 'var(--accent-400)' }}
                                 >
                                     {isLast ? 'Entendi!' : 'Próximo'}
                                     {!isLast && <ChevronRight size={12} />}

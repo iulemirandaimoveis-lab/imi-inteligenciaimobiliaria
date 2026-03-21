@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { avaliacaoSchema, avaliacaoUpdateSchema } from '@/lib/schemas'
+import { createNotification } from '@/lib/notifications'
 
 export async function GET(request: NextRequest) {
     const supabase = await createClient()
@@ -116,6 +117,16 @@ export async function POST(request: NextRequest) {
         .single()
 
     if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+
+    // Notification — fire-and-forget
+    createNotification({
+        userId: user.id,
+        type: 'avaliacao_nova',
+        title: 'Nova Avaliação',
+        message: `Avaliação para ${body.cliente_nome || body.clienteNome || 'cliente'} criada`,
+        data: { avaliacao_id: data.id },
+    }).catch(() => {})
+
     return NextResponse.json({ data }, { status: 201 })
 }
 

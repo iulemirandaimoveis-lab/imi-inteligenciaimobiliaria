@@ -59,7 +59,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
             <div style={{
                 position: 'fixed', top: 56, left: 0, right: 0, zIndex: 40,
                 background: 'var(--bg-base)',
-                borderBottom: '1px solid rgba(184,148,58,0.1)',
+                borderBottom: '1px solid rgba(61,111,255,0.1)',
                 display: 'flex', gap: 8,
                 overflowX: 'auto', scrollbarWidth: 'none',
                 padding: '10px 16px',
@@ -75,8 +75,8 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                 height: 32, minWidth: 48,
                                 padding: '0 14px',
                                 borderRadius: 6,
-                                background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
-                                border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
+                                background: isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.08)',
+                                border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.2)'}`,
                                 color: isActive ? T.text : 'var(--text-tertiary)',
                                 fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 12, fontWeight: isActive ? 700 : 500,
@@ -98,7 +98,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                 {development && (
                     <div style={{
                         background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(184,148,58,0.12)',
+                        border: '1px solid rgba(61,111,255,0.12)',
                         borderRadius: 6,
                         padding: '12px 14px',
                         marginBottom: 12,
@@ -139,7 +139,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                 key={section.key}
                                 style={{
                                     background: 'var(--bg-elevated)',
-                                    border: '1px solid rgba(184,148,58,0.12)',
+                                    border: '1px solid rgba(61,111,255,0.12)',
                                     borderRadius: 6,
                                     padding: '16px',
                                 }}
@@ -176,7 +176,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                         <span style={{
                                             fontFamily: 'var(--font-dm-mono, monospace)',
                                             fontSize: 16, fontWeight: 700,
-                                            color: 'var(--imi-gold-500)',
+                                            color: 'var(--accent-400)',
                                         }}>
                                             {section.retention}%
                                         </span>

@@ -136,7 +136,7 @@ export default function LogsPage() {
     success: { label: 'Sucesso', color: 'var(--success)', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
     error: { label: 'Erro', color: 'var(--error)', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
     warning: { label: 'Aviso', color: 'var(--warning)', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
-    info: { label: 'Info', color: 'var(--imi-gold-500)', bg: 'rgba(72,101,129,0.12)', icon: Info },
+    info: { label: 'Info', color: 'var(--accent-400)', bg: 'rgba(72,101,129,0.12)', icon: Info },
   }
 
   const inputBase: React.CSSProperties = {

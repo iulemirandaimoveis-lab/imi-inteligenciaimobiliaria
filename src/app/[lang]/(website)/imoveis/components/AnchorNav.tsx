@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const GOLD = '#C8A44A';
+const GOLD = '#3D6FFF';
 
 interface AnchorNavProps {
     sections: { id: string; label: string }[];

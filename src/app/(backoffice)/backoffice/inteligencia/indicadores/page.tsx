@@ -40,7 +40,7 @@ const CATEGORY_META: Record<string, { label: string; color: string; bg: string; 
     performance: { label: 'Performance',  color: 'var(--info)', bg: 'rgba(59,130,246,0.10)',  Icon: BarChart3 },
     liquidez:    { label: 'Liquidez',     color: 'var(--success)', bg: 'rgba(16,185,129,0.10)',  Icon: Gauge },
     preco:       { label: 'Preço',        color: 'var(--warning)', bg: 'rgba(245,158,11,0.10)',  Icon: DollarSign },
-    oferta:      { label: 'Oferta',       color: 'var(--imi-gold-500)', bg: 'rgba(139,92,246,0.10)',  Icon: Package },
+    oferta:      { label: 'Oferta',       color: 'var(--accent-400)', bg: 'rgba(139,92,246,0.10)',  Icon: Package },
     macro:       { label: 'Macro',        color: '#EC4899', bg: 'rgba(236,72,153,0.10)',  Icon: TrendingUp },
 }
 
@@ -59,7 +59,7 @@ const inputStyle = {
     border: '1px solid var(--border-default)',
     color: 'var(--text-primary)',
 }
-const inputClass = "h-9 px-3 rounded-[6px] text-sm outline-none transition-all w-full focus:ring-1 focus:ring-[var(--imi-gold-500)]"
+const inputClass = "h-9 px-3 rounded-[6px] text-sm outline-none transition-all w-full focus:ring-1 focus:ring-[var(--accent-400)]"
 
 // ── Indicator Card — view mode ───────────────────────────────────
 function IndicatorCard({
@@ -169,7 +169,7 @@ function IndicatorEditCard({
     return (
         <div
             className="rounded-lg p-4 flex flex-col gap-3"
-            style={{ background: 'var(--bg-active)', border: `1px solid rgba(184,148,58,0.25)` }}
+            style={{ background: 'var(--bg-active)', border: `1px solid rgba(61,111,255,0.25)` }}
         >
             <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold" style={{ color: T.text }}>
@@ -342,7 +342,7 @@ export default function IndicadoresPage() {
                     onClick={() => setCategoryFilter('all')}
                     className="flex-shrink-0 h-8 px-3 rounded-[6px] text-xs font-semibold transition-all"
                     style={{
-                        background: categoryFilter === 'all' ? 'var(--imi-gold-500)' : T.elevated,
+                        background: categoryFilter === 'all' ? 'var(--accent-400)' : T.elevated,
                         color: categoryFilter === 'all' ? 'white' : T.textMuted,
                         border: `1px solid ${categoryFilter === 'all' ? 'transparent' : T.border}`,
                     }}

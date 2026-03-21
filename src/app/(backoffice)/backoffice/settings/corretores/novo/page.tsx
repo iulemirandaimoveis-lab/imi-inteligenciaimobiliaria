@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation'
 import { createBroker, BrokerFormData } from '@/hooks/use-brokers'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-export const dynamic = 'force-dynamic'
 const schema = z.object({
     name: z.string().min(3, 'Nome muito curto'),
     email: z.string().email('Email inválido'),

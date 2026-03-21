@@ -57,7 +57,7 @@ export default function IndicesPage() {
     {
       title: 'Taxas de Juros',
       keys: ['selic', 'cdi', 'ipca'],
-      color: '#C8A44A',
+      color: '#3D6FFF',
     },
     {
       title: 'Cambio',
@@ -117,7 +117,7 @@ export default function IndicesPage() {
           <button
             onClick={fetchIndices}
             className="mt-4 px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-            style={{ background: '#C8A44A' }}
+            style={{ background: '#3D6FFF' }}
           >
             Tentar Novamente
           </button>

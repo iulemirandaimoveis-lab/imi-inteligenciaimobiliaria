@@ -21,20 +21,20 @@ interface AIInsightCardProps {
 
 const VARIANT_STYLES = {
   gold: {
-    border: 'rgba(184,148,58,0.30)',
-    bg: 'rgba(184,148,58,0.06)',
-    iconColor: 'var(--imi-gold-500)',
-    labelColor: 'var(--imi-gold-500)',
-    btnBg: 'var(--imi-gold-500)',
-    btnShadow: '0 2px 10px rgba(184,148,58,0.35)',
+    border: 'rgba(61,111,255,0.30)',
+    bg: 'rgba(61,111,255,0.06)',
+    iconColor: 'var(--accent-400)',
+    labelColor: 'var(--accent-400)',
+    btnBg: 'var(--accent-400)',
+    btnShadow: '0 2px 10px rgba(61,111,255,0.35)',
     btnColor: '#FFFFFF',
   },
   blue: {
     border: 'rgba(61,81,138,0.30)',
     bg: 'rgba(61,81,138,0.08)',
-    iconColor: 'var(--imi-navy-300)',
-    labelColor: 'var(--imi-navy-300)',
-    btnBg: 'var(--imi-navy-400)',
+    iconColor: 'var(--text-secondary)',
+    labelColor: 'var(--text-secondary)',
+    btnBg: 'var(--bg-elevated, #162040)',
     btnShadow: '0 2px 10px rgba(61,81,138,0.35)',
     btnColor: '#FFFFFF',
   },
@@ -67,7 +67,7 @@ export function AIInsightCard({
           ? 'linear-gradient(135deg, var(--surface-raised, var(--bg-surface)) 0%, rgba(200,164,74,0.06) 100%)'
           : 'var(--bg-surface)',
         border: `1px solid ${v.border}`,
-        borderLeft: variant === 'gold' ? '3px solid var(--color-gold, var(--imi-gold-500))' : undefined,
+        borderLeft: variant === 'gold' ? '3px solid var(--color-gold, var(--accent-400))' : undefined,
         borderRadius: 'var(--r-xl, 4px)',
         padding: 'var(--space-5, 20px)',
         position: 'relative',

@@ -1,12 +1,11 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Building2, TrendingUp, BarChart2, Plus, Star, Eye, Edit } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
+import { enrichProperty } from '@/features/properties/services/score.service'
+import { getScoreStyle } from '@/hooks/useScore'
 import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
@@ -21,10 +20,10 @@ const DT = {
   bg:       'var(--bg-base)',
   surface:  'var(--bg-surface)',
   elevated: 'var(--bg-elevated)',
-  border:   'rgba(184,148,58,0.15)',
-  borderHi: 'rgba(184,148,58,0.35)',
-  gold:     'var(--imi-gold-500)',
-  goldBg:   'rgba(184,148,58,0.08)',
+  border:   'rgba(61,111,255,0.15)',
+  borderHi: 'rgba(61,111,255,0.35)',
+  gold:     'var(--accent-400)',
+  goldBg:   'rgba(61,111,255,0.08)',
   text:     'var(--text-primary)',
   textSub:  'var(--text-secondary)',
   textDim:  'var(--text-tertiary)',
@@ -36,7 +35,7 @@ const DT = {
 const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
   disponivel:    { label: 'Disponível',  color: 'var(--success)', bg: 'rgba(93,184,135,0.12)' },
   publicado:     { label: 'Publicado',   color: 'var(--success)', bg: 'rgba(93,184,135,0.12)' },
-  lancamento:    { label: 'Lançamento',  color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)'  },
+  lancamento:    { label: 'Lançamento',  color: 'var(--accent-400)', bg: 'rgba(61,111,255,0.12)'  },
   em_construcao: { label: 'Construção',  color: 'var(--warning)', bg: 'rgba(212,145,58,0.12)'  },
   reservado:     { label: 'Reservado',   color: '#A78BFA', bg: 'rgba(167,139,250,0.12)' },
   vendido:       { label: 'Vendido',     color: 'var(--text-secondary)', bg: 'rgba(159,170,184,0.10)' },
@@ -148,7 +147,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
     return acc
   }, {})
 
-  const typeColors = ['var(--imi-gold-500)', 'var(--info)', 'var(--success)', '#A78BFA', 'var(--warning)', 'var(--error)', 'var(--text-secondary)', 'var(--warning)']
+  const typeColors = ['var(--accent-400)', 'var(--info)', 'var(--success)', '#A78BFA', 'var(--warning)', 'var(--error)', 'var(--text-secondary)', 'var(--warning)']
   const typeData = Object.entries(byType).map(([k, v], i) => ({
     label: TYPE_LABELS[k] ?? k,
     value: v,
@@ -177,10 +176,10 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
   return (
     <div style={{ minHeight: '100vh', background: DT.bg, color: DT.text, fontFamily: 'var(--font-outfit, sans-serif)' }}>
       <style suppressHydrationWarning>{`
-        .desk-row:hover { background: rgba(184,148,58,0.04) !important; }
-        .desk-action-btn:hover { background: rgba(184,148,58,0.14) !important; color: var(--imi-gold-500) !important; }
+        .desk-row:hover { background: rgba(61,111,255,0.04) !important; }
+        .desk-action-btn:hover { background: rgba(61,111,255,0.14) !important; color: var(--accent-400) !important; }
         .desk-new-btn:hover { background: #b8943e !important; }
-        .desk-kpi:hover { border-color: rgba(184,148,58,0.35) !important; transform: translateY(-1px); }
+        .desk-kpi:hover { border-color: rgba(61,111,255,0.35) !important; transform: translateY(-1px); }
         .desk-kpi { transition: border-color 0.2s, transform 0.2s; }
       `}</style>
 
@@ -328,7 +327,8 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
               </Link>
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="overflow-x-auto">
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 700 }}>
               <thead>
                 <tr style={{ borderBottom: `1px solid ${DT.border}` }}>
                   {['Imóvel', 'Tipo', 'Score', 'Preço', 'Área', 'Status', 'Bairro', ''].map((h, i) => (
@@ -344,7 +344,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
               <tbody>
                 {properties.map((p) => {
                   const score = p.imi_score ?? 0
-                  const scoreColor = getScoreColor(score)
+                  const scoreColor = getScoreStyle(score).color
                   const st = STATUS_CFG[p.status] ?? { label: p.status, color: DT.textDim, bg: 'rgba(92,107,125,0.12)' }
                   const typeLbl = TYPE_LABELS[p.type] ?? p.type
                   return (
@@ -414,7 +414,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                           <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none' }}>
                             <button className="desk-action-btn" style={{
                               display: 'flex', alignItems: 'center', gap: 5,
-                              background: 'rgba(184,148,58,0.06)',
+                              background: 'rgba(61,111,255,0.06)',
                               border: `1px solid ${DT.border}`,
                               borderRadius: 6, padding: '5px 10px',
                               cursor: 'pointer', color: DT.textSub,
@@ -429,7 +429,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                           <Link href={`/backoffice/imoveis/${p.id}/editar`} style={{ textDecoration: 'none' }}>
                             <button className="desk-action-btn" style={{
                               display: 'flex', alignItems: 'center', gap: 5,
-                              background: 'rgba(184,148,58,0.06)',
+                              background: 'rgba(61,111,255,0.06)',
                               border: `1px solid ${DT.border}`,
                               borderRadius: 6, padding: '5px 10px',
                               cursor: 'pointer', color: DT.textSub,
@@ -448,6 +448,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                 })}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>

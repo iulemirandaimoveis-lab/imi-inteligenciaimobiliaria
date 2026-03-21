@@ -195,18 +195,18 @@ describe('mapDevToProperty', () => {
       expect(mapDevToProperty(raw).name).toBe('Via Name')
     })
 
-    it('uses area_min when area_from is not present', () => {
-      const raw = { id: 'col-3', area_min: 80 }
+    it('uses area_from for area', () => {
+      const raw = { id: 'col-3', area_from: 80 }
       expect(mapDevToProperty(raw).area).toBe(80)
     })
 
-    it('uses price_min when price_from is not present', () => {
-      const raw = { id: 'col-4', price_min: 300000 }
+    it('uses price_from for price', () => {
+      const raw = { id: 'col-4', price_from: 300000 }
       expect(mapDevToProperty(raw).price).toBe(300000)
     })
 
-    it('uses bedrooms_from when bedrooms is not present', () => {
-      const raw = { id: 'col-5', bedrooms_from: 2 }
+    it('uses bedrooms for bedrooms', () => {
+      const raw = { id: 'col-5', bedrooms: 2 }
       expect(mapDevToProperty(raw).bedrooms).toBe(2)
     })
 

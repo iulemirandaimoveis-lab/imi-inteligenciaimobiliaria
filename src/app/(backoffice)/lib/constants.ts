@@ -49,7 +49,7 @@ export const STATUS_CONFIG = {
   vencido:    { label: 'Vencido',    color: 'var(--error)',     bg: 'var(--error-bg)',     dot: '#f87171' },
   em_revisao: { label: 'Em Revisão', color: 'var(--info)',      bg: 'var(--info-bg)',      dot: '#60a5fa' },
   gerado:     { label: 'Gerado',     color: '#7b9ec4',            bg: 'rgba(123,158,196,0.12)', dot: '#7b9ec4' },
-  aguardando_assinatura: { label: 'Aguard. Assinatura', color: 'var(--imi-gold-500)', bg: 'var(--bg-active)', dot: '#3b82f6' },
+  aguardando_assinatura: { label: 'Aguard. Assinatura', color: 'var(--accent-400)', bg: 'var(--bg-active)', dot: '#3b82f6' },
   assinado_parcial:      { label: 'Parcial. Assinado',  color: '#e8a87c',          bg: 'rgba(232,168,124,0.12)', dot: '#e8a87c' },
 
   // ── Financeiro ─────────────────────────────────────────
@@ -76,7 +76,7 @@ export const STATUS_CONFIG = {
   em_andamento:{ label: 'Em Andamento', color: 'var(--info)',      bg: 'var(--info-bg)',      dot: '#60a5fa' },
   concluido:  { label: 'Concluído',  color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#34d399' },
   arquivado:  { label: 'Arquivado',  color: 'var(--text-secondary)',bg: 'var(--bg-hover)',        dot: '#9ca3af' },
-  estruturacao: { label: 'Estruturação', color: 'var(--imi-gold-500)',    bg: 'var(--bg-active)',    dot: '#3b82f6' },
+  estruturacao: { label: 'Estruturação', color: 'var(--accent-400)',    bg: 'var(--bg-active)',    dot: '#3b82f6' },
   obras:        { label: 'Em Obras',     color: 'var(--warning)',   bg: 'var(--warning-bg)',   dot: '#f59e0b' },
   pronto:       { label: 'Pronto',       color: 'var(--success)',   bg: 'var(--success-bg)',   dot: '#22c55e' },
 

@@ -33,7 +33,7 @@ function calcScore(kr: KeyResult) {
 }
 
 function scoreStyle(score: number) {
-  if (score >= 0.7) return { bg: 'bg-[#C8A44A]/20', text: 'text-[#C8A44A]', label: 'Ouro', border: 'border-[#C8A44A]/30' }
+  if (score >= 0.7) return { bg: 'bg-[#3D6FFF]/20', text: 'text-[#3D6FFF]', label: 'Ouro', border: 'border-[#3D6FFF]/30' }
   if (score >= 0.6) return { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Verde', border: 'border-emerald-500/30' }
   if (score >= 0.3) return { bg: 'bg-amber-500/20', text: 'text-amber-400', label: 'Amarelo', border: 'border-amber-500/30' }
   return { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Vermelho', border: 'border-red-500/30' }
@@ -101,7 +101,7 @@ export default function RetrospectivaPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-[#C8A44A] animate-spin" />
+        <Loader2 className="w-6 h-6 text-[#3D6FFF] animate-spin" />
       </div>
     )
   }
@@ -125,7 +125,7 @@ export default function RetrospectivaPage() {
           <select
             value={quarter}
             onChange={e => setQuarter(e.target.value)}
-            className="px-3 py-1.5 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-[#C8A44A]/50"
+            className="px-3 py-1.5 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-[#3D6FFF]/50"
           >
             {QUARTERS.map(q => (
               <option key={q} value={q} className="bg-[#0B1928]">{q}</option>
@@ -153,7 +153,7 @@ export default function RetrospectivaPage() {
             className="h-full rounded-full transition-all duration-700"
             style={{
               width: `${companyAvg * 100}%`,
-              background: companyAvg >= 0.7 ? '#C8A44A' : companyAvg >= 0.6 ? '#34d399' : companyAvg >= 0.3 ? '#fbbf24' : '#f87171',
+              background: companyAvg >= 0.7 ? '#3D6FFF' : companyAvg >= 0.6 ? '#34d399' : companyAvg >= 0.3 ? '#fbbf24' : '#f87171',
             }}
           />
         </div>
@@ -199,7 +199,7 @@ export default function RetrospectivaPage() {
                       className="h-full rounded-full transition-all duration-700"
                       style={{
                         width: `${obj.score * 100}%`,
-                        background: obj.score >= 0.7 ? '#C8A44A' : obj.score >= 0.6 ? '#34d399' : obj.score >= 0.3 ? '#fbbf24' : '#f87171',
+                        background: obj.score >= 0.7 ? '#3D6FFF' : obj.score >= 0.6 ? '#34d399' : obj.score >= 0.3 ? '#fbbf24' : '#f87171',
                       }}
                     />
                   </div>
@@ -223,7 +223,7 @@ export default function RetrospectivaPage() {
             style={{ background: 'rgba(255,255,255,0.03)' }}
           >
             <div className="flex items-center gap-2 mb-3">
-              <BookOpen className="w-4 h-4 text-[#C8A44A]" />
+              <BookOpen className="w-4 h-4 text-[#3D6FFF]" />
               <h3 className="text-sm font-semibold text-white">{section.title}</h3>
             </div>
             <textarea
@@ -231,7 +231,7 @@ export default function RetrospectivaPage() {
               onChange={e => saveText(section.field, e.target.value)}
               placeholder={section.placeholder}
               rows={4}
-              className="w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.03] border border-white/[0.06] text-white/80 placeholder:text-white/20 focus:outline-none focus:border-[#C8A44A]/30 resize-none transition-colors"
+              className="w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.03] border border-white/[0.06] text-white/80 placeholder:text-white/20 focus:outline-none focus:border-[#3D6FFF]/30 resize-none transition-colors"
             />
             <p className="text-[10px] text-white/20 mt-1">Salvo automaticamente no navegador</p>
           </div>

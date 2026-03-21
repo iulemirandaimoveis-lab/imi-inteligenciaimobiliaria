@@ -39,7 +39,7 @@ export default function InvestDashboard() {
           </h1>
           <p className="text-sm text-white/50 mt-1">Painel de Inteligência de Investimentos</p>
         </div>
-        <button className="px-4 py-2 rounded-[6px] text-sm font-medium text-navy-900" style={{ background: 'var(--imi-gold-500, #C8A44A)' }}>
+        <button className="px-4 py-2 rounded-[6px] text-sm font-medium text-navy-900" style={{ background: 'var(--accent-400, #3D6FFF)' }}>
           Nova Simulação
         </button>
       </div>

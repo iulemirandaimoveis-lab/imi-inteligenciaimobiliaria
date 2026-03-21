@@ -1,32 +1,32 @@
 {
   "version": "1.0",
-  "lastUpdated": "2026-03-19T10:20:50.187Z",
+  "lastUpdated": "2026-03-19T19:39:28.985Z",
   "retentionDays": 30,
   "layers": {
     "layer1": {
       "passRate": 0.8571428571428571,
       "avgTimeMs": null,
-      "totalRuns": 28,
-      "lastRun": "2026-03-19T10:20:50.185Z"
+      "totalRuns": 42,
+      "lastRun": "2026-03-19T19:39:28.983Z"
     },
     "layer2": {
       "passRate": 1,
       "avgTimeMs": 150000,
-      "totalRuns": 12,
-      "lastRun": "2026-03-19T10:20:50.134Z",
+      "totalRuns": 18,
+      "lastRun": "2026-03-19T19:39:28.927Z",
       "autoCatchRate": 0,
       "coderabbit": {
         "active": true,
-        "findingsCount": 20,
+        "findingsCount": 30,
         "severityBreakdown": {
           "critical": 0,
-          "high": 4,
-          "medium": 8,
-          "low": 8
+          "high": 6,
+          "medium": 12,
+          "low": 12
         }
       },
       "quinn": {
-        "findingsCount": 12,
+        "findingsCount": 18,
         "topCategories": [
           "test-coverage",
           "documentation"
@@ -36,8 +36,8 @@
     "layer3": {
       "passRate": 1,
       "avgTimeMs": 600000,
-      "totalRuns": 4,
-      "lastRun": "2026-03-19T10:20:50.142Z"
+      "totalRuns": 6,
+      "lastRun": "2026-03-19T19:39:28.932Z"
     }
   },
   "trends": {
@@ -498,6 +498,234 @@
     },
     {
       "timestamp": "2026-03-19T10:20:50.185Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 2000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.901Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 2500,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.913Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 1500,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.918Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": "not a number",
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.924Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 180000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.929Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 120000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.934Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 150000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr",
+        "prNumber": 42,
+        "branchName": "feature/test"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.940Z",
+      "layer": 3,
+      "passed": true,
+      "durationMs": 600000,
+      "findingsCount": 1,
+      "metadata": {
+        "triggeredBy": "manual"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.945Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 0,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:28.951Z",
+      "layer": 1,
+      "passed": false,
+      "durationMs": 0,
+      "findingsCount": 1,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:29.071Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 0,
+      "findingsCount": 2,
+      "metadata": {
+        "triggeredBy": "hook",
+        "lintErrors": 1,
+        "typeErrors": 1
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:10:29.081Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 2000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.888Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 2500,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.903Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 1500,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.912Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": "not a number",
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.917Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 180000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.922Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 120000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.927Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 150000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr",
+        "prNumber": 42,
+        "branchName": "feature/test"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.932Z",
+      "layer": 3,
+      "passed": true,
+      "durationMs": 600000,
+      "findingsCount": 1,
+      "metadata": {
+        "triggeredBy": "manual"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.938Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 0,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.945Z",
+      "layer": 1,
+      "passed": false,
+      "durationMs": 0,
+      "findingsCount": 1,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.957Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 0,
+      "findingsCount": 2,
+      "metadata": {
+        "triggeredBy": "hook",
+        "lintErrors": 1,
+        "typeErrors": 1
+      }
+    },
+    {
+      "timestamp": "2026-03-19T19:39:28.983Z",
       "layer": 1,
       "passed": true,
       "durationMs": 2000,

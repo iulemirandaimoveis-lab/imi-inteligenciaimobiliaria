@@ -11,7 +11,7 @@ import { TrendingUp, TrendingDown } from 'lucide-react'
 
 export interface ChartLegendItem {
   label: string
-  color: string // CSS variable e.g. 'var(--imi-gold-500)'
+  color: string // CSS variable e.g. 'var(--accent-400)'
   value?: string | number
 }
 

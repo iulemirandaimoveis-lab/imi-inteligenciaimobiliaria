@@ -17,10 +17,9 @@ import { createClient } from '@/lib/supabase/client'
 import { PageIntelHeader, FilterTabs } from '../../components/ui'
 import { T } from '../../lib/theme'
 
-export const dynamic = 'force-dynamic'
 
 const FUNNEL_STAGES = [
-    { key: 'new', label: 'Novos', color: 'var(--imi-gold-500)' },
+    { key: 'new', label: 'Novos', color: 'var(--accent-400)' },
     { key: 'contacted', label: 'Contatados', color: '#5B7A9C' },
     { key: 'visit_scheduled', label: 'Visita Agendada', color: '#6B8FAF' },
     { key: 'proposal', label: 'Proposta', color: '#7BA3C2' },
@@ -93,7 +92,7 @@ const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
     avaliacoes: { label: 'Avaliações', text: 'var(--text-secondary)', bg: 'rgba(168,158,196,0.12)' },
     financeiro: { label: 'Financeiro', text: 'var(--success)', bg: 'rgba(107,184,123,0.12)' },
     crm: { label: 'CRM', text: 'var(--info)', bg: 'rgba(123,158,196,0.12)' },
-    imoveis: { label: 'Imóveis', text: 'var(--imi-gold-500)', bg: 'rgba(72,101,129,0.12)' },
+    imoveis: { label: 'Imóveis', text: 'var(--accent-400)', bg: 'rgba(72,101,129,0.12)' },
     consultorias: { label: 'Consultorias', text: 'var(--warning)', bg: 'rgba(232,168,124,0.12)' },
 }
 
@@ -187,7 +186,7 @@ export default function RelatoriosPage() {
                         onClick={() => setTab(t.key as 'analytics' | 'relatorios')}
                         className="flex items-center gap-2 px-4 h-9 rounded-[6px] text-sm font-medium transition-all"
                         style={{
-                            background: tab === t.key ? 'var(--imi-gold-500)' : 'transparent',
+                            background: tab === t.key ? 'var(--accent-400)' : 'transparent',
                             color: tab === t.key ? 'white' : T.textDim,
                         }}
                     >
@@ -204,7 +203,7 @@ export default function RelatoriosPage() {
                     {/* KPI strip */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {[
-                            { label: 'Total Leads', value: funnel?.reduce((s, f) => s + f.value, 0) || 0, color: 'var(--imi-gold-500)' },
+                            { label: 'Total Leads', value: funnel?.reduce((s, f) => s + f.value, 0) || 0, color: 'var(--accent-400)' },
                             { label: 'Fechados', value: won, color: '#4CAF7D' },
                             { label: 'Taxa Conversão', value: `${conversionRate}%`, color: 'var(--text-secondary)' },
                             { label: 'Empreendimentos', value: byDev?.length || 0, color: 'var(--warning)' },
@@ -253,7 +252,7 @@ export default function RelatoriosPage() {
                                         <XAxis dataKey="semana" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
                                         <YAxis tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
-                                        <Line type="monotone" dataKey="leads" name="Leads" stroke="var(--imi-gold-500)" strokeWidth={2} dot={{ fill: 'var(--imi-gold-500)', r: 3 }} />
+                                        <Line type="monotone" dataKey="leads" name="Leads" stroke="var(--accent-400)" strokeWidth={2} dot={{ fill: 'var(--accent-400)', r: 3 }} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             )}
@@ -273,7 +272,7 @@ export default function RelatoriosPage() {
                                         <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
                                         <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} width={95} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
-                                        <Bar dataKey="leads" name="Leads" fill="var(--imi-gold-500)" radius={[0, 4, 4, 0]} maxBarSize={16} />
+                                        <Bar dataKey="leads" name="Leads" fill="var(--accent-400)" radius={[0, 4, 4, 0]} maxBarSize={16} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             )}
@@ -340,7 +339,7 @@ export default function RelatoriosPage() {
                                         <motion.button whileTap={{ scale: 0.95 }}
                                             onClick={() => handleGerar(r.id)} disabled={loading}
                                             className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-xs font-semibold text-white transition-all"
-                                            style={{ background: loading ? 'var(--bg-elevated)' : 'var(--imi-gold-500)', opacity: loading ? 0.7 : 1 }}>
+                                            style={{ background: loading ? 'var(--bg-elevated)' : 'var(--accent-400)', opacity: loading ? 0.7 : 1 }}>
                                             {loading ? (
                                                 <>
                                                     <motion.span animate={{ rotate: 360 }}

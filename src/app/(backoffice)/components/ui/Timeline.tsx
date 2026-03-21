@@ -47,7 +47,7 @@ interface StatusCfg {
 
 const STATUS_CFG: Record<TimelineStatus, StatusCfg> = {
   done:    { color: 'var(--success)',       bg: 'var(--success-bg)',  border: 'var(--success)',       ring: undefined,                     pulse: false },
-  active:  { color: 'var(--imi-gold-500)',  bg: 'rgba(184,148,58,0.12)', border: 'var(--imi-gold-500)', ring: 'rgba(184,148,58,0.20)',  pulse: true  },
+  active:  { color: 'var(--accent-400)',  bg: 'rgba(61,111,255,0.12)', border: 'var(--accent-400)', ring: 'rgba(61,111,255,0.20)',  pulse: true  },
   pending: { color: 'var(--text-tertiary)', bg: 'var(--bg-muted)',    border: 'var(--border-default)', ring: undefined,                     pulse: false },
   error:   { color: 'var(--error)',         bg: 'var(--error-bg)',    border: 'var(--error)',          ring: undefined,                     pulse: false },
   warning: { color: 'var(--warning)',       bg: 'var(--warning-bg)', border: 'var(--warning)',         ring: undefined,                     pulse: false },

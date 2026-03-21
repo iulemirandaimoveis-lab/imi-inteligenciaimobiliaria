@@ -47,9 +47,9 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
 
     // Construct specs string
     const beds = dbProp.bedrooms ? `${dbProp.bedrooms}` : 'Sob consulta';
-    const area = dbProp.area_min || dbProp.area_from
-        ? `${dbProp.area_min || dbProp.area_from}${(dbProp.area_max || dbProp.area_to) && (dbProp.area_max || dbProp.area_to) !== (dbProp.area_min || dbProp.area_from)
-            ? ' a ' + (dbProp.area_max || dbProp.area_to)
+    const area = dbProp.area_from
+        ? `${dbProp.area_from}${dbProp.area_to && dbProp.area_to !== dbProp.area_from
+            ? ' a ' + dbProp.area_to
             : ''}m²`
         : 'Sob consulta';
 

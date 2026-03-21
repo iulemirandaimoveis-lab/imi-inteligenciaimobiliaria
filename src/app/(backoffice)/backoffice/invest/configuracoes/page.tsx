@@ -62,12 +62,12 @@ export default function ConfiguracoesPage() {
     }
   }
 
-  const inputCls = "w-full px-3 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#C8A44A]/50"
+  const inputCls = "w-full px-3 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#3D6FFF]/50"
   const inputBg = { background: 'rgba(255,255,255,0.05)' }
   const labelCls = "block text-xs text-white/50 mb-1.5"
 
   const toggleCls = (active: boolean) =>
-    `relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${active ? 'bg-[#C8A44A]' : 'bg-white/10'}`
+    `relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${active ? 'bg-[#3D6FFF]' : 'bg-white/10'}`
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -75,7 +75,7 @@ export default function ConfiguracoesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-            <Settings className="w-6 h-6 text-[#C8A44A]" />
+            <Settings className="w-6 h-6 text-[#3D6FFF]" />
             Configuracoes Invest
           </h1>
           <p className="text-sm text-white/50 mt-1">Parametros padrao e integracoes do modulo de investimento</p>
@@ -84,7 +84,7 @@ export default function ConfiguracoesPage() {
           onClick={save}
           disabled={saving}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[#0B1928]"
-          style={{ background: '#C8A44A' }}
+          style={{ background: '#3D6FFF' }}
         >
           <Save className="w-4 h-4" />
           {saving ? 'Salvando...' : saved ? 'Salvo!' : 'Salvar'}
@@ -94,7 +94,7 @@ export default function ConfiguracoesPage() {
       {/* Default Parameters */}
       <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-          <Globe className="w-4 h-4 text-[#C8A44A]" />
+          <Globe className="w-4 h-4 text-[#3D6FFF]" />
           Parametros Padrao
         </h3>
         <div className="grid grid-cols-2 gap-4">
@@ -138,7 +138,7 @@ export default function ConfiguracoesPage() {
       {/* Toggles */}
       <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-          <Zap className="w-4 h-4 text-[#C8A44A]" />
+          <Zap className="w-4 h-4 text-[#3D6FFF]" />
           Funcionalidades
         </h3>
         <div className="space-y-4">
@@ -166,7 +166,7 @@ export default function ConfiguracoesPage() {
       {/* Notifications */}
       <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-          <Bell className="w-4 h-4 text-[#C8A44A]" />
+          <Bell className="w-4 h-4 text-[#3D6FFF]" />
           Notificacoes
         </h3>
         <div className="space-y-4">
@@ -193,7 +193,7 @@ export default function ConfiguracoesPage() {
       {/* Integrations */}
       <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-          <Database className="w-4 h-4 text-[#C8A44A]" />
+          <Database className="w-4 h-4 text-[#3D6FFF]" />
           Integracoes
         </h3>
         <div className="space-y-4">

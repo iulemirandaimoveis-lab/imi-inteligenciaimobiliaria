@@ -10,14 +10,13 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-export const dynamic = 'force-dynamic'
 const STEPS = [
     { id: 1, name: 'Cliente', description: 'Dados pessoais', icon: User },
     { id: 2, name: 'Imóvel', description: 'Informações do registro', icon: Home },
     { id: 3, name: 'Engenharia de Crédito', description: 'Análise de capacidade', icon: Calculator },
     { id: 4, name: 'Dossiê', description: 'Instruções finais', icon: FileText },
 ]
-const inputClass = 'w-full h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--imi-gold-500)] transition-all'
+const inputClass = 'w-full h-11 px-4 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--accent-400)] transition-all'
 const inputStyle = { background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', color: 'var(--text-primary)' }
 const inputErrorStyle = { background: 'var(--bg-elevated)', border: `1px solid ${T.error}`, color: 'var(--text-primary)' }
 function Label({ children }: { children: React.ReactNode }) {
@@ -398,7 +397,7 @@ export default function CreditoNovoPage() {
                                     onChange={handleChange}
                                     rows={6}
                                     placeholder="Insira aqui detalhes sobre a composição de renda, outros proponentes ou particularidades do imóvel..."
-                                    className="w-full px-4 py-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--imi-gold-500)] transition-all resize-none"
+                                    className="w-full px-4 py-3 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-[var(--accent-400)] transition-all resize-none"
                                     style={inputStyle}
                                 />
                             </div>

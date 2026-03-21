@@ -36,7 +36,7 @@ function calcScore(kr: KeyResult) {
 }
 
 function scoreColor(score: number) {
-  if (score >= 0.7) return { bg: 'bg-gold/20', text: 'text-gold', bar: '#C8A44A' }
+  if (score >= 0.7) return { bg: 'bg-gold/20', text: 'text-gold', bar: '#3D6FFF' }
   if (score >= 0.6) return { bg: 'bg-emerald-500/20', text: 'text-emerald-400', bar: '#34d399' }
   if (score >= 0.3) return { bg: 'bg-amber-500/20', text: 'text-amber-400', bar: '#fbbf24' }
   return { bg: 'bg-red-500/20', text: 'text-red-400', bar: '#f87171' }
@@ -107,7 +107,7 @@ export default function OKRsListPage() {
         <Link
           href="/backoffice/metas/okrs/novo"
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-          style={{ background: '#C8A44A' }}
+          style={{ background: '#3D6FFF' }}
         >
           <Plus className="w-4 h-4" />
           Novo OKR
@@ -153,7 +153,7 @@ export default function OKRsListPage() {
           <Link
             href="/backoffice/metas/okrs/novo"
             className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-            style={{ background: '#C8A44A' }}
+            style={{ background: '#3D6FFF' }}
           >
             <Plus className="w-4 h-4" />
             Novo OKR

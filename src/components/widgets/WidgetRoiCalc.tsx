@@ -55,7 +55,7 @@ function DonutChart({ capitalPct, rentalPct, size = 110 }: DonutProps) {
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
             <defs>
                 <linearGradient id="capGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="var(--imi-gold-500,#C8A44A)" />
+                    <stop offset="0%" stopColor="var(--accent-400,#3D6FFF)" />
                     <stop offset="100%" stopColor="rgba(200,164,74,0.6)" />
                 </linearGradient>
                 <linearGradient id="renGrad" x1="0" y1="0" x2="1" y2="1">
@@ -186,7 +186,7 @@ export function WidgetRoiCalc() {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <div>
                         <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>ROI Total</div>
-                        <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--imi-gold-500,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
+                        <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--accent-400,#3D6FFF)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
                             {formatPct(roiTotal)}
                         </div>
                     </div>
@@ -202,7 +202,7 @@ export function WidgetRoiCalc() {
             {/* Legend */}
             <div style={{ display: 'flex', gap: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: 2, background: 'var(--imi-gold-500,#C8A44A)' }} />
+                    <div style={{ width: 10, height: 10, borderRadius: 2, background: 'var(--accent-400,#3D6FFF)' }} />
                     <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>Ganho de capital</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -214,7 +214,7 @@ export function WidgetRoiCalc() {
             {/* Breakdown */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {[
-                    { label: 'Ganho Capital', value: formatBRL(ganhoCapital), color: 'var(--imi-gold-500,#C8A44A)' },
+                    { label: 'Ganho Capital', value: formatBRL(ganhoCapital), color: 'var(--accent-400,#3D6FFF)' },
                     { label: `Renda Aluguel (${anos}a)`, value: formatBRL(rendaTotal), color: 'var(--success,#2D8F5C)' },
                 ].map(s => (
                     <div key={s.label} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '8px 12px' }}>
@@ -259,10 +259,10 @@ export function WidgetRoiCalc() {
             {/* CTA */}
             <button style={{
                 background: 'transparent',
-                border: '1px solid var(--imi-gold-500,#C8A44A)',
+                border: '1px solid var(--accent-400,#3D6FFF)',
                 borderRadius: 7,
                 padding: '9px 16px',
-                color: 'var(--imi-gold-500,#C8A44A)',
+                color: 'var(--accent-400,#3D6FFF)',
                 fontSize: 11,
                 fontWeight: 600,
                 fontFamily: 'var(--font-ui)',

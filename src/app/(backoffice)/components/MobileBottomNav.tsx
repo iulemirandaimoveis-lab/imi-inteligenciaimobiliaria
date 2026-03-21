@@ -18,17 +18,17 @@ import {
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
 const BOTTOM_ITEMS = [
-    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,          color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.13)'  },
-    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,    color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.13)'  },
-    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,        color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)' },
-    { name: 'Agenda',  href: '/backoffice/agenda',    icon: CalendarDays, color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)'  },
+    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,          color: 'var(--nav-active)', bg: 'rgba(61,111,255,0.13)'  },
+    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,    color: 'var(--nav-active)', bg: 'rgba(61,111,255,0.13)'  },
+    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,        color: 'var(--nav-active)', bg: 'rgba(61,111,255,0.13)' },
+    { name: 'Agenda',  href: '/backoffice/agenda',    icon: CalendarDays, color: 'var(--nav-active)', bg: 'rgba(61,111,255,0.13)'  },
 ]
 
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
-    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--imi-gold-500)', iconBg: 'rgba(184,148,58,0.14)'  },
+    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--accent-400)', iconBg: 'rgba(61,111,255,0.14)'  },
     { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: 'var(--info)',              iconBg: 'rgba(96,165,250,0.14)'  },
-    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--imi-gold-400)',              iconBg: 'rgba(167,139,250,0.14)' },
+    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--platinum-400)',              iconBg: 'rgba(167,139,250,0.14)' },
     { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus, color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },
     { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: 'var(--success)',              iconBg: 'rgba(52,211,153,0.14)'  },
     { label: 'Novo Contrato',  subtitle: 'Registrar contrato',       href: '/backoffice/contratos/novo',  icon: FileSignature,color: '#F87171',              iconBg: 'rgba(248,113,113,0.14)' },
@@ -77,7 +77,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
             { name: 'Explorer',     href: '/backoffice/imoveis/explorer',   icon: Search,     badge: 'NEW'   },
             { name: 'Construtoras', href: '/backoffice/construtoras',       icon: Building,   badge: 'NEW'   },
             { name: 'Projetos',     href: '/backoffice/projetos',           icon: FolderOpen, badge: 'NEW'   },
-            { name: 'Publicações',  href: '/backoffice/conteudos',          icon: FileText   },
+            { name: 'Publicações',  href: '/backoffice/conteudo',           icon: FileText   },
             { name: 'Criador IA',   href: '/backoffice/conteudo/criador',   icon: Wand2      },
             { name: 'eBook IA',     href: '/backoffice/conteudo/ebook',     icon: BookMarked },
             { name: 'Vídeo IA',     href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },
@@ -119,7 +119,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Crescimento', color: 'var(--imi-gold-400)', bg: 'rgba(167,139,250,0.12)',
+        label: 'Crescimento', color: 'var(--platinum-400)', bg: 'rgba(167,139,250,0.12)',
         items: [
             { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap,       badge: 'BREVE' },
             { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen,  badge: 'NEW'   },
@@ -164,7 +164,7 @@ function TileBadge({ badge }: { badge: string }) {
             whiteSpace: 'nowrap',
             boxShadow: isNew ? '0 1px 4px rgba(45,143,92,0.3)' : 'none',
         }}>
-            {isNew ? 'NEW' : 'BREVE'}
+            {isNew ? 'NOVO' : 'BREVE'}
         </span>
     )
 }
@@ -311,11 +311,11 @@ export function MobileBottomNav() {
                                         <item.icon
                                             size={active ? 22 : 20}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
                                             className="text-[10px] font-semibold transition-colors duration-150"
-                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
                                         </span>
@@ -339,11 +339,11 @@ export function MobileBottomNav() {
                                         <item.icon
                                             size={active ? 22 : 20}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
                                             className="text-[10px] font-semibold transition-colors duration-150"
-                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
                                         </span>
@@ -366,8 +366,8 @@ export function MobileBottomNav() {
                                     width: 44,
                                     height: 44,
                                     borderRadius: 6,
-                                    background: open ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
-                                    border: `1px solid ${open ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
+                                    background: open ? 'var(--accent-400)' : 'var(--bg-elevated)',
+                                    border: `1px solid ${open ? 'var(--accent-400)' : 'rgba(61,111,255,0.2)'}`,
                                     transition: 'background 0.2s, border-color 0.2s',
                                 }}
                             >
@@ -397,7 +397,7 @@ export function MobileBottomNav() {
                             </motion.button>
                             <span
                                 className="text-[10px] font-semibold transition-colors duration-150"
-                                style={{ color: open ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                style={{ color: open ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                             >
                                 Mais
                             </span>
@@ -418,11 +418,11 @@ export function MobileBottomNav() {
                                         <item.icon
                                             size={active ? 22 : 20}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
                                             className="text-[10px] font-semibold transition-colors duration-150"
-                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
                                         </span>
@@ -446,11 +446,11 @@ export function MobileBottomNav() {
                                         <item.icon
                                             size={active ? 22 : 20}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
                                             className="text-[10px] font-semibold transition-colors duration-150"
-                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
                                         </span>
@@ -569,7 +569,7 @@ export function MobileBottomNav() {
                                             <Bell size={14} style={{ color: 'var(--text-tertiary)' }} />
                                             <span
                                                 className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full"
-                                                style={{ background: 'var(--imi-gold-500)', border: '2px solid var(--bg-surface)' }}
+                                                style={{ background: 'var(--accent-400)', border: '2px solid var(--bg-surface)' }}
                                             />
                                         </Link>
                                         <button
@@ -604,7 +604,7 @@ export function MobileBottomNav() {
                                 >
                                     <div className="flex gap-2">
                                         {[
-                                            { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)' },
+                                            { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--accent-400)', bg: 'rgba(61,111,255,0.12)' },
                                             { label: 'Imóveis', value: '—', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
                                             { label: 'Leads', value: '—', color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
                                         ].map((w, i) => (
@@ -636,7 +636,7 @@ export function MobileBottomNav() {
                                 >
                                     {/* Section label */}
                                     <div className="flex items-center gap-2.5 mb-3">
-                                        <div style={{ width: 4, height: 12, borderRadius: 6, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                                        <div style={{ width: 4, height: 12, borderRadius: 6, background: 'var(--accent-400)', flexShrink: 0 }} />
                                         <span style={{
                                             fontSize: '11px', fontWeight: 700,
                                             color: 'var(--text-tertiary)',
@@ -673,8 +673,8 @@ export function MobileBottomNav() {
                                                         onHoverStart={e => {
                                                             const el = (e.target as HTMLElement).closest('[data-quick-card]') as HTMLElement | null
                                                             if (el) {
-                                                                el.style.borderColor = 'rgba(184,148,58,0.45)'
-                                                                el.style.boxShadow = '0 2px 10px rgba(184,148,58,0.10)'
+                                                                el.style.borderColor = 'rgba(61,111,255,0.45)'
+                                                                el.style.boxShadow = '0 2px 10px rgba(61,111,255,0.10)'
                                                             }
                                                         }}
                                                         onHoverEnd={e => {
@@ -700,9 +700,10 @@ export function MobileBottomNav() {
 
                                                         {/* Text */}
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-[12px] font-semibold truncate leading-tight"
+                                                            <p className="text-[11px] font-semibold leading-tight"
                                                                 style={{ color: 'var(--text-primary)' }}>
-                                                                {item.label}
+                                                                <span className="block">{item.label.split(' ')[0]}</span>
+                                                                <span className="block">{item.label.split(' ').slice(1).join(' ')}</span>
                                                             </p>
                                                             <p className="text-[9px] truncate mt-0.5 leading-tight"
                                                                 style={{ color: 'var(--text-tertiary)' }}>

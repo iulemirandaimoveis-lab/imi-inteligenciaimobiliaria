@@ -43,6 +43,16 @@ export async function POST(request: Request) {
             if (userRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(userRow.role)) {
                 isAdmin = true
             }
+            if (!isAdmin) {
+                const { data: profileRow } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single()
+                if (profileRow && ['admin', 'ADMIN', 'SUPER_ADMIN'].includes(profileRow.role)) {
+                    isAdmin = true
+                }
+            }
         }
         if (!isAdmin) {
             return NextResponse.json({ error: 'Apenas administradores podem criar usuários' }, { status: 403 })

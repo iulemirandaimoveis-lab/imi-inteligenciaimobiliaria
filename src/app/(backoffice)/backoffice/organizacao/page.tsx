@@ -10,8 +10,6 @@ import { PageIntelHeader, Btn } from '../../components/ui'
 import { T, inputStyle } from '../../lib/theme'
 import { createClient } from '@/lib/supabase/client'
 
-export const dynamic = 'force-dynamic'
-
 /* ─── TYPES ─────────────────────────────────────────────────────── */
 interface OrgForm {
   // Perfil
@@ -58,7 +56,7 @@ const DEFAULT_FORM: OrgForm = {
   bairro: 'Bela Vista',
   cidade: 'São Paulo',
   estado: 'SP',
-  corPrimaria: '#B8943A',
+  corPrimaria: '#2550E8',
   corSecundaria: '#0B1120',
   fonte: 'libre',
   moeda: 'BRL',
@@ -105,11 +103,11 @@ function SectionCard({
       }}>
         <div style={{
           width: 36, height: 36, borderRadius: T.radius.md, flexShrink: 0,
-          background: 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)',
-          border: '1px solid color-mix(in srgb, var(--imi-gold-500) 22%, transparent)',
+          background: 'color-mix(in srgb, var(--accent-400) 10%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--accent-400) 22%, transparent)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <Icon size={16} style={{ color: 'var(--imi-gold-500)' }} />
+          <Icon size={16} style={{ color: 'var(--accent-400)' }} />
         </div>
         <div>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: T.text, fontFamily: T.font.sans, margin: 0 }}>
@@ -131,7 +129,7 @@ function Field({ label, children, readOnly }: { label: string; children: React.R
     <div>
       <label style={{
         display: 'block', fontSize: 11, fontWeight: 700,
-        color: readOnly ? 'var(--imi-gold-500)' : T.textMuted,
+        color: readOnly ? 'var(--accent-400)' : T.textMuted,
         textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6,
       }}>
         {label}
@@ -200,8 +198,8 @@ export default function OrganizacaoPage() {
     ...fI,
     opacity: 0.7,
     cursor: 'not-allowed',
-    background: 'color-mix(in srgb, var(--imi-gold-500) 5%, var(--bg-elevated))',
-    border: '1.5px solid color-mix(in srgb, var(--imi-gold-500) 20%, var(--border-default))',
+    background: 'color-mix(in srgb, var(--accent-400) 5%, var(--bg-elevated))',
+    border: '1.5px solid color-mix(in srgb, var(--accent-400) 20%, var(--border-default))',
   }
 
   const update = <K extends keyof OrgForm>(key: K, value: OrgForm[K]) => {
@@ -328,8 +326,8 @@ export default function OrganizacaoPage() {
                   padding: 0,
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = 'var(--imi-gold-500)'
-                  e.currentTarget.style.background = 'color-mix(in srgb, var(--imi-gold-500) 5%, var(--bg-elevated))'
+                  e.currentTarget.style.borderColor = 'var(--accent-400)'
+                  e.currentTarget.style.background = 'color-mix(in srgb, var(--accent-400) 5%, var(--bg-elevated))'
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.borderColor = T.border
@@ -430,7 +428,7 @@ export default function OrganizacaoPage() {
                     opacity: cepLoading ? 0.6 : 1,
                   }}
                 >
-                  <Search size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                  <Search size={13} style={{ color: 'var(--accent-400)' }} />
                   {cepLoading ? 'Buscando...' : 'Auto-preencher'}
                 </button>
               </div>
@@ -530,8 +528,8 @@ export default function OrganizacaoPage() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: 12,
                     padding: '12px 16px', borderRadius: T.radius.lg,
-                    border: `1.5px solid ${form.fonte === opt.id ? 'var(--imi-gold-500)' : T.border}`,
-                    background: form.fonte === opt.id ? 'color-mix(in srgb, var(--imi-gold-500) 5%, var(--bg-elevated))' : T.elevated,
+                    border: `1.5px solid ${form.fonte === opt.id ? 'var(--accent-400)' : T.border}`,
+                    background: form.fonte === opt.id ? 'color-mix(in srgb, var(--accent-400) 5%, var(--bg-elevated))' : T.elevated,
                     cursor: 'pointer', transition: 'all 0.15s',
                   }}
                 >
@@ -541,7 +539,7 @@ export default function OrganizacaoPage() {
                     value={opt.id}
                     checked={form.fonte === opt.id}
                     onChange={() => update('fonte', opt.id)}
-                    style={{ accentColor: 'var(--imi-gold-500)', width: 16, height: 16, flexShrink: 0 }}
+                    style={{ accentColor: 'var(--accent-400)', width: 16, height: 16, flexShrink: 0 }}
                   />
                   <div>
                     <span style={{ fontSize: 15, fontFamily: opt.family, fontWeight: 700, color: T.text }}>
@@ -658,9 +656,9 @@ export default function OrganizacaoPage() {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             marginBottom: 18, padding: '5px 14px', borderRadius: T.radius.full,
-            background: 'color-mix(in srgb, var(--imi-gold-500) 12%, transparent)',
-            border: '1px solid color-mix(in srgb, var(--imi-gold-500) 25%, transparent)',
-            color: 'var(--imi-gold-500)', fontSize: 11, fontWeight: 700,
+            background: 'color-mix(in srgb, var(--accent-400) 12%, transparent)',
+            border: '1px solid color-mix(in srgb, var(--accent-400) 25%, transparent)',
+            color: 'var(--accent-400)', fontSize: 11, fontWeight: 700,
             letterSpacing: '0.04em',
           }}>
             <Shield size={12} />
@@ -671,19 +669,19 @@ export default function OrganizacaoPage() {
             <Field label="CRECI" readOnly>
               <div style={{ position: 'relative' }}>
                 <input type="text" value={form.creci} readOnly style={readonlyI} />
-                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--imi-gold-500)', pointerEvents: 'none' }} />
+                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-400)', pointerEvents: 'none' }} />
               </div>
             </Field>
             <Field label="CNAI" readOnly>
               <div style={{ position: 'relative' }}>
                 <input type="text" value={form.cnai} readOnly style={readonlyI} />
-                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--imi-gold-500)', pointerEvents: 'none' }} />
+                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-400)', pointerEvents: 'none' }} />
               </div>
             </Field>
             <Field label="Validade da Licença" readOnly>
               <div style={{ position: 'relative' }}>
                 <input type="text" value={form.validadeLicenca} readOnly style={readonlyI} />
-                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--imi-gold-500)', pointerEvents: 'none' }} />
+                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-400)', pointerEvents: 'none' }} />
               </div>
             </Field>
           </Grid>

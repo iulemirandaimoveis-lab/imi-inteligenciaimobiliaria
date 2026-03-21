@@ -103,7 +103,7 @@ export function MobileLeadCard({
     warm: 'linear-gradient(135deg, #78350f 0%, #92400e 100%)',
     cold: 'linear-gradient(135deg, #0c4a6e 0%, #075985 100%)',
   }
-  const avatarBg = avatarColors[status.toLowerCase()] ?? 'linear-gradient(135deg, var(--imi-navy-700) 0%, var(--imi-navy-500) 100%)'
+  const avatarBg = avatarColors[status.toLowerCase()] ?? 'linear-gradient(135deg, var(--bg-elevated, #162040) 0%, var(--bg-surface) 100%)'
 
   const cardStyle: React.CSSProperties = {
     padding: '14px 16px',
@@ -133,7 +133,7 @@ export function MobileLeadCard({
             left: 0,
             right: 0,
             height: '2px',
-            background: 'linear-gradient(90deg, var(--imi-gold-500), transparent)',
+            background: 'linear-gradient(90deg, var(--accent-400), transparent)',
           }}
         />
       )}
@@ -263,7 +263,7 @@ export function MobileLeadCard({
           }}
         >
           <div className="flex items-start gap-2">
-            <span style={{ fontSize: '11px', color: 'var(--imi-gold-500)', marginTop: '1px', flexShrink: 0 }}>
+            <span style={{ fontSize: '11px', color: 'var(--accent-400)', marginTop: '1px', flexShrink: 0 }}>
               ✦
             </span>
             <p
@@ -289,9 +289,9 @@ export function MobileLeadCard({
               fontFamily: 'var(--font-mono)',
               fontSize: '11px',
               fontWeight: 600,
-              color: 'var(--imi-gold-500)',
-              background: 'rgba(184,148,58,0.10)',
-              border: '1px solid rgba(184,148,58,0.20)',
+              color: 'var(--accent-400)',
+              background: 'rgba(61,111,255,0.10)',
+              border: '1px solid rgba(61,111,255,0.20)',
               padding: '2px 7px',
               borderRadius: 'var(--r-sm, 4px)',
             }}

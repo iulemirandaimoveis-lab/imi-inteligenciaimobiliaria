@@ -113,8 +113,8 @@ export default function BillingPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.08 }}
                                 style={{
-                                    background: plan.highlight ? 'rgba(184,148,58,0.06)' : 'var(--bg-surface)',
-                                    border: `1px solid ${plan.highlight ? 'rgba(184,148,58,0.3)' : 'var(--border-default)'}`,
+                                    background: plan.highlight ? 'rgba(61,111,255,0.06)' : 'var(--bg-surface)',
+                                    border: `1px solid ${plan.highlight ? 'rgba(61,111,255,0.3)' : 'var(--border-default)'}`,
                                     borderRadius: '6px',
                                     padding: '28px 24px',
                                     position: 'relative',
@@ -123,7 +123,7 @@ export default function BillingPage() {
                                 {plan.highlight && (
                                     <div style={{
                                         position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
-                                        background: 'var(--imi-gold-500)', color: '#000',
+                                        background: 'var(--accent-400)', color: '#000',
                                         fontSize: '11px', fontWeight: 800, padding: '4px 14px', borderRadius: '6px',
                                         letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap',
                                     }}>
@@ -134,10 +134,10 @@ export default function BillingPage() {
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                                     <div style={{
                                         width: 40, height: 40, borderRadius: '6px',
-                                        background: plan.highlight ? 'rgba(184,148,58,0.12)' : 'rgba(255,255,255,0.05)',
+                                        background: plan.highlight ? 'rgba(61,111,255,0.12)' : 'rgba(255,255,255,0.05)',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     }}>
-                                        <Icon size={18} style={{ color: plan.highlight ? 'var(--imi-gold-500)' : 'var(--text-secondary)' }} />
+                                        <Icon size={18} style={{ color: plan.highlight ? 'var(--accent-400)' : 'var(--text-secondary)' }} />
                                     </div>
                                     <div>
                                         <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>{plan.name}</div>
@@ -155,7 +155,7 @@ export default function BillingPage() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
                                     {plan.features.map((feat, fi) => (
                                         <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                            <CheckCircle2 size={13} style={{ color: plan.highlight ? 'var(--imi-gold-500)' : 'var(--success)', flexShrink: 0, marginTop: '2px' }} />
+                                            <CheckCircle2 size={13} style={{ color: plan.highlight ? 'var(--accent-400)' : 'var(--success)', flexShrink: 0, marginTop: '2px' }} />
                                             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{feat}</span>
                                         </div>
                                     ))}
@@ -166,7 +166,7 @@ export default function BillingPage() {
                                     disabled={loading === plan.id}
                                     style={{
                                         width: '100%', height: '46px', borderRadius: '6px',
-                                        background: plan.highlight ? 'var(--imi-gold-500)' : 'rgba(255,255,255,0.06)',
+                                        background: plan.highlight ? 'var(--accent-400)' : 'rgba(255,255,255,0.06)',
                                         border: plan.highlight ? 'none' : '1px solid var(--border-default)',
                                         color: plan.highlight ? '#000' : 'var(--text-primary)',
                                         fontSize: '14px', fontWeight: 700, cursor: 'pointer',

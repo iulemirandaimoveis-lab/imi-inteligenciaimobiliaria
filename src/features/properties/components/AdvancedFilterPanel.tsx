@@ -62,7 +62,10 @@ function ChipSelect({ options, value, onChange, multi = true }: {
     }
   }
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>
+    <div style={{
+      display: 'flex', overflowX: 'auto', gap: 4, marginTop: 6,
+      scrollbarWidth: 'none', paddingBottom: 2,
+    }}>
       {options.map(o => {
         const active = value.includes(o.value)
         return (
@@ -70,10 +73,11 @@ function ChipSelect({ options, value, onChange, multi = true }: {
             key={o.value}
             onClick={() => toggle(o.value)}
             style={{
+              flexShrink: 0, whiteSpace: 'nowrap',
               padding: '6px 12px', borderRadius: 6,
               background: active ? 'rgba(200,164,74,0.12)' : 'var(--bg-surface, rgba(255,255,255,0.04))',
               border: `1px solid ${active ? 'rgba(200,164,74,0.40)' : 'rgba(255,255,255,0.08)'}`,
-              color: active ? '#C8A44A' : 'var(--text-secondary, #9FAAB8)',
+              color: active ? '#3D6FFF' : 'var(--text-secondary, #9FAAB8)',
               fontSize: '12px', fontWeight: active ? 600 : 400,
               fontFamily: 'var(--font-outfit, sans-serif)',
               cursor: 'pointer',
@@ -220,7 +224,7 @@ export function AdvancedFilterPanel({
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <SlidersHorizontal size={13} style={{ color: '#C8A44A' }} />
+          <SlidersHorizontal size={13} style={{ color: '#3D6FFF' }} />
           <span style={{
             fontSize: '9px', fontWeight: 700, letterSpacing: '2px',
             textTransform: 'uppercase', color: 'var(--text-primary, #EBE7E0)',
@@ -234,7 +238,7 @@ export function AdvancedFilterPanel({
               background: 'rgba(200,164,74,0.20)',
               border: '1px solid rgba(200,164,74,0.40)',
               fontSize: '9px', fontFamily: 'var(--font-dm-mono, monospace)',
-              color: '#C8A44A', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#3D6FFF', display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               {activeCount}
             </span>
@@ -265,7 +269,7 @@ export function AdvancedFilterPanel({
         <span style={{ fontSize: '10px', color: 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
           Resultados
         </span>
-        <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: '#C8A44A' }}>
+        <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: '#3D6FFF' }}>
           {filteredCount} / {totalCount}
         </span>
       </div>

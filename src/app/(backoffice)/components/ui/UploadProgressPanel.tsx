@@ -18,7 +18,7 @@ interface UploadProgressPanelProps {
 const statusConfig = {
     pending:     { icon: ImageIcon,    color: 'var(--text-tertiary)',  label: 'Aguardando' },
     compressing: { icon: Loader2,      color: 'var(--info)',           label: 'Comprimindo' },
-    uploading:   { icon: Loader2,      color: 'var(--imi-gold-500)',   label: 'Enviando' },
+    uploading:   { icon: Loader2,      color: 'var(--accent-400)',   label: 'Enviando' },
     done:        { icon: CheckCircle,  color: 'var(--success)',        label: 'Concluído' },
     error:       { icon: XCircle,      color: 'var(--error)',          label: 'Erro' },
     retrying:    { icon: RotateCw,     color: 'var(--warning)',        label: 'Tentando novamente' },
@@ -52,7 +52,7 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                             <Loader2
                                 size={14}
                                 className={done < total ? 'animate-spin' : ''}
-                                style={{ color: done < total ? 'var(--imi-gold-500)' : 'var(--success)' }}
+                                style={{ color: done < total ? 'var(--accent-400)' : 'var(--success)' }}
                             />
                             <span style={{ fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
                                 {done < total
@@ -77,7 +77,7 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                                     ? 'var(--warning)'
                                     : done === total
                                         ? 'var(--success)'
-                                        : 'var(--imi-gold-500)',
+                                        : 'var(--accent-400)',
                             }}
                             animate={{ width: `${overallPercent}%` }}
                             transition={{ duration: 0.3 }}

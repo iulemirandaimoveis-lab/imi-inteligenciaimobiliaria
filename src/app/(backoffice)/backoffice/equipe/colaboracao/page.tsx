@@ -121,7 +121,7 @@ const INVITES: PartnershipInvite[] = [
 const STAGE_CONFIG: Record<string, { label: string; color: string }> = {
   visita: { label: 'Visita', color: '#5B9BD5' },
   proposta: { label: 'Proposta', color: '#D4913A' },
-  negociacao: { label: 'Negociação', color: 'var(--imi-gold-500)' },
+  negociacao: { label: 'Negociação', color: 'var(--accent-400)' },
   contrato: { label: 'Contrato', color: 'var(--success)' },
 }
 
@@ -154,11 +154,11 @@ function NovaParceriaModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.3)', borderRadius: 8, width: '100%', maxWidth: 520, overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}
+        style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.3)', borderRadius: 8, width: '100%', maxWidth: 520, overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}
       >
         {/* Header */}
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(184,148,58,0.12)', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(184,148,58,0.04)' }}>
-          <Handshake size={16} style={{ color: 'var(--imi-gold-500)' }} />
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(61,111,255,0.12)', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(61,111,255,0.04)' }}>
+          <Handshake size={16} style={{ color: 'var(--accent-400)' }} />
           <p style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Nova Parceria</p>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
             <X size={16} style={{ color: 'var(--text-tertiary)' }} />
@@ -181,8 +181,8 @@ function NovaParceriaModal({ onClose }: { onClose: () => void }) {
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
               {[1, 2].map(s => (
                 <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: step >= s ? 'var(--imi-gold-500)' : 'rgba(255,255,255,0.06)', fontSize: 11, fontWeight: 700, color: step >= s ? '#0B1120' : 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{s}</div>
-                  <span style={{ fontSize: 11, color: step >= s ? 'var(--imi-gold-500)' : 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{s === 1 ? 'Imóvel & Corretor' : 'Split & Mensagem'}</span>
+                  <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: step >= s ? 'var(--accent-400)' : 'rgba(255,255,255,0.06)', fontSize: 11, fontWeight: 700, color: step >= s ? '#0B1120' : 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{s}</div>
+                  <span style={{ fontSize: 11, color: step >= s ? 'var(--accent-400)' : 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{s === 1 ? 'Imóvel & Corretor' : 'Split & Mensagem'}</span>
                   {s < 2 && <ChevronRight size={12} style={{ color: 'var(--text-tertiary)' }} />}
                 </div>
               ))}
@@ -198,11 +198,11 @@ function NovaParceriaModal({ onClose }: { onClose: () => void }) {
                       <button
                         key={p}
                         onClick={() => setSelectedProperty(p)}
-                        style={{ padding: '10px 14px', borderRadius: 6, background: selectedProperty === p ? 'rgba(184,148,58,0.12)' : 'rgba(255,255,255,0.04)', border: selectedProperty === p ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(255,255,255,0.08)', color: selectedProperty === p ? 'var(--imi-gold-500)' : 'var(--text-primary)', fontSize: 12, textAlign: 'left', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
+                        style={{ padding: '10px 14px', borderRadius: 6, background: selectedProperty === p ? 'rgba(61,111,255,0.12)' : 'rgba(255,255,255,0.04)', border: selectedProperty === p ? '1px solid rgba(61,111,255,0.4)' : '1px solid rgba(255,255,255,0.08)', color: selectedProperty === p ? 'var(--accent-400)' : 'var(--text-primary)', fontSize: 12, textAlign: 'left', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
                       >
                         <Building2 size={13} />
                         {p}
-                        {selectedProperty === p && <Check size={12} style={{ marginLeft: 'auto', color: 'var(--imi-gold-500)' }} />}
+                        {selectedProperty === p && <Check size={12} style={{ marginLeft: 'auto', color: 'var(--accent-400)' }} />}
                       </button>
                     ))}
                   </div>
@@ -231,7 +231,7 @@ function NovaParceriaModal({ onClose }: { onClose: () => void }) {
                 <button
                   onClick={() => { if (selectedProperty && selectedBroker) setStep(2) }}
                   disabled={!selectedProperty || !selectedBroker}
-                  style={{ padding: '10px', borderRadius: 6, background: selectedProperty && selectedBroker ? 'var(--btn-primary-bg, var(--imi-gold-500))' : 'rgba(255,255,255,0.06)', border: 'none', color: selectedProperty && selectedBroker ? '#0B1120' : 'var(--text-tertiary)', fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: selectedProperty && selectedBroker ? 'pointer' : 'not-allowed' }}
+                  style={{ padding: '10px', borderRadius: 6, background: selectedProperty && selectedBroker ? 'var(--btn-primary-bg, var(--accent-400))' : 'rgba(255,255,255,0.06)', border: 'none', color: selectedProperty && selectedBroker ? '#0B1120' : 'var(--text-tertiary)', fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: selectedProperty && selectedBroker ? 'pointer' : 'not-allowed' }}
                 >
                   Próximo
                 </button>
@@ -245,11 +245,11 @@ function NovaParceriaModal({ onClose }: { onClose: () => void }) {
                   <label style={{ fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, display: 'block', marginBottom: 12 }}>Split de Comissão</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: 24, fontFamily: 'var(--font-dm-mono)', color: 'var(--imi-gold-500)', fontWeight: 400 }}>{mySplit}%</div>
+                      <div style={{ fontSize: 24, fontFamily: 'var(--font-dm-mono)', color: 'var(--accent-400)', fontWeight: 400 }}>{mySplit}%</div>
                       <div style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Você</div>
                     </div>
                     <div style={{ flex: 1, height: 8, borderRadius: 6, background: 'rgba(255,255,255,0.06)', position: 'relative', overflow: 'hidden' }}>
-                      <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${mySplit}%`, background: 'linear-gradient(90deg, var(--imi-gold-500), #D4913A)', borderRadius: 6, transition: 'width 0.15s' }} />
+                      <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${mySplit}%`, background: 'linear-gradient(90deg, var(--accent-400), #D4913A)', borderRadius: 6, transition: 'width 0.15s' }} />
                     </div>
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ fontSize: 24, fontFamily: 'var(--font-dm-mono)', color: '#5B9BD5', fontWeight: 400 }}>{100 - mySplit}%</div>
@@ -259,7 +259,7 @@ function NovaParceriaModal({ onClose }: { onClose: () => void }) {
                   <input
                     type="range" min={10} max={90} step={5} value={mySplit}
                     onChange={e => setMySplit(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: 'var(--imi-gold-500)' }}
+                    style={{ width: '100%', accentColor: 'var(--accent-400)' }}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
                     <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>10%</span>
@@ -276,13 +276,13 @@ function NovaParceriaModal({ onClose }: { onClose: () => void }) {
                     onChange={e => setMessage(e.target.value)}
                     placeholder="Explique a oportunidade de parceria…"
                     rows={3}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--text-primary)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', resize: 'none', outline: 'none', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--text-primary)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', resize: 'none', outline: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => setStep(1)} style={{ flex: 1, padding: '10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--imi-gold-500)', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Voltar</button>
-                  <button onClick={handleSend} style={{ flex: 2, padding: '10px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--imi-gold-500))', border: 'none', color: '#0B1120', fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <button onClick={() => setStep(1)} style={{ flex: 1, padding: '10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--accent-400)', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Voltar</button>
+                  <button onClick={handleSend} style={{ flex: 2, padding: '10px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--accent-400))', border: 'none', color: '#0B1120', fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                     <Handshake size={13} /> Enviar Convite
                   </button>
                 </div>
@@ -301,9 +301,9 @@ function SharedNotesModal({ deal, onClose }: { deal: Deal; onClose: () => void }
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, backdropFilter: 'blur(4px)' }} onClick={onClose}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.3)', borderRadius: 8, width: '100%', maxWidth: 480, overflow: 'hidden' }}>
-        <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(184,148,58,0.12)', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(184,148,58,0.04)' }}>
-          <MessageSquare size={15} style={{ color: 'var(--imi-gold-500)' }} />
+      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.3)', borderRadius: 8, width: '100%', maxWidth: 480, overflow: 'hidden' }}>
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(61,111,255,0.12)', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(61,111,255,0.04)' }}>
+          <MessageSquare size={15} style={{ color: 'var(--accent-400)' }} />
           <p style={{ flex: 1, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Notas — {deal.property}</p>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={15} style={{ color: 'var(--text-tertiary)' }} /></button>
         </div>
@@ -312,11 +312,11 @@ function SharedNotesModal({ deal, onClose }: { deal: Deal; onClose: () => void }
             value={notes}
             onChange={e => setNotes(e.target.value)}
             rows={8}
-            style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--text-primary)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', resize: 'vertical', outline: 'none', boxSizing: 'border-box', lineHeight: 1.7 }}
+            style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--text-primary)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', resize: 'vertical', outline: 'none', boxSizing: 'border-box', lineHeight: 1.7 }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={onClose} style={{ flex: 1, padding: '9px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(184,148,58,0.2)', color: 'var(--imi-gold-500)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Cancelar</button>
-            <button onClick={onClose} style={{ flex: 2, padding: '9px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--imi-gold-500))', border: 'none', color: '#0B1120', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Salvar Notas</button>
+            <button onClick={onClose} style={{ flex: 1, padding: '9px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--accent-400)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Cancelar</button>
+            <button onClick={onClose} style={{ flex: 2, padding: '9px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--accent-400))', border: 'none', color: '#0B1120', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Salvar Notas</button>
           </div>
         </div>
       </div>
@@ -329,9 +329,9 @@ function DealCard({ deal, onNotes }: { deal: Deal; onNotes: (d: Deal) => void })
   const stage = STAGE_CONFIG[deal.stage]
 
   return (
-    <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.15)', borderRadius: 8, overflow: 'hidden' }}>
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.15)', borderRadius: 8, overflow: 'hidden' }}>
       {/* Card header */}
-      <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(184,148,58,0.08)' }}>
+      <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(61,111,255,0.08)' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
           <div>
             <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-outfit, sans-serif)', marginBottom: 2 }}>{deal.property}</p>
@@ -397,20 +397,20 @@ export default function ColaboracaoPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
       {/* Header */}
-      <header style={{ padding: '24px 32px 20px', borderBottom: '1px solid rgba(184,148,58,0.12)', background: 'var(--bg-elevated)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'linear-gradient(rgba(184,148,58,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(184,148,58,0.015) 1px, transparent 1px)', backgroundSize: '52px 52px' }} />
+      <header style={{ padding: '24px 32px 20px', borderBottom: '1px solid rgba(61,111,255,0.12)', background: 'var(--bg-elevated)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'linear-gradient(rgba(61,111,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(61,111,255,0.015) 1px, transparent 1px)', backgroundSize: '52px 52px' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
-            <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--imi-gold-500)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>IMI</span>
-            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
+            <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--accent-400)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>IMI</span>
+            <span style={{ color: 'rgba(61,111,255,0.3)', fontSize: 11 }}>›</span>
             <Link href="/backoffice/equipe"><span style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase' as const, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Equipe</span></Link>
-            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
-            <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--imi-gold-500)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>Colaboração</span>
+            <span style={{ color: 'rgba(61,111,255,0.3)', fontSize: 11 }}>›</span>
+            <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--accent-400)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>Colaboração</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
             <div>
               <h1 style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: 28, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4, lineHeight: 1.1 }}>
-                IMI <em style={{ fontStyle: 'italic', color: 'var(--imi-gold-500)' }}>Connect</em>
+                IMI <em style={{ fontStyle: 'italic', color: 'var(--accent-400)' }}>Connect</em>
               </h1>
               <p style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 300 }}>
                 Co-brokagem · parcerias · notas compartilhadas · splits de comissão
@@ -418,7 +418,7 @@ export default function ColaboracaoPage() {
             </div>
             <button
               onClick={() => setShowModal(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--imi-gold-500))', border: 'none', color: '#0B1120', fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--accent-400))', border: 'none', color: '#0B1120', fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}
             >
               <Plus size={14} /> Nova Parceria
             </button>
@@ -432,8 +432,8 @@ export default function ColaboracaoPage() {
         {/* ── Section 1: Em Andamento ── */}
         <section>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-            <TrendingUp size={15} style={{ color: 'var(--imi-gold-500)' }} />
-            <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--imi-gold-500)', fontWeight: 700 }}>Em Andamento</span>
+            <TrendingUp size={15} style={{ color: 'var(--accent-400)' }} />
+            <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--accent-400)', fontWeight: 700 }}>Em Andamento</span>
             <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>— {DEALS.length} negócios ativos</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
@@ -454,8 +454,8 @@ export default function ColaboracaoPage() {
           </div>
 
           {invites.length === 0 ? (
-            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.1)', borderRadius: 8 }}>
-              <Handshake size={32} style={{ color: 'rgba(184,148,58,0.2)', margin: '0 auto 10px' }} />
+            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8 }}>
+              <Handshake size={32} style={{ color: 'rgba(61,111,255,0.2)', margin: '0 auto 10px' }} />
               <p style={{ fontSize: 13, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Nenhum convite pendente</p>
             </div>
           ) : (
@@ -478,8 +478,8 @@ export default function ColaboracaoPage() {
                         </span>
                       </div>
                       {/* Property info */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '10px 0', padding: '8px 12px', borderRadius: 6, background: 'rgba(184,148,58,0.05)', border: '1px solid rgba(184,148,58,0.12)' }}>
-                        <Building2 size={13} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '10px 0', padding: '8px 12px', borderRadius: 6, background: 'rgba(61,111,255,0.05)', border: '1px solid rgba(61,111,255,0.12)' }}>
+                        <Building2 size={13} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
                         <div>
                           <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{invite.property}</p>
                           <p style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{invite.neighborhood} · {invite.price}</p>
@@ -518,11 +518,11 @@ export default function ColaboracaoPage() {
             <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--success)', fontWeight: 700 }}>Minha Equipe</span>
             <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>— {BROKERS.filter(b => b.online).length} online agora</span>
           </div>
-          <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.12)', borderRadius: 8, overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.12)', borderRadius: 8, overflow: 'hidden' }}>
             {BROKERS.map((broker, i) => (
               <div
                 key={broker.id}
-                style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', borderBottom: i < BROKERS.length - 1 ? '1px solid rgba(184,148,58,0.06)' : 'none' }}
+                style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', borderBottom: i < BROKERS.length - 1 ? '1px solid rgba(61,111,255,0.06)' : 'none' }}
               >
                 {/* Avatar */}
                 <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -549,7 +549,7 @@ export default function ColaboracaoPage() {
                 <div style={{ display: 'flex', gap: 6 }}>
                   <button
                     onClick={() => setShowModal(true)}
-                    style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 10px', borderRadius: 6, background: 'rgba(184,148,58,0.06)', border: '1px solid rgba(184,148,58,0.18)', color: 'var(--imi-gold-500)', fontSize: 10, fontWeight: 600, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 10px', borderRadius: 6, background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.18)', color: 'var(--accent-400)', fontSize: 10, fontWeight: 600, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}
                   >
                     <Handshake size={10} /> Convidar
                   </button>

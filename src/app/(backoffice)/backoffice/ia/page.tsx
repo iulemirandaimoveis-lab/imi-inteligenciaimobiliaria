@@ -570,7 +570,7 @@ export default function IAHubPage() {
                 {/* Model Routing Table */}
                 <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-2 mb-4">
-                        <Braces size={16} style={{ color: 'var(--imi-gold-500)' }} />
+                        <Braces size={16} style={{ color: 'var(--accent-400)' }} />
                         <h2 className="text-sm font-bold" style={{ color: T.text }}>Roteamento por Tarefa</h2>
                     </div>
 

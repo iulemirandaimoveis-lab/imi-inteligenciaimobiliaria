@@ -118,7 +118,7 @@ export default function OnboardingTutorial({
                             {/* Header */}
                             <div className="px-4 pt-4 pb-2">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <GraduationCap size={14} style={{ color: 'var(--imi-gold-500)' }} />
+                                    <GraduationCap size={14} style={{ color: 'var(--accent-400)' }} />
                                     <span className="text-xs font-bold" style={{ color: 'var(--text-primary)' }}>
                                         Tours Guiados
                                     </span>
@@ -134,7 +134,7 @@ export default function OnboardingTutorial({
                                     <button
                                         onClick={handleStartCurrentModule}
                                         className="w-full h-10 rounded-[6px] text-xs font-bold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110"
-                                        style={{ background: 'var(--imi-gold-500)' }}
+                                        style={{ background: 'var(--accent-400)' }}
                                     >
                                         <Sparkles size={12} />
                                         Tour desta página ({ctx.totalTips} dicas)

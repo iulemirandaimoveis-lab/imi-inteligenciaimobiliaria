@@ -67,13 +67,13 @@ export function WidgetDemandTrend() {
                             padding: '5px 14px',
                             borderRadius: 6,
                             border: activeSegment === seg
-                                ? '1px solid var(--imi-gold-500,#C8A44A)'
+                                ? '1px solid var(--accent-400,#3D6FFF)'
                                 : '1px solid var(--border-default)',
                             background: activeSegment === seg
                                 ? 'rgba(200,164,74,0.12)'
                                 : 'transparent',
                             color: activeSegment === seg
-                                ? 'var(--imi-gold-500,#C8A44A)'
+                                ? 'var(--accent-400,#3D6FFF)'
                                 : 'var(--text-secondary)',
                             fontSize: 10,
                             fontWeight: 600,
@@ -105,7 +105,7 @@ export function WidgetDemandTrend() {
                             <div style={{
                                 height: '100%',
                                 width: `${row.score}%`,
-                                background: `linear-gradient(90deg, var(--imi-gold-500,#C8A44A), rgba(200,164,74,0.55))`,
+                                background: `linear-gradient(90deg, var(--accent-400,#3D6FFF), rgba(200,164,74,0.55))`,
                                 borderRadius: 6,
                                 transition: 'width 0.5s cubic-bezier(0.4,0,0.2,1)',
                                 display: 'flex', alignItems: 'center', paddingLeft: 8,

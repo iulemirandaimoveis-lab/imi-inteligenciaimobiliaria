@@ -20,8 +20,6 @@ import {
     useDraggable,
 } from '@dnd-kit/core'
 
-export const dynamic = 'force-dynamic'
-
 // ── Pipeline stage config (derived from centralized constants) ─────
 const STAGES = [
     { key: 'novo',        label: 'NOVO LEAD' },
@@ -118,7 +116,7 @@ function DroppableColumn({ stageKey, children }: { stageKey: string; children: R
             ref={setNodeRef}
             style={{
                 transition: 'background 0.15s',
-                background: isOver ? 'color-mix(in srgb, var(--imi-gold-500) 6%, transparent)' : undefined,
+                background: isOver ? 'color-mix(in srgb, var(--accent-400) 6%, transparent)' : undefined,
                 borderRadius: 16, minHeight: 120,
             }}
         >
@@ -178,7 +176,7 @@ function LeadCard({ lead, stageColor }: { lead: Record<string, any>; stageColor:
 
                 {/* Budget */}
                 {budget && (
-                    <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--imi-gold-500)', marginBottom: 10, letterSpacing: '-0.3px' }}>
+                    <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--accent-400)', marginBottom: 10, letterSpacing: '-0.3px' }}>
                         {budget}
                     </p>
                 )}
@@ -429,7 +427,7 @@ export default function PipelineKanbanPage() {
                             {stageLeads.length > 0 && (
                                 <div style={{ padding: '6px 4px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</span>
-                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--imi-gold-500)' }}>
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-400)' }}>
                                         {formatTotal(stageLeads.reduce((s, l) => s + (l.capital || l.budget || 0), 0))}
                                     </span>
                                 </div>
@@ -443,7 +441,7 @@ export default function PipelineKanbanPage() {
                     <div style={{ opacity: 0.9, transform: 'rotate(2deg)', pointerEvents: 'none' }}>
                         <LeadCard
                             lead={leads.find(l => l.id === activeId) || {}}
-                            stageColor="var(--imi-gold-500)"
+                            stageColor="var(--accent-400)"
                         />
                     </div>
                 ) : null}
@@ -462,7 +460,7 @@ export default function PipelineKanbanPage() {
                     marginTop: 8, flexShrink: 0,
                 }}
             >
-                <Zap size={16} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                <Zap size={16} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
                 <p style={{ fontSize: 12, color: 'var(--text-secondary)', flex: 1, lineHeight: 1.4 }}>
                     <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>IA Pipeline:</span> {
                         !loading && leads.length > 0
@@ -470,7 +468,7 @@ export default function PipelineKanbanPage() {
                             : 'Carregando análise do pipeline...'
                     }
                 </p>
-                <Link href="/backoffice/leads" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: 'var(--imi-gold-500)', textDecoration: 'none', flexShrink: 0 }}>
+                <Link href="/backoffice/leads" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: 'var(--accent-400)', textDecoration: 'none', flexShrink: 0 }}>
                     Ver todos <ChevronRight size={12} />
                 </Link>
             </motion.div>

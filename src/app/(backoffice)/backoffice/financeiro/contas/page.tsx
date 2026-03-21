@@ -18,8 +18,6 @@ import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs, ActionMenu, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
-export const dynamic = 'force-dynamic'
-
 interface BankAccount {
     id: string
     banco: string

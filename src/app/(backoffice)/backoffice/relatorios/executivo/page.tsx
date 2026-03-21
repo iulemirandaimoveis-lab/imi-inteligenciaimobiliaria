@@ -13,8 +13,8 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeade
 type Period = 'monthly' | 'quarterly' | 'yearly'
 
 const MONTHS_SHORT = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-const CHANNEL_COLORS = ['var(--info)', 'var(--imi-gold-500)', 'var(--success)', 'var(--warning)', 'var(--error)']
-const AGENT_COLORS   = ['var(--info)', 'var(--imi-gold-400)', 'var(--success)', 'var(--warning)']
+const CHANNEL_COLORS = ['var(--info)', 'var(--accent-400)', 'var(--success)', 'var(--warning)', 'var(--error)']
+const AGENT_COLORS   = ['var(--info)', 'var(--platinum-400)', 'var(--success)', 'var(--warning)']
 
 type VelocityData = Record<Period, number[]>
 type ChannelItem  = { label: string; pct: number; color: string }
@@ -32,6 +32,7 @@ export default function RelatoriosExecutivoPage() {
   const [velocityData, setVelocityData] = useState<VelocityData>({ monthly: [], quarterly: [], yearly: [] })
   const [channelData, setChannelData] = useState<ChannelItem[]>([])
   const [topAgents, setTopAgents] = useState<AgentItem[]>([])
+  const [realtimeActive, setRealtimeActive] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -118,9 +119,16 @@ export default function RelatoriosExecutivoPage() {
           const sorted = Object.entries(counts)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 4)
-          const channels: ChannelItem[] = sorted.map(([label, count], i) => ({
+          // Use floor to avoid rounding artefacts that push total > 100%
+          const rawPcts = sorted.map(([, count]) =>
+            srcTotal > 0 ? Math.floor((count / srcTotal) * 100) : 0
+          )
+          const remainder = 100 - rawPcts.reduce((a, b) => a + b, 0)
+          // Give remaining points to the largest bucket(s)
+          const adjustedPcts = rawPcts.map((p, i) => (i === 0 ? p + Math.max(0, remainder) : p))
+          const channels: ChannelItem[] = sorted.map(([label], i) => ({
             label,
-            pct: srcTotal > 0 ? Math.round((count / srcTotal) * 100) : 0,
+            pct: adjustedPcts[i],
             color: CHANNEL_COLORS[i],
           }))
           if (channels.length > 0) setChannelData(channels)
@@ -151,6 +159,23 @@ export default function RelatoriosExecutivoPage() {
       setLoading(false)
     }
     load()
+
+    // ── Realtime: subscribe to leads changes to show LIVE badge ──────────
+    const supabase = createClient()
+    const channel = supabase
+      .channel('executivo-leads-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, () => {
+        // Re-fetch on any leads change
+        load()
+      })
+      .subscribe((status) => {
+        setRealtimeActive(status === 'SUBSCRIBED')
+      })
+
+    return () => {
+      supabase.removeChannel(channel)
+      setRealtimeActive(false)
+    }
   }, [])
 
   const currentVelocity = velocityData[period].length > 0
@@ -164,7 +189,7 @@ export default function RelatoriosExecutivoPage() {
       : ['2021', '2022', '2023', '2024', '2025', '2026'].slice(0, currentVelocity.length)
   const currentChannels = channelData.length > 0 ? channelData : [
     { label: 'Meta Ads', pct: 42, color: 'var(--info)' },
-    { label: 'Google Search', pct: 31, color: 'var(--imi-gold-500)' },
+    { label: 'Google Search', pct: 31, color: 'var(--accent-400)' },
     { label: 'Direct Link', pct: 18, color: 'var(--success)' },
     { label: 'Referral', pct: 9, color: 'var(--warning)' },
   ]
@@ -179,7 +204,7 @@ export default function RelatoriosExecutivoPage() {
           moduleLabel="INTELLIGENCE OS · RELATÓRIOS"
           title="Global Reports"
           subtitle="Visão executiva consolidada de performance, leads e receita"
-          live
+          live={realtimeActive}
           actions={
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <button style={{
@@ -404,7 +429,7 @@ export default function RelatoriosExecutivoPage() {
                 <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>75%</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-400)', flexShrink: 0 }} />
                 <span style={{ fontSize: '11px', color: 'var(--text-secondary)', flex: 1 }}>Comercial</span>
                 <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>25%</span>
               </div>

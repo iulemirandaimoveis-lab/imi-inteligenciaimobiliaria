@@ -79,8 +79,8 @@ export default function AvaliacaoDetalhesPage() {
                 if (!devs?.length) return
                 const prices = devs
                     .map((d: Record<string, unknown>) => {
-                        const price = (Number(d.price_min || d.price_from || 0) + Number(d.price_max || d.price_to || d.price_min || d.price_from || 0)) / 2
-                        const area = (Number(d.area_from || d.area_min || 0) + Number(d.area_to || d.area_max || d.area_from || d.area_min || 0)) / 2
+                        const price = (Number(d.price_from || d.price_min || 0) + Number(d.price_to || d.price_max || d.price_from || d.price_min || 0)) / 2
+                        const area = (Number(d.area_from || 0) + Number(d.area_to || d.area_from || 0)) / 2
                         return area > 0 ? price / area : 0
                     })
                     .filter(p => p > 1000 && p < 100000) // sanity range
@@ -253,10 +253,10 @@ export default function AvaliacaoDetalhesPage() {
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Preço/m²</p>
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(139,92,246,0.12)' }}>
-                                <BarChart2 size={14} style={{ color: 'var(--imi-gold-500)' }} />
+                                <BarChart2 size={14} style={{ color: 'var(--accent-400)' }} />
                             </div>
                         </div>
-                        <p className="text-lg font-bold leading-tight" style={{ color: 'var(--imi-gold-500)' }}>{formatPrice(Number(data.valor_m2))}/m²</p>
+                        <p className="text-lg font-bold leading-tight" style={{ color: 'var(--accent-400)' }}>{formatPrice(Number(data.valor_m2))}/m²</p>
                     </div>
                 )}
                 {data.area_privativa && (
@@ -281,7 +281,7 @@ export default function AvaliacaoDetalhesPage() {
                         <p className="text-lg font-bold leading-tight" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
                         {data.honorarios_status && (
                             <p className="text-[10px] font-bold mt-1.5" style={{
-                                color: data.honorarios_status === 'pago' ? 'var(--success)' : data.honorarios_status === 'parcial' ? 'var(--imi-gold-500)' : 'var(--warning)'
+                                color: data.honorarios_status === 'pago' ? 'var(--success)' : data.honorarios_status === 'parcial' ? 'var(--accent-400)' : 'var(--warning)'
                             }}>
                                 ● {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
                             </p>
@@ -329,14 +329,14 @@ export default function AvaliacaoDetalhesPage() {
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
                                     {data.quartos != null && (
                                         <div className="text-center">
-                                            <Bed size={24} className="mx-auto mb-2" style={{ color: 'var(--imi-gold-500)' }} />
+                                            <Bed size={24} className="mx-auto mb-2" style={{ color: 'var(--accent-400)' }} />
                                             <p className="text-xl font-bold" style={{ color: T.text }}>{data.quartos}</p>
                                             <p className="text-xs" style={{ color: T.textMuted }}>Quartos</p>
                                         </div>
                                     )}
                                     {data.banheiros != null && (
                                         <div className="text-center">
-                                            <Bath size={24} className="mx-auto mb-2" style={{ color: 'var(--imi-gold-500)' }} />
+                                            <Bath size={24} className="mx-auto mb-2" style={{ color: 'var(--accent-400)' }} />
                                             <p className="text-xl font-bold" style={{ color: T.text }}>{data.banheiros}</p>
                                             <p className="text-xs" style={{ color: T.textMuted }}>Banheiros</p>
                                         </div>
@@ -366,7 +366,7 @@ export default function AvaliacaoDetalhesPage() {
                                 <div className="flex flex-wrap gap-2">
                                     {caracteristicas.map((f: string, i: number) => (
                                         <span key={i} className="px-3 py-1.5 rounded-lg text-sm"
-                                            style={{ background: 'rgba(59,130,246,0.1)', color: 'var(--imi-gold-500)' }}>
+                                            style={{ background: 'rgba(59,130,246,0.1)', color: 'var(--accent-400)' }}>
                                             {f}
                                         </span>
                                     ))}

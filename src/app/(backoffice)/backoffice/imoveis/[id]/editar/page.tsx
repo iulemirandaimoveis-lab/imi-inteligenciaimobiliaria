@@ -618,7 +618,7 @@ export default function EditarImovelPage() {
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
           height: 56, background: 'var(--bg-surface)',
-          borderBottom: '1px solid rgba(184,148,58,0.12)',
+          borderBottom: '1px solid rgba(61,111,255,0.12)',
           display: 'flex', alignItems: 'center', padding: '0 4px 0 4px', gap: 8,
         }}>
           <button
@@ -1016,7 +1016,7 @@ export default function EditarImovelPage() {
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
           background: 'rgba(11,25,40,0.92)', backdropFilter: 'blur(12px)',
-          borderTop: '1px solid rgba(184,148,58,0.12)',
+          borderTop: '1px solid rgba(61,111,255,0.12)',
           padding: '12px 16px',
           paddingBottom: 'max(20px, env(safe-area-inset-bottom))',
           display: 'flex', gap: 10,
@@ -1026,8 +1026,8 @@ export default function EditarImovelPage() {
               onClick={() => setActiveTab(TABS[currentTabIndex - 1].id)}
               style={{
                 flex: '0 0 auto', height: 52, paddingLeft: 20, paddingRight: 20,
-                borderRadius: 6, background: 'rgba(184,148,58,0.08)',
-                border: '1px solid rgba(184,148,58,0.25)', color: 'var(--imi-gold-500)',
+                borderRadius: 6, background: 'rgba(61,111,255,0.08)',
+                border: '1px solid rgba(61,111,255,0.25)', color: 'var(--accent-400)',
                 fontFamily: 'var(--font-outfit, sans-serif)', fontSize: 13, fontWeight: 700,
                 letterSpacing: '0.5px', cursor: 'pointer', touchAction: 'manipulation',
               }}
@@ -1039,7 +1039,7 @@ export default function EditarImovelPage() {
             onClick={currentTabIndex < totalTabs - 1 ? () => setActiveTab(TABS[currentTabIndex + 1].id) : handleSubmit}
             style={{
               flex: 1, height: 52, borderRadius: 6,
-              background: currentTabIndex < totalTabs - 1 ? 'var(--imi-gold-500)' : 'var(--success)',
+              background: currentTabIndex < totalTabs - 1 ? 'var(--accent-400)' : 'var(--success)',
               border: 'none', color: currentTabIndex < totalTabs - 1 ? T.text : 'white',
               fontFamily: 'var(--font-outfit, sans-serif)', fontSize: 13, fontWeight: 800,
               letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', touchAction: 'manipulation',

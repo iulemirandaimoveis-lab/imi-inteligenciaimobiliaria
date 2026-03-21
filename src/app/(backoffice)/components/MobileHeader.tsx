@@ -50,7 +50,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/credito': 'Crédito',
     '/backoffice/credito/simulador': 'Simulador',
     '/backoffice/consultorias': 'Consultorias',
-    '/backoffice/conteudos': 'Conteúdos',
+    '/backoffice/conteudo': 'Conteúdos',
     '/backoffice/agenda': 'Agenda',
 }
 
@@ -100,9 +100,9 @@ function AvatarButton({
                 aspectRatio: '1/1',
                 borderRadius: '50%',
                 border: accountOpen
-                    ? '2px solid var(--imi-gold-400)'
-                    : '2px solid rgba(184,148,58,0.35)',
-                background: avatarUrl ? 'transparent' : 'var(--imi-gold-500)',
+                    ? '2px solid var(--platinum-400)'
+                    : '2px solid rgba(61,111,255,0.35)',
+                background: avatarUrl ? 'transparent' : 'var(--accent-400)',
                 transition: 'border-color 0.2s',
                 flexShrink: 0,
             }}
@@ -270,32 +270,32 @@ export default function MobileHeader() {
                                     transition={{ duration: 0.18 }}
                                     className="flex items-center gap-2"
                                 >
-                                    {/* IMI wordmark — uses text-primary so dark in light mode, light in dark mode */}
+                                    {/* IMI wordmark — Cormorant Garamond Bold, matches brand reference */}
                                     <span style={{
-                                        fontFamily: "'Libre Baskerville', Georgia, serif",
-                                        fontSize: 20,
+                                        fontFamily: 'var(--font-cormorant), "Cormorant Garamond", Georgia, serif',
+                                        fontSize: 22,
                                         fontWeight: 700,
                                         color: 'var(--text-primary)',
-                                        letterSpacing: '-0.01em',
+                                        letterSpacing: '0.04em',
                                         lineHeight: 1,
                                     }}>
                                         IMI
                                     </span>
-                                    {/* Divider */}
+                                    {/* Thin gold separator */}
                                     <div style={{
                                         width: 1,
-                                        height: 16,
-                                        background: 'var(--border-strong)',
+                                        height: 18,
+                                        background: 'var(--accent-400)',
                                         flexShrink: 0,
                                     }} />
-                                    {/* Tagline — text-gold adapts: gold-600 in light, gold-400 in dark */}
+                                    {/* Tagline — sans-serif, uppercase, wide tracking */}
                                     <span style={{
-                                        fontSize: 11,
-                                        fontWeight: 700,
-                                        color: 'var(--text-gold)',
-                                        letterSpacing: '0.15em',
+                                        fontSize: 9,
+                                        fontWeight: 400,
+                                        color: 'var(--accent-400)',
+                                        letterSpacing: '0.22em',
                                         textTransform: 'uppercase',
-                                        lineHeight: 1.25,
+                                        lineHeight: 1.3,
                                         fontFamily: 'var(--font-sans)',
                                     }}>
                                         INTELIGÊNCIA<br />IMOBILIÁRIA
@@ -343,13 +343,13 @@ export default function MobileHeader() {
                         >
                             <Bell
                                 size={18}
-                                style={{ color: notifOpen ? 'var(--imi-gold-500)' : 'var(--text-tertiary)' }}
+                                style={{ color: notifOpen ? 'var(--accent-400)' : 'var(--text-tertiary)' }}
                             />
                             {unreadCount > 0 && (
                                 <span
                                     className="absolute top-[5px] right-[5px] min-w-[14px] h-[14px] px-0.5 text-[9px] font-bold text-white rounded-full flex items-center justify-center"
                                     style={{
-                                        background: 'var(--imi-gold-500)',
+                                        background: 'var(--accent-400)',
                                         boxShadow: '0 0 0 2px var(--bg-surface)',
                                     }}
                                 >
@@ -406,8 +406,8 @@ export default function MobileHeader() {
                                     className="rounded-full overflow-hidden flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
                                     style={{
                                         width: 40, height: 40, minWidth: 40, minHeight: 40, aspectRatio: '1/1',
-                                        background: avatarUrl ? 'transparent' : 'var(--imi-gold-500)',
-                                        border: '1.5px solid rgba(184,148,58,0.35)',
+                                        background: avatarUrl ? 'transparent' : 'var(--accent-400)',
+                                        border: '1.5px solid rgba(61,111,255,0.35)',
                                     }}
                                 >
                                     {avatarUrl ? (
@@ -428,8 +428,8 @@ export default function MobileHeader() {
                                         <span
                                             className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
                                             style={{
-                                                background: 'rgba(184,148,58,0.10)',
-                                                color: 'var(--imi-gold-500)',
+                                                background: 'rgba(61,111,255,0.10)',
+                                                color: 'var(--accent-400)',
                                                 borderRadius: 'var(--r-sm)',
                                                 fontFamily: 'var(--font-mono)',
                                             }}
@@ -549,7 +549,7 @@ export default function MobileHeader() {
                                         <button
                                             onClick={markAllRead}
                                             className="text-[11px] font-semibold"
-                                            style={{ color: 'var(--imi-gold-500)', fontFamily: 'var(--font-sans)' }}
+                                            style={{ color: 'var(--accent-400)', fontFamily: 'var(--font-sans)' }}
                                         >
                                             Marcar lidas
                                         </button>
@@ -577,7 +577,7 @@ export default function MobileHeader() {
                                     >
                                         <div
                                             className="w-1.5 h-1.5 rounded-full mt-2 shrink-0"
-                                            style={{ background: n.read ? 'transparent' : 'var(--imi-gold-500)' }}
+                                            style={{ background: n.read ? 'transparent' : 'var(--accent-400)' }}
                                         />
                                         <div className="flex-1 min-w-0">
                                             <p
@@ -620,7 +620,7 @@ export default function MobileHeader() {
                                 <button
                                     onClick={() => { setNotifOpen(false); router.push('/backoffice/notificacoes') }}
                                     className="inline-flex items-center gap-1 text-xs font-semibold mx-auto"
-                                    style={{ color: 'var(--imi-gold-500)', fontFamily: 'var(--font-sans)' }}
+                                    style={{ color: 'var(--accent-400)', fontFamily: 'var(--font-sans)' }}
                                 >
                                     Ver todas <ChevronRight size={12} />
                                 </button>

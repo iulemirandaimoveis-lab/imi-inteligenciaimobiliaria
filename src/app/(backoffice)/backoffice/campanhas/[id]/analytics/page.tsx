@@ -185,7 +185,7 @@ export default function CampanhaAnalyticsPage() {
         <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
-              <Calendar size={20} style={{ color: 'var(--imi-gold-500)' }} />
+              <Calendar size={20} style={{ color: 'var(--accent-400)' }} />
             </div>
           </div>
           <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { parseBody, calendarEventSchema, calendarEventUpdateSchema } from '@/lib/schemas'
+import { createNotification } from '@/lib/notifications'
 
 export async function GET(req: NextRequest) {
     try {
@@ -14,7 +15,9 @@ export async function GET(req: NextRequest) {
         if (id) {
             const { data, error } = await supabase.from('calendar_events').select('*').eq('id', id).single()
             if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 404 })
-            return NextResponse.json(data)
+            return NextResponse.json(data, {
+                headers: { 'Cache-Control': 'private, s-maxage=30, stale-while-revalidate=120' },
+            })
         }
 
         let query = supabase.from('calendar_events').select('*').order('start_time', { ascending: true })
@@ -29,7 +32,9 @@ export async function GET(req: NextRequest) {
 
         const { data, error } = await query.limit(200)
         if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        return NextResponse.json(data || [])
+        return NextResponse.json(data || [], {
+            headers: { 'Cache-Control': 'private, s-maxage=30, stale-while-revalidate=120' },
+        })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }
@@ -53,6 +58,16 @@ export async function POST(req: NextRequest) {
         }).select().single()
 
         if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+
+        // Notification — fire-and-forget
+        createNotification({
+            userId: user.id,
+            type: 'agenda_novo',
+            title: 'Novo Evento na Agenda',
+            message: `Evento "${title}" agendado`,
+            data: { event_id: data.id },
+        }).catch(() => {})
+
         return NextResponse.json(data, { status: 201 })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })

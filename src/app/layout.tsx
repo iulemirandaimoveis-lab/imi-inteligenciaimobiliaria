@@ -1,8 +1,20 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
-// DEPLOY_VERSION: v3.1.0 - DS3.1 DESIGN SYSTEM UPGRADE
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+import { Syne } from 'next/font/google';
+// DEPLOY_VERSION: v6.0.0 - DS6 PRECISION DARK
 import './globals.css';
 
+// DS v6 display font (Syne) — loaded via Google Fonts
+const syne = Syne({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700', '800'],
+    variable: '--font-syne',
+    display: 'swap',
+});
+
+// Legacy fonts kept for compatibility (still referenced in some components)
 const cormorant = localFont({
     src: [
         { path: '../../public/fonts/cormorant-garamond-latin-wght-normal.woff2', style: 'normal' },
@@ -69,8 +81,8 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="pt-BR" suppressHydrationWarning className={`${cormorant.variable} ${outfit.variable} ${dmMono.variable}`}>
-            <body className={`${outfit.className} min-h-screen bg-[var(--bg-base,#0B1120)] relative`}>
+        <html lang="pt-BR" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} ${cormorant.variable} ${outfit.variable} ${dmMono.variable} ${syne.variable}`}>
+            <body className={`${GeistSans.className} min-h-screen bg-[var(--bg-base,#080D18)] relative`}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="dark"

@@ -8,7 +8,7 @@ interface OriginsChartProps {
     data: Array<{ name: string; value: number }>
 }
 
-const COLORS = ['var(--text-primary)', 'var(--imi-gold-500)', 'var(--text-secondary)', 'var(--text-tertiary)', 'var(--border-subtle)']
+const COLORS = ['var(--text-primary)', 'var(--accent-400)', 'var(--text-secondary)', 'var(--text-tertiary)', 'var(--border-subtle)']
 
 export default function OriginsChart({ data }: OriginsChartProps) {
     if (!data || data.length === 0) {

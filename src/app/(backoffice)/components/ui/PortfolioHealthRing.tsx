@@ -27,11 +27,11 @@ export interface PortfolioHealthRingProps {
 }
 
 const METRIC_COLORS = [
-  'var(--imi-gold-500)',
+  'var(--accent-400)',
   'var(--success)',
   'var(--info)',
   'var(--warning)',
-  'var(--imi-navy-300)',
+  'var(--text-secondary)',
   'var(--error)',
 ]
 
@@ -43,14 +43,14 @@ function scoreColor(s: number): string {
 }
 
 function gradeColor(g: HealthGrade): string {
-  if (g === 'A+' || g === 'A') return 'var(--imi-gold-500)'
+  if (g === 'A+' || g === 'A') return 'var(--accent-400)'
   if (g === 'B+' || g === 'B') return 'var(--info)'
   if (g === 'C') return 'var(--warning)'
   return 'var(--error)'
 }
 
 function gradeBg(g: HealthGrade): string {
-  if (g === 'A+' || g === 'A') return 'rgba(184,148,58,0.12)'
+  if (g === 'A+' || g === 'A') return 'rgba(61,111,255,0.12)'
   if (g === 'B+' || g === 'B') return 'var(--info-bg)'
   if (g === 'C') return 'var(--warning-bg)'
   return 'var(--error-bg)'

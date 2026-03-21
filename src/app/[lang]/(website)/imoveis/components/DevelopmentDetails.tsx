@@ -5,7 +5,7 @@ import { Bed, Maximize, Bath, Car, Check, Sparkles, Building2, Waves, TreePine, 
 import { Development } from '../types/development';
 import { slideUp, staggerContainer } from '@/lib/animations';
 
-const GOLD = '#C8A44A';
+const GOLD = '#3D6FFF';
 const NAVY = '#0B1928';
 
 interface DevelopmentDetailsProps {

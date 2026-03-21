@@ -187,7 +187,7 @@ export default function CampanhaDetalhesPage() {
             )}
 
             {/* AI Insight Card */}
-            <div className="rounded-lg p-5" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)' }}>
+            <div className="rounded-lg p-5" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.25)' }}>
                 <div className="flex items-center gap-2 mb-3">
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(var(--imi-ai-gold-rgb),0.12)' }}>
                         {aiLoading ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--imi-ai-gold)' }} /> : <Sparkles size={13} style={{ color: 'var(--imi-ai-gold)' }} />}

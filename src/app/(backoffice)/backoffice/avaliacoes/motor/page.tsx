@@ -1,9 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Scale, BookOpen, Upload, Send, Trash2, Search, Sparkles, FileText, ChevronRight, RotateCcw, Brain, CheckCircle2, XCircle, Loader2, Info } from 'lucide-react'
-
-export const dynamic = 'force-dynamic'
+import { Scale, BookOpen, Upload, Send, Trash2, Search, Sparkles, FileText, ChevronRight, RotateCcw, Brain, CheckCircle2, XCircle, Loader2, Info, Calculator, DollarSign, TrendingUp, Building2 } from 'lucide-react'
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const T = {
@@ -12,12 +10,12 @@ const T = {
   elevated:   'var(--bg-elevated)',
   border:     'var(--border-default)',
   borderHi:   'rgba(184,148,58,0.35)',
-  gold:       'var(--imi-gold-500)',
+  gold:       'var(--accent-400)',
   goldBg:     'rgba(184,148,58,0.08)',
   text:       'var(--text-primary)',
   textSub:    'var(--text-secondary)',
   textDim:    'var(--text-secondary)',
-  navy:       'var(--imi-navy-900)',
+  navy:       'var(--bg-void)',
   success:    'var(--success)',
   successBg:  'var(--success-bg)',
   error:      'var(--error)',
@@ -40,12 +38,12 @@ interface Message {
   timestamp: Date
 }
 
-type Tab = 'consultar' | 'base' | 'processar'
+type Tab = 'consultar' | 'base' | 'processar' | 'calculadora'
 
 const CATEGORIES = [
-  { value: 'all',         label: 'Todas',       color: 'var(--imi-gold-500)' },
+  { value: 'all',         label: 'Todas',       color: 'var(--accent-400)' },
   { value: 'metodologia', label: 'Metodologia', color: 'var(--info)' },
-  { value: 'norma',       label: 'Normas NBR',  color: 'var(--imi-gold-400)' },
+  { value: 'norma',       label: 'Normas NBR',  color: 'var(--platinum-400)' },
   { value: 'definicao',   label: 'Definições',  color: 'var(--success)' },
   { value: 'calculo',     label: 'Cálculos',    color: '#F87171' },
   { value: 'exemplo',     label: 'Exemplos',    color: '#FBBF24' },
@@ -113,9 +111,10 @@ export default function MotorAvaliacoesPage() {
           {/* Tabs */}
           <div style={{ display: 'flex' }}>
             {([
-              { id: 'consultar', label: 'Consultar IA',         Icon: Brain    },
-              { id: 'base',      label: 'Base de Conhecimento', Icon: BookOpen },
-              { id: 'processar', label: 'Processar Páginas',    Icon: Upload   },
+              { id: 'consultar',   label: 'Consultar IA',         Icon: Brain      },
+              { id: 'calculadora', label: 'Calculadora NBR',     Icon: Calculator },
+              { id: 'base',        label: 'Base de Conhecimento', Icon: BookOpen  },
+              { id: 'processar',   label: 'Processar Páginas',    Icon: Upload    },
             ] as const).map(t => (
               <button key={t.id} onClick={() => setTab(t.id)} className="mt"
                 style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: tab === t.id ? 700 : 500, color: tab === t.id ? T.gold : T.textSub, borderBottom: tab === t.id ? `2px solid ${T.gold}` : '2px solid transparent', marginBottom: -1, transition: 'all 150ms' }}>
@@ -128,9 +127,10 @@ export default function MotorAvaliacoesPage() {
 
       {/* Content */}
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 28px' }}>
-        {tab === 'consultar' && <TabConsultar />}
-        {tab === 'base'      && <TabBase />}
-        {tab === 'processar' && <TabProcessar />}
+        {tab === 'consultar'   && <TabConsultar />}
+        {tab === 'calculadora' && <TabCalculadora />}
+        {tab === 'base'        && <TabBase />}
+        {tab === 'processar'   && <TabProcessar />}
       </div>
     </div>
   )
@@ -264,6 +264,298 @@ function TabConsultar() {
           ))}
         </div>
       </div>
+    </div>
+  )
+}
+
+// ── Tab: Calculadora NBR ─────────────────────────────────────────────────────
+type CalcMethod = 'comparativo' | 'evolutivo' | 'renda' | 'ross_heidecke'
+interface CalcComparavel { endereco: string; area: number; valor: number; fator_localizacao: number; fator_padrao: number }
+
+function TabCalculadora() {
+  const [method, setMethod] = useState<CalcMethod>('comparativo')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<Record<string, unknown> | null>(null)
+  const [error, setError] = useState('')
+
+  // Shared property fields
+  const [area, setArea] = useState('')
+  const [anoConst, setAnoConst] = useState('')
+  const [conservacao, setConservacao] = useState('Regular')
+  const [padrao, setPadrao] = useState('Normal')
+
+  // Comparativo
+  const [comparaveis, setComparaveis] = useState<CalcComparavel[]>([
+    { endereco: '', area: 0, valor: 0, fator_localizacao: 1, fator_padrao: 1 },
+    { endereco: '', area: 0, valor: 0, fator_localizacao: 1, fator_padrao: 1 },
+    { endereco: '', area: 0, valor: 0, fator_localizacao: 1, fator_padrao: 1 },
+  ])
+
+  // Evolutivo
+  const [valorTerreno, setValorTerreno] = useState('')
+
+  // Renda
+  const [rendaMensal, setRendaMensal] = useState('')
+  const [taxaCap, setTaxaCap] = useState('0.6')
+
+  const formatBRL = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
+
+  const updateComp = (idx: number, field: keyof CalcComparavel, value: string | number) => {
+    setComparaveis(prev => prev.map((c, i) => i === idx ? { ...c, [field]: value } : c))
+  }
+
+  async function calculate() {
+    setError('')
+    setResult(null)
+    setLoading(true)
+    try {
+      const property = {
+        area: Number(area),
+        ano_construcao: Number(anoConst) || undefined,
+        estado_conservacao: conservacao,
+        padrao,
+        bairro: '',
+        tipo: 'Apartamento',
+      }
+      let body: Record<string, unknown> = { metodo: method, property }
+
+      if (method === 'comparativo') {
+        const valid = comparaveis.filter(c => c.area > 0 && c.valor > 0)
+        if (valid.length < 2) { setError('Mínimo 2 comparáveis com área e valor'); setLoading(false); return }
+        body.comparaveis = valid.map(c => ({
+          endereco: c.endereco,
+          area: c.area,
+          valor_venda: c.valor,
+          fator_localizacao: c.fator_localizacao,
+          fator_padrao: c.fator_padrao,
+        }))
+      } else if (method === 'evolutivo') {
+        if (!valorTerreno || !area) { setError('Área e valor do terreno obrigatórios'); setLoading(false); return }
+        body.valor_terreno = Number(valorTerreno)
+      } else if (method === 'renda') {
+        if (!rendaMensal || !taxaCap) { setError('Renda mensal e taxa obrigatórias'); setLoading(false); return }
+        body.renda = { renda_mensal: Number(rendaMensal), taxa_capitalizacao: Number(taxaCap) }
+      } else if (method === 'ross_heidecke') {
+        if (!anoConst) { setError('Ano de construção obrigatório'); setLoading(false); return }
+      }
+
+      const res = await fetch('/api/avaliacoes/calcular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro no cálculo')
+      setResult(data.result)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const METHODS = [
+    { id: 'comparativo' as const, label: 'Comparativo Direto', desc: 'NBR 14653-2 §8', Icon: Scale },
+    { id: 'evolutivo' as const, label: 'Evolutivo', desc: 'NBR 14653-2 §10', Icon: Building2 },
+    { id: 'renda' as const, label: 'Capitalização da Renda', desc: 'NBR 14653-2 §11', Icon: DollarSign },
+    { id: 'ross_heidecke' as const, label: 'Ross-Heidecke', desc: 'Depreciação', Icon: TrendingUp },
+  ]
+
+  const inputStyle = { width: '100%', padding: '8px 12px', borderRadius: 6, background: T.elevated, border: `1px solid ${T.border}`, color: T.text, fontSize: 12, boxSizing: 'border-box' as const }
+  const labelStyle = { fontSize: 11, color: T.textSub, fontWeight: 600 as const, marginBottom: 4, display: 'block' as const }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 900 }}>
+      {/* Method selector */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10 }}>
+        {METHODS.map(m => (
+          <button key={m.id} onClick={() => { setMethod(m.id); setResult(null); setError('') }}
+            style={{ padding: '14px 12px', borderRadius: 6, border: `1px solid ${method === m.id ? T.gold : T.border}`, background: method === m.id ? T.goldBg : T.elevated, cursor: 'pointer', textAlign: 'left', transition: 'all 150ms' }}>
+            <m.Icon size={16} color={method === m.id ? T.gold : T.textDim} style={{ marginBottom: 6 }} />
+            <div style={{ fontSize: 12, fontWeight: 700, color: method === m.id ? T.gold : T.text }}>{m.label}</div>
+            <div style={{ fontSize: 10, color: T.textDim, marginTop: 2 }}>{m.desc}</div>
+          </button>
+        ))}
+      </div>
+
+      {/* Property fields (shared) */}
+      <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: 20 }}>
+        <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.gold, fontWeight: 700, marginBottom: 14 }}>Dados do Imóvel</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+          <div>
+            <label style={labelStyle}>Área (m²) *</label>
+            <input className="mi" type="number" value={area} onChange={e => setArea(e.target.value)} placeholder="95" style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelStyle}>Ano Construção</label>
+            <input className="mi" type="number" value={anoConst} onChange={e => setAnoConst(e.target.value)} placeholder="2015" style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelStyle}>Padrão</label>
+            <select value={padrao} onChange={e => setPadrao(e.target.value)} style={inputStyle}>
+              {['Mínimo', 'Baixo', 'Normal', 'Alto', 'Luxo'].map(p => <option key={p}>{p}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Conservação</label>
+            <select value={conservacao} onChange={e => setConservacao(e.target.value)} style={inputStyle}>
+              {['Novo', 'Entre novo e regular', 'Regular', 'Entre regular e reparos simples', 'Reparos simples', 'Entre reparos simples e importantes', 'Reparos importantes', 'Entre reparos importantes e sem valor', 'Sem valor'].map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Method-specific fields */}
+      {method === 'comparativo' && (
+        <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+            <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.gold, fontWeight: 700 }}>Comparáveis ({comparaveis.length})</div>
+            <button onClick={() => setComparaveis(prev => [...prev, { endereco: '', area: 0, valor: 0, fator_localizacao: 1, fator_padrao: 1 }])}
+              style={{ fontSize: 11, padding: '4px 12px', borderRadius: 6, border: `1px solid ${T.borderHi}`, background: T.goldBg, color: T.gold, cursor: 'pointer', fontWeight: 600 }}>+ Adicionar</button>
+          </div>
+          {comparaveis.map((c, i) => (
+            <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.2fr 1fr 1fr auto', gap: 8, marginBottom: 8, alignItems: 'end' }}>
+              <div>
+                {i === 0 && <label style={labelStyle}>Endereço</label>}
+                <input className="mi" value={c.endereco} onChange={e => updateComp(i, 'endereco', e.target.value)} placeholder="Rua..." style={inputStyle} />
+              </div>
+              <div>
+                {i === 0 && <label style={labelStyle}>Área (m²)</label>}
+                <input className="mi" type="number" value={c.area || ''} onChange={e => updateComp(i, 'area', Number(e.target.value))} placeholder="90" style={inputStyle} />
+              </div>
+              <div>
+                {i === 0 && <label style={labelStyle}>Valor Venda (R$)</label>}
+                <input className="mi" type="number" value={c.valor || ''} onChange={e => updateComp(i, 'valor', Number(e.target.value))} placeholder="450000" style={inputStyle} />
+              </div>
+              <div>
+                {i === 0 && <label style={labelStyle}>Fator Loc.</label>}
+                <input className="mi" type="number" step="0.01" value={c.fator_localizacao} onChange={e => updateComp(i, 'fator_localizacao', Number(e.target.value))} style={inputStyle} />
+              </div>
+              <div>
+                {i === 0 && <label style={labelStyle}>Fator Pad.</label>}
+                <input className="mi" type="number" step="0.01" value={c.fator_padrao} onChange={e => updateComp(i, 'fator_padrao', Number(e.target.value))} style={inputStyle} />
+              </div>
+              <button onClick={() => setComparaveis(prev => prev.filter((_, j) => j !== i))} className="md"
+                style={{ width: 32, height: 32, borderRadius: 6, border: `1px solid ${T.border}`, background: 'transparent', color: T.textDim, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Trash2 size={12} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {method === 'evolutivo' && (
+        <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: 20 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.gold, fontWeight: 700, marginBottom: 14 }}>Método Evolutivo</div>
+          <div style={{ maxWidth: 300 }}>
+            <label style={labelStyle}>Valor do Terreno (R$) *</label>
+            <input className="mi" type="number" value={valorTerreno} onChange={e => setValorTerreno(e.target.value)} placeholder="200000" style={inputStyle} />
+          </div>
+          <p style={{ fontSize: 11, color: T.textDim, marginTop: 8 }}>Valor = Terreno + (Área × CUB/m² × Fator Padrão) − Depreciação Ross-Heidecke</p>
+        </div>
+      )}
+
+      {method === 'renda' && (
+        <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: 20 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.gold, fontWeight: 700, marginBottom: 14 }}>Capitalização da Renda</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, maxWidth: 400 }}>
+            <div>
+              <label style={labelStyle}>Renda Mensal (R$) *</label>
+              <input className="mi" type="number" value={rendaMensal} onChange={e => setRendaMensal(e.target.value)} placeholder="3500" style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Taxa Cap. (% a.m.) *</label>
+              <input className="mi" type="number" step="0.01" value={taxaCap} onChange={e => setTaxaCap(e.target.value)} placeholder="0.6" style={inputStyle} />
+            </div>
+          </div>
+          <p style={{ fontSize: 11, color: T.textDim, marginTop: 8 }}>Valor = Renda Mensal / (Taxa ÷ 100) × 12</p>
+        </div>
+      )}
+
+      {method === 'ross_heidecke' && (
+        <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: 20 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.gold, fontWeight: 700, marginBottom: 14 }}>Depreciação Ross-Heidecke</div>
+          <p style={{ fontSize: 11, color: T.textDim, margin: 0 }}>
+            Usa os campos <strong style={{ color: T.text }}>Ano de Construção</strong>, <strong style={{ color: T.text }}>Conservação</strong> e <strong style={{ color: T.text }}>Área</strong> acima.<br />
+            D = (1 − R) × ross + c × (1 − ross) — vida útil padrão: 60 anos
+          </p>
+        </div>
+      )}
+
+      {/* Calculate button */}
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        <button onClick={calculate} disabled={loading || !area}
+          style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 28px', borderRadius: 6, border: 'none', cursor: loading || !area ? 'not-allowed' : 'pointer', background: loading || !area ? T.surface : T.gold, color: loading || !area ? T.textDim : T.navy, fontSize: 13, fontWeight: 700, transition: 'all 150ms' }}>
+          {loading ? <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} /> : <Calculator size={15} />}
+          {loading ? 'Calculando...' : 'Calcular Valor'}
+        </button>
+        {error && <span style={{ fontSize: 12, color: T.error }}>{error}</span>}
+      </div>
+
+      {/* Result */}
+      {result && (
+        <div style={{ background: T.goldBg, border: `1px solid ${T.borderHi}`, borderRadius: 6, padding: 24 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.gold, fontWeight: 700, marginBottom: 16 }}>Resultado — {METHODS.find(m => m.id === method)?.label}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
+            {typeof (result as Record<string, unknown>).valor_total === 'number' && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Valor Total</div>
+                <div style={{ fontFamily: 'var(--font-playfair, var(--font-display, serif))', fontSize: 28, color: T.gold, fontWeight: 700 }}>{formatBRL((result as Record<string, number>).valor_total)}</div>
+              </div>
+            )}
+            {typeof (result as Record<string, unknown>).valor_unitario === 'number' && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Valor Unitário (R$/m²)</div>
+                <div style={{ fontSize: 20, color: T.text, fontWeight: 600 }}>{formatBRL((result as Record<string, number>).valor_unitario)}</div>
+              </div>
+            )}
+            {!!(result as Record<string, unknown>).intervalo && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Intervalo de Confiança</div>
+                <div style={{ fontSize: 14, color: T.text }}>
+                  {formatBRL(((result as Record<string, Record<string, number>>).intervalo).min)} — {formatBRL(((result as Record<string, Record<string, number>>).intervalo).max)}
+                </div>
+              </div>
+            )}
+            {typeof (result as Record<string, unknown>).depreciacao_percentual === 'number' && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Depreciação</div>
+                <div style={{ fontSize: 20, color: T.error, fontWeight: 600 }}>{((result as Record<string, number>).depreciacao_percentual * 100).toFixed(1)}%</div>
+              </div>
+            )}
+            {typeof (result as Record<string, unknown>).valor_depreciado === 'number' && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Valor Depreciado</div>
+                <div style={{ fontSize: 20, color: T.text, fontWeight: 600 }}>{formatBRL((result as Record<string, number>).valor_depreciado)}</div>
+              </div>
+            )}
+            {typeof (result as Record<string, unknown>).valor_capitalizado === 'number' && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Valor Capitalizado</div>
+                <div style={{ fontFamily: 'var(--font-playfair, var(--font-display, serif))', fontSize: 28, color: T.gold, fontWeight: 700 }}>{formatBRL((result as Record<string, number>).valor_capitalizado)}</div>
+              </div>
+            )}
+            {typeof (result as Record<string, unknown>).grau_fundamentacao === 'string' && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Grau de Fundamentação</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: T.success }}>{(result as Record<string, string>).grau_fundamentacao}</div>
+              </div>
+            )}
+            {typeof (result as Record<string, unknown>).grau_precisao === 'string' && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Grau de Precisão</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: T.success }}>{(result as Record<string, string>).grau_precisao}</div>
+              </div>
+            )}
+            {typeof (result as Record<string, unknown>).coeficiente_variacao === 'number' && (
+              <div>
+                <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>Coeficiente de Variação</div>
+                <div style={{ fontSize: 16, color: T.text }}>{((result as Record<string, number>).coeficiente_variacao).toFixed(1)}%</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

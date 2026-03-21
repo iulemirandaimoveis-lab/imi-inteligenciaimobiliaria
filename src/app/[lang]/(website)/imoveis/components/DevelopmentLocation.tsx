@@ -5,7 +5,7 @@ import { MapPin, Navigation } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { slideUp } from '@/lib/animations';
 
-const GOLD = '#C8A44A';
+const GOLD = '#3D6FFF';
 
 interface DevelopmentLocationProps {
     development: Development;

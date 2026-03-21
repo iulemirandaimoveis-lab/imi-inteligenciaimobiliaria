@@ -19,7 +19,7 @@ import {
   SlidersHorizontal, X, Home,
 } from 'lucide-react'
 import type { IMIProperty } from '@/features/properties/types'
-import { getScoreColor } from '@/features/properties/services/score.service'
+import { getScoreStyle } from '@/hooks/useScore'
 import { usePathname } from 'next/navigation'
 
 // ─── Design Tokens (DS3) ─────────────────────────────────────────────────────
@@ -32,7 +32,7 @@ export const T = {
   navyMid:    'var(--bg-surface)',
   navyCard:   'var(--bg-elevated)',
   navyRaised: 'var(--bg-muted)',
-  gold:       '#B8943A',
+  gold:       '#2550E8',
   goldBright: '#D4B86A',
   text1:      'var(--text-primary)',
   text2:      'var(--text-secondary)',
@@ -43,7 +43,7 @@ export const T = {
   blue:       'var(--info)',
   amber:      'var(--warning)',
   borderSoft: 'var(--border-subtle)',
-  borderGold: 'rgba(184,148,58,0.22)',
+  borderGold: 'rgba(61,111,255,0.22)',
   glassBase:  'color-mix(in srgb, var(--bg-base) 85%, transparent)',
 } as const
 
@@ -238,7 +238,7 @@ export function MobileAppBarAction({ icon, href, onClick, active, badge, label, 
       className="mob-btn-tap"
       style={{
         minWidth: 44, height: 44, borderRadius: 'var(--r-md)',
-        background: isPrimary ? T.gold : active ? `rgba(184,148,58,0.12)` : 'transparent',
+        background: isPrimary ? T.gold : active ? `rgba(61,111,255,0.12)` : 'transparent',
         border: 'none', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: isPrimary ? T.textInv : active ? T.gold : 'var(--text-secondary)',
@@ -285,7 +285,7 @@ export function MobileSearchBar({ value, onChange, placeholder = 'Buscar...', au
       display: 'flex', alignItems: 'center', gap: 10,
       height: 44,
       background: 'var(--bg-elevated)',
-      border: `1px solid ${focused ? 'rgba(184,148,58,0.5)' : 'var(--border-subtle)'}`,
+      border: `1px solid ${focused ? 'rgba(61,111,255,0.5)' : 'var(--border-subtle)'}`,
       borderRadius: 6,
       padding: '0 14px',
       transition: 'border-color 150ms ease',
@@ -358,12 +358,13 @@ export function MobileFilterChips({ chips, active, onChange }: MobileFilterChips
             aria-pressed={isActive}
             style={{
               flexShrink: 0,
+              whiteSpace: 'nowrap',
               display: 'flex', alignItems: 'center', gap: 5,
               height: 32, padding: '0 12px',
               borderRadius: 6,
-              background: isActive ? T.gold : 'rgba(184,148,58,0.08)',
-              border: `1px solid ${isActive ? T.gold : 'rgba(184,148,58,0.2)'}`,
-              color: isActive ? T.textInv : 'var(--text-secondary)',
+              background: isActive ? 'var(--nav-active)' : 'rgba(61,111,255,0.08)',
+              border: `1px solid ${isActive ? 'var(--nav-active)' : 'rgba(61,111,255,0.2)'}`,
+              color: isActive ? '#fff' : 'var(--text-secondary)',
               fontFamily: 'var(--font-sans)',
               fontSize: 11, fontWeight: isActive ? 700 : 500,
               cursor: 'pointer',
@@ -372,7 +373,7 @@ export function MobileFilterChips({ chips, active, onChange }: MobileFilterChips
             }}
           >
             {chip.icon && (
-              <span style={{ display: 'flex', alignItems: 'center', color: isActive ? T.textInv : 'var(--text-gold)' }}>
+              <span style={{ display: 'flex', alignItems: 'center', color: isActive ? '#fff' : 'var(--nav-active)' }}>
                 {chip.icon}
               </span>
             )}
@@ -397,7 +398,7 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
   const status = normalizeStatus(property.status)
   const statusCfg = STATUS_CONFIGS[status] ?? { label: status, color: T.text2 }
   const score = property.imi_score ?? 0
-  const scoreColor = getScoreColor(score)
+  const scoreColor = getScoreStyle(score).color
   const imageUrl = property.cover_image_url ?? property.image_urls?.[0] ?? null
 
   return (
@@ -428,7 +429,7 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-muted) 100%)',
             }}>
-              <Building2 size={44} style={{ color: 'rgba(184,148,58,0.15)' }} />
+              <Building2 size={44} style={{ color: 'rgba(61,111,255,0.15)' }} />
             </div>
           )}
 
@@ -486,7 +487,7 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
                 width: 36, height: 36,
                 background: 'rgba(11,17,32,0.72)', backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
-                border: `1px solid rgba(184,148,58,0.22)`,
+                border: `1px solid rgba(61,111,255,0.22)`,
                 borderRadius: 'var(--r-md)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 cursor: 'pointer',
@@ -630,7 +631,7 @@ export function MobileBottomSheet({ isOpen, onClose, title, children, footer }: 
           width: '100%', maxHeight: '88vh',
           background: 'var(--bg-elevated)',
           borderRadius: '4px 4px 0 0',
-          borderTop: `1px solid rgba(184,148,58,0.22)`,
+          borderTop: `1px solid rgba(61,111,255,0.22)`,
           display: 'flex', flexDirection: 'column',
           boxShadow: '0 -8px 40px rgba(0,0,0,0.5)',
           animation: 'sheetIn 350ms cubic-bezier(0.16,1,0.3,1) both',
@@ -648,7 +649,7 @@ export function MobileBottomSheet({ isOpen, onClose, title, children, footer }: 
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '14px 20px 12px',
-            borderBottom: `1px solid rgba(184,148,58,0.10)`,
+            borderBottom: `1px solid rgba(61,111,255,0.10)`,
             flexShrink: 0,
           }}>
             <span style={{
@@ -681,7 +682,7 @@ export function MobileBottomSheet({ isOpen, onClose, title, children, footer }: 
         {footer && (
           <div style={{
             flexShrink: 0,
-            borderTop: `1px solid rgba(184,148,58,0.10)`,
+            borderTop: `1px solid rgba(61,111,255,0.10)`,
             padding: `14px 20px max(14px, env(safe-area-inset-bottom))`,
           }}>
             {footer}
@@ -709,11 +710,11 @@ export function MobileEmptyState({ title = 'Nenhum imóvel', subtitle = 'Tente a
     }}>
       <div style={{
         width: 72, height: 72, borderRadius: 'var(--r-2xl)',
-        background: 'rgba(184,148,58,0.06)',
-        border: '1px solid rgba(184,148,58,0.18)',
+        background: 'rgba(61,111,255,0.06)',
+        border: '1px solid rgba(61,111,255,0.18)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        <Building2 size={32} style={{ color: 'rgba(184,148,58,0.4)' }} />
+        <Building2 size={32} style={{ color: 'rgba(61,111,255,0.4)' }} />
       </div>
       <div>
         <div style={{
@@ -788,7 +789,7 @@ export function MobileBottomNav() {
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 justifyContent: 'center', gap: 3,
                 height: 56, padding: '0 4px',
-                color: active ? T.gold : 'var(--text-tertiary)',
+                color: active ? 'var(--nav-active)' : 'var(--text-tertiary)',
                 transition: 'color 150ms ease',
               }}
             >
@@ -797,7 +798,7 @@ export function MobileBottomNav() {
                 fontFamily: 'var(--font-sans)',
                 fontSize: 11, fontWeight: active ? 700 : 500,
                 letterSpacing: '0.3px',
-                color: active ? T.gold : 'var(--text-tertiary)',
+                color: active ? 'var(--nav-active)' : 'var(--text-tertiary)',
               }}>{item.label}</span>
             </div>
           </Link>
@@ -838,8 +839,8 @@ export function MobileSortChips({ options, activeField, activeDir, onChange }: M
             style={{
               flexShrink: 0, height: 28, padding: '0 10px',
               borderRadius: 6,
-              background: isActive ? 'rgba(184,148,58,0.15)' : 'transparent',
-              border: `1px solid ${isActive ? T.gold : 'rgba(184,148,58,0.15)'}`,
+              background: isActive ? 'rgba(61,111,255,0.15)' : 'transparent',
+              border: `1px solid ${isActive ? T.gold : 'rgba(61,111,255,0.15)'}`,
               color: isActive ? T.gold : 'var(--text-tertiary)',
               fontFamily: 'var(--font-sans)',
               fontSize: 11, fontWeight: isActive ? 700 : 500,
@@ -970,7 +971,7 @@ export function MobileFiltersButton({ count, onClick }: MobileFiltersButtonProps
         display: 'flex', alignItems: 'center', gap: 6,
         padding: '0 14px', height: 36, borderRadius: 6,
         background: 'transparent',
-        border: `1px solid ${count > 0 ? T.gold : 'rgba(184,148,58,0.25)'}`,
+        border: `1px solid ${count > 0 ? T.gold : 'rgba(61,111,255,0.25)'}`,
         color: T.gold,
         fontFamily: 'var(--font-sans)',
         fontSize: 12, fontWeight: 600, cursor: 'pointer',

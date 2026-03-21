@@ -49,7 +49,7 @@ function calcScore(kr: KeyResult) {
 }
 
 function scoreColor(score: number) {
-  if (score >= 0.7) return { bg: 'bg-gold/20', text: 'text-gold', bar: '#C8A44A' }
+  if (score >= 0.7) return { bg: 'bg-gold/20', text: 'text-gold', bar: '#3D6FFF' }
   if (score >= 0.6) return { bg: 'bg-emerald-500/20', text: 'text-emerald-400', bar: '#34d399' }
   if (score >= 0.3) return { bg: 'bg-amber-500/20', text: 'text-amber-400', bar: '#fbbf24' }
   return { bg: 'bg-red-500/20', text: 'text-red-400', bar: '#f87171' }
@@ -295,7 +295,7 @@ export default function OKRDetailPage() {
                         onClick={handleCheckIn}
                         disabled={savingCheckIn || !checkInValue}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-[#0B1928] disabled:opacity-50"
-                        style={{ background: '#C8A44A' }}
+                        style={{ background: '#3D6FFF' }}
                       >
                         {savingCheckIn ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
                         Registrar

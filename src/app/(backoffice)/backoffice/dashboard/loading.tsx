@@ -12,7 +12,7 @@ export default function Loading() {
       <Loader2
         size={24}
         style={{
-          color: 'var(--imi-gold-500, #C8A44A)',
+          color: 'var(--accent-400, #3D6FFF)',
           animation: 'spin 1s linear infinite',
         }}
       />

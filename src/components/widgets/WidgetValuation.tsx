@@ -76,7 +76,7 @@ export function WidgetValuation() {
                             <span>Confiabilidade do Modelo</span><span>87%</span>
                         </div>
                         <div style={{ height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 99 }}>
-                            <div style={{ height: '100%', width: '87%', background: 'var(--gold,#C8A44A)', borderRadius: 99 }} />
+                            <div style={{ height: '100%', width: '87%', background: 'var(--gold,#3D6FFF)', borderRadius: 99 }} />
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@ const S = {
         padding: '9px 12px', fontSize: 13, color: 'var(--text-primary)', fontFamily: 'inherit', outline: 'none', width: '100%',
     },
     btn: {
-        width: '100%', padding: '11px', background: 'var(--imi-gold-500)', color: 'var(--navy,#0B1928)',
+        width: '100%', padding: '11px', background: 'var(--accent-400)', color: 'var(--navy,#0B1928)',
         border: 'none', borderRadius: 'var(--r-sm,4px)', fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
         cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase' as const,
     },

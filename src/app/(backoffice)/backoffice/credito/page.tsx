@@ -14,8 +14,6 @@ import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
 import { getStatusConfig } from '../../lib/constants'
 
-export const dynamic = 'force-dynamic'
-
 interface CreditApplication {
   id: string
   protocol: string
@@ -196,7 +194,7 @@ function SimuladorCredito() {
 
       <Link href="/backoffice/credito/novo"
         className="flex items-center justify-center gap-2 w-full rounded-[6px] text-sm font-bold text-white transition-all hover:opacity-90"
-        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--imi-gold-500) 22%, transparent)' }}>
+        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--accent-400) 22%, transparent)' }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
 
@@ -308,7 +306,7 @@ export default function CreditoPage() {
             whileTap={{ scale: 0.96 }}
             onClick={() => window.location.href = '/backoffice/credito/novo'}
             className="flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white flex-shrink-0"
-            style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--imi-gold-500) 22%, transparent)', border: 'none' }}
+            style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--accent-400) 22%, transparent)', border: 'none' }}
           >
             <Plus size={16} /> <span className="hidden sm:inline">Nova Operação</span>
           </motion.button>

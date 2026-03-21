@@ -1,5 +1,4 @@
 'use client'
-export const dynamic = 'force-dynamic'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -131,9 +130,9 @@ export default function OnboardingPage() {
                                     width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     fontSize: '11px', fontWeight: 800,
-                                    background: step > s.id ? 'var(--success-bg)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
+                                    background: step > s.id ? 'var(--success-bg)' : step === s.id ? 'var(--accent-400)' : 'var(--bg-elevated)',
                                     color: step > s.id ? 'var(--success)' : step === s.id ? '#fff' : 'var(--text-secondary)',
-                                    border: `1px solid ${step > s.id ? 'var(--success)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--border-default)'}`,
+                                    border: `1px solid ${step > s.id ? 'var(--success)' : step === s.id ? 'var(--accent-400)' : 'var(--border-default)'}`,
                                     transition: 'all var(--dur-3) var(--ease)',
                                 }}>
                                     {step > s.id ? <CheckCircle2 size={14} /> : s.id}
@@ -169,12 +168,12 @@ export default function OnboardingPage() {
                             <div style={{
                                 width: '42px', height: '42px', borderRadius: '6px',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                background: 'rgba(184,148,58,0.12)', border: '1px solid rgba(184,148,58,0.25)',
+                                background: 'rgba(61,111,255,0.12)', border: '1px solid rgba(61,111,255,0.25)',
                             }}>
-                                <Building2 size={20} style={{ color: 'var(--imi-gold-500)' }} />
+                                <Building2 size={20} style={{ color: 'var(--accent-400)' }} />
                             </div>
                             <div>
-                                <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '2px' }}>
+                                <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-400)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '2px' }}>
                                     CONFIGURAÇÃO INICIAL · PASSO {step}/3
                                 </p>
                                 <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>
@@ -201,7 +200,7 @@ export default function OnboardingPage() {
                                         value={data.companyName} onChange={e => set('companyName', e.target.value)}
                                         placeholder="Ex: Iule Miranda Imóveis"
                                         style={inp}
-                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--accent-400)')}
                                         onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                     />
                                 </div>
@@ -211,7 +210,7 @@ export default function OnboardingPage() {
                                         value={data.ownerName} onChange={e => set('ownerName', e.target.value)}
                                         placeholder="Nome completo"
                                         style={inp}
-                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--accent-400)')}
                                         onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                     />
                                 </div>
@@ -221,7 +220,7 @@ export default function OnboardingPage() {
                                         value={data.phone} onChange={e => set('phone', e.target.value)}
                                         placeholder="(81) 9 9999-9999"
                                         style={inp}
-                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--accent-400)')}
                                         onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                     />
                                 </div>
@@ -244,12 +243,12 @@ export default function OnboardingPage() {
                                                 style={{
                                                     padding: '12px 14px', borderRadius: '6px', textAlign: 'left',
                                                     cursor: 'pointer', transition: 'all 0.18s ease',
-                                                    background: data.niche === n.value ? 'rgba(184,148,58,0.12)' : 'var(--bg-surface)',
-                                                    border: `1px solid ${data.niche === n.value ? 'rgba(184,148,58,0.4)' : 'var(--border-default)'}`,
+                                                    background: data.niche === n.value ? 'rgba(61,111,255,0.12)' : 'var(--bg-surface)',
+                                                    border: `1px solid ${data.niche === n.value ? 'rgba(61,111,255,0.4)' : 'var(--border-default)'}`,
                                                 }}
                                             >
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                                                    <n.icon size={14} style={{ color: data.niche === n.value ? 'var(--imi-gold-500)' : 'var(--text-secondary)', flexShrink: 0 }} />
+                                                    <n.icon size={14} style={{ color: data.niche === n.value ? 'var(--accent-400)' : 'var(--text-secondary)', flexShrink: 0 }} />
                                                     <span style={{ fontSize: '12px', fontWeight: 700, color: data.niche === n.value ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{n.label}</span>
                                                 </div>
                                                 <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginLeft: '22px' }}>{n.desc}</p>
@@ -264,7 +263,7 @@ export default function OnboardingPage() {
                                             value={data.city} onChange={e => set('city', e.target.value)}
                                             placeholder="Ex: Recife"
                                             style={inp}
-                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--accent-400)')}
                                             onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                         />
                                     </div>
@@ -273,7 +272,7 @@ export default function OnboardingPage() {
                                         <select
                                             value={data.state} onChange={e => set('state', e.target.value)}
                                             style={{ ...inp, width: '72px', cursor: 'pointer' }}
-                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--accent-400)')}
                                             onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                         >
                                             {STATES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -358,7 +357,7 @@ export default function OnboardingPage() {
                                         height: '44px', padding: '0 24px', borderRadius: '6px',
                                         fontSize: '13px', fontWeight: 700, cursor: 'pointer',
                                         color: 'var(--text-inverse)',
-                                        background: 'linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-500) 100%)',
+                                        background: 'linear-gradient(135deg, var(--accent-400) 0%, var(--accent-400) 100%)',
                                         border: 'none',
                                         display: 'flex', alignItems: 'center', gap: '8px',
                                         opacity: ((step === 1 && !step1Valid) || (step === 2 && !step2Valid)) ? 0.45 : 1,
@@ -382,7 +381,7 @@ export default function OnboardingPage() {
                                     width: '100%', height: '48px', borderRadius: '6px',
                                     fontSize: '14px', fontWeight: 800, cursor: 'pointer',
                                     color: 'var(--text-inverse)',
-                                    background: 'linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-500) 100%)',
+                                    background: 'linear-gradient(135deg, var(--accent-400) 0%, var(--accent-400) 100%)',
                                     border: 'none',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                                 }}

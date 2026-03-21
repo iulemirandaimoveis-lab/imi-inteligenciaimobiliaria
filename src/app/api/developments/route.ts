@@ -28,7 +28,9 @@ export async function GET(request: NextRequest) {
             if (!data) {
                 return NextResponse.json({ error: 'Empreendimento não encontrado' }, { status: 404 })
             }
-            return NextResponse.json(data)
+            return NextResponse.json(data, {
+                headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+            })
         }
         const { data, error } = await supabase
             .from('developments')
@@ -37,7 +39,9 @@ export async function GET(request: NextRequest) {
         if (error) {
             return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
-        return NextResponse.json(data)
+        return NextResponse.json(data, {
+            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+        })
     } catch (error) {
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
@@ -95,6 +99,13 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     // Sync area: if only area_from set (from single 'area' form field), mirror to area_to
     if (result.area_from !== undefined && result.area_from !== null && result.area_to === undefined) {
         result.area_to = result.area_from
+    }
+    // Sync private_area ↔ area_from (edit form sends private_area, detail page reads area_from)
+    if (result.private_area !== undefined && result.private_area !== null && result.area_from === undefined) {
+        result.area_from = result.private_area
+    }
+    if (result.area_from !== undefined && result.area_from !== null && result.private_area === undefined) {
+        result.private_area = result.area_from
     }
     // Sync dual status columns with proper value mapping
     // status_commercial (EN): draft, published, campaign, private, sold

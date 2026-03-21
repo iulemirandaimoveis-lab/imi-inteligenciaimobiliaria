@@ -349,7 +349,7 @@ export default function NovoOKRPage() {
           onClick={handleSave}
           disabled={saving}
           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-navy-900 disabled:opacity-50"
-          style={{ background: '#C8A44A' }}
+          style={{ background: '#3D6FFF' }}
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Salvar OKR

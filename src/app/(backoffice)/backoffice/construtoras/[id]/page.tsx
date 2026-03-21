@@ -116,7 +116,7 @@ export default function ConstrutoraDetalhesPage() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      lancamento: 'var(--imi-gold-500)',
+      lancamento: 'var(--accent-400)',
       em_construcao: 'var(--warning)',
       pronto: 'var(--success)',
       em_obras: 'var(--warning)',
@@ -266,7 +266,7 @@ export default function ConstrutoraDetalhesPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="rounded-lg p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Empreendimentos</p>
-          <p className="text-2xl font-bold" style={{ color: 'var(--imi-gold-500)' }}>{activeDevelopments.length}</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--accent-400)' }}>{activeDevelopments.length}</p>
         </div>
         <div className="rounded-lg p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Total Unidades</p>

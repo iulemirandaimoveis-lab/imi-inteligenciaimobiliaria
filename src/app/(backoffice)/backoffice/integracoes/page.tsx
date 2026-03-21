@@ -317,7 +317,7 @@ export default function IntegracoesPage() {
                         <button key={cat.key} onClick={() => setCategoriaAtiva(cat.key)}
                             className="px-3.5 h-9 rounded-[6px] text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: categoriaAtiva === cat.key ? 'var(--imi-gold-500)' : T.surface,
+                                background: categoriaAtiva === cat.key ? 'var(--accent-400)' : T.surface,
                                 color: categoriaAtiva === cat.key ? 'white' : T.textDim,
                                 border: `1px solid ${categoriaAtiva === cat.key ? T.borderGold : T.border}`,
                             }}>
@@ -419,7 +419,7 @@ export default function IntegracoesPage() {
                             'GDRIVE_FOLDER_ID=',
                             'GDRIVE_SERVICE_ACCOUNT_JSON=',
                         ].map((line, i) => (
-                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? 'var(--imi-gold-500)' : 'var(--success)' }}>
+                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? 'var(--accent-400)' : 'var(--success)' }}>
                                 {line || '\u00A0'}
                             </div>
                         ))}

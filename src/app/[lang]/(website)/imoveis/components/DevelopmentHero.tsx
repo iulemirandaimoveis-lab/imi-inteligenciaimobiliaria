@@ -11,7 +11,7 @@ interface DevelopmentHeroProps {
     development: Development;
 }
 
-const GOLD = '#C8A44A';
+const GOLD = '#3D6FFF';
 
 const formatPrice = (price: number) => {
     if (price >= 1000000) {

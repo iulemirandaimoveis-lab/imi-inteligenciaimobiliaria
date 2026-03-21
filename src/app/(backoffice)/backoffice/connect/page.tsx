@@ -126,6 +126,11 @@ export default function ConnectPage() {
     const [showNewChannel, setShowNewChannel] = useState(false)
     const [newChannelName, setNewChannelName] = useState('')
     const [searchQuery, setSearchQuery] = useState('')
+    const [newChannelMode, setNewChannelMode] = useState<'team' | 'direct'>('direct')
+    const [brokerSearch, setBrokerSearch] = useState('')
+    const [availableBrokers, setAvailableBrokers] = useState<Array<{ id: string; name: string; email: string; avatar_url: string | null }>>([])
+    const [selectedBrokerId, setSelectedBrokerId] = useState<string | null>(null)
+    const [loadingBrokers, setLoadingBrokers] = useState(false)
     const [mobileView, setMobileView] = useState<'list' | 'chat'>('list')
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -188,15 +193,62 @@ export default function ConnectPage() {
         typingTimeout.current = setTimeout(() => {}, 3000)
     }
 
-    // Create channel
+    // Fetch brokers when modal opens
+    useEffect(() => {
+        if (!showNewChannel || !user) return
+        setLoadingBrokers(true)
+        const supabase = createClient()
+        supabase.from('profiles')
+            .select('id, name, email, avatar_url')
+            .neq('id', user.id)
+            .eq('is_active', true)
+            .order('name')
+            .then(({ data }) => {
+                setAvailableBrokers(data ?? [])
+                setLoadingBrokers(false)
+            })
+    }, [showNewChannel, user])
+
+    const filteredBrokers = availableBrokers.filter(b =>
+        !brokerSearch || b.name?.toLowerCase().includes(brokerSearch.toLowerCase()) || b.email?.toLowerCase().includes(brokerSearch.toLowerCase())
+    )
+
+    // Create channel (team or direct)
     const handleCreateChannel = async () => {
-        if (!newChannelName.trim()) return
-        const ch = await createChannel({ type: 'team', name: newChannelName.trim() })
-        if (ch) {
-            setActiveChannelId(ch.id)
-            setShowNewChannel(false)
-            setNewChannelName('')
-            setMobileView('chat')
+        if (newChannelMode === 'direct') {
+            if (!selectedBrokerId) return
+            const broker = availableBrokers.find(b => b.id === selectedBrokerId)
+            if (!broker) return
+            // Check if direct channel already exists between these two users
+            const existingDirect = channels.find(ch =>
+                ch.type === 'direct' && ch.name?.includes(broker.name)
+            )
+            if (existingDirect) {
+                setActiveChannelId(existingDirect.id)
+                setShowNewChannel(false)
+                setSelectedBrokerId(null)
+                setBrokerSearch('')
+                setMobileView('chat')
+                return
+            }
+            const channelName = `${user?.name ?? 'Eu'} ↔ ${broker.name}`
+            const ch = await createChannel({ type: 'direct', name: channelName, memberIds: [selectedBrokerId] })
+            if (ch) {
+                setActiveChannelId(ch.id)
+                setShowNewChannel(false)
+                setSelectedBrokerId(null)
+                setBrokerSearch('')
+                setMobileView('chat')
+            }
+        } else {
+            if (!newChannelName.trim()) return
+            const ch = await createChannel({ type: 'team', name: newChannelName.trim() })
+            if (ch) {
+                setActiveChannelId(ch.id)
+                setShowNewChannel(false)
+                setNewChannelName('')
+                setMobileView('chat')
+            }
         }
     }
 
@@ -491,14 +543,14 @@ export default function ConnectPage() {
 
     return (
         <div style={{ height: 'calc(100vh - 64px)', display: 'flex', overflow: 'hidden' }}>
-            {/* New Channel Modal */}
+            {/* New Channel / Direct Message Modal */}
             <AnimatePresence>
                 {showNewChannel && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => setShowNewChannel(false)}
+                        onClick={() => { setShowNewChannel(false); setNewChannelMode('direct'); setSelectedBrokerId(null); setBrokerSearch('') }}
                         style={{
                             position: 'fixed', inset: 0, zIndex: 50,
                             background: 'rgba(0,0,0,0.5)',
@@ -511,30 +563,114 @@ export default function ConnectPage() {
                             exit={{ opacity: 0, scale: 0.95, y: 8 }}
                             onClick={e => e.stopPropagation()}
                             style={{
-                                ...cardStyle, padding: 24, width: 400, maxWidth: '90vw',
+                                ...cardStyle, padding: 24, width: 440, maxWidth: '90vw',
                                 boxShadow: 'var(--shadow-lg)',
                             }}
                         >
                             <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: T.font.serif, color: T.text, marginBottom: 16 }}>
-                                Novo Canal
+                                Nova Conversa
                             </h3>
-                            <input
-                                value={newChannelName}
-                                onChange={e => setNewChannelName(e.target.value)}
-                                onKeyDown={e => { if (e.key === 'Enter') handleCreateChannel() }}
-                                placeholder="Nome do canal..."
-                                autoFocus
-                                style={{
-                                    width: '100%', height: 40, padding: '0 14px',
-                                    background: T.elevated, border: `1.5px solid ${T.border}`,
-                                    borderRadius: T.radius.md, color: T.text,
-                                    fontSize: 14, fontFamily: T.font.sans, outline: 'none',
-                                    marginBottom: 16,
-                                }}
-                            />
+
+                            {/* Mode tabs */}
+                            <div style={{ display: 'flex', gap: 4, marginBottom: 16, background: T.elevated, borderRadius: T.radius.md, padding: 3 }}>
+                                {([['direct', 'Mensagem Direta'], ['team', 'Canal de Equipe']] as const).map(([mode, label]) => (
+                                    <button
+                                        key={mode}
+                                        onClick={() => { setNewChannelMode(mode); setSelectedBrokerId(null); setBrokerSearch(''); setNewChannelName('') }}
+                                        style={{
+                                            flex: 1, height: 34, borderRadius: T.radius.sm,
+                                            background: newChannelMode === mode ? T.accent : 'transparent',
+                                            color: newChannelMode === mode ? T.textInverse : T.textMuted,
+                                            border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                            transition: `all ${T.transition.fast}`,
+                                        }}
+                                    >
+                                        {mode === 'direct' ? <UserPlus size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} /> : <Hash size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />}
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {newChannelMode === 'direct' ? (
+                                <>
+                                    {/* Broker search */}
+                                    <div style={{
+                                        display: 'flex', alignItems: 'center', gap: 8,
+                                        background: T.elevated, borderRadius: T.radius.md,
+                                        padding: '0 12px', height: 40, marginBottom: 12,
+                                        border: `1.5px solid ${T.border}`,
+                                    }}>
+                                        <Search size={14} style={{ color: T.textDim, flexShrink: 0 }} />
+                                        <input
+                                            value={brokerSearch}
+                                            onChange={e => setBrokerSearch(e.target.value)}
+                                            placeholder="Buscar corretor por nome ou email..."
+                                            autoFocus
+                                            style={{
+                                                flex: 1, background: 'transparent', border: 'none', outline: 'none',
+                                                fontSize: 13, color: T.text, fontFamily: T.font.sans,
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* Broker list */}
+                                    <div style={{
+                                        maxHeight: 240, overflowY: 'auto', marginBottom: 16,
+                                        border: `1px solid ${T.borderLight}`, borderRadius: T.radius.md,
+                                    }}>
+                                        {loadingBrokers ? (
+                                            <div style={{ padding: 16, textAlign: 'center', color: T.textDim, fontSize: 13 }}>
+                                                <Loader2 size={16} className="animate-spin" style={{ display: 'inline-block', marginRight: 6 }} />
+                                                Carregando...
+                                            </div>
+                                        ) : filteredBrokers.length === 0 ? (
+                                            <div style={{ padding: 16, textAlign: 'center', color: T.textDim, fontSize: 13 }}>
+                                                Nenhum corretor encontrado
+                                            </div>
+                                        ) : filteredBrokers.map(broker => (
+                                            <button
+                                                key={broker.id}
+                                                onClick={() => setSelectedBrokerId(broker.id === selectedBrokerId ? null : broker.id)}
+                                                style={{
+                                                    width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                                                    padding: '10px 12px', border: 'none', cursor: 'pointer',
+                                                    background: broker.id === selectedBrokerId ? 'var(--bg-active)' : 'transparent',
+                                                    borderBottom: `1px solid ${T.borderLight}`,
+                                                    transition: `background ${T.transition.fast}`,
+                                                }}
+                                            >
+                                                <ChatAvatar name={broker.name} url={broker.avatar_url} size={32} />
+                                                <div style={{ flex: 1, textAlign: 'left' }}>
+                                                    <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{broker.name}</div>
+                                                    <div style={{ fontSize: 11, color: T.textDim }}>{broker.email}</div>
+                                                </div>
+                                                {broker.id === selectedBrokerId && (
+                                                    <CheckCheck size={16} style={{ color: T.success, flexShrink: 0 }} />
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </>
+                            ) : (
+                                <input
+                                    value={newChannelName}
+                                    onChange={e => setNewChannelName(e.target.value)}
+                                    onKeyDown={e => { if (e.key === 'Enter') handleCreateChannel() }}
+                                    placeholder="Nome do canal..."
+                                    autoFocus
+                                    style={{
+                                        width: '100%', height: 40, padding: '0 14px',
+                                        background: T.elevated, border: `1.5px solid ${T.border}`,
+                                        borderRadius: T.radius.md, color: T.text,
+                                        fontSize: 14, fontFamily: T.font.sans, outline: 'none',
+                                        marginBottom: 16,
+                                    }}
+                                />
+                            )}
+
                             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                                 <button
-                                    onClick={() => setShowNewChannel(false)}
+                                    onClick={() => { setShowNewChannel(false); setNewChannelMode('direct'); setSelectedBrokerId(null); setBrokerSearch('') }}
                                     style={{
                                         height: 36, padding: '0 16px', borderRadius: T.radius.md,
                                         background: 'transparent', border: `1px solid ${T.border}`,
@@ -545,15 +681,15 @@ export default function ConnectPage() {
                                 </button>
                                 <button
                                     onClick={handleCreateChannel}
-                                    disabled={!newChannelName.trim()}
+                                    disabled={newChannelMode === 'direct' ? !selectedBrokerId : !newChannelName.trim()}
                                     style={{
                                         height: 36, padding: '0 16px', borderRadius: T.radius.md,
                                         background: T.accent, border: 'none',
                                         color: T.textInverse, fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                                        opacity: newChannelName.trim() ? 1 : 0.5,
+                                        opacity: (newChannelMode === 'direct' ? selectedBrokerId : newChannelName.trim()) ? 1 : 0.5,
                                     }}
                                 >
-                                    Criar Canal
+                                    {newChannelMode === 'direct' ? 'Iniciar Conversa' : 'Criar Canal'}
                                 </button>
                             </div>
                         </motion.div>

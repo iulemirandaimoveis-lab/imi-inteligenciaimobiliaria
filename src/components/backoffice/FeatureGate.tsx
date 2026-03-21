@@ -68,18 +68,18 @@ export function FeatureGate({ tier, children, featureName }: FeatureGateProps) {
             }}>
                 <div style={{
                     background: 'var(--bg-surface, #1a1a1a)',
-                    border: '1px solid rgba(184,148,58,0.25)',
+                    border: '1px solid rgba(61,111,255,0.25)',
                     borderRadius: '16px', padding: '20px 24px',
                     textAlign: 'center', maxWidth: '280px',
                     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
                 }}>
                     <div style={{
                         width: 40, height: 40, borderRadius: '10px',
-                        background: 'rgba(184,148,58,0.12)',
+                        background: 'rgba(61,111,255,0.12)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         margin: '0 auto 12px',
                     }}>
-                        <Lock size={18} style={{ color: 'var(--imi-gold-500, #b8943a)' }} />
+                        <Lock size={18} style={{ color: 'var(--accent-400, #b8943a)' }} />
                     </div>
                     <p style={{ fontSize: '14px', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
                         {featureName || 'Recurso Premium'}
@@ -92,7 +92,7 @@ export function FeatureGate({ tier, children, featureName }: FeatureGateProps) {
                         style={{
                             display: 'inline-flex', alignItems: 'center', gap: '6px',
                             padding: '8px 16px', borderRadius: '10px',
-                            background: 'var(--imi-gold-500, #b8943a)', color: '#000',
+                            background: 'var(--accent-400, #b8943a)', color: '#000',
                             fontSize: '12px', fontWeight: 700, textDecoration: 'none',
                         }}
                     >

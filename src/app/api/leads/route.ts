@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { logAudit, getRequestMeta } from '@/lib/governance'
 import { parseBody, leadSchema } from '@/lib/schemas'
+import { createNotification } from '@/lib/notifications'
 export async function GET(request: Request) {
     try {
         const supabase = await createClient();
@@ -55,6 +56,8 @@ export async function GET(request: Request) {
                 total: count || 0,
                 pages: Math.ceil((count || 0) / limit),
             },
+        }, {
+            headers: { 'Cache-Control': 'private, s-maxage=30, stale-while-revalidate=120' },
         });
     } catch (error) {
         return NextResponse.json({ error: 'Internal Server Error', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 500 });
@@ -82,7 +85,7 @@ function formatBudget(min: number | null, max: number | null): string {
 export async function POST(request: Request) {
     try {
         const supabase = await createClient()
-        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { user } } = await supabase.auth.getUser()
         const parsed = await parseBody(request, leadSchema)
         if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
         const body = parsed.data
@@ -118,13 +121,23 @@ export async function POST(request: Request) {
         // Audit log
         const meta = getRequestMeta(request)
         logAudit({
-            user_id: session?.user?.id,
+            user_id: user?.id,
             action: 'create',
             entity_type: 'lead',
             entity_id: lead.id,
             new_data: { name: body.name, email: body.email, source: body.source },
             ...meta,
         })
+        // Notification — fire-and-forget
+        if (user) {
+            createNotification({
+                userId: user.id,
+                type: 'lead_novo',
+                title: 'Novo Lead',
+                message: `Lead ${body.name || 'novo'} adicionado`,
+                data: { lead_id: lead.id },
+            }).catch(() => {})
+        }
         // Non-blocking auto-score calculation
         const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
         fetch(`${baseUrl}/api/ai/auto-score`, {

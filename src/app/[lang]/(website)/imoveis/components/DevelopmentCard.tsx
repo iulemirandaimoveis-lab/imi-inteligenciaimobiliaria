@@ -13,7 +13,7 @@ const T = {
     elevated: '#142840',
     border:   'rgba(200,164,74,0.15)',
     borderHi: 'rgba(200,164,74,0.35)',
-    gold:     '#C8A44A',
+    gold:     '#3D6FFF',
     goldBg:   'rgba(200,164,74,0.10)',
     text:     '#EBE7E0',
     textSub:  '#9FAAB8',

@@ -74,9 +74,9 @@ function stepCfg(status: StepStatus): StepCfg {
       }
     case 'active':
       return {
-        circleBg: 'var(--imi-gold-500)',
+        circleBg: 'var(--accent-400)',
         circleColor: '#ffffff',
-        circleBorder: 'var(--imi-gold-500)',
+        circleBorder: 'var(--accent-400)',
         labelColor: 'var(--text-primary)',
       }
     case 'error':
@@ -176,7 +176,7 @@ interface ConnectorProps {
 }
 
 function Connector({ done, orientation, circleSize }: ConnectorProps) {
-  const color = done ? 'var(--imi-gold-500)' : 'var(--border-subtle)'
+  const color = done ? 'var(--accent-400)' : 'var(--border-subtle)'
 
   if (orientation === 'horizontal') {
     return (

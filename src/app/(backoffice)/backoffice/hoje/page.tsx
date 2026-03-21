@@ -41,15 +41,15 @@ function formatTime(iso: string) {
 
 // ── Quick action config ──────────────────────────────────────────────
 const QUICK_ACTIONS = [
-  { label: 'Dashboard',   href: '/backoffice/dashboard',         color: 'var(--imi-gold-500)', icon: LayoutDashboard },
+  { label: 'Dashboard',   href: '/backoffice/dashboard',         color: 'var(--accent-400)', icon: LayoutDashboard },
   { label: 'Novo Lead',   href: '/backoffice/leads/novo',        color: 'var(--error)',        icon: Users },
   { label: 'Agendamento', href: '/backoffice/agenda',            color: 'var(--warning)',      icon: CalendarDays },
   { label: 'WhatsApp',    href: '/backoffice/whatsapp',          color: '#25D366',             icon: MessageCircle },
   { label: 'Agentes IA',  href: '/backoffice/ia/agentes',        color: '#A78BFA',             icon: Bot,           isNew: true },
   { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',    color: '#F472B6',             icon: Video,         isNew: true },
-  { label: 'Avaliação',   href: '/backoffice/avaliacoes/nova',   color: 'var(--imi-gold-500)', icon: Scale },
+  { label: 'Avaliação',   href: '/backoffice/avaliacoes/nova',   color: 'var(--accent-400)', icon: Scale },
   { label: 'Imóveis',     href: '/backoffice/imoveis',           color: 'var(--info)',         icon: Building2 },
-  { label: 'Pipeline',    href: '/backoffice/leads',             color: 'var(--imi-gold-500)', icon: TrendingUp },
+  { label: 'Pipeline',    href: '/backoffice/leads',             color: 'var(--accent-400)', icon: TrendingUp },
 ]
 
 // ── Agent activity default (zeroed — real data fetched from API) ──
@@ -178,7 +178,7 @@ export default function HojePage() {
       : 'Pipeline aguardando novos leads. Ative suas campanhas para maximizar captação.'
 
   const greetIconColor = period === 'morning'
-    ? 'var(--imi-gold-500)'
+    ? 'var(--accent-400)'
     : period === 'afternoon'
       ? 'var(--warning)'
       : 'var(--info)'
@@ -209,7 +209,7 @@ export default function HojePage() {
 
         {/* IMI Intelligence tag */}
         <div className="flex items-center gap-2 mb-3">
-          <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--accent-400)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
             INTELLIGENCE OS
           </span>
           <span className="flex items-center gap-1">
@@ -236,7 +236,7 @@ export default function HojePage() {
                 display: 'inline-block', marginTop: 6,
                 fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
                 padding: '2px 8px', borderRadius: 6,
-                background: 'var(--bg-active)', color: 'var(--imi-gold-500)',
+                background: 'var(--bg-active)', color: 'var(--accent-400)',
                 border: '1px solid var(--border-default)',
               }}>
                 {userRole}
@@ -259,7 +259,7 @@ export default function HojePage() {
               style={{
                 width: 56, height: 56, borderRadius: '50%',
                 overflow: 'hidden', position: 'relative',
-                border: `2px solid rgba(184,148,58,0.4)`,
+                border: `2px solid rgba(61,111,255,0.4)`,
                 background: 'var(--bg-elevated)',
                 cursor: 'pointer', padding: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -268,12 +268,12 @@ export default function HojePage() {
               title="Alterar foto"
             >
               {uploading ? (
-                <Loader2 size={20} style={{ color: 'var(--imi-gold-500)', animation: 'spin 1s linear infinite' }} />
+                <Loader2 size={20} style={{ color: 'var(--accent-400)', animation: 'spin 1s linear infinite' }} />
               ) : avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--imi-gold-500)', fontFamily: "'Libre Baskerville', serif" }}>
+                <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent-400)', fontFamily: "'Libre Baskerville', serif" }}>
                   {userName.charAt(0).toUpperCase()}
                 </span>
               )}
@@ -439,13 +439,14 @@ export default function HojePage() {
           transition={{ delay: 0.12 }}
           className="rounded-lg"
           style={{
-            background: 'linear-gradient(135deg, rgba(184,148,58,0.08) 0%, rgba(184,148,58,0.04) 100%)',
-            border: '1px solid rgba(184,148,58,0.25)',
+            background: 'linear-gradient(135deg, rgba(61,111,255,0.08) 0%, rgba(61,111,255,0.04) 100%)',
+            border: '1px solid rgba(61,111,255,0.25)',
             padding: '14px 16px',
             position: 'relative',
           }}
         >
           <button
+            type="button"
             onClick={() => {
               setIntegBannerDismissed(true)
               try { localStorage.setItem('imi-integ-banner-dismissed', '1') } catch {}
@@ -463,11 +464,11 @@ export default function HojePage() {
           <div className="flex items-start gap-3">
             <div style={{
               width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-              background: 'rgba(184,148,58,0.12)',
-              border: '1px solid rgba(184,148,58,0.25)',
+              background: 'rgba(61,111,255,0.12)',
+              border: '1px solid rgba(61,111,255,0.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              <Plug size={16} style={{ color: 'var(--imi-gold-500)' }} />
+              <Plug size={16} style={{ color: 'var(--accent-400)' }} />
             </div>
             <div style={{ flex: 1 }}>
               <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>
@@ -511,7 +512,7 @@ export default function HojePage() {
             {aiBriefing}
             {hotCount > 0 && (
               <>
-                {' '}Recomendação: ligar nas <span style={{ color: 'var(--imi-gold-500)', fontWeight: 600 }}>próximas 2 horas</span> para maximizar conversão.
+                {' '}Recomendação: ligar nas <span style={{ color: 'var(--accent-400)', fontWeight: 600 }}>próximas 2 horas</span> para maximizar conversão.
               </>
             )}
           </span>
@@ -632,9 +633,9 @@ export default function HojePage() {
                 onClick={() => router.push('/backoffice/agenda')}
                 style={{
                   fontSize: '11px', fontWeight: 600,
-                  color: 'var(--imi-gold-500)',
-                  background: 'rgba(184,148,58,0.10)',
-                  border: '1px solid rgba(184,148,58,0.25)',
+                  color: 'var(--accent-400)',
+                  background: 'rgba(61,111,255,0.10)',
+                  border: '1px solid rgba(61,111,255,0.25)',
                   padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
                 }}
               >
@@ -651,7 +652,7 @@ export default function HojePage() {
                 {/* Accent line */}
                 <div style={{
                   width: '3px', height: '36px', borderRadius: '2px', flexShrink: 0,
-                  background: String(ev.color || 'var(--imi-gold-500)'),
+                  background: String(ev.color || 'var(--accent-400)'),
                 }} />
                 <div className="flex-1 min-w-0">
                   <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -750,10 +751,10 @@ export default function HojePage() {
         >
           <div style={{
             width: '36px', height: '36px', borderRadius: '10px',
-            background: 'rgba(184,148,58,0.10)', border: '1px solid rgba(184,148,58,0.25)',
+            background: 'rgba(61,111,255,0.10)', border: '1px solid rgba(61,111,255,0.25)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
           }}>
-            <TrendingUp size={16} style={{ color: 'var(--imi-gold-500)' }} />
+            <TrendingUp size={16} style={{ color: 'var(--accent-400)' }} />
           </div>
           <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>
             Pipeline
@@ -828,7 +829,7 @@ export default function HojePage() {
           {totalLeads > 0 ? (
             <div className="space-y-2">
               {[
-                { label: 'Total Leads', value: totalLeads, max: totalLeads, color: 'var(--imi-gold-500)' },
+                { label: 'Total Leads', value: totalLeads, max: totalLeads, color: 'var(--accent-400)' },
                 { label: 'Quentes', value: hotCount, max: totalLeads, color: 'var(--error)' },
                 { label: 'Mornos', value: warmCount, max: totalLeads, color: 'var(--warning)' },
               ].map(item => (
@@ -863,7 +864,7 @@ export default function HojePage() {
         <SectionHeader title="Módulos Ativos" action={{ label: 'Ver tudo', href: '/backoffice/dashboard' }} />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {[
-            { label: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale, color: 'var(--imi-gold-500)', badge: 'IA' },
+            { label: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale, color: 'var(--accent-400)', badge: 'IA' },
             { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone, color: '#F472B6', badge: null },
             { label: 'Contratos', href: '/backoffice/contratos', icon: FileSignature, color: '#60A5FA', badge: null },
             { label: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote, color: 'var(--success)', badge: null },
@@ -885,9 +886,9 @@ export default function HojePage() {
                   position: 'absolute', top: 8, right: 8,
                   fontSize: '7px', fontWeight: 800, padding: '1px 4px',
                   borderRadius: 6,
-                  background: 'rgba(184,148,58,0.12)',
-                  color: 'var(--imi-gold-500)',
-                  border: '1px solid rgba(184,148,58,0.25)',
+                  background: 'rgba(61,111,255,0.12)',
+                  color: 'var(--accent-400)',
+                  border: '1px solid rgba(61,111,255,0.25)',
                 }}>{mod.badge}</span>
               )}
               <div style={{

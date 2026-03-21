@@ -168,7 +168,7 @@ export default function EbooksPage() {
                                                     className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                                                     style={{ background: 'rgba(72,101,129,0.18)' }}
                                                 >
-                                                    <BookOpen size={14} style={{ color: 'var(--imi-gold-500)' }} />
+                                                    <BookOpen size={14} style={{ color: 'var(--accent-400)' }} />
                                                 </div>
                                                 <div>
                                                     <p className="font-semibold text-sm" style={{ color: T.text }}>{e.title}</p>
@@ -191,7 +191,7 @@ export default function EbooksPage() {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex items-center gap-1 text-xs font-semibold"
-                                                    style={{ color: 'var(--imi-gold-500)' }}
+                                                    style={{ color: 'var(--accent-400)' }}
                                                 >
                                                     <ExternalLink size={12} /> Link
                                                 </a>
@@ -209,7 +209,7 @@ export default function EbooksPage() {
                                                 >
                                                     {e.is_published
                                                         ? <EyeOff size={13} style={{ color: T.textMuted }} />
-                                                        : <Eye size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                                                        : <Eye size={13} style={{ color: 'var(--accent-400)' }} />
                                                     }
                                                 </button>
                                                 <Link

@@ -44,7 +44,7 @@ export default function CookieConsent() {
                     maxWidth: 520,
                     margin: '0 auto',
                     background: 'var(--bg-elevated, #101830)',
-                    border: '1px solid var(--border-default, rgba(184,148,58,0.15))',
+                    border: '1px solid var(--border-default, rgba(61,111,255,0.15))',
                     borderRadius: 12,
                     padding: '16px 20px',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
@@ -56,7 +56,7 @@ export default function CookieConsent() {
                     Utilizamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa{' '}
                     <a
                         href="/pt/privacidade"
-                        style={{ color: 'var(--imi-gold-500, #B8943A)', textDecoration: 'underline' }}
+                        style={{ color: 'var(--accent-400, #2550E8)', textDecoration: 'underline' }}
                     >
                         Política de Privacidade
                     </a>{' '}
@@ -69,7 +69,7 @@ export default function CookieConsent() {
                             flex: 1,
                             height: 36,
                             borderRadius: 6,
-                            border: '1px solid var(--border-default, rgba(184,148,58,0.2))',
+                            border: '1px solid var(--border-default, rgba(61,111,255,0.2))',
                             background: 'transparent',
                             color: 'var(--text-secondary, #8CA4B8)',
                             fontSize: 13,
@@ -85,7 +85,7 @@ export default function CookieConsent() {
                             flex: 1,
                             height: 36,
                             borderRadius: 6,
-                            background: 'var(--imi-gold-500, #B8943A)',
+                            background: 'var(--accent-400, #2550E8)',
                             color: 'white',
                             border: 'none',
                             fontSize: 13,

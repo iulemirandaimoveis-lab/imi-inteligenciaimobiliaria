@@ -12,7 +12,7 @@ const SEGMENTS = [
 
 function getLiquidityLabel(score: number): { text: string; color: string } {
     if (score >= 70) return { text: 'Alta Liquidez', color: 'var(--success,#2D8F5C)' }
-    if (score >= 45) return { text: 'Liquidez Média', color: 'var(--imi-gold-500,#C8A44A)' }
+    if (score >= 45) return { text: 'Liquidez Média', color: 'var(--accent-400,#3D6FFF)' }
     return { text: 'Baixa Liquidez', color: '#E05A5A' }
 }
 
@@ -46,7 +46,7 @@ function GaugeArc({ value }: { value: number }) {
     // We'll draw three arc segments
     const zoneArcs = [
         { from: 210, to: 210 - 96, color: '#E05A5A', label: '' },   // 0–40: 96°
-        { from: 210 - 96, to: 210 - 168, color: 'var(--imi-gold-500,#C8A44A)', label: '' }, // 40–70: 72°
+        { from: 210 - 96, to: 210 - 168, color: 'var(--accent-400,#3D6FFF)', label: '' }, // 40–70: 72°
         { from: 210 - 168, to: 210 - 240, color: 'var(--success,#2D8F5C)', label: '' }, // 70–100: 72°
     ]
 
@@ -61,7 +61,7 @@ function GaugeArc({ value }: { value: number }) {
         <svg width="160" height="110" viewBox="0 0 160 110">
             <defs>
                 <linearGradient id="valueGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="var(--imi-gold-500,#C8A44A)" />
+                    <stop offset="0%" stopColor="var(--accent-400,#3D6FFF)" />
                     <stop offset="100%" stopColor="var(--success,#2D8F5C)" />
                 </linearGradient>
             </defs>
@@ -171,7 +171,7 @@ export function WidgetLiquidity() {
                                     background: seg.score >= 70
                                         ? 'var(--success,#2D8F5C)'
                                         : seg.score >= 45
-                                            ? 'var(--imi-gold-500,#C8A44A)'
+                                            ? 'var(--accent-400,#3D6FFF)'
                                             : '#E05A5A',
                                     borderRadius: 6,
                                     opacity: 0.8,

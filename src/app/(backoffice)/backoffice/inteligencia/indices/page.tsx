@@ -211,7 +211,7 @@ export default function IndicesBackofficePage() {
                                     >
                                         {idx.is_published
                                             ? <EyeOff size={14} style={{ color: T.textMuted }} />
-                                            : <Eye size={14} style={{ color: 'var(--imi-gold-500)' }} />
+                                            : <Eye size={14} style={{ color: 'var(--accent-400)' }} />
                                         }
                                     </button>
                                     <button

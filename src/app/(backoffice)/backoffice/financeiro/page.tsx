@@ -172,7 +172,7 @@ export default function FinanceiroPage() {
                   height: '38px', padding: '0 18px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
                   background: 'var(--btn-primary-bg)',
-                  boxShadow: '0 4px 14px color-mix(in srgb, var(--imi-gold-500) 28%, transparent)',
+                  boxShadow: '0 4px 14px color-mix(in srgb, var(--accent-400) 28%, transparent)',
                   border: 'none', cursor: 'pointer',
                   flexShrink: 0,
                 }}

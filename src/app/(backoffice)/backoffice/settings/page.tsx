@@ -74,7 +74,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
       aria-checked={checked}
       style={{
         width: 44, height: 24, borderRadius: 6, position: 'relative',
-        background: checked ? 'var(--imi-gold-500)' : 'var(--bg-muted)',
+        background: checked ? 'var(--accent-400)' : 'var(--bg-muted)',
         border: checked ? 'none' : '1.5px solid var(--border-default)',
         cursor: 'pointer', transition: 'all var(--dur-2) var(--ease)', flexShrink: 0,
         outline: 'none',
@@ -320,7 +320,7 @@ export default function SettingsPage() {
               display: 'flex', alignItems: 'center', gap: 8,
               height: 40, padding: '0 18px',
               borderRadius: 'var(--r-md)',
-              background: showSuccess ? 'var(--success)' : 'var(--imi-gold-500)',
+              background: showSuccess ? 'var(--success)' : 'var(--accent-400)',
               color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
               fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
               transition: 'all var(--dur-2) var(--ease)',
@@ -370,7 +370,7 @@ export default function SettingsPage() {
                 display: 'flex', alignItems: 'center', gap: 8,
                 padding: '8px 14px', borderRadius: 'var(--r-lg)',
                 background: active ? 'var(--bg-elevated)' : 'transparent',
-                color: active ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                color: active ? 'var(--accent-400)' : 'var(--text-secondary)',
                 border: active ? '1px solid var(--border-default)' : '1px solid transparent',
                 fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: active ? 600 : 400,
                 cursor: 'pointer', whiteSpace: 'nowrap',
@@ -411,8 +411,8 @@ export default function SettingsPage() {
                   <div style={{
                     width: 80, height: 80, borderRadius: 6,
                     overflow: 'hidden',
-                    background: 'rgba(184,148,58,0.15)',
-                    border: '2.5px solid rgba(184,148,58,0.35)',
+                    background: 'rgba(61,111,255,0.15)',
+                    border: '2.5px solid rgba(61,111,255,0.35)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0,
                   }}>
@@ -427,7 +427,7 @@ export default function SettingsPage() {
                       <span style={{
                         fontFamily: 'var(--font-serif)',
                         fontSize: 24, fontWeight: 700,
-                        color: 'var(--imi-gold-500)',
+                        color: 'var(--accent-400)',
                       }}>
                         {getInitials(personal.fullName) || 'IM'}
                       </span>
@@ -460,7 +460,7 @@ export default function SettingsPage() {
                       display: 'flex', alignItems: 'center', gap: 8,
                       height: 38, padding: '0 16px',
                       borderRadius: 'var(--r-md)',
-                      background: 'var(--imi-gold-500)',
+                      background: 'var(--accent-400)',
                       color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
                       fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
                       opacity: uploadingAvatar ? 0.6 : 1,
@@ -625,7 +625,7 @@ export default function SettingsPage() {
                   display: 'flex', alignItems: 'center', gap: 8,
                   height: 42, padding: '0 20px',
                   borderRadius: 'var(--r-md)',
-                  background: showSuccess ? 'var(--success)' : 'var(--imi-gold-500)',
+                  background: showSuccess ? 'var(--success)' : 'var(--accent-400)',
                   color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
                   fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
                   opacity: isSaving ? 0.7 : 1,
@@ -724,10 +724,10 @@ export default function SettingsPage() {
             {/* Multi-market info */}
             <div style={{
               padding: '14px 16px', borderRadius: 'var(--r-lg)',
-              background: 'rgba(184,148,58,0.06)', border: '1px solid rgba(184,148,58,0.20)',
+              background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.20)',
               display: 'flex', alignItems: 'center', gap: 12,
             }}>
-              <Globe size={16} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
+              <Globe size={16} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
               <div>
                 <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', margin: 0 }}>
                   Mercados Ativos
@@ -769,8 +769,8 @@ export default function SettingsPage() {
                         display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
                         gap: 8, padding: '16px 18px', minWidth: 140, flex: 1,
                         borderRadius: 'var(--r-xl)',
-                        background: isSelected ? 'rgba(184,148,58,0.08)' : 'var(--bg-elevated)',
-                        border: isSelected ? '2px solid var(--imi-gold-500)' : '1.5px solid var(--border-subtle)',
+                        background: isSelected ? 'rgba(61,111,255,0.08)' : 'var(--bg-elevated)',
+                        border: isSelected ? '2px solid var(--accent-400)' : '1.5px solid var(--border-subtle)',
                         cursor: 'pointer', textAlign: 'left',
                         transition: 'all 180ms ease',
                         boxShadow: isSelected ? 'var(--shadow-gold)' : 'none',
@@ -778,15 +778,15 @@ export default function SettingsPage() {
                     >
                       <div style={{
                         width: 36, height: 36, borderRadius: 'var(--r-md)',
-                        background: isSelected ? 'rgba(184,148,58,0.15)' : 'var(--bg-muted)',
+                        background: isSelected ? 'rgba(61,111,255,0.15)' : 'var(--bg-muted)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
-                        <Icon size={18} style={{ color: isSelected ? 'var(--imi-gold-500)' : 'var(--text-tertiary)' }} />
+                        <Icon size={18} style={{ color: isSelected ? 'var(--accent-400)' : 'var(--text-tertiary)' }} />
                       </div>
                       <div>
                         <p style={{
                           fontSize: 13, fontWeight: 600, margin: 0,
-                          color: isSelected ? 'var(--imi-gold-500)' : 'var(--text-primary)',
+                          color: isSelected ? 'var(--accent-400)' : 'var(--text-primary)',
                           fontFamily: 'var(--font-sans)',
                         }}>{opt.label}</p>
                         <p style={{ fontSize: 11, color: 'var(--text-tertiary)', margin: '3px 0 0', fontFamily: 'var(--font-sans)', lineHeight: 1.4 }}>
@@ -796,7 +796,7 @@ export default function SettingsPage() {
                       {isSelected && (
                         <div style={{
                           alignSelf: 'flex-end', width: 8, height: 8, borderRadius: 6,
-                          background: 'var(--imi-gold-500)',
+                          background: 'var(--accent-400)',
                           position: 'absolute', top: 10, right: 10,
                         }} />
                       )}
@@ -823,9 +823,9 @@ export default function SettingsPage() {
                       style={{
                         display: 'flex', alignItems: 'center', gap: 8,
                         padding: '12px 14px', borderRadius: 'var(--r-lg)',
-                        background: active ? 'rgba(184,148,58,0.08)' : 'var(--bg-elevated)',
-                        border: active ? '1.5px solid var(--imi-gold-500)' : '1.5px solid var(--border-subtle)',
-                        color: active ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                        background: active ? 'rgba(61,111,255,0.08)' : 'var(--bg-elevated)',
+                        border: active ? '1.5px solid var(--accent-400)' : '1.5px solid var(--border-subtle)',
+                        color: active ? 'var(--accent-400)' : 'var(--text-secondary)',
                         cursor: 'pointer', fontFamily: 'var(--font-sans)', fontSize: 13,
                         fontWeight: active ? 600 : 400, transition: 'all 180ms ease',
                       }}
@@ -851,7 +851,7 @@ export default function SettingsPage() {
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Figtree — Corpo de texto</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: 'var(--imi-gold-500)' }}>R$ 24.800/m²</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: 'var(--accent-400)' }}>R$ 24.800/m²</span>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>JetBrains Mono — Dados e métricas</span>
                 </div>
               </div>
@@ -932,9 +932,9 @@ export default function SettingsPage() {
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                         height: 40, borderRadius: 'var(--r-md)',
-                        background: active ? 'rgba(184,148,58,0.10)' : 'var(--bg-elevated)',
-                        border: active ? '1.5px solid var(--imi-gold-500)' : '1.5px solid var(--border-subtle)',
-                        color: active ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                        background: active ? 'rgba(61,111,255,0.10)' : 'var(--bg-elevated)',
+                        border: active ? '1.5px solid var(--accent-400)' : '1.5px solid var(--border-subtle)',
+                        color: active ? 'var(--accent-400)' : 'var(--text-secondary)',
                         fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: active ? 700 : 500,
                         cursor: 'pointer', transition: 'all 180ms ease',
                       }}
@@ -1089,7 +1089,7 @@ export default function SettingsPage() {
                       padding: '10px 12px', borderRadius: 'var(--r-md)',
                       background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)',
                     }}>
-                      <code style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--imi-gold-500)', fontWeight: 700, display: 'block', marginBottom: 3 }}>
+                      <code style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--accent-400)', fontWeight: 700, display: 'block', marginBottom: 3 }}>
                         {item.env}
                       </code>
                       <p style={{ fontSize: 11, color: 'var(--text-tertiary)', margin: 0, fontFamily: 'var(--font-sans)', lineHeight: 1.5 }}>
@@ -1107,7 +1107,7 @@ export default function SettingsPage() {
               background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)',
               display: 'flex', alignItems: 'center', gap: 8,
             }}>
-              <Zap size={14} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
+              <Zap size={14} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
               <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, fontFamily: 'var(--font-sans)', lineHeight: 1.5 }}>
                 Configure todas as variáveis em{' '}
                 <strong style={{ color: 'var(--text-primary)' }}>Vercel → Settings → Environment Variables</strong>
@@ -1118,7 +1118,7 @@ export default function SettingsPage() {
                 target="_blank" rel="noreferrer"
                 style={{
                   display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0,
-                  fontSize: 12, color: 'var(--imi-gold-500)', fontFamily: 'var(--font-sans)',
+                  fontSize: 12, color: 'var(--accent-400)', fontFamily: 'var(--font-sans)',
                   textDecoration: 'none', fontWeight: 600,
                 }}
               >

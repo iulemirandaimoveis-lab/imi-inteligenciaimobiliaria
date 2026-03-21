@@ -96,7 +96,7 @@ export default function LeadsPage() {
   // ── Stats ──────────────────────────────────────────────────────
   const stats = useMemo(() => ({
     total:       leads.length,
-    hot:         leads.filter(l => l.status === 'hot' || l.status === 'negotiation').length,
+    hot:         leads.filter(l => l.status === 'hot').length,
     qualified:   leads.filter(l => l.status === 'qualified').length,
     new:         leads.filter(l => l.status === 'new' || l.status === 'contacted').length,
     avg:         leads.length > 0
@@ -227,18 +227,18 @@ export default function LeadsPage() {
         <div
           style={{
             position: 'relative',
-            border: `1px solid ${searchFocused ? 'rgba(184,148,58,0.25)' : 'var(--border-default)'}`,
+            border: `1px solid ${searchFocused ? 'rgba(61,111,255,0.25)' : 'var(--border-default)'}`,
             borderRadius: '12px',
             background: 'var(--bg-surface)',
             transition: 'border-color 0.18s',
-            boxShadow: searchFocused ? '0 0 0 3px rgba(184,148,58,0.10)' : 'none',
+            boxShadow: searchFocused ? '0 0 0 3px rgba(61,111,255,0.10)' : 'none',
           }}
         >
           <Search
             size={15}
             style={{
               position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
-              color: searchFocused ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+              color: searchFocused ? 'var(--accent-400)' : 'var(--text-secondary)',
               transition: 'color 0.18s',
             }}
           />
@@ -337,11 +337,21 @@ export default function LeadsPage() {
                     : 20 + Math.floor((lead.score || 50) * 0.3))
 
                 // AI summary
-                const aiSummary = lead.status === 'hot' && lead.interest
-                  ? `Alta intenção detectada. Interesse: ${lead.interest}. Prioridade: contato imediato.`
-                  : lead.status === 'warm' && lead.interest
-                    ? `Engajamento moderado. Lead explorando ${lead.interest}.`
-                    : undefined
+                const aiSummary = (() => {
+                  const scoreNum = aiScore
+                  if (lead.status === 'hot') {
+                    if (!lead.interest) return `Score ${scoreNum} — lead quente. Prioridade: contato imediato.`
+                    return scoreNum >= 85
+                      ? `Score ${scoreNum} — alta intenção em ${lead.interest}. Janela crítica: próximas 24h.`
+                      : `Score ${scoreNum} — interesse em ${lead.interest}. Contato imediato recomendado.`
+                  }
+                  if (lead.status === 'warm' && lead.interest) {
+                    return lead.location
+                      ? `Explorando ${lead.interest} em ${lead.location}. Follow-up esta semana.`
+                      : `Engajamento moderado com ${lead.interest}. Enviar material de apoio.`
+                  }
+                  return undefined
+                })()
 
                 return (
                   <motion.div

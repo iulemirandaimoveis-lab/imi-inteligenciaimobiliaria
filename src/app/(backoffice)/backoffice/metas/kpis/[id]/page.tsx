@@ -50,7 +50,7 @@ const statusStyles = {
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(v)
 const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
 
-const inputCls = 'w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C8A44A]/50 transition-colors'
+const inputCls = 'w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#3D6FFF]/50 transition-colors'
 
 /* ── component ─────────────────────────────────────────────── */
 export default function KPIDetailPage() {
@@ -104,7 +104,7 @@ export default function KPIDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-[#C8A44A] animate-spin" />
+        <Loader2 className="w-6 h-6 text-[#3D6FFF] animate-spin" />
       </div>
     )
   }
@@ -114,7 +114,7 @@ export default function KPIDetailPage() {
       <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
         <Activity className="w-8 h-8 text-white/20 mx-auto mb-3" />
         <p className="text-white/50 text-sm">KPI não encontrado.</p>
-        <Link href="/backoffice/metas/kpis" className="text-[#C8A44A] text-sm mt-2 inline-block hover:underline">
+        <Link href="/backoffice/metas/kpis" className="text-[#3D6FFF] text-sm mt-2 inline-block hover:underline">
           Voltar para KPIs
         </Link>
       </div>
@@ -196,7 +196,7 @@ export default function KPIDetailPage() {
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[#0B1928]"
-          style={{ background: '#C8A44A' }}
+          style={{ background: '#3D6FFF' }}
         >
           <Plus className="w-4 h-4" />
           Registrar Leitura
@@ -204,9 +204,9 @@ export default function KPIDetailPage() {
       </div>
 
       {showForm && (
-        <div className="rounded-lg border border-[#C8A44A]/20 p-5 space-y-4" style={{ background: 'rgba(200,164,74,0.05)' }}>
+        <div className="rounded-lg border border-[#3D6FFF]/20 p-5 space-y-4" style={{ background: 'rgba(200,164,74,0.05)' }}>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#C8A44A]">Nova Leitura</span>
+            <span className="text-sm font-medium text-[#3D6FFF]">Nova Leitura</span>
             <button onClick={() => setShowForm(false)} className="text-white/30 hover:text-white/60">
               <X className="w-4 h-4" />
             </button>
@@ -226,7 +226,7 @@ export default function KPIDetailPage() {
               onClick={handleNewReading}
               disabled={saving || !newValue}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[#0B1928] disabled:opacity-50"
-              style={{ background: '#C8A44A' }}
+              style={{ background: '#3D6FFF' }}
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
               Salvar

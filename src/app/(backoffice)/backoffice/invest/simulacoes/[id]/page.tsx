@@ -165,7 +165,7 @@ export default function SimulacaoDetailPage() {
                   <div key={year} className="flex items-center gap-3">
                     <span className="text-xs text-white/40 w-12" style={dmMono}>Ano {year}</span>
                     <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                      <div className="h-full rounded-full" style={{ width: `${Math.min(pct, 100)}%`, background: 'linear-gradient(90deg, #C8A44A, #34d399)' }} />
+                      <div className="h-full rounded-full" style={{ width: `${Math.min(pct, 100)}%`, background: 'linear-gradient(90deg, #3D6FFF, #34d399)' }} />
                     </div>
                     <span className="text-xs text-white/60 w-24 text-right" style={dmMono}>
                       R$ {(net / 1000).toFixed(0)}k
@@ -203,7 +203,7 @@ export default function SimulacaoDetailPage() {
             <h3 className="text-sm font-semibold text-white">Analise de Cenarios</h3>
             {[
               { label: 'Otimista', irr: sim.irr * 1.3, color: '#34d399', desc: 'Valorizacao acima da media + ocupacao 100%' },
-              { label: 'Base', irr: sim.irr, color: '#C8A44A', desc: 'Cenario projetado com premissas atuais' },
+              { label: 'Base', irr: sim.irr, color: '#3D6FFF', desc: 'Cenario projetado com premissas atuais' },
               { label: 'Pessimista', irr: sim.irr * 0.5, color: '#fbbf24', desc: 'Vacancia 20% + valorizacao abaixo do IPCA' },
               { label: 'Estresse', irr: sim.irr * 0.1, color: '#f87171', desc: 'Queda de precos + vacancia alta + juros altos' },
             ].map(s => (
@@ -229,7 +229,7 @@ export default function SimulacaoDetailPage() {
               { label: 'IPCA + 6%', value: 10.5, color: '#a78bfa' },
               { label: 'Poupanca', value: 7.5, color: '#94a3b8' },
               { label: 'FIIs (IFIX)', value: 11.2, color: '#34d399' },
-              { label: 'Esta Simulacao', value: sim.irr, color: '#C8A44A' },
+              { label: 'Esta Simulacao', value: sim.irr, color: '#3D6FFF' },
             ].sort((a, b) => b.value - a.value).map(b => {
               const max = Math.max(sim.irr, 15)
               const pct = (b.value / max) * 100

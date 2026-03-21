@@ -6,7 +6,7 @@ import { MessageCircle, FileText, Building2, MapPin, Calendar, Phone, Download, 
 import { AnimatePresence } from 'framer-motion';
 import LeadCaptureModal from './LeadCaptureModal';
 
-const GOLD = '#C8A44A';
+const GOLD = '#3D6FFF';
 
 interface DevelopmentCTAProps {
     development: Development;

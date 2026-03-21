@@ -246,7 +246,7 @@ export default function NovaSimulacaoPage() {
               <div className="text-xs text-white/40 mb-3">Composicao de Retorno</div>
               <div className="space-y-2">
                 {[
-                  { label: 'Renda Aluguel', pct: 40, color: '#C8A44A' },
+                  { label: 'Renda Aluguel', pct: 40, color: '#3D6FFF' },
                   { label: 'Valorizacao', pct: 35, color: '#34d399' },
                   { label: 'Beneficio Fiscal', pct: 15, color: '#60a5fa' },
                   { label: 'Equity Build', pct: 10, color: '#a78bfa' },
@@ -287,7 +287,7 @@ export default function NovaSimulacaoPage() {
             onClick={next}
             disabled={!canAdvance() || loading}
             className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-navy-900 disabled:opacity-40"
-            style={{ background: '#C8A44A' }}
+            style={{ background: '#3D6FFF' }}
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {step === 2 ? 'Simular' : 'Proximo'}
@@ -304,7 +304,7 @@ export default function NovaSimulacaoPage() {
             <a
               href="/backoffice/invest/simulacoes"
               className="px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-              style={{ background: '#C8A44A' }}
+              style={{ background: '#3D6FFF' }}
             >
               Ver Todas
             </a>

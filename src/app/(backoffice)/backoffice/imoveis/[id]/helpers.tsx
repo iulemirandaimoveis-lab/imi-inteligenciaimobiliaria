@@ -51,16 +51,16 @@ export function toIMIProperty(d: Development): IMIProperty {
     condition: d.condition ?? status,
     status,
     price: d.price_from ?? undefined,
-    area: d.area_min ?? undefined,
-    bedrooms: d.bedrooms_from ?? undefined,
-    bathrooms: d.bathrooms_from ?? undefined,
-    parking: d.parking_from ?? undefined,
+    area: d.area_from ?? undefined,
+    bedrooms: d.bedrooms ?? undefined,
+    bathrooms: d.bathrooms ?? undefined,
+    parking: d.parking_spaces ?? undefined,
     neighborhood: d.neighborhood ?? undefined,
     city: d.city ?? undefined,
     state: d.state ?? undefined,
     address: d.address ?? undefined,
-    image_urls: d.image_urls ?? undefined,
-    cover_image_url: d.cover_image_url ?? undefined,
+    image_urls: d.gallery_images ?? d.image_urls ?? undefined,
+    cover_image_url: d.image ?? d.cover_image_url ?? undefined,
     slug: d.slug ?? undefined,
     developer: d.developer ?? undefined,
     created_at: d.created_at ?? undefined,
@@ -74,19 +74,19 @@ export const EYEBROW: React.CSSProperties = {
   fontSize: '8.5px',
   letterSpacing: '3px',
   textTransform: 'uppercase',
-  color: 'var(--imi-gold-500)',
+  color: 'var(--accent-400)',
   fontFamily: 'var(--font-outfit, sans-serif)',
   fontWeight: 700,
 }
 
 export const CARD: React.CSSProperties = {
   background: 'var(--bg-surface)',
-  border: '1px solid rgba(184,148,58,0.18)',
+  border: '1px solid rgba(61,111,255,0.18)',
   borderRadius: '12px',
 }
 
 export const BTN_PRIMARY: React.CSSProperties = {
-  background: 'var(--gold, var(--imi-gold-500))',
+  background: 'var(--gold, var(--accent-400))',
   color: 'var(--navy, #0B1120)',
   borderRadius: '6px',
   letterSpacing: '1.8px',
@@ -105,8 +105,8 @@ export const BTN_PRIMARY: React.CSSProperties = {
 
 export const BTN_SECONDARY: React.CSSProperties = {
   background: 'transparent',
-  border: '1px solid rgba(184,148,58,0.25)',
-  color: 'var(--gold, var(--imi-gold-500))',
+  border: '1px solid rgba(61,111,255,0.25)',
+  color: 'var(--gold, var(--accent-400))',
   borderRadius: '6px',
   letterSpacing: '1.8px',
   textTransform: 'uppercase',
@@ -143,10 +143,10 @@ export function buildComparables(d: Development) {
   const neighborhood = d.neighborhood ?? 'Centro'
   const avgSqm = NEIGHBORHOOD_AVG_SQM[neighborhood] ?? 9500
   return [
-    { name: `${neighborhood} Residences`, area: (d.area_min ?? 80) + 5, priceSqm: Math.round(avgSqm * 1.05), delta: 5.2 },
-    { name: `Edifício ${neighborhood} Park`, area: (d.area_min ?? 80) - 8, priceSqm: Math.round(avgSqm * 0.97), delta: -3.1 },
-    { name: `${neighborhood} Premier`, area: (d.area_min ?? 80) + 15, priceSqm: Math.round(avgSqm * 1.12), delta: 11.8 },
-    { name: `Terraço ${neighborhood}`, area: (d.area_min ?? 80) - 3, priceSqm: Math.round(avgSqm * 0.94), delta: -6.0 },
+    { name: `${neighborhood} Residences`, area: (d.area_from ?? 80) + 5, priceSqm: Math.round(avgSqm * 1.05), delta: 5.2 },
+    { name: `Edifício ${neighborhood} Park`, area: (d.area_from ?? 80) - 8, priceSqm: Math.round(avgSqm * 0.97), delta: -3.1 },
+    { name: `${neighborhood} Premier`, area: (d.area_from ?? 80) + 15, priceSqm: Math.round(avgSqm * 1.12), delta: 11.8 },
+    { name: `Terraço ${neighborhood}`, area: (d.area_from ?? 80) - 3, priceSqm: Math.round(avgSqm * 0.94), delta: -6.0 },
   ]
 }
 
@@ -154,7 +154,7 @@ export function buildComparables(d: Development) {
 
 export const STATUS_OPTIONS = [
   { value: 'disponivel', label: 'Disponível', color: '#6BB87B' },
-  { value: 'em_negociacao', label: 'Em Negociação', color: 'var(--imi-gold-500)' },
+  { value: 'em_negociacao', label: 'Em Negociação', color: 'var(--accent-400)' },
   { value: 'reservado', label: 'Reservado', color: '#A89EC4' },
   { value: 'vendido', label: 'Vendido', color: '#7B9EC4' },
   { value: 'lancamento', label: 'Lançamento', color: '#E8A87C' },

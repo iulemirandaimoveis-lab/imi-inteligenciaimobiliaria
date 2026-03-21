@@ -6,7 +6,7 @@ import Image from 'next/image'
 import {
   ArrowLeft, MapPin, Building2, Bed, Bath, Car, Ruler, Edit, QrCode,
   BarChart2, Layers, Zap, TrendingUp, TrendingDown, Copy, MessageSquare,
-  ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles,
+  ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles, Scale,
 } from 'lucide-react'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import {
@@ -65,7 +65,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
     return (
       <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px', textAlign: 'center' }}>
         <Home size={48} style={{ color: 'var(--text-tertiary)', marginBottom: 16, opacity: 0.4 }} />
-        <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 8 }}>
+        <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 8 }}>
           Imóvel não encontrado
         </p>
         <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 24 }}>
@@ -83,9 +83,11 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
 
   // Derived values
   const images: string[] = (() => {
+    if (dev.gallery_images && dev.gallery_images.length > 0) return dev.gallery_images
     const list: string[] = []
-    if (dev.cover_image_url) list.push(dev.cover_image_url)
-    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== dev.cover_image_url))
+    const cover = dev.image ?? dev.cover_image_url
+    if (cover) list.push(cover)
+    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== cover))
     return list
   })()
 
@@ -93,17 +95,17 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
   const statusCfg = getStatusConfig(displayStatus)
 
   const price = dev.price_from
-  const priceSqm = enriched.price_per_sqm ?? calcPricePerSqm(price, dev.area_min) ?? null
+  const priceSqm = enriched.price_per_sqm ?? calcPricePerSqm(price, dev.area_from) ?? null
   const score = enriched.imi_score ?? calcIMIScore(enriched)
   const yieldEst = enriched.yield_est ?? calcYieldEst(enriched)
   const marketDelta = enriched.market_delta_pct ?? calcMarketDelta(enriched)
 
   const locationStr = [dev.neighborhood, dev.city].filter(Boolean).join(' · ')
-  const allFeatures = [...(dev.features ?? []), ...(dev.amenities ?? [])]
+  const allFeatures = [...(dev.features ?? [])]
 
   const mobileScoreColor =
     score >= 80 ? '#5DB887' :
-    score >= 60 ? 'var(--imi-gold-500)' :
+    score >= 60 ? 'var(--accent-400)' :
     score >= 40 ? '#D4913A' :
     '#E06B6B'
 
@@ -111,7 +113,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
     background: 'rgba(11,25,40,0.72)',
     backdropFilter: 'blur(12px)',
     WebkitBackdropFilter: 'blur(12px)',
-    border: '1px solid rgba(184,148,58,0.18)',
+    border: '1px solid rgba(61,111,255,0.18)',
   }
 
   return (
@@ -210,7 +212,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
             </button>
             <div style={{ position: 'absolute', bottom: 44, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5 }}>
               {images.slice(0, 8).map((_, i) => (
-                <div key={i} style={{ width: i === mobileGalleryIdx ? 16 : 5, height: 5, borderRadius: 3, background: i === mobileGalleryIdx ? 'var(--imi-gold-500)' : 'rgba(235,231,224,0.4)', transition: 'all 200ms ease' }} />
+                <div key={i} style={{ width: i === mobileGalleryIdx ? 16 : 5, height: 5, borderRadius: 3, background: i === mobileGalleryIdx ? 'var(--accent-400)' : 'rgba(235,231,224,0.4)', transition: 'all 200ms ease' }} />
               ))}
             </div>
           </>
@@ -243,7 +245,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
 
         {/* Price section */}
         <div style={{ marginTop: 14 }}>
-          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 26, fontWeight: 500, color: 'var(--imi-gold-500)', letterSpacing: '-0.5px', lineHeight: 1.1 }}>
+          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 26, fontWeight: 500, color: 'var(--accent-400)', letterSpacing: '-0.5px', lineHeight: 1.1 }}>
             {fmtCurrency(price)}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4, flexWrap: 'wrap' }}>
@@ -262,15 +264,15 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
         {/* Spec pills */}
         <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
           {[
-            dev.bedrooms_from != null && { icon: Bed, value: `${dev.bedrooms_from}` },
-            dev.bathrooms_from != null && { icon: Bath, value: `${dev.bathrooms_from}` },
-            dev.parking_from != null && { icon: Car, value: `${dev.parking_from}` },
-            dev.area_min != null && { icon: Ruler, value: `${dev.area_min}m²` },
+            dev.bedrooms != null && { icon: Bed, value: `${dev.bedrooms}` },
+            dev.bathrooms != null && { icon: Bath, value: `${dev.bathrooms}` },
+            dev.parking_spaces != null && { icon: Car, value: `${dev.parking_spaces}` },
+            dev.area_from != null && { icon: Ruler, value: `${dev.area_from}m²` },
           ].filter(Boolean).map((spec, i) => {
             if (!spec) return null
             const { icon: Icon, value } = spec as { icon: React.ElementType; value: string }
             return (
-              <div key={i} style={{ background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.2)', borderRadius: 8, padding: '8px 12px', minHeight: 40, display: 'flex', alignItems: 'center', gap: 7 }}>
+              <div key={i} style={{ background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.2)', borderRadius: 8, padding: '8px 12px', minHeight: 40, display: 'flex', alignItems: 'center', gap: 7 }}>
                 <Icon size={14} style={{ color: 'var(--text-tertiary)' }} />
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: 'var(--text-primary)' }}>{value}</span>
               </div>
@@ -281,7 +283,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
         {/* Sobre */}
         {dev.description && (
           <div style={{ marginTop: 24 }}>
-            <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 8 }}>Sobre</p>
+            <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 8 }}>Sobre</p>
             <p style={{ fontSize: 14, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif', lineHeight: 1.6, margin: 0 }}>{dev.description}</p>
           </div>
         )}
@@ -289,10 +291,10 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
         {/* Características */}
         {allFeatures.length > 0 && (
           <div style={{ marginTop: 24 }}>
-            <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Características</p>
+            <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Características</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {allFeatures.map((feat, i) => (
-                <span key={i} style={{ background: 'rgba(184,148,58,0.06)', border: '1px solid rgba(184,148,58,0.15)', borderRadius: 20, padding: '6px 12px', fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>{feat}</span>
+                <span key={i} style={{ background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.15)', borderRadius: 20, padding: '6px 12px', fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>{feat}</span>
               ))}
             </div>
           </div>
@@ -300,14 +302,14 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
 
         {/* Análise IMI */}
         <div style={{ marginTop: 24 }}>
-          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Análise IMI</p>
-          <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.15)', borderRadius: 12, padding: 16 }}>
+          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Análise IMI</p>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.15)', borderRadius: 12, padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
               <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 400, color: mobileScoreColor, lineHeight: 1 }}>{score}</div>
               <div>
                 <div style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 2 }}>IMI Score</div>
                 <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>/100 · Índice de Oportunidade</div>
-                <div style={{ height: 4, width: 120, background: 'rgba(184,148,58,0.1)', borderRadius: 6, marginTop: 6, overflow: 'hidden' }}>
+                <div style={{ height: 4, width: 120, background: 'rgba(61,111,255,0.1)', borderRadius: 6, marginTop: 6, overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${score}%`, background: mobileScoreColor, borderRadius: 6 }} />
                 </div>
               </div>
@@ -329,8 +331,8 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
 
         {/* Detalhes Técnicos */}
         <div style={{ marginTop: 24 }}>
-          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Detalhes Técnicos</p>
-          <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(184,148,58,0.15)', borderRadius: 12, overflow: 'hidden' }}>
+          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Detalhes Técnicos</p>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.15)', borderRadius: 12, overflow: 'hidden' }}>
             {[
               { label: 'Tipo', value: dev.type ?? '—' },
               { label: 'Condição', value: dev.condition ?? '—' },
@@ -338,7 +340,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
               { label: 'CEP', value: dev.cep ?? '—' },
               { label: 'Estado', value: dev.state ?? '—' },
             ].map(({ label, value }, i) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: i < 4 ? '1px solid rgba(184,148,58,0.08)' : 'none' }}>
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: i < 4 ? '1px solid rgba(61,111,255,0.08)' : 'none' }}>
                 <span style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif' }}>{label}</span>
                 <span style={{ fontSize: 13, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>{value}</span>
               </div>
@@ -348,16 +350,17 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
 
         {/* Ações Rápidas */}
         <div style={{ marginTop: 24 }}>
-          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Ações Rápidas</p>
+          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Ações Rápidas</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {[
               { icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
               { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics` },
+              { icon: Scale, label: 'Avaliação', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}` },
               { icon: QrCode, label: 'QR Code', href: `/backoffice/tracking/qr?imovel=${id}` },
               { icon: Zap, label: 'Campanha', href: `/backoffice/campanhas?imovel=${id}` },
             ].map(({ icon: Icon, label, href }) => (
-              <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(184,148,58,0.06)', border: '1px solid rgba(184,148,58,0.14)', borderRadius: 10, padding: '14px 16px', textDecoration: 'none' }}>
-                <Icon size={16} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
+              <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.14)', borderRadius: 10, padding: '14px 16px', textDecoration: 'none' }}>
+                <Icon size={16} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
                 <span style={{ fontSize: 13, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>{label}</span>
               </Link>
             ))}
@@ -366,9 +369,9 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
 
         {/* Compartilhar */}
         <div style={{ marginTop: 24 }}>
-          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Compartilhar</p>
+          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Compartilhar</p>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={handleCopyLink} style={{ flex: 1, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 10, color: 'var(--imi-gold-500)', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
+            <button onClick={handleCopyLink} style={{ flex: 1, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 10, color: 'var(--accent-400)', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
               <Copy size={14} /> {copied ? 'Copiado!' : 'Link'}
             </button>
             <button onClick={handleWhatsApp} style={{ flex: 1, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(93,184,135,0.35)', borderRadius: 10, color: '#5DB887', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
@@ -385,7 +388,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
             { icon: '📋', label: 'Leads este mês', value: '—', color: 'var(--text-secondary)' },
             { icon: '📅', label: 'Última atualização', value: dev?.updated_at ? new Date(dev.updated_at).toLocaleDateString('pt-BR') : '—', color: 'var(--text-secondary)' },
           ].map(({ icon, label, value, color }) => (
-            <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(184,148,58,0.06)' }}>
+            <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(61,111,255,0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 14 }}>{icon}</span>
                 <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{label}</span>
@@ -402,7 +405,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
         background: 'var(--nav-bg, var(--bg-surface))',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid rgba(184,148,58,0.18)',
+        borderTop: '1px solid rgba(61,111,255,0.18)',
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '12px 16px',
         paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
@@ -410,7 +413,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
         <Link
           href={`/backoffice/imoveis/${id}/editar`}
           className="mob-btn-tap"
-          style={{ flex: 1, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(184,148,58,0.35)', borderRadius: 10, color: 'var(--imi-gold-500)', textDecoration: 'none', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', touchAction: 'manipulation' }}
+          style={{ flex: 1, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(61,111,255,0.35)', borderRadius: 10, color: 'var(--accent-400)', textDecoration: 'none', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', touchAction: 'manipulation' }}
         >
           <Edit size={15} /> Editar
         </Link>

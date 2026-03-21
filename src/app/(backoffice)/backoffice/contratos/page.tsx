@@ -107,8 +107,8 @@ export default function ContratosPage() {
                             className="flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white flex-shrink-0"
                             style={{
                                 height: '44px',
-                                background: 'var(--imi-gold-500)',
-                                boxShadow: '0 4px 14px rgba(184,148,58,0.28)',
+                                background: 'var(--accent-400)',
+                                boxShadow: '0 4px 14px rgba(61,111,255,0.28)',
                                 border: 'none',
                             }}
                         >
@@ -189,7 +189,7 @@ export default function ContratosPage() {
                         onClick={() => setActiveTab(tab.key as 'lista' | 'modelos')}
                         className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-[6px] text-xs font-semibold transition-all"
                         style={{
-                            background: activeTab === tab.key ? 'var(--imi-gold-500)' : T.surface,
+                            background: activeTab === tab.key ? 'var(--accent-400)' : T.surface,
                             color: activeTab === tab.key ? 'white' : T.textDim,
                             border: `1px solid ${activeTab === tab.key ? T.borderGold : T.border}`,
                         }}>
@@ -258,7 +258,7 @@ export default function ContratosPage() {
 >
                                             <div className="flex items-center gap-3 p-4">
                                                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                                                    style={{ background: 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' }}>
+                                                    style={{ background: 'color-mix(in srgb, var(--accent-400) 10%, transparent)' }}>
                                                     <FileSignature size={18} style={{ color: T.accent }} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -318,8 +318,8 @@ export default function ContratosPage() {
                                         className="inline-flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white"
                                         style={{
                                             height: '44px',
-                                            background: 'var(--imi-gold-500)',
-                                            boxShadow: '0 4px 14px rgba(184,148,58,0.22)',
+                                            background: 'var(--accent-400)',
+                                            boxShadow: '0 4px 14px rgba(61,111,255,0.22)',
                                             border: 'none',
                                         }}
                                     >

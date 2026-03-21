@@ -13,8 +13,6 @@ import { PageIntelHeader, KPICard, Btn } from '../../components/ui'
 import { T } from '../../lib/theme'
 import { createClient } from '@/lib/supabase/client'
 
-export const dynamic = 'force-dynamic'
-
 /* ─── TYPES ─────────────────────────────────────────────────────── */
 interface AutomationRule {
   id: string
@@ -163,7 +161,7 @@ function RuleCard({
       transition={{ delay: index * 0.05, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       style={{
         background: T.surface,
-        border: `1px solid ${isActive ? 'color-mix(in srgb, var(--imi-gold-500) 22%, var(--border-default))' : T.border}`,
+        border: `1px solid ${isActive ? 'color-mix(in srgb, var(--accent-400) 22%, var(--border-default))' : T.border}`,
         borderRadius: T.radius.xl,
         padding: '16px 20px',
         position: 'relative',
@@ -173,7 +171,7 @@ function RuleCard({
       {/* Top accent */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: 2,
-        background: isActive ? 'linear-gradient(90deg, var(--imi-gold-500), transparent)' : 'transparent',
+        background: isActive ? 'linear-gradient(90deg, var(--accent-400), transparent)' : 'transparent',
         transition: 'opacity 0.3s',
       }} />
 
@@ -181,11 +179,11 @@ function RuleCard({
         {/* Trigger icon */}
         <div style={{
           width: 40, height: 40, borderRadius: T.radius.lg, flexShrink: 0,
-          background: isActive ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' : T.elevated,
-          border: `1px solid ${isActive ? 'color-mix(in srgb, var(--imi-gold-500) 20%, transparent)' : T.border}`,
+          background: isActive ? 'color-mix(in srgb, var(--accent-400) 10%, transparent)' : T.elevated,
+          border: `1px solid ${isActive ? 'color-mix(in srgb, var(--accent-400) 20%, transparent)' : T.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <TrigIcon size={17} style={{ color: isActive ? 'var(--imi-gold-500)' : T.textDim }} />
+          <TrigIcon size={17} style={{ color: isActive ? 'var(--accent-400)' : T.textDim }} />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -219,7 +217,7 @@ function RuleCard({
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}
             >
               {isActive
-                ? <ToggleRight size={28} style={{ color: 'var(--imi-gold-500)' }} />
+                ? <ToggleRight size={28} style={{ color: 'var(--accent-400)' }} />
                 : <ToggleLeft size={28} style={{ color: T.textDim }} />
               }
             </button>
@@ -242,10 +240,10 @@ function RuleCard({
               display: 'inline-flex', alignItems: 'center', gap: 4,
               fontSize: 11, padding: '4px 10px', borderRadius: T.radius.full, fontWeight: 500,
               background: isActive
-                ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)'
+                ? 'color-mix(in srgb, var(--accent-400) 10%, transparent)'
                 : T.elevated,
-              color: isActive ? 'var(--imi-gold-500)' : T.textDim,
-              border: `1px solid ${isActive ? 'color-mix(in srgb, var(--imi-gold-500) 20%, transparent)' : T.border}`,
+              color: isActive ? 'var(--accent-400)' : T.textDim,
+              border: `1px solid ${isActive ? 'color-mix(in srgb, var(--accent-400) 20%, transparent)' : T.border}`,
             }}>
               <ActIcon size={10} />
               {rule.actionLabel}
@@ -259,7 +257,7 @@ function RuleCard({
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <span style={{ fontSize: 11, color: T.textDim, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <Zap size={11} style={{ color: 'var(--imi-gold-500)' }} />
+                <Zap size={11} style={{ color: 'var(--accent-400)' }} />
                 {rule.firedToday} disparos hoje
               </span>
               <span style={{ fontSize: 11, color: T.textDim }}>
@@ -421,9 +419,9 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                     width: 28, height: 28, borderRadius: '50%',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 12, fontWeight: 700, flexShrink: 0,
-                    background: active ? 'var(--imi-gold-500)' : done ? 'var(--success-bg)' : T.elevated,
+                    background: active ? 'var(--accent-400)' : done ? 'var(--success-bg)' : T.elevated,
                     color: active ? '#fff' : done ? 'var(--success)' : T.textDim,
-                    border: active ? '2px solid var(--imi-gold-500)' : done ? '2px solid color-mix(in srgb, var(--success) 30%, transparent)' : `2px solid ${T.border}`,
+                    border: active ? '2px solid var(--accent-400)' : done ? '2px solid color-mix(in srgb, var(--success) 30%, transparent)' : `2px solid ${T.border}`,
                   }}>
                     {done ? <CheckCircle2 size={14} /> : n}
                   </div>
@@ -467,8 +465,8 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                           key={opt.id}
                           onClick={() => setSelectedTrigger(opt.id)}
                           style={{
-                            background: sel ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' : T.elevated,
-                            border: `1.5px solid ${sel ? 'var(--imi-gold-500)' : T.border}`,
+                            background: sel ? 'color-mix(in srgb, var(--accent-400) 10%, transparent)' : T.elevated,
+                            border: `1.5px solid ${sel ? 'var(--accent-400)' : T.border}`,
                             borderRadius: T.radius.lg,
                             padding: '14px',
                             textAlign: 'left',
@@ -477,8 +475,8 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <Icon size={16} style={{ color: sel ? 'var(--imi-gold-500)' : T.textMuted, flexShrink: 0 }} />
-                            <span style={{ fontSize: 13, fontWeight: 600, color: sel ? 'var(--imi-gold-500)' : T.text, fontFamily: T.font.sans }}>
+                            <Icon size={16} style={{ color: sel ? 'var(--accent-400)' : T.textMuted, flexShrink: 0 }} />
+                            <span style={{ fontSize: 13, fontWeight: 600, color: sel ? 'var(--accent-400)' : T.text, fontFamily: T.font.sans }}>
                               {opt.label}
                             </span>
                           </div>
@@ -507,8 +505,8 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                           key={opt.id}
                           onClick={() => setSelectedAction(opt.id)}
                           style={{
-                            background: sel ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' : T.elevated,
-                            border: `1.5px solid ${sel ? 'var(--imi-gold-500)' : T.border}`,
+                            background: sel ? 'color-mix(in srgb, var(--accent-400) 10%, transparent)' : T.elevated,
+                            border: `1.5px solid ${sel ? 'var(--accent-400)' : T.border}`,
                             borderRadius: T.radius.lg,
                             padding: '14px',
                             textAlign: 'left',
@@ -517,8 +515,8 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <Icon size={16} style={{ color: sel ? 'var(--imi-gold-500)' : T.textMuted, flexShrink: 0 }} />
-                            <span style={{ fontSize: 13, fontWeight: 600, color: sel ? 'var(--imi-gold-500)' : T.text, fontFamily: T.font.sans }}>
+                            <Icon size={16} style={{ color: sel ? 'var(--accent-400)' : T.textMuted, flexShrink: 0 }} />
+                            <span style={{ fontSize: 13, fontWeight: 600, color: sel ? 'var(--accent-400)' : T.text, fontFamily: T.font.sans }}>
                               {opt.label}
                             </span>
                           </div>
@@ -556,7 +554,7 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                           <TrigI size={12} /> {trig?.label}
                         </span>
                         <ArrowRight size={12} style={{ color: T.textDim }} />
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--imi-gold-500)', fontWeight: 500 }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--accent-400)', fontWeight: 500 }}>
                           <ActI size={12} /> {act?.label}
                         </span>
                       </div>
@@ -655,7 +653,7 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
 
 /* ─── MAIN PAGE ──────────────────────────────────────────────────── */
 export default function AutomacoesPage() {
-  const [rules, setRules] = useState<AutomationRule[]>(MOCK_RULES)
+  const [rules, setRules] = useState<AutomationRule[]>([])
   const [modalOpen, setModalOpen] = useState(false)
   const [saved, setSaved] = useState(false)
 

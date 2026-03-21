@@ -441,7 +441,7 @@ export default function AgentesIAPage() {
                         style={{
                             padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                             cursor: 'pointer', transition: 'all 0.15s',
-                            background: category === cat.id ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
+                            background: category === cat.id ? 'var(--accent-400)' : 'var(--bg-elevated)',
                             color: category === cat.id ? '#fff' : 'var(--text-secondary)',
                             border: `1px solid ${category === cat.id ? 'transparent' : 'var(--border-default)'}`,
                         }}

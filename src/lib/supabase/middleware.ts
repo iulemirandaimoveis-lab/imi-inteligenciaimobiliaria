@@ -31,11 +31,11 @@ export async function updateSession(request: NextRequest) {
         }
     )
 
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data: { user } } = await supabase.auth.getUser()
 
     // Proteger rotas do backoffice
     if (request.nextUrl.pathname.startsWith('/backoffice')) {
-        if (!session) {
+        if (!user) {
             const redirectUrl = request.nextUrl.clone()
             redirectUrl.pathname = '/login'
             redirectUrl.searchParams.set('redirectedFrom', request.nextUrl.pathname)
@@ -45,8 +45,8 @@ export async function updateSession(request: NextRequest) {
         // Subscription enforcement: skip for /billing and /onboarding
         const pathname = request.nextUrl.pathname
         const isExempt = pathname.startsWith('/backoffice/billing') || pathname.startsWith('/onboarding')
-        if (!isExempt && session.user?.user_metadata) {
-            const meta = session.user.user_metadata
+        if (!isExempt && user?.user_metadata) {
+            const meta = user.user_metadata
             const tier = meta.subscription_tier as string | undefined
             const trialEndsAt = meta.trial_ends_at as string | undefined
             const trialExpired = trialEndsAt ? new Date(trialEndsAt) < new Date() : false
@@ -60,7 +60,7 @@ export async function updateSession(request: NextRequest) {
 
     // Se já estiver logado e tentar acessar /login, redireciona para /backoffice
     if (request.nextUrl.pathname === '/login') {
-        if (session) {
+        if (user) {
             return NextResponse.redirect(new URL('/backoffice', request.url))
         }
     }

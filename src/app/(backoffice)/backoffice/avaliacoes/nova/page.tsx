@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft, ArrowRight, Building2, MapPin, Ruler, User, Mail, Phone,
   FileText, Upload, Check, Save, Loader2, AlertCircle, DollarSign,
@@ -217,20 +217,31 @@ function InputField({ icon: Icon, error, ...props }: { icon?: LucideIcon; error?
 // ============================================================
 export default function NovaAvaliacaoPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [currentStep, setCurrentStep] = useState<Step>(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showHonorarios, setShowHonorarios] = useState(false)
   const [valorEstimadoHonorarios, setValorEstimadoHonorarios] = useState(500000)
-  const [formData, setFormData] = useState<FormData>({
-    endereco: '', complemento: '', bairro: '', cidade: 'Recife', estado: 'PE', cep: '',
-    tipo: '', areaPrivativa: '', areaTotal: '', quartos: '', banheiros: '',
+  const [calcResult, setCalcResult] = useState<Record<string, unknown> | null>(null)
+  const [calcLoading, setCalcLoading] = useState(false)
+  // Pre-fill from cross-link URL params (e.g. from property detail page)
+  const prefillBairro = searchParams.get('bairro') ?? ''
+  const prefillArea = searchParams.get('area') ?? ''
+  const prefillNome = searchParams.get('nome') ?? ''
+  const prefillImovelId = searchParams.get('imovel') ?? ''
+  const prefillObs = prefillNome
+    ? `Imóvel: ${prefillNome}${prefillImovelId ? ` (ID: ${prefillImovelId})` : ''}`
+    : ''
+  const [formData, setFormData] = useState<FormData>(() => ({
+    endereco: '', complemento: '', bairro: prefillBairro, cidade: 'Recife', estado: 'PE', cep: '',
+    tipo: '', areaPrivativa: prefillArea, areaTotal: '', quartos: '', banheiros: '',
     vagas: '', andar: '', totalAndares: '', anoContrucao: '', padrao: 'Normal',
     estado_conservacao: 'Novo', caracteristicas: [],
     clienteNome: '', clienteEmail: '', clienteTelefone: '', clienteCPFCNPJ: '',
     clienteTipo: 'PF', solicitanteInstituicao: '',
     finalidade: '', metodologia: 'comparativo', grauFundamentacao: 'II', grauPrecisao: 'II',
-    prazoEntrega: '', valorHonorarios: '', formaPagamento: 'À vista', observacoes: '',
+    prazoEntrega: '', valorHonorarios: '', formaPagamento: 'À vista', observacoes: prefillObs,
     comparaveis: [
       {
         id: '1', endereco: '', tipo: 'Apartamento', area: 0, quartos: 0, banheiros: 0,
@@ -239,7 +250,8 @@ export default function NovaAvaliacaoPage() {
       }
     ],
     documentos: [],
-  })
+  }))
+
   const handleChange = (field: keyof FormData, value: FormData[keyof FormData]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }))
@@ -358,14 +370,14 @@ export default function NovaAvaliacaoPage() {
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all"
                     style={{
-                      background: done ? 'var(--success)' : active ? 'var(--imi-gold-500)' : T.elevated,
+                      background: done ? 'var(--success)' : active ? 'var(--accent-400)' : T.elevated,
                       color: done || active ? 'white' : T.textMuted,
                     }}
                   >
                     {done ? <Check size={16} /> : <Icon size={16} />}
                   </div>
                   <span className="text-xs mt-1 hidden sm:block font-medium"
-                    style={{ color: active ? 'var(--imi-gold-500)' : done ? 'var(--success)' : T.textMuted }}>
+                    style={{ color: active ? 'var(--accent-400)' : done ? 'var(--success)' : T.textMuted }}>
                     {step.label}
                   </span>
                 </div>
@@ -526,7 +538,7 @@ export default function NovaAvaliacaoPage() {
             </div>
             {/* Info Box */}
             <div className="flex gap-3 p-4 rounded-lg" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
-              <Info size={18} style={{ color: 'var(--imi-gold-500)', flexShrink: 0, marginTop: 1 }} />
+              <Info size={18} style={{ color: 'var(--accent-400)', flexShrink: 0, marginTop: 1 }} />
               <div className="text-sm">
                 <p className="font-medium mb-1" style={{ color: T.text }}>Responsabilidade do Avaliador</p>
                 <p className="text-xs" style={{ color: T.textMuted }}>O laudo de avaliação é de responsabilidade exclusiva do profissional habilitado (CNAI/CRECI). Os dados do solicitante são arquivados para rastreabilidade conforme NBR 14653-1.</p>
@@ -546,13 +558,13 @@ export default function NovaAvaliacaoPage() {
                   <button key={f.value} type="button" onClick={() => handleChange('finalidade', f.value)}
                     className="flex items-start gap-3 p-3 rounded-lg text-left transition-all"
                     style={formData.finalidade === f.value
-                      ? { border: '1px solid var(--imi-gold-500)', background: 'var(--bg-active)' }
+                      ? { border: '1px solid var(--accent-400)', background: 'var(--bg-active)' }
                       : { border: `1px solid ${T.border}`, background: T.elevated }}>
                     <div
                       className="w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0"
                       style={{
-                        borderColor: formData.finalidade === f.value ? 'var(--imi-gold-500)' : T.border,
-                        background: formData.finalidade === f.value ? 'var(--imi-gold-500)' : 'transparent',
+                        borderColor: formData.finalidade === f.value ? 'var(--accent-400)' : T.border,
+                        background: formData.finalidade === f.value ? 'var(--accent-400)' : 'transparent',
                       }}
                     />
                     <div>
@@ -574,7 +586,7 @@ export default function NovaAvaliacaoPage() {
                     <button key={m.value} type="button" onClick={() => handleChange('metodologia', m.value)}
                       className="w-full flex items-center gap-4 p-4 rounded-lg text-left transition-all"
                       style={formData.metodologia === m.value
-                        ? { border: '1px solid var(--imi-gold-500)', background: 'var(--bg-active)' }
+                        ? { border: '1px solid var(--accent-400)', background: 'var(--bg-active)' }
                         : { border: `1px solid ${T.border}`, background: T.elevated }}>
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={formData.metodologia === m.value
@@ -808,7 +820,7 @@ export default function NovaAvaliacaoPage() {
                       ].map(item => (
                         <div key={item.l}>
                           <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{item.l}</p>
-                          <p className={`text-sm font-bold mt-0.5 ${item.ok === false ? 'text-red-400' : item.ok === true ? 'text-emerald-400' : 'text-[var(--imi-gold-500)]'}`}>{item.v}</p>
+                          <p className={`text-sm font-bold mt-0.5 ${item.ok === false ? 'text-red-400' : item.ok === true ? 'text-emerald-400' : 'text-[var(--accent-400)]'}`}>{item.v}</p>
                         </div>
                       ))}
                     </div>
@@ -864,9 +876,9 @@ export default function NovaAvaliacaoPage() {
               <p className="text-sm font-semibold mb-3" style={{ color: T.text }}>Links de Consulta</p>
               <a href="https://ridigital.org.br/" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <Landmark size={16} style={{ color: 'var(--imi-gold-500)' }} />
+                <Landmark size={16} style={{ color: 'var(--accent-400)' }} />
                 <div>
-                  <p className="text-sm group-hover:underline" style={{ color: 'var(--imi-gold-500)' }}>RI Digital — Matrícula do Imóvel</p>
+                  <p className="text-sm group-hover:underline" style={{ color: 'var(--accent-400)' }}>RI Digital — Matrícula do Imóvel</p>
                   <p className="text-xs" style={{ color: T.textMuted }}>ridigital.org.br</p>
                 </div>
               </a>
@@ -880,13 +892,90 @@ export default function NovaAvaliacaoPage() {
               </a>
               <a href="https://www.fipe.org.br/pt-br/indices/fipezap/" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <BarChart2 size={16} style={{ color: 'var(--imi-gold-400)' }} />
+                <BarChart2 size={16} style={{ color: 'var(--platinum-400)' }} />
                 <div>
-                  <p className="text-sm group-hover:underline" style={{ color: 'var(--imi-gold-400)' }}>FIPE ZAP — Índice de Preços</p>
+                  <p className="text-sm group-hover:underline" style={{ color: 'var(--platinum-400)' }}>FIPE ZAP — Índice de Preços</p>
                   <p className="text-xs" style={{ color: T.textMuted }}>fipe.org.br</p>
                 </div>
               </a>
             </div>
+            {/* Motor de Cálculo */}
+            {formData.comparaveis.length >= 1 && formData.areaPrivativa && (
+              <div className="rounded-lg p-5 space-y-3" style={{ background: "rgba(184,148,58,0.06)", border: "1px solid rgba(184,148,58,0.25)" }}>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold flex items-center gap-2" style={{ color: "var(--accent-400)" }}>
+                    <Calculator size={14} /> Motor NBR 14653
+                  </p>
+                  <button
+                    type="button"
+                    disabled={calcLoading}
+                    onClick={async () => {
+                      setCalcLoading(true)
+                      try {
+                        const res = await fetch('/api/avaliacoes/calcular', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            metodo: formData.metodologia === 'comparativo' ? 'comparativo' : 'evolutivo',
+                            property: {
+                              area: Number(formData.areaPrivativa),
+                              quartos: Number(formData.quartos) || 0,
+                              vagas: Number(formData.vagas) || 0,
+                              padrao: formData.padrao,
+                              estado_conservacao: formData.estado_conservacao,
+                              andar: Number(formData.andar) || undefined,
+                              ano_construcao: Number(formData.anoContrucao) || undefined,
+                              tipo: formData.tipo,
+                              bairro: formData.bairro,
+                              cidade: formData.cidade,
+                            },
+                            comparaveis: formData.comparaveis.filter(c => c.valorVenda > 0 && c.area > 0),
+                            valor_terreno: 200000,
+                          }),
+                        })
+                        const data = await res.json()
+                        if (data.success) setCalcResult(data.result)
+                      } catch { /* silent */ }
+                      finally { setCalcLoading(false) }
+                    }}
+                    className="flex items-center gap-2 h-8 px-4 rounded-[6px] text-xs font-semibold transition-all hover:opacity-80"
+                    style={{ background: 'var(--accent-400)', color: 'var(--text-inverse)' }}
+                  >
+                    {calcLoading ? <><Loader2 size={12} className="animate-spin" /> Calculando...</> : <><Sparkles size={12} /> Calcular Valor</>}
+                  </button>
+                </div>
+                {calcResult && (
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>Valor Estimado</p>
+                      <p className="text-lg font-bold mt-1" style={{ color: 'var(--accent-400)', fontFamily: 'var(--font-mono)' }}>
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number((calcResult as Record<string, unknown>).valor_total ?? 0))}
+                      </p>
+                    </div>
+                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>R$/m²</p>
+                      <p className="text-lg font-bold mt-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number((calcResult as Record<string, unknown>).valor_unitario ?? 0))}
+                      </p>
+                    </div>
+                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>Intervalo</p>
+                      <p className="text-xs font-medium mt-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number((calcResult as Record<string, unknown>).valor_minimo ?? 0))}
+                        {' — '}
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number((calcResult as Record<string, unknown>).valor_maximo ?? 0))}
+                      </p>
+                    </div>
+                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+                      <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>Grau Fund. / Prec.</p>
+                      <p className="text-sm font-bold mt-1" style={{ color: 'var(--success)' }}>
+                        {String((calcResult as Record<string, unknown>).grau_fundamentacao ?? '—')} / {String((calcResult as Record<string, unknown>).grau_precisao ?? '—')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             {/* Resumo Final */}
             <div className="rounded-lg p-5 space-y-3" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
               <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Resumo da Avaliação</p>
@@ -896,7 +985,7 @@ export default function NovaAvaliacaoPage() {
                 <div><span style={{ color: "var(--text-secondary)" }}>Cliente:</span><br /><span style={{ color: "var(--text-primary)" }}>{formData.clienteNome || '—'}</span></div>
                 <div><span style={{ color: "var(--text-secondary)" }}>Metodologia:</span><br /><span style={{ color: "var(--text-primary)" }}>{METODOLOGIAS.find(m => m.value === formData.metodologia)?.label?.split(' ').slice(0, 3).join(' ') || '—'}</span></div>
                 <div><span style={{ color: "var(--text-secondary)" }}>Comparáveis:</span><br /><span className={formData.comparaveis.length >= 3 ? 'text-emerald-400' : 'text-red-400'}>{formData.comparaveis.length} amostras</span></div>
-                <div><span style={{ color: "var(--text-secondary)" }}>Honorários:</span><br /><span className="text-[var(--imi-gold-500)] font-semibold">{formData.valorHonorarios ? formatCurrency(Number(formData.valorHonorarios)) : '—'}</span></div>
+                <div><span style={{ color: "var(--text-secondary)" }}>Honorários:</span><br /><span className="text-[var(--accent-400)] font-semibold">{formData.valorHonorarios ? formatCurrency(Number(formData.valorHonorarios)) : '—'}</span></div>
               </div>
             </div>
           </div>

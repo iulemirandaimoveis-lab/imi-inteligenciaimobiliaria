@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import {
   MessageCircle, QrCode, Smartphone, FileText, Copy, ExternalLink,
   Edit2, CheckCheck, Clock, Wifi, WifiOff, ArrowRight, Zap, Users,
+  RefreshCw, Loader2, AlertTriangle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -100,7 +101,7 @@ const CONVERSATIONS: RecentConversation[] = [
     lastMsg: 'Perfeito! Vejo vocês amanhã então.',
     time: 'Ontem',
     unread: 0,
-    color: 'var(--imi-gold-500)',
+    color: 'var(--accent-400)',
   },
   {
     id: '3',
@@ -125,6 +126,58 @@ const SETUP_STEPS = [
 export default function WhatsAppPage() {
   const [connected, setConnected] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [qrCode, setQrCode] = useState<string | null>(null)
+  const [qrLoading, setQrLoading] = useState(false)
+  const [qrError, setQrError] = useState<string | null>(null)
+  const [apiConfigured, setApiConfigured] = useState(true)
+
+  const fetchQrCode = useCallback(async () => {
+    setQrLoading(true)
+    setQrError(null)
+    try {
+      const res = await fetch('/api/whatsapp/qr')
+      const data = await res.json()
+      if (data.connected) {
+        setConnected(true)
+        setQrCode(null)
+      } else if (data.qrcode) {
+        setConnected(false)
+        setQrCode(data.qrcode)
+      } else if (data.configured === false) {
+        setApiConfigured(false)
+        setQrError(data.error)
+      } else if (data.error) {
+        setQrError(data.error)
+      }
+    } catch {
+      setQrError('Erro ao conectar com servidor')
+    } finally {
+      setQrLoading(false)
+    }
+  }, [])
+
+  // Auto-fetch QR code on mount
+  useEffect(() => { fetchQrCode() }, [fetchQrCode])
+
+  // Auto-refresh QR code every 30s while not connected
+  useEffect(() => {
+    if (connected) return
+    const interval = setInterval(fetchQrCode, 30000)
+    return () => clearInterval(interval)
+  }, [connected, fetchQrCode])
+
+  const handleDisconnect = async () => {
+    try {
+      await fetch('/api/whatsapp/qr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'disconnect' }),
+      })
+      setConnected(false)
+      setQrCode(null)
+      fetchQrCode()
+    } catch { /* */ }
+  }
 
   const handleCopy = (id: string, text: string) => {
     navigator.clipboard.writeText(text).catch(() => {})
@@ -145,17 +198,17 @@ export default function WhatsAppPage() {
             <span style={{
               fontSize: 11, fontWeight: 700, padding: '4px 10px',
               borderRadius: 6,
-              background: 'rgba(184,148,58,0.12)',
-              color: 'var(--imi-gold-500)',
-              border: '1px solid rgba(184,148,58,0.30)',
+              background: apiConfigured ? 'rgba(37,211,102,0.12)' : 'rgba(61,111,255,0.12)',
+              color: apiConfigured ? '#25D366' : 'var(--accent-400)',
+              border: apiConfigured ? '1px solid rgba(37,211,102,0.30)' : '1px solid rgba(61,111,255,0.30)',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
               fontFamily: 'var(--font-mono)',
             }}>
-              API · Em Breve
+              {apiConfigured ? 'Evolution API' : 'API · Não Configurada'}
             </span>
             <button
-              onClick={() => setConnected(c => !c)}
+              onClick={connected ? handleDisconnect : fetchQrCode}
               style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 height: 38, padding: '0 16px',
@@ -168,7 +221,7 @@ export default function WhatsAppPage() {
               }}
             >
               {connected ? <Wifi size={14} /> : <WifiOff size={14} />}
-              {connected ? 'Conectado' : 'Desconectado'}
+              {connected ? 'Conectado' : 'Reconectar'}
             </button>
           </div>
         }
@@ -203,23 +256,78 @@ export default function WhatsAppPage() {
           </div>
 
           <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-            {/* QR Code Placeholder */}
+            {/* QR Code */}
             <div style={{
               width: 200, height: 200, flexShrink: 0,
               borderRadius: 'var(--r-lg)',
-              background: 'var(--bg-elevated)',
-              border: '2px dashed var(--border-default)',
+              background: connected ? 'color-mix(in srgb, var(--success) 8%, var(--bg-elevated))' : 'var(--bg-elevated)',
+              border: connected ? '2px solid color-mix(in srgb, var(--success) 35%, transparent)' : '2px dashed var(--border-default)',
               display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center', gap: 12,
+              overflow: 'hidden', position: 'relative',
             }}>
-              <QrCode size={56} style={{ color: 'var(--text-tertiary)', opacity: 0.5 }} />
-              <p style={{
-                fontSize: 11, color: 'var(--text-tertiary)',
-                fontFamily: 'var(--font-mono)', textAlign: 'center',
-                lineHeight: 1.4, padding: '0 16px',
-              }}>
-                QR Code aparece após<br />ativar a integração
-              </p>
+              {qrLoading ? (
+                <>
+                  <Loader2 size={32} className="animate-spin" style={{ color: 'var(--accent-400)' }} />
+                  <p style={{ fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)', textAlign: 'center' }}>
+                    Gerando QR Code...
+                  </p>
+                </>
+              ) : connected ? (
+                <>
+                  <CheckCheck size={48} style={{ color: 'var(--success)' }} />
+                  <p style={{ fontSize: 12, color: 'var(--success)', fontWeight: 600, fontFamily: 'var(--font-sans)', textAlign: 'center' }}>
+                    WhatsApp Conectado
+                  </p>
+                </>
+              ) : qrCode ? (
+                <>
+                  <img
+                    src={qrCode.startsWith('data:') ? qrCode : `data:image/png;base64,${qrCode}`}
+                    alt="WhatsApp QR Code"
+                    style={{ width: 180, height: 180, borderRadius: 8, objectFit: 'contain' }}
+                  />
+                  <button
+                    onClick={fetchQrCode}
+                    style={{
+                      position: 'absolute', bottom: 4, right: 4,
+                      width: 24, height: 24, borderRadius: 6,
+                      background: 'rgba(0,0,0,0.6)', border: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <RefreshCw size={12} style={{ color: '#fff' }} />
+                  </button>
+                </>
+              ) : qrError ? (
+                <>
+                  <AlertTriangle size={32} style={{ color: 'var(--warning)', opacity: 0.7 }} />
+                  <p style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)', textAlign: 'center', padding: '0 12px', lineHeight: 1.4 }}>
+                    {qrError.length > 80 ? qrError.slice(0, 80) + '...' : qrError}
+                  </p>
+                  <button
+                    onClick={fetchQrCode}
+                    style={{
+                      fontSize: 11, color: 'var(--accent-400)', background: 'none',
+                      border: 'none', cursor: 'pointer', fontWeight: 600,
+                    }}
+                  >
+                    Tentar novamente
+                  </button>
+                </>
+              ) : (
+                <>
+                  <QrCode size={56} style={{ color: 'var(--text-tertiary)', opacity: 0.5 }} />
+                  <p style={{
+                    fontSize: 11, color: 'var(--text-tertiary)',
+                    fontFamily: 'var(--font-mono)', textAlign: 'center',
+                    lineHeight: 1.4, padding: '0 16px',
+                  }}>
+                    Clique em Reconectar<br />para gerar o QR Code
+                  </p>
+                </>
+              )}
             </div>
 
             {/* Steps */}
@@ -230,13 +338,13 @@ export default function WhatsAppPage() {
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                     <div style={{
                       width: 22, height: 22, borderRadius: 6, flexShrink: 0,
-                      background: 'rgba(184,148,58,0.12)',
-                      border: '1.5px solid rgba(184,148,58,0.30)',
+                      background: 'rgba(61,111,255,0.12)',
+                      border: '1.5px solid rgba(61,111,255,0.30)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                       <span style={{
                         fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
-                        color: 'var(--imi-gold-500)',
+                        color: 'var(--accent-400)',
                       }}>
                         {i + 1}
                       </span>
@@ -399,9 +507,9 @@ export default function WhatsAppPage() {
           <span style={{
             fontSize: 11, fontWeight: 700, padding: '4px 10px',
             borderRadius: 6,
-            background: 'rgba(184,148,58,0.10)',
-            color: 'var(--imi-gold-500)',
-            border: '1px solid rgba(184,148,58,0.25)',
+            background: 'rgba(61,111,255,0.10)',
+            color: 'var(--accent-400)',
+            border: '1px solid rgba(61,111,255,0.25)',
             textTransform: 'uppercase', letterSpacing: '0.08em',
             fontFamily: 'var(--font-mono)',
           }}>
@@ -442,9 +550,9 @@ export default function WhatsAppPage() {
                 <span style={{
                   fontSize: 11, fontWeight: 700, padding: '4px 8px',
                   borderRadius: 6,
-                  background: 'rgba(184,148,58,0.10)',
-                  color: 'var(--imi-gold-500)',
-                  border: '1px solid rgba(184,148,58,0.22)',
+                  background: 'rgba(61,111,255,0.10)',
+                  color: 'var(--accent-400)',
+                  border: '1px solid rgba(61,111,255,0.22)',
                   textTransform: 'uppercase', letterSpacing: '0.08em',
                   fontFamily: 'var(--font-mono)', flexShrink: 0,
                 }}>
@@ -471,7 +579,7 @@ export default function WhatsAppPage() {
                   <span key={v} style={{
                     fontSize: 11, padding: '2px 7px', borderRadius: 6,
                     background: 'var(--bg-muted)',
-                    color: 'var(--imi-gold-500)',
+                    color: 'var(--accent-400)',
                     fontFamily: 'var(--font-mono)',
                     border: '1px solid var(--border-subtle)',
                   }}>
@@ -531,31 +639,31 @@ export default function WhatsAppPage() {
         style={{
           ...card,
           padding: 24,
-          background: 'linear-gradient(135deg, rgba(184,148,58,0.07) 0%, var(--bg-surface) 100%)',
-          border: '1px solid rgba(184,148,58,0.22)',
+          background: 'linear-gradient(135deg, rgba(61,111,255,0.07) 0%, var(--bg-surface) 100%)',
+          border: '1px solid rgba(61,111,255,0.22)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
           <div style={{
             width: 52, height: 52, borderRadius: 'var(--r-xl)',
-            background: 'rgba(184,148,58,0.12)',
-            border: '1.5px solid rgba(184,148,58,0.30)',
+            background: 'rgba(61,111,255,0.12)',
+            border: '1.5px solid rgba(61,111,255,0.30)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
           }}>
-            <Zap size={22} style={{ color: 'var(--imi-gold-500)' }} />
+            <Zap size={22} style={{ color: 'var(--accent-400)' }} />
           </div>
           <div style={{ flex: 1, minWidth: 200 }}>
             <p style={{
               fontFamily: 'var(--font-serif)', fontSize: 17, fontWeight: 700,
               color: 'var(--text-primary)', margin: 0,
             }}>
-              Conecte via Meta Business API para automação completa
+              Automação completa com Evolution API
             </p>
             <p style={{
               fontSize: 13, color: 'var(--text-secondary)',
               fontFamily: 'var(--font-sans)', margin: '4px 0 0', lineHeight: 1.5,
             }}>
-              Envio em massa, templates aprovados pelo Meta, webhooks em tempo real e integração com o CRM de leads.
+              Envio em massa, templates personalizados, webhooks em tempo real e integração com CRM. Configure EVOLUTION_API_URL e EVOLUTION_API_KEY.
             </p>
           </div>
           <Link
@@ -564,7 +672,7 @@ export default function WhatsAppPage() {
               display: 'flex', alignItems: 'center', gap: 8,
               height: 42, padding: '0 20px',
               borderRadius: 'var(--r-md)',
-              background: 'var(--imi-gold-500)',
+              background: 'var(--accent-400)',
               color: 'var(--text-inverse)', textDecoration: 'none',
               fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
               flexShrink: 0,
@@ -589,10 +697,10 @@ export default function WhatsAppPage() {
             }}>
               <div style={{
                 width: 30, height: 30, borderRadius: 'var(--r-md)',
-                background: 'rgba(184,148,58,0.10)',
+                background: 'rgba(61,111,255,0.10)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
               }}>
-                <feat.icon size={14} style={{ color: 'var(--imi-gold-500)' }} />
+                <feat.icon size={14} style={{ color: 'var(--accent-400)' }} />
               </div>
               <div>
                 <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', margin: 0 }}>

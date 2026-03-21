@@ -7,7 +7,7 @@ const STATS = [
 
 export default function Stats() {
   return (
-    <section style={{ padding: '48px 24px', background: 'var(--imi-navy-800)' }}>
+    <section style={{ padding: '48px 24px', background: 'var(--bg-base)' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <div
           style={{
@@ -27,7 +27,7 @@ export default function Stats() {
                   fontFamily: 'var(--font-display)',
                   fontSize: 28,
                   fontWeight: 700,
-                  color: 'var(--imi-gold-500)',
+                  color: 'var(--accent-400)',
                 }}
               >
                 {stat.value}

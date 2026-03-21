@@ -52,7 +52,7 @@ export default function TimelineChart({ data }: TimelineChartProps) {
                     <Area
                         type="monotone"
                         dataKey="leads"
-                        stroke="var(--imi-gold-500)"
+                        stroke="var(--accent-400)"
                         strokeWidth={3}
                         fillOpacity={1}
                         fill="url(#colorLeads)"

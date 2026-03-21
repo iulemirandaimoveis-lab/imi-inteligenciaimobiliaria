@@ -87,9 +87,9 @@ const LOCAL_STATUS_CONFIG: Record<string, {
   },
   ai: {
     label: 'IA',
-    color: 'var(--imi-gold-500)',
-    bg: 'rgba(184,148,58,0.10)',
-    dotColor: 'var(--imi-gold-500)',
+    color: 'var(--accent-400)',
+    bg: 'rgba(61,111,255,0.10)',
+    dotColor: 'var(--accent-400)',
   },
 }
 

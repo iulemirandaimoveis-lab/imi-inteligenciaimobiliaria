@@ -326,7 +326,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                     {/* Lead Strategy */}
                                     <div className="rounded-lg p-3" style={{ background: T.elevated }}>
                                         <div className="flex items-center gap-1.5 mb-2">
-                                            <Users size={11} style={{ color: 'var(--imi-gold-500)' }} />
+                                            <Users size={11} style={{ color: 'var(--accent-400)' }} />
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.accent }}>
                                                 Estratégia de Leads
                                             </span>

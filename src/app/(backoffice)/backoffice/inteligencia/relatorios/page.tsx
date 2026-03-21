@@ -31,7 +31,7 @@ const CATEGORY_COLORS: Record<string, { color: string; bg: string }> = {
     mercado: { color: 'var(--info)', bg: 'rgba(59,130,246,0.1)' },
     residencial: { color: 'var(--success)', bg: 'rgba(16,185,129,0.1)' },
     comercial: { color: 'var(--warning)', bg: 'rgba(245,158,11,0.1)' },
-    luxo: { color: 'var(--imi-gold-500)', bg: 'rgba(139,92,246,0.1)' },
+    luxo: { color: 'var(--accent-400)', bg: 'rgba(139,92,246,0.1)' },
     macro: { color: '#EC4899', bg: 'rgba(236,72,153,0.1)' },
 }
 
@@ -187,7 +187,7 @@ export default function RelatoriosBackofficePage() {
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                                                         style={{ background: 'rgba(72,101,129,0.15)' }}>
-                                                        <FileText size={14} style={{ color: 'var(--imi-gold-500)' }} />
+                                                        <FileText size={14} style={{ color: 'var(--accent-400)' }} />
                                                     </div>
                                                     <p className="font-semibold max-w-[220px] truncate" style={{ color: T.text }}>{r.title}</p>
                                                 </div>
@@ -209,7 +209,7 @@ export default function RelatoriosBackofficePage() {
                                                 {r.pdf_url ? (
                                                     <a href={r.pdf_url} target="_blank" rel="noopener noreferrer"
                                                         className="flex items-center gap-1 text-xs font-semibold"
-                                                        style={{ color: 'var(--imi-gold-500)' }}>
+                                                        style={{ color: 'var(--accent-400)' }}>
                                                         <Download size={12} /> PDF
                                                     </a>
                                                 ) : (
@@ -228,7 +228,7 @@ export default function RelatoriosBackofficePage() {
                                                     >
                                                         {r.is_published
                                                             ? <EyeOff size={13} style={{ color: T.textMuted }} />
-                                                            : <Eye size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                                                            : <Eye size={13} style={{ color: 'var(--accent-400)' }} />
                                                         }
                                                     </button>
                                                     <Link

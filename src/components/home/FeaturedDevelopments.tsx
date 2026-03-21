@@ -117,7 +117,7 @@ function FeaturedCard({
                             )}
                         </div>
                         <div className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full border backdrop-blur-sm transition-all duration-300 group-hover:scale-110"
-                            style={{ background: 'rgba(184,148,58,0.15)', borderColor: 'rgba(184,148,58,0.3)' }}>
+                            style={{ background: 'rgba(61,111,255,0.15)', borderColor: 'rgba(61,111,255,0.3)' }}>
                             <ArrowRight size={13} className="text-white transition-transform duration-300 group-hover:translate-x-0.5" />
                         </div>
                     </div>
@@ -154,22 +154,22 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
                     <div className="flex items-end justify-between mb-8 sm:mb-10">
                         <div>
                             <div className="flex items-center gap-3 mb-3">
-                                <div className="w-8 h-px" style={{ background: 'var(--imi-gold-500)' }} />
-                                <span className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--imi-gold-500)', fontFamily: 'var(--font-sans)' }}>Portfólio em Destaque</span>
+                                <div className="w-8 h-px" style={{ background: 'var(--accent-400)' }} />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--accent-400)', fontFamily: 'var(--font-sans)' }}>Portfólio em Destaque</span>
                             </div>
                             <h2
                                 className="text-[26px] sm:text-[32px] font-bold leading-tight"
                                 style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
                             >
                                 Empreendimentos{' '}
-                                <span style={{ color: 'var(--imi-navy-600)' }}>Selecionados</span>
+                                <span style={{ color: 'var(--text-tertiary)' }}>Selecionados</span>
                             </h2>
                             <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}>Brasil · Estados Unidos · Emirados Árabes</p>
                         </div>
                         <Link
                             href={`/${lang}/imoveis`}
                             className="hidden sm:flex items-center gap-1.5 text-xs font-semibold transition-colors group"
-                        style={{ color: 'var(--imi-navy-500)', fontFamily: 'var(--font-sans)' }}
+                        style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}
                         >
                             Ver portfólio completo
                             <ArrowRight size={12} className="transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -226,7 +226,7 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
                     <div className="sm:hidden mt-6 text-center">
                         <Link
                             href={`/${lang}/imoveis`}
-                            className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 text-white" style={{ borderRadius: 6, background: 'var(--imi-navy-700)', fontFamily: 'var(--font-sans)' }}
+                            className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 text-white" style={{ borderRadius: 6, background: 'var(--bg-elevated, #162040)', fontFamily: 'var(--font-sans)' }}
                             >
                             Ver portfólio completo <ArrowRight size={14} />
                         </Link>

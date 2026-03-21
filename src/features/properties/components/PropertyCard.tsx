@@ -179,7 +179,7 @@ export function PropertyCard({
                   border: `1px solid ${isFavorited ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.1)'}`,
                 }}
               >
-                <Heart size={12} style={{ color: isFavorited ? '#C8A44A' : '#9FAAB8' }} fill={isFavorited ? '#C8A44A' : 'none'} />
+                <Heart size={12} style={{ color: isFavorited ? '#3D6FFF' : '#9FAAB8' }} fill={isFavorited ? '#3D6FFF' : 'none'} />
               </button>
             )}
             {onCompare && (
@@ -192,7 +192,7 @@ export function PropertyCard({
                   border: `1px solid ${isComparing ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.1)'}`,
                 }}
               >
-                <Scale size={12} style={{ color: isComparing ? '#C8A44A' : '#9FAAB8' }} />
+                <Scale size={12} style={{ color: isComparing ? '#3D6FFF' : '#9FAAB8' }} />
               </button>
             )}
             {/* Quick navigation actions */}
@@ -205,7 +205,7 @@ export function PropertyCard({
                 border: '1px solid rgba(200,164,74,0.35)',
               }}
             >
-              <ExternalLink size={11} style={{ color: '#C8A44A' }} />
+              <ExternalLink size={11} style={{ color: '#3D6FFF' }} />
             </button>
             <button
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/backoffice/tracking/qr?property=${p.id}`) }}
@@ -420,7 +420,7 @@ if (typeof document !== 'undefined' && !document.getElementById('prop-card-style
       cursor: pointer; transition: all 0.15s;
     }
     .imi-checkbox-overlay.selected {
-      background: #C8A44A; border-color: #C8A44A;
+      background: #3D6FFF; border-color: #3D6FFF;
     }
   `
   document.head.appendChild(s)
@@ -601,7 +601,7 @@ export function PropertyListRow({
             cursor: 'pointer', textDecoration: 'none',
           }}
         >
-          <ExternalLink size={11} style={{ color: '#C8A44A' }} />
+          <ExternalLink size={11} style={{ color: '#3D6FFF' }} />
         </Link>
         <Link
           href={`/backoffice/tracking/qr?property=${p.id}`}

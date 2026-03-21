@@ -19,7 +19,7 @@ const BADGE_COLORS: Record<string, { color: string; bg: string; border: string }
   warning: { color: 'var(--warning)', bg: 'var(--warning-bg)', border: 'color-mix(in srgb, var(--warning) 20%, transparent)' },
   error:   { color: 'var(--error)',   bg: 'var(--error-bg)',   border: 'color-mix(in srgb, var(--error) 20%, transparent)' },
   info:    { color: 'var(--info)',    bg: 'var(--info-bg)',    border: 'color-mix(in srgb, var(--info) 20%, transparent)' },
-  accent:  { color: 'var(--imi-gold-500)', bg: 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)', border: 'color-mix(in srgb, var(--imi-gold-500) 25%, transparent)' },
+  accent:  { color: 'var(--accent-400)', bg: 'color-mix(in srgb, var(--accent-400) 10%, transparent)', border: 'color-mix(in srgb, var(--accent-400) 25%, transparent)' },
   muted:   { color: 'var(--text-secondary)', bg: 'var(--bg-hover)', border: 'var(--border-default)' },
 }
 
@@ -118,9 +118,9 @@ export function PageIntelHeader({
               width: 4,
               height: 4,
               borderRadius: '50%',
-              background: 'var(--imi-gold-500)',
+              background: 'var(--accent-400)',
               flexShrink: 0,
-              boxShadow: '0 0 6px var(--imi-gold-500)',
+              boxShadow: '0 0 6px var(--accent-400)',
               display: 'inline-block',
             }} />
 
@@ -229,7 +229,7 @@ export function PageIntelHeader({
         style={{
           height: '2px',
           marginTop: '16px',
-          background: 'linear-gradient(90deg, var(--imi-gold-500), transparent)',
+          background: 'linear-gradient(90deg, var(--accent-400), transparent)',
           borderRadius: 'var(--r-full, 9999px)',
         }}
       />

@@ -165,12 +165,12 @@ export default function SimuladorCreditoPage() {
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
                                 <label className="text-xs font-semibold" style={{ color: T.textMuted }}>Taxa de Juros (a.a.)</label>
-                                <span className="text-xs font-bold" style={{ color: 'var(--imi-gold-400)' }}>{fmtPct(interestRate)}</span>
+                                <span className="text-xs font-bold" style={{ color: 'var(--platinum-400)' }}>{fmtPct(interestRate)}</span>
                             </div>
                             <input type="range" min="7" max="12" step="0.1" value={interestRate}
                                 onChange={e => setInterestRate(Number(e.target.value))}
                                 className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
-                                style={{ accentColor: 'var(--imi-gold-400)' }} />
+                                style={{ accentColor: 'var(--platinum-400)' }} />
                             <div className="flex justify-between mt-1" style={{ color: T.textMuted }}>
                                 {['7%', '9.5%', '12%'].map(l => <span key={l} className="text-[10px]">{l}</span>)}
                             </div>

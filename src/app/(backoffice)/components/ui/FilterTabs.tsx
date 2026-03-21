@@ -44,11 +44,11 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
               fontFamily: 'var(--font-sans)',
               fontSize: '12px',
               fontWeight: isActive ? 600 : 500,
-              border: `1px solid ${isActive ? 'var(--imi-gold-400)' : 'var(--border-subtle)'}`,
+              border: `1px solid ${isActive ? 'var(--platinum-400)' : 'var(--border-subtle)'}`,
               background: isActive
-                ? 'rgba(184,148,58,0.10)'
+                ? 'rgba(61,111,255,0.10)'
                 : 'transparent',
-              color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+              color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)',
               transition: 'all var(--dur-2, 200ms) var(--ease)',
               whiteSpace: 'nowrap',
               cursor: 'pointer',
@@ -85,8 +85,8 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
                   fontFamily: 'var(--font-mono)',
                   fontSize: '11px',
                   fontWeight: 700,
-                  background: isActive ? 'rgba(184,148,58,0.12)' : 'var(--bg-muted)',
-                  color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                  background: isActive ? 'rgba(61,111,255,0.12)' : 'var(--bg-muted)',
+                  color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)',
                   padding: '0px 5px',
                   borderRadius: '6px',
                   lineHeight: '16px',

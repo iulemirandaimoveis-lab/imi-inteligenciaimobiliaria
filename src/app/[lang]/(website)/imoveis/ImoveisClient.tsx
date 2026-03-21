@@ -29,7 +29,7 @@ const DEFAULT_FILTERS: FilterState = {
     sort: 'relevant',
 };
 
-const GOLD = '#C8A44A';
+const GOLD = '#3D6FFF';
 const SURFACE = '#0F2035';
 const BG = '#0B1928';
 const TEXT = '#EBE7E0';

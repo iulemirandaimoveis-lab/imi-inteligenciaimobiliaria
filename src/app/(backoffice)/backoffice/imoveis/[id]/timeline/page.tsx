@@ -33,7 +33,7 @@ const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: LucideIcon
     price_change:   { color: 'var(--success)', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
     campaign_start: { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: Activity },
     sold:           { color: 'var(--warning)', bg: 'rgba(245,158,11,0.12)', icon: CheckCircle2 },
-    visit:          { color: 'var(--imi-gold-500)', bg: 'var(--bg-active)', icon: Users },
+    visit:          { color: 'var(--accent-400)', bg: 'var(--bg-active)', icon: Users },
     lead_gen:       { color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
 }
 
@@ -137,12 +137,12 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             display: 'inline-block',
                             padding: '5px 14px',
                             borderRadius: 6,
-                            background: 'rgba(184,148,58,0.10)',
-                            border: '1px solid rgba(184,148,58,0.28)',
+                            background: 'rgba(61,111,255,0.10)',
+                            border: '1px solid rgba(61,111,255,0.28)',
                             fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 11,
                             fontWeight: 700,
-                            color: 'var(--imi-gold-500)',
+                            color: 'var(--accent-400)',
                             letterSpacing: '0.3px',
                         }}>
                             {events.length} evento{events.length !== 1 ? 's' : ''} registrado{events.length !== 1 ? 's' : ''}
@@ -160,7 +160,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             top: 20,
                             bottom: 20,
                             width: 1,
-                            background: 'rgba(184,148,58,0.12)',
+                            background: 'rgba(61,111,255,0.12)',
                             zIndex: 0,
                         }} />
 
@@ -203,7 +203,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                             background: 'var(--bg-elevated)',
                                             borderRadius: 6,
                                             padding: 14,
-                                            border: '1px solid rgba(184,148,58,0.12)',
+                                            border: '1px solid rgba(61,111,255,0.12)',
                                         }}>
                                             {/* Event type badge */}
                                             <span style={{
@@ -276,14 +276,14 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             width: 64,
                             height: 64,
                             borderRadius: 6,
-                            background: 'rgba(184,148,58,0.06)',
-                            border: '1px solid rgba(184,148,58,0.15)',
+                            background: 'rgba(61,111,255,0.06)',
+                            border: '1px solid rgba(61,111,255,0.15)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             marginBottom: 16,
                         }}>
-                            <Building2 size={28} style={{ color: 'rgba(184,148,58,0.35)' }} />
+                            <Building2 size={28} style={{ color: 'rgba(61,111,255,0.35)' }} />
                         </div>
                         <div style={{
                             fontFamily: 'var(--font-playfair, serif)',
@@ -316,7 +316,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                     right: 16,
                     height: 52,
                     padding: '0 20px',
-                    background: 'var(--imi-gold-500)',
+                    background: 'var(--accent-400)',
                     color: T.text,
                     borderRadius: 6,
                     border: 'none',
@@ -328,7 +328,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                     fontSize: 13,
                     fontWeight: 700,
                     letterSpacing: '0.3px',
-                    boxShadow: '0 4px 20px rgba(184,148,58,0.35)',
+                    boxShadow: '0 4px 20px rgba(61,111,255,0.35)',
                     zIndex: 50,
                 }}
             >

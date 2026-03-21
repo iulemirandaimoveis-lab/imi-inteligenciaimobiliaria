@@ -70,8 +70,8 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
             price_min: initialData?.price_from || 0, // Mapped from price_from
 
             // Map from specs
-            area_min: Number(initialData?.specs?.area || initialData?.specs?.area_min || 0),
-            area_max: Number(initialData?.specs?.area_max || 0),
+            area_min: Number(initialData?.specs?.area || initialData?.specs?.area_from || 0),
+            area_max: Number(initialData?.specs?.area_to || 0),
             bedrooms: Number(initialData?.specs?.bedrooms || 0),
             bathrooms: Number(initialData?.specs?.bathrooms || 0),
             parking_spots: Number(initialData?.specs?.parking_spots || 0),
@@ -112,8 +112,8 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
             features: features,
             specs: {
                 area: data.area_min, // legacy
-                area_min: data.area_min,
-                area_max: data.area_max,
+                area_from: data.area_min,
+                area_to: data.area_max,
                 bedrooms: data.bedrooms,
                 bathrooms: data.bathrooms,
                 parking_spots: data.parking_spots

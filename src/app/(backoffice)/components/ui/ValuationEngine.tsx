@@ -158,8 +158,8 @@ export function ValuationEngine({
             width: 16,
             height: 16,
             borderRadius: '50%',
-            background: 'radial-gradient(circle at 40% 35%, var(--imi-gold-300), var(--imi-gold-500))',
-            boxShadow: '0 0 6px rgba(184,148,58,0.4)',
+            background: 'radial-gradient(circle at 40% 35%, var(--accent-300), var(--accent-400))',
+            boxShadow: '0 0 6px rgba(61,111,255,0.4)',
             flexShrink: 0,
           }}
         />
@@ -229,7 +229,7 @@ export function ValuationEngine({
                   top: 0,
                   bottom: 0,
                   borderRadius: 'var(--r-full, 9999px)',
-                  background: 'linear-gradient(to right, var(--imi-gold-400), var(--imi-gold-500))',
+                  background: 'linear-gradient(to right, var(--platinum-400), var(--accent-400))',
                 }}
               />
               {/* Estimate dot */}
@@ -245,9 +245,9 @@ export function ValuationEngine({
                   width: 12,
                   height: 12,
                   borderRadius: '50%',
-                  background: 'var(--imi-gold-500)',
+                  background: 'var(--accent-400)',
                   border: '2px solid var(--bg-surface)',
-                  boxShadow: 'var(--shadow-gold, 0 0 8px rgba(184,148,58,0.5))',
+                  boxShadow: 'var(--shadow-gold, 0 0 8px rgba(61,111,255,0.5))',
                   zIndex: 1,
                 }}
               />
@@ -492,7 +492,7 @@ export function ValuationEngine({
             gap: 4,
           }}
         >
-          <Zap size={9} style={{ color: 'var(--imi-gold-400)', flexShrink: 0 }} />
+          <Zap size={9} style={{ color: 'var(--platinum-400)', flexShrink: 0 }} />
           <span
             style={{
               fontFamily: 'var(--font-mono)',

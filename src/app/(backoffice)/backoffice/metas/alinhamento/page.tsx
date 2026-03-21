@@ -37,14 +37,14 @@ function calcScore(krs: KeyResult[]) {
 }
 
 function scoreColor(score: number) {
-  if (score >= 0.7) return '#C8A44A'
+  if (score >= 0.7) return '#3D6FFF'
   if (score >= 0.6) return '#34d399'
   if (score >= 0.3) return '#fbbf24'
   return '#f87171'
 }
 
 function scoreTextClass(score: number) {
-  if (score >= 0.7) return 'text-[#C8A44A]'
+  if (score >= 0.7) return 'text-[#3D6FFF]'
   if (score >= 0.6) return 'text-emerald-400'
   if (score >= 0.3) return 'text-amber-400'
   return 'text-red-400'
@@ -99,7 +99,7 @@ function TreeNode({
               <Icon className="w-4 h-4" style={{ color }} />
             </div>
             <div className="min-w-0">
-              <h3 className="text-sm font-medium text-white group-hover:text-[#C8A44A] transition-colors truncate">
+              <h3 className="text-sm font-medium text-white group-hover:text-[#3D6FFF] transition-colors truncate">
                 {obj.title}
               </h3>
               <div className="flex items-center gap-2 mt-1">
@@ -174,7 +174,7 @@ export default function AlinhamentoPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-[#C8A44A] animate-spin" />
+        <Loader2 className="w-6 h-6 text-[#3D6FFF] animate-spin" />
       </div>
     )
   }
@@ -223,7 +223,7 @@ export default function AlinhamentoPage() {
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-xs text-white/50">
         <span className="flex items-center gap-1.5">
-          <Building2 className="w-3.5 h-3.5 text-[#C8A44A]" />
+          <Building2 className="w-3.5 h-3.5 text-[#3D6FFF]" />
           Empresa
         </span>
         <span className="flex items-center gap-1.5">
@@ -236,7 +236,7 @@ export default function AlinhamentoPage() {
         </span>
         <span className="text-white/30">|</span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-[#C8A44A]" /> 70%+
+          <span className="w-2 h-2 rounded-full bg-[#3D6FFF]" /> 70%+
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-emerald-400" /> 60-69%
@@ -258,7 +258,7 @@ export default function AlinhamentoPage() {
           <Link
             href="/backoffice/metas/okrs/novo"
             className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium text-[#0B1928]"
-            style={{ background: '#C8A44A' }}
+            style={{ background: '#3D6FFF' }}
           >
             Criar OKR
           </Link>

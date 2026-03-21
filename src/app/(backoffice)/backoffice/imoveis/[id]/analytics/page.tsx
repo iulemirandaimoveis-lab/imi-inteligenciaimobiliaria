@@ -13,7 +13,7 @@ import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts'
-const PIE_COLORS = ['var(--imi-gold-500)', 'var(--info)', '#6BB87B', '#A89EC4', '#E8A87C', '#7B9EC4']
+const PIE_COLORS = ['var(--accent-400)', 'var(--info)', '#6BB87B', '#A89EC4', '#E8A87C', '#7B9EC4']
 interface AnalyticsData {
     development: { id: string; name: string; slug?: string; city?: string; state?: string; neighborhood?: string }
     kpis: {
@@ -39,10 +39,10 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
     const { kpis, performanceTemporal, fontesTrafico, devices, topLocations, topCampaigns, development } = data
     const KPI_CARDS = [
         { label: 'Total Cliques', value: kpis.totalClicks.toLocaleString('pt-BR'), icon: MousePointer, color: '#A89EC4' },
-        { label: 'Links Ativos', value: String(kpis.trackedLinksCount), icon: Link2, color: 'var(--imi-gold-500)' },
+        { label: 'Links Ativos', value: String(kpis.trackedLinksCount), icon: Link2, color: 'var(--accent-400)' },
         { label: 'Leads Gerados', value: String(kpis.totalLeads), icon: Users, color: '#E8A87C' },
         { label: 'Conversões', value: String(kpis.convertedLeads), icon: Target, color: 'var(--success)' },
-        { label: 'Taxa Conv.', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--imi-gold-500)' },
+        { label: 'Taxa Conv.', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--accent-400)' },
         { label: 'Eventos', value: String(kpis.totalEvents), icon: BarChart3, color: '#A89EC4' },
     ]
     const maxDailyClicks = Math.max(...performanceTemporal.map(d => d.clicks), 1)
@@ -92,8 +92,8 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                     height: 36, minWidth: 52,
                                     padding: '0 16px',
                                     borderRadius: 6,
-                                    background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
-                                    border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
+                                    background: isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.08)',
+                                    border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.2)'}`,
                                     color: isActive ? T.text : 'var(--text-tertiary)',
                                     fontFamily: 'var(--font-outfit, sans-serif)',
                                     fontSize: 12, fontWeight: isActive ? 700 : 500,
@@ -119,7 +119,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                             key={k.label}
                             style={{
                                 background: 'var(--bg-elevated)',
-                                border: '1px solid rgba(184,148,58,0.12)',
+                                border: '1px solid rgba(61,111,255,0.12)',
                                 borderRadius: 6,
                                 padding: 14,
                             }}
@@ -162,7 +162,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                 <div style={{ padding: '20px 14px 0' }}>
                     <div style={{
                         background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(184,148,58,0.12)',
+                        border: '1px solid rgba(61,111,255,0.12)',
                         borderRadius: 6,
                         padding: 14,
                     }}>
@@ -200,15 +200,15 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                     <AreaChart data={mobileChartData} margin={{ top: 4, right: 0, left: -20, bottom: 0 }}>
                                         <defs>
                                             <linearGradient id="mobileViewsGrad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="var(--imi-gold-500)" stopOpacity={0.3} />
-                                                <stop offset="95%" stopColor="var(--imi-gold-500)" stopOpacity={0} />
+                                                <stop offset="5%" stopColor="var(--accent-400)" stopOpacity={0.3} />
+                                                <stop offset="95%" stopColor="var(--accent-400)" stopOpacity={0} />
                                             </linearGradient>
                                         </defs>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(184,148,58,0.08)" vertical={false} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(61,111,255,0.08)" vertical={false} />
                                         <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
                                         <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 6, fontSize: 11, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(184,148,58,0.2)' }} />
-                                        <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--imi-gold-500)" strokeWidth={2} fill="url(#mobileViewsGrad)" dot={false} />
+                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 6, fontSize: 11, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(61,111,255,0.2)' }} />
+                                        <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--accent-400)" strokeWidth={2} fill="url(#mobileViewsGrad)" dot={false} />
                                         <Area type="monotone" dataKey="leads" name="Leads" stroke="#5DB887" strokeWidth={1.5} fill="rgba(93,184,135,0.08)" dot={false} />
                                     </AreaChart>
                                 </ResponsiveContainer>
@@ -220,7 +220,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                 <div style={{ padding: '16px 14px 0' }}>
                     <div style={{
                         background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(184,148,58,0.12)',
+                        border: '1px solid rgba(61,111,255,0.12)',
                         borderRadius: 6,
                         padding: 14,
                     }}>
@@ -268,8 +268,8 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                 <span style={{
                                                     fontFamily: 'var(--font-outfit, sans-serif)',
                                                     fontSize: 11, fontWeight: 700,
-                                                    color: 'var(--imi-gold-500)',
-                                                    background: 'rgba(184,148,58,0.12)',
+                                                    color: 'var(--accent-400)',
+                                                    background: 'rgba(61,111,255,0.12)',
                                                     borderRadius: 6,
                                                     padding: '2px 8px',
                                                 }}>{f.percentage}%</span>
@@ -277,13 +277,13 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         </div>
                                         <div style={{
                                             height: 4, borderRadius: 6,
-                                            background: 'rgba(184,148,58,0.12)',
+                                            background: 'rgba(61,111,255,0.12)',
                                             overflow: 'hidden',
                                         }}>
                                             <div style={{
                                                 height: '100%', borderRadius: 6,
                                                 width: `${f.percentage}%`,
-                                                background: 'var(--imi-gold-500)',
+                                                background: 'var(--accent-400)',
                                             }} />
                                         </div>
                                     </div>
@@ -297,7 +297,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                     <div style={{ padding: '16px 14px 0' }}>
                         <div style={{
                             background: 'var(--bg-elevated)',
-                            border: '1px solid rgba(184,148,58,0.12)',
+                            border: '1px solid rgba(61,111,255,0.12)',
                             borderRadius: 6,
                             padding: 14,
                         }}>
@@ -324,16 +324,16 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         padding: '10px 12px',
                                         background: 'var(--bg-muted)',
                                         borderRadius: 6,
-                                        border: '1px solid rgba(184,148,58,0.08)',
+                                        border: '1px solid rgba(61,111,255,0.08)',
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                             <div style={{
                                                 width: 28, height: 28, borderRadius: 6,
-                                                background: 'rgba(184,148,58,0.12)',
+                                                background: 'rgba(61,111,255,0.12)',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 flexShrink: 0,
                                             }}>
-                                                <MapPin size={12} style={{ color: 'var(--imi-gold-500)' }} />
+                                                <MapPin size={12} style={{ color: 'var(--accent-400)' }} />
                                             </div>
                                             <span style={{
                                                 fontFamily: 'var(--font-outfit, sans-serif)',
@@ -343,8 +343,8 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         <span style={{
                                             fontFamily: 'var(--font-dm-mono, monospace)',
                                             fontSize: 12, fontWeight: 700,
-                                            color: 'var(--imi-gold-500)',
-                                            background: 'rgba(184,148,58,0.10)',
+                                            color: 'var(--accent-400)',
+                                            background: 'rgba(61,111,255,0.10)',
                                             borderRadius: 6,
                                             padding: '4px 8px',
                                         }}>{loc.percentage}%</span>
@@ -359,7 +359,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                     <div style={{ padding: '16px 14px 0' }}>
                         <div style={{
                             background: 'var(--bg-elevated)',
-                            border: '1px solid rgba(184,148,58,0.12)',
+                            border: '1px solid rgba(61,111,255,0.12)',
                             borderRadius: 6,
                             padding: 14,
                         }}>
@@ -417,7 +417,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                     <div style={{ padding: '16px 14px 0' }}>
                         <div style={{
                             background: 'var(--bg-elevated)',
-                            border: '1px solid rgba(184,148,58,0.12)',
+                            border: '1px solid rgba(61,111,255,0.12)',
                             borderRadius: 6,
                             padding: 14,
                         }}>
@@ -444,16 +444,16 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         padding: '10px 12px',
                                         background: 'var(--bg-muted)',
                                         borderRadius: 6,
-                                        border: '1px solid rgba(184,148,58,0.08)',
+                                        border: '1px solid rgba(61,111,255,0.08)',
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
                                             <div style={{
                                                 width: 28, height: 28, borderRadius: 6,
-                                                background: 'rgba(184,148,58,0.12)',
+                                                background: 'rgba(61,111,255,0.12)',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 flexShrink: 0,
                                                 fontFamily: 'var(--font-dm-mono, monospace)',
-                                                fontSize: 11, fontWeight: 700, color: 'var(--imi-gold-500)',
+                                                fontSize: 11, fontWeight: 700, color: 'var(--accent-400)',
                                             }}>
                                                 {idx + 1}
                                             </div>
@@ -507,7 +507,7 @@ function MobileLoading() {
         <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <MobileGlobalStyles />
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                <Loader2 size={28} style={{ color: 'var(--imi-gold-500)', animation: 'spin 1s linear infinite' }} />
+                <Loader2 size={28} style={{ color: 'var(--accent-400)', animation: 'spin 1s linear infinite' }} />
                 <style suppressHydrationWarning>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
                 <span style={{ fontFamily: 'var(--font-outfit, sans-serif)', fontSize: 12, color: 'var(--text-secondary)' }}>
                     Carregando analytics...
@@ -520,7 +520,7 @@ function MobileEmpty({ onBack }: { onBack: () => void }) {
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 }}>
             <MobileGlobalStyles />
-            <BarChart3 size={40} style={{ color: 'rgba(184,148,58,0.25)' }} />
+            <BarChart3 size={40} style={{ color: 'rgba(61,111,255,0.25)' }} />
             <div style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: 18, fontWeight: 600, color: 'var(--imi-cream)', marginBottom: 6 }}>
                     Sem dados de analytics
@@ -533,9 +533,9 @@ function MobileEmpty({ onBack }: { onBack: () => void }) {
                 onClick={onBack}
                 style={{
                     height: 44, padding: '0 24px', borderRadius: 6,
-                    background: 'rgba(184,148,58,0.12)',
-                    border: '1px solid rgba(184,148,58,0.25)',
-                    color: 'var(--imi-gold-500)',
+                    background: 'rgba(61,111,255,0.12)',
+                    border: '1px solid rgba(61,111,255,0.25)',
+                    color: 'var(--accent-400)',
                     fontFamily: 'var(--font-outfit, sans-serif)',
                     fontSize: 12, fontWeight: 700,
                     cursor: 'pointer',
@@ -612,10 +612,10 @@ export default function ImovelAnalyticsPage() {
     const location = [development.neighborhood, development.city, development.state].filter(Boolean).join(', ') || '—'
     const KPI_CARDS = [
         { label: 'Total Cliques', value: kpis.totalClicks.toLocaleString('pt-BR'), icon: MousePointer, color: '#A89EC4' },
-        { label: 'Links Ativos', value: kpis.trackedLinksCount, icon: Link2, color: 'var(--imi-gold-500)' },
+        { label: 'Links Ativos', value: kpis.trackedLinksCount, icon: Link2, color: 'var(--accent-400)' },
         { label: 'Leads Gerados', value: kpis.totalLeads, icon: Users, color: '#E8A87C' },
         { label: 'Conversões', value: kpis.convertedLeads, icon: Target, color: 'var(--success)' },
-        { label: 'Taxa Conversão', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--imi-gold-500)' },
+        { label: 'Taxa Conversão', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--accent-400)' },
         { label: 'Eventos', value: kpis.totalEvents, icon: BarChart3, color: '#A89EC4' },
     ]
     // Device totals
@@ -722,19 +722,19 @@ export default function ImovelAnalyticsPage() {
                             <AreaChart data={chartData} margin={{ top: 4, right: 0, left: -20, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="viewsGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="var(--imi-gold-500)" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="var(--imi-gold-500)" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="var(--accent-400)" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="var(--accent-400)" stopOpacity={0} />
                                     </linearGradient>
                                     <linearGradient id="leadsGrad" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#6BB87B" stopOpacity={0.2} />
                                         <stop offset="95%" stopColor="#6BB87B" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(184,148,58,0.08)" vertical={false} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(61,111,255,0.08)" vertical={false} />
                                 <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }} axisLine={false} tickLine={false} />
                                 <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                                <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(184,148,58,0.2)' }} />
-                                <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--imi-gold-500)" strokeWidth={2} fill="url(#viewsGrad)" dot={false} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(61,111,255,0.2)' }} />
+                                <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--accent-400)" strokeWidth={2} fill="url(#viewsGrad)" dot={false} />
                                 <Area type="monotone" dataKey="leads" name="Leads" stroke="#6BB87B" strokeWidth={1.5} fill="url(#leadsGrad)" dot={false} />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -762,7 +762,7 @@ export default function ImovelAnalyticsPage() {
                                                 <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                                             ))}
                                         </Pie>
-                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} />
+                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} />
                                     </PieChart>
                                 </ResponsiveContainer>
                                 <div className="space-y-2 mt-2">

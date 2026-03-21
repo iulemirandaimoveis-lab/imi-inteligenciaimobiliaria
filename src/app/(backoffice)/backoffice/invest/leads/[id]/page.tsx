@@ -103,7 +103,7 @@ export default function LeadDetailPage() {
           <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
             <h3 className="text-sm font-semibold text-white mb-4">Scoring</h3>
             <div className="flex justify-around">
-              <ScoreRing value={lead.engagementScore} label="Engajamento" color="#C8A44A" />
+              <ScoreRing value={lead.engagementScore} label="Engajamento" color="#3D6FFF" />
               <ScoreRing value={lead.readinessScore} label="Prontidao" color={lead.readinessScore >= 70 ? '#34d399' : '#fbbf24'} />
             </div>
           </div>

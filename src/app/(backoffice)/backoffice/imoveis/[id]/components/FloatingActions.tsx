@@ -33,8 +33,8 @@ export function FloatingActions({ id }: { id: string }) {
           color: 'var(--text-secondary)', textDecoration: 'none',
           transition: 'all 0.15s',
         }}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(184,148,58,0.5)'; (e.currentTarget as HTMLElement).style.color = 'var(--imi-gold-500)' }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(184,148,58,0.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(61,111,255,0.5)'; (e.currentTarget as HTMLElement).style.color = 'var(--accent-400)' }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(61,111,255,0.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}
         >
           <Icon size={16} />
         </a>
@@ -43,7 +43,7 @@ export function FloatingActions({ id }: { id: string }) {
         width: 40, height: 40, borderRadius: 10,
         background: copied ? 'rgba(107,184,123,0.2)' : 'rgba(11,25,40,0.9)',
         backdropFilter: 'blur(12px)',
-        border: `1px solid ${copied ? 'rgba(107,184,123,0.4)' : 'rgba(184,148,58,0.18)'}`,
+        border: `1px solid ${copied ? 'rgba(107,184,123,0.4)' : 'rgba(61,111,255,0.18)'}`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: copied ? '#6BB87B' : '#9FAAB8', cursor: 'pointer',
         transition: 'all 0.2s',

@@ -36,14 +36,14 @@ export default function Method({ dict }: MethodProps) {
     const lang = (params?.lang as string) || 'pt'
 
     return (
-        <section className="relative py-20 lg:py-28 overflow-hidden" style={{ background: 'var(--imi-navy-800)' }}>
+        <section className="relative py-20 lg:py-28 overflow-hidden" style={{ background: 'var(--bg-base)' }}>
             {/* Dot grid texture */}
             <div
                 className="absolute inset-0 opacity-[0.025]"
                 style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }}
             />
             {/* Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full" style={{ background: 'var(--imi-navy-700)', opacity: 0.05, filter: 'blur(80px)' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full" style={{ background: 'var(--bg-elevated, #162040)', opacity: 0.05, filter: 'blur(80px)' }} />
 
             <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8">
                 {/* Eyebrow */}
@@ -54,9 +54,9 @@ export default function Method({ dict }: MethodProps) {
                     transition={{ duration: 0.5 }}
                     className="flex items-center justify-center gap-3 mb-8"
                 >
-                    <div className="w-8 h-px" style={{ background: 'var(--imi-navy-600)' }} />
-                    <span className="text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--imi-navy-300)', fontFamily: 'var(--font-sans)' }}>{dict.method_pre}</span>
-                    <div className="w-8 h-px" style={{ background: 'var(--imi-navy-600)' }} />
+                    <div className="w-8 h-px" style={{ background: 'var(--border-subtle)' }} />
+                    <span className="text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}>{dict.method_pre}</span>
+                    <div className="w-8 h-px" style={{ background: 'var(--border-subtle)' }} />
                 </motion.div>
 
                 {/* Headline */}
@@ -101,7 +101,7 @@ export default function Method({ dict }: MethodProps) {
                                 </div>
 
                                 {/* Accent line */}
-                                <div className="w-8 h-px mb-4" style={{ background: 'var(--imi-navy-400)' }} />
+                                <div className="w-8 h-px mb-4" style={{ background: 'var(--text-tertiary)' }} />
 
                                 <h3 className="text-[15px] font-bold text-white mb-2">{step.title}</h3>
                                 <p className="text-[13px] text-white/45 leading-relaxed">{step.desc}</p>
