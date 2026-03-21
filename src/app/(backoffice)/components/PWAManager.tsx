@@ -64,15 +64,41 @@ export default function PWAManager() {
   const [showNotifBanner, setShowNotifBanner] = useState(false)
 
   // -------------------------------------------------------------------------
-  // 1. Service Worker registration
+  // 1. Service Worker registration + auto-subscribe if already permitted
   // -------------------------------------------------------------------------
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return
 
     navigator.serviceWorker
       .register('/sw.js')
-      .then((registration) => {
+      .then(async (registration) => {
         swRegistrationRef.current = registration
+
+        // If permission already granted, silently ensure subscription is saved in DB
+        if (
+          typeof Notification !== 'undefined' &&
+          Notification.permission === 'granted' &&
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+        ) {
+          try {
+            const existing = await registration.pushManager.getSubscription()
+            const sub = existing ?? await registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(
+                process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+              ).buffer as BufferSource,
+            })
+            if (sub) {
+              await fetch('/api/notifications/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sub),
+              })
+            }
+          } catch {
+            // Silent fail — don't bother user
+          }
+        }
       })
       .catch(() => {
         // Silent fail — SW is an enhancement, not required for functionality
@@ -80,16 +106,26 @@ export default function PWAManager() {
   }, [])
 
   // -------------------------------------------------------------------------
-  // 2. Push notification permission banner (after 10 s delay)
+  // 2. Push notification permission banner (after 5 s delay)
   // -------------------------------------------------------------------------
   useEffect(() => {
     if (typeof Notification === 'undefined') return
-    if (Notification.permission !== 'default') return
-    if (localStorage.getItem('imi-notif-dismissed') === '1') return
+    if (Notification.permission === 'denied') return // User explicitly denied — respect
+    if (Notification.permission === 'granted') return // Already granted — handled by SW registration
+    // permission === 'default': not yet decided
+    // Show banner after 5s (halved from 10s) regardless of previous dismissal
+    // The user can dismiss again; localStorage 'imi-notif-dismissed' is cleared once per 7 days
+    const dismissed = localStorage.getItem('imi-notif-dismissed')
+    if (dismissed) {
+      const dismissedAt = parseInt(dismissed, 10)
+      if (!isNaN(dismissedAt) && Date.now() - dismissedAt < 7 * 24 * 60 * 60 * 1000) return
+      // 7 days passed — clear and show again
+      localStorage.removeItem('imi-notif-dismissed')
+    }
 
     const timer = setTimeout(() => {
       setShowNotifBanner(true)
-    }, 10_000)
+    }, 5_000)
 
     return () => clearTimeout(timer)
   }, [])
@@ -136,7 +172,7 @@ export default function PWAManager() {
 
   function handleDismissNotif() {
     setShowNotifBanner(false)
-    localStorage.setItem('imi-notif-dismissed', '1')
+    localStorage.setItem('imi-notif-dismissed', Date.now().toString())
   }
 
   // -------------------------------------------------------------------------

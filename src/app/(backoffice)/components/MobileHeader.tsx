@@ -91,7 +91,7 @@ function AvatarButton({
         <motion.button
             whileTap={{ scale: 0.88 }}
             onClick={onClick}
-            className="flex items-center justify-center overflow-hidden flex-shrink-0"
+            className="flex items-center justify-center flex-shrink-0"
             style={{
                 width: size,
                 height: size,
@@ -99,6 +99,7 @@ function AvatarButton({
                 minHeight: size,
                 aspectRatio: '1/1',
                 borderRadius: '50%',
+                overflow: 'hidden',
                 border: accountOpen
                     ? '2px solid var(--platinum-400)'
                     : '2px solid rgba(61,111,255,0.35)',
@@ -112,7 +113,13 @@ function AvatarButton({
                 <img
                     src={avatarUrl}
                     alt={userInfo?.name ?? 'Avatar'}
-                    className="w-full h-full object-cover object-top rounded-full"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center top',
+                        display: 'block',
+                    }}
                 />
             ) : (
                 <span
@@ -412,7 +419,11 @@ export default function MobileHeader() {
                                 >
                                     {avatarUrl ? (
                                         // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={avatarUrl} alt={userInfo?.name ?? 'Avatar'} className="w-full h-full object-cover" />
+                                        <img
+                                            src={avatarUrl}
+                                            alt={userInfo?.name ?? 'Avatar'}
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+                                        />
                                     ) : (
                                         userInfo?.initials ?? <User size={16} />
                                     )}

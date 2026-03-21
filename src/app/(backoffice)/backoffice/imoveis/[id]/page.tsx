@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { enrichProperty } from '@/features/properties/services/score.service'
-// Data fetched via /api/developments route (authenticated server-side)
+import { createClient } from '@/lib/supabase/client'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import type { Development, TabKey, DetailProps } from './types'
 import { toIMIProperty } from './helpers'
@@ -31,27 +31,42 @@ export default function ImovelDetailPage() {
   // Copy state
   const [copied, setCopied] = useState(false)
 
-  // Fetch data via API route (bypasses RLS issues with anon client)
+  // Fetch data — primary: Supabase client-side (same as list page), fallback: API route
   const fetchData = useCallback(async () => {
     setLoading(true)
+    setNotFound(false)
     try {
-      const res = await fetch(`/api/developments?id=${id}`)
-      if (!res.ok) {
+      // Primary: fetch directly from Supabase (client-side, uses active session)
+      const supabase = createClient()
+      const { data: directData, error: directError } = await supabase
+        .from('developments')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      let rawData: Development | null = null
+
+      if (!directError && directData) {
+        rawData = directData as unknown as Development
+      } else {
+        // Fallback: try the API route (handles cases where RLS requires server-side admin)
+        const res = await fetch(`/api/developments?id=${id}`)
+        if (res.ok) {
+          const json = await res.json()
+          const apiData = json.data ?? json
+          if (apiData && (apiData.id || apiData.name)) {
+            rawData = apiData as unknown as Development
+          }
+        }
+      }
+
+      if (!rawData) {
         setNotFound(true)
         return
       }
-      const json = await res.json()
-      const data = json.data ?? json
 
-      if (!data || (!data.id && !data.name)) {
-        setNotFound(true)
-        return
-      }
-
-      const development = data as unknown as Development
-      setDev(development)
-
-      const prop = toIMIProperty(development)
+      setDev(rawData)
+      const prop = toIMIProperty(rawData)
       const rich = enrichProperty(prop)
       setEnriched(rich)
 
