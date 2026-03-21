@@ -91,8 +91,8 @@ export default function SimulacoesPage() {
           )}
         </div>
       ) : (
-        <div className="rounded-lg border border-white/10 overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)' }}>
-          <table className="w-full">
+        <div className="rounded-lg border border-white/10 overflow-hidden overflow-x-auto" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b border-white/10">
                 <th className="text-left text-xs text-white/40 font-medium px-4 py-3">Mercado</th>

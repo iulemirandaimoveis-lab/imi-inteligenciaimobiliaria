@@ -33,6 +33,10 @@ export default function CorretoresPage() {
 
     return (
         <div className="space-y-6">
+            <div className="rounded-lg text-xs" style={{ padding: '10px 14px', background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.15)', color: 'var(--text-secondary)' }}>
+                Para gestão completa da equipe com cards visuais, acesse{' '}
+                <Link href="/backoffice/equipe" className="font-bold underline" style={{ color: 'var(--accent-400)' }}>Equipe</Link>
+            </div>
             <PageIntelHeader
                 moduleLabel="SETTINGS · EQUIPE"
                 title="Gestão de Corretores"
