@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { enrichProperty } from '@/features/properties/services/score.service'
-import { createClient } from '@/lib/supabase/client'
+// Data fetched via /api/developments route (authenticated server-side)
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import type { Development, TabKey, DetailProps } from './types'
 import { toIMIProperty } from './helpers'
@@ -31,27 +31,19 @@ export default function ImovelDetailPage() {
   // Copy state
   const [copied, setCopied] = useState(false)
 
-  // Fetch data
+  // Fetch data via API route (bypasses RLS issues with anon client)
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
-      const supabase = createClient()
-      const { data, error } = await supabase
-        .from('developments')
-        .select(`
-          id, name, type, status, status_commercial, condition,
-          price_from, price_to, area_from, area_to,
-          bedrooms, bathrooms, parking_spaces,
-          neighborhood, city, state, country, address, street_number,
-          cep, description, features,
-          gallery_images, image, video_url, slug,
-          created_at, updated_at, latitude, longitude,
-          developer:developers!developer_id(id, name, logo_url)
-        `)
-        .eq('id', id)
-        .maybeSingle()
+      const res = await fetch(`/api/developments?id=${id}`)
+      if (!res.ok) {
+        setNotFound(true)
+        return
+      }
+      const json = await res.json()
+      const data = json.data ?? json
 
-      if (error || !data) {
+      if (!data || (!data.id && !data.name)) {
         setNotFound(true)
         return
       }

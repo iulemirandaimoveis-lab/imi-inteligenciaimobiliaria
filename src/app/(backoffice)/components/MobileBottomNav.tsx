@@ -13,7 +13,7 @@ import {
     QrCode, Sparkles, Building, Brain, LineChart, Wand2, BarChart3, Shield,
     UserPlus, CalendarPlus, ClipboardList,
     BookMarked, Inbox, MoreHorizontal,
-    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell,
+    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell, Handshake,
 } from 'lucide-react'
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
@@ -58,16 +58,15 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
             { name: 'Campanhas',     href: '/backoffice/campanhas',        icon: Megaphone,     badge: 'NEW'   },
             { name: 'Ads',           href: '/backoffice/campanhas/ads',    icon: BarChart2 },
             { name: 'QR Tracking',   href: '/backoffice/tracking/qr',      icon: QrCode,        badge: 'NEW'   },
-            { name: 'Omni Channel',  href: '/backoffice/omnichannel',      icon: Layers,        badge: 'BREVE' },
-            { name: 'WhatsApp',      href: '/backoffice/whatsapp',         icon: MessageSquare, badge: 'BREVE' },
         ],
     },
     {
         label: 'Conversão', color: 'var(--success)', bg: 'var(--success-bg)',
         items: [
-            { name: 'Pipeline',   href: '/backoffice/leads/pipeline',    icon: TrendingUp },
-            { name: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },
-            { name: 'Agenda',     href: '/backoffice/agenda',            icon: CalendarDays },
+            { name: 'Parcerias', href: '/backoffice/parcerias',        icon: Handshake,   badge: 'NEW' },
+            { name: 'Pipeline',  href: '/backoffice/leads/pipeline',   icon: TrendingUp },
+            { name: 'Simulações',href: '/backoffice/credito/simulador',icon: CreditCard },
+            { name: 'Agenda',    href: '/backoffice/agenda',           icon: CalendarDays },
         ],
     },
     {
@@ -121,7 +120,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
     {
         label: 'Crescimento', color: 'var(--platinum-400)', bg: 'rgba(167,139,250,0.12)',
         items: [
-            { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap,       badge: 'BREVE' },
+            { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap        },
             { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen,  badge: 'NEW'   },
             { name: 'Analytics',     href: '/backoffice/tracking',      icon: BarChart2, badge: 'NEW'   },
             { name: 'Central IA',    href: '/backoffice/ia',            icon: Sparkles   },
@@ -131,7 +130,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
     {
         label: 'Configurações', color: 'var(--text-tertiary)', bg: 'rgba(148,163,184,0.10)',
         items: [
-            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building,    badge: 'BREVE' },
+            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building     },
             { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,       badge: 'NEW'   },
             { name: 'Usuários',     href: '/backoffice/settings/usuarios',   icon: UserCog,     badge: 'NEW'   },
             { name: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
@@ -649,8 +648,8 @@ export function MobileBottomNav() {
                                         <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
                                     </div>
 
-                                    {/* 2-column grid — min-w-0 prevents overflow */}
-                                    <div className="grid grid-cols-2 gap-2 w-full">
+                                    {/* 2-column grid — gap-1.5 + px-2 fit Samsung S25 Ultra (412px) */}
+                                    <div className="grid grid-cols-2 gap-1.5 w-full">
                                         {QUICK_CREATE.map((item, i) => (
                                             <motion.div
                                                 key={item.href}
@@ -662,9 +661,9 @@ export function MobileBottomNav() {
                                                 <Link href={item.href} onClick={() => setOpen(false)}>
                                                     <motion.div
                                                         whileTap={{ scale: 0.96 }}
-                                                        className="flex items-center gap-2.5 px-3 min-w-0"
+                                                        className="flex items-center gap-2 px-2.5 min-w-0"
                                                         style={{
-                                                            height: 60,
+                                                            height: 56,
                                                             borderRadius: 'var(--r-lg)',
                                                             background: 'var(--bg-elevated)',
                                                             border: '1px solid var(--border-subtle)',
@@ -689,33 +688,26 @@ export function MobileBottomNav() {
                                                         <div
                                                             className="flex-shrink-0 flex items-center justify-center"
                                                             style={{
-                                                                width: 36, height: 36,
+                                                                width: 32, height: 32,
                                                                 borderRadius: 6,
                                                                 background: item.iconBg,
                                                                 border: `1px solid ${item.color}28`,
                                                             }}
                                                         >
-                                                            <item.icon size={15} style={{ color: item.color }} />
+                                                            <item.icon size={14} style={{ color: item.color }} />
                                                         </div>
 
-                                                        {/* Text */}
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="text-[11px] font-semibold leading-tight"
+                                                        {/* Text — truncated to prevent overflow on narrow screens */}
+                                                        <div className="flex-1 min-w-0 overflow-hidden">
+                                                            <p className="text-[11px] font-semibold leading-tight truncate"
                                                                 style={{ color: 'var(--text-primary)' }}>
-                                                                <span className="block">{item.label.split(' ')[0]}</span>
-                                                                <span className="block">{item.label.split(' ').slice(1).join(' ')}</span>
+                                                                {item.label}
                                                             </p>
                                                             <p className="text-[9px] truncate mt-0.5 leading-tight"
                                                                 style={{ color: 'var(--text-tertiary)' }}>
                                                                 {item.subtitle}
                                                             </p>
                                                         </div>
-
-                                                        {/* Arrow */}
-                                                        <span className="flex-shrink-0 text-[13px] font-light"
-                                                            style={{ color: 'var(--text-tertiary)', opacity: 0.6 }}>
-                                                            →
-                                                        </span>
                                                     </motion.div>
                                                 </Link>
                                             </motion.div>

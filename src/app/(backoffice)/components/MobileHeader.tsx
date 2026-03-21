@@ -112,7 +112,7 @@ function AvatarButton({
                 <img
                     src={avatarUrl}
                     alt={userInfo?.name ?? 'Avatar'}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top rounded-full"
                 />
             ) : (
                 <span
