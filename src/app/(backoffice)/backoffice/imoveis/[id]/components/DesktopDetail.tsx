@@ -65,7 +65,7 @@ export function DesktopImovelDetail({
     )
   }
 
-  if (notFound || !dev || !enriched) {
+  if (notFound && !dev) {
     return (
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px', textAlign: 'center' }}>
         <Home size={48} style={{ color: T.textDim, margin: '0 auto 16px', display: 'block', opacity: 0.3 }} />

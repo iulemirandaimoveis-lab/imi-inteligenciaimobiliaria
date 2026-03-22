@@ -60,8 +60,8 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
     )
   }
 
-  // Not found state
-  if (notFound || !dev || !enriched) {
+  // Not found state — only show if explicitly notFound AND no data at all
+  if (notFound && !dev) {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px', textAlign: 'center' }}>
         <Home size={48} style={{ color: 'var(--text-tertiary)', marginBottom: 16, opacity: 0.4 }} />

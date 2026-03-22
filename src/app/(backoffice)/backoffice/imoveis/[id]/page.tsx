@@ -66,13 +66,41 @@ export default function ImovelDetailPage() {
       }
 
       setDev(rawData)
-      const prop = toIMIProperty(rawData)
-      const rich = enrichProperty(prop)
-      setEnriched(rich)
+      try {
+        const prop = toIMIProperty(rawData)
+        const rich = enrichProperty(prop)
+        setEnriched(rich)
 
-      // Seed rent input from yield estimate
-      if (rich.price && rich.yield_est) {
-        setRentInput(Math.round((rich.price * (rich.yield_est / 100)) / 12))
+        // Seed rent input from yield estimate
+        if (rich.price && rich.yield_est) {
+          setRentInput(Math.round((rich.price * (rich.yield_est / 100)) / 12))
+        }
+      } catch {
+        // Enrichment failed — still show the property with basic data
+        // Create a minimal enriched object so the detail page renders
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const raw = rawData as Record<string, any>
+        const fallbackEnriched = {
+          id: raw.id || id,
+          name: raw.name || raw.title || 'Imóvel',
+          slug: raw.slug || '',
+          type: raw.type || 'apartment',
+          price: Number(raw.price_from || raw.price_min) || 0,
+          area: Number(raw.area_from) || 0,
+          bedrooms: Number(raw.bedrooms) || 0,
+          bathrooms: Number(raw.bathrooms) || 0,
+          parking: Number(raw.parking_spaces) || 0,
+          neighborhood: raw.neighborhood || '',
+          city: raw.city || '',
+          state: raw.state || '',
+          status: raw.status || 'launch',
+          score: 50,
+          yield_est: 0,
+          market_delta: 0,
+          price_per_sqm: 0,
+          liquidity: 0,
+        } as unknown as import('@/features/properties/types').IMIProperty
+        setEnriched(fallbackEnriched)
       }
     } catch {
       setNotFound(true)
