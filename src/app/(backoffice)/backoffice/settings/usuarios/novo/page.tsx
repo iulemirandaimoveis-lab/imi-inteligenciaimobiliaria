@@ -2,24 +2,20 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, User, Mail, Shield, Key, Loader2 } from 'lucide-react'
+import { ArrowLeft, User, Mail, Shield, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 export default function NovoUsuarioPage() {
     const router = useRouter()
-    const [form, setForm] = useState({ name: '', email: '', password: '', role: 'EDITOR' })
+    const [form, setForm] = useState({ name: '', email: '', role: 'EDITOR' })
     const [loading, setLoading] = useState(false)
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!form.name.trim() || !form.email.trim() || !form.password) {
+        if (!form.name.trim() || !form.email.trim()) {
             toast.error('Preencha todos os campos obrigatórios')
-            return
-        }
-        if (form.password.length < 6) {
-            toast.error('A senha deve ter pelo menos 6 caracteres')
             return
         }
         setLoading(true)
@@ -31,7 +27,7 @@ export default function NovoUsuarioPage() {
             })
             const data = await response.json()
             if (!response.ok) throw new Error(data.error || 'Erro ao criar o usuário')
-            toast.success(`Usuário "${form.name}" criado com sucesso!`)
+            toast.success(data.message || `Convite enviado para ${form.email}. O usuário receberá um link para definir sua senha.`)
             router.push('/backoffice/settings/usuarios')
             router.refresh()
         } catch (err: unknown) {
@@ -107,25 +103,6 @@ export default function NovoUsuarioPage() {
                         </div>
                     </div>
 
-                    {/* Password */}
-                    <div>
-                        <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textMuted }}>
-                            Senha Inicial *
-                        </label>
-                        <div className="relative">
-                            <Key size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
-                            <input
-                                type="password"
-                                required
-                                minLength={6}
-                                value={form.password}
-                                onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                                placeholder="Mínimo 6 caracteres"
-                                style={inputStyle}
-                            />
-                        </div>
-                    </div>
-
                     {/* Role */}
                     <div>
                         <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textMuted }}>
@@ -148,7 +125,7 @@ export default function NovoUsuarioPage() {
                     {/* Info box */}
                     <div className="rounded-lg p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
                         <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                            💡 O usuário receberá as credenciais para acessar o sistema. A senha pode ser alterada no primeiro acesso.
+                            O usuario recebera um email para definir sua propria senha no primeiro acesso. Nao e necessario criar uma senha manualmente.
                         </p>
                     </div>
 
@@ -168,7 +145,7 @@ export default function NovoUsuarioPage() {
                             className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
                             style={{ background: T.accent }}>
                             {loading && <Loader2 size={15} className="animate-spin" />}
-                            {loading ? 'Criando...' : 'Criar Usuário'}
+                            {loading ? 'Enviando convite...' : 'Convidar Usuário'}
                         </button>
                     </div>
                 </form>

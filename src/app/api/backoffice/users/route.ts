@@ -58,25 +58,21 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Apenas administradores podem criar usuários' }, { status: 403 })
         }
         const body = await request.json()
-        const { email, password, name, role } = body
-        if (!email || !password || !name) {
+        const { email, name, role } = body
+        if (!email || !name) {
             return NextResponse.json(
-                { error: 'Email, senha e nome são obrigatórios' },
+                { error: 'Email e nome são obrigatórios' },
                 { status: 400 }
             )
         }
-        if (password.length < 6) {
-            return NextResponse.json(
-                { error: 'Senha deve ter pelo menos 6 caracteres' },
-                { status: 400 }
-            )
-        }
+        // Auto-generate a temporary password — user will set their own via recovery email
+        const tempPassword = crypto.randomUUID().slice(0, 12) + 'A1!'
         const validRole = role || 'EDITOR'
         if (hasServiceKey) {
             // Admin flow: create user via admin API (bypasses email confirmation)
             const { data: authUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
                 email,
-                password,
+                password: tempPassword,
                 email_confirm: true,
                 user_metadata: { name, role: validRole }
             })
@@ -84,22 +80,29 @@ export async function POST(request: Request) {
                 return NextResponse.json({ error: createError.message }, { status: 500 })
             }
             const newUserId = authUser.user.id
-            // Sync to public.users (camelCase columns)
-            await supabaseAdmin
-                .from('profiles')
-                .upsert({ id: newUserId, email, name, role: validRole })
-                .then(() => {})
-            // Also sync to profiles
+            // Sync to profiles
             await supabaseAdmin
                 .from('profiles')
                 .upsert({ id: newUserId, email, name, role: validRole.toLowerCase() })
                 .then(() => {})
-            return NextResponse.json({ success: true, user: { id: newUserId, email, name, role: validRole } })
+            // Send password reset email so user can set their own password
+            await supabaseAdmin.auth.admin.generateLink({
+                type: 'recovery',
+                email,
+                options: {
+                    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login?reset=true`
+                }
+            }).catch(() => { /* non-critical if email fails */ })
+            return NextResponse.json({
+                success: true,
+                user: { id: newUserId, email, name, role: validRole },
+                message: `Convite enviado para ${email}. O usuário receberá um link para definir sua senha.`
+            })
         } else {
             // Fallback: use regular signUp (user will need to confirm email)
             const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                 email,
-                password,
+                password: tempPassword,
                 options: {
                     data: { name, role: validRole },
                     emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login`,
@@ -154,16 +157,15 @@ export async function PUT(request: Request) {
         const updates: Record<string, unknown> = {}
         if (name !== undefined) updates.name = name
         if (role !== undefined) updates.role = role
-        if (is_active !== undefined) updates.is_active = is_active
+        updates.updated_at = new Date().toISOString()
         // Update profiles table
-        const { error: profileErr } = await client.from('profiles').update(updates).eq('id', id)
-        // profileErr handled via response
-        // Update users table (camelCase role, no is_active in that table typically)
-        const userUpdates: Record<string, unknown> = {}
-        if (name !== undefined) userUpdates.name = name
-        if (role !== undefined) userUpdates.role = role
-        if (is_active !== undefined) userUpdates.active = is_active
-        await client.from('profiles').update(userUpdates).eq('id', id)
+        await client.from('profiles').update(updates).eq('id', id)
+        // If toggling active status, use auth admin API to ban/unban
+        if (is_active !== undefined && hasServiceKey) {
+            await supabaseAdmin.auth.admin.updateUserById(id, {
+                ban_duration: is_active ? 'none' : '876000h' // ~100 years = effectively permanent
+            })
+        }
         return NextResponse.json({ success: true })
     } catch (error: unknown) {
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
@@ -189,9 +191,12 @@ export async function DELETE(request: Request) {
         if (!id) return NextResponse.json({ error: 'ID do usuário é obrigatório' }, { status: 400 })
         // Prevent self-deactivation
         if (id === user.id) return NextResponse.json({ error: 'Não é possível desativar o próprio usuário' }, { status: 400 })
-        // Soft-delete: mark as inactive in both tables
-        await client.from('profiles').update({ is_active: false }).eq('id', id)
-        await client.from('profiles').update({ active: false }).eq('id', id)
+        // Soft-delete: ban user via auth admin API
+        if (hasServiceKey) {
+            await supabaseAdmin.auth.admin.updateUserById(id, {
+                ban_duration: '876000h' // effectively permanent
+            })
+        }
         return NextResponse.json({ success: true })
     } catch (error: unknown) {
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
@@ -204,11 +209,42 @@ export async function GET(request: Request) {
         if (authError || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
+
+        // Self-heal: sync auth.users to profiles table
+        // Handles users created via Supabase dashboard or manual SQL that are missing from profiles
+        if (hasServiceKey) {
+            try {
+                const { data: { users: authUsers } } = await supabaseAdmin.auth.admin.listUsers()
+                if (authUsers) {
+                    for (const au of authUsers) {
+                        const { data: existing } = await supabaseAdmin
+                            .from('profiles')
+                            .select('id')
+                            .eq('id', au.id)
+                            .maybeSingle()
+                        if (!existing) {
+                            await supabaseAdmin.from('profiles').insert({
+                                id: au.id,
+                                email: au.email || '',
+                                name: au.user_metadata?.name || au.user_metadata?.full_name || au.email?.split('@')[0] || 'Usuário',
+                                role: au.user_metadata?.role || 'corretor',
+                                avatar_url: au.user_metadata?.avatar_url || null,
+                                phone: au.user_metadata?.phone || null,
+                                created_at: au.created_at,
+                            })
+                        }
+                    }
+                }
+            } catch {
+                // Non-critical: if self-heal fails, continue with normal query
+            }
+        }
+
         // Try profiles first (has more columns), fallback to users
         const client = hasServiceKey ? supabaseAdmin : supabase
         const { data, error } = await client
             .from('profiles')
-            .select('id, email, name, role, avatar_url, phone, is_active, created_at')
+            .select('id, email, name, role, avatar_url, phone, created_at')
             .order('created_at', { ascending: false })
         if (error) {
             // Fallback to users table with camelCase columns

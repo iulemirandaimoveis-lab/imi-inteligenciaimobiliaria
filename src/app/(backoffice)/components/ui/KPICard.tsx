@@ -62,13 +62,13 @@ export function KPICard({
       className={`group ${onClick ? 'cursor-pointer' : ''} ${className}`}
       style={{
         padding: PAD[size],
-        // Liquid glass — dark navy base with accent glow
-        background: `linear-gradient(135deg, #0D1B2A, #162040)`,
+        // Theme-aware surface with accent glow
+        background: 'var(--bg-surface)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        border: `1px solid ${a.border}`,
+        border: `1px solid var(--border-default)`,
         borderRadius: '12px',
-        boxShadow: `0 1px 3px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.04), inset 0 0 20px ${a.glow}`,
+        boxShadow: `var(--shadow-sm), inset 0 0 20px ${a.glow}`,
         transition: 'all 200ms ease',
         position: 'relative',
         overflow: 'hidden',
@@ -76,13 +76,13 @@ export function KPICard({
       onClick={onClick}
       onMouseEnter={e => {
         e.currentTarget.style.transform = 'translateY(-1px)'
-        e.currentTarget.style.boxShadow = `0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 20px ${a.glow}`
+        e.currentTarget.style.boxShadow = `var(--shadow-md), inset 0 0 20px ${a.glow}`
         e.currentTarget.style.borderColor = a.iconColor
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = `0 1px 3px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.04), inset 0 0 20px ${a.glow}`
-        e.currentTarget.style.borderColor = a.border
+        e.currentTarget.style.boxShadow = `var(--shadow-sm), inset 0 0 20px ${a.glow}`
+        e.currentTarget.style.borderColor = 'var(--border-default)'
       }}
     >
       {/* Label + Icon row — compact */}
@@ -92,7 +92,7 @@ export function KPICard({
             fontFamily: 'var(--font-ui)',
             fontSize: 10,
             fontWeight: 700,
-            color: 'rgba(255,255,255,0.5)',
+            color: 'var(--text-tertiary)',
             textTransform: 'uppercase' as const,
             letterSpacing: '0.1em',
             lineHeight: 1.3,
@@ -126,7 +126,7 @@ export function KPICard({
           fontFamily: 'var(--font-data)',
           fontSize: VALUE_SIZES[size],
           fontWeight: 600,
-          color: 'rgba(255,255,255,0.95)',
+          color: 'var(--text-primary)',
           lineHeight: 1.1,
           letterSpacing: '-0.02em',
           fontVariantNumeric: 'tabular-nums',
@@ -149,13 +149,13 @@ export function KPICard({
               fontSize: 11,
               fontWeight: 500,
               background: isPositive ? 'var(--success-bg)' : isNegative ? 'var(--error-bg)' : 'var(--bg-muted)',
-              color: isPositive ? 'var(--color-success, var(--success))' : isNegative ? 'var(--color-danger, var(--error))' : 'rgba(255,255,255,0.4)',
+              color: isPositive ? 'var(--color-success, var(--success))' : isNegative ? 'var(--color-danger, var(--error))' : 'var(--text-tertiary)',
             }}
           >
             {isPositive ? '▲+' : isNegative ? '▼' : ''}{delta}%
           </span>
           {deltaLabel && (
-            <span style={{ fontFamily: 'var(--font-data)', fontSize: 10, fontWeight: 400, color: 'rgba(255,255,255,0.3)' }}>
+            <span style={{ fontFamily: 'var(--font-data)', fontSize: 10, fontWeight: 400, color: 'var(--text-tertiary)' }}>
               {deltaLabel}
             </span>
           )}
@@ -164,7 +164,7 @@ export function KPICard({
 
       {/* Sublabel */}
       {delta === undefined && sublabel && (
-        <span style={{ fontFamily: 'var(--font-data)', fontSize: 11, fontWeight: 400, color: 'rgba(255,255,255,0.4)', marginTop: 2, display: 'block' }}>
+        <span style={{ fontFamily: 'var(--font-data)', fontSize: 11, fontWeight: 400, color: 'var(--text-tertiary)', marginTop: 2, display: 'block' }}>
           {sublabel}
         </span>
       )}

@@ -84,17 +84,17 @@
   --color-gold-deep:      #A8842A;
   --color-gold-subtle:    rgba(200, 164, 74, 0.12);
   --color-gold-glow:      rgba(200, 164, 74, 0.30);
-  --color-offwhite:       #F0ECE4;
-  --color-offwhite-dim:   rgba(240, 236, 228, 0.70);
-  --color-offwhite-mute:  rgba(240, 236, 228, 0.40);
+  --color-offwhite:       #0B1928;
+  --color-offwhite-dim:   rgba(11, 25, 40, 0.70);
+  --color-offwhite-mute:  rgba(11, 25, 40, 0.40);
 
-  /* ── DS3.1 Surface System ── */
-  --surface-base:         #0B1928;
-  --surface-raised:       #0F2035;
-  --surface-overlay:      #162840;
-  --surface-float:        #1D3450;
-  --surface-border:       #243D5C;
-  --surface-border-gold:  rgba(200, 164, 74, 0.30);
+  /* ── DS3.1 Surface System (light theme overrides) ── */
+  --surface-base:         var(--imi-cream);
+  --surface-raised:       #FFFFFF;
+  --surface-overlay:      #FEFEFE;
+  --surface-float:        #FFFFFF;
+  --surface-border:       rgba(11,17,32,0.14);
+  --surface-border-gold:  rgba(184, 148, 58, 0.25);
 
   /* ── DS3.1 Semantic ── */
   --color-success:        #2ECC71;
@@ -139,14 +139,14 @@
   --bg-hover:     rgba(11,17,32,0.07);
   --bg-active:    rgba(11,17,32,0.10);
 
-  --border-subtle:  rgba(11,17,32,0.08);
-  --border-default: rgba(11,17,32,0.14);
-  --border-strong:  rgba(11,17,32,0.24);
+  --border-subtle:  rgba(11,17,32,0.12);
+  --border-default: rgba(11,17,32,0.22);
+  --border-strong:  rgba(11,17,32,0.34);
   --border-focus:   var(--imi-navy-600);
 
   --text-primary:   var(--imi-navy-900);
   --text-secondary: var(--imi-stone-600);
-  --text-tertiary:  var(--imi-stone-400);
+  --text-tertiary:  var(--imi-stone-500);
   --text-disabled:  var(--imi-stone-300);
   --text-inverse:   #FFFFFF;
   --text-gold:      var(--imi-gold-600);
@@ -280,6 +280,18 @@
 
 .dark {
   /* ══ DARK THEME — DS v6 Precision Dark ══ */
+  --color-offwhite:       #F0ECE4;
+  --color-offwhite-dim:   rgba(240, 236, 228, 0.70);
+  --color-offwhite-mute:  rgba(240, 236, 228, 0.40);
+
+  /* DS3.1 Surface System — dark originals */
+  --surface-base:         #0B1928;
+  --surface-raised:       #0F2035;
+  --surface-overlay:      #162840;
+  --surface-float:        #1D3450;
+  --surface-border:       #243D5C;
+  --surface-border-gold:  rgba(200, 164, 74, 0.30);
+
   --bg-base:      #080D18;
   --bg-surface:   #0D1424;
   --bg-elevated:  #121B2E;

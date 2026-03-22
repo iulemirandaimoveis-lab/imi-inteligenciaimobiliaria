@@ -33,7 +33,7 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
 
             <div className="p-5">
                 {/* Avatar + Info */}
-                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 mb-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left mb-4">
                     <div className="relative w-[72px] h-[72px] rounded-2xl overflow-hidden flex-shrink-0 bg-[#102A43]/5 flex items-center justify-center border border-gray-100">
                         {broker.avatar_url ? (
                             <Image

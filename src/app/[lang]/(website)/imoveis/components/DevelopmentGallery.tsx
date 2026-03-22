@@ -136,7 +136,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                 {hasFloorPlans && (
                     <div>
                         <SectionTitle label="Plantas" />
-                        <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 -mx-4 px-4 lg:mx-0 lg:px-0">
+                        <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 -mx-2 px-2 sm:-mx-4 sm:px-4 lg:mx-0 lg:px-0">
                             {development.images.floorPlans.map((plan, idx) => (
                                 <div
                                     key={idx}

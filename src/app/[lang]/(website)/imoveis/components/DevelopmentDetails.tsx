@@ -162,7 +162,7 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                     <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "var(--font-serif, 'Libre Baskerville', Georgia, serif)" }}>
                         O Que Torna Especial
                     </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {development.features.map((feature, i) => (
                             <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                                 <span className="text-lg">{getFeatureEmoji(feature)}</span>
