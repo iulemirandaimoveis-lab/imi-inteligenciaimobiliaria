@@ -43,14 +43,30 @@ export default function Footer() {
                     <div className="md:col-span-5">
                         <div className="flex items-center gap-3 mb-5">
                             <span
-                                className="text-2xl font-black tracking-tight text-white"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                className="leading-none select-none"
+                                style={{
+                                    fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+                                    fontSize: 26,
+                                    fontWeight: 700,
+                                    color: '#FFFFFF',
+                                    letterSpacing: '0.04em',
+                                }}
                             >
                                 IMI
                             </span>
-                            <div className="h-6 w-px bg-white/15" />
-                            <span className="text-[11px] uppercase tracking-[2px] text-slate-400 font-bold">
-                                Inteligência Imobiliária
+                            <div className="flex-shrink-0" style={{ width: 1, height: 22, background: '#C49D5B' }} />
+                            <span
+                                className="leading-[1.25] select-none"
+                                style={{
+                                    fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif",
+                                    fontSize: 10,
+                                    fontWeight: 500,
+                                    letterSpacing: '0.18em',
+                                    textTransform: 'uppercase',
+                                    color: 'rgba(255,255,255,0.5)',
+                                }}
+                            >
+                                INTELIGÊNCIA<br />IMOBILIÁRIA
                             </span>
                         </div>
 

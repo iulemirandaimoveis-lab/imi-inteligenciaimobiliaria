@@ -1,21 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Background -->
+  <!-- Dark navy background — backoffice / PWA / Apple Touch -->
   <rect width="512" height="512" rx="80" fill="#0B1928"/>
-
-  <!-- Safe zone: inner 400x400 centered at 256,256 (56px padding each side) -->
-
-  <!-- Gold top horizontal bar -->
-  <rect x="128" y="136" width="256" height="40" rx="20" fill="#C8A44A"/>
-
-  <!-- Gold vertical stem (center pillar) -->
-  <rect x="224" y="176" width="64" height="160" fill="#C8A44A"/>
-
-  <!-- Gold bottom horizontal bar -->
-  <rect x="128" y="336" width="256" height="40" rx="20" fill="#C8A44A"/>
-
-  <!-- Subtle gold accent dot -->
-  <circle cx="256" cy="424" r="16" fill="#C8A44A" opacity="0.55"/>
-
-  <!-- Thin gold divider line accent (horizontal center) -->
-  <rect x="176" y="252" width="160" height="8" rx="4" fill="#0B1928" opacity="0.4"/>
+  <!-- Gold bar — top unifier (100% width per brandkit) -->
+  <rect x="0" y="0" width="512" height="40" rx="20" fill="#C49D5B"/>
+  <!-- IMI text — centered, Playfair Display 700 style -->
+  <text x="256" y="330" text-anchor="middle" font-family="'Playfair Display','Georgia',serif" font-size="200" font-weight="700" fill="white" letter-spacing="12">IMI</text>
 </svg>
