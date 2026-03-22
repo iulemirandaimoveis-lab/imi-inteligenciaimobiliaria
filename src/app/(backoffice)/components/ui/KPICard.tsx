@@ -1,12 +1,11 @@
 'use client'
 
 /**
- * KPICard — IMI Design System v3 stat-card
- * DS3 pattern: top accent border, serif value, mono label, hover lift
+ * KPICard — IMI Design System v3.2
+ * Liquid glass style: frosted blur, compact proportions, subtle glow
  */
 
 import React from 'react'
-// TrendingUp/TrendingDown removed — using unicode arrows ▲ ▼ instead
 
 interface KPICardProps {
   label: string
@@ -21,24 +20,24 @@ interface KPICardProps {
   onClick?: () => void
 }
 
-const ACCENT_CONFIG: Record<string, { border: string; iconBg: string; iconColor: string }> = {
-  gold:    { border: 'var(--accent-400)',  iconBg: 'rgba(61,111,255,0.10)',  iconColor: 'var(--accent-400)' },
-  navy:    { border: 'var(--bg-elevated, #162040)',  iconBg: 'rgba(37,53,101,0.12)',   iconColor: 'var(--text-secondary)' },
-  success: { border: 'var(--success)',       iconBg: 'var(--success-bg)',       iconColor: 'var(--success)' },
-  warning: { border: 'var(--warning)',       iconBg: 'var(--warning-bg)',       iconColor: 'var(--warning)' },
-  error:   { border: 'var(--error)',         iconBg: 'var(--error-bg)',         iconColor: 'var(--error)' },
-  info:    { border: 'var(--info)',          iconBg: 'var(--info-bg)',          iconColor: 'var(--info)' },
-  // Legacy aliases
-  blue:    { border: 'var(--info)',          iconBg: 'var(--info-bg)',          iconColor: 'var(--info)' },
-  hot:     { border: 'var(--error)',         iconBg: 'var(--error-bg)',         iconColor: 'var(--error)' },
-  warm:    { border: 'var(--warning)',       iconBg: 'var(--warning-bg)',       iconColor: 'var(--warning)' },
-  cold:    { border: 'var(--info)',          iconBg: 'var(--info-bg)',          iconColor: 'var(--info)' },
-  ai:      { border: 'var(--accent-400)',  iconBg: 'rgba(61,111,255,0.10)',  iconColor: 'var(--accent-400)' },
-  green:   { border: 'var(--success)',       iconBg: 'var(--success-bg)',       iconColor: 'var(--success)' },
+const ACCENT_CONFIG: Record<string, { glow: string; iconBg: string; iconColor: string; border: string }> = {
+  gold:    { glow: 'rgba(196,157,91,0.08)',  iconBg: 'rgba(196,157,91,0.12)',  iconColor: 'var(--accent-400)',       border: 'rgba(196,157,91,0.25)' },
+  navy:    { glow: 'rgba(37,53,101,0.08)',    iconBg: 'rgba(37,53,101,0.15)',   iconColor: 'var(--text-secondary)',   border: 'rgba(37,53,101,0.20)' },
+  success: { glow: 'rgba(16,185,129,0.06)',   iconBg: 'var(--success-bg)',       iconColor: 'var(--success)',          border: 'rgba(16,185,129,0.20)' },
+  warning: { glow: 'rgba(245,158,11,0.06)',   iconBg: 'var(--warning-bg)',       iconColor: 'var(--warning)',          border: 'rgba(245,158,11,0.20)' },
+  error:   { glow: 'rgba(239,68,68,0.06)',    iconBg: 'var(--error-bg)',         iconColor: 'var(--error)',            border: 'rgba(239,68,68,0.20)' },
+  info:    { glow: 'rgba(59,130,246,0.06)',   iconBg: 'var(--info-bg)',          iconColor: 'var(--info)',             border: 'rgba(59,130,246,0.20)' },
+  blue:    { glow: 'rgba(59,130,246,0.06)',   iconBg: 'var(--info-bg)',          iconColor: 'var(--info)',             border: 'rgba(59,130,246,0.20)' },
+  hot:     { glow: 'rgba(239,68,68,0.06)',    iconBg: 'var(--error-bg)',         iconColor: 'var(--error)',            border: 'rgba(239,68,68,0.20)' },
+  warm:    { glow: 'rgba(245,158,11,0.06)',   iconBg: 'var(--warning-bg)',       iconColor: 'var(--warning)',          border: 'rgba(245,158,11,0.20)' },
+  cold:    { glow: 'rgba(59,130,246,0.06)',   iconBg: 'var(--info-bg)',          iconColor: 'var(--info)',             border: 'rgba(59,130,246,0.20)' },
+  ai:      { glow: 'rgba(196,157,91,0.08)',   iconBg: 'rgba(196,157,91,0.12)',  iconColor: 'var(--accent-400)',       border: 'rgba(196,157,91,0.25)' },
+  green:   { glow: 'rgba(16,185,129,0.06)',   iconBg: 'var(--success-bg)',       iconColor: 'var(--success)',          border: 'rgba(16,185,129,0.20)' },
 }
 
-const VALUE_SIZES: Record<string, string> = { sm: '24px', md: '36px', lg: '48px' }
-const PAD: Record<string, string> = { sm: '14px 16px', md: 'var(--space-6, 24px)', lg: 'var(--space-6, 24px)' }
+const VALUE_SIZES: Record<string, string> = { sm: '20px', md: '26px', lg: '34px' }
+const ICON_SIZES: Record<string, number> = { sm: 28, md: 30, lg: 34 }
+const PAD: Record<string, string> = { sm: '10px 12px', md: '12px 14px', lg: '14px 16px' }
 
 export function KPICard({
   label,
@@ -53,6 +52,7 @@ export function KPICard({
   onClick,
 }: KPICardProps) {
   const a = ACCENT_CONFIG[accent] ?? ACCENT_CONFIG.gold
+  const iconSize = ICON_SIZES[size]
 
   const isPositive = delta !== undefined && delta > 0
   const isNegative = delta !== undefined && delta < 0
@@ -62,38 +62,40 @@ export function KPICard({
       className={`group ${onClick ? 'cursor-pointer' : ''} ${className}`}
       style={{
         padding: PAD[size],
-        background: 'var(--surface-raised, var(--bg-surface))',
-        border: '1px solid var(--surface-border, var(--border-subtle))',
-        borderTop: `3px solid ${a.border}`,
-        borderRadius: '10px',
-        boxShadow: 'var(--shadow-card, var(--shadow-xs))',
-        transition: 'background 200ms ease, box-shadow 200ms ease, transform 200ms ease',
+        // Liquid glass effect
+        background: `linear-gradient(135deg, ${a.glow}, rgba(255,255,255,0.02))`,
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: `1px solid ${a.border}`,
+        borderRadius: '12px',
+        boxShadow: `0 1px 3px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.04)`,
+        transition: 'all 200ms ease',
         position: 'relative',
         overflow: 'hidden',
       }}
       onClick={onClick}
       onMouseEnter={e => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-raised, var(--shadow-md))'
-        e.currentTarget.style.background = 'var(--surface-overlay, var(--bg-elevated))'
-        e.currentTarget.style.transform = 'translateY(-2px)'
+        e.currentTarget.style.transform = 'translateY(-1px)'
+        e.currentTarget.style.boxShadow = `0 4px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.06)`
+        e.currentTarget.style.borderColor = a.iconColor
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-card, var(--shadow-xs))'
-        e.currentTarget.style.background = 'var(--surface-raised, var(--bg-surface))'
         e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.boxShadow = `0 1px 3px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.04)`
+        e.currentTarget.style.borderColor = a.border
       }}
     >
-      {/* Label + Icon */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 12 }}>
+      {/* Label + Icon row — compact */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6, marginBottom: 6 }}>
         <span
           style={{
             fontFamily: 'var(--font-ui)',
-            fontSize: 11,
-            fontWeight: 600,
+            fontSize: 10,
+            fontWeight: 700,
             color: 'var(--color-offwhite-mute, var(--text-tertiary))',
             textTransform: 'uppercase' as const,
-            letterSpacing: '0.08em',
-            lineHeight: 1.4,
+            letterSpacing: '0.1em',
+            lineHeight: 1.3,
           }}
         >
           {label}
@@ -106,8 +108,8 @@ export function KPICard({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 36,
-              height: 36,
+              width: iconSize,
+              height: iconSize,
               borderRadius: '8px',
               background: a.iconBg,
               flexShrink: 0,
@@ -118,17 +120,16 @@ export function KPICard({
         )}
       </div>
 
-      {/* Value — DM Mono, monumental */}
+      {/* Value — compact monumental */}
       <div
         style={{
           fontFamily: 'var(--font-data)',
           fontSize: VALUE_SIZES[size],
-          fontWeight: 500,
+          fontWeight: 600,
           color: 'var(--color-offwhite, var(--text-primary))',
-          lineHeight: 1,
-          letterSpacing: '-0.03em',
+          lineHeight: 1.1,
+          letterSpacing: '-0.02em',
           fontVariantNumeric: 'tabular-nums',
-          marginBottom: (delta !== undefined || sublabel) ? 'var(--space-2, 8px)' : 0,
         }}
       >
         {value}
@@ -136,25 +137,25 @@ export function KPICard({
 
       {/* Delta */}
       {delta !== undefined && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 'var(--space-2, 8px)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
           <span
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 4,
-              padding: '2px 8px',
-              borderRadius: 6,
+              gap: 3,
+              padding: '1px 6px',
+              borderRadius: 5,
               fontFamily: 'var(--font-data)',
-              fontSize: 13,
-              fontWeight: 300,
+              fontSize: 11,
+              fontWeight: 500,
               background: isPositive ? 'var(--success-bg)' : isNegative ? 'var(--error-bg)' : 'var(--bg-muted)',
               color: isPositive ? 'var(--color-success, var(--success))' : isNegative ? 'var(--color-danger, var(--error))' : 'var(--text-tertiary)',
             }}
           >
-            {isPositive ? '▲ +' : isNegative ? '▼ ' : ''}{delta}%
+            {isPositive ? '▲+' : isNegative ? '▼' : ''}{delta}%
           </span>
           {deltaLabel && (
-            <span style={{ fontFamily: 'var(--font-data)', fontSize: 13, fontWeight: 300, color: 'var(--text-disabled)' }}>
+            <span style={{ fontFamily: 'var(--font-data)', fontSize: 10, fontWeight: 400, color: 'var(--text-disabled)' }}>
               {deltaLabel}
             </span>
           )}
@@ -163,7 +164,7 @@ export function KPICard({
 
       {/* Sublabel */}
       {delta === undefined && sublabel && (
-        <span style={{ fontFamily: 'var(--font-data)', fontSize: 13, fontWeight: 300, color: 'var(--text-tertiary)' }}>
+        <span style={{ fontFamily: 'var(--font-data)', fontSize: 11, fontWeight: 400, color: 'var(--text-tertiary)', marginTop: 2, display: 'block' }}>
           {sublabel}
         </span>
       )}
