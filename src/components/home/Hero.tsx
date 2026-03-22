@@ -67,7 +67,7 @@ export default function Hero({ dict }: HeroProps) {
       {/* Background image */}
       <div className="absolute inset-0">
         <div
-          className="absolute inset-0 bg-cover bg-[center_top] sm:bg-[bottom_right] md:bg-[85%_center] bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center sm:bg-[bottom_right] md:bg-[85%_center] bg-no-repeat"
           style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
         {/* Dark overlay gradient - stronger on the left for text readibility */}

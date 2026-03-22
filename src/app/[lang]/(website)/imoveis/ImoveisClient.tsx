@@ -830,7 +830,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
                 {/* MAP split view */}
                 {viewMode === 'map' && (
-                    <div style={{ display: 'flex', gap: 0, height: 'clamp(500px, calc(100vh - 220px), 860px)', borderRadius: 20, overflow: 'hidden', border: `1px solid ${BORDER}` }}>
+                    <div className="flex flex-col md:flex-row" style={{ gap: 0, height: 'clamp(500px, calc(100vh - 220px), 860px)', borderRadius: 20, overflow: 'hidden', border: `1px solid ${BORDER}` }}>
                         {/* Map pane */}
                         <div style={{ flex: 1, minWidth: 0, position: 'relative' }}>
                             {filteredDevelopments.length > 0 ? (
@@ -854,7 +854,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             )}
                         </div>
                         {/* Sidebar */}
-                        <div ref={listRef} style={{ width: 380, flexShrink: 0, overflowY: 'auto', borderLeft: `1px solid ${BORDER}`, background: SURFACE }}>
+                        <div ref={listRef} className="w-full md:w-[380px] flex-shrink-0 overflow-y-auto md:border-l border-t md:border-t-0" style={{ borderColor: BORDER, background: SURFACE }}>
                             <div style={{ position: 'sticky', top: 0, background: 'rgba(15,32,53,0.96)', backdropFilter: 'blur(8px)', padding: '12px 14px', borderBottom: `1px solid ${BORDER}`, zIndex: 5 }}>
                                 <p style={{ margin: 0, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: TEXT_MUTED }}>
                                     {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
