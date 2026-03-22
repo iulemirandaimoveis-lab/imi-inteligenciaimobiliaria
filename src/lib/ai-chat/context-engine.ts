@@ -76,7 +76,7 @@ async function fetchImoveis(supabase: SupabaseClient): Promise<ContextBlock | nu
 }
 
 async function fetchContratos(supabase: SupabaseClient): Promise<ContextBlock | null> {
-    const { data } = await supabase.from('contracts').select('id, title, status, value, commission_rate, created_at').order('created_at', { ascending: false }).limit(15)
+    const { data } = await supabase.from('contratos').select('id, title, status, value, commission_rate, created_at').order('created_at', { ascending: false }).limit(15)
     if (!data?.length) return null
     const text = data.map(c => `• ${c.title} | ${c.status} | R$${c.value?.toLocaleString() || '?'} | ${c.commission_rate || '?'}%`).join('\n')
     return { label: 'Contratos', data: `${data.length} contratos:\n${text}`, tokenEstimate: Math.ceil(text.length / 4) }
@@ -85,7 +85,7 @@ async function fetchContratos(supabase: SupabaseClient): Promise<ContextBlock | 
 async function fetchMetricas(supabase: SupabaseClient): Promise<ContextBlock | null> {
     const { count: totalLeads } = await supabase.from('leads').select('id', { count: 'exact', head: true })
     const { count: totalImoveis } = await supabase.from('developments').select('id', { count: 'exact', head: true })
-    const { count: totalContratos } = await supabase.from('contracts').select('id', { count: 'exact', head: true })
+    const { count: totalContratos } = await supabase.from('contratos').select('id', { count: 'exact', head: true })
     const { count: totalBrokers } = await supabase.from('brokers').select('id', { count: 'exact', head: true })
     const text = `Leads: ${totalLeads || 0}\nImóveis: ${totalImoveis || 0}\nContratos: ${totalContratos || 0}\nCorretores: ${totalBrokers || 0}`
     return { label: 'Métricas gerais', data: text, tokenEstimate: 50 }
@@ -107,7 +107,8 @@ async function fetchCampanhas(supabase: SupabaseClient): Promise<ContextBlock | 
 
 async function fetchBookKnowledge(query: string): Promise<ContextBlock | null> {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/books/index.json`)
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
+        const res = await fetch(`${baseUrl}/books/index.json`)
         if (!res.ok) return null
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const books: any[] = await res.json()

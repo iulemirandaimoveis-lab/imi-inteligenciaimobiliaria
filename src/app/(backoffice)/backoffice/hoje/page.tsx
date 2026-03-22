@@ -104,7 +104,7 @@ export default function HojePage() {
       setUserName(name.split(' ')[0])
       if (user.user_metadata?.avatar_url) setAvatarUrl(user.user_metadata.avatar_url)
       // Load role
-      supabase.from('users').select('role').eq('email', user.email).single()
+      supabase.from('profiles').select('role').eq('email', user.email).single()
         .then(({ data }) => { if (data?.role) setUserRole(data.role as string) })
     })
   }, [])

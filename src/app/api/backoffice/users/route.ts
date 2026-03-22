@@ -16,7 +16,7 @@ export async function POST(request: Request) {
         let isAdmin = false
         if (hasServiceKey) {
             const { data: userRow } = await supabaseAdmin
-                .from('users')
+                .from('profiles')
                 .select('role')
                 .eq('id', user.id)
                 .single()
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         } else {
             // Without service key, check via authenticated client
             const { data: userRow } = await supabase
-                .from('users')
+                .from('profiles')
                 .select('role')
                 .eq('id', user.id)
                 .single()
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
             const newUserId = authUser.user.id
             // Sync to public.users (camelCase columns)
             await supabaseAdmin
-                .from('users')
+                .from('profiles')
                 .upsert({ id: newUserId, email, name, role: validRole })
                 .then(() => {})
             // Also sync to profiles
@@ -112,7 +112,7 @@ export async function POST(request: Request) {
             if (signUpData.user) {
                 const newUserId = signUpData.user.id
                 await supabase
-                    .from('users')
+                    .from('profiles')
                     .upsert({ id: newUserId, email, name, role: validRole, createdAt: new Date().toISOString() })
                     .then(() => {})
                 await supabase
@@ -141,7 +141,7 @@ export async function PUT(request: Request) {
         // Check admin
         let isAdmin = false
         const client = hasServiceKey ? supabaseAdmin : supabase
-        const { data: callerRow } = await client.from('users').select('role').eq('id', user.id).single()
+        const { data: callerRow } = await client.from('profiles').select('role').eq('id', user.id).single()
         if (callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(callerRow.role)) isAdmin = true
         if (!isAdmin) {
             const { data: callerProfile } = await client.from('profiles').select('role').eq('id', user.id).single()
@@ -163,7 +163,7 @@ export async function PUT(request: Request) {
         if (name !== undefined) userUpdates.name = name
         if (role !== undefined) userUpdates.role = role
         if (is_active !== undefined) userUpdates.active = is_active
-        await client.from('users').update(userUpdates).eq('id', id)
+        await client.from('profiles').update(userUpdates).eq('id', id)
         return NextResponse.json({ success: true })
     } catch (error: unknown) {
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
@@ -177,7 +177,7 @@ export async function DELETE(request: Request) {
         // Check admin
         let isAdmin = false
         const client = hasServiceKey ? supabaseAdmin : supabase
-        const { data: callerRow } = await client.from('users').select('role').eq('id', user.id).single()
+        const { data: callerRow } = await client.from('profiles').select('role').eq('id', user.id).single()
         if (callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(callerRow.role)) isAdmin = true
         if (!isAdmin) {
             const { data: callerProfile } = await client.from('profiles').select('role').eq('id', user.id).single()
@@ -191,7 +191,7 @@ export async function DELETE(request: Request) {
         if (id === user.id) return NextResponse.json({ error: 'Não é possível desativar o próprio usuário' }, { status: 400 })
         // Soft-delete: mark as inactive in both tables
         await client.from('profiles').update({ is_active: false }).eq('id', id)
-        await client.from('users').update({ active: false }).eq('id', id)
+        await client.from('profiles').update({ active: false }).eq('id', id)
         return NextResponse.json({ success: true })
     } catch (error: unknown) {
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
@@ -213,7 +213,7 @@ export async function GET(request: Request) {
         if (error) {
             // Fallback to users table with camelCase columns
             const { data: usersData, error: usersError } = await client
-                .from('users')
+                .from('profiles')
                 .select('id, email, name, role, "createdAt"')
                 .order('"createdAt"', { ascending: false })
             if (usersError) throw usersError

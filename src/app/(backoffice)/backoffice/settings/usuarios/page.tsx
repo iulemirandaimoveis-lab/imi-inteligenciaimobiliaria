@@ -68,7 +68,7 @@ export default function UsuariosPage() {
         setUsuariosData(formatted)
       } else {
         const supabase = createClient()
-        const { data } = await supabase.from('users').select('*').order('createdAt', { ascending: false })
+        const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
         if (data) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setUsuariosData(data.map((u: any) => ({

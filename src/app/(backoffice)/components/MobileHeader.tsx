@@ -166,7 +166,7 @@ export default function MobileHeader() {
                 let role: string | undefined
                 try {
                     const { data: dbUser } = await supabase
-                        .from('users')
+                        .from('profiles')
                         .select('role')
                         .eq('email', user.email)
                         .single()

@@ -41,7 +41,7 @@ async function isAuthorized(req: NextRequest): Promise<{ ok: boolean; userId?: s
         if (error || !user) return { ok: false }
         // Check the user's role in the public.users table
         const { data: profile } = await supabaseAdmin
-            .from('users')
+            .from('profiles')
             .select('role')
             .eq('id', user.id)
             .single()

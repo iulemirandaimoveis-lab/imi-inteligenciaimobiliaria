@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
             const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Admin'
             // Check role from users table
             const { data: profile } = await supabaseAdmin
-                .from('users')
+                .from('profiles')
                 .select('role')
                 .eq('id', user.id)
                 .maybeSingle()

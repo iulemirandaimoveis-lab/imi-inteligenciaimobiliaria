@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
         if (id) {
             const { data, error } = await supabase
-                .from('playbooks')
+                .from('operational_playbooks')
                 .select('*')
                 .eq('id', id)
                 .single()
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
         }
 
         let query = supabase
-            .from('playbooks')
+            .from('operational_playbooks')
             .select('*')
             .eq('is_active', true)
             .order('created_at', { ascending: true })
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
             .replace(/[^a-z0-9_]/g, '')
 
         const { data, error } = await supabase
-            .from('playbooks')
+            .from('operational_playbooks')
             .insert({ ...parsed.data, slug })
             .select()
             .single()
@@ -80,7 +80,7 @@ export async function PUT(request: NextRequest) {
         const { id, ...updates } = parsed.data
 
         const { data, error } = await supabase
-            .from('playbooks')
+            .from('operational_playbooks')
             .update({ ...updates, updated_at: new Date().toISOString() })
             .eq('id', id)
             .select()
@@ -104,7 +104,7 @@ export async function DELETE(request: NextRequest) {
         if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
 
         const { error } = await supabase
-            .from('playbooks')
+            .from('operational_playbooks')
             .update({ is_active: false, updated_at: new Date().toISOString() })
             .eq('id', id)
 

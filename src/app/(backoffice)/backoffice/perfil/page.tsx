@@ -62,7 +62,7 @@ export default function PerfilPage() {
 
             // Get user profile
             const { data: userProfile } = await supabase
-                .from('users')
+                .from('profiles')
                 .select('role, language')
                 .eq('id', user.id)
                 .maybeSingle()
@@ -106,7 +106,7 @@ export default function PerfilPage() {
             })
 
             // Update language in users table
-            await supabase.from('users').update({ language: profile.language }).eq('id', user.id)
+            await supabase.from('profiles').update({ language: profile.language }).eq('id', user.id)
 
             toast.success('Perfil atualizado com sucesso!')
         } catch {

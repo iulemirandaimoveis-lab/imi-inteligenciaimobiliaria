@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (!message || !model) return new Response(JSON.stringify({ error: 'Mensagem e modelo obrigatórios' }), { status: 400 })
 
     // Get user role from profiles or users table
-    const { data: profile } = await supabaseAdmin.from('users').select('role').eq('id', user.id).single()
+    const { data: profile } = await supabaseAdmin.from('profiles').select('role').eq('id', user.id).single()
     const userRole = profile?.role || 'corretor'
 
     // Resolve permissions

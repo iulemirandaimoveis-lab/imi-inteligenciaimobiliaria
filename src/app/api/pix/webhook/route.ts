@@ -59,7 +59,7 @@ async function applyChargeUpdate(externalId: string, newStatus: string, rawBody:
             .eq('id', charge.transaction_id)
         // Also try legacy transactions table
         await supabaseAdmin
-            .from('transactions')
+            .from('financial_transactions')
             .update({
                 status: 'pago',
                 paid_date: new Date().toISOString().split('T')[0],
