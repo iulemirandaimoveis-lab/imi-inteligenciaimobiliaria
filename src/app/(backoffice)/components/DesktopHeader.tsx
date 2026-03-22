@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, LogOut, Settings, ChevronDown, GraduationCap, Camera, Loader2 } from 'lucide-react'
+import { Search, LogOut, Settings, ChevronDown, GraduationCap, Camera, Loader2, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from './ThemeToggle'
@@ -183,6 +183,12 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                                 </div>
                             </div>
                             <div className="p-1.5">
+                                <button onClick={() => { setOpen(false); router.push('/backoffice/perfil') }}
+                                    className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all"
+                                    style={{ color: 'var(--text-tertiary)' }}
+                                >
+                                    <User size={14} />Meu Perfil
+                                </button>
                                 <button onClick={() => { setOpen(false); router.push('/backoffice/settings') }}
                                     className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all"
                                     style={{ color: 'var(--text-tertiary)' }}

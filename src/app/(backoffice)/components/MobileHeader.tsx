@@ -52,6 +52,8 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/consultorias': 'Consultorias',
     '/backoffice/conteudo': 'Conteúdos',
     '/backoffice/agenda': 'Agenda',
+    '/backoffice/perfil': 'Meu Perfil',
+    '/backoffice/parcerias': 'Parcerias',
 }
 
 function getPageTitle(pathname: string): string {
@@ -465,7 +467,7 @@ export default function MobileHeader() {
                                 </div>
 
                                 <Link
-                                    href="/backoffice/hoje"
+                                    href="/backoffice/perfil"
                                     onClick={() => setAccountOpen(false)}
                                     className="flex items-center gap-3 px-3 py-2.5 text-sm transition-colors"
                                     style={{
@@ -476,8 +478,8 @@ export default function MobileHeader() {
                                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
-                                    <Camera size={14} className="flex-shrink-0" />
-                                    Alterar foto
+                                    <User size={14} className="flex-shrink-0" />
+                                    Meu Perfil
                                 </Link>
 
                                 <Link

@@ -81,6 +81,9 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
     )
   }
 
+  // TypeScript guard — dev must exist after above checks
+  if (!dev || !enriched) return null
+
   // Derived values
   const images: string[] = (() => {
     if (dev.gallery_images && dev.gallery_images.length > 0) return dev.gallery_images

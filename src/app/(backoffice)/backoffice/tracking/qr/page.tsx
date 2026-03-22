@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import {
     ArrowLeft, Building2, Copy, Check, QrCode, Sparkles,
     ChevronDown, Loader2, Globe, Trash2, MapPin,
-    Download, RefreshCw, Eye, BarChart2, ExternalLink,
+    Download, RefreshCw, Eye, BarChart2, ExternalLink, FileText,
     TrendingUp, Clock, User, Users, ChevronRight,
     ScanLine, MousePointer, Link2,
 } from 'lucide-react'
@@ -163,7 +163,7 @@ export default function QRGeneratorPage() {
 
             const qr = await QRCode.toDataURL(url, {
                 width: 400, margin: 2,
-                color: { dark: '#0A0A0A', light: '#FFFFFF' },
+                color: { dark: '#1A1A2E', light: '#FFFFFF' },
                 errorCorrectionLevel: 'H',
             })
             setQrDataUrl(qr)
@@ -183,6 +183,59 @@ export default function QRGeneratorPage() {
         a.download = `qr-${selectedDev?.name?.toLowerCase().replace(/\s+/g, '-') || 'link'}-${selectedSource.value}.png`
         a.click()
         toast.success('QR Code baixado!')
+    }
+
+    const handleDownloadSVG = async () => {
+        if (!shortUrl) return
+        const QRCodeLib = (await import('qrcode')).default
+        const svgString = await QRCodeLib.toString(shortUrl, {
+            type: 'svg',
+            width: 600,
+            margin: 2,
+            color: { dark: '#1A1A2E', light: '#FFFFFF' },
+            errorCorrectionLevel: 'H'
+        })
+        const blob = new Blob([svgString], { type: 'image/svg+xml' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `qr-${selectedDev?.name?.toLowerCase().replace(/\s+/g, '-') || 'link'}.svg`
+        a.click()
+        URL.revokeObjectURL(url)
+        toast.success('SVG baixado!')
+    }
+
+    const handleDownloadPDF = () => {
+        if (!qrDataUrl) return
+        const printWindow = window.open('', '_blank')
+        if (!printWindow) return
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head><title>QR Code - ${selectedDev?.name || 'IMI'}</title>
+            <style>
+                @page { size: A4; margin: 0; }
+                body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: white; font-family: 'DM Sans', sans-serif; }
+                .logo { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 48px; font-weight: 700; color: #0B1928; letter-spacing: 0.04em; margin-bottom: 8px; }
+                .tagline { font-size: 12px; color: #C49D5B; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 48px; }
+                img { width: 400px; height: 400px; }
+                .name { font-size: 24px; font-weight: 600; color: #0B1928; margin-top: 32px; }
+                .url { font-size: 14px; color: #666; margin-top: 8px; font-family: monospace; }
+                .cta { font-size: 16px; color: #C49D5B; font-weight: 600; margin-top: 24px; }
+            </style>
+            </head>
+            <body>
+                <div class="logo">IMI</div>
+                <div class="tagline">Intelig\u00EAncia Imobili\u00E1ria</div>
+                <img src="${qrDataUrl}" alt="QR Code" />
+                <div class="name">${selectedDev?.name || ''}</div>
+                <div class="url">${shortUrl}</div>
+                <div class="cta">Escaneie para ver o im\u00F3vel</div>
+            </body>
+            </html>
+        `)
+        printWindow.document.close()
+        setTimeout(() => printWindow.print(), 500)
     }
 
     const handleDelete = async (id: string) => {
@@ -466,6 +519,28 @@ export default function QRGeneratorPage() {
                         )}
                     </div>
 
+                    {/* CTA text under QR */}
+                    {qrDataUrl && (
+                        <p className="text-xs font-semibold tracking-wide" style={{ color: T.accent }}>
+                            Escaneie para ver o imóvel
+                        </p>
+                    )}
+
+                    {/* Property preview */}
+                    {qrDataUrl && selectedDev && (
+                        <div className="w-full rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(59,130,246,0.12)' }}>
+                                    <Building2 size={14} style={{ color: 'var(--info)' }} />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="text-[9px] font-bold uppercase tracking-[0.1em]" style={{ color: 'rgba(255,255,255,0.35)' }}>Imóvel vinculado</p>
+                                    <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{selectedDev.name}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Short URL */}
                     {shortUrl ? (
                         <div className="w-full">
@@ -486,10 +561,40 @@ export default function QRGeneratorPage() {
                                 <button onClick={handleDownload} disabled={!qrDataUrl}
                                     className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-30"
                                     style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)' }}
+                                    title="Download PNG"
                                 >
                                     <Download size={13} style={{ color: 'var(--success)' }} />
                                 </button>
                             </div>
+
+                            {/* Download buttons row */}
+                            <div className="flex items-center gap-2 mt-3">
+                                <button
+                                    onClick={handleDownload}
+                                    disabled={!qrDataUrl}
+                                    className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-lg text-[11px] font-bold transition-all disabled:opacity-30"
+                                    style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.2)', color: 'var(--success)' }}
+                                >
+                                    <Download size={12} /> PNG
+                                </button>
+                                <button
+                                    onClick={handleDownloadSVG}
+                                    disabled={!shortUrl}
+                                    className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-lg text-[11px] font-bold transition-all disabled:opacity-30"
+                                    style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', color: 'var(--info)' }}
+                                >
+                                    <Download size={12} /> SVG
+                                </button>
+                                <button
+                                    onClick={handleDownloadPDF}
+                                    disabled={!qrDataUrl}
+                                    className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-lg text-[11px] font-bold transition-all disabled:opacity-30"
+                                    style={{ background: `rgba(196,157,91,0.08)`, border: `1px solid rgba(196,157,91,0.2)`, color: T.accent }}
+                                >
+                                    <FileText size={12} /> PDF A4
+                                </button>
+                            </div>
+
                             {(selectedBroker || teamLabel) && (
                                 <div className="flex items-center gap-3 mt-2 justify-center">
                                     {selectedBroker && (

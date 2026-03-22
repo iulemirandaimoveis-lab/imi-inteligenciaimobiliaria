@@ -80,6 +80,9 @@ export function DesktopImovelDetail({
     )
   }
 
+  // TypeScript guard — dev must exist after above checks
+  if (!dev || !enriched) return null
+
   // Derived values
   const images: string[] = (() => {
     // Primary: gallery_images (saved by edit form)

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bed, Maximize, Bath, Car, Check, Sparkles, Building2, Waves, TreePine, Dumbbell } from 'lucide-react';
 import { Development } from '../types/development';
@@ -25,6 +26,105 @@ function getFeatureIcon(feature: string) {
         if (lower.includes(key)) return Icon;
     }
     return Check;
+}
+
+function getFeatureEmoji(feature: string): string {
+    const lower = feature.toLowerCase()
+    if (lower.includes('piscina') || lower.includes('pool')) return '🏊'
+    if (lower.includes('academia') || lower.includes('gym') || lower.includes('fitness')) return '💪'
+    if (lower.includes('churrasqueira') || lower.includes('gourmet') || lower.includes('bbq')) return '🔥'
+    if (lower.includes('playground') || lower.includes('brinquedo')) return '🎠'
+    if (lower.includes('salão') || lower.includes('festa') || lower.includes('party')) return '🎉'
+    if (lower.includes('sauna') || lower.includes('spa')) return '🧖'
+    if (lower.includes('pet') || lower.includes('animal')) return '🐾'
+    if (lower.includes('quadra') || lower.includes('esport')) return '⚽'
+    if (lower.includes('coworking') || lower.includes('trabalho')) return '💻'
+    if (lower.includes('cinema') || lower.includes('home theater')) return '🎬'
+    if (lower.includes('rooftop') || lower.includes('terraço') || lower.includes('varanda')) return '🌆'
+    if (lower.includes('jardim') || lower.includes('garden')) return '🌿'
+    if (lower.includes('segurança') || lower.includes('portaria') || lower.includes('24h')) return '🛡️'
+    if (lower.includes('elevador') || lower.includes('elevator')) return '🛗'
+    if (lower.includes('garagem') || lower.includes('vaga') || lower.includes('parking')) return '🅿️'
+    if (lower.includes('ar condicionado') || lower.includes('split')) return '❄️'
+    if (lower.includes('vista') || lower.includes('view') || lower.includes('mar')) return '🌊'
+    if (lower.includes('mobilia') || lower.includes('furnished')) return '🛋️'
+    if (lower.includes('lavanderia') || lower.includes('laundry')) return '👔'
+    if (lower.includes('bike') || lower.includes('biciclet')) return '🚲'
+    return '✨'
+}
+
+function FinancialSimulator({ price }: { price: number }) {
+    const [entrada, setEntrada] = useState(20)
+    const [prazo, setPrazo] = useState(360)
+    const [taxa, setTaxa] = useState(9.5)
+
+    if (!price || price <= 0) return null
+
+    const entradaValor = price * (entrada / 100)
+    const financiado = price - entradaValor
+    const taxaMensal = taxa / 100 / 12
+
+    // SAC
+    const amortSAC = financiado / prazo
+    const primeiraParcSAC = amortSAC + (financiado * taxaMensal)
+    const ultimaParcSAC = amortSAC + (amortSAC * taxaMensal)
+
+    // PRICE
+    const parcelaPrice = financiado * (taxaMensal * Math.pow(1 + taxaMensal, prazo)) / (Math.pow(1 + taxaMensal, prazo) - 1)
+
+    const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
+
+    return (
+        <section className="mt-8 p-6 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-bold mb-1" style={{ fontFamily: "var(--font-serif, 'Libre Baskerville', Georgia, serif)" }}>
+                Simulador Financeiro
+            </h2>
+            <p className="text-sm text-gray-500 mb-6">Simule o financiamento deste imóvel</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Entrada ({entrada}%)</label>
+                    <input type="range" min={10} max={50} step={5} value={entrada} onChange={e => setEntrada(Number(e.target.value))}
+                        className="w-full mt-2 accent-amber-600" />
+                    <p className="text-sm font-mono mt-1">{fmt(entradaValor)}</p>
+                </div>
+                <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Prazo</label>
+                    <select value={prazo} onChange={e => setPrazo(Number(e.target.value))}
+                        className="w-full mt-2 h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm">
+                        <option value={120}>10 anos (120x)</option>
+                        <option value={240}>20 anos (240x)</option>
+                        <option value={360}>30 anos (360x)</option>
+                        <option value={420}>35 anos (420x)</option>
+                    </select>
+                </div>
+                <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Taxa anual (%)</label>
+                    <input type="number" min={5} max={15} step={0.1} value={taxa} onChange={e => setTaxa(Number(e.target.value))}
+                        className="w-full mt-2 h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-mono" />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tabela SAC</p>
+                    <p className="text-2xl font-bold font-mono" style={{ color: 'var(--accent, #C49D5B)' }}>
+                        {fmt(primeiraParcSAC)}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">1ª parcela · última: {fmt(ultimaParcSAC)}</p>
+                </div>
+                <div className="p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tabela PRICE</p>
+                    <p className="text-2xl font-bold font-mono" style={{ color: 'var(--accent, #C49D5B)' }}>
+                        {fmt(parcelaPrice)}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Parcela fixa por {prazo} meses</p>
+                </div>
+            </div>
+
+            <p className="text-[10px] text-gray-400 mt-4">* Simulação aproximada. Consulte um especialista para valores exatos. Taxa de referência: financiamento imobiliário convencional.</p>
+        </section>
+    )
 }
 
 export default function DevelopmentDetails({ development }: DevelopmentDetailsProps) {
@@ -55,6 +155,23 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                     Sobre o empreendimento
                 </h2>
             </motion.div>
+
+            {/* O Que Torna Especial */}
+            {development.features && development.features.length > 0 && (
+                <motion.div variants={slideUp} className="mb-10">
+                    <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "var(--font-serif, 'Libre Baskerville', Georgia, serif)" }}>
+                        O Que Torna Especial
+                    </h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {development.features.map((feature, i) => (
+                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                                <span className="text-lg">{getFeatureEmoji(feature)}</span>
+                                <span className="text-sm font-medium">{feature}</span>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+            )}
 
             {/* Description */}
             <motion.div variants={slideUp} className="mb-12">
@@ -138,6 +255,11 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                         <p className="text-gray-900 font-bold text-base">{development.developer}</p>
                     </div>
                 </div>
+            </motion.div>
+
+            {/* Simulador Financeiro */}
+            <motion.div variants={slideUp}>
+                <FinancialSimulator price={development.priceRange.min || development.priceRange.max} />
             </motion.div>
         </motion.div>
     );
