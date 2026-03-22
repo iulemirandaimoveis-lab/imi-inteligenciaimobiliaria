@@ -3,9 +3,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  ChevronRight, Target, Loader2, Building2, Users, User,
+  Target, Loader2, Building2, Users, User,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
+import { T } from '../../../lib/theme'
+import { PageIntelHeader } from '../../../components/ui'
 
 /* ── types ─────────────────────────────────────────────────── */
 interface Objective {
@@ -37,17 +40,17 @@ function calcScore(krs: KeyResult[]) {
 }
 
 function scoreColor(score: number) {
-  if (score >= 0.7) return '#3D6FFF'
+  if (score >= 0.7) return 'var(--accent-400)'
   if (score >= 0.6) return '#34d399'
   if (score >= 0.3) return '#fbbf24'
   return '#f87171'
 }
 
-function scoreTextClass(score: number) {
-  if (score >= 0.7) return 'text-[#3D6FFF]'
-  if (score >= 0.6) return 'text-emerald-400'
-  if (score >= 0.3) return 'text-amber-400'
-  return 'text-red-400'
+function scoreTextStyle(score: number): React.CSSProperties {
+  if (score >= 0.7) return { color: T.accent }
+  if (score >= 0.6) return { color: '#34d399' }
+  if (score >= 0.3) return { color: '#fbbf24' }
+  return { color: '#f87171' }
 }
 
 const levelIcons: Record<string, typeof Building2> = {
@@ -87,8 +90,8 @@ function TreeNode({
       {/* Node */}
       <Link
         href={`/backoffice/metas/okrs/${obj.id}`}
-        className="block rounded-lg border border-white/10 p-4 hover:border-white/20 transition-colors group"
-        style={{ background: 'rgba(255,255,255,0.03)' }}
+        className="block rounded-lg p-4 transition-colors group"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
       >
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3 min-w-0">
@@ -99,23 +102,23 @@ function TreeNode({
               <Icon className="w-4 h-4" style={{ color }} />
             </div>
             <div className="min-w-0">
-              <h3 className="text-sm font-medium text-white group-hover:text-[#3D6FFF] transition-colors truncate">
+              <h3 className="text-sm font-medium truncate transition-colors" style={{ color: T.text }}>
                 {obj.title}
               </h3>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs text-white/40">{obj.department}</span>
-                <span className="text-xs text-white/30">{levelLabels[obj.level] || obj.level}</span>
+                <span className="text-xs" style={{ color: T.textMuted }}>{obj.department}</span>
+                <span className="text-xs" style={{ color: T.textDim }}>{levelLabels[obj.level] || obj.level}</span>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-            <div className="w-12 h-1.5 rounded-full overflow-hidden bg-white/10">
+            <div className="w-12 h-1.5 rounded-full overflow-hidden" style={{ background: T.hover }}>
               <div
                 className="h-full rounded-full"
                 style={{ width: `${score * 100}%`, background: color }}
               />
             </div>
-            <span className={`text-sm font-bold ${scoreTextClass(score)}`} style={{ fontFamily: 'DM Mono, monospace' }}>
+            <span className="text-sm font-bold" style={{ ...scoreTextStyle(score), fontFamily: T.font.data }}>
               {Math.round(score * 100)}%
             </span>
           </div>
@@ -128,14 +131,14 @@ function TreeNode({
           {/* Connecting line */}
           <div
             className="absolute left-4 top-0 bottom-4 w-px"
-            style={{ background: 'rgba(255,255,255,0.06)' }}
+            style={{ background: T.borderSubtle }}
           />
           {childObjs.map(child => (
             <div key={child.id} className="relative pl-6">
               {/* Horizontal connector */}
               <div
                 className="absolute left-4 top-5 w-4 h-px"
-                style={{ background: 'rgba(255,255,255,0.06)' }}
+                style={{ background: T.borderSubtle }}
               />
               <TreeNode
                 obj={child}
@@ -168,13 +171,13 @@ export default function AlinhamentoPage() {
       setKeyResults(krRes.data ?? [])
       setLoading(false)
     }
-    load()
+    load().catch(() => { toast.error('Erro ao carregar dados'); setLoading(false) })
   }, [])
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-[#3D6FFF] animate-spin" />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.accent }} />
       </div>
     )
   }
@@ -208,22 +211,17 @@ export default function AlinhamentoPage() {
   return (
     <div className="space-y-8 max-w-4xl">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 text-xs text-white/40 mb-1">
-          <Link href="/backoffice/metas" className="hover:text-white/60 transition-colors">Metas</Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-white/60">Alinhamento</span>
-        </div>
-        <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-          Mapa de Alinhamento
-        </h1>
-        <p className="text-sm text-white/50 mt-1">{QUARTER} — Visualização hierárquica dos OKRs</p>
-      </div>
+      <PageIntelHeader
+        moduleLabel="METAS \u00b7 ALINHAMENTO"
+        title="Mapa de Alinhamento"
+        subtitle={`${QUARTER} \u2014 Visualiza\u00e7\u00e3o hier\u00e1rquica dos OKRs`}
+        breadcrumbs={[{ label: 'Metas', href: '/backoffice/metas' }]}
+      />
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 text-xs text-white/50">
+      <div className="flex flex-wrap gap-4 text-xs" style={{ color: T.textMuted }}>
         <span className="flex items-center gap-1.5">
-          <Building2 className="w-3.5 h-3.5 text-[#3D6FFF]" />
+          <Building2 className="w-3.5 h-3.5" style={{ color: T.accent }} />
           Empresa
         </span>
         <span className="flex items-center gap-1.5">
@@ -234,9 +232,9 @@ export default function AlinhamentoPage() {
           <User className="w-3.5 h-3.5 text-purple-400" />
           Individual
         </span>
-        <span className="text-white/30">|</span>
+        <span style={{ color: T.textDim }}>|</span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-[#3D6FFF]" /> 70%+
+          <span className="w-2 h-2 rounded-full" style={{ background: T.accent }} /> 70%+
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-emerald-400" /> 60-69%
@@ -251,14 +249,14 @@ export default function AlinhamentoPage() {
 
       {/* Tree */}
       {objectives.length === 0 ? (
-        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-          <Target className="w-8 h-8 text-white/20 mx-auto mb-3" />
-          <p className="text-white/50 text-sm">Nenhum OKR encontrado para {QUARTER}.</p>
-          <p className="text-white/30 text-xs mt-1">Crie OKRs com relacionamento pai/filho para visualizar o alinhamento.</p>
+        <div className="rounded-lg p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <Target className="w-8 h-8 mx-auto mb-3" style={{ color: T.textDim }} />
+          <p className="text-sm" style={{ color: T.textMuted }}>Nenhum OKR encontrado para {QUARTER}.</p>
+          <p className="text-xs mt-1" style={{ color: T.textDim }}>Crie OKRs com relacionamento pai/filho para visualizar o alinhamento.</p>
           <Link
             href="/backoffice/metas/okrs/novo"
-            className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium text-[#0B1928]"
-            style={{ background: '#3D6FFF' }}
+            className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ background: T.accent, color: '#0B1928' }}
           >
             Criar OKR
           </Link>
@@ -279,8 +277,8 @@ export default function AlinhamentoPage() {
           {/* Orphan department OKRs */}
           {orphanDept.length > 0 && (
             <div className="mt-8">
-              <h3 className="text-xs font-medium text-white/30 uppercase tracking-wider mb-3">
-                Departamento (sem vínculo)
+              <h3 className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: T.textDim }}>
+                Departamento (sem v\u00ednculo)
               </h3>
               <div className="space-y-2">
                 {orphanDept.map(obj => (
@@ -299,8 +297,8 @@ export default function AlinhamentoPage() {
           {/* Orphan individual OKRs */}
           {orphanIndividual.length > 0 && (
             <div className="mt-6">
-              <h3 className="text-xs font-medium text-white/30 uppercase tracking-wider mb-3">
-                Individual (sem vínculo)
+              <h3 className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: T.textDim }}>
+                Individual (sem v\u00ednculo)
               </h3>
               <div className="space-y-2">
                 {orphanIndividual.map(obj => (

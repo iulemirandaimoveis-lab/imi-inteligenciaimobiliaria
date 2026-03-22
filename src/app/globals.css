@@ -1700,6 +1700,29 @@
     padding-bottom: max(24px, env(safe-area-inset-bottom));
   }
 
+  /* ── SAMSUNG / ANDROID TALL SCREENS ─────────────────────────  */
+  /* Prevent horizontal overflow on narrow viewports (S25 Ultra = 412px) */
+  .backoffice-root main > div {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  /* Tighter KPI grid gap on narrow phones */
+  @media (max-width: 420px) {
+    .backoffice-root .grid {
+      gap: 8px;
+    }
+  }
+
+  /* Minimum touch target for accessibility on mobile */
+  @media (max-width: 768px) {
+    .backoffice-root button,
+    .backoffice-root a[role="button"],
+    .backoffice-root [role="button"] {
+      min-height: 44px;
+    }
+  }
+
   /* ── CONTAINERS ─────────────────────────────────────────────  */
   .container-institutional {
     @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8;

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { toast } from 'sonner'
 import { ArrowLeft, FileText, Clock, Download, Eye, User, Share2, Printer } from 'lucide-react'
-
-const dmMono = { fontFamily: "'DM Mono', monospace" }
+import { T } from '../../../../lib/theme'
 
 interface ReportDetail {
   id: string
@@ -31,14 +32,14 @@ export default function ReportDetailPage() {
     fetch(`/api/invest/reports/${id}`)
       .then(r => r.json())
       .then(data => { setReport(data); setLoading(false) })
-      .catch(() => setLoading(false))
+      .catch(() => { toast.error('Erro ao carregar relatorio'); setLoading(false) })
   }, [id])
 
   if (loading) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-24 rounded-lg bg-white/5 animate-pulse" />
+          <div key={i} className="h-24 rounded-lg animate-pulse" style={{ background: T.hover }} />
         ))}
       </div>
     )
@@ -46,11 +47,11 @@ export default function ReportDetailPage() {
 
   if (!report) {
     return (
-      <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <FileText className="w-10 h-10 text-white/20 mx-auto mb-3" />
-        <h3 className="text-white/70 font-medium mb-1">Relatorio nao encontrado</h3>
-        <p className="text-white/40 text-sm mb-4">ID: {id}</p>
-        <a href="/backoffice/invest/relatorios" className="text-[#3D6FFF] text-sm hover:underline">Voltar para lista</a>
+      <div className="rounded-lg p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <FileText className="w-10 h-10 mx-auto mb-3" style={{ color: T.textDim }} />
+        <h3 className="font-medium mb-1" style={{ color: T.textMuted }}>Relatorio nao encontrado</h3>
+        <p className="text-sm mb-4" style={{ color: T.textMuted }}>ID: {id}</p>
+        <Link href="/backoffice/invest/relatorios" className="text-sm hover:underline" style={{ color: T.accent }}>Voltar para lista</Link>
       </div>
     )
   }
@@ -59,12 +60,12 @@ export default function ReportDetailPage() {
     <div className="space-y-6 max-w-4xl">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <a href="/backoffice/invest/relatorios" className="p-2 rounded-lg border border-white/10 hover:border-[#3D6FFF]/30 transition-colors">
-          <ArrowLeft className="w-4 h-4 text-white/50" />
-        </a>
+        <Link href="/backoffice/invest/relatorios" className="p-2 rounded-lg transition-colors" style={{ border: `1px solid ${T.border}` }}>
+          <ArrowLeft className="w-4 h-4" style={{ color: T.textMuted }} />
+        </Link>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-white">{report.title}</h1>
-          <div className="flex items-center gap-4 text-xs text-white/40 mt-0.5">
+          <h1 className="text-xl font-bold" style={{ color: T.text }}>{report.title}</h1>
+          <div className="flex items-center gap-4 text-xs mt-0.5" style={{ color: T.textMuted }}>
             <span className="flex items-center gap-1"><User className="w-3 h-3" />{report.author}</span>
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(report.createdAt).toLocaleDateString('pt-BR')}</span>
             <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{report.views} views</span>
@@ -72,13 +73,13 @@ export default function ReportDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="p-2 rounded-[6px] border border-white/10 hover:border-white/20 transition-colors">
-            <Share2 className="w-4 h-4 text-white/50" />
+          <button className="p-2 rounded-[6px] transition-colors" style={{ border: `1px solid ${T.border}` }}>
+            <Share2 className="w-4 h-4" style={{ color: T.textMuted }} />
           </button>
-          <button className="p-2 rounded-[6px] border border-white/10 hover:border-white/20 transition-colors">
-            <Printer className="w-4 h-4 text-white/50" />
+          <button className="p-2 rounded-[6px] transition-colors" style={{ border: `1px solid ${T.border}` }}>
+            <Printer className="w-4 h-4" style={{ color: T.textMuted }} />
           </button>
-          <button className="flex items-center gap-2 px-3 py-2 rounded-[6px] text-sm font-medium text-[#0B1928]" style={{ background: '#3D6FFF' }}>
+          <button className="flex items-center gap-2 px-3 py-2 rounded-[6px] text-sm font-medium" style={{ background: T.accent, color: '#0B1928' }}>
             <Download className="w-4 h-4" />
             PDF
           </button>
@@ -89,7 +90,7 @@ export default function ReportDetailPage() {
       {report.tags && report.tags.length > 0 && (
         <div className="flex gap-2">
           {report.tags.map(tag => (
-            <span key={tag} className="text-xs px-2 py-1 rounded-[6px] border border-white/10 text-white/50">
+            <span key={tag} className="text-xs px-2 py-1 rounded-[6px]" style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>
               {tag}
             </span>
           ))}
@@ -97,30 +98,30 @@ export default function ReportDetailPage() {
       )}
 
       {/* Summary */}
-      <div className="rounded-lg border border-[#3D6FFF]/20 p-5" style={{ background: 'rgba(200,164,74,0.05)' }}>
-        <h3 className="text-xs text-[#3D6FFF] font-semibold mb-2">RESUMO EXECUTIVO</h3>
-        <p className="text-sm text-white/70 leading-relaxed">{report.summary}</p>
+      <div className="rounded-lg p-5" style={{ border: `1px solid ${T.borderActive}`, background: T.activeBg }}>
+        <h3 className="text-xs font-semibold mb-2" style={{ color: T.accent }}>RESUMO EXECUTIVO</h3>
+        <p className="text-sm leading-relaxed" style={{ color: T.textMuted }}>{report.summary}</p>
       </div>
 
       {/* Sections */}
       {report.sections && report.sections.length > 0 ? (
         <div className="space-y-4">
           {report.sections.map((section, i) => (
-            <div key={i} className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-              <h3 className="text-sm font-semibold text-white mb-3">{section.title}</h3>
-              <p className="text-sm text-white/60 leading-relaxed whitespace-pre-line">{section.content}</p>
+            <div key={i} className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <h3 className="text-sm font-semibold mb-3" style={{ color: T.text }}>{section.title}</h3>
+              <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: T.textMuted }}>{section.content}</p>
             </div>
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
-          <p className="text-white/40 text-sm">Conteudo do relatorio sera exibido aqui.</p>
+        <div className="rounded-lg p-8 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <p className="text-sm" style={{ color: T.textMuted }}>Conteudo do relatorio sera exibido aqui.</p>
         </div>
       )}
 
       {/* Metadata */}
-      <div className="rounded-lg border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.01)' }}>
-        <div className="flex items-center justify-between text-xs text-white/20">
+      <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.borderSubtle}` }}>
+        <div className="flex items-center justify-between text-xs" style={{ color: T.textDim }}>
           <span>Tipo: {report.type}</span>
           <span>Status: {report.status}</span>
           <span>Atualizado: {new Date(report.updatedAt).toLocaleDateString('pt-BR')}</span>

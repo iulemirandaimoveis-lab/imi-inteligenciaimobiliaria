@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { toast } from 'sonner'
 import { ArrowLeft, TrendingUp, DollarSign, Building, BarChart3, Scale, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react'
-
-const dmMono = { fontFamily: "'DM Mono', monospace" }
+import { T } from '../../../../lib/theme'
 
 type Tab = 'overview' | 'cashflow' | 'financing' | 'scenarios' | 'benchmarks' | 'fiscal'
 
@@ -49,14 +50,14 @@ export default function SimulacaoDetailPage() {
     fetch(`/api/invest/simulations/${id}`)
       .then(r => r.json())
       .then(data => { setSim(data); setLoading(false) })
-      .catch(() => setLoading(false))
+      .catch(() => { toast.error('Erro ao carregar simulacao'); setLoading(false) })
   }, [id])
 
   if (loading) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-20 rounded-lg bg-white/5 animate-pulse" />
+          <div key={i} className="h-20 rounded-lg animate-pulse" style={{ background: T.hover }} />
         ))}
       </div>
     )
@@ -64,11 +65,11 @@ export default function SimulacaoDetailPage() {
 
   if (!sim) {
     return (
-      <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <BarChart3 className="w-10 h-10 text-white/20 mx-auto mb-3" />
-        <h3 className="text-white/70 font-medium mb-1">Simulacao nao encontrada</h3>
-        <p className="text-white/40 text-sm mb-4">ID: {id}</p>
-        <a href="/backoffice/invest/simulacoes" className="text-gold text-sm hover:underline">Voltar para lista</a>
+      <div className="rounded-lg p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <BarChart3 className="w-10 h-10 mx-auto mb-3" style={{ color: T.textDim }} />
+        <h3 className="font-medium mb-1" style={{ color: T.textMuted }}>Simulacao nao encontrada</h3>
+        <p className="text-sm mb-4" style={{ color: T.textMuted }}>ID: {id}</p>
+        <Link href="/backoffice/invest/simulacoes" className="text-sm hover:underline" style={{ color: T.accent }}>Voltar para lista</Link>
       </div>
     )
   }
@@ -77,16 +78,16 @@ export default function SimulacaoDetailPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <a href="/backoffice/invest/simulacoes" className="p-2 rounded-lg border border-white/10 hover:border-gold/30 transition-colors">
-          <ArrowLeft className="w-4 h-4 text-white/50" />
-        </a>
+        <Link href="/backoffice/invest/simulacoes" className="p-2 rounded-lg transition-colors" style={{ border: `1px solid ${T.border}` }}>
+          <ArrowLeft className="w-4 h-4" style={{ color: T.textMuted }} />
+        </Link>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-white">{sim.propertyType} — {sim.city}</h1>
-          <p className="text-xs text-white/40">{sim.market} | Criada em {new Date(sim.createdAt).toLocaleDateString('pt-BR')}</p>
+          <h1 className="text-xl font-bold" style={{ color: T.text }}>{sim.propertyType} — {sim.city}</h1>
+          <p className="text-xs" style={{ color: T.textMuted }}>{sim.market} | Criada em {new Date(sim.createdAt).toLocaleDateString('pt-BR')}</p>
         </div>
         <div className="text-right">
-          <div className="text-xs text-white/40">TIR</div>
-          <div className={`text-2xl font-bold ${sim.irr >= 0 ? 'text-emerald-400' : 'text-red-400'}`} style={dmMono}>
+          <div className="text-xs" style={{ color: T.textMuted }}>TIR</div>
+          <div className={`text-2xl font-bold ${sim.irr >= 0 ? 'text-emerald-400' : 'text-red-400'}`} style={{ fontFamily: T.font.data }}>
             {sim.irr.toFixed(1)}%
           </div>
         </div>
@@ -102,22 +103,25 @@ export default function SimulacaoDetailPage() {
           { label: 'VPL', value: `R$ ${(sim.npv / 1000).toFixed(0)}k`, positive: sim.npv > 0 },
           { label: 'Renda Liq', value: `R$ ${sim.monthlyNet.toLocaleString('pt-BR')}`, positive: sim.monthlyNet > 0 },
         ].map(kpi => (
-          <div key={kpi.label} className="rounded-lg p-3 border border-white/10" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <div className="text-xs text-white/40 mb-1">{kpi.label}</div>
-            <div className={`text-sm font-bold ${kpi.positive ? 'text-white' : 'text-red-400'}`} style={dmMono}>{kpi.value}</div>
+          <div key={kpi.label} className="rounded-lg p-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="text-xs mb-1" style={{ color: T.textMuted }}>{kpi.label}</div>
+            <div className={`text-sm font-bold ${kpi.positive ? '' : 'text-red-400'}`} style={{ fontFamily: T.font.data, color: kpi.positive ? T.text : undefined }}>{kpi.value}</div>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-white/10 overflow-x-auto">
+      <div className="flex gap-1 overflow-x-auto" style={{ borderBottom: `1px solid ${T.border}` }}>
         {tabs.map(t => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
-              tab === t.key ? 'border-gold text-gold' : 'border-transparent text-white/40 hover:text-white/60'
-            }`}
+            className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap"
+            style={
+              tab === t.key
+                ? { borderBottomColor: T.accent, color: T.accent }
+                : { borderBottomColor: 'transparent', color: T.textMuted }
+            }
           >
             <t.icon className="w-3.5 h-3.5" />
             {t.label}
@@ -126,10 +130,10 @@ export default function SimulacaoDetailPage() {
       </div>
 
       {/* Tab content */}
-      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {tab === 'overview' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-white">Resumo do Investimento</h3>
+            <h3 className="text-sm font-semibold" style={{ color: T.text }}>Resumo do Investimento</h3>
             <div className="grid grid-cols-2 gap-4">
               {[
                 { label: 'Mercado', value: sim.market },
@@ -141,9 +145,9 @@ export default function SimulacaoDetailPage() {
                 { label: 'Valorizacao', value: `${sim.appreciation}% a.a.` },
                 { label: 'Horizonte', value: `${sim.horizon} anos` },
               ].map(row => (
-                <div key={row.label} className="flex justify-between py-2 border-b border-white/5">
-                  <span className="text-xs text-white/40">{row.label}</span>
-                  <span className="text-sm text-white" style={dmMono}>{row.value}</span>
+                <div key={row.label} className="flex justify-between py-2" style={{ borderBottom: `1px solid ${T.borderSubtle}` }}>
+                  <span className="text-xs" style={{ color: T.textMuted }}>{row.label}</span>
+                  <span className="text-sm" style={{ color: T.text, fontFamily: T.font.data }}>{row.value}</span>
                 </div>
               ))}
             </div>
@@ -152,7 +156,7 @@ export default function SimulacaoDetailPage() {
 
         {tab === 'cashflow' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-white">Projecao de Fluxo de Caixa</h3>
+            <h3 className="text-sm font-semibold" style={{ color: T.text }}>Projecao de Fluxo de Caixa</h3>
             <div className="space-y-2">
               {Array.from({ length: Math.min(sim.horizon, 10) }, (_, i) => {
                 const year = i + 1
@@ -163,11 +167,11 @@ export default function SimulacaoDetailPage() {
                 const pct = (net / maxNet) * 100
                 return (
                   <div key={year} className="flex items-center gap-3">
-                    <span className="text-xs text-white/40 w-12" style={dmMono}>Ano {year}</span>
-                    <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                      <div className="h-full rounded-full" style={{ width: `${Math.min(pct, 100)}%`, background: 'linear-gradient(90deg, #3D6FFF, #34d399)' }} />
+                    <span className="text-xs w-12" style={{ color: T.textMuted, fontFamily: T.font.data }}>Ano {year}</span>
+                    <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: T.hover }}>
+                      <div className="h-full rounded-full" style={{ width: `${Math.min(pct, 100)}%`, background: `linear-gradient(90deg, var(--accent-400), #34d399)` }} />
                     </div>
-                    <span className="text-xs text-white/60 w-24 text-right" style={dmMono}>
+                    <span className="text-xs w-24 text-right" style={{ color: T.textMuted, fontFamily: T.font.data }}>
                       R$ {(net / 1000).toFixed(0)}k
                     </span>
                   </div>
@@ -179,7 +183,7 @@ export default function SimulacaoDetailPage() {
 
         {tab === 'financing' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-white">Simulacao de Financiamento</h3>
+            <h3 className="text-sm font-semibold" style={{ color: T.text }}>Simulacao de Financiamento</h3>
             <div className="grid grid-cols-2 gap-4">
               {[
                 { label: 'Valor Financiado', value: `R$ ${((sim.purchasePrice * (100 - sim.downPayment)) / 100000).toFixed(0)}k` },
@@ -189,9 +193,9 @@ export default function SimulacaoDetailPage() {
                 { label: 'Parcela Inicial', value: `R$ ${((sim.purchasePrice * (100 - sim.downPayment) / 100) * (sim.financingRate / 1200) / (1 - Math.pow(1 + sim.financingRate / 1200, -360))).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}` },
                 { label: 'CET Estimado', value: `${(sim.financingRate + 0.8).toFixed(1)}% a.a.` },
               ].map(row => (
-                <div key={row.label} className="rounded-lg p-3 border border-white/5" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                  <div className="text-xs text-white/40 mb-1">{row.label}</div>
-                  <div className="text-sm font-medium text-white" style={dmMono}>{row.value}</div>
+                <div key={row.label} className="rounded-lg p-3" style={{ background: T.surface, border: `1px solid ${T.borderSubtle}` }}>
+                  <div className="text-xs mb-1" style={{ color: T.textMuted }}>{row.label}</div>
+                  <div className="text-sm font-medium" style={{ color: T.text, fontFamily: T.font.data }}>{row.value}</div>
                 </div>
               ))}
             </div>
@@ -200,20 +204,20 @@ export default function SimulacaoDetailPage() {
 
         {tab === 'scenarios' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-white">Analise de Cenarios</h3>
+            <h3 className="text-sm font-semibold" style={{ color: T.text }}>Analise de Cenarios</h3>
             {[
               { label: 'Otimista', irr: sim.irr * 1.3, color: '#34d399', desc: 'Valorizacao acima da media + ocupacao 100%' },
-              { label: 'Base', irr: sim.irr, color: '#3D6FFF', desc: 'Cenario projetado com premissas atuais' },
+              { label: 'Base', irr: sim.irr, color: T.accent, desc: 'Cenario projetado com premissas atuais' },
               { label: 'Pessimista', irr: sim.irr * 0.5, color: '#fbbf24', desc: 'Vacancia 20% + valorizacao abaixo do IPCA' },
               { label: 'Estresse', irr: sim.irr * 0.1, color: '#f87171', desc: 'Queda de precos + vacancia alta + juros altos' },
             ].map(s => (
-              <div key={s.label} className="flex items-center gap-4 p-3 rounded-lg border border-white/5" style={{ background: 'rgba(255,255,255,0.03)' }}>
+              <div key={s.label} className="flex items-center gap-4 p-3 rounded-lg" style={{ background: T.surface, border: `1px solid ${T.borderSubtle}` }}>
                 <div className="w-2 h-10 rounded-full" style={{ background: s.color }} />
                 <div className="flex-1">
-                  <div className="text-sm text-white font-medium">{s.label}</div>
-                  <div className="text-xs text-white/40">{s.desc}</div>
+                  <div className="text-sm font-medium" style={{ color: T.text }}>{s.label}</div>
+                  <div className="text-xs" style={{ color: T.textMuted }}>{s.desc}</div>
                 </div>
-                <div className={`text-lg font-bold`} style={{ ...dmMono, color: s.color }}>
+                <div className="text-lg font-bold" style={{ fontFamily: T.font.data, color: s.color }}>
                   {s.irr.toFixed(1)}%
                 </div>
               </div>
@@ -223,23 +227,23 @@ export default function SimulacaoDetailPage() {
 
         {tab === 'benchmarks' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-white">Comparacao com Benchmarks</h3>
+            <h3 className="text-sm font-semibold" style={{ color: T.text }}>Comparacao com Benchmarks</h3>
             {[
               { label: 'CDI', value: 13.25, color: '#60a5fa' },
               { label: 'IPCA + 6%', value: 10.5, color: '#a78bfa' },
               { label: 'Poupanca', value: 7.5, color: '#94a3b8' },
               { label: 'FIIs (IFIX)', value: 11.2, color: '#34d399' },
-              { label: 'Esta Simulacao', value: sim.irr, color: '#3D6FFF' },
+              { label: 'Esta Simulacao', value: sim.irr, color: T.accent },
             ].sort((a, b) => b.value - a.value).map(b => {
               const max = Math.max(sim.irr, 15)
               const pct = (b.value / max) * 100
               return (
                 <div key={b.label} className="flex items-center gap-3">
-                  <span className={`text-xs w-28 ${b.label === 'Esta Simulacao' ? 'text-gold font-semibold' : 'text-white/50'}`}>{b.label}</span>
-                  <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                  <span className={`text-xs w-28 ${b.label === 'Esta Simulacao' ? 'font-semibold' : ''}`} style={{ color: b.label === 'Esta Simulacao' ? T.accent : T.textMuted }}>{b.label}</span>
+                  <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: T.hover }}>
                     <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(pct, 100)}%`, background: b.color }} />
                   </div>
-                  <span className={`text-xs w-14 text-right ${b.label === 'Esta Simulacao' ? 'text-gold font-bold' : 'text-white/60'}`} style={dmMono}>
+                  <span className={`text-xs w-14 text-right ${b.label === 'Esta Simulacao' ? 'font-bold' : ''}`} style={{ fontFamily: T.font.data, color: b.label === 'Esta Simulacao' ? T.accent : T.textMuted }}>
                     {b.value.toFixed(1)}%
                   </span>
                 </div>
@@ -250,7 +254,7 @@ export default function SimulacaoDetailPage() {
 
         {tab === 'fiscal' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-white">Impacto Fiscal</h3>
+            <h3 className="text-sm font-semibold" style={{ color: T.text }}>Impacto Fiscal</h3>
             <div className="grid grid-cols-2 gap-4">
               {[
                 { label: 'ITBI (compra)', value: `R$ ${(sim.purchasePrice * 0.03 / 1000).toFixed(0)}k`, desc: '3% sobre valor venal' },
@@ -260,10 +264,10 @@ export default function SimulacaoDetailPage() {
                 { label: 'Depreciacao', value: `R$ ${(sim.purchasePrice * 0.04 / 12 / 1000).toFixed(1)}k/mes`, desc: '4% a.a. sobre construcao' },
                 { label: 'Economia Anual', value: `R$ ${(sim.purchasePrice * 0.04 * 0.275 / 1000).toFixed(0)}k`, desc: 'Beneficio fiscal depreciacao' },
               ].map(row => (
-                <div key={row.label} className="rounded-lg p-3 border border-white/5" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                  <div className="text-xs text-white/40 mb-1">{row.label}</div>
-                  <div className="text-sm font-medium text-white mb-0.5" style={dmMono}>{row.value}</div>
-                  <div className="text-[10px] text-white/30">{row.desc}</div>
+                <div key={row.label} className="rounded-lg p-3" style={{ background: T.surface, border: `1px solid ${T.borderSubtle}` }}>
+                  <div className="text-xs mb-1" style={{ color: T.textMuted }}>{row.label}</div>
+                  <div className="text-sm font-medium mb-0.5" style={{ color: T.text, fontFamily: T.font.data }}>{row.value}</div>
+                  <div className="text-[10px]" style={{ color: T.textDim }}>{row.desc}</div>
                 </div>
               ))}
             </div>

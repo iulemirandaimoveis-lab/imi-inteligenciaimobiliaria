@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  Activity, Loader2, ChevronRight, TrendingUp, TrendingDown,
+  Activity, Loader2, TrendingUp, TrendingDown,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { T } from '../../../lib/theme'
+import { PageIntelHeader } from '../../../components/ui'
 
 /* ── types ─────────────────────────────────────────────────── */
 interface KpiDef {
@@ -102,7 +104,7 @@ export default function KPIsDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-gold animate-spin" />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.accent }} />
       </div>
     )
   }
@@ -110,19 +112,12 @@ export default function KPIsDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-white/40 mb-1">
-            <Link href="/backoffice/metas" className="hover:text-white/60 transition-colors">Metas</Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-white/60">KPIs</span>
-          </div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-            KPIs
-          </h1>
-          <p className="text-sm text-white/50 mt-1">Indicadores-chave de performance</p>
-        </div>
-      </div>
+      <PageIntelHeader
+        moduleLabel="METAS · KPI"
+        title="KPIs"
+        subtitle="Indicadores-chave de performance"
+        breadcrumbs={[{ label: 'Metas', href: '/backoffice/metas' }]}
+      />
 
       {/* Department filter */}
       <div className="flex gap-2 overflow-x-auto pb-1">
@@ -130,11 +125,12 @@ export default function KPIsDashboard() {
           <button
             key={d}
             onClick={() => setDept(d)}
-            className={`px-3 py-1.5 rounded-[6px] text-xs font-medium whitespace-nowrap transition-colors ${
+            className="px-3 py-1.5 rounded-[6px] text-xs font-medium whitespace-nowrap transition-colors"
+            style={
               dept === d
-                ? 'bg-gold/20 text-gold border border-gold/30'
-                : 'bg-white/[0.03] text-white/50 border border-white/10 hover:text-white/70'
-            }`}
+                ? { background: T.activeBg, color: T.accent, border: `1px solid ${T.borderActive}` }
+                : { background: T.surface, color: T.textMuted, border: `1px solid ${T.border}` }
+            }
           >
             {d}
           </button>
@@ -143,10 +139,13 @@ export default function KPIsDashboard() {
 
       {/* KPI Grid */}
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-          <Activity className="w-8 h-8 text-white/20 mx-auto mb-3" />
-          <p className="text-white/50 text-sm">Nenhum KPI cadastrado.</p>
-          <p className="text-white/30 text-xs mt-1">Configure indicadores para acompanhar a performance.</p>
+        <div
+          className="rounded-lg p-12 text-center"
+          style={{ background: T.surface, border: `1px solid ${T.border}` }}
+        >
+          <Activity className="w-8 h-8 mx-auto mb-3" style={{ color: T.textDim }} />
+          <p className="text-sm" style={{ color: T.textMuted }}>Nenhum KPI cadastrado.</p>
+          <p className="text-xs mt-1" style={{ color: T.textDim }}>Configure indicadores para acompanhar a performance.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -165,12 +164,12 @@ export default function KPIsDashboard() {
               <Link
                 key={kpi.id}
                 href={`/backoffice/metas/kpis/${kpi.id}`}
-                className="rounded-lg border border-white/10 p-5 hover:border-white/20 transition-colors group"
-                style={{ background: 'rgba(255,255,255,0.03)' }}
+                className="rounded-lg p-5 transition-colors group"
+                style={{ background: T.surface, border: `1px solid ${T.border}` }}
               >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm text-white/70 group-hover:text-white transition-colors truncate">
+                  <span className="text-sm transition-colors truncate" style={{ color: T.textMuted }}>
                     {kpi.name}
                   </span>
                   <span className={`w-2 h-2 rounded-full ${st.dot}`} />
@@ -178,10 +177,10 @@ export default function KPIsDashboard() {
 
                 {/* Current value */}
                 <div className="flex items-baseline gap-2 mb-3">
-                  <p className="text-2xl font-bold text-white" style={{ fontFamily: 'DM Mono, monospace' }}>
+                  <p className="text-2xl font-bold" style={{ color: T.text, fontFamily: T.font.data }}>
                     {fmt(currentValue)}
                   </p>
-                  {kpi.unit && <span className="text-xs text-white/40">{kpi.unit}</span>}
+                  {kpi.unit && <span className="text-xs" style={{ color: T.textDim }}>{kpi.unit}</span>}
                   {readings.length >= 2 && (
                     <span className={`flex items-center gap-0.5 text-xs ${trendUp ? 'text-emerald-400' : 'text-red-400'}`}>
                       {trendUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
@@ -199,7 +198,7 @@ export default function KPIsDashboard() {
                   <span className={`px-2 py-0.5 rounded-[6px] text-xs ${st.bg} ${st.text}`}>
                     {status === 'green' ? 'Saudável' : status === 'yellow' ? 'Atenção' : 'Crítico'}
                   </span>
-                  <span className="text-xs text-white/30">
+                  <span className="text-xs" style={{ color: T.textDim }}>
                     Meta: {fmt(kpi.target_value)}
                   </span>
                 </div>

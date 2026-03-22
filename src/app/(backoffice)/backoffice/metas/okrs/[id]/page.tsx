@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { T } from '../../../../lib/theme'
 
 /* ── types ─────────────────────────────────────────────────── */
 interface Objective {
@@ -49,16 +50,14 @@ function calcScore(kr: KeyResult) {
 }
 
 function scoreColor(score: number) {
-  if (score >= 0.7) return { bg: 'bg-gold/20', text: 'text-gold', bar: '#3D6FFF' }
-  if (score >= 0.6) return { bg: 'bg-emerald-500/20', text: 'text-emerald-400', bar: '#34d399' }
-  if (score >= 0.3) return { bg: 'bg-amber-500/20', text: 'text-amber-400', bar: '#fbbf24' }
-  return { bg: 'bg-red-500/20', text: 'text-red-400', bar: '#f87171' }
+  if (score >= 0.7) return { bg: T.activeBg, text: T.accent, bar: 'var(--accent-400)' }
+  if (score >= 0.6) return { bg: 'rgba(52,211,153,0.15)', text: '#34d399', bar: '#34d399' }
+  if (score >= 0.3) return { bg: 'rgba(251,191,36,0.15)', text: '#fbbf24', bar: '#fbbf24' }
+  return { bg: 'rgba(248,113,113,0.15)', text: '#f87171', bar: '#f87171' }
 }
 
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(v)
 const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
-
-const inputCls = 'w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-colors'
 
 /* ── component ─────────────────────────────────────────────── */
 export default function OKRDetailPage() {
@@ -91,7 +90,7 @@ export default function OKRDetailPage() {
     setLoading(false)
   }
 
-  useEffect(() => { loadData() }, [id])
+  useEffect(() => { loadData().catch(() => { toast.error('Erro ao carregar dados'); setLoading(false) }) }, [id])
 
   async function handleCheckIn() {
     if (!checkInKR || !checkInValue) return
@@ -131,17 +130,17 @@ export default function OKRDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-gold animate-spin" />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.accent }} />
       </div>
     )
   }
 
   if (!obj) {
     return (
-      <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-        <Target className="w-8 h-8 text-white/20 mx-auto mb-3" />
-        <p className="text-white/50 text-sm">OKR não encontrado.</p>
-        <Link href="/backoffice/metas/okrs" className="text-gold text-sm mt-2 inline-block hover:underline">
+      <div className="rounded-lg p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <Target className="w-8 h-8 mx-auto mb-3" style={{ color: T.textDim }} />
+        <p className="text-sm" style={{ color: T.textMuted }}>OKR n\u00e3o encontrado.</p>
+        <Link href="/backoffice/metas/okrs" className="text-sm mt-2 inline-block hover:underline" style={{ color: T.accent }}>
           Voltar para OKRs
         </Link>
       </div>
@@ -157,37 +156,37 @@ export default function OKRDetailPage() {
     <div className="space-y-8 max-w-4xl">
       {/* Breadcrumb */}
       <div>
-        <div className="flex items-center gap-2 text-xs text-white/40 mb-1">
-          <Link href="/backoffice/metas" className="hover:text-white/60 transition-colors">Metas</Link>
+        <div className="flex items-center gap-2 text-xs mb-1" style={{ color: T.textMuted }}>
+          <Link href="/backoffice/metas" className="hover:opacity-80 transition-colors">Metas</Link>
           <ChevronRight className="w-3 h-3" />
-          <Link href="/backoffice/metas/okrs" className="hover:text-white/60 transition-colors">OKRs</Link>
+          <Link href="/backoffice/metas/okrs" className="hover:opacity-80 transition-colors">OKRs</Link>
           <ChevronRight className="w-3 h-3" />
-          <span className="text-white/60 truncate max-w-[200px]">{obj.title}</span>
+          <span className="truncate max-w-[200px]" style={{ color: T.textMuted }}>{obj.title}</span>
         </div>
       </div>
 
       {/* Objective Header */}
-      <div className="rounded-lg border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-white">{obj.title}</h1>
-            {obj.description && <p className="text-sm text-white/50 mt-2">{obj.description}</p>}
+            <h1 className="text-xl font-bold" style={{ color: T.text }}>{obj.title}</h1>
+            {obj.description && <p className="text-sm mt-2" style={{ color: T.textMuted }}>{obj.description}</p>}
             <div className="flex items-center gap-2 mt-3">
-              <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/50">{obj.department}</span>
-              <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/40">{obj.quarter}</span>
-              <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/40">{obj.level}</span>
+              <span className="px-2 py-0.5 rounded-[6px] text-xs" style={{ background: T.hover, color: T.textMuted }}>{obj.department}</span>
+              <span className="px-2 py-0.5 rounded-[6px] text-xs" style={{ background: T.hover, color: T.textMuted }}>{obj.quarter}</span>
+              <span className="px-2 py-0.5 rounded-[6px] text-xs" style={{ background: T.hover, color: T.textMuted }}>{obj.level}</span>
             </div>
           </div>
           <div className="text-right ml-4">
-            <p className={`text-3xl font-bold ${sc.text}`} style={{ fontFamily: 'DM Mono, monospace' }}>
+            <p className="text-3xl font-bold" style={{ color: sc.text, fontFamily: T.font.data }}>
               {Math.round(avgScore * 100)}%
             </p>
-            <span className={`px-2 py-0.5 rounded-[6px] text-xs ${sc.bg} ${sc.text}`}>
+            <span className="px-2 py-0.5 rounded-[6px] text-xs" style={{ background: sc.bg, color: sc.text }}>
               Score
             </span>
           </div>
         </div>
-        <div className="h-3 rounded-full overflow-hidden bg-white/10">
+        <div className="h-3 rounded-full overflow-hidden" style={{ background: T.hover }}>
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{ width: `${avgScore * 100}%`, background: sc.bar }}
@@ -197,10 +196,10 @@ export default function OKRDetailPage() {
 
       {/* Key Results */}
       <div>
-        <h2 className="text-lg font-semibold text-white mb-4">Key Results</h2>
+        <h2 className="text-lg font-semibold mb-4" style={{ color: T.text }}>Key Results</h2>
         {krs.length === 0 ? (
-          <div className="rounded-lg border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-white/50 text-sm">Nenhum Key Result definido.</p>
+          <div className="rounded-lg p-8 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <p className="text-sm" style={{ color: T.textMuted }}>Nenhum Key Result definido.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -212,13 +211,13 @@ export default function OKRDetailPage() {
               return (
                 <div
                   key={kr.id}
-                  className="rounded-lg border border-white/10 p-5"
-                  style={{ background: 'rgba(255,255,255,0.03)' }}
+                  className="rounded-lg p-5"
+                  style={{ background: T.surface, border: `1px solid ${T.border}` }}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-sm font-semibold text-white">{kr.title}</h3>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-white/40">
+                      <h3 className="text-sm font-semibold" style={{ color: T.text }}>{kr.title}</h3>
+                      <div className="flex items-center gap-3 mt-1 text-xs" style={{ color: T.textMuted }}>
                         {kr.unit && <span>Unidade: {kr.unit}</span>}
                         {kr.due_date && (
                           <span className="flex items-center gap-1">
@@ -228,32 +227,33 @@ export default function OKRDetailPage() {
                         )}
                       </div>
                     </div>
-                    <span className={`text-lg font-bold ${krSc.text}`} style={{ fontFamily: 'DM Mono, monospace' }}>
+                    <span className="text-lg font-bold" style={{ color: krSc.text, fontFamily: T.font.data }}>
                       {Math.round(score * 100)}%
                     </span>
                   </div>
 
                   {/* Progress */}
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-xs text-white/40 w-16" style={{ fontFamily: 'DM Mono, monospace' }}>
+                    <span className="text-xs w-16" style={{ color: T.textMuted, fontFamily: T.font.data }}>
                       {fmt(kr.start_value)}
                     </span>
-                    <div className="flex-1 h-2 rounded-full overflow-hidden bg-white/10">
+                    <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: T.hover }}>
                       <div
                         className="h-full rounded-full transition-all duration-700"
                         style={{ width: `${score * 100}%`, background: krSc.bar }}
                       />
                     </div>
-                    <span className="text-xs text-white/40 w-16 text-right" style={{ fontFamily: 'DM Mono, monospace' }}>
+                    <span className="text-xs w-16 text-right" style={{ color: T.textMuted, fontFamily: T.font.data }}>
                       {fmt(kr.target_value)}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs text-white/40 mb-4">
-                    <span>Atual: <span className="text-white font-medium" style={{ fontFamily: 'DM Mono, monospace' }}>{fmt(kr.current_value)}</span></span>
+                  <div className="flex items-center justify-between text-xs mb-4" style={{ color: T.textMuted }}>
+                    <span>Atual: <span className="font-medium" style={{ color: T.text, fontFamily: T.font.data }}>{fmt(kr.current_value)}</span></span>
                     <button
                       onClick={() => setCheckInKR(checkInKR === kr.id ? null : kr.id)}
-                      className="flex items-center gap-1 text-gold hover:text-gold-400 transition-colors"
+                      className="flex items-center gap-1 transition-colors hover:opacity-80"
+                      style={{ color: T.accent }}
                     >
                       <Plus className="w-3 h-3" />
                       Novo Check-in
@@ -262,40 +262,42 @@ export default function OKRDetailPage() {
 
                   {/* Inline check-in form */}
                   {checkInKR === kr.id && (
-                    <div className="rounded-lg border border-gold/20 p-4 mb-4 space-y-3" style={{ background: 'rgba(200,164,74,0.05)' }}>
+                    <div className="rounded-lg p-4 mb-4 space-y-3" style={{ background: T.activeBg, border: `1px solid ${T.borderActive}` }}>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-gold">Novo Check-in</span>
-                        <button onClick={() => setCheckInKR(null)} className="text-white/30 hover:text-white/60">
+                        <span className="text-xs font-medium" style={{ color: T.accent }}>Novo Check-in</span>
+                        <button onClick={() => setCheckInKR(null)} className="hover:opacity-80" style={{ color: T.textDim }}>
                           <X className="w-3.5 h-3.5" />
                         </button>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs text-white/50 mb-1">Valor Atual</label>
+                          <label className="block text-xs mb-1" style={{ color: T.textMuted }}>Valor Atual</label>
                           <input
                             type="number"
                             value={checkInValue}
                             onChange={e => setCheckInValue(e.target.value)}
                             placeholder={String(kr.current_value)}
-                            className={inputCls}
+                            className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none transition-colors"
+                            style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-white/50 mb-1">Nota (opcional)</label>
+                          <label className="block text-xs mb-1" style={{ color: T.textMuted }}>Nota (opcional)</label>
                           <input
                             type="text"
                             value={checkInNote}
                             onChange={e => setCheckInNote(e.target.value)}
                             placeholder="O que mudou?"
-                            className={inputCls}
+                            className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none transition-colors"
+                            style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
                           />
                         </div>
                       </div>
                       <button
                         onClick={handleCheckIn}
                         disabled={savingCheckIn || !checkInValue}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-[#0B1928] disabled:opacity-50"
-                        style={{ background: '#3D6FFF' }}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-50"
+                        style={{ background: T.accent, color: '#0B1928' }}
                       >
                         {savingCheckIn ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
                         Registrar
@@ -305,15 +307,15 @@ export default function OKRDetailPage() {
 
                   {/* Check-in history */}
                   {krCheckIns.length > 0 && (
-                    <div className="border-t border-white/[0.06] pt-3 mt-3">
-                      <p className="text-xs text-white/40 mb-2">Histórico de Check-ins</p>
+                    <div className="pt-3 mt-3" style={{ borderTop: `1px solid ${T.borderSubtle}` }}>
+                      <p className="text-xs mb-2" style={{ color: T.textMuted }}>Hist\u00f3rico de Check-ins</p>
                       <div className="space-y-1.5">
                         {krCheckIns.slice(0, 5).map(ci => (
                           <div key={ci.id} className="flex items-center justify-between text-xs">
-                            <span className="text-white/50">{fmtDate(ci.created_at)}</span>
+                            <span style={{ color: T.textMuted }}>{fmtDate(ci.created_at)}</span>
                             <div className="flex items-center gap-2">
-                              {ci.note && <span className="text-white/30 truncate max-w-[200px]">{ci.note}</span>}
-                              <span className="text-white font-medium" style={{ fontFamily: 'DM Mono, monospace' }}>
+                              {ci.note && <span className="truncate max-w-[200px]" style={{ color: T.textDim }}>{ci.note}</span>}
+                              <span className="font-medium" style={{ color: T.text, fontFamily: T.font.data }}>
                                 {fmt(ci.value)}
                               </span>
                             </div>

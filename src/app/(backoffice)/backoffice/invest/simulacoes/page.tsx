@@ -1,7 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { BarChart3, Plus, Search, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react'
+import { BarChart3, Plus, Search, ArrowUpRight, ArrowDownRight, Clock, Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { toast } from 'sonner'
+import { T, inputStyle } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader, EmptyState } from '../../../components/ui'
 
 interface Simulation {
   id: string
@@ -13,8 +17,6 @@ interface Simulation {
   status: 'completed' | 'draft' | 'running'
 }
 
-const dmMono = { fontFamily: "'DM Mono', monospace" }
-
 export default function SimulacoesPage() {
   const [simulations, setSimulations] = useState<Simulation[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,7 +26,7 @@ export default function SimulacoesPage() {
     fetch('/api/invest/simulations')
       .then(r => r.json())
       .then(data => { setSimulations(data.simulations || []); setLoading(false) })
-      .catch(() => setLoading(false))
+      .catch(() => { toast.error('Erro ao carregar dados'); setLoading(false) })
   }, [])
 
   const filtered = simulations.filter(s =>
@@ -35,90 +37,95 @@ export default function SimulacoesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-            Simulacoes
-          </h1>
-          <p className="text-sm text-white/50 mt-1">Historico de simulacoes de investimento</p>
-        </div>
-        <a
-          href="/backoffice/invest/simulacoes/nova"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-          style={{ background: '#3D6FFF' }}
-        >
-          <Plus className="w-4 h-4" />
-          Nova Simulacao
-        </a>
-      </div>
+      <PageIntelHeader
+        moduleLabel="INVEST · SIMULAÇÕES"
+        title="Simulações"
+        subtitle="Histórico de simulações de investimento"
+        actions={
+          <Link
+            href="/backoffice/invest/simulacoes/nova"
+            className="flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium"
+            style={{ background: T.accent, color: T.textInverse }}
+          >
+            <Plus className="w-4 h-4" />
+            Nova Simulação
+          </Link>
+        }
+      />
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: T.textDim }} />
         <input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Buscar por mercado, tipo..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50"
-          style={{ background: 'rgba(255,255,255,0.03)' }}
+          style={{ ...inputStyle, paddingLeft: 40 }}
         />
       </div>
 
       {/* Table */}
       {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-14 rounded-lg bg-white/5 animate-pulse" />
-          ))}
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="animate-spin" size={28} style={{ color: T.textMuted }} />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
-          <BarChart3 className="w-10 h-10 text-white/20 mx-auto mb-3" />
-          <h3 className="text-white/70 font-medium mb-1">Nenhuma simulacao encontrada</h3>
-          <p className="text-white/40 text-sm mb-4">
-            {search ? 'Tente outros termos de busca.' : 'Crie sua primeira simulacao de investimento para comecar.'}
-          </p>
-          {!search && (
-            <a
-              href="/backoffice/invest/simulacoes/nova"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-              style={{ background: '#3D6FFF' }}
-            >
-              <Plus className="w-4 h-4" />
-              Nova Simulacao
-            </a>
-          )}
+        <div
+          className="rounded-lg"
+          style={{ background: T.surface, border: `1px solid ${T.border}` }}
+        >
+          <EmptyState
+            icon={<BarChart3 size={24} />}
+            title="Nenhuma simulação encontrada"
+            description={search ? 'Tente outros termos de busca.' : 'Crie sua primeira simulação de investimento para começar.'}
+            action={!search ? (
+              <Link
+                href="/backoffice/invest/simulacoes/nova"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium"
+                style={{ background: T.accent, color: T.textInverse }}
+              >
+                <Plus className="w-4 h-4" />
+                Nova Simulação
+              </Link>
+            ) : undefined}
+          />
         </div>
       ) : (
-        <div className="rounded-lg border border-white/10 overflow-hidden overflow-x-auto" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div
+          className="rounded-lg overflow-hidden overflow-x-auto"
+          style={{ background: T.surface, border: `1px solid ${T.border}` }}
+        >
           <table className="w-full min-w-[600px]">
             <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left text-xs text-white/40 font-medium px-4 py-3">Mercado</th>
-                <th className="text-left text-xs text-white/40 font-medium px-4 py-3">Tipo</th>
-                <th className="text-right text-xs text-white/40 font-medium px-4 py-3">Valor</th>
-                <th className="text-right text-xs text-white/40 font-medium px-4 py-3">TIR</th>
-                <th className="text-left text-xs text-white/40 font-medium px-4 py-3">Status</th>
-                <th className="text-left text-xs text-white/40 font-medium px-4 py-3">Data</th>
+              <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                <th className="text-left text-xs font-medium px-4 py-3" style={{ color: T.textDim }}>Mercado</th>
+                <th className="text-left text-xs font-medium px-4 py-3" style={{ color: T.textDim }}>Tipo</th>
+                <th className="text-right text-xs font-medium px-4 py-3" style={{ color: T.textDim }}>Valor</th>
+                <th className="text-right text-xs font-medium px-4 py-3" style={{ color: T.textDim }}>TIR</th>
+                <th className="text-left text-xs font-medium px-4 py-3" style={{ color: T.textDim }}>Status</th>
+                <th className="text-left text-xs font-medium px-4 py-3" style={{ color: T.textDim }}>Data</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map(sim => (
                 <tr
                   key={sim.id}
-                  className="border-b border-white/5 hover:bg-white/[0.03] transition-colors cursor-pointer"
+                  className="transition-colors cursor-pointer"
+                  style={{ borderBottom: `1px solid ${T.borderSubtle}` }}
                   onClick={() => window.location.href = `/backoffice/invest/simulacoes/${sim.id}`}
+                  onMouseEnter={e => { e.currentTarget.style.background = T.hover }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                 >
-                  <td className="px-4 py-3 text-sm text-white">{sim.market}</td>
-                  <td className="px-4 py-3 text-sm text-white/70">{sim.propertyType}</td>
-                  <td className="px-4 py-3 text-sm text-white text-right" style={dmMono}>
+                  <td className="px-4 py-3 text-sm" style={{ color: T.text }}>{sim.market}</td>
+                  <td className="px-4 py-3 text-sm" style={{ color: T.textMuted }}>{sim.propertyType}</td>
+                  <td className="px-4 py-3 text-sm text-right" style={{ color: T.text, fontFamily: T.font.data }}>
                     R$ {sim.value.toLocaleString('pt-BR')}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <span
-                      className={`text-sm ${sim.irr >= 0 ? 'text-emerald-400' : 'text-red-400'}`}
-                      style={dmMono}
+                      className="text-sm"
+                      style={{ color: sim.irr >= 0 ? T.success : T.error, fontFamily: T.font.data }}
                     >
                       {sim.irr >= 0 ? <ArrowUpRight className="w-3 h-3 inline mr-0.5" /> : <ArrowDownRight className="w-3 h-3 inline mr-0.5" />}
                       {sim.irr.toFixed(1)}%
@@ -130,10 +137,10 @@ export default function SimulacoesPage() {
                       sim.status === 'running' ? 'bg-amber-400/10 text-amber-400' :
                       'bg-white/10 text-white/50'
                     }`}>
-                      {sim.status === 'completed' ? 'Concluida' : sim.status === 'running' ? 'Processando' : 'Rascunho'}
+                      {sim.status === 'completed' ? 'Concluída' : sim.status === 'running' ? 'Processando' : 'Rascunho'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-white/40 flex items-center gap-1">
+                  <td className="px-4 py-3 text-xs flex items-center gap-1" style={{ color: T.textDim }}>
                     <Clock className="w-3 h-3" />
                     {new Date(sim.createdAt).toLocaleDateString('pt-BR')}
                   </td>

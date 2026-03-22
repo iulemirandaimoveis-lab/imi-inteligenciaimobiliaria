@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Settings, Save, Globe, DollarSign, Bell, Shield, Database, Zap } from 'lucide-react'
-
-const dmMono = { fontFamily: "'DM Mono', monospace" }
+import { Save, Globe, Bell, Database, Zap, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { T, inputStyle } from '../../../lib/theme'
+import { PageIntelHeader } from '../../../components/ui'
 
 interface InvestSettings {
   defaultMarket: string
@@ -40,7 +41,6 @@ const initialSettings: InvestSettings = {
 export default function ConfiguracoesPage() {
   const [settings, setSettings] = useState<InvestSettings>(initialSettings)
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
 
   const set = (key: keyof InvestSettings, val: string | number | boolean) =>
     setSettings(prev => ({ ...prev, [key]: val }))
@@ -53,54 +53,69 @@ export default function ConfiguracoesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings),
       })
-      setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      toast.success('Configurações salvas')
     } catch {
-      // silent
+      toast.error('Erro ao salvar')
     } finally {
       setSaving(false)
     }
   }
 
-  const inputCls = "w-full px-3 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#3D6FFF]/50"
-  const inputBg = { background: 'rgba(255,255,255,0.05)' }
-  const labelCls = "block text-xs text-white/50 mb-1.5"
+  const fieldStyle: React.CSSProperties = {
+    ...inputStyle,
+    fontFamily: T.font.sans,
+  }
 
-  const toggleCls = (active: boolean) =>
-    `relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${active ? 'bg-[#3D6FFF]' : 'bg-white/10'}`
+  const numFieldStyle: React.CSSProperties = {
+    ...inputStyle,
+    fontFamily: T.font.data,
+  }
+
+  const toggleStyle = (active: boolean): React.CSSProperties => ({
+    position: 'relative',
+    display: 'inline-flex',
+    height: 20,
+    width: 36,
+    alignItems: 'center',
+    borderRadius: 9999,
+    cursor: 'pointer',
+    transition: `all ${T.transition.fast}`,
+    background: active ? T.accent : T.hover,
+    border: 'none',
+  })
 
   return (
     <div className="space-y-6 max-w-3xl">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-            <Settings className="w-6 h-6 text-[#3D6FFF]" />
-            Configuracoes Invest
-          </h1>
-          <p className="text-sm text-white/50 mt-1">Parametros padrao e integracoes do modulo de investimento</p>
-        </div>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[#0B1928]"
-          style={{ background: '#3D6FFF' }}
-        >
-          <Save className="w-4 h-4" />
-          {saving ? 'Salvando...' : saved ? 'Salvo!' : 'Salvar'}
-        </button>
-      </div>
+      <PageIntelHeader
+        moduleLabel="INVEST · CONFIG"
+        title="Configurações Invest"
+        subtitle="Parametros padrao e integracoes do modulo de investimento"
+        actions={
+          <button
+            onClick={save}
+            disabled={saving}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ background: T.accent, color: T.textInverse }}
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {saving ? 'Salvando...' : 'Salvar'}
+          </button>
+        }
+      />
 
       {/* Default Parameters */}
-      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-          <Globe className="w-4 h-4 text-[#3D6FFF]" />
+      <div
+        className="rounded-lg p-5"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+      >
+        <h3 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: T.text }}>
+          <Globe className="w-4 h-4" style={{ color: T.accent }} />
           Parametros Padrao
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className={labelCls}>Mercado Padrao</label>
-            <select value={settings.defaultMarket} onChange={e => set('defaultMarket', e.target.value)} className={inputCls} style={inputBg}>
+            <label className="block text-xs mb-1.5" style={{ color: T.textMuted }}>Mercado Padrao</label>
+            <select value={settings.defaultMarket} onChange={e => set('defaultMarket', e.target.value)} style={fieldStyle}>
               <option value="brasil">Brasil</option>
               <option value="eua">EUA (Florida)</option>
               <option value="dubai">Dubai</option>
@@ -108,8 +123,8 @@ export default function ConfiguracoesPage() {
             </select>
           </div>
           <div>
-            <label className={labelCls}>Moeda</label>
-            <select value={settings.currency} onChange={e => set('currency', e.target.value)} className={inputCls} style={inputBg}>
+            <label className="block text-xs mb-1.5" style={{ color: T.textMuted }}>Moeda</label>
+            <select value={settings.currency} onChange={e => set('currency', e.target.value)} style={fieldStyle}>
               <option value="BRL">BRL - Real</option>
               <option value="USD">USD - Dolar</option>
               <option value="EUR">EUR - Euro</option>
@@ -117,28 +132,31 @@ export default function ConfiguracoesPage() {
             </select>
           </div>
           <div>
-            <label className={labelCls}>Horizonte (anos)</label>
-            <input type="number" value={settings.defaultHorizon} onChange={e => set('defaultHorizon', +e.target.value)} className={inputCls} style={{ ...inputBg, ...dmMono }} />
+            <label className="block text-xs mb-1.5" style={{ color: T.textMuted }}>Horizonte (anos)</label>
+            <input type="number" value={settings.defaultHorizon} onChange={e => set('defaultHorizon', +e.target.value)} style={numFieldStyle} />
           </div>
           <div>
-            <label className={labelCls}>Valorizacao Anual (%)</label>
-            <input type="number" value={settings.defaultAppreciation} onChange={e => set('defaultAppreciation', +e.target.value)} step="0.5" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+            <label className="block text-xs mb-1.5" style={{ color: T.textMuted }}>Valorizacao Anual (%)</label>
+            <input type="number" value={settings.defaultAppreciation} onChange={e => set('defaultAppreciation', +e.target.value)} step="0.5" style={numFieldStyle} />
           </div>
           <div>
-            <label className={labelCls}>Taxa Financiamento (% a.a.)</label>
-            <input type="number" value={settings.defaultFinancingRate} onChange={e => set('defaultFinancingRate', +e.target.value)} step="0.1" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+            <label className="block text-xs mb-1.5" style={{ color: T.textMuted }}>Taxa Financiamento (% a.a.)</label>
+            <input type="number" value={settings.defaultFinancingRate} onChange={e => set('defaultFinancingRate', +e.target.value)} step="0.1" style={numFieldStyle} />
           </div>
           <div>
-            <label className={labelCls}>Entrada Padrao (%)</label>
-            <input type="number" value={settings.defaultDownPayment} onChange={e => set('defaultDownPayment', +e.target.value)} className={inputCls} style={{ ...inputBg, ...dmMono }} />
+            <label className="block text-xs mb-1.5" style={{ color: T.textMuted }}>Entrada Padrao (%)</label>
+            <input type="number" value={settings.defaultDownPayment} onChange={e => set('defaultDownPayment', +e.target.value)} style={numFieldStyle} />
           </div>
         </div>
       </div>
 
       {/* Toggles */}
-      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-          <Zap className="w-4 h-4 text-[#3D6FFF]" />
+      <div
+        className="rounded-lg p-5"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+      >
+        <h3 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: T.text }}>
+          <Zap className="w-4 h-4" style={{ color: T.accent }} />
           Funcionalidades
         </h3>
         <div className="space-y-4">
@@ -149,14 +167,24 @@ export default function ConfiguracoesPage() {
           ].map(item => (
             <div key={item.key} className="flex items-center justify-between">
               <div>
-                <div className="text-sm text-white">{item.label}</div>
-                <div className="text-xs text-white/40">{item.desc}</div>
+                <div className="text-sm" style={{ color: T.text }}>{item.label}</div>
+                <div className="text-xs" style={{ color: T.textDim }}>{item.desc}</div>
               </div>
               <button
                 onClick={() => set(item.key, !settings[item.key])}
-                className={toggleCls(settings[item.key] as boolean)}
+                style={toggleStyle(settings[item.key] as boolean)}
               >
-                <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${settings[item.key] ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                <span
+                  style={{
+                    display: 'inline-block',
+                    height: 14,
+                    width: 14,
+                    borderRadius: 9999,
+                    background: 'white',
+                    transition: `transform ${T.transition.fast}`,
+                    transform: settings[item.key] ? 'translateX(16px)' : 'translateX(2px)',
+                  }}
+                />
               </button>
             </div>
           ))}
@@ -164,9 +192,12 @@ export default function ConfiguracoesPage() {
       </div>
 
       {/* Notifications */}
-      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-          <Bell className="w-4 h-4 text-[#3D6FFF]" />
+      <div
+        className="rounded-lg p-5"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+      >
+        <h3 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: T.text }}>
+          <Bell className="w-4 h-4" style={{ color: T.accent }} />
           Notificacoes
         </h3>
         <div className="space-y-4">
@@ -176,14 +207,24 @@ export default function ConfiguracoesPage() {
           ].map(item => (
             <div key={item.key} className="flex items-center justify-between">
               <div>
-                <div className="text-sm text-white">{item.label}</div>
-                <div className="text-xs text-white/40">{item.desc}</div>
+                <div className="text-sm" style={{ color: T.text }}>{item.label}</div>
+                <div className="text-xs" style={{ color: T.textDim }}>{item.desc}</div>
               </div>
               <button
                 onClick={() => set(item.key, !settings[item.key])}
-                className={toggleCls(settings[item.key] as boolean)}
+                style={toggleStyle(settings[item.key] as boolean)}
               >
-                <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${settings[item.key] ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                <span
+                  style={{
+                    display: 'inline-block',
+                    height: 14,
+                    width: 14,
+                    borderRadius: 9999,
+                    background: 'white',
+                    transition: `transform ${T.transition.fast}`,
+                    transform: settings[item.key] ? 'translateX(16px)' : 'translateX(2px)',
+                  }}
+                />
               </button>
             </div>
           ))}
@@ -191,34 +232,37 @@ export default function ConfiguracoesPage() {
       </div>
 
       {/* Integrations */}
-      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-          <Database className="w-4 h-4 text-[#3D6FFF]" />
+      <div
+        className="rounded-lg p-5"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+      >
+        <h3 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: T.text }}>
+          <Database className="w-4 h-4" style={{ color: T.accent }} />
           Integracoes
         </h3>
         <div className="space-y-4">
           <div>
-            <label className={labelCls}>BCB API Key (opcional)</label>
+            <label className="block text-xs mb-1.5" style={{ color: T.textMuted }}>BCB API Key (opcional)</label>
             <input
               type="password"
               value={settings.bcbApiKey}
               onChange={e => set('bcbApiKey', e.target.value)}
               placeholder="Chave para acesso avancado ao BCB"
-              className={inputCls}
-              style={inputBg}
+              style={fieldStyle}
             />
           </div>
           <div>
-            <label className={labelCls}>Webhook URL (opcional)</label>
+            <label className="block text-xs mb-1.5" style={{ color: T.textMuted }}>Webhook URL (opcional)</label>
             <input
               type="url"
               value={settings.webhookUrl}
               onChange={e => set('webhookUrl', e.target.value)}
               placeholder="https://..."
-              className={inputCls}
-              style={inputBg}
+              style={fieldStyle}
             />
-            <p className="text-xs text-white/30 mt-1">Receber eventos de simulacoes e leads via webhook</p>
+            <p className="text-xs mt-1" style={{ color: T.textDim }}>
+              Receber eventos de simulacoes e leads via webhook
+            </p>
           </div>
         </div>
       </div>

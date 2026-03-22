@@ -3,9 +3,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  ChevronRight, Target, Loader2, BookOpen,
+  Target, Loader2, BookOpen,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
+import { T } from '../../../lib/theme'
+import { PageIntelHeader } from '../../../components/ui'
 
 /* ── types ─────────────────────────────────────────────────── */
 interface Objective {
@@ -33,10 +36,10 @@ function calcScore(kr: KeyResult) {
 }
 
 function scoreStyle(score: number) {
-  if (score >= 0.7) return { bg: 'bg-[#3D6FFF]/20', text: 'text-[#3D6FFF]', label: 'Ouro', border: 'border-[#3D6FFF]/30' }
-  if (score >= 0.6) return { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Verde', border: 'border-emerald-500/30' }
-  if (score >= 0.3) return { bg: 'bg-amber-500/20', text: 'text-amber-400', label: 'Amarelo', border: 'border-amber-500/30' }
-  return { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Vermelho', border: 'border-red-500/30' }
+  if (score >= 0.7) return { bg: T.activeBg, text: T.accent, label: 'Ouro', border: T.borderActive, barColor: 'var(--accent-400)' }
+  if (score >= 0.6) return { bg: 'rgba(52,211,153,0.15)', text: '#34d399', label: 'Verde', border: 'rgba(52,211,153,0.3)', barColor: '#34d399' }
+  if (score >= 0.3) return { bg: 'rgba(251,191,36,0.15)', text: '#fbbf24', label: 'Amarelo', border: 'rgba(251,191,36,0.3)', barColor: '#fbbf24' }
+  return { bg: 'rgba(248,113,113,0.15)', text: '#f87171', label: 'Vermelho', border: 'rgba(248,113,113,0.3)', barColor: '#f87171' }
 }
 
 const STORAGE_KEY = 'imi_retro_'
@@ -72,7 +75,7 @@ export default function RetrospectivaPage() {
 
       setLoading(false)
     }
-    load()
+    load().catch(() => { toast.error('Erro ao carregar dados'); setLoading(false) })
   }, [quarter])
 
   function saveText(field: string, value: string) {
@@ -101,7 +104,7 @@ export default function RetrospectivaPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-[#3D6FFF] animate-spin" />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.accent }} />
       </div>
     )
   }
@@ -109,63 +112,67 @@ export default function RetrospectivaPage() {
   return (
     <div className="space-y-8 max-w-4xl">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 text-xs text-white/40 mb-1">
-          <Link href="/backoffice/metas" className="hover:text-white/60 transition-colors">Metas</Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-white/60">Retrospectiva</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-              Retrospectiva
-            </h1>
-            <p className="text-sm text-white/50 mt-1">Revisão de resultados do quarter</p>
-          </div>
+      <PageIntelHeader
+        moduleLabel="METAS \u00b7 RETRO"
+        title="Retrospectiva"
+        subtitle="Revis\u00e3o de resultados do quarter"
+        breadcrumbs={[{ label: 'Metas', href: '/backoffice/metas' }]}
+        actions={
           <select
             value={quarter}
             onChange={e => setQuarter(e.target.value)}
-            className="px-3 py-1.5 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-[#3D6FFF]/50"
+            className="px-3 py-1.5 rounded-[6px] text-sm focus:outline-none transition-colors"
+            style={{
+              background: T.surface,
+              border: `1px solid ${T.border}`,
+              color: T.text,
+            }}
           >
             {QUARTERS.map(q => (
-              <option key={q} value={q} className="bg-[#0B1928]">{q}</option>
+              <option key={q} value={q} style={{ background: 'var(--bg-base)' }}>{q}</option>
             ))}
           </select>
-        </div>
-      </div>
+        }
+      />
 
       {/* Company Average */}
-      <div className={`rounded-lg border ${companyStyle.border} p-6`} style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div
+        className="rounded-lg p-6"
+        style={{ background: T.surface, border: `1px solid ${companyStyle.border}` }}
+      >
         <div className="flex items-center gap-3 mb-3">
-          <Target className={`w-5 h-5 ${companyStyle.text}`} />
-          <span className="text-sm font-medium text-white">Score Médio da Empresa</span>
+          <Target className="w-5 h-5" style={{ color: companyStyle.text }} />
+          <span className="text-sm font-medium" style={{ color: T.text }}>Score M\u00e9dio da Empresa</span>
         </div>
         <div className="flex items-baseline gap-3">
-          <p className={`text-4xl font-bold ${companyStyle.text}`} style={{ fontFamily: 'DM Mono, monospace' }}>
+          <p className="text-4xl font-bold" style={{ color: companyStyle.text, fontFamily: T.font.data }}>
             {(companyAvg * 100).toFixed(0)}%
           </p>
-          <span className={`px-2 py-0.5 rounded-[6px] text-xs ${companyStyle.bg} ${companyStyle.text}`}>
+          <span
+            className="px-2 py-0.5 rounded-[6px] text-xs"
+            style={{ background: companyStyle.bg, color: companyStyle.text }}
+          >
             {companyStyle.label}
           </span>
         </div>
-        <div className="h-3 rounded-full overflow-hidden bg-white/10 mt-4">
+        <div className="h-3 rounded-full overflow-hidden mt-4" style={{ background: T.hover }}>
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{
               width: `${companyAvg * 100}%`,
-              background: companyAvg >= 0.7 ? '#3D6FFF' : companyAvg >= 0.6 ? '#34d399' : companyAvg >= 0.3 ? '#fbbf24' : '#f87171',
+              background: companyStyle.barColor,
             }}
           />
         </div>
-        <p className="text-xs text-white/30 mt-2">{objScores.length} objetivos avaliados</p>
+        <p className="text-xs mt-2" style={{ color: T.textDim }}>{objScores.length} objetivos avaliados</p>
       </div>
 
       {/* OKRs with final scores */}
       <div>
-        <h2 className="text-lg font-semibold text-white mb-4">Resultados por Objetivo</h2>
+        <h2 className="text-lg font-semibold mb-4" style={{ color: T.text }}>Resultados por Objetivo</h2>
         {objScores.length === 0 ? (
-          <div className="rounded-lg border border-white/10 p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-white/50 text-sm">Nenhum OKR encontrado para {quarter}.</p>
+          <div className="rounded-lg p-8 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <p className="text-sm" style={{ color: T.textMuted }}>Nenhum OKR encontrado para {quarter}.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -174,32 +181,35 @@ export default function RetrospectivaPage() {
               return (
                 <div
                   key={obj.id}
-                  className={`rounded-lg border ${st.border} p-4`}
-                  style={{ background: 'rgba(255,255,255,0.03)' }}
+                  className="rounded-lg p-4"
+                  style={{ background: T.surface, border: `1px solid ${st.border}` }}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="text-sm font-semibold text-white">{obj.title}</h3>
+                      <h3 className="text-sm font-semibold" style={{ color: T.text }}>{obj.title}</h3>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/50">{obj.department}</span>
-                        <span className="text-xs text-white/30">{obj.krCount} KRs</span>
+                        <span className="px-2 py-0.5 rounded-[6px] text-xs" style={{ background: T.hover, color: T.textMuted }}>{obj.department}</span>
+                        <span className="text-xs" style={{ color: T.textDim }}>{obj.krCount} KRs</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className={`text-xl font-bold ${st.text}`} style={{ fontFamily: 'DM Mono, monospace' }}>
+                      <p className="text-xl font-bold" style={{ color: st.text, fontFamily: T.font.data }}>
                         {(obj.score * 100).toFixed(0)}%
                       </p>
-                      <span className={`px-2 py-0.5 rounded-[6px] text-xs ${st.bg} ${st.text}`}>
+                      <span
+                        className="px-2 py-0.5 rounded-[6px] text-xs"
+                        style={{ background: st.bg, color: st.text }}
+                      >
                         {st.label}
                       </span>
                     </div>
                   </div>
-                  <div className="h-2 rounded-full overflow-hidden bg-white/10">
+                  <div className="h-2 rounded-full overflow-hidden" style={{ background: T.hover }}>
                     <div
                       className="h-full rounded-full transition-all duration-700"
                       style={{
                         width: `${obj.score * 100}%`,
-                        background: obj.score >= 0.7 ? '#3D6FFF' : obj.score >= 0.6 ? '#34d399' : obj.score >= 0.3 ? '#fbbf24' : '#f87171',
+                        background: st.barColor,
                       }}
                     />
                   </div>
@@ -213,27 +223,32 @@ export default function RetrospectivaPage() {
       {/* Reflection sections */}
       <div className="space-y-6">
         {[
-          { title: 'O que funcionou', emoji: '✅', field: 'worked', value: worked, placeholder: 'Descreva o que deu certo neste quarter...' },
-          { title: 'O que não funcionou', emoji: '❌', field: 'didnt', value: didntWork, placeholder: 'O que não atingiu as expectativas...' },
-          { title: 'Lições aprendidas', emoji: '💡', field: 'lessons', value: lessons, placeholder: 'Aprendizados para o próximo quarter...' },
+          { title: 'O que funcionou', emoji: '\u2705', field: 'worked', value: worked, placeholder: 'Descreva o que deu certo neste quarter...' },
+          { title: 'O que n\u00e3o funcionou', emoji: '\u274c', field: 'didnt', value: didntWork, placeholder: 'O que n\u00e3o atingiu as expectativas...' },
+          { title: 'Li\u00e7\u00f5es aprendidas', emoji: '\ud83d\udca1', field: 'lessons', value: lessons, placeholder: 'Aprendizados para o pr\u00f3ximo quarter...' },
         ].map(section => (
           <div
             key={section.field}
-            className="rounded-lg border border-white/10 p-5"
-            style={{ background: 'rgba(255,255,255,0.03)' }}
+            className="rounded-lg p-5"
+            style={{ background: T.surface, border: `1px solid ${T.border}` }}
           >
             <div className="flex items-center gap-2 mb-3">
-              <BookOpen className="w-4 h-4 text-[#3D6FFF]" />
-              <h3 className="text-sm font-semibold text-white">{section.title}</h3>
+              <BookOpen className="w-4 h-4" style={{ color: T.accent }} />
+              <h3 className="text-sm font-semibold" style={{ color: T.text }}>{section.title}</h3>
             </div>
             <textarea
               value={section.value}
               onChange={e => saveText(section.field, e.target.value)}
               placeholder={section.placeholder}
               rows={4}
-              className="w-full px-3 py-2 rounded-[6px] text-sm bg-white/[0.03] border border-white/[0.06] text-white/80 placeholder:text-white/20 focus:outline-none focus:border-[#3D6FFF]/30 resize-none transition-colors"
+              className="w-full px-3 py-2 rounded-[6px] text-sm placeholder:opacity-40 focus:outline-none resize-none transition-colors"
+              style={{
+                background: T.surface,
+                border: `1px solid ${T.borderSubtle}`,
+                color: T.text,
+              }}
             />
-            <p className="text-[10px] text-white/20 mt-1">Salvo automaticamente no navegador</p>
+            <p className="text-[10px] mt-1" style={{ color: T.textDim }}>Salvo automaticamente no navegador</p>
           </div>
         ))}
       </div>

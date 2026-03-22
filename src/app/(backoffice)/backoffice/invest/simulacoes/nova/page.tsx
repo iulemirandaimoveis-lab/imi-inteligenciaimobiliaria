@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { toast } from 'sonner'
 import { ArrowLeft, ArrowRight, Check, Loader2, TrendingUp, ArrowUpRight } from 'lucide-react'
-
-const dmMono = { fontFamily: "'DM Mono', monospace" }
+import { T } from '../../../../lib/theme'
 
 const STEPS = ['Mercado', 'Imovel', 'Cenario', 'Resultado'] as const
 
@@ -74,7 +75,9 @@ export default function NovaSimulacaoPage() {
       setResult(data.result || data)
       setStep(3)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erro desconhecido')
+      const msg = e instanceof Error ? e.message : 'Erro desconhecido'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
@@ -88,20 +91,21 @@ export default function NovaSimulacaoPage() {
     }
   }
 
-  const inputCls = "w-full px-3 py-2.5 rounded-[6px] border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold/50"
-  const inputBg = { background: 'rgba(255,255,255,0.05)' }
-  const labelCls = "block text-xs text-white/50 mb-1.5"
+  const inputCls = "w-full px-3 py-2.5 rounded-[6px] text-sm placeholder:opacity-40 focus:outline-none"
+  const inputStyle: React.CSSProperties = { background: T.surface, border: `1px solid ${T.border}`, color: T.text, fontFamily: T.font.data }
+  const labelCls = "block text-xs mb-1.5"
+  const labelStyle: React.CSSProperties = { color: T.textMuted }
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <a href="/backoffice/invest/simulacoes" className="p-2 rounded-lg border border-white/10 hover:border-gold/30 transition-colors">
-          <ArrowLeft className="w-4 h-4 text-white/50" />
-        </a>
+        <Link href="/backoffice/invest/simulacoes" className="p-2 rounded-lg transition-colors" style={{ border: `1px solid ${T.border}` }}>
+          <ArrowLeft className="w-4 h-4" style={{ color: T.textMuted }} />
+        </Link>
         <div>
-          <h1 className="text-xl font-bold text-white">Nova Simulacao</h1>
-          <p className="text-xs text-white/40">Passo {step + 1} de 4 — {STEPS[step]}</p>
+          <h1 className="text-xl font-bold" style={{ color: T.text }}>Nova Simulacao</h1>
+          <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Passo {step + 1} de 4 — {STEPS[step]}</p>
         </div>
       </div>
 
@@ -109,27 +113,32 @@ export default function NovaSimulacaoPage() {
       <div className="flex items-center gap-2">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-2 flex-1">
-            <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-all ${
-              i < step ? 'bg-gold text-navy-900' :
-              i === step ? 'border-2 border-gold text-gold' :
-              'border border-white/20 text-white/30'
-            }`}>
+            <div
+              className="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-all"
+              style={
+                i < step
+                  ? { background: T.accent, color: '#0B1928' }
+                  : i === step
+                  ? { border: `2px solid ${T.accent}`, color: T.accent }
+                  : { border: `1px solid ${T.border}`, color: T.textDim }
+              }
+            >
               {i < step ? <Check className="w-3.5 h-3.5" /> : i + 1}
             </div>
-            <span className={`text-xs hidden sm:block ${i === step ? 'text-white' : 'text-white/30'}`}>{s}</span>
-            {i < 3 && <div className={`flex-1 h-px ${i < step ? 'bg-gold' : 'bg-white/10'}`} />}
+            <span className="text-xs hidden sm:block" style={{ color: i === step ? T.text : T.textDim }}>{s}</span>
+            {i < 3 && <div className="flex-1 h-px" style={{ background: i < step ? T.accent : T.border }} />}
           </div>
         ))}
       </div>
 
       {/* Step content */}
-      <div className="rounded-lg border border-white/10 p-6" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {step === 0 && (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-white mb-4">Selecione o Mercado</h2>
+            <h2 className="text-lg font-semibold mb-4" style={{ color: T.text }}>Selecione o Mercado</h2>
             <div>
-              <label className={labelCls}>Mercado</label>
-              <select value={form.market} onChange={e => set('market', e.target.value)} className={inputCls} style={inputBg}>
+              <label className={labelCls} style={labelStyle}>Mercado</label>
+              <select value={form.market} onChange={e => set('market', e.target.value)} className={inputCls} style={inputStyle}>
                 <option value="">Selecione...</option>
                 <option value="brasil">Brasil</option>
                 <option value="eua">EUA (Florida)</option>
@@ -138,18 +147,18 @@ export default function NovaSimulacaoPage() {
               </select>
             </div>
             <div>
-              <label className={labelCls}>Cidade</label>
-              <input type="text" value={form.city} onChange={e => set('city', e.target.value)} placeholder="Ex: Sao Paulo, Miami, Dubai Marina" className={inputCls} style={inputBg} />
+              <label className={labelCls} style={labelStyle}>Cidade</label>
+              <input type="text" value={form.city} onChange={e => set('city', e.target.value)} placeholder="Ex: Sao Paulo, Miami, Dubai Marina" className={inputCls} style={inputStyle} />
             </div>
           </div>
         )}
 
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-white mb-4">Dados do Imovel</h2>
+            <h2 className="text-lg font-semibold mb-4" style={{ color: T.text }}>Dados do Imovel</h2>
             <div>
-              <label className={labelCls}>Tipo de Imovel</label>
-              <select value={form.propertyType} onChange={e => set('propertyType', e.target.value)} className={inputCls} style={inputBg}>
+              <label className={labelCls} style={labelStyle}>Tipo de Imovel</label>
+              <select value={form.propertyType} onChange={e => set('propertyType', e.target.value)} className={inputCls} style={inputStyle}>
                 <option value="">Selecione...</option>
                 <option value="apartamento">Apartamento</option>
                 <option value="casa">Casa</option>
@@ -160,26 +169,26 @@ export default function NovaSimulacaoPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={labelCls}>Area (m2)</label>
-                <input type="number" value={form.area || ''} onChange={e => set('area', +e.target.value)} placeholder="0" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+                <label className={labelCls} style={labelStyle}>Area (m2)</label>
+                <input type="number" value={form.area || ''} onChange={e => set('area', +e.target.value)} placeholder="0" className={inputCls} style={inputStyle} />
               </div>
               <div>
-                <label className={labelCls}>Quartos</label>
-                <input type="number" value={form.bedrooms || ''} onChange={e => set('bedrooms', +e.target.value)} placeholder="0" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+                <label className={labelCls} style={labelStyle}>Quartos</label>
+                <input type="number" value={form.bedrooms || ''} onChange={e => set('bedrooms', +e.target.value)} placeholder="0" className={inputCls} style={inputStyle} />
               </div>
             </div>
             <div>
-              <label className={labelCls}>Preco de Compra (R$)</label>
-              <input type="number" value={form.purchasePrice || ''} onChange={e => set('purchasePrice', +e.target.value)} placeholder="0" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+              <label className={labelCls} style={labelStyle}>Preco de Compra (R$)</label>
+              <input type="number" value={form.purchasePrice || ''} onChange={e => set('purchasePrice', +e.target.value)} placeholder="0" className={inputCls} style={inputStyle} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={labelCls}>Condominio Mensal (R$)</label>
-                <input type="number" value={form.condoFee || ''} onChange={e => set('condoFee', +e.target.value)} placeholder="0" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+                <label className={labelCls} style={labelStyle}>Condominio Mensal (R$)</label>
+                <input type="number" value={form.condoFee || ''} onChange={e => set('condoFee', +e.target.value)} placeholder="0" className={inputCls} style={inputStyle} />
               </div>
               <div>
-                <label className={labelCls}>IPTU Anual (R$)</label>
-                <input type="number" value={form.iptu || ''} onChange={e => set('iptu', +e.target.value)} placeholder="0" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+                <label className={labelCls} style={labelStyle}>IPTU Anual (R$)</label>
+                <input type="number" value={form.iptu || ''} onChange={e => set('iptu', +e.target.value)} placeholder="0" className={inputCls} style={inputStyle} />
               </div>
             </div>
           </div>
@@ -187,29 +196,29 @@ export default function NovaSimulacaoPage() {
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-white mb-4">Cenario Financeiro</h2>
+            <h2 className="text-lg font-semibold mb-4" style={{ color: T.text }}>Cenario Financeiro</h2>
             <div>
-              <label className={labelCls}>Renda de Aluguel Mensal (R$)</label>
-              <input type="number" value={form.rentalIncome || ''} onChange={e => set('rentalIncome', +e.target.value)} placeholder="0" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+              <label className={labelCls} style={labelStyle}>Renda de Aluguel Mensal (R$)</label>
+              <input type="number" value={form.rentalIncome || ''} onChange={e => set('rentalIncome', +e.target.value)} placeholder="0" className={inputCls} style={inputStyle} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={labelCls}>Valorizacao Anual (%)</label>
-                <input type="number" value={form.appreciation || ''} onChange={e => set('appreciation', +e.target.value)} placeholder="5" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+                <label className={labelCls} style={labelStyle}>Valorizacao Anual (%)</label>
+                <input type="number" value={form.appreciation || ''} onChange={e => set('appreciation', +e.target.value)} placeholder="5" className={inputCls} style={inputStyle} />
               </div>
               <div>
-                <label className={labelCls}>Horizonte (anos)</label>
-                <input type="number" value={form.horizon || ''} onChange={e => set('horizon', +e.target.value)} placeholder="10" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+                <label className={labelCls} style={labelStyle}>Horizonte (anos)</label>
+                <input type="number" value={form.horizon || ''} onChange={e => set('horizon', +e.target.value)} placeholder="10" className={inputCls} style={inputStyle} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={labelCls}>Taxa Financiamento (% a.a.)</label>
-                <input type="number" value={form.financingRate || ''} onChange={e => set('financingRate', +e.target.value)} placeholder="10.5" step="0.1" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+                <label className={labelCls} style={labelStyle}>Taxa Financiamento (% a.a.)</label>
+                <input type="number" value={form.financingRate || ''} onChange={e => set('financingRate', +e.target.value)} placeholder="10.5" step="0.1" className={inputCls} style={inputStyle} />
               </div>
               <div>
-                <label className={labelCls}>Entrada (%)</label>
-                <input type="number" value={form.downPayment || ''} onChange={e => set('downPayment', +e.target.value)} placeholder="20" className={inputCls} style={{ ...inputBg, ...dmMono }} />
+                <label className={labelCls} style={labelStyle}>Entrada (%)</label>
+                <input type="number" value={form.downPayment || ''} onChange={e => set('downPayment', +e.target.value)} placeholder="20" className={inputCls} style={inputStyle} />
               </div>
             </div>
           </div>
@@ -218,8 +227,8 @@ export default function NovaSimulacaoPage() {
         {step === 3 && result && (
           <div className="space-y-5">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-5 h-5 text-gold" />
-              <h2 className="text-lg font-semibold text-white">Resultado da Simulacao</h2>
+              <TrendingUp className="w-5 h-5" style={{ color: T.accent }} />
+              <h2 className="text-lg font-semibold" style={{ color: T.text }}>Resultado da Simulacao</h2>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
@@ -231,9 +240,9 @@ export default function NovaSimulacaoPage() {
                 { label: 'VPL', value: `R$ ${(result.netPresentValue / 1000).toFixed(0)}k`, positive: result.netPresentValue >= 0 },
                 { label: 'Renda Liq/mes', value: `R$ ${result.monthlyNetIncome.toLocaleString('pt-BR')}`, positive: result.monthlyNetIncome > 0 },
               ].map(m => (
-                <div key={m.label} className="rounded-lg p-3 border border-white/10" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                  <div className="text-xs text-white/40 mb-1">{m.label}</div>
-                  <div className={`text-lg font-bold flex items-center gap-1 ${m.positive ? 'text-emerald-400' : 'text-red-400'}`} style={dmMono}>
+                <div key={m.label} className="rounded-lg p-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                  <div className="text-xs mb-1" style={{ color: T.textMuted }}>{m.label}</div>
+                  <div className={`text-lg font-bold flex items-center gap-1 ${m.positive ? 'text-emerald-400' : 'text-red-400'}`} style={{ fontFamily: T.font.data }}>
                     {m.positive && <ArrowUpRight className="w-3.5 h-3.5" />}
                     {m.value}
                   </div>
@@ -242,21 +251,21 @@ export default function NovaSimulacaoPage() {
             </div>
 
             {/* Simple bar visualization */}
-            <div className="rounded-lg p-4 border border-white/10" style={{ background: 'rgba(255,255,255,0.03)' }}>
-              <div className="text-xs text-white/40 mb-3">Composicao de Retorno</div>
+            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <div className="text-xs mb-3" style={{ color: T.textMuted }}>Composicao de Retorno</div>
               <div className="space-y-2">
                 {[
-                  { label: 'Renda Aluguel', pct: 40, color: '#3D6FFF' },
+                  { label: 'Renda Aluguel', pct: 40, color: T.accent },
                   { label: 'Valorizacao', pct: 35, color: '#34d399' },
                   { label: 'Beneficio Fiscal', pct: 15, color: '#60a5fa' },
                   { label: 'Equity Build', pct: 10, color: '#a78bfa' },
                 ].map(b => (
                   <div key={b.label} className="flex items-center gap-3">
-                    <span className="text-xs text-white/50 w-28">{b.label}</span>
-                    <div className="flex-1 h-4 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                    <span className="text-xs w-28" style={{ color: T.textMuted }}>{b.label}</span>
+                    <div className="flex-1 h-4 rounded-full overflow-hidden" style={{ background: T.hover }}>
                       <div className="h-full rounded-full transition-all" style={{ width: `${b.pct}%`, background: b.color }} />
                     </div>
-                    <span className="text-xs text-white/50 w-10 text-right" style={dmMono}>{b.pct}%</span>
+                    <span className="text-xs w-10 text-right" style={{ color: T.textMuted, fontFamily: T.font.data }}>{b.pct}%</span>
                   </div>
                 ))}
               </div>
@@ -265,7 +274,7 @@ export default function NovaSimulacaoPage() {
         )}
 
         {error && (
-          <div className="mt-4 p-3 rounded-lg bg-red-400/10 border border-red-400/20 text-red-400 text-sm">
+          <div className="mt-4 p-3 rounded-lg text-sm" style={{ background: T.errorBg, border: '1px solid rgba(239,68,68,0.2)', color: T.error }}>
             {error}
           </div>
         )}
@@ -276,7 +285,8 @@ export default function NovaSimulacaoPage() {
         <button
           onClick={() => setStep(s => Math.max(s - 1, 0))}
           disabled={step === 0}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm border border-white/10 text-white/70 disabled:opacity-30 hover:border-white/20 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm disabled:opacity-30 transition-colors"
+          style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
         >
           <ArrowLeft className="w-4 h-4" />
           Anterior
@@ -286,8 +296,8 @@ export default function NovaSimulacaoPage() {
           <button
             onClick={next}
             disabled={!canAdvance() || loading}
-            className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-navy-900 disabled:opacity-40"
-            style={{ background: '#3D6FFF' }}
+            className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-40"
+            style={{ background: T.accent, color: '#0B1928' }}
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {step === 2 ? 'Simular' : 'Proximo'}
@@ -297,17 +307,18 @@ export default function NovaSimulacaoPage() {
           <div className="flex gap-2">
             <button
               onClick={() => { setStep(0); setResult(null); setForm(initialForm) }}
-              className="px-4 py-2 rounded-lg text-sm border border-white/10 text-white/70 hover:border-white/20 transition-colors"
+              className="px-4 py-2 rounded-lg text-sm transition-colors"
+              style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
             >
               Nova Simulacao
             </button>
-            <a
+            <Link
               href="/backoffice/invest/simulacoes"
-              className="px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-              style={{ background: '#3D6FFF' }}
+              className="px-4 py-2 rounded-lg text-sm font-medium"
+              style={{ background: T.accent, color: '#0B1928' }}
             >
               Ver Todas
-            </a>
+            </Link>
           </div>
         )}
       </div>

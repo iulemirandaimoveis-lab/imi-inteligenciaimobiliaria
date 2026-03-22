@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Globe, ArrowUpRight, ArrowDownRight } from 'lucide-react'
-
-const dmMono = { fontFamily: "'DM Mono', monospace" }
+import { T } from '../../../lib/theme'
+import { PageIntelHeader } from '../../../components/ui'
 
 interface MarketMetrics {
   label: string
@@ -37,7 +36,7 @@ function getMetrics(value: number): MarketMetrics[] {
 const markets = [
   { key: 'brasil', label: 'Brasil', flag: '🇧🇷', color: '#34d399' },
   { key: 'eua', label: 'EUA', flag: '🇺🇸', color: '#60a5fa' },
-  { key: 'dubai', label: 'Dubai', flag: '🇦🇪', color: '#3D6FFF' },
+  { key: 'dubai', label: 'Dubai', flag: '🇦🇪', color: T.accent },
 ]
 
 export default function ComparadorPage() {
@@ -46,34 +45,44 @@ export default function ComparadorPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-          <Globe className="w-6 h-6 text-gold" />
-          Comparador Cross-Border
-        </h1>
-        <p className="text-sm text-white/50 mt-1">Compare metricas de investimento entre mercados internacionais</p>
-      </div>
+      <PageIntelHeader
+        moduleLabel="INVEST · COMPARAÇÃO"
+        title="Comparador Cross-Border"
+        subtitle="Compare metricas de investimento entre mercados internacionais"
+      />
 
       {/* Value input */}
-      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <label className="block text-xs text-white/50 mb-2">Valor do Investimento (R$)</label>
+      <div
+        className="rounded-lg p-5"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+      >
+        <label className="block text-xs mb-2" style={{ color: T.textMuted }}>
+          Valor do Investimento (R$)
+        </label>
         <input
           type="number"
           value={value}
           onChange={e => setValue(+e.target.value || 0)}
-          className="w-full px-4 py-3 rounded-[6px] border border-white/10 text-xl text-white focus:outline-none focus:border-gold/50"
-          style={{ background: 'rgba(255,255,255,0.05)', ...dmMono }}
+          className="w-full px-4 py-3 rounded-[6px] text-xl focus:outline-none"
+          style={{
+            background: T.surface,
+            border: `1px solid ${T.border}`,
+            color: T.text,
+            fontFamily: T.font.data,
+          }}
         />
         <div className="flex gap-2 mt-3">
           {[500000, 1000000, 2000000, 5000000].map(v => (
             <button
               key={v}
               onClick={() => setValue(v)}
-              className={`px-3 py-1 rounded-lg text-xs border transition-colors ${
-                value === v ? 'border-gold/50 text-gold bg-gold/10' : 'border-white/10 text-white/40 hover:text-white/60'
-              }`}
-              style={dmMono}
+              className="px-3 py-1 rounded-lg text-xs transition-colors"
+              style={{
+                border: `1px solid ${value === v ? T.accent : T.border}`,
+                color: value === v ? T.accent : T.textDim,
+                background: value === v ? T.accentBg : 'transparent',
+                fontFamily: T.font.data,
+              }}
             >
               R$ {(v / 1000000).toFixed(1)}M
             </button>
@@ -82,22 +91,38 @@ export default function ComparadorPage() {
       </div>
 
       {/* Comparison table */}
-      <div className="rounded-lg border border-white/10 overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div
+        className="rounded-lg overflow-hidden"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+      >
         {/* Market headers */}
-        <div className="grid grid-cols-4 border-b border-white/10">
-          <div className="p-4 text-xs text-white/30">Metrica</div>
+        <div
+          className="grid grid-cols-4"
+          style={{ borderBottom: `1px solid ${T.border}` }}
+        >
+          <div className="p-4 text-xs" style={{ color: T.textDim }}>Metrica</div>
           {markets.map(m => (
-            <div key={m.key} className="p-4 text-center border-l border-white/5">
+            <div
+              key={m.key}
+              className="p-4 text-center"
+              style={{ borderLeft: `1px solid ${T.borderSubtle}` }}
+            >
               <div className="text-lg mb-0.5">{m.flag}</div>
-              <div className="text-sm font-semibold text-white">{m.label}</div>
+              <div className="text-sm font-semibold" style={{ color: T.text }}>{m.label}</div>
             </div>
           ))}
         </div>
 
         {/* Rows */}
         {metrics.map((row, i) => (
-          <div key={row.label} className={`grid grid-cols-4 ${i < metrics.length - 1 ? 'border-b border-white/5' : ''}`}>
-            <div className="px-4 py-3 text-xs text-white/50 flex items-center">{row.label}</div>
+          <div
+            key={row.label}
+            className="grid grid-cols-4"
+            style={i < metrics.length - 1 ? { borderBottom: `1px solid ${T.borderSubtle}` } : undefined}
+          >
+            <div className="px-4 py-3 text-xs flex items-center" style={{ color: T.textMuted }}>
+              {row.label}
+            </div>
             {(['brasil', 'eua', 'dubai'] as const).map(mkt => {
               const val = row[mkt]
               const isHighlight = row.highlight === 'max'
@@ -107,8 +132,15 @@ export default function ComparadorPage() {
                 : false
 
               return (
-                <div key={mkt} className="px-4 py-3 text-center border-l border-white/5">
-                  <span className="text-sm text-white" style={dmMono}>
+                <div
+                  key={mkt}
+                  className="px-4 py-3 text-center"
+                  style={{ borderLeft: `1px solid ${T.borderSubtle}` }}
+                >
+                  <span
+                    className="text-sm"
+                    style={{ color: T.text, fontFamily: T.font.data }}
+                  >
                     {val}
                   </span>
                 </div>
@@ -119,26 +151,42 @@ export default function ComparadorPage() {
       </div>
 
       {/* Visual comparison bars */}
-      <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <h3 className="text-sm font-semibold text-white mb-4">Atratividade por Metrica</h3>
+      <div
+        className="rounded-lg p-5"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+      >
+        <h3 className="text-sm font-semibold mb-4" style={{ color: T.text }}>
+          Atratividade por Metrica
+        </h3>
         {[
           { label: 'Cap Rate', values: [5.8, 6.2, 7.5] },
           { label: 'Yield Mensal', values: [0.45, 0.52, 0.65] },
           { label: 'Valorizacao 5a', values: [42, 28, 55] },
         ].map(metric => (
           <div key={metric.label} className="mb-4">
-            <div className="text-xs text-white/40 mb-2">{metric.label}</div>
+            <div className="text-xs mb-2" style={{ color: T.textDim }}>{metric.label}</div>
             <div className="space-y-1.5">
               {markets.map((m, i) => {
                 const max = Math.max(...metric.values)
                 const pct = (metric.values[i] / max) * 100
                 return (
                   <div key={m.key} className="flex items-center gap-3">
-                    <span className="text-xs text-white/50 w-14">{m.label}</span>
-                    <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                      <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: m.color }} />
+                    <span className="text-xs w-14" style={{ color: T.textMuted }}>{m.label}</span>
+                    <div
+                      className="flex-1 h-3 rounded-full overflow-hidden"
+                      style={{ background: T.hover }}
+                    >
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{ width: `${pct}%`, background: m.color }}
+                      />
                     </div>
-                    <span className="text-xs text-white/60 w-12 text-right" style={dmMono}>{metric.values[i]}</span>
+                    <span
+                      className="text-xs w-12 text-right"
+                      style={{ color: T.textMuted, fontFamily: T.font.data }}
+                    >
+                      {metric.values[i]}
+                    </span>
                   </div>
                 )
               })}

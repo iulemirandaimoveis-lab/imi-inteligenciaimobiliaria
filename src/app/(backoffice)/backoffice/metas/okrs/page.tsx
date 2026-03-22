@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  Target, Plus, Loader2, ChevronRight, Users,
+  Target, Plus, Loader2, Users,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { T } from '../../../lib/theme'
+import { PageIntelHeader } from '../../../components/ui'
 
 /* ── types ─────────────────────────────────────────────────── */
 interface Objective {
@@ -36,7 +38,7 @@ function calcScore(kr: KeyResult) {
 }
 
 function scoreColor(score: number) {
-  if (score >= 0.7) return { bg: 'bg-gold/20', text: 'text-gold', bar: '#3D6FFF' }
+  if (score >= 0.7) return { bg: 'bg-emerald-500/20', text: 'text-emerald-400', bar: T.accent }
   if (score >= 0.6) return { bg: 'bg-emerald-500/20', text: 'text-emerald-400', bar: '#34d399' }
   if (score >= 0.3) return { bg: 'bg-amber-500/20', text: 'text-amber-400', bar: '#fbbf24' }
   return { bg: 'bg-red-500/20', text: 'text-red-400', bar: '#f87171' }
@@ -53,7 +55,7 @@ const statusBadge: Record<string, { bg: string; text: string; label: string }> =
   on_track: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'No caminho' },
   at_risk: { bg: 'bg-amber-500/20', text: 'text-amber-400', label: 'Em risco' },
   behind: { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Atrasado' },
-  completed: { bg: 'bg-gold/20', text: 'text-gold', label: 'Concluído' },
+  completed: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Concluído' },
 }
 
 /* ── component ─────────────────────────────────────────────── */
@@ -84,7 +86,7 @@ export default function OKRsListPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-gold animate-spin" />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.accent }} />
       </div>
     )
   }
@@ -92,37 +94,33 @@ export default function OKRsListPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-white/40 mb-1">
-            <Link href="/backoffice/metas" className="hover:text-white/60 transition-colors">Metas</Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-white/60">OKRs</span>
-          </div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-            OKRs
-          </h1>
-          <p className="text-sm text-white/50 mt-1">Objetivos e Key Results do quarter</p>
-        </div>
-        <Link
-          href="/backoffice/metas/okrs/novo"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-          style={{ background: '#3D6FFF' }}
-        >
-          <Plus className="w-4 h-4" />
-          Novo OKR
-        </Link>
-      </div>
+      <PageIntelHeader
+        moduleLabel="METAS · OKR"
+        title="OKRs"
+        subtitle="Objetivos e Key Results do quarter"
+        breadcrumbs={[{ label: 'Metas', href: '/backoffice/metas' }]}
+        actions={
+          <Link
+            href="/backoffice/metas/okrs/novo"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ background: T.accent, color: '#0B1928' }}
+          >
+            <Plus className="w-4 h-4" />
+            Novo OKR
+          </Link>
+        }
+      />
 
       {/* Quarter selector */}
       <div className="flex items-center gap-4">
         <select
           value={quarter}
           onChange={e => setQuarter(e.target.value)}
-          className="px-3 py-1.5 rounded-[6px] text-sm bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-gold/50"
+          className="px-3 py-1.5 rounded-[6px] text-sm focus:outline-none transition-colors"
+          style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
         >
           {QUARTERS.map(q => (
-            <option key={q} value={q} className="bg-navy-900">{q}</option>
+            <option key={q} value={q} style={{ background: 'var(--bg-base)' }}>{q}</option>
           ))}
         </select>
       </div>
@@ -133,11 +131,12 @@ export default function OKRsListPage() {
           <button
             key={d}
             onClick={() => setDept(d)}
-            className={`px-3 py-1.5 rounded-[6px] text-xs font-medium whitespace-nowrap transition-colors ${
+            className="px-3 py-1.5 rounded-[6px] text-xs font-medium whitespace-nowrap transition-colors"
+            style={
               dept === d
-                ? 'bg-gold/20 text-gold border border-gold/30'
-                : 'bg-white/[0.03] text-white/50 border border-white/10 hover:text-white/70'
-            }`}
+                ? { background: T.activeBg, color: T.accent, border: `1px solid ${T.borderActive}` }
+                : { background: T.surface, color: T.textMuted, border: `1px solid ${T.border}` }
+            }
           >
             {d}
           </button>
@@ -146,14 +145,17 @@ export default function OKRsListPage() {
 
       {/* OKR Cards */}
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-          <Target className="w-8 h-8 text-white/20 mx-auto mb-3" />
-          <p className="text-white/50 text-sm">Nenhum OKR encontrado para {quarter}.</p>
-          <p className="text-white/30 text-xs mt-1">Crie o primeiro objetivo do quarter.</p>
+        <div
+          className="rounded-lg p-12 text-center"
+          style={{ background: T.surface, border: `1px solid ${T.border}` }}
+        >
+          <Target className="w-8 h-8 mx-auto mb-3" style={{ color: T.textDim }} />
+          <p className="text-sm" style={{ color: T.textMuted }}>Nenhum OKR encontrado para {quarter}.</p>
+          <p className="text-xs mt-1" style={{ color: T.textDim }}>Crie o primeiro objetivo do quarter.</p>
           <Link
             href="/backoffice/metas/okrs/novo"
-            className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-            style={{ background: '#3D6FFF' }}
+            className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ background: T.accent, color: '#0B1928' }}
           >
             <Plus className="w-4 h-4" />
             Novo OKR
@@ -173,19 +175,25 @@ export default function OKRsListPage() {
               <Link
                 key={obj.id}
                 href={`/backoffice/metas/okrs/${obj.id}`}
-                className="block rounded-lg border border-white/10 p-5 hover:border-white/20 transition-colors group"
-                style={{ background: 'rgba(255,255,255,0.03)' }}
+                className="block rounded-lg p-5 transition-colors group"
+                style={{ background: T.surface, border: `1px solid ${T.border}` }}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-white group-hover:text-gold transition-colors truncate">
+                    <h3 className="text-base font-semibold transition-colors truncate" style={{ color: T.text }}>
                       {obj.title}
                     </h3>
                     <div className="flex items-center gap-2 mt-1.5">
-                      <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/50">
+                      <span
+                        className="px-2 py-0.5 rounded-[6px] text-xs"
+                        style={{ background: T.hover, color: T.textMuted }}
+                      >
                         {obj.department}
                       </span>
-                      <span className="px-2 py-0.5 rounded-[6px] text-xs bg-white/[0.06] text-white/40">
+                      <span
+                        className="px-2 py-0.5 rounded-[6px] text-xs"
+                        style={{ background: T.hover, color: T.textDim }}
+                      >
                         {levelLabel[obj.level] || obj.level}
                       </span>
                       <span className={`px-2 py-0.5 rounded-[6px] text-xs ${badge.bg} ${badge.text}`}>
@@ -194,27 +202,27 @@ export default function OKRsListPage() {
                     </div>
                   </div>
                   <div className="text-right ml-4 flex-shrink-0">
-                    <p className={`text-lg font-bold ${sc.text}`} style={{ fontFamily: 'DM Mono, monospace' }}>
+                    <p className={`text-lg font-bold ${sc.text}`} style={{ fontFamily: T.font.data }}>
                       {Math.round(avgScore * 100)}%
                     </p>
                   </div>
                 </div>
 
                 {obj.owner && (
-                  <div className="flex items-center gap-1.5 mb-3 text-xs text-white/40">
+                  <div className="flex items-center gap-1.5 mb-3 text-xs" style={{ color: T.textDim }}>
                     <Users className="w-3 h-3" />
                     {obj.owner}
                   </div>
                 )}
 
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 h-2 rounded-full overflow-hidden bg-white/10">
+                  <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: T.hover }}>
                     <div
                       className="h-full rounded-full transition-all duration-700"
                       style={{ width: `${avgScore * 100}%`, background: sc.bar }}
                     />
                   </div>
-                  <span className="text-xs text-white/40 flex-shrink-0">
+                  <span className="text-xs flex-shrink-0" style={{ color: T.textDim }}>
                     {krs.length} KR{krs.length !== 1 ? 's' : ''}
                   </span>
                 </div>

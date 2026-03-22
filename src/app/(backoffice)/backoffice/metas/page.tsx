@@ -7,6 +7,8 @@ import {
   Loader2, ChevronRight, Zap,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { T } from '../../lib/theme'
+import { PageIntelHeader, KPICard } from '../../components/ui'
 
 /* ── types ─────────────────────────────────────────────────── */
 interface Objective {
@@ -131,7 +133,7 @@ export default function MetasDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-6 h-6 text-gold animate-spin" />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.accent }} />
       </div>
     )
   }
@@ -139,42 +141,48 @@ export default function MetasDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-editorial, serif)' }}>
-            Metas & OKRs
-          </h1>
-          <p className="text-sm text-white/50 mt-1">{QUARTER} — Painel de acompanhamento</p>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            href="/backoffice/metas/okrs"
-            className="px-4 py-2 rounded-lg text-sm font-medium border border-white/10 text-white/70 hover:text-white hover:border-white/20 transition-colors"
-          >
-            Ver OKRs
-          </Link>
-          <Link
-            href="/backoffice/metas/kpis"
-            className="px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-            style={{ background: '#3D6FFF' }}
-          >
-            Ver KPIs
-          </Link>
-        </div>
-      </div>
+      <PageIntelHeader
+        moduleLabel="METAS · OKR"
+        title="Metas & OKRs"
+        subtitle="Q1-2026 — Painel de acompanhamento"
+        actions={
+          <div className="flex gap-2">
+            <Link
+              href="/backoffice/metas/okrs"
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              style={{ color: T.textMuted, border: `1px solid ${T.border}` }}
+            >
+              Ver OKRs
+            </Link>
+            <Link
+              href="/backoffice/metas/kpis"
+              className="px-4 py-2 rounded-lg text-sm font-medium"
+              style={{ background: T.accent, color: '#0B1928' }}
+            >
+              Ver KPIs
+            </Link>
+          </div>
+        }
+      />
 
       {/* North Star Metric */}
-      <div className="rounded-lg border border-gold/30 p-6" style={{ background: 'rgba(200,164,74,0.05)' }}>
+      <div
+        className="rounded-lg p-6"
+        style={{ background: T.activeBg, border: `1px solid ${T.borderActive}` }}
+      >
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(200,164,74,0.15)' }}>
-            <Zap className="w-5 h-5 text-gold" />
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            style={{ background: T.activeBg }}
+          >
+            <Zap className="w-5 h-5" style={{ color: T.accent }} />
           </div>
           <div>
-            <p className="text-xs text-gold font-medium uppercase tracking-wider">North Star Metric</p>
-            <p className="text-xs text-white/40">Annual Recurring Revenue</p>
+            <p className="text-xs font-medium uppercase tracking-wider" style={{ color: T.accent }}>North Star Metric</p>
+            <p className="text-xs" style={{ color: T.textDim }}>Annual Recurring Revenue</p>
           </div>
         </div>
-        <p className="text-3xl font-bold text-white" style={{ fontFamily: 'DM Mono, monospace' }}>
+        <p className="text-3xl font-bold" style={{ color: T.text, fontFamily: T.font.data }}>
           {arrValue > 0 ? fmtCurrency(arrValue) : 'Sem dados'}
         </p>
       </div>
@@ -185,11 +193,12 @@ export default function MetasDashboard() {
           <button
             key={d}
             onClick={() => setDept(d)}
-            className={`px-3 py-1.5 rounded-[6px] text-xs font-medium whitespace-nowrap transition-colors ${
+            className="px-3 py-1.5 rounded-[6px] text-xs font-medium whitespace-nowrap transition-colors"
+            style={
               dept === d
-                ? 'bg-gold/20 text-gold border border-gold/30'
-                : 'bg-white/[0.03] text-white/50 border border-white/10 hover:text-white/70'
-            }`}
+                ? { background: T.activeBg, color: T.accent, border: `1px solid ${T.borderActive}` }
+                : { background: T.surface, color: T.textMuted, border: `1px solid ${T.border}` }
+            }
           >
             {d}
           </button>
@@ -198,58 +207,38 @@ export default function MetasDashboard() {
 
       {/* OKR Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
-          <div className="flex items-center gap-2 mb-3">
-            <Target className="w-4 h-4 text-gold" />
-            <span className="text-xs text-white/50">Objetivos</span>
-          </div>
-          <p className="text-2xl font-bold text-white" style={{ fontFamily: 'DM Mono, monospace' }}>
-            {totalObj}
-          </p>
-        </div>
-
-        <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
-          <div className="flex items-center gap-2 mb-3">
-            <BarChart3 className="w-4 h-4 text-blue-400" />
-            <span className="text-xs text-white/50">Key Results</span>
-          </div>
-          <p className="text-2xl font-bold text-white" style={{ fontFamily: 'DM Mono, monospace' }}>
-            {objKRs.length}
-          </p>
-        </div>
-
-        <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs text-white/50">Score Médio</span>
-          </div>
-          <p className="text-2xl font-bold text-white" style={{ fontFamily: 'DM Mono, monospace' }}>
-            {fmt(avgScore * 100)}%
-          </p>
-          <div className="mt-2 h-2 rounded-full overflow-hidden bg-white/10">
-            <div
-              className="h-full rounded-full transition-all duration-700"
-              style={{ width: `${avgScore * 100}%`, background: '#3D6FFF' }}
-            />
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-white/10 p-5" style={{ background: 'rgba(255,255,255,0.03)' }}>
-          <div className="flex items-center gap-2 mb-3">
-            <Activity className="w-4 h-4 text-purple-400" />
-            <span className="text-xs text-white/50">KPIs Ativos</span>
-          </div>
-          <p className="text-2xl font-bold text-white" style={{ fontFamily: 'DM Mono, monospace' }}>
-            {filteredKpis.length}
-          </p>
-        </div>
+        <KPICard
+          label="Objetivos"
+          value={totalObj}
+          icon={<Target className="w-4 h-4" />}
+          accent="gold"
+        />
+        <KPICard
+          label="Key Results"
+          value={objKRs.length}
+          icon={<BarChart3 className="w-4 h-4" />}
+          accent="blue"
+        />
+        <KPICard
+          label="Score Médio"
+          value={`${fmt(avgScore * 100)}%`}
+          sublabel={`${objKRs.length} key results avaliados`}
+          icon={<TrendingUp className="w-4 h-4" />}
+          accent="success"
+        />
+        <KPICard
+          label="KPIs Ativos"
+          value={filteredKpis.length}
+          icon={<Activity className="w-4 h-4" />}
+          accent="info"
+        />
       </div>
 
       {/* KPI Health Grid */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">Saúde dos KPIs</h2>
-          <div className="flex gap-3 text-xs text-white/50">
+          <h2 className="text-lg font-semibold" style={{ color: T.text }}>Saúde dos KPIs</h2>
+          <div className="flex gap-3 text-xs" style={{ color: T.textMuted }}>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400" /> {healthCounts.green}
             </span>
@@ -263,14 +252,17 @@ export default function MetasDashboard() {
         </div>
 
         {kpiHealth.length === 0 ? (
-          <div className="rounded-lg border border-white/10 p-12 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <Activity className="w-8 h-8 text-white/20 mx-auto mb-3" />
-            <p className="text-white/50 text-sm">Nenhum KPI cadastrado ainda.</p>
-            <p className="text-white/30 text-xs mt-1">Cadastre KPIs para acompanhar a saúde dos indicadores.</p>
+          <div
+            className="rounded-lg p-12 text-center"
+            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+          >
+            <Activity className="w-8 h-8 mx-auto mb-3" style={{ color: T.textDim }} />
+            <p className="text-sm" style={{ color: T.textMuted }}>Nenhum KPI cadastrado ainda.</p>
+            <p className="text-xs mt-1" style={{ color: T.textDim }}>Cadastre KPIs para acompanhar a saúde dos indicadores.</p>
             <Link
               href="/backoffice/metas/kpis"
-              className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium text-navy-900"
-              style={{ background: '#3D6FFF' }}
+              className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium"
+              style={{ background: T.accent, color: '#0B1928' }}
             >
               Configurar KPIs
             </Link>
@@ -283,21 +275,21 @@ export default function MetasDashboard() {
                 <Link
                   key={kpi.id}
                   href={`/backoffice/metas/kpis/${kpi.id}`}
-                  className="rounded-lg border border-white/10 p-4 hover:border-white/20 transition-colors group"
-                  style={{ background: 'rgba(255,255,255,0.03)' }}
+                  className="rounded-lg p-4 transition-colors group"
+                  style={{ background: T.surface, border: `1px solid ${T.border}` }}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-white/70 group-hover:text-white transition-colors">{kpi.name}</span>
+                    <span className="text-sm transition-colors" style={{ color: T.textMuted }}>{kpi.name}</span>
                     <span className={`w-2 h-2 rounded-full ${sc.dot}`} />
                   </div>
-                  <p className="text-xl font-bold text-white" style={{ fontFamily: 'DM Mono, monospace' }}>
+                  <p className="text-xl font-bold" style={{ color: T.text, fontFamily: T.font.data }}>
                     {fmt(kpi.currentValue)}
                   </p>
                   <div className="flex items-center justify-between mt-2">
                     <span className={`px-2 py-0.5 rounded-[6px] text-xs ${sc.bg} ${sc.text}`}>
                       {kpi.status === 'green' ? 'Saudável' : kpi.status === 'yellow' ? 'Atenção' : 'Crítico'}
                     </span>
-                    <span className="text-xs text-white/30">Meta: {fmt(kpi.target_value)}</span>
+                    <span className="text-xs" style={{ color: T.textDim }}>Meta: {fmt(kpi.target_value)}</span>
                   </div>
                 </Link>
               )
@@ -316,18 +308,18 @@ export default function MetasDashboard() {
           <Link
             key={item.href}
             href={item.href}
-            className="rounded-lg border border-white/10 p-5 hover:border-gold/30 transition-colors group"
-            style={{ background: 'rgba(255,255,255,0.03)' }}
+            className="rounded-lg p-5 transition-colors group"
+            style={{ background: T.surface, border: `1px solid ${T.border}` }}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <item.icon className="w-5 h-5 text-gold" />
+                <item.icon className="w-5 h-5" style={{ color: T.accent }} />
                 <div>
-                  <p className="text-sm font-medium text-white group-hover:text-gold transition-colors">{item.label}</p>
-                  <p className="text-xs text-white/40">{item.desc}</p>
+                  <p className="text-sm font-medium transition-colors" style={{ color: T.text }}>{item.label}</p>
+                  <p className="text-xs" style={{ color: T.textDim }}>{item.desc}</p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-gold transition-colors" />
+              <ChevronRight className="w-4 h-4" style={{ color: T.textDim }} />
             </div>
           </Link>
         ))}
