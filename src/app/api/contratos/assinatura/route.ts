@@ -3,6 +3,7 @@
 // Interface unificada — detecta provider pelo config ativo
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 export const runtime = 'nodejs'
 export const maxDuration = 30
 // ════════════════════════════════════════════════════════════
@@ -264,8 +265,38 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ success: true, ...resultado, provider: 'clicksign' })
         }
         case 'status': {
-          const { document_key } = payload
+          const { document_key, contrato_id } = payload
           const status = await clicksign.consultarStatus(document_key)
+          // When all parties signed → update contract + create financial transaction
+          if (status.all_signed && contrato_id) {
+            // Update contract status
+            await supabaseAdmin.from('contratos').update({
+              status: 'signed',
+              signed_at: new Date().toISOString(),
+              signed_document_url: status.pdf_signed_url || null,
+            }).eq('id', contrato_id)
+            // Fetch contract to get value for financial transaction
+            const { data: contrato } = await supabaseAdmin
+              .from('contratos')
+              .select('id, numero, valor, tipo, development_id, client_name')
+              .eq('id', contrato_id)
+              .single()
+            if (contrato?.valor) {
+              // Create financial transaction linked to the signed contract
+              await supabaseAdmin.from('financial_transactions').insert({
+                type: 'income',
+                category: 'comissao',
+                description: `Comissão contrato ${contrato.numero || contrato_id} — ${contrato.client_name || 'Cliente'}`,
+                amount: contrato.valor,
+                status: 'pending',
+                due_date: new Date(Date.now() + 30 * 86400000).toISOString(), // 30 days
+                reference_type: 'contrato',
+                reference_id: contrato_id,
+                development_id: contrato.development_id || null,
+                created_by: user.id,
+              })
+            }
+          }
           return NextResponse.json({ success: true, ...status, provider: 'clicksign' })
         }
         case 'cancelar': {
