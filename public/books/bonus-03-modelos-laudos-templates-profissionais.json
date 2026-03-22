@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "titulo": "Modelos de Laudos e Templates Profissionais",
+    "subtitulo": "Estruturas Prontas Para Avaliação Residencial, Comercial, Terrenos e Perícia Judicial",
+    "autor": "Iule Miranda",
+    "serie": "Biblioteca IMI — Bônus",
+    "posicao": "Bônus 3 de 3",
+    "numero": "B3",
+    "slug": "bonus-03-modelos-laudos-templates-profissionais",
+    "dedicatoria": "A quem sabe que um bom template não substitui o conhecimento — mas organiza, padroniza e blinda o trabalho de quem sabe."
+  },
+  "capitulos": [
+    {
+      "numero": 1,
+      "titulo": "Template 1: Laudo de Avaliação Residencial Urbana",
+      "epigrafe": "A estrutura certa liberta o avaliador para focar no que importa: a análise.",
+      "secoes": [
+        {
+          "titulo": "Estrutura do laudo residencial",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Este template cobre a avaliação de apartamentos, casas e sobrados em áreas urbanas, pelo Método Comparativo Direto de Dados de Mercado (MCDDM). É o tipo mais frequente de avaliação no Brasil e o mais padronizável."},
+            {"tipo": "insight", "texto": "Estrutura recomendada (seções numeradas para referência): 1. IDENTIFICAÇÃO — 1.1 Solicitante (nome, CPF/CNPJ). 1.2 Finalidade (venda, compra, garantia, inventário, seguro). 1.3 Objetivo (determinar valor de mercado). 1.4 Data-base (data a que se refere o valor). 1.5 Imóvel (endereço completo, matrícula, registro). 2. DOCUMENTAÇÃO — Lista de todos os documentos consultados (matrícula, IPTU, planta, habite-se, convenção do condomínio). 3. VISTORIA — 3.1 Data e condições da vistoria. 3.2 Acompanhantes. 3.3 Metodologia de medição. 3.4 Registro fotográfico (mínimo 20 fotos referenciadas). 4. CARACTERIZAÇÃO — 4.1 Região (localização, infraestrutura, serviços, uso predominante, tendência). 4.2 Terreno (dimensões, forma, topografia — se casa/sobrado). 4.3 Edificação (tipo, área, número de cômodos, padrão construtivo, idade, estado de conservação, vagas). 5. METODOLOGIA — Justificativa da escolha do MCDDM, citação da NBR 14653-2."},
+            {"tipo": "insight", "texto": "Continuação da estrutura: 6. PESQUISA DE MERCADO — 6.1 Critérios de busca (região, tipologia, período). 6.2 Fontes consultadas. 6.3 Tabela completa de dados (endereço, fonte, tipo, valor, área, características, data). 7. TRATAMENTO DOS DADOS — 7.1 Se por fatores: tabela de fatores e fontes. 7.2 Se por inferência: modelo de regressão, variáveis, coeficientes, significância, R². 7.3 Diagnóstico (normalidade, homocedasticidade, multicolinearidade). 8. RESULTADO — 8.1 Valor estimado (pontual). 8.2 Intervalo de confiança de 80%. 8.3 Grau de fundamentação (I, II ou III) com detalhamento. 8.4 Grau de precisão (I, II ou III). 8.5 Campo de arbítrio e justificativa do valor adotado. 9. CONCLUSÃO — Síntese em linguagem acessível. 10. ENCERRAMENTO — Declaração de independência, habilitação, e responsabilidade. ART/RRT. 11. ANEXOS — Fotos, planilhas, mapa, certidões."},
+            {"tipo": "pratica", "texto": "Use esta estrutura como checklist: antes de entregar qualquer laudo residencial, confirme que cada seção está completa. A ausência de qualquer seção é potencial brecha para impugnação."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "titulo": "Template 2: Laudo de Avaliação Comercial",
+      "epigrafe": "Imóveis comerciais falam a linguagem da renda. O laudo precisa falar também.",
+      "secoes": [
+        {
+          "titulo": "Especificidades do laudo comercial",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "A avaliação comercial (salas, lojas, galpões, edifícios corporativos) frequentemente exige a aplicação de dois métodos: MCDDM e Capitalização da Renda. A estrutura do laudo deve acomodar ambos e apresentar a reconciliação dos valores."},
+            {"tipo": "insight", "texto": "Seções adicionais no laudo comercial (além da estrutura base): 4.4 RENDA — Aluguel praticado ou estimado (com pesquisa de locação), vacância típica do mercado, despesas operacionais (condomínio, IPTU, manutenção). 5.2 MÉTODO DA CAPITALIZAÇÃO DA RENDA — Receita bruta potencial → Vacância → Receita efetiva → Despesas operacionais → Receita líquida → Capitalização pela taxa. 5.3 TAXA DE CAPITALIZAÇÃO — Fundamentar a taxa: (a) por extração de mercado (cap rate observado em transações + locações), (b) por construção (taxa livre de risco + prêmio de risco imobiliário). 8. RESULTADO — Apresentar valor pelo MCDDM e pelo Capitalização da Renda separadamente, depois reconciliar (média ponderada ou análise crítica)."},
+            {"tipo": "caso", "titulo_caso": "Modelo de reconciliação de métodos", "texto": "Exemplo: Sala comercial de 80 m² em edifício corporativo. MCDDM: R$ 720.000 (Grau II). Capitalização da Renda: R$ 685.000 (renda líquida R$ 4.800/mês, cap rate 8,4%). Diferença: 5,1% — dentro do aceitável. Valor adotado: R$ 700.000 (média ponderada, peso 60% para MCDDM por ter mais dados, 40% para Renda). Justificativa: ambos os métodos convergem para a faixa R$ 685-720K, e a pequena diferença reflete a incerteza natural dos parâmetros de renda."},
+            {"tipo": "armadilha", "texto": "Para imóveis comerciais vazios, não estimar aluguel 'pelo que o proprietário gostaria de receber'. Pesquisar aluguéis praticados em imóveis similares na mesma região. Aluguel estimado acima do mercado infla o valor pelo método da renda — e é facilmente impugnável."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "titulo": "Template 3: Laudo de Avaliação de Terreno",
+      "epigrafe": "Terreno é potência. O laudo precisa medir a potência, não apenas a terra.",
+      "secoes": [
+        {
+          "titulo": "Especificidades do laudo de terreno",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "A avaliação de terrenos urbanos exige atenção especial ao potencial construtivo e, frequentemente, à aplicação do Método Involutivo como complemento ou alternativa ao Comparativo. A estrutura do laudo reflete essas necessidades."},
+            {"tipo": "insight", "texto": "Seções específicas para terrenos: 4. CARACTERIZAÇÃO EXPANDIDA — 4.1 Zoneamento (zona, CA básico e máximo, TO, gabarito, recuos, uso permitido). 4.2 Outorga onerosa estimada (para CA acima do básico). 4.3 Restrições urbanísticas e ambientais (tombamento, APP, servidão, faixa non aedificandi). 4.4 Vocação (residencial vertical, horizontal, comercial, misto, renda). 5. METODOLOGIA — Se MCDDM: detalhar fatores de ajuste específicos (testada, profundidade, topografia, forma). Se Involutivo: apresentar estudo de viabilidade completo com pelo menos 3 cenários (produto, mercado, margem). 6. PESQUISA — Incluir separadamente: dados de terrenos (para MCDDM) e dados de unidades novas na região (para estimativa de VGV no involutivo). 7. ANÁLISE DE SENSIBILIDADE (obrigatória para involutivo) — Variar VGV (±10%), custo (±10%), margem (±3pp). Apresentar matriz de resultados."},
+            {"tipo": "pratica", "texto": "Para laudos de terreno com dois métodos: apresente uma tabela de reconciliação mostrando: Valor pelo MCDDM, Valor pelo Involutivo (cenário base), Faixa do Involutivo (pessimista a otimista), Valor Adotado com justificativa. Se os métodos divergem mais de 30%, investigue — geralmente indica que o mercado de terrenos está descolado da viabilidade de incorporação."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "titulo": "Template 4: Laudo Pericial Judicial",
+      "epigrafe": "O laudo judicial não é apenas técnico — é probatório. Cada palavra pode ser questionada.",
+      "secoes": [
+        {
+          "titulo": "Estrutura pericial completa",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "O laudo pericial segue a mesma base técnica dos demais, mas adiciona camadas de formalidade processual e de blindagem contra impugnação. A estrutura abaixo segue o Protocolo de Blindagem (10 Muralhas) desenvolvido ao longo do Livro 3."},
+            {"tipo": "insight", "texto": "Seções obrigatórias do laudo pericial: 1. IDENTIFICAÇÃO — Processo (número, vara, comarca), partes (autor/réu), juiz, data da nomeação, data da entrega, data-base da avaliação. 2. QUALIFICAÇÃO DO PERITO — Formação, registro CREA/CAU, experiência, declaração de ausência de impedimento ou suspeição. 3. DOCUMENTAÇÃO DOS AUTOS — Lista detalhada de todos os documentos do processo que foram analisados, com número da folha/página. 4. VISTORIA — Data, presentes (assistentes técnicos notificados? compareceram?), condições de acesso, metodologia. 5. CARACTERIZAÇÃO — Mesma estrutura dos demais laudos, mas com ênfase em documentar discrepâncias entre o que os autos dizem e o que a vistoria revelou. 6. METODOLOGIA — Justificativa ampla, incluindo razões para não utilizar outros métodos. 7. PESQUISA E CÁLCULOS — Com rastreabilidade total (o juiz deve poder verificar cada número). 8. RESULTADO — Com intervalo e cenários se houver questão controversa (ex: área irregular)."},
+            {"tipo": "insight", "texto": "Continuação: 9. RESPOSTAS AOS QUESITOS — Transcrever cada quesito integralmente e responder logo abaixo. Nunca responder apenas 'sim' ou 'não' sem fundamentação. Nunca responder 'prejudicado' sem explicar por quê. Se o quesito contém premissa falsa, identificar a premissa antes de responder. 10. CONCLUSÃO — Síntese objetiva do resultado. 11. ENCERRAMENTO — Declaração de que o trabalho foi realizado com independência e imparcialidade, conforme Art. 473 do CPC. ART/RRT. Data e assinatura. 12. ANEXOS — Fotos referenciadas, planilha de dados, mapa de localização, documentos de suporte, ART/RRT."},
+            {"tipo": "armadilha", "texto": "O laudo pericial NÃO pode: (a) omitir documentos dos autos que contradizem suas conclusões, (b) usar linguagem opinativa ('acredito que', 'parece-me'), (c) responder quesitos de forma que valide premissas não comprovadas, (d) apresentar resultado sem intervalo de confiança, (e) não declarar grau de fundamentação e precisão. Qualquer dessas falhas é motivo legítimo de impugnação."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "titulo": "Template 5: Parecer de Valor e Relatório Executivo",
+      "epigrafe": "Nem tudo precisa ser laudo. Mas tudo precisa ser competente.",
+      "secoes": [
+        {
+          "titulo": "Quando usar parecer vs. laudo",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "O parecer técnico é uma alternativa mais ágil ao laudo completo, adequada para situações que não exigem grau de fundamentação formal: consultoria para decisão interna, triagem de portfólio, orientação para compra/venda, e análises preliminares. Não substitui o laudo em contextos judiciais, bancários ou regulatórios."},
+            {"tipo": "insight", "texto": "Estrutura do Parecer de Valor (documento de 5-10 páginas): 1. OBJETIVO — O que está sendo avaliado e para quê (em 2-3 linhas). 2. IDENTIFICAÇÃO DO IMÓVEL — Endereço, matrícula, breve descrição. 3. PREMISSAS — Quais condições foram assumidas (área conforme matrícula, sem vistoria interna, mercado corrente). 4. ANÁLISE — Pesquisa simplificada de mercado (5-8 comparativos), com ajustes resumidos. 5. VALOR ESTIMADO — Faixa de valor com breve justificativa. 6. RESSALVAS — O que o parecer NÃO cobre (vistoria detalhada, diagnóstico estrutural, verificação documental completa). 7. RESPONSÁVEL — Identificação e ART/RRT."},
+            {"tipo": "insight", "texto": "Estrutura do Relatório Executivo (para fundos, corporações, conselhos): 1. SUMÁRIO EXECUTIVO — Valor estimado, faixa, método, data-base (em 1 página). 2. CONTEXTO — Por que esta avaliação foi solicitada, qual decisão ela subsidia. 3. PRINCIPAIS ACHADOS — 3-5 pontos-chave que impactam o valor. 4. ANÁLISE DE MERCADO — Panorama da região, tendências, comparáveis resumidos. 5. VALOR E SENSIBILIDADE — Valor central, faixa, e tabela de sensibilidade a premissas-chave. 6. RISCOS E OPORTUNIDADES — O que pode fazer o valor subir ou cair. 7. RECOMENDAÇÃO — Ação sugerida (comprar, vender, manter, aprofundar análise). 8. ANEXO TÉCNICO — Laudo completo ou metodologia detalhada para quem quiser verificar."},
+            {"tipo": "pratica", "texto": "Defina qual formato é adequado antes de começar: (a) Contexto judicial ou bancário → Laudo completo obrigatório. (b) Decisão interna de compra/venda → Parecer pode ser suficiente. (c) Comitê de investimento ou conselho → Relatório Executivo + Laudo Técnico em anexo. Entregar o formato errado é tão prejudicial quanto entregar o número errado."},
+            {"tipo": "transicao", "texto": "Estes templates são pontos de partida — não substitutos do conhecimento. Adapte-os ao seu caso, ao seu mercado e ao seu público. E lembre-se: o melhor template do mundo não salva um avaliador que não sabe o que está fazendo. Mas organiza, padroniza e protege o trabalho de quem sabe."}
+          ]
+        }
+      ]
+    }
+  ]
+}

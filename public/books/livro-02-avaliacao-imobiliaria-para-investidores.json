@@ -1,0 +1,630 @@
+{
+  "metadata": {
+    "numero": 2,
+    "titulo": "Avaliação Imobiliária para Investidores",
+    "subtitulo": "Como Analisar se um Imóvel é Bom Investimento Antes de Comprar — Com Números, Não com Esperança",
+    "autor": "Iule Miranda",
+    "serie": "Biblioteca IMI — Inteligência Imobiliária",
+    "bloco": "Bloco 1 — Avaliação",
+    "posicao": "Livro 02 de 27",
+    "palavras_estimadas": 50000,
+    "capitulos": 10,
+    "frameworks_totais": 10,
+    "personagem_principal": "Beatriz",
+    "personagens_secundarios": ["Ricardo (L1)", "Helena (L9/L19)", "Professor Coutinho (L1)"],
+    "dedicatoria": "Para quem já perdeu dinheiro comprando imóvel pela emoção e jurou que da próxima vez faria pela razão. Este livro é a razão sistematizada.",
+    "narrativa_central": "Beatriz, médica ginecologista de 45 anos em Recife, com R$ 1,2 milhão em poupança e CDB, decide investir em imóveis após ouvir que 'imóvel é o investimento mais seguro'. Compra um apartamento de R$ 480K em Piedade sem analisar — e descobre em 12 meses que o yield líquido é 2,8% ao ano (abaixo da Selic). O livro acompanha a educação de Beatriz, orientada por Ricardo (L1) que agora é avaliador experiente, para nunca mais comprar imóvel sem análise de investimento completa.",
+    "conexoes": {
+      "livro_1": "Ricardo como mentor — evolução do personagem",
+      "livro_6": "Identificação de imóveis abaixo do valor",
+      "livro_8": "Estratégias de renda com aluguel",
+      "livro_9": "Construção de patrimônio com imóveis",
+      "livro_24": "IA para análise de investimento"
+    }
+  },
+  "capitulos": [
+    {
+      "numero": 1,
+      "titulo": "O Erro de R$ 480 Mil",
+      "objetivo": "O leitor entende por que comprar imóvel sem análise de investimento é o erro mais caro do mercado",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Diagnóstico IMI de Investimento Imobiliário"],
+      "conteudo": {
+        "abertura": "Beatriz assinou a escritura com a mesma caneta que usava para prescrever receitas. Caneta preta, ponta fina, letra médica ilegível. Mas na escritura, o nome estava legível — e o número também: R$ 480.000,00.\n\nApartamento de 2 quartos em Piedade, 4º andar, vista para a rua (não para o mar), 1 vaga presa, prédio de 1998 com pintura descascando na fachada. O corretor tinha dito: 'Excelente investimento, doutora. Aluga fácil por R$ 2.000. O bairro está valorizando.'\n\nBeatriz não verificou nada. Não calculou yield. Não pesquisou comparativos. Não analisou vacância da região. Não comparou com alternativas financeiras. Confiou no corretor — que tinha incentivo para vender, não para analisar.\n\nDoze meses depois, a realidade:\n\nAluguel obtido: R$ 1.650 (não R$ 2.000 — o mercado não sustentava). IPTU: R$ 280/mês. Condomínio pago pelo proprietário (prédio antigo sem administração): R$ 180/mês. Taxa de administração (8%): R$ 132/mês. IR sobre aluguel (27,5% após deduções): R$ 290/mês. Renda líquida: R$ 1.650 - R$ 280 - R$ 180 - R$ 132 - R$ 290 = R$ 768/mês.\n\nYield líquido: R$ 768 × 12 ÷ R$ 480.000 = 1,92% ao ano.\n\nSelic na época: 10,5% ao ano. CDB que ela tirou o dinheiro: 9,8% líquido. A diferença: R$ 480.000 × (9,8% - 1,92%) = R$ 37.824 por ano que Beatriz perdeu escolhendo imóvel em vez de renda fixa.\n\nO cheiro de cartório — papel velho, carimbo, tinta. O peso da caneta assinando o que deveria ser investimento e era, na verdade, destruição de capital.\n\nBeatriz descobriu os números quando Ricardo — que agora avaliava para bancos e começava a prestar consultoria — analisou o apartamento a pedido de uma amiga em comum.\n\n'Doutora, vou ser direto: a senhora comprou pelo coração. E o coração custou R$ 37 mil por ano.'\n\n*Imóvel não é investimento seguro. Imóvel bem analisado é investimento seguro. A diferença entre os dois são as contas que ninguém faz antes de assinar a escritura.*",
+        "secoes": [
+          {
+            "titulo": "O Diagnóstico IMI de Investimento Imobiliário",
+            "conteudo": "O Diagnóstico IMI é o framework que Beatriz deveria ter aplicado ANTES de comprar. São 7 perguntas que separam investimento de aposta.\n\nPergunta 1 — Qual o yield bruto? Aluguel anual ÷ preço de compra. Para Beatriz: R$ 1.650 × 12 ÷ R$ 480.000 = 4,12%. Abaixo de 5%: sinal amarelo. Abaixo de 4%: sinal vermelho.\n\nPergunta 2 — Qual o yield líquido? Renda líquida anual (descontando IPTU, condomínio, administração, IR, manutenção, vacância) ÷ preço de compra. Para Beatriz: 1,92%. Abaixo da Selic: investimento destruindo valor.\n\nPergunta 3 — Qual o custo de oportunidade? Quanto renderia o mesmo dinheiro na alternativa mais segura (Selic/CDB)? Se o yield líquido do imóvel é menor que a renda fixa, o imóvel precisa compensar com valorização — e valorização não é garantida.\n\nPergunta 4 — Qual a vacância esperada? Quantos meses por ano o imóvel fica vazio? Se a vacância média da região é 10% (1,2 meses), o yield real cai proporcionalmente. Piedade tinha vacância de 12-15% — Beatriz não sabia.\n\nPergunta 5 — Qual a tendência de valorização? O bairro está valorizando (preço/m² subindo), estável ou desvalorizando? Piedade tinha valorização real de 0,3% ao ano nos últimos 5 anos — praticamente zero.\n\nPergunta 6 — Qual o custo total de aquisição? Preço + ITBI (2-3%) + escritura e registro (1-2%) + reforma (se necessário). Para Beatriz: R$ 480K + R$ 14.400 (ITBI 3%) + R$ 7.200 (escritura/registro) = R$ 501.600 de investimento real. O yield deveria ser calculado sobre R$ 501.600, não sobre R$ 480.000.\n\nPergunta 7 — Qual a liquidez? Em quanto tempo o imóvel pode ser vendido pelo preço de mercado? Se a resposta é 6-12 meses, o capital está travado — diferente de CDB que resgata em D+1.\n\nBeatriz respondeu todas as perguntas — 12 meses tarde demais. As respostas confirmaram: o apartamento era investimento ruim. Não porque imóvel é ruim — porque aquele imóvel, naquela localização, por aquele preço, era ruim.\n\nRicardo ensinou a lição mais importante: 'Imóvel bom é excelente investimento. Imóvel ruim é péssimo. A diferença entre os dois são essas 7 perguntas.'\n\n*O Diagnóstico IMI não é para quem quer ouvir que imóvel é bom investimento. É para quem quer saber SE aquele imóvel específico é bom investimento. A resposta nem sempre agrada — mas sempre protege.*"
+          },
+          {
+            "titulo": "A Ilusão do Imóvel Seguro",
+            "conteudo": "Beatriz cresceu ouvindo: 'Invista em imóvel. É o investimento mais seguro que existe. Imóvel nunca perde valor.'\n\nAs três frases estão erradas. E o dinheiro perdido por quem acredita nelas é incalculável.\n\nFrase 1: 'Imóvel é seguro.' Imóvel tem riscos específicos que renda fixa não tem: vacância (meses sem renda), inadimplência de inquilino, danos ao imóvel, custos de manutenção imprevistos, mudança de mercado (bairro que desvaloriza), iliquidez (não vende quando precisa), e risco jurídico (processo de inquilino, disputa de propriedade). A segurança do imóvel é real quando bem localizado, bem avaliado e bem gerido. Sem os três, é tão arriscado quanto ação de empresa ruim.\n\nFrase 2: 'Imóvel nunca perde valor.' Em termos nominais (números absolutos), é quase verdade — porque a inflação brasileira faz os números subirem mesmo sem valorização real. Mas em termos reais (descontada a inflação), milhares de imóveis no Brasil perderam valor nos últimos 10 anos. Apartamentos em Piedade que custavam R$ 400K em 2014 são vendidos por R$ 380K em 2026 — queda nominal de 5% e queda real de 50%+ quando se desconta a inflação acumulada.\n\nFrase 3: 'Invista em imóvel.' Correto — mas incompleto. Deveria ser: 'Invista em imóvel DEPOIS de analisar yield, vacância, valorização, custo de oportunidade e liquidez.' A frase sem as ressalvas é perigosa — porque leva Beatrizes do Brasil inteiro a comprar imóvel ruim achando que estão fazendo investimento seguro.\n\nRicardo mostrou os números para Beatriz numa planilha que ela chamou de 'exame de sangue do apartamento'. Porque, como médica, ela entendia: ninguém trata doença sem exame. E ninguém deveria comprar imóvel sem análise.\n\n*A ilusão do imóvel seguro custa bilhões de reais por ano a investidores brasileiros. Não porque imóvel é ruim — porque imóvel comprado sem análise é aposta. E aposta não é investimento.*"
+          },
+          {
+            "titulo": "O Que Beatriz Deveria Ter Feito — E O Que Você Vai Fazer",
+            "conteudo": "Se Beatriz tivesse aplicado o Diagnóstico IMI antes de comprar, teria descoberto em 30 minutos o que descobriu em 12 meses de prejuízo.\n\nYield bruto de 4,12% — abaixo do mínimo de 5% para residencial.\nYield líquido de 1,92% — abaixo da Selic por 8,6 pontos percentuais.\nVacância da região de 12-15% — acima do aceitável de 8%.\nValorização real de 0,3% ao ano — praticamente zero.\nCusto total de aquisição R$ 501.600 — 4,5% acima do preço de compra.\nLiquidez de 8-12 meses — capital travado.\n\nCom esses dados, a decisão seria: NÃO COMPRAR. Manter em CDB a 9,8% e esperar oportunidade melhor.\n\nOu: comprar em outra localização. Ricardo mapeou alternativas: sala comercial no Derby (yield líquido de 6,8%), apartamento de 1 quarto em Espinheiro (yield de 5,4%), ou flat em Boa Viagem (yield de 7,2% com risco de vacância maior).\n\nCada alternativa era MELHOR que o apartamento de Piedade. Mas Beatriz não as viu — porque não analisou. Comprou o primeiro que o corretor mostrou.\n\nA lição que custou R$ 37K por ano: análise de 30 minutos antes da compra economiza anos de arrependimento depois.\n\nBeatriz não vendeu o apartamento — o custo de transação (ITBI, escritura, comissão) tornava a venda ainda mais prejudicial no curto prazo. Mas reformulou a estratégia: manteria o imóvel por 5 anos (apostando em valorização da região com o VLT em construção), otimizaria a gestão (reduziu vacância para 8% com administradora profissional), e os próximos R$ 700K que investiria em imóvel passariam pelo Diagnóstico IMI sem exceção.\n\n*O erro de Beatriz não foi comprar imóvel. Foi comprar sem analisar. E a diferença entre os dois — 30 minutos de contas — vale R$ 37.000 por ano. Todo ano.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "Yield Bruto vs. Yield Líquido — A Conta que Ninguém Faz",
+          "conteudo": "O yield bruto (aluguel anual ÷ preço) é o número que corretores usam para vender. O yield líquido é o que o investidor realmente recebe. A diferença é brutal. Para apartamento residencial típico, os custos que reduzem o yield bruto são: IPTU (0,5-1,5% do valor do imóvel/ano), condomínio quando pago pelo proprietário (variável), taxa de administração (8-10% do aluguel), IR sobre aluguel (0-27,5% dependendo da faixa), manutenção estimada (0,5-1% do valor/ano), vacância (5-15% do aluguel/ano dependendo da região), e seguro (0,1-0,3% do valor/ano). Um yield bruto de 6% pode se transformar em yield líquido de 3-4% depois de todos os custos. O investidor que calcula apenas o bruto superestima o retorno em 40-50%. A recomendação: nunca tomar decisão de investimento baseado em yield bruto. Sempre calcular o líquido. E comparar o líquido com a Selic — que é o custo de oportunidade mínimo."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Aplicando o Diagnóstico IMI ao Seu Próximo Investimento",
+          "passos": [
+            "Antes de qualquer visita: aplique as 7 perguntas do Diagnóstico IMI com dados reais (não com o que o corretor diz)",
+            "Calcule yield LÍQUIDO — não bruto. Desconte todos os custos: IPTU, condomínio, administração, IR, manutenção, vacância",
+            "Compare com custo de oportunidade: yield líquido do imóvel é maior que Selic/CDB? Se não, o imóvel precisa compensar com valorização comprovável",
+            "Pesquise vacância real da região (não a que o corretor diz — a que os portais mostram)",
+            "Calcule custo total de aquisição (preço + ITBI + escritura + reforma)",
+            "Se as 7 perguntas não aprovam: NÃO COMPRE. Espere oportunidade melhor. Disciplina é a ferramenta mais rentável do investidor"
+          ]
+        },
+        "checklist": [
+          "7 perguntas do Diagnóstico IMI respondidas com dados reais",
+          "Yield líquido calculado (não apenas bruto)",
+          "Custo de oportunidade comparado (yield vs. Selic)",
+          "Vacância real da região pesquisada",
+          "Custo total de aquisição calculado",
+          "Decisão baseada em análise — não em emoção ou pressão"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Confiar no yield bruto que o corretor apresenta",
+            "por_que": "O corretor tem incentivo para vender — não para analisar. O yield bruto de 6% que ele promete vira 3% líquido depois de todos os custos. Se você descobre depois de comprar, é tarde",
+            "solucao": "Calcular SEMPRE o yield líquido antes de qualquer decisão. Se o corretor não sabe calcular, é sinal de que não entende investimento — e você precisa de outro profissional"
+          },
+          {
+            "erro": "Comprar imóvel para investimento baseado em emoção ('gostei do apartamento')",
+            "por_que": "O imóvel bonito que você gosta pode ser péssimo investimento. O imóvel feio que você ignoraria pode ser excelente. Investimento é número — não sentimento. Gostar é critério para morar, não para investir",
+            "solucao": "Separar decisão de moradia de decisão de investimento. Se é para morar: gostar importa. Se é para investir: yield, vacância e valorização importam. São decisões diferentes com critérios diferentes"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 2,
+      "titulo": "Yield e Rentabilidade",
+      "objetivo": "O leitor domina cálculo de yield, TIR e payback para investimento imobiliário",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Calculadora IMI de Rentabilidade Imobiliária"],
+      "conteudo": {
+        "abertura": "Ricardo sentou com Beatriz no escritório dele — sala de 30m² em Espinheiro, mesa de reunião para 4, notebook aberto com planilha que ele chamava de 'raio-X do investimento'. O cheiro de café que a secretária trouxe. A luz da tela refletindo nos óculos de Beatriz. E 6 números na planilha que mudariam como ela pensava sobre dinheiro para sempre.\n\n'Doutora, vou te mostrar por que R$ 480K em Piedade renderam 1,92% e por que R$ 480K em outro lugar renderiam 6,8%. A diferença não é sorte — é conta.'\n\nBeatriz, que operava pacientes com precisão milimétrica, nunca tinha operado investimento com a mesma disciplina. Na medicina, nenhuma decisão é tomada sem exame. No investimento, tinha tomado a maior decisão financeira da vida sem examinar nada.\n\n'Ricardo, me ensina a conta. Toda ela. Quero saber fazer sozinha.'\n\nRicardo abriu a Calculadora IMI de Rentabilidade e começou pela célula A1.\n\n*Rentabilidade imobiliária não é mistério. É aritmética. Quem domina a aritmética domina a decisão. E quem domina a decisão, domina o patrimônio.*",
+        "secoes": [
+          {
+            "titulo": "A Calculadora IMI de Rentabilidade Imobiliária",
+            "conteudo": "A Calculadora IMI é planilha com 6 módulos que, juntos, revelam a verdade financeira de qualquer investimento imobiliário.\n\nMódulo 1 — Yield bruto. Aluguel mensal × 12 ÷ preço de compra × 100. Exemplo: R$ 2.000 × 12 ÷ R$ 400.000 = 6,0%. Benchmark: residencial acima de 5%, comercial acima de 7%. Abaixo: questionar.\n\nMódulo 2 — Yield líquido. (Aluguel - IPTU - condomínio - administração - IR - manutenção) × 12 ÷ (preço + custos de aquisição) × 100. É o número real. Sempre 30-50% menor que o bruto. Benchmark: acima da Selic = investimento gera valor. Abaixo = destruindo capital.\n\nMódulo 3 — Custo de oportunidade. Capital investido × taxa Selic (ou melhor CDB disponível). É quanto o dinheiro renderia sem risco. Se o yield líquido é menor, precisa de valorização para compensar.\n\nMódulo 4 — Valorização projetada. Tendência de preço/m² do bairro nos últimos 5 anos, projetada para os próximos 5. Não é certeza — é referência. Se valorização projetada + yield líquido > Selic + 2%: investimento provavelmente vale. Se menor: provavelmente não vale.\n\nMódulo 5 — Payback. Quantos anos para recuperar o investimento total (preço + custos) via renda líquida. Payback = investimento total ÷ renda líquida anual. Benchmark: abaixo de 15 anos é bom. 15-20 é aceitável. Acima de 20: questionar.\n\nMódulo 6 — TIR (Taxa Interna de Retorno). Combina renda líquida + valorização + valor residual de venda em fluxo de caixa projetado de 10-15 anos. É a métrica mais completa — mas exige projeção de cenários. Calcula com a função TIR do Excel.\n\nBeatriz preencheu a Calculadora para o apartamento de Piedade: yield bruto 4,12%, yield líquido 1,92%, custo de oportunidade 9,8%, valorização projetada 0,3%, payback 52 anos (impagável), TIR 2,4% (abaixo de qualquer benchmark).\n\nDepois preencheu para a sala no Derby que Ricardo sugeriu: yield bruto 8,4%, yield líquido 6,8%, custo de oportunidade 9,8% (ainda abaixo, mas com valorização de 4,2% complementando), payback 14,7 anos, TIR 11,2%.\n\nA diferença visual — dois investimentos lado a lado na planilha — era a prova que Beatriz precisava. O Piedade era vermelho em tudo. O Derby era verde em quase tudo.\n\n'Ricardo, por que ninguém me mostrou isso antes de comprar?'\n\n'Porque quem te vendeu não sabia fazer a conta. Ou sabia e não queria que você visse.'"
+          },
+          {
+            "titulo": "O Cap Rate — A Métrica do Investidor Profissional",
+            "conteudo": "Além do yield, existe uma métrica que investidores profissionais usam e que Beatriz precisava aprender: o cap rate (taxa de capitalização).\n\nCap rate = NOI (Net Operating Income) ÷ Valor do imóvel.\n\nNOI é a renda operacional líquida — aluguel menos custos operacionais (IPTU, condomínio quando aplicável, manutenção, administração), MAS antes do IR e do financiamento. É a renda que o imóvel gera como ativo, independente da estrutura fiscal e financeira do proprietário.\n\nO cap rate permite comparar imóveis de tipos e valores diferentes numa mesma métrica: 'para cada R$ 1 investido, quanto o imóvel gera de renda operacional?'\n\nBenchmarks de cap rate no Brasil: residencial popular: 4-6%. Residencial médio: 5-7%. Residencial alto padrão: 3-5% (valorização compensa yield menor). Comercial escritório: 6-9%. Comercial loja: 7-11%. Galpão logístico: 8-12%.\n\nBeatriz calculou o cap rate de Piedade: NOI de R$ 1.058/mês (aluguel menos custos operacionais, antes de IR) × 12 ÷ R$ 480.000 = 2,65%. Abaixo do piso do benchmark residencial.\n\nA sala no Derby: NOI de R$ 2.850/mês × 12 ÷ R$ 420.000 = 8,14%. No topo do benchmark comercial.\n\nA comparação era cirúrgica — como Beatriz gostava, sendo médica.\n\n*O cap rate é o termômetro do investimento imobiliário. Não mente, não engana, não tem opinião. Apenas mede. E o investidor que mede antes de comprar não adoece de arrependimento depois.*"
+          },
+          {
+            "titulo": "Simulação de Cenários — O Teste de Estresse",
+            "conteudo": "Ricardo ensinou Beatriz a fazer o que investidores profissionais fazem e amadores nunca fazem: simulação de cenários.\n\nCenário base: tudo funciona como planejado. Aluguel recebido, vacância de 8%, reajuste anual pelo IPCA, valorização de 3% ao ano. É o cenário que o corretor apresenta — e que raramente se materializa exatamente.\n\nCenário otimista: aluguel 10% acima do planejado (mercado aquecido), vacância de 5%, valorização de 5% ao ano. Tudo dá certo. Possível, mas não provável.\n\nCenário pessimista: aluguel 10% abaixo (mercado frio), vacância de 15%, valorização zero (estagnação). Nada dá certo. Possível — e mais frequente do que se imagina.\n\nCenário catástrofe: inquilino inadimplente por 6 meses + despejo + reforma de R$ 20K + 4 meses de vacância. Acontece — e quando acontece, destrói 3-5 anos de renda.\n\nBeatriz simulou os 4 cenários para Piedade e para o Derby. No cenário pessimista, Piedade tinha TIR negativa (-1,2%). O Derby mantinha TIR de 5,8% — abaixo do ideal mas positiva.\n\nNo cenário catástrofe, Piedade consumia R$ 62.000 em 18 meses sem gerar renda. O Derby consumia R$ 28.000 (custos menores, mercado mais líquido).\n\nA simulação não prevê o futuro — testa a resistência do investimento a futuros adversos. O imóvel que sobrevive ao cenário pessimista é investimento. O que colapsa é aposta.\n\n*Simular cenários antes de comprar é como o piloto que treina emergência antes de voar. Não é pessimismo — é profissionalismo. O investidor que só calcula o cenário base é otimista. O que calcula 4 cenários é preparado.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "TIR — Como Calcular no Excel em 5 Minutos",
+          "conteudo": "A TIR (Taxa Interna de Retorno) é calculada com a função TIR/IRR do Excel. Estrutura: Linha 0: investimento inicial com sinal negativo (ex: -R$ 500.000). Linhas 1-10 (ou 1-15): fluxo de caixa líquido de cada ano (renda líquida anual). Última linha: valor residual de venda (preço estimado de venda no último ano, menos custos de venda de 6-8%). Fórmula: =TIR(B1:B11). O resultado é a taxa anual de retorno que iguala o investimento aos fluxos. Se TIR > Selic + 2%: investimento atrativo. Se TIR < Selic: investimento destruindo valor. Para Beatriz em Piedade: fluxo de -R$ 501.600 no ano 0, R$ 9.216/ano líquido (R$ 768/mês × 12) por 10 anos, e venda por R$ 500.000 no ano 10. TIR = 2,4%. Para a sala no Derby: -R$ 441.000, R$ 28.560/ano, venda por R$ 560.000 no ano 10. TIR = 11,2%. A TIR resume em um número tudo que o investidor precisa saber."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Montando Sua Calculadora IMI de Rentabilidade",
+          "passos": [
+            "Abra planilha e crie os 6 módulos da Calculadora IMI",
+            "Para cada imóvel que considerar comprar: preencha todos os 6 módulos com dados reais",
+            "Calcule yield LÍQUIDO sempre — nunca tome decisão baseado no bruto",
+            "Compare com Selic como benchmark mínimo: yield líquido + valorização deve superar",
+            "Simule 4 cenários (base, otimista, pessimista, catástrofe) para cada investimento",
+            "Só compre se: yield líquido > 4%, TIR > Selic + 2%, e cenário pessimista ainda é positivo"
+          ]
+        },
+        "checklist": [
+          "Calculadora IMI montada em planilha",
+          "Yield bruto e líquido calculados para todo imóvel considerado",
+          "Cap rate calculado e comparado com benchmark",
+          "TIR projetada para horizonte de 10 anos",
+          "4 cenários simulados (base, otimista, pessimista, catástrofe)",
+          "Decisão baseada em números — não em feeling"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Calcular yield sem incluir vacância",
+            "por_que": "Yield de 6% com 0% de vacância vira 5,1% com 15% de vacância. E vacância zero não existe — todo imóvel fica vazio entre inquilinos. Ignorar vacância é inflar yield em 10-15%",
+            "solucao": "Sempre incluir vacância estimada: 8% para mercados líquidos (bairros procurados), 12-15% para mercados frios (bairros com excesso de oferta). Pesquisar dados reais da região"
+          },
+          {
+            "erro": "Projetar valorização com base nos últimos 2-3 anos de alta",
+            "por_que": "O mercado imobiliário é cíclico. 3 anos de alta não significam mais 3 anos de alta. Projetar apenas o cenário otimista gera expectativa irreal e decisão enviesada",
+            "solucao": "Usar média de 10+ anos como referência de valorização de longo prazo. E sempre incluir cenário de valorização zero (estagnação) como teste de resistência"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 3,
+      "titulo": "Localização para Investimento",
+      "objetivo": "O leitor aprende a avaliar localização especificamente pelo prisma de investimento",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Mapa IMI de Investimento por Localização"],
+      "conteudo": {
+        "abertura": "Ricardo levou Beatriz para um exercício de campo que mudou a perspectiva dela para sempre. Dois bairros. Duas horas. Dois mundos.\n\nPrimeiro: Piedade, onde ela tinha comprado. Rua com trânsito pesado, calçada quebrada, fachadas descascando. O prédio dela — 28 anos, pintura de 2019 já desbotada, portaria com cadeira de plástico. Três placas de 'aluga-se' visíveis do carro.\n\nSegundo: Derby, a 5km de distância. Rua arborizada, calçadas largas, prédios comerciais com fachada de vidro. O prédio da sala que Ricardo sugeriu — 15 anos, bem conservado, portaria com vidro blindado e controle de acesso digital. Zero placa de 'aluga-se'.\n\nBeatriz olhou para Ricardo. 'A diferença é óbvia. Por que eu não vi antes de comprar?'\n\n'Porque você visitou Piedade num sábado de manhã, quando a rua estava vazia e silenciosa. A verdade de um bairro aparece terça-feira às 8h — quando o trânsito trava, a calçada tá lotada e os problemas ficam visíveis.'\n\nO cheiro de escapamento na avenida de Piedade. O cheiro de jasmim na rua do Derby. Dois bairros. Dois investimentos. Dois futuros.\n\n*Para morar, visite no domingo. Para investir, visite na segunda. O domingo mostra o lazer. A segunda mostra a realidade.*",
+        "secoes": [
+          {
+            "titulo": "O Mapa IMI de Investimento por Localização",
+            "conteudo": "O Mapa IMI classifica localizações em 4 zonas de investimento, cada uma com perfil de risco/retorno diferente.\n\nZona A — Consolidada premium. Bairros estabelecidos de alto padrão com infraestrutura completa. Exemplo em Recife: Boa Viagem (frente pro mar), Espinheiro, Casa Forte. Yield: baixo a médio (3-5%). Valorização: moderada (2-4%/ano). Risco: baixo. Liquidez: alta. Perfil: investidor conservador que prioriza preservação de capital.\n\nZona B — Consolidada em ascensão. Bairros estabelecidos de classe média que estão melhorando — nova infraestrutura, comércio crescendo, gentrificação. Exemplo: Madalena, Aflitos, Graças. Yield: médio (5-7%). Valorização: boa (4-6%/ano). Risco: médio-baixo. Liquidez: boa. Perfil: investidor equilibrado que busca yield + valorização.\n\nZona C — Emergente. Bairros que estão 'virando' — nova infraestrutura em construção (metrô, VLT), primeiros empreendimentos de padrão superior chegando. Exemplo: Imbiribeira (com VLT), Caxangá, Iputinga. Yield: médio-alto (6-8%). Valorização: alta potencial (5-10%/ano) mas com incerteza. Risco: médio. Liquidez: moderada. Perfil: investidor com horizonte de 5-10 anos que aceita risco por retorno maior.\n\nZona D — Periférica/estagnada. Bairros sem perspectiva de melhoria de infraestrutura, excesso de oferta, demanda declinante. Exemplo: Piedade (excesso de oferta), Paulista (distância do centro sem compensação). Yield: aparentemente alto (6-8% bruto) mas corroído por vacância e desvalorização. Risco: alto. Liquidez: baixa. Perfil: NÃO recomendado para investimento — exceto oportunidades muito específicas (leilão a 50% do mercado).\n\nBeatriz comprou na Zona D. Deveria ter comprado na Zona B ou C. A diferença de preço por m² era 20-30% maior — mas o retorno total (yield + valorização) era 3-4x maior.\n\nRicardo mapeou Recife inteiro nas 4 zonas e usava o mapa como primeira ferramenta de conversa com investidores: 'Antes de discutir imóvel, vamos discutir localização. Porque a localização errada torna qualquer imóvel errado.'\n\n*O mapa de investimento não é o mapa do Google. É o mapa que mostra onde o dinheiro cresce — e onde evapora. O investidor que não sabe ler este mapa navega no escuro.*"
+          },
+          {
+            "titulo": "Os Indicadores que Revelam o Futuro de um Bairro",
+            "conteudo": "Ricardo ensinou Beatriz a ler 7 indicadores que antecipam se um bairro vai valorizar ou desvalorizar.\n\nIndicador 1 — Infraestrutura de transporte. Metrô, VLT, BRT em construção ou planejado = sinal forte de valorização. Cada estação de metrô valoriza imóveis num raio de 500m em 10-25% nos 5 anos seguintes à inauguração. Fonte: pesquisas do setor em São Paulo e Rio confirmam a magnitude.\n\nIndicador 2 — Novos empreendimentos de padrão superior. Incorporadoras grandes lançando no bairro = sinal de que o mercado antecipa valorização. Incorporadora não investe R$ 50M em bairro sem futuro.\n\nIndicador 3 — Comércio e serviços. Escolas bilíngues, academias premium, restaurantes e cafés de qualidade abrindo = sinal de gentrificação em curso.\n\nIndicador 4 — Renda média crescente. Dados do IBGE ou da Receita Federal que mostram aumento de renda na região = demanda crescente por imóveis melhores.\n\nIndicador 5 — Vacância declinante. Vacância caindo ao longo de 2-3 anos = demanda absorvendo oferta = pressão de preço para cima.\n\nIndicador 6 — Preço/m² relativo. Se o bairro tem preço/m² 40% abaixo do bairro vizinho com qualidade similar, existe potencial de convergência. A diferença de preço é gap que pode fechar.\n\nIndicador 7 — Segurança melhorando. Dados de SSP que mostram redução de ocorrências criminais = percepção de segurança melhorando = demanda crescente.\n\nPiedade tinha indicadores 1-7 todos negativos ou neutros: sem transporte novo, sem empreendimentos de padrão, comércio estagnado, renda estável, vacância crescendo, preço/m² caindo em termos reais, segurança estável.\n\nImbiribeira — a alternativa que Clara (L24) identificou — tinha indicadores 1, 2, 3, 4 e 6 positivos: VLT em construção, 4 novos empreendimentos, escola bilíngue inaugurada, renda crescendo 12% em 2 anos, e preço/m² 35% abaixo de Boa Viagem.\n\n'Doutora, investir em imóvel é como investir em ação: você compra o futuro, não o presente. Os indicadores mostram o futuro antes que ele chegue.'\n\n*O bairro que vai valorizar já está dizendo — com indicadores que qualquer pessoa pode ler. O investidor que lê antes, compra barato. O que lê depois, compra caro. O que não lê, compra em Piedade.*"
+          },
+          {
+            "titulo": "Micro-localização — O Fator que Multiplica ou Destrói",
+            "conteudo": "Dentro do mesmo bairro, a micro-localização pode fazer diferença de 30-50% no valor — e no retorno do investimento.\n\nRicardo mostrou a Beatriz dois apartamentos no mesmo bairro do Derby, separados por 3 quadras:\n\nApartamento A: Rua do Sossego (nome fictício, situação real). Rua residencial, arborizada, sem trânsito pesado. Prédio a 200m da praça principal. Silencioso. Aluguel: R$ 3.200/mês. Valor: R$ 420K. Cap rate: 9,1%.\n\nApartamento B: Avenida Conde da Boa Vista. Via principal com tráfego de ônibus, barulho constante, poluição. Prédio a 300m do A. Mesmo tamanho e padrão. Aluguel: R$ 2.400/mês. Valor: R$ 380K. Cap rate: 7,6%.\n\nMesmo bairro. Mesma tipologia. 3 quadras de distância. Diferença de cap rate: 1,5 ponto percentual. Em R$ 420K investidos: R$ 6.300/ano de diferença na renda.\n\nA micro-localização que fez a diferença: rua silenciosa vs. avenida barulhenta. É o fator que portais não mostram (não tem filtro 'silêncio') e que AVM não captura perfeitamente (não tem sensor de barulho). É o fator que a vistoria presencial revela — e que o investidor que compra pelo portal sem visitar perde.\n\nBeatriz anotou: 'Visitar terça-feira às 8h. Visitar sexta-feira às 22h. Visitar sábado ao meio-dia. Três momentos = três versões da verdade sobre a rua.'\n\nRicardo sorriu. 'Agora você está pensando como investidora.'\n\n*A localização no portfólio é macro (bairro). A localização no retorno é micro (rua). Dois apartamentos no mesmo bairro podem ter retorno 50% diferente porque um está na rua certa e o outro não. A rua certa não aparece em dados — aparece na visita.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O Efeito Metrô na Valorização — Dados do Mercado Brasileiro",
+          "conteudo": "O impacto de estações de metrô na valorização imobiliária é um dos fenômenos mais documentados no mercado. Dados de pesquisas em São Paulo e Rio mostram: imóveis num raio de 500m de estações de metrô se valorizam 15-25% nos 3-5 anos após inauguração. O efeito é mais forte para imóveis residenciais do que comerciais. O efeito começa ANTES da inauguração — quando a construção se torna visível e certa (não apenas planejada). Implicação para investidor: comprar quando a obra é anunciada (máximo desconto) ou quando a construção está em andamento (desconto moderado com menor risco de cancelamento). Após inauguração: o premium já está precificado e a oportunidade diminui. Para Recife: o VLT em construção na Imbiribeira e áreas adjacentes representa janela de investimento que vai se fechar à medida que a obra avança."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Avaliando Localização para Investimento",
+          "passos": [
+            "Mapeie sua cidade nas 4 zonas do Mapa IMI (consolidada premium, ascensão, emergente, periférica)",
+            "Para cada zona-alvo: pesquise os 7 indicadores de futuro",
+            "Priorize Zonas B (yield + valorização) e C (valorização + yield potencial)",
+            "Dentro da zona escolhida: avalie micro-localização com visitas em 3 horários diferentes",
+            "Compare preço/m² entre ruas do mesmo bairro — a diferença revela oportunidade ou risco",
+            "Acompanhe obras de infraestrutura: cada nova estação de metrô/VLT é oportunidade com prazo de validade"
+          ]
+        },
+        "checklist": [
+          "Cidade mapeada nas 4 zonas IMI",
+          "7 indicadores de futuro pesquisados para zonas-alvo",
+          "Micro-localização avaliada com visitas em 3 horários",
+          "Preço/m² comparado entre ruas do mesmo bairro",
+          "Obras de infraestrutura mapeadas com prazo",
+          "Decisão de localização baseada em dados — não em achismo"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Comprar em Zona D porque 'o preço é barato'",
+            "por_que": "Preço baixo em Zona D é reflexo de fundamentos ruins — não oportunidade. Imóvel barato que desvaloriza é prejuízo barato. R$ 300K que viram R$ 270K em 5 anos é perda de R$ 30K + custo de oportunidade",
+            "solucao": "Barato não é sinônimo de oportunidade. Oportunidade é: preço abaixo do mercado em Zona B ou C com indicadores positivos. É imóvel subavaliado em bairro bom — não imóvel precificado corretamente em bairro ruim"
+          },
+          {
+            "erro": "Investir em bairro que 'todo mundo diz que vai valorizar' sem verificar indicadores",
+            "por_que": "Hype imobiliário é real e frequente. Bairros são 'promovidos' por incorporadoras que têm terreno lá. Se os indicadores objetivos (transporte, renda, comércio) não confirmam, a valorização é marketing — não tendência",
+            "solucao": "Nunca investir baseado em promessa. Sempre verificar indicadores concretos. Se o metrô está no papel há 10 anos sem obra iniciada, não é indicador — é fantasia"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 4,
+      "titulo": "Comparação com Alternativas",
+      "objetivo": "O leitor aprende a comparar investimento imobiliário com renda fixa, FIIs e ações",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Matriz IMI de Alocação Patrimonial"],
+      "conteudo": {
+        "abertura": "Beatriz trouxe uma pergunta que todo investidor deveria fazer antes de comprar imóvel: 'Se eu tenho R$ 500K, por que imóvel e não FII? Por que não CDB? Por que não ação?'\n\nRicardo não era assessor de investimentos — era avaliador. Mas sabia que a decisão de comprar imóvel só faz sentido quando comparada com as alternativas. Por isso criou a Matriz IMI de Alocação Patrimonial: não para recomendar, mas para iluminar.\n\nO cheiro do café que já era tradição nas reuniões de Ricardo com clientes. A planilha com 5 colunas — uma para cada classe de investimento — e os números que falavam por si.\n\n*O investidor que compara imóvel apenas com outros imóveis vê metade da realidade. O que compara com renda fixa, FIIs e ações vê o todo. E quem vê o todo, decide melhor.*",
+        "secoes": [
+          {
+            "titulo": "A Matriz IMI de Alocação Patrimonial",
+            "conteudo": "A Matriz IMI compara 5 classes de investimento em 7 dimensões.\n\nDimensão 1 — Rentabilidade. Imóvel direto: yield líquido 3-7% + valorização 2-5%. FIIs: dividend yield 7-11% + valorização/desvalorização de cotas. CDB/Selic: 9-12% líquido (em 2026). Ações: muito variável — 0 a 30%+ com risco proporcional. Tesouro IPCA: inflação + 5-7%.\n\nDimensão 2 — Risco. Imóvel: médio (vacância, inadimplência, desvalorização local). FIIs: médio (vacância, gestão, mercado). CDB: baixo (garantido pelo FGC até R$ 250K). Ações: alto. Tesouro: baixíssimo.\n\nDimensão 3 — Liquidez. Imóvel: muito baixa (meses para vender). FIIs: alta (vende na bolsa em minutos). CDB: média (D+1 a vencimento). Ações: alta. Tesouro: alta.\n\nDimensão 4 — Tributação. Imóvel: IR de 15-22,5% sobre ganho de capital na venda + IR de até 27,5% sobre aluguel (PF). FIIs: dividendos isentos de IR (PF) + IR de 20% sobre ganho de capital. CDB: IR regressivo de 15-22,5%. Ações: IR de 15-20% sobre ganho.\n\nDimensão 5 — Alavancagem. Imóvel: alta — pode financiar 80% do valor a juros relativamente baixos. Nenhuma outra classe permite alavancagem comparável para pessoa física. É a vantagem mais subestimada do imóvel.\n\nDimensão 6 — Controle. Imóvel: total — você decide o preço do aluguel, quando reformar, quando vender. FIIs: nenhum — gestor decide tudo. CDB/Ações: nenhum.\n\nDimensão 7 — Proteção contra inflação. Imóvel: alta — aluguel reajustado anualmente, valor do imóvel acompanha inflação no longo prazo. FIIs: média a alta. CDB prefixado: nenhuma. Tesouro IPCA: total.\n\nBeatriz olhou a Matriz e entendeu: cada classe tem vantagens e desvantagens. Imóvel brilha em alavancagem, controle e proteção contra inflação. Perde em liquidez e tributação. A alocação ideal não é 100% em nenhuma classe — é combinação.\n\nHelena (L9), quando viu a Matriz, disse: 'Meus R$ 12,4M estão 70% em imóvel direto, 15% em FIIs e 15% em renda fixa. A Matriz confirma que minha alocação faz sentido — porque priorizo controle e proteção contra inflação.'"
+          },
+          {
+            "titulo": "A Vantagem Oculta do Imóvel — Alavancagem",
+            "conteudo": "A vantagem mais poderosa e menos discutida do investimento imobiliário é a alavancagem com financiamento.\n\nConceito: com R$ 500K, você compra R$ 500K em CDB (sem alavancagem). Ou compra R$ 2M em imóvel financiando R$ 1,5M a juros de 9-11% ao ano. Se o imóvel valorizar 5% ao ano, o ganho é R$ 100K/ano — sobre investimento próprio de R$ 500K = 20% de retorno sobre capital próprio. Mesmo com juros do financiamento, a alavancagem multiplica o retorno se o yield + valorização superar o custo do financiamento.\n\nRicardo fez a conta para Beatriz:\n\nCenário sem alavancagem: R$ 500K em imóvel. Yield líquido 5% = R$ 25K/ano. Valorização 3% = R$ 15K/ano. Retorno total: R$ 40K/ano = 8%.\n\nCenário com alavancagem: R$ 500K de entrada + R$ 1M financiados a 10% ao ano. Imóvel de R$ 1,5M. Yield líquido 5% sobre R$ 1,5M = R$ 75K/ano. Parcela do financiamento: ~R$ 100K/ano (juros + amortização). Fluxo líquido: -R$ 25K/ano (negativo nos primeiros anos). MAS: valorização de 3% sobre R$ 1,5M = R$ 45K/ano. Patrimônio cresce R$ 45K em valorização + amortização que reduz saldo devedor. Em 10 anos: patrimônio de R$ 1,5M × 1,03^10 = R$ 2,01M, com saldo devedor de ~R$ 720K. Patrimônio líquido: R$ 1,29M (de R$ 500K investidos). Retorno: 158% em 10 anos = ~10% ao ano sobre capital próprio.\n\nSem alavancagem: 8% ao ano. Com alavancagem: 10% ao ano. A alavancagem adicionou 2 pontos percentuais.\n\nMAS — e é um grande mas: alavancagem amplifica tanto ganho quanto perda. Se o imóvel desvalorizar 3% ao ano em vez de valorizar, o cenário alavancado perde mais do que o não alavancado.\n\n'Alavancagem é faca de dois gumes', Ricardo disse. 'Quando o investimento é bom, multiplica o retorno. Quando é ruim, multiplica o prejuízo. Por isso o Diagnóstico IMI vem ANTES do financiamento — nunca depois.'\n\n*A alavancagem é a razão pela qual muitos milionários construíram patrimônio com imóveis. E é a razão pela qual muitos perderam patrimônio com imóveis. A diferença entre os dois é análise antes da compra.*"
+          },
+          {
+            "titulo": "Quando NÃO Investir em Imóvel",
+            "conteudo": "Ricardo tinha uma lista que chamava de 'red flags' — sinais de que o investidor deveria escolher outra classe de ativo.\n\nRed flag 1: Yield líquido abaixo da Selic sem perspectiva de valorização superior. Se o imóvel rende 3% líquido e a Selic é 10%, e o bairro não tem indicadores de valorização forte — não compre. O CDB é melhor em tudo.\n\nRed flag 2: Todo o patrimônio em imóvel. Investidor que tem 100% do patrimônio em imóveis não tem liquidez para emergências. Se precisar de dinheiro rápido, vende com desconto de 15-20% — que anula anos de renda.\n\nRed flag 3: Comprando com financiamento que compromete mais de 25% da renda. Alavancagem excessiva é risco sistêmico pessoal. Se perder emprego ou renda, não consegue pagar prestação e perde o imóvel + a entrada.\n\nRed flag 4: Comprando imóvel na planta de incorporadora desconhecida com entrega em 4+ anos. Risco de atraso, risco de qualidade, risco de a incorporadora falir. O desconto de 20-30% na planta nem sempre compensa os riscos.\n\nRed flag 5: Comprando por pressão do corretor ('último disponível', 'vai subir amanhã'). Pressão é sinal de venda, não de oportunidade. Oportunidade real espera 48h de análise.\n\nBeatriz reconheceu: tinha cometido 3 das 5 red flags. Yield abaixo da Selic (flag 1), 80% do patrimônio em imóvel depois da compra (flag 2), e compra por pressão do corretor (flag 5).\n\n'Doutora, não comprar é, às vezes, a melhor decisão de investimento. O dinheiro no CDB rendendo 10% enquanto você analisa vale mais que o dinheiro num imóvel que rende 2%.'\n\n*Saber quando NÃO investir em imóvel é tão importante quanto saber quando investir. A disciplina de esperar a oportunidade certa é a ferramenta mais rentável do investidor — e a menos usada.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "FIIs vs. Imóvel Direto — Comparativo Completo",
+          "conteudo": "Para quem quer exposição imobiliária sem as desvantagens da propriedade direta, FIIs são alternativa séria. Vantagens do FII sobre imóvel direto: liquidez (vende na bolsa), diversificação (um FII pode ter 30+ imóveis), gestão profissional, dividendos isentos de IR, e ticket acessível (R$ 10-100 por cota). Desvantagens: zero controle sobre gestão, volatilidade de preço da cota (oscila diariamente como ação), risco de gestão ruim, e impossibilidade de alavancar com financiamento. Na prática, a combinação ideal para muitos investidores é: imóvel direto para patrimônio principal (com alavancagem de financiamento), FIIs para complemento diversificado (10-20% do portfólio), e renda fixa como reserva de liquidez. Beatriz, após a consultoria com Ricardo, ajustou: manteve o apartamento de Piedade (já comprado), alocou os próximos R$ 200K em FIIs diversificados (dividend yield de 9,4%), e manteve R$ 300K em CDB como reserva."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Comparando Imóvel com Alternativas Antes de Comprar",
+          "passos": [
+            "Para cada investimento imobiliário considerado: preencha a Matriz IMI de 7 dimensões",
+            "Calcule o retorno de aplicar o mesmo dinheiro em CDB/Selic — é o benchmark mínimo",
+            "Se yield líquido do imóvel + valorização projetada < Selic + 2%: questionar seriamente",
+            "Avalie se a alavancagem faz sentido: financiamento a juros abaixo do retorno total do imóvel?",
+            "Verifique as 5 red flags antes de assinar qualquer compromisso",
+            "Considere mix: imóvel direto + FIIs + renda fixa — diversificação protege"
+          ]
+        },
+        "checklist": [
+          "Matriz IMI de 7 dimensões preenchida para o investimento",
+          "Benchmark de Selic calculado como comparativo",
+          "Alavancagem avaliada: viável e com margem de segurança?",
+          "5 red flags verificadas — nenhuma ativa",
+          "Mix de alocação definido (imóvel + FIIs + renda fixa)",
+          "Decisão baseada em comparação com alternativas — não em isolamento"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Comparar yield bruto do imóvel com taxa líquida do CDB",
+            "por_que": "É comparação de maçã com laranja. O yield bruto de 7% do imóvel vira 4,5% líquido. O CDB de 10% bruto vira 8,5% líquido. Se comparar 7% com 8,5%, o imóvel parece competitivo. Se comparar 4,5% com 8,5%, a verdade aparece",
+            "solucao": "Sempre comparar líquido com líquido. Ou bruto com bruto. Nunca misturar. A comparação honesta é a única que protege"
+          },
+          {
+            "erro": "Ignorar a alavancagem como vantagem do imóvel",
+            "por_que": "Quem compara R$ 500K em imóvel com R$ 500K em CDB ignora que com R$ 500K se compra R$ 2M em imóvel (financiando R$ 1,5M). A comparação justa é: R$ 500K alavancado em R$ 2M de imóvel vs. R$ 500K em CDB. E nessa comparação, o imóvel frequentemente ganha — se bem escolhido",
+            "solucao": "Incluir alavancagem no cálculo de retorno sobre capital próprio. É a vantagem estrutural do imóvel sobre outras classes — e ignorá-la é subestimar o potencial"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 5,
+      "titulo": "Due Diligence",
+      "objetivo": "O leitor domina a análise completa antes de comprar imóvel para investimento",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Checklist IMI de Due Diligence para Investidor"],
+      "conteudo": {
+        "abertura": "Beatriz encontrou o que parecia ser a oportunidade perfeita: sala comercial no Derby, 45m², 8º andar com vista, prédio de 2012, R$ 380.000. O yield bruto estimado era 8,2%. O cap rate era 7,8%. Todos os indicadores do Diagnóstico IMI estavam verdes.\n\nEla quase comprou. Quase.\n\nRicardo pediu 7 dias para due diligence. 'Doutora, os números são bonitos. Mas bonito no papel não significa limpo na matrícula.'\n\nNo terceiro dia de verificação, Ricardo encontrou: uma ação trabalhista contra o vendedor de R$ 340.000 movida por ex-funcionário. O imóvel poderia ser penhorado como garantia da execução. Se Beatriz comprasse e a penhora fosse registrada depois, ela teria imóvel e problema.\n\n'Ricardo, como você descobriu?'\n\n'Certidão de distribuição da Justiça do Trabalho. Custa R$ 30. Leva 5 minutos para consultar online. E salva R$ 380.000.'\n\nO cheiro de susto no escritório — porque susto tem cheiro, e é parecido com adrenalina e café frio. O silêncio de quem quase cometeu erro de centenas de milhares de reais. E a gratidão muda de quem entendeu que R$ 30 de certidão é o investimento de maior ROI do mercado imobiliário.\n\n*Due diligence não é burocracia. É proteção. E R$ 30 de certidão que evita R$ 380.000 de problema é, matematicamente, o melhor investimento que você fará na vida.*",
+        "secoes": [
+          {
+            "titulo": "O Checklist IMI de Due Diligence para Investidor",
+            "conteudo": "O Checklist IMI tem 15 itens obrigatórios antes de qualquer compra de imóvel para investimento.\n\nDocumentação do imóvel (5 itens). 1: Certidão de matrícula atualizada (30 dias) — verificar: proprietário, ônus (hipoteca, penhora, usufruto), área, confrontações. 2: Certidão negativa de ônus reais — confirmar que não há gravames ocultos. 3: Certidão de IPTU — confirmar que está em dia e verificar valor venal e metragem. 4: Habite-se — confirmar que o imóvel tem habite-se (se não tem, pode ser irregular). 5: Certidão de condomínio — confirmar que condomínio está em dia e verificar se há processos judiciais contra o condomínio.\n\nDocumentação do vendedor (5 itens). 6: Certidão negativa de débitos federais (Receita Federal). 7: Certidão de distribuição da Justiça do Trabalho (onde Ricardo encontrou o problema). 8: Certidão de distribuição cível e criminal da Justiça Estadual. 9: Certidão de distribuição da Justiça Federal. 10: Certidão de protesto — verificar se o vendedor tem títulos protestados.\n\nAnálise técnica do imóvel (3 itens). 11: Vistoria presencial com Checklist IMI de 30 itens (L1, Cap. 3). 12: Verificação de conformidade — o imóvel está conforme a matrícula? Área bate? Houve reforma não averbada? 13: Avaliação independente — nunca confiar no preço pedido. Aplicar Método IMI de Avaliação Comparativa.\n\nAnálise de investimento (2 itens). 14: Diagnóstico IMI de 7 perguntas completo. 15: Simulação de 4 cenários (base, otimista, pessimista, catástrofe).\n\nRicardo cobrava R$ 2.500 por due diligence completa para investidores. Levava 5-7 dias. E em 1 de cada 5 casos, encontrava problema que impedia ou alterava a compra. O ROI para o investidor: R$ 2.500 que protegiam R$ 300-500K.\n\nBeatriz nunca mais compraria imóvel sem os 15 itens verificados. 'É o exame pré-operatório do investimento. Nenhum cirurgião opera sem. Nenhum investidor deveria comprar sem.'"
+          },
+          {
+            "titulo": "Os Riscos Jurídicos Mais Comuns — E Como Detectar",
+            "conteudo": "Ricardo compilou os 5 riscos jurídicos que mais encontrava em due diligence de imóveis em Recife.\n\nRisco 1 — Penhora ou hipoteca na matrícula. Alguém tem direito sobre o imóvel (banco, credor). Detectado na certidão de matrícula. Se existir: não comprar até a penhora/hipoteca ser levantada.\n\nRisco 2 — Vendedor com ação judicial que pode resultar em penhora futura. O vendedor está sendo processado e, se condenado, o imóvel pode ser penhorado — mesmo depois de vendido (se a ação era anterior à venda e o comprador não verificou). Detectado nas certidões de distribuição. Foi o caso da sala de Beatriz.\n\nRisco 3 — Imóvel irregular. Sem habite-se, com área construída diferente da registrada, ou com uso irregular (residencial usado como comercial). Detectado na comparação entre matrícula, IPTU e realidade. Imóvel irregular pode ter valor 20-40% abaixo do regular — e financiamento bancário é negado.\n\nRisco 4 — Condomínio com problemas jurídicos ou financeiros. Processos trabalhistas contra o condomínio, obras emergenciais não orçadas, inadimplência alta que gera rateio extra. Detectado na certidão de condomínio e em conversa com o síndico.\n\nRisco 5 — Vendedor que não é o proprietário real. Procuração falsa, espólio não inventariado, herdeiro vendendo sem autorização dos demais. Detectado na comparação entre matrícula (quem é o dono registrado?) e quem está vendendo (é a mesma pessoa?).\n\nCada risco é detectável com documentos que custam R$ 30-100 cada. O custo total da due diligence documental: R$ 200-500. O custo de não fazer: potencialmente centenas de milhares de reais.\n\n*Os 5 riscos mais comuns são todos detectáveis. Todos. Basta verificar as certidões. O investidor que verifica antes gasta R$ 500 em papel. O que não verifica pode gastar R$ 50.000 em advogado — e ainda perder o imóvel.*"
+          },
+          {
+            "titulo": "A Due Diligence que Salvou R$ 380K de Beatriz",
+            "conteudo": "Vou detalhar o caso de Beatriz porque é didático.\n\nA sala comercial no Derby tinha tudo certo nos indicadores financeiros: yield de 8,2%, cap rate de 7,8%, localização Zona B, tendência de valorização positiva. Beatriz estava pronta para assinar.\n\nRicardo iniciou a due diligence. Dias 1-2: documentação do imóvel. Matrícula limpa. IPTU em dia. Habite-se regular. Condomínio sem problemas. Tudo verde.\n\nDia 3: documentação do vendedor. Certidão da Receita Federal: limpa. Certidão da Justiça Estadual: limpa. Certidão da Justiça Federal: limpa. Certidão da Justiça do Trabalho: ALERTA. Ação trabalhista movida por ex-funcionário da empresa do vendedor. Valor da causa: R$ 340.000. Fase: execução. O juiz poderia determinar penhora de bens do vendedor a qualquer momento.\n\nSe Beatriz comprasse a sala e a penhora fosse registrada antes da escritura ser lavrada, ela teria pago R$ 380K por imóvel com penhora. Se a penhora fosse registrada depois da escritura, ela estaria protegida — mas teria risco de anulação da venda se caracterizada fraude contra credores (o vendedor alienando patrimônio enquanto devedor em execução).\n\nRicardo apresentou 3 opções a Beatriz. Opção 1: Desistir (mais seguro). Opção 2: Condicionar a compra à quitação ou depósito judicial que garanta a ação trabalhista (intermediário). Opção 3: Comprar com desconto de 15-20% como prêmio pelo risco (mais arriscado).\n\nBeatriz escolheu opção 1: desistiu. Três semanas depois, encontrou outra sala no mesmo prédio, andar diferente, vendedor sem qualquer restrição. Comprou por R$ 395K (R$ 15K mais cara). Due diligence limpa em todos os 15 itens.\n\nR$ 15K a mais no preço. R$ 380K de problema evitado. A conta era óbvia.\n\n*Due diligence não é custo. É seguro. E seguro de R$ 2.500 que protege R$ 380.000 é o investimento de maior retorno que existe — porque o retorno é binário: ou economiza tudo, ou não precisava. E nas duas hipóteses, o investidor dorme tranquilo.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "Fraude Contra Credores — O Risco que Poucas Pessoas Conhecem",
+          "conteudo": "O art. 158 do Código Civil estabelece que os negócios de transmissão gratuita de bens (doação) ou remissão de dívida pelo devedor insolvente podem ser anulados. O art. 159 estende para negócios onerosos (venda) quando a insolvência for notória ou houver motivo para ser conhecida do comprador. Implicação prática: se o vendedor tem dívidas executadas e vende imóvel, o credor pode pedir anulação da venda. O comprador que verificou certidões e encontrou ação trabalhista está em posição fraca — porque 'deveria saber' da insolvência. O comprador que NÃO verificou está em posição ainda pior — porque deveria ter verificado. A única proteção real: verificar certidões ANTES de comprar e não comprar de vendedor com execuções em andamento (ou condicionar a compra a garantias adicionais). Os R$ 200-500 de certidões são, literalmente, a diferença entre compra segura e bomba jurídica."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Realizando Due Diligence Completa",
+          "passos": [
+            "Para cada imóvel que decidir comprar: aplique os 15 itens do Checklist IMI sem exceção",
+            "Solicite certidão de matrícula atualizada (30 dias) no cartório de registro de imóveis",
+            "Solicite certidões do vendedor: federal, estadual, trabalhista, federal, protesto (todas online, R$ 30-80 cada)",
+            "Realize vistoria presencial com Checklist de 30 itens (L1)",
+            "Aplique avaliação independente (Método IMI) — nunca confie no preço pedido",
+            "Se encontrar qualquer irregularidade: pare. Consulte advogado antes de prosseguir"
+          ]
+        },
+        "checklist": [
+          "15 itens do Checklist IMI verificados",
+          "Matrícula atualizada analisada (ônus, proprietário, área)",
+          "Certidões do vendedor todas limpas",
+          "Vistoria presencial realizada",
+          "Avaliação independente feita (valor de mercado fundamentado)",
+          "Decisão tomada com base em due diligence completa"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Pular due diligence porque 'o vendedor é pessoa conhecida'",
+            "por_que": "Amigo, parente ou colega de trabalho podem ter dívidas que você desconhece. A ação trabalhista do caso de Beatriz era contra um empresário respeitado no mercado. Ninguém sabia — exceto a certidão",
+            "solucao": "Due diligence para TODA compra. Sem exceção. Independente de quem está vendendo. A certidão não distingue entre amigo e estranho — mostra a verdade igual"
+          },
+          {
+            "erro": "Fazer due diligence parcial — verificar matrícula mas não certidões do vendedor",
+            "por_que": "Matrícula limpa + vendedor com execuções = risco de anulação. A matrícula mostra o passado do imóvel. As certidões mostram o presente do vendedor. Os dois juntos é que dão segurança",
+            "solucao": "Os 15 itens são TODOS obrigatórios. Não existem itens opcionais em due diligence. Cada item omitido é brecha. E brechas, em direito imobiliário, custam caro"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 6,
+      "titulo": "Análise de Aluguel",
+      "objetivo": "O leitor aprende a avaliar o potencial de renda de um imóvel antes de comprar",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Modelo IMI de Projeção de Renda"],
+      "conteudo": {
+        "abertura": "Beatriz aprendeu a lição mais dura do investimento imobiliário para renda: o aluguel que o corretor promete não é o aluguel que o mercado paga.\n\nO corretor prometeu R$ 2.000 para Piedade. O mercado pagou R$ 1.650. Diferença: R$ 350/mês = R$ 4.200/ano de receita a menos do que o cálculo previa. E R$ 4.200/ano sobre yield já baixo transformava investimento medíocre em investimento ruim.\n\nRicardo mostrou como projetar aluguel com dados — não com promessa.\n\n*O aluguel prometido é marketing. O aluguel praticado é dado. E a diferença entre os dois é, frequentemente, a diferença entre investimento que funciona e investimento que não funciona.*",
+        "secoes": [
+          {
+            "titulo": "O Modelo IMI de Projeção de Renda",
+            "conteudo": "O Modelo IMI projeta a renda líquida de um imóvel para investimento em 5 etapas.\n\nEtapa 1 — Pesquisa de aluguel praticado. NÃO o pedido — o praticado. Pesquisar 5-8 imóveis similares alugados recentemente na região. Fontes: portais (com desconto de 5-10% sobre o anunciado), imobiliárias locais, e base própria. O aluguel praticado é, em média, 5-15% abaixo do anunciado.\n\nEtapa 2 — Estimativa de vacância. Quantos meses por ano o imóvel fica vazio? Para residencial em bairro bom: 5-8% (0,6-1 mês). Para residencial em bairro regular: 10-15% (1,2-1,8 meses). Para comercial: 8-20% dependendo da região e do mercado. A vacância é o custo invisível que ninguém considera — e que destrói yield.\n\nEtapa 3 — Estimativa de custos operacionais. IPTU (anual ÷ 12), condomínio (se pago pelo proprietário), taxa de administração (8-10% do aluguel se usar administradora), manutenção estimada (1% do valor do imóvel por ano ÷ 12), e seguro (R$ 50-150/mês).\n\nEtapa 4 — Estimativa de tributação. IR sobre aluguel: para PF, tabela progressiva de 0 a 27,5%. Para PJ (holding), lucro presumido com alíquota efetiva de 11-14%. A diferença tributária entre PF e PJ pode ser de 10+ pontos percentuais — tema dos Livros 16-19.\n\nEtapa 5 — Projeção de 10 anos. Aluguel reajustado anualmente (IPCA ou IGPM). Custos reajustados proporcionalmente. Vacância aplicada como média. Resultado: fluxo de caixa líquido projetado mês a mês por 10 anos. É esse fluxo que alimenta o cálculo de TIR.\n\nBeatriz aplicou o Modelo para a sala do Derby que comprou: aluguel praticado estimado: R$ 3.100/mês (pesquisa com 6 comparativos). Vacância estimada: 8%. Custos operacionais: R$ 620/mês. IR (holding): R$ 270/mês. Renda líquida: R$ 1.838/mês. Yield líquido: 5,58%. Acima da meta de 5%. TIR projetada em 10 anos: 10,8%. Aprovado.\n\nSeis meses depois, a sala alugou por R$ 3.250 — 5% acima da projeção. O primeiro mês onde Beatriz celebrou resultado acima do planejado, não abaixo."
+          },
+          {
+            "titulo": "O Mito do Aluguel Garantido",
+            "conteudo": "Existe uma frase que corretores usam para vender imóvel na planta: 'Aluguel garantido por 2 anos.' A promessa é tentadora — compra na planta, recebe chave, e já tem inquilino.\n\nA realidade: o 'aluguel garantido' geralmente é pago pela própria incorporadora, embutido no preço do imóvel. Ou seja: você paga R$ 480K por imóvel que vale R$ 430K, e a incorporadora usa os R$ 50K de diferença para pagar 'aluguel' de R$ 2.000/mês por 24 meses (R$ 48K). No mês 25, o aluguel garantido acaba — e o mercado real pode pagar R$ 1.500.\n\nRicardo mostrou a conta para Beatriz: 'O aluguel garantido não é renda do imóvel. É devolução do sobre-preço que você pagou. É como o banco te dar cashback — com o dinheiro que você pagou de juros.'\n\nBeatriz, como médica, entendeu a analogia: 'É como o plano de saúde que oferece check-up grátis — com o dinheiro que você paga de mensalidade.'\n\nExatamente. O aluguel garantido não é contra-indicação absoluta — pode fazer sentido se o preço base for justo (mesmo sem o garantido) e se o mercado real sustentar o aluguel após o período de garantia. Mas na maioria dos casos, é mecanismo de venda — não benefício real.\n\n*Aluguel garantido é marketing — não investimento. O investidor que calcula o yield sobre o preço real (sem sobre-preço) e projeta o aluguel de mercado (sem garantia) vê a verdade. O que aceita a promessa de olhos fechados compra ilusão.*"
+          },
+          {
+            "titulo": "Otimizando a Renda — O Que Fazer Depois de Comprar",
+            "conteudo": "Beatriz perguntou: 'Agora que entendi como analisar antes de comprar, como maximizar a renda depois de comprado?'\n\nRicardo listou 7 estratégias de otimização de renda.\n\nEstratégia 1 — Precificação dinâmica. Revisar preço do aluguel a cada renovação com dados de mercado (não com IGPM automático). Se o mercado subiu 8% e o IGPM é 4%, negociar reajuste acima do índice.\n\nEstratégia 2 — Redução de vacância. Fotos profissionais, anúncio em múltiplos portais, resposta rápida a leads, seguro fiança como padrão. Cada dia de vacância = 1/30 do aluguel perdido.\n\nEstratégia 3 — Seleção rigorosa de inquilino. Renda mínima de 3x o aluguel, score de crédito acima de 600, referências verificadas. Inquilino bom que fica 36 meses vale mais que 3 inquilinos mediocres que ficam 12 meses cada (com vacância entre eles).\n\nEstratégia 4 — Gestão profissional. Administradora cobra 8-10% mas reduz vacância, inadimplência e dor de cabeça. Para portfólio de 3+ imóveis: a administradora se paga em eficiência.\n\nEstratégia 5 — Reforma estratégica. Investir R$ 20-30K em reforma que permite cobrar R$ 300-500/mês a mais. Payback: 40-60 meses. ROI: 7-10% ao ano sobre o investimento da reforma.\n\nEstratégia 6 — Estruturação tributária. Migrar para holding patrimonial (L16) quando portfólio superar R$ 1M. Economia de IR: 10-15 pontos percentuais sobre o aluguel.\n\nEstratégia 7 — Diversificação de tipologia. Não colocar tudo em residencial. Sala comercial, flat, loja — cada tipologia tem ciclo diferente. Quando residencial está em vacância alta, comercial pode estar em demanda.\n\nBeatriz implementou as estratégias 1-4 imediatamente. A 5 planejou para o apartamento de Piedade (reforma para reposicionar). A 6 ficou para quando o portfólio atingisse R$ 1,5M (ver Livros 16-19). A 7 começou com a compra da sala no Derby.\n\n*A renda do imóvel não é número fixo. É variável que pode ser otimizada com gestão inteligente. O investidor passivo recebe o que o mercado dá. O ativo otimiza e recebe 20-30% a mais.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "Holding Patrimonial e Tributação de Aluguel — Preview",
+          "conteudo": "O impacto tributário é um dos maiores determinantes do yield líquido. Para pessoa física, aluguel é tributado como renda (tabela progressiva de 0 a 27,5%). Para holding patrimonial (pessoa jurídica no lucro presumido), a alíquota efetiva sobre aluguel é de 11-14%. A diferença é brutal: para aluguel de R$ 5.000/mês, o IR como PF é ~R$ 630/mês. Como holding: ~R$ 610/mês. Pouca diferença nessa faixa. Mas para R$ 15.000/mês de aluguel total (portfólio de 3-5 imóveis): PF paga ~R$ 3.200/mês. Holding paga ~R$ 1.830/mês. Economia: R$ 1.370/mês = R$ 16.440/ano. A holding faz sentido a partir de R$ 8-10K/mês de aluguel total. Abaixo disso, o custo de manutenção da PJ (contabilidade, taxas) pode superar a economia. Detalhado no Livro 16."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Projetando Renda do Seu Próximo Investimento",
+          "passos": [
+            "Aplique as 5 etapas do Modelo IMI de Projeção de Renda para cada imóvel considerado",
+            "Pesquise aluguel PRATICADO — não pedido. Ligue para imobiliárias e pergunte valores reais de locação recente",
+            "Inclua vacância realista: 8% para bairro bom, 12-15% para bairro regular",
+            "Calcule renda líquida incluindo TODOS os custos: IPTU, condomínio, administração, manutenção, IR",
+            "Projete fluxo de caixa de 10 anos e calcule TIR",
+            "Implemente as 7 estratégias de otimização para imóveis já comprados"
+          ]
+        },
+        "checklist": [
+          "Modelo IMI de 5 etapas aplicado",
+          "Aluguel praticado pesquisado (não pedido)",
+          "Vacância realista incluída na projeção",
+          "Renda líquida calculada com todos os custos",
+          "TIR projetada para 10 anos",
+          "Estratégias de otimização identificadas e em implementação"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Acreditar no aluguel que o corretor promete sem verificar",
+            "por_que": "O corretor tem incentivo para inflar o aluguel — porque yield mais alto vende mais rápido. A diferença entre o prometido e o praticado pode ser 15-25% — que transforma investimento bom em ruim",
+            "solucao": "Pesquisar pessoalmente: ligar para 3-5 imobiliárias da região e perguntar 'quanto custa alugar sala/apartamento de Xm² neste bairro?' O valor que elas informam é mais confiável que o do corretor que quer vender"
+          },
+          {
+            "erro": "Não considerar manutenção como custo recorrente",
+            "por_que": "Manutenção consome 0,5-1,5% do valor do imóvel por ano. Para imóvel de R$ 400K: R$ 2.000-6.000/ano. Ignorar é superestimar yield em 0,5-1,5 pontos percentuais — que pode ser a diferença entre investimento viável e inviável",
+            "solucao": "Incluir sempre: 1% do valor do imóvel por ano como provisão de manutenção. Para imóveis novos: 0,5%. Para imóveis com 20+ anos: 1,5%. É custo real que o proprietário paga"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 7,
+      "titulo": "Negociação de Compra",
+      "objetivo": "O leitor domina técnicas de negociação para comprar imóvel para investimento pelo melhor preço",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Sistema IMI de Negociação para Investidor"],
+      "conteudo": {
+        "abertura": "Beatriz encontrou a segunda oportunidade: apartamento de 2 quartos em Espinheiro, 72m², 6º andar, prédio de 2015, 1 vaga coberta. Preço pedido: R$ 395.000. Diagnóstico IMI: yield bruto 6,4%, indicadores de localização todos positivos, due diligence limpa.\n\nMas o preço ainda era R$ 395K. E a avaliação de Ricardo indicava valor de mercado de R$ 360-380K. Diferença: R$ 15-35K que fariam o yield líquido subir de 4,2% para 4,8-5,3%.\n\nA diferença entre comprar por R$ 395K e por R$ 365K era: R$ 30K no bolso + 1,1 ponto percentual de yield líquido + R$ 30K a menos de capital investido gerando custo de oportunidade = ~R$ 6.000/ano de diferença total.\n\n'Doutora, nos próximos 30 minutos eu vou te ensinar como esses R$ 30K voltam pro seu bolso.'\n\nO cheiro de café no escritório de Ricardo. O barulho da impressora imprimindo o relatório de avaliação que seria a ferramenta principal de negociação. E Beatriz, com a mesma concentração que tinha na cirurgia, pronta para operar na negociação.\n\n*A compra do investidor começa onde a do comprador emocional termina. O emocional paga o preço pedido. O investidor paga o preço justo. E a diferença entre os dois é a margem que transforma investimento médio em bom.*",
+        "secoes": [
+          {
+            "titulo": "O Sistema IMI de Negociação para Investidor",
+            "conteudo": "O Sistema IMI tem 5 etapas que o investidor aplica para negociar pelo melhor preço sem destruir a relação com o vendedor.\n\nEtapa 1 — Avaliação independente antes de qualquer contato com o vendedor. Ricardo avaliou o apartamento pelo Método IMI: 7 comparativos, homogeneização, faixa de R$ 360-380K. Essa avaliação é a âncora do investidor — o número que ele sabe ser justo, independente do que o vendedor pede.\n\nEtapa 2 — Pesquisa sobre o vendedor. Por que está vendendo? Há quanto tempo o imóvel está anunciado? Já baixou preço? O vendedor que está anunciado há 8 meses e já baixou 2 vezes tem mais urgência do que o que anunciou há 2 semanas. Urgência = margem de negociação.\n\nEtapa 3 — Apresentação fundamentada. Não oferecer preço baixo sem justificativa ('ofereço R$ 350K' gera rejeição). Apresentar a avaliação com dados: 'Baseado em 7 comparativos verificados na região, o valor de mercado é de R$ 360-380K. Minha oferta reflete o topo da faixa: R$ 370K.'\n\nEtapa 4 — Negociação de condições (não apenas preço). Se o vendedor não aceita R$ 370K, negociar outras variáveis: prazo de pagamento (pagamento à vista com desconto vs. parcelado), inclusão de mobília/eletrodomésticos, data de desocupação, reparos antes da venda. Cada variável cria espaço para acordo.\n\nEtapa 5 — Paciência estratégica. Não pressionar. Não criar urgência artificial. Apresentar oferta, dar 72h para resposta, e estar genuinamente disposto a desistir se o preço não fizer sentido. O investidor que precisa daquele imóvel específico negocia mal. O que tem 3 alternativas negocia bem.\n\nBeatriz apresentou a oferta de R$ 370K com o relatório de Ricardo. O vendedor contra-propôs R$ 385K. Beatriz mostrou os comparativos que sustentavam R$ 370K. Após 5 dias de negociação (Etapas 4-5), fecharam em R$ 375K — R$ 20K abaixo do pedido.\n\nYield líquido final: 5,1%. Acima do benchmark. TIR projetada: 10,4%. Aprovado.\n\n*Negociação com dados não é agressão — é demonstração. O vendedor que vê 7 comparativos sustentando R$ 370K não se sente pressionado — se sente informado. E informação, na mesa de negociação, é mais poderosa que pressão.*"
+          },
+          {
+            "titulo": "O Poder da Avaliação na Negociação",
+            "conteudo": "A avaliação independente é a arma mais poderosa do investidor na negociação — e a mais subestimada.\n\nQuando Ricardo apresentou o relatório de avaliação ao vendedor do apartamento de Espinheiro, o vendedor ficou em silêncio por 2 minutos lendo. Depois disse: 'O corretor que me assessora disse que vale R$ 400K.'\n\nRicardo respondeu: 'O corretor que o assessora quer comissão sobre R$ 400K. Minha avaliação não tem comissão — tem método. Aqui estão os 7 comparativos, com endereço, metragem, preço verificado e fator de ajuste. Se algum dado estiver errado, me aponte.'\n\nNenhum dado estava errado. O vendedor aceitou R$ 375K — porque os números eram irrefutáveis.\n\nPara Beatriz, o custo da avaliação foi R$ 0 (Ricardo incluiu como parte da consultoria de investimento). Para investidores em geral, o custo de uma avaliação independente é R$ 1.000-2.500. E a economia na negociação — como demonstrado — pode ser de R$ 20-50K.\n\nROI da avaliação como ferramenta de negociação: investir R$ 2.000 para economizar R$ 20.000 = 900%.\n\n'Ricardo, por que o vendedor aceitou R$ 20K a menos?'\n\n'Porque ele viu que R$ 375K era o valor justo. Ninguém gosta de vender abaixo do justo. Mas ninguém consegue justificar vender acima quando os dados mostram o contrário.'\n\n*A avaliação não é ferramenta de compra. É ferramenta de verdade. E a verdade, quando apresentada com dados e sem arrogância, move negociações que emoção não move.*"
+          },
+          {
+            "titulo": "Quando Desistir é a Melhor Negociação",
+            "conteudo": "Ricardo ensinou Beatriz a última lição de negociação — a mais contraintuitiva e mais valiosa: quando desistir.\n\n'Doutora, se o vendedor não aceita preço que faça sentido no seu Diagnóstico IMI, desista. Não existe imóvel único no mundo. Existe imóvel certo ao preço certo — e se esse não é, o próximo será.'\n\nBeatriz testou no terceiro investimento. Encontrou flat em Boa Viagem por R$ 310K, yield projetado de 7,8%, localização excelente. Ofereceu R$ 285K (avaliação de Ricardo: R$ 280-295K). O vendedor não negociou — R$ 310K ou nada.\n\nBeatriz desistiu. Doeu — porque gostou do flat. Mas os números não aprovavam a R$ 310K (yield caía para 6,2% abaixo dos custos de oportunidade ajustados).\n\nQuatro meses depois, o mesmo flat apareceu novamente: R$ 295K. O vendedor tinha ficado 4 meses sem vender a R$ 310K e baixou. Beatriz comprou por R$ 290K — R$ 20K menos que a oferta original.\n\nA paciência economizou R$ 20K e adicionou 0,8 ponto percentual ao yield.\n\n'Ricardo, como você sabia que ia baixar?'\n\n'Não sabia. Mas sabia que a R$ 310K não fazia sentido. E quando não faz sentido, o tempo é aliado do investidor — não do vendedor.'\n\n*A melhor negociação que o investidor pode fazer, às vezes, é não fazer. Desistir quando os números não fecham. Esperar quando o vendedor pede demais. E comprar quando o mercado concordar com os dados — não com a pressa.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "A Margem de Negociação Média no Brasil — Dados Reais",
+          "conteudo": "Dados de mercado indicam que a margem média de negociação no mercado imobiliário brasileiro (diferença entre preço anunciado e preço efetivo de venda) é de 10-18% dependendo do mercado e do momento do ciclo. Em mercados aquecidos (demanda alta): 5-10%. Em mercados equilibrados: 10-15%. Em mercados frios (oferta alta): 15-25%. Para o investidor que avalia antes de negociar, essa margem é previsível — porque a avaliação estima o valor de mercado, e a diferença entre o anúncio e a avaliação é a margem disponível. Para Recife em 2026 (mercado entre equilibrado e em recuperação): a margem média é de 12-18% para imóveis anunciados há mais de 90 dias. Para imóveis novos (lançamentos): 5-10% via condições de pagamento. O investidor que negocia com avaliação captura, em média, 60-80% da margem disponível. O que negocia sem avaliação captura 20-40% — porque não sabe onde está o piso."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Negociando Seu Próximo Investimento",
+          "passos": [
+            "ANTES de qualquer contato com vendedor: fazer avaliação independente (Método IMI)",
+            "Pesquisar sobre o vendedor: tempo de anúncio, reduções de preço, motivação de venda",
+            "Apresentar oferta fundamentada com relatório de avaliação (dados, não pressão)",
+            "Se vendedor contra-propõe: negociar condições além do preço (prazo, mobília, reparos)",
+            "Dar prazo de 72h para resposta — nunca decidir sob pressão",
+            "Se preço não faz sentido nos números: DESISTIR. Outro imóvel virá. Paciência é ferramenta"
+          ]
+        },
+        "checklist": [
+          "Avaliação independente realizada antes de qualquer oferta",
+          "Vendedor pesquisado (tempo de anúncio, motivação)",
+          "Oferta fundamentada com relatório de dados",
+          "Condições além do preço negociadas",
+          "Prazo de 72h respeitado (sem decisão sob pressão)",
+          "Disposição genuína de desistir se números não fecham"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Oferecer preço muito baixo sem fundamentação ('ofereço 30% abaixo')",
+            "por_que": "Oferta sem fundamento ofende o vendedor e fecha a porta para negociação. O vendedor que se sente desrespeitado não vende — nem por preço justo depois",
+            "solucao": "Toda oferta acompanhada de fundamentação: 'Minha oferta de R$ X é baseada em avaliação com 7 comparativos (anexo relatório).' O vendedor pode discordar — mas não pode se sentir desrespeitado"
+          },
+          {
+            "erro": "Se apaixonar por um imóvel específico e perder poder de negociação",
+            "por_que": "O investidor que 'precisa' daquele imóvel aceita qualquer preço. O que tem 3 alternativas negocia com serenidade. A paixão é inimiga da negociação",
+            "solucao": "Sempre ter 2-3 alternativas em análise simultânea. Nunca depender de um único imóvel. A diversidade de opções é a maior ferramenta de negociação que existe"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 8,
+      "titulo": "Portfólio",
+      "objetivo": "O leitor aprende a construir e gerir portfólio de imóveis para investimento",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Blueprint IMI de Portfólio Imobiliário"],
+      "conteudo": {
+        "abertura": "Dezoito meses após o erro de Piedade, Beatriz tinha portfólio de 3 imóveis: o apartamento em Piedade (R$ 480K — o erro), a sala no Derby (R$ 395K — o acerto) e o flat em Boa Viagem (R$ 290K — a paciência). Valor total: R$ 1,165 milhão.\n\nRicardo montou o que chamou de 'check-up do portfólio' — análise consolidada dos 3 imóveis como sistema, não como peças isoladas.\n\nPiedade: yield líquido 2,1% (após otimização). Derby: 5,6%. Boa Viagem: 7,4%. Média ponderada do portfólio: 4,5%. Abaixo do ideal — puxada pelo Piedade.\n\n'Doutora, seu portfólio tem um imóvel doente. Se fosse paciente, qual seria o diagnóstico?'\n\nBeatriz, médica até no vocabulário de investimento: 'Crônico. Sem cura. Candidato a cirurgia — vender e realocar.'\n\nRicardo sorriu. 'Exatamente. Quando o custo de manter é maior que o custo de vender, vender é o tratamento.'\n\n*Portfólio de imóveis é como equipe: um membro fraco puxa a média de todos para baixo. O investidor que monitora e opera — vendendo o fraco, comprando o forte — constrói patrimônio que cresce. O que compra e esquece, acumula peso morto.*",
+        "secoes": [
+          {
+            "titulo": "O Blueprint IMI de Portfólio Imobiliário",
+            "conteudo": "O Blueprint IMI organiza a construção de portfólio em 5 princípios.\n\nPrincípio 1 — Diversificação por tipologia. Não colocar tudo em residencial. Mix recomendado: 40-50% residencial (renda estável), 30-40% comercial (yield maior), 10-20% terreno ou especial (valorização). Cada tipologia tem ciclo diferente — a diversificação suaviza oscilações.\n\nPrincípio 2 — Diversificação por localização. Não concentrar tudo num bairro. Se aquele bairro desvalorizar, o portfólio inteiro sofre. Espalhar entre 2-3 zonas do Mapa IMI: 1 consolidada (segurança), 1 em ascensão (crescimento), 1 emergente (aposta calculada).\n\nPrincípio 3 — Meta de yield mínimo. Definir yield líquido mínimo aceitável — e não comprar abaixo. Para Beatriz: 4,5% líquido como piso. Qualquer imóvel abaixo precisa de justificativa excepcional (valorização projetada comprovável).\n\nPrincípio 4 — Revisão anual. Uma vez por ano, avaliar cada imóvel do portfólio: yield atual vs. meta, valorização vs. projeção, custos vs. orçado. Imóvel que está consistentemente abaixo da meta por 2+ anos: candidato a venda.\n\nPrincípio 5 — Reinvestimento. Cada real de renda que não é consumida deve ser reinvestido — em reforma de imóvel existente (para aumentar aluguel), em amortização de financiamento (para reduzir custo de capital), ou em novo imóvel (para escalar). O patrimônio cresce por reinvestimento, não por sorte.\n\nBeatriz aplicou os 5 princípios. Decisão tomada: vender Piedade (abaixo da meta por 2 anos consecutivos, sem perspectiva de melhora). Reinvestir em sala comercial no Espinheiro (yield projetado 6,2%, Zona B em ascensão). Portfólio pós-venda: Derby + Boa Viagem + Espinheiro. Yield médio projetado: 6,4%. De 4,5% para 6,4% — 1,9 ponto percentual a mais — por uma decisão: trocar o fraco pelo forte."
+          },
+          {
+            "titulo": "Quando Vender — A Decisão Mais Difícil",
+            "conteudo": "Vender imóvel é a decisão mais difícil do investidor — porque envolve admitir erro e pagar custo de transação (ITBI, escritura, comissão: 6-8% do valor). Mas manter imóvel ruim por orgulho é mais caro que vender.\n\nRicardo criou 3 critérios de venda:\n\nCritério 1 — Yield líquido abaixo da meta por 2+ anos sem perspectiva de melhora. Se o imóvel rende 2% e a meta é 5%, e o bairro não tem indicadores de valorização que compensem, o capital está mal alocado.\n\nCritério 2 — Custo de oportunidade crescente. Se o capital do imóvel renderia 60%+ mais em outro ativo (outro imóvel, FII, renda fixa), manter é destruir valor. Calcular: quanto renderia o capital liberado? Subtrair o custo de venda. Se o ganho líquido em 5 anos supera, vender.\n\nCritério 3 — Mudança estrutural no mercado. Bairro em declínio confirmado (novo empreendimento que inundou oferta, perda de âncora comercial, deterioração de infraestrutura). Se a tendência é irreversível, vender antes que os outros percebam.\n\nBeatriz aplicou os 3 critérios a Piedade:\n\nCritério 1: yield de 2,1% vs. meta de 4,5% — abaixo por 18 meses. Positivo para venda.\nCritério 2: capital de R$ 480K rendendo R$ 9.216/ano em Piedade vs. R$ 29.760/ano se investido em sala no Espinheiro. Ganho de R$ 20.544/ano. Custo de venda: ~R$ 36K (7,5% de comissão + custos). Payback: 21 meses. Positivo para venda.\nCritério 3: Piedade sem indicadores de reversão. Vacância estável/crescente. Sem transporte novo. Sem empreendimentos de padrão. Positivo para venda.\n\n3/3 critérios positivos. Decisão: vender.\n\nBeatriz vendeu por R$ 445K (R$ 35K abaixo do que pagou). A perda de R$ 35K + custos de R$ 36K = R$ 71K de 'prejuízo' na operação Piedade. Mas o ganho de R$ 20.544/ano na realocação pagaria esse prejuízo em 3,5 anos — e geraria R$ 205K a mais nos 10 anos seguintes.\n\nA cirurgia era dolorosa. Mas o prognóstico era melhor com ela do que sem.\n\n*Vender imóvel ruim dói. Manter imóvel ruim custa mais. O investidor que confunde dor de curto prazo com perda de longo prazo fica preso em ativo que sangra silenciosamente.*"
+          },
+          {
+            "titulo": "Helena e o Portfólio de R$ 12,4 Milhões — O Destino",
+            "conteudo": "Ricardo contou para Beatriz sobre Helena (L9) — a investidora que começou com R$ 220K e construiu R$ 12,4M em 15 anos. Beatriz queria saber: o que Helena fez diferente?\n\nRicardo resumiu em 4 pontos:\n\nPonto 1: Helena analisava antes de comprar. Cada imóvel passava pelo equivalente ao Diagnóstico IMI. Nunca comprou por emoção.\n\nPonto 2: Helena reinvestia 100% da renda nos primeiros 10 anos. Não usava aluguel para consumo. Usava para amortizar financiamento e comprar o próximo.\n\nPonto 3: Helena diversificou. Residencial + comercial + terreno. Recife + Olinda + Caruaru. Não colocou tudo num lugar ou tipo.\n\nPonto 4: Helena estruturou. Holding no ano 6. Planejamento tributário. Gestão profissional. Proteção patrimonial. Tudo que os Livros 16-19 ensinam.\n\nBeatriz tinha 45 anos, R$ 1,165M em imóveis, e 20 anos de investimento pela frente. Se seguisse o modelo de Helena — análise + reinvestimento + diversificação + estruturação — poderia chegar a R$ 5-8M aos 65 anos.\n\nA conta era simples: R$ 1,165M crescendo a 8% ao ano (yield líquido + valorização) por 20 anos = R$ 5,4M. Com reinvestimento e alavancagem moderada: R$ 7-10M.\n\nBeatriz olhou os números e disse: 'Se eu tivesse começado certo — sem o erro de Piedade — estaria R$ 70K à frente.'\n\n'Doutora, os R$ 70K que perdeu foram a mensalidade da melhor escola de investimento que existe: a escola do erro. E a mensalidade só se paga uma vez — se você aprender a lição.'\n\n*O portfólio de R$ 12,4M de Helena começou com R$ 220K e 1 decisão: analisar antes de comprar. O portfólio de Beatriz começou com R$ 480K e 1 erro: não analisar. A diferença entre os dois caminhos se resolve com 1 framework: o Diagnóstico IMI. A partir de agora, Beatriz e Helena estão no mesmo caminho.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O Efeito Composto no Investimento Imobiliário",
+          "conteudo": "O investimento imobiliário compõe de 3 formas simultâneas: renda (aluguel reinvestido gera mais imóveis que geram mais aluguel), valorização (o imóvel se valoriza e o valor maior gera aluguel proporcional maior), e amortização (cada parcela de financiamento paga reduz a dívida e aumenta o patrimônio líquido). O efeito das 3 composições juntas é poderoso: R$ 500K investidos a yield líquido de 5% + valorização de 3% + amortização equivalente a 2% = retorno total de ~10% ao ano. Em 20 anos: R$ 500K × 1,10^20 = R$ 3,36M. Se o investidor reinveste a renda e usa alavancagem moderada (mantendo LTV abaixo de 60%): R$ 500K podem virar R$ 6-10M em 20 anos. É isso que Helena fez. É isso que Beatriz vai fazer. E é isso que qualquer investidor disciplinado pode fazer — se seguir análise em vez de emoção."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Construindo e Gerindo Seu Portfólio",
+          "passos": [
+            "Aplique os 5 princípios do Blueprint IMI ao seu portfólio (ou ao que planeja construir)",
+            "Diversifique: 2-3 tipologias + 2-3 localizações — nunca concentrar",
+            "Defina meta de yield mínimo e não compre abaixo — disciplina é rentabilidade",
+            "Revise anualmente: yield, valorização e custos de cada imóvel vs. meta",
+            "Aplique os 3 critérios de venda a imóveis que estão consistentemente abaixo da meta",
+            "Reinvista renda: amortização de financiamento ou compra do próximo imóvel"
+          ]
+        },
+        "checklist": [
+          "5 princípios do Blueprint IMI aplicados",
+          "Portfólio diversificado por tipologia e localização",
+          "Meta de yield mínimo definida e respeitada",
+          "Revisão anual agendada e realizada",
+          "Imóveis abaixo da meta identificados e avaliados para venda",
+          "Renda sendo reinvestida (não consumida)"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Manter imóvel ruim porque 'já estou perdendo — se vender, perco mais'",
+            "por_que": "É o clássico viés de aversão à perda. O investidor evita realizar o prejuízo — e continua perdendo silenciosamente. O capital travado em Piedade rendendo 2% poderia estar rendendo 6% em outro lugar. Cada ano mantido é R$ 19K de custo de oportunidade",
+            "solucao": "Ignorar o preço que pagou (custo irrecuperável). Perguntar: 'Se eu tivesse R$ 480K em dinheiro hoje, compraria esse imóvel?' Se a resposta é não — vender. O passado não muda. O futuro depende da decisão de hoje"
+          },
+          {
+            "erro": "Comprar 5 imóveis do mesmo tipo no mesmo bairro",
+            "por_que": "Se o bairro desvalorizar ou a vacância subir, os 5 sofrem simultaneamente. É o equivalente a ter 100% da carteira em ações de uma única empresa — risco concentrado que pode destruir o portfólio",
+            "solucao": "Diversificar como princípio inegociável. 2-3 tipologias, 2-3 localizações, mix de renda e valorização. A diversificação não é conservadorismo — é inteligência"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 9,
+      "titulo": "O Modelo IMI de Investimento",
+      "objetivo": "O leitor recebe o framework integrado que conecta tudo sobre investimento imobiliário",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Modelo IMI de Investimento Imobiliário Inteligente"],
+      "conteudo": {
+        "abertura": "Ricardo e Beatriz estavam no escritório revisando o portfólio 2 anos após o erro de Piedade. A mesa tinha 3 pastas: vermelha (Piedade — vendido), azul (Derby e Boa Viagem — mantidos) e verde (Espinheiro — novo).\n\nPatrimônio: R$ 1,08M em imóveis (Derby R$ 420K + Boa Viagem R$ 310K + Espinheiro R$ 350K). Renda líquida: R$ 5.100/mês. Yield médio: 5,7%. Valorização estimada do portfólio no último ano: 4,2%.\n\nBeatriz olhou os números e lembrou do ponto de partida: R$ 1,2M em poupança e CDB rendendo 9,8%. Se tivesse mantido tudo em renda fixa: R$ 1,44M (sem risco, sem trabalho). Com imóveis: R$ 1,08M + R$ 61K de renda recebida + R$ 45K de valorização = R$ 1,186M.\n\nAinda abaixo da renda fixa — por causa do erro de Piedade que custou R$ 71K. Mas a tendência era de convergência: em mais 2 anos, o portfólio otimizado superaria a renda fixa — e a partir daí, a diferença cresceria exponencialmente pela composição.\n\nO cheiro de café — sempre café no escritório de Ricardo. O peso das pastas na mesa. E a certeza de que o caminho errado tinha se tornado caminho certo — não por sorte, mas por correção disciplinada.\n\n*O modelo de investimento imobiliário não promete que todo investimento dá certo. Promete que as decisões são tomadas com método — e que erros são corrigidos antes de se tornarem desastres.*",
+        "secoes": [
+          {
+            "titulo": "O Modelo IMI de Investimento Imobiliário Inteligente",
+            "conteudo": "O Modelo IMI integra os 8 capítulos anteriores em 6 pilares.\n\nPilar 1 — Diagnóstico (Cap. 1). As 7 perguntas que filtram imóvel bom de imóvel ruim. É o exame pré-operatório que nenhum investimento pode pular.\n\nPilar 2 — Rentabilidade (Cap. 2). Calculadora IMI de 6 módulos. Yield, cap rate, TIR, payback. Números que substituem achismo.\n\nPilar 3 — Localização (Cap. 3). Mapa IMI de 4 zonas. 7 indicadores de futuro. Micro-localização como diferencial.\n\nPilar 4 — Comparação (Cap. 4). Matriz IMI de alocação. Imóvel vs. FIIs vs. renda fixa. Alavancagem como vantagem. Red flags como proteção.\n\nPilar 5 — Proteção (Cap. 5). Due diligence de 15 itens. Riscos jurídicos detectados antes da compra.\n\nPilar 6 — Gestão (Cap. 6-8). Projeção de renda, negociação, portfólio. Blueprint de 5 princípios. Revisão anual. Coragem de vender o fraco.\n\nOs 6 pilares formam ciclo: diagnosticar → calcular → localizar → comparar → proteger → gerir → diagnosticar novamente. Cada imóvel novo passa pelos 6 pilares. Cada imóvel existente é revisado anualmente. O sistema não garante acerto — garante que erros são minimizados e corrigidos rapidamente.\n\nBeatriz opera o sistema há 18 meses. O próximo imóvel que comprar passará pelos 6 pilares em 5-7 dias de análise. E nunca mais passará apenas pela opinião de um corretor em 5 minutos de conversa."
+          },
+          {
+            "titulo": "A Transformação de Beatriz — Em Números",
+            "conteudo": "Para fechar com dados:\n\nAntes do Modelo IMI: R$ 1,2M em poupança/CDB. Renda: R$ 9.800/mês (9,8% líquido). Risco: baixíssimo. Patrimônio: estático. Conhecimento imobiliário: zero.\n\nMês 0 (erro): compra Piedade R$ 480K sem análise. Yield líquido: 1,92%. Custo de oportunidade: R$ 37K/ano.\n\nMês 6 (despertar): Ricardo analisa. Beatriz entende o erro. Começa estudo.\n\nMês 12 (primeira correção): compra Derby R$ 395K com análise completa. Yield: 5,6%.\n\nMês 16 (paciência): compra Boa Viagem R$ 290K após esperar 4 meses por preço justo. Yield: 7,4%.\n\nMês 22 (cirurgia): vende Piedade R$ 445K. Perda: R$ 71K. Aloca em Espinheiro R$ 350K. Yield: 6,2%.\n\nMês 24 (agora): portfólio de R$ 1,08M. Renda: R$ 5.100/mês. Yield médio: 5,7%. Valorização: 4,2%/ano. Retorno total: ~9,9%/ano.\n\nComparação com cenário sem imóvel: CDB a 9,8% renderia R$ 9.800/mês sobre R$ 1,2M. Beatriz tem R$ 5.100/mês de renda + R$ 3.780/mês de valorização = R$ 8.880/mês equivalente. Ainda abaixo — mas convergindo. Em 3 anos: ultrapassará. Em 10 anos: estará significativamente acima (pelo efeito composto da valorização + renda).\n\nA lição: o investimento imobiliário é maratonista, não velocista. Perde para renda fixa nos primeiros 3-5 anos. Ganha nos 10-20 anos seguintes — se gerido com método.\n\nBeatriz tem 45 anos e 20 anos pela frente. O erro de Piedade será nota de rodapé num portfólio de R$ 5-8M.\n\n*O investimento imobiliário não é para quem quer ganhar rápido. É para quem quer construir permanente. Helena levou 15 anos para R$ 12,4M. Beatriz vai levar 20 para R$ 5-8M. O denominador comum é tempo + método. Sem os dois, é aposta.*"
+          },
+          {
+            "titulo": "A Ponte para o Bloco 2 e Além",
+            "conteudo": "Este Livro 2 ensinou a avaliar imóvel pelo prisma do investimento. O Livro 1 ensinou a avaliar com método. Juntos, formam a dupla fundamental: saber quanto vale (L1) e saber se vale a pena comprar (L2).\n\nOs livros seguintes do Bloco 1 (L3-L5) vão aprofundar: avaliação para processos judiciais (L3), terrenos e lotes (L4), e engenharia de avaliações com estatística (L5).\n\nO Bloco 2 (L6-L10) vai expandir o investimento: identificar imóveis abaixo do valor (L6), investir com segurança (L7), estratégias de renda (L8), construção de patrimônio (L9), e fundamentos completos (L10).\n\nBeatriz vai reaparecer no Livro 9 — quando seu portfólio atingir R$ 3M e ela precisar de holding patrimonial. E vai reaparecer no Livro 19 — quando o masterplan de 20 anos precisar de revisão.\n\nCada livro é módulo. Cada módulo se conecta. E o investidor que domina os 27 módulos opera no nível mais alto de inteligência imobiliária que existe.\n\nMas tudo começa com 2 livros: saber avaliar (L1) e saber investir (L2). O resto é construção sobre fundação sólida.\n\n*Se o Livro 1 é a fundação, o Livro 2 é o primeiro andar. E é no primeiro andar que o investidor decide se vai construir mais 25 andares — ou se vai parar no térreo. A decisão está nas suas mãos. Os 7 próximos capítulos do Sprint de 90 Dias estão no Capítulo 10. Vá.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O Investidor Brasileiro vs. O Investidor Global — Gap de Educação",
+          "conteudo": "O investidor imobiliário brasileiro médio compra 1-2 imóveis na vida inteira, geralmente para moradia. O conceito de 'investimento imobiliário com método' é estrangeiro para a maioria. Compare com investidores em mercados maduros: nos EUA, existem milhões de investidores individuais com 5-50 propriedades de aluguel, educados por décadas de literatura, podcasts e plataformas (BiggerPockets, Zillow, Redfin). Na Austrália, 'negative gearing' (alavancagem com subsídio fiscal) criou cultura de investimento imobiliário massiva. No Brasil, a educação é incipiente — e essa é a oportunidade. O profissional imobiliário que educa o investidor (como Ricardo faz com Beatriz) não apenas gera negócios — gera mercado. Cada investidor educado compra mais, melhor e com mais frequência. A educação é o marketing mais rentável do mercado imobiliário."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Implementando o Modelo IMI de Investimento",
+          "passos": [
+            "Para cada imóvel considerado: aplicar os 6 pilares na ordem (diagnóstico → rentabilidade → localização → comparação → proteção → gestão)",
+            "Monte planilha com a Calculadora IMI e use em TODA análise de investimento",
+            "Defina meta de yield mínimo e nunca compre abaixo — a disciplina é o pilar invisível",
+            "Faça revisão anual de todo o portfólio — não de memória, com dados",
+            "Tenha coragem de vender o que não funciona — custo irrecuperável não justifica manutenção",
+            "Reinvista renda e use alavancagem moderada — o efeito composto é o motor do patrimônio"
+          ]
+        },
+        "checklist": [
+          "6 pilares do Modelo IMI compreendidos e aplicáveis",
+          "Calculadora IMI montada e em uso",
+          "Meta de yield mínimo definida",
+          "Revisão anual agendada",
+          "Critérios de venda definidos",
+          "Mentalidade de longo prazo (maratonista, não velocista)"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Aplicar o Modelo IMI no primeiro imóvel e abandonar nos seguintes",
+            "por_que": "A disciplina que funciona no primeiro investimento precisa funcionar em todos. O investidor que relaxa no terceiro ou quarto imóvel ('já sei o que faço') é o que comete o erro que anula o acerto dos anteriores",
+            "solucao": "O Modelo IMI é para TODA compra. Toda. Para o primeiro e para o vigésimo. A disciplina não tem data de validade. O Diagnóstico IMI de 7 perguntas leva 30 minutos. O erro sem diagnóstico custa anos"
+          },
+          {
+            "erro": "Usar o Modelo apenas para compra e esquecer da gestão",
+            "por_que": "Comprar certo e gerir errado é como plantar semente boa e não regar. O imóvel que foi boa compra pode virar mau investimento se a vacância subir, a manutenção for negligenciada e o aluguel não for reajustado",
+            "solucao": "O Modelo IMI inclui gestão (Pilar 6) como componente permanente. Revisão anual, otimização de renda, e coragem de vender são tão importantes quanto a análise inicial"
+          }
+        ]
+      }
+    },
+    {
+      "numero": 10,
+      "titulo": "Execução",
+      "objetivo": "O leitor sai com plano de ação para começar a investir com método em 90 dias",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": ["Sprint IMI de Investimento — 90 Dias"],
+      "conteudo": {
+        "abertura": "Beatriz mandou mensagem para Ricardo num domingo à noite. 'Ricardo, uma amiga minha quer comprar apartamento para investimento. Pediu minha opinião. Sabe o que eu disse?'\n\n'O quê?'\n\n'Disse que antes de visitar qualquer imóvel, ela precisa responder 7 perguntas. E se não souber responder, não está pronta para comprar.'\n\nRicardo leu e sorriu. A médica que 18 meses atrás não sabia o que era yield agora ensinava o Diagnóstico IMI para amigas.\n\nA educação tinha composto. O erro de Piedade tinha virado lição. E a lição estava se multiplicando.\n\nO cheiro de domingo à noite em Recife — brisa do mar, churrasco do vizinho, e a certeza de que cada pessoa que aprende a investir com método é uma pessoa a menos que comete o erro de R$ 480K.\n\n*O Sprint de 90 Dias que segue é para você — que leu até aqui e quer começar. Ou recomeçar. Porque nunca é tarde para aplicar método onde antes havia achismo.*",
+        "secoes": [
+          {
+            "titulo": "O Sprint IMI de Investimento — 90 Dias",
+            "conteudo": "Semana 1-2: Educação financeira imobiliária. Monte a Calculadora IMI de 6 módulos em planilha. Aprenda a calcular yield bruto, yield líquido, cap rate e TIR. Se não sabe usar TIR no Excel: 15 minutos de tutorial no YouTube resolvem.\n\nSemana 3-4: Mapeamento do mercado. Aplique o Mapa IMI de 4 zonas à sua cidade. Pesquise preço/m² e aluguel por bairro nos portais. Identifique as zonas B e C (ascensão e emergente) — é onde a oportunidade está.\n\nSemana 5-6: Análise de 5 imóveis. Selecione 5 imóveis à venda nos portais (mix de tipologias). Para cada um, aplique o Diagnóstico IMI de 7 perguntas e a Calculadora de 6 módulos. Não compre — apenas analise. O exercício é treinar o olho.\n\nSemana 7-8: Due diligence simulada. Para o imóvel mais atrativo dos 5: faça due diligence documental simulada. Consulte matrícula (R$ 30 no cartório), pesquise certidões do vendedor (online). Pratique o Checklist de 15 itens.\n\nSemana 9-10: Negociação simulada. Faça avaliação do imóvel pelo Método IMI (L1). Compare com preço pedido. Calcule a margem de negociação. Prepare oferta fundamentada — mesmo que não vá comprar.\n\nSemana 11-12: Decisão. Dos 5 imóveis analisados: algum passou em todos os critérios? Se sim: considere comprar (com due diligence real completa). Se nenhum passou: ótimo — sua disciplina está funcionando. Continue analisando até encontrar.\n\nDia 90: Se comprou: parabéns, seu primeiro investimento com método. Se não comprou: parabéns, sua disciplina evitou o erro de Beatriz em Piedade. Nas duas hipóteses: você é melhor investidor do que era há 90 dias."
+          },
+          {
+            "titulo": "A Última Lição de Beatriz",
+            "conteudo": "No último encontro documentado neste livro, Beatriz disse algo que Ricardo guardou:\n\n'Ricardo, eu sou cirurgiã. Opero gente há 20 anos. Nunca operei sem exame, sem planejamento, sem checklist. Mas comprei imóvel de R$ 480K sem examinar nada. Se eu tratasse meus pacientes como tratei meu dinheiro, teria matado alguém.'\n\nA honestidade brutal. O reconhecimento de que competência numa área não garante competência em outra. E a humildade de admitir que R$ 480K merecem o mesmo rigor que um procedimento cirúrgico.\n\nBeatriz agora aplica a mesma disciplina: exame (Diagnóstico IMI), planejamento (Calculadora + cenários), checklist (due diligence), e procedimento (negociação + compra). A analogia com a medicina funciona — porque investir é cuidar da saúde financeira com o mesmo rigor que se cuida da saúde física.\n\nE para quem está lendo e pensando 'eu não tenho R$ 500K para investir': o Sprint funciona com qualquer valor. R$ 100K, R$ 200K, R$ 50K (para FIIs e crowdfunding). O método é o mesmo. A escala muda — a disciplina não.\n\n*Este livro termina aqui. Sua jornada como investidor começa agora. Com 7 perguntas, 1 calculadora e a decisão de nunca mais comprar imóvel pelo coração. O coração é para amar. O investimento é para calcular.*"
+          },
+          {
+            "titulo": "A Ponte para os Próximos 25 Livros",
+            "conteudo": "Com os Livros 1 e 2, você tem a fundação completa: saber avaliar (L1) e saber investir (L2). Juntos, respondem às duas perguntas mais importantes do mercado imobiliário: quanto vale? E vale a pena?\n\nOs Livros 3-5 vão aprofundar a avaliação: judicial (L3), terrenos (L4) e engenharia de avaliações (L5). Os Livros 6-10 vão aprofundar o investimento: imóveis abaixo do valor (L6), segurança (L7), renda (L8), patrimônio (L9) e fundamentos (L10).\n\nOs Livros 11-15 vão expandir internacionalmente. Os 16-19, proteger patrimonialmente. Os 20-23, profissionalizar operacionalmente. E os 24-27, transformar tecnologicamente.\n\n27 livros. 270 capítulos. Um sistema completo de inteligência imobiliária que começa com estas duas perguntas: quanto vale? E vale a pena?\n\nVocê agora sabe responder as duas. O resto é construção.\n\n*A Biblioteca IMI começa com avaliação porque avaliação é fundamento. E termina com futuro porque o futuro é para onde o fundamento leva. Entre os dois — 25 livros de competência, tecnologia e visão. E tudo começa com o Sprint de 90 Dias que você inicia agora.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O Primeiro Investimento — Quanto Capital Precisa?",
+          "conteudo": "Desmistificando: quanto precisa para começar a investir em imóveis no Brasil? Para compra direta com financiamento: R$ 80-150K de entrada (20-30% de imóvel de R$ 300-500K). Para compra à vista de imóvel de renda: R$ 200-400K (sala comercial ou apartamento em cidade média). Para FIIs (exposição imobiliária sem compra direta): R$ 10-100 (uma cota). Para crowdfunding imobiliário: R$ 1.000-5.000. O investidor que 'não tem dinheiro para imóvel' pode começar com FIIs e crowdfunding — acumulando conhecimento e capital até atingir R$ 80-150K para a primeira compra direta. O Sprint de 90 Dias funciona em qualquer faixa: para quem tem R$ 50K (analisa FIIs e crowdfunding) e para quem tem R$ 5M (analisa portfólio de 10 imóveis). O método é o mesmo. Apenas a escala muda."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Seu Sprint de 90 Dias — Comece Agora",
+          "passos": [
+            "Semana 1-2: Monte Calculadora IMI + aprenda yield/cap rate/TIR",
+            "Semana 3-4: Mapeie sua cidade nas 4 zonas IMI + pesquise preços e aluguéis",
+            "Semana 5-6: Analise 5 imóveis com Diagnóstico IMI completo (sem comprar)",
+            "Semana 7-8: Due diligence simulada do melhor candidato",
+            "Semana 9-10: Negociação simulada com avaliação independente",
+            "Semana 11-12: Decisão — comprar se aprovado em todos os critérios, ou continuar analisando",
+            "Dia 90: Investidor com método — independente de ter comprado ou não"
+          ]
+        },
+        "checklist": [
+          "Sprint de 90 Dias iniciado com data registrada",
+          "Calculadora IMI montada e testada",
+          "Cidade mapeada nas 4 zonas IMI",
+          "5 imóveis analisados com Diagnóstico completo",
+          "Due diligence simulada realizada",
+          "Negociação simulada com avaliação",
+          "Decisão tomada com método — não com pressa",
+          "Compromisso: nunca mais comprar sem o Diagnóstico IMI de 7 perguntas"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Terminar o Sprint analisando e nunca comprar ('paralisia por análise')",
+            "por_que": "Análise sem ação é procrastinação sofisticada. O investidor que analisa 50 imóveis e não compra nenhum tem conhecimento mas não tem patrimônio. E patrimônio só se constrói comprando",
+            "solucao": "Definir critérios claros ANTES de começar o Sprint: yield mínimo, localização-alvo, orçamento, e prazo (ex: 'vou comprar nos próximos 6 meses se encontrar imóvel que passe nos critérios'). O compromisso com prazo evita paralisia"
+          },
+          {
+            "erro": "Ler este livro e comprar no mês seguinte sem aplicar nada",
+            "por_que": "O entusiasmo pós-leitura pode gerar falsa sensação de competência. Ler sobre yield não é o mesmo que calcular yield. Saber que due diligence existe não é o mesmo que fazer. O Sprint existe para transformar leitura em prática",
+            "solucao": "Seguir o Sprint na ordem, semana a semana. Não pular etapas. O investimento de 90 dias em prática protege contra o investimento de R$ 300-500K em erro"
+          }
+        ]
+      }
+    }
+  ]
+}

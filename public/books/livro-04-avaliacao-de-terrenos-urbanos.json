@@ -1,0 +1,271 @@
+{
+  "metadata": {
+    "titulo": "Avaliação de Terrenos Urbanos",
+    "subtitulo": "Do Lote Vazio ao Potencial Construtivo — Métodos, Incorporação e Valor",
+    "autor": "Iule Miranda",
+    "serie": "Biblioteca IMI",
+    "posicao": "Livro 04 de 27",
+    "numero": "04",
+    "slug": "livro-04-avaliacao-de-terrenos-urbanos",
+    "dedicatoria": "A quem olha para um terreno vazio e enxerga o que ele pode se tornar. O valor de um lote nunca está na terra — está na visão de quem o mede.",
+    "personagens": ["Marcelo (engenheiro avaliador de terrenos)","Tomás (incorporador experiente, vindo do L25)","Dona Eunice (proprietária de terreno herdado)","Gustavo (investidor fundiário)"],
+    "frameworks": ["Método da Comparação por Fatores Ajustados","Modelo de Residual Estático para Incorporação","Matriz de Vocação do Terreno","Framework TOP (Topografia-Ocupação-Potencial)","Índice de Atratividade Fundiária","Protocolo de Due Diligence do Terreno"]
+  },
+  "capitulos": [
+    {
+      "numero": 1,
+      "titulo": "O Terreno Que Valia Uma Fortuna Escondida",
+      "epigrafe": "Todo terreno conta uma história. A maioria dos avaliadores nunca a escuta.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Marcelo parou o carro na esquina da Rua Conselheiro Brotero com a Alameda Barros, em Higienópolis. O terreno era uma contradição urbana: 1.200 m² de nada no meio de tudo. Muro de bloco sem reboco, mato crescendo entre as frestas do asfalto improvisado, e um portão de ferro enferrujado com um cadeado que parecia mais velho que a República. Do outro lado da rua, edifícios residenciais de alto padrão. Na esquina oposta, uma padaria artesanal onde o café custava R$ 18. O lote vazio era um anacronismo — e um tesouro que sua dona, Dona Eunice, não sabia que possuía."},
+            {"tipo": "paragrafo", "texto": "Dona Eunice havia herdado o terreno do marido, falecido em 2018. O IPTU estava atrasado há três anos, a matrícula tinha uma averbação de penhora de 1996 que já havia sido cancelada mas nunca limpa, e o valor venal declarado pela Prefeitura era de R$ 2.800.000. Um corretor vizinho havia oferecido R$ 3,5 milhões. Tomás, incorporador com 30 anos de mercado, oferecia R$ 7 milhões. Alguém estava errado — e Marcelo foi chamado para descobrir quem."},
+            {"tipo": "dialogo", "texto": "<span class='speaker'>Tomás:</span> Marcelo, eu já calculei o residual desse terreno. Com o potencial construtivo de Higienópolis, eu coloco um prédio de 18 andares aqui. O VGV passa de R$ 80 milhões. O terreno vale R$ 12 a 14 milhões. Eu estou oferecendo R$ 7 por uma questão de margem e risco. Mas a dona acha que vale R$ 3,5 porque o corretor disse R$ 3,5. E o corretor disse R$ 3,5 porque nunca fez uma conta de incorporação na vida.<br><br><span class='speaker'>Marcelo:</span> E se o zoneamento não permitir 18 andares?<br><br><span class='speaker'>Tomás:</span> Por isso eu chamei você. Para ter certeza antes de assinar qualquer coisa."},
+            {"tipo": "paragrafo", "texto": "A avaliação de terrenos urbanos é a disciplina mais subestimada do mercado imobiliário brasileiro. Enquanto a avaliação de imóveis prontos tem abundância de dados comparativos, a avaliação de terrenos opera em um território de escassez — poucos dados de transação, alta heterogeneidade entre lotes, e um valor que depende fundamentalmente do que se pode construir, não do que existe. O terreno é potência pura. E potência exige método para ser medida."},
+            {"tipo": "insight", "texto": "O valor de um terreno urbano é determinado por quatro vetores: localização (onde está), dimensões físicas (tamanho, forma, topografia), potencial construtivo (o que o zoneamento permite edificar) e liquidez (quão rápido pode ser vendido ou desenvolvido). A maioria das avaliações amadoras considera apenas os dois primeiros. A diferença entre um laudo competente e um achismo está nos dois últimos."}
+          ]
+        },
+        {
+          "titulo": "Por que terrenos são diferentes de tudo",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Avaliar um terreno não é simplificar a avaliação de um imóvel. É um exercício completamente diferente. O imóvel pronto tem acabamento, estado de conservação, idade — variáveis observáveis. O terreno tem potencial, restrições, vocação — variáveis inferidas. O avaliador de imóveis mede o que é. O avaliador de terrenos estima o que pode ser."},
+            {"tipo": "paragrafo", "texto": "Nos próximos capítulos, Marcelo e Tomás vão nos guiar pelo universo da avaliação fundiária urbana. Cada capítulo ataca uma dimensão do problema: do zoneamento à topografia, do método comparativo ao involutivo, da due diligence documental à negociação com proprietários que não sabem — ou sabem demais — o que têm."},
+            {"tipo": "checklist", "items": ["Cap 2 — Zoneamento e potencial construtivo: o código que define o valor","Cap 3 — Tipologia de terrenos: como classificar e comparar lotes urbanos","Cap 4 — Método Comparativo para terrenos: adaptações essenciais","Cap 5 — Método Involutivo: quando o terreno vale pelo que se pode construir nele","Cap 6 — Topografia, forma e frente: os fatores que multiplicam ou destroem valor","Cap 7 — Due diligence fundiária: o checklist que evita desastres","Cap 8 — Avaliação para incorporação: como o incorporador pensa","Cap 9 — Terrenos especiais: esquinas, encravados, contaminados, tombados","Cap 10 — Negociação e laudo: comunicar valor para quem não quer ouvir"]},
+            {"tipo": "transicao", "texto": "No próximo capítulo, Marcelo abre o Plano Diretor de São Paulo e descobre que o terreno de Dona Eunice esconde mais potencial do que Tomás imagina — e mais restrições do que ele gostaria."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "titulo": "O Código Que Define o Valor: Zoneamento e Potencial Construtivo",
+      "epigrafe": "O terreno não sabe o que vale. O Plano Diretor é quem conta.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Marcelo abriu o GeoSampa — o sistema georreferenciado da Prefeitura de São Paulo — e digitou o endereço do terreno. A tela mostrou o que ele já suspeitava: Zona Mista (ZM), com Coeficiente de Aproveitamento básico de 1,0, máximo de 4,0 mediante outorga onerosa. Taxa de ocupação de 70%. Gabarito sem limite de altura pela zona, mas com restrições de cota de insolação. O terreno era um retângulo quase perfeito: 30 m de frente por 40 m de profundidade."},
+            {"tipo": "paragrafo", "texto": "Para quem não é do mercado, esses números parecem abstrações burocráticas. Para Marcelo, eram a linguagem que traduzia terra em dinheiro. O Coeficiente de Aproveitamento (CA) máximo de 4,0 significava que, em teoria, poderia construir até 4.800 m² de área computável naquele terreno de 1.200 m². Com a taxa de ocupação de 70%, a projeção máxima no solo seria de 840 m². A relação entre projeção e área computável determinava o número de pavimentos: 4.800 ÷ 840 ≈ 5,7 andares de área computável. Mas havia as áreas não computáveis — garagens, circulação, lazer — que poderiam adicionar 3 a 5 pavimentos. O prédio de 18 andares que Tomás mencionou começava a fazer sentido."},
+            {"tipo": "insight", "texto": "Os quatro parâmetros urbanísticos que definem o potencial construtivo: (1) Coeficiente de Aproveitamento (CA) — quanto se pode construir em relação à área do terreno. (2) Taxa de Ocupação (TO) — quanto do terreno pode ser coberto pela projeção do edifício. (3) Gabarito — limite de altura em metros ou pavimentos. (4) Recuos — afastamentos obrigatórios das divisas. Alterar qualquer um desses parâmetros altera diretamente o valor do terreno."}
+          ]
+        },
+        {
+          "titulo": "A outorga onerosa e a conta real",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "O CA básico era 1,0. O CA máximo, 4,0. A diferença — 3,0 — era o potencial construtivo adicional que só poderia ser exercido mediante pagamento de outorga onerosa ao município. E aqui estava o detalhe que separava avaliadores competentes de amadores: a outorga onerosa é um custo de implantação, não do terreno. Mas ela reduz indiretamente o valor do terreno, porque reduz o lucro do incorporador."},
+            {"tipo": "formula", "texto": "Outorga Onerosa = (ACmax - ACbas) × Ct × Fp × Fs<br><br>ACmax = Área construída máxima | ACbas = Área construída básica<br>Ct = Valor do m² do terreno (PGVS) | Fp = Fator de planejamento | Fs = Fator social"},
+            {"tipo": "caso", "titulo_caso": "Cálculo da outorga para o terreno de Dona Eunice", "texto": "Área do terreno: 1.200 m². CA básico: 1,0 (1.200 m² de área computável gratuita). CA máximo: 4,0 (4.800 m² totais). Área adicional: 3.600 m². Valor do m² (PGVS): R$ 6.500. Fp × Fs: 0,5 (zona mista, uso residencial). Outorga estimada: 3.600 × 6.500 × 0,5 = R$ 11.700.000. Esse valor entraria no estudo de viabilidade do incorporador como custo, reduzindo o que ele poderia pagar pelo terreno."},
+            {"tipo": "armadilha", "texto": "Avaliar um terreno pelo CA máximo sem considerar a outorga onerosa é o erro mais comum e mais caro na avaliação fundiária. O avaliador calcula o potencial construtivo máximo, estima o VGV, subtrai custos de construção, e chega a um valor de terreno inflado — porque esqueceu que exercer o potencial custa dinheiro. Tomás nunca cometia esse erro. Muitos corretores, sim."},
+            {"tipo": "pratica", "texto": "Exercício: Acesse o GeoSampa (ou o equivalente da sua cidade) e consulte o zoneamento de 3 terrenos em regiões diferentes. Para cada um, calcule: (a) área computável máxima, (b) estimativa de outorga onerosa, (c) número aproximado de pavimentos. Compare os terrenos: qual tem o maior potencial por m²?"},
+            {"tipo": "transicao", "texto": "Com o potencial construtivo mapeado, Marcelo precisava entender as características físicas do terreno. No Capítulo 3, classificamos terrenos por tipologia — porque dois lotes no mesmo bairro podem ter valores radicalmente diferentes."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "titulo": "Nem Todo Lote é Igual: Tipologia de Terrenos",
+      "epigrafe": "A diferença entre um terreno de R$ 5 mil o metro e um de R$ 500 pode ser apenas uma ladeira.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Gustavo, investidor fundiário que conhecia Marcelo de um curso do IBAPE, ligou em uma terça-feira com uma proposta: tinha encontrado três terrenos à venda na mesma rua em Santana, todos com 300 m², todos com o mesmo zoneamento. Os preços pedidos eram R$ 900 mil, R$ 1,2 milhão e R$ 1,6 milhão. 'Marcelo, são terrenos iguais na mesma rua. Por que a diferença de 78%?' A resposta estava na tipologia — e na cegueira comparativa de quem olha só para metros quadrados."},
+            {"tipo": "paragrafo", "texto": "O primeiro terreno tinha 10 m de frente por 30 m de profundidade — um corredor. O segundo, 15 m por 20 m — proporção equilibrada. O terceiro, 20 m por 15 m — frente generosa. Além disso, o primeiro era em aclive de 3 metros em relação à rua, o segundo era plano, e o terceiro tinha leve declive de 1 metro com frente para duas ruas (esquina). Mesma metragem, mesma localização, valores completamente diferentes."}
+          ]
+        },
+        {
+          "titulo": "Framework TOP: Topografia, Ocupação, Potencial",
+          "conteudo": [
+            {"tipo": "insight", "texto": "O Framework TOP classifica terrenos em três dimensões: (T) Topografia — plano, aclive, declive, irregular. Terrenos planos valem mais por reduzirem custos de fundação e movimentação de terra. Aclives de mais de 20% podem inviabilizar projetos verticais. (O) Ocupação — como o lote pode ser ocupado dadas suas dimensões. Frente estreita limita projetos. Forma irregular gera áreas perdidas. Proporção frente/profundidade ideal: entre 1:2 e 1:3. (P) Potencial — o que o zoneamento permite e o mercado absorve. Um terreno com CA 4,0 em bairro sem demanda vale menos que um com CA 2,0 em bairro aquecido."},
+            {"tipo": "paragrafo", "texto": "Marcelo aplicou o Framework TOP aos três terrenos de Gustavo. Terreno 1 (R$ 900 mil): T = aclive 3m (penalidade), O = frente estreita 10m (restringe projeto), P = CA 2,0 com demanda moderada. Terreno 2 (R$ 1,2 milhão): T = plano (ideal), O = proporção equilibrada (versátil), P = CA 2,0 com demanda moderada. Terreno 3 (R$ 1,6 milhão): T = leve declive com esquina (vantagem comercial), O = frente dupla 20m+15m (máxima flexibilidade), P = CA 2,0 + bônus de esquina. A diferença de preço não era aleatória — era consequência direta da tipologia."},
+            {"tipo": "caso", "titulo_caso": "O custo oculto do aclive", "texto": "Gustavo ficou tentado pelo terreno de R$ 900 mil — era o mais barato por m². Marcelo fez a conta que ele não havia feito: para nivelar o terreno e construir uma fundação adequada para o aclive de 3 metros, o custo adicional seria de aproximadamente R$ 180.000 a R$ 250.000. Além disso, a frente de 10 metros limitava o projeto a edifícios estreitos, reduzindo a eficiência construtiva em cerca de 15%. Ajustando o preço pelo custo adicional e pela perda de eficiência, o terreno 'barato' custava R$ 1,1 milhão efetivo — quase o mesmo que o terreno plano de R$ 1,2 milhão, que não exigia nenhum investimento extra."},
+            {"tipo": "armadilha", "texto": "Comparar terrenos apenas por R$/m² é a armadilha mais frequente no mercado fundiário. Dois terrenos de 300 m² na mesma rua podem ter valores unitários que variam 100% ou mais, dependendo de frente, topografia, forma e posição na quadra. O R$/m² é indicador de partida, nunca de chegada."},
+            {"tipo": "pratica", "texto": "Aplique o Framework TOP a três terrenos reais da sua região. Para cada um, atribua nota de 1 a 5 em cada dimensão (T, O, P). Some as notas. O terreno com maior pontuação deveria ter o maior valor de mercado — se não tem, investigue por quê."},
+            {"tipo": "transicao", "texto": "No Capítulo 4, Marcelo enfrenta o desafio principal: como comparar terrenos quando cada lote é único? O método comparativo precisa de adaptações específicas quando o objeto é terra nua."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "titulo": "Método Comparativo Para Terrenos: A Arte da Homogeneização",
+      "epigrafe": "Comparar terrenos é como comparar pessoas: só funciona se você souber o que realmente importa.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Marcelo abriu sua planilha de pesquisa e começou a buscar terrenos comparáveis ao de Dona Eunice. O problema era previsível: em Higienópolis, terrenos de 1.200 m² não apareciam com frequência. Nos últimos 24 meses, encontrou apenas 6 ofertas e 2 transações efetivas em um raio de 2 km. A amostra era pequena — mas era o mercado real. E o mercado real nem sempre oferece amostras confortáveis."},
+            {"tipo": "paragrafo", "texto": "O Método Comparativo Direto de Dados de Mercado aplicado a terrenos segue a mesma lógica do MCDDM para imóveis prontos, mas com fatores de ajuste específicos. Os fatores de homogeneização mais relevantes para terrenos são: transposição (localização relativa), área (lotes maiores tendem a ter valor unitário menor), frente (testada influencia o aproveitamento), profundidade (equivalente da relação frente/fundo), topografia e forma."},
+            {"tipo": "insight", "texto": "Fatores de homogeneização mais utilizados para terrenos urbanos: (1) Fator de Oferta: 0,85-0,95 (desconto sobre preço pedido). (2) Fator de Transposição: baseado na planta de valores ou na pesquisa local. (3) Fator de Área: F = (Aref/Acomp)^n, onde n varia de 0,125 a 0,25 dependendo do mercado. (4) Fator de Testada: F = (Tref/Tcomp)^0,25 (influência da frente). (5) Fator de Profundidade: tabelas de Jerret ou Harper. (6) Fator de Topografia: plano=1,00, aclive suave=0,95, aclive forte=0,80-0,85."}
+          ]
+        },
+        {
+          "titulo": "Construindo a amostra e homogeneizando",
+          "conteudo": [
+            {"tipo": "caso", "titulo_caso": "A amostra de Higienópolis", "texto": "Os 8 dados de Marcelo: (1) Rua Piauí, 800 m², oferta R$ 9.600/m² — CA 4,0, plano, 20m frente. (2) Al. Santos (Cerqueira César), 1.500 m², transação R$ 11.200/m² — CA 4,0, plano, 25m frente. (3) Rua Itacolomi, 600 m², oferta R$ 8.800/m² — CA 2,0, aclive leve, 12m frente. (4) Rua Alagoas, 1.000 m², oferta R$ 10.500/m² — CA 4,0, plano, 22m frente. (5) Al. Barros, 900 m², transação R$ 10.800/m² — CA 4,0, plano, 18m frente. (6) Rua Minas Gerais, 700 m², oferta R$ 9.200/m² — CA 4,0, plano, 15m frente. (7) Rua Bahia, 1.100 m², oferta R$ 10.000/m² — CA 4,0, plano, 20m frente. (8) Rua Maranhão, 1.400 m², oferta R$ 9.800/m² — CA 4,0, plano, 28m frente."},
+            {"tipo": "paragrafo", "texto": "Após homogeneização (fator de oferta 0,90 para ofertas, fator de área, fator de testada e transposição), Marcelo chegou a um valor unitário médio homogeneizado de R$ 9.450/m² para o terreno de Dona Eunice. Com 1.200 m², o valor pelo comparativo era R$ 11.340.000. Tomás estava oferecendo R$ 7 milhões — pouco mais da metade. O corretor havia sugerido R$ 3,5 milhões — menos de um terço."},
+            {"tipo": "armadilha", "texto": "Quando a amostra é pequena (menos de 10 dados), cada comparativo tem peso desproporcional. Um único dado atípico pode distorcer o resultado em 15-20%. Marcelo mitigou esse risco de duas formas: (a) verificou cada dado individualmente com a fonte, (b) calculou o resultado retirando cada dado e verificou que a variação não excedia 8%. Se tivesse excedido, descartaria o outlier ou reduziria o grau de fundamentação."},
+            {"tipo": "pratica", "texto": "Monte uma planilha de homogeneização para terrenos com os fatores: oferta, transposição, área, testada, profundidade e topografia. Use os 8 dados do caso acima e chegue ao seu próprio valor homogeneizado. Compare com o R$ 9.450/m² de Marcelo."},
+            {"tipo": "transicao", "texto": "O comparativo deu R$ 11,3 milhões. Mas Tomás, como incorporador, pensa pelo involutivo — quanto o terreno vale em função do que pode ser construído nele. No Capítulo 5, fazemos a conta que Tomás faz toda semana: o estudo de viabilidade que transforma terreno em empreendimento."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "titulo": "Método Involutivo: O Terreno Vale Pelo Que Pode Nascer Nele",
+      "epigrafe": "O incorporador não compra terra. Compra o direito de transformar terra em receita.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Tomás sentou-se na sala de reuniões do escritório de Marcelo com uma planilha que parecia uma declaração de imposto de renda: dezenas de linhas, fórmulas encadeadas, e um número final destacado em amarelo. Era seu estudo de viabilidade para o terreno de Dona Eunice. 'Marcelo, deixa eu te mostrar como eu penso. Depois você me diz se a conta fecha na sua metodologia também.'"},
+            {"tipo": "paragrafo", "texto": "O Método Involutivo é, na essência, um estudo de viabilidade às avessas. Em vez de partir do custo do terreno e calcular o lucro, parte-se da receita esperada e subtrai-se tudo — custos de construção, impostos, taxas, outorga, despesas de venda, custo financeiro — até chegar ao valor residual que pode ser pago pelo terreno. É o método que todo incorporador usa intuitivamente. E é o método que a NBR 14653-2 reconhece como adequado para terrenos com vocação para incorporação."},
+            {"tipo": "formula", "texto": "V terreno = VGV - Custo Construção - Outorga - Despesas Comerciais - Custos Financeiros - Impostos - Margem do Incorporador<br><br>V terreno = Receita Total - Σ(todos os custos) - Lucro mínimo aceitável"}
+          ]
+        },
+        {
+          "titulo": "Modelo de Residual Estático para Incorporação",
+          "conteudo": [
+            {"tipo": "caso", "titulo_caso": "O residual do terreno de Dona Eunice", "texto": "Projeto hipotético: edifício residencial de alto padrão, 18 pavimentos, 4 unidades por andar (72 apartamentos), área privativa média de 65 m² por unidade. Área computável total: 4.680 m². Área total construída (incluindo garagem e áreas comuns): ~7.500 m². VGV estimado (72 unidades × R$ 1.100.000/unidade): R$ 79.200.000. Custo de construção (R$ 5.800/m² × 7.500 m²): R$ 43.500.000. Outorga onerosa: R$ 11.700.000. Despesas comerciais (6% VGV): R$ 4.752.000. Custos financeiros (estimativa): R$ 3.960.000. Impostos sobre receita: R$ 2.970.000. Margem do incorporador (15% VGV): R$ 11.880.000. RESIDUAL = 79.200.000 - 43.500.000 - 11.700.000 - 4.752.000 - 3.960.000 - 2.970.000 - 11.880.000 = R$ 438.000 (NEGATIVO OU MARGINALMENTE POSITIVO dependendo dos ajustes). Resultado: com essa configuração, o terreno vale entre R$ 0 e R$ 1 milhão pelo involutivo. Algo estava errado — ou o projeto, ou o mercado."},
+            {"tipo": "paragrafo", "texto": "Tomás olhou para Marcelo. 'Sua conta está diferente da minha. Porque eu não uso 15% de margem — uso 12%. E meu custo de construção é R$ 5.200, não R$ 5.800, porque eu tenho escala e construtora própria. E o VGV eu calculo em R$ 1.200.000 por unidade, não R$ 1.100.000.' Com os parâmetros de Tomás, o residual subia para R$ 7.200.000 — exatamente o que ele estava oferecendo."},
+            {"tipo": "insight", "texto": "O Método Involutivo é extremamente sensível às premissas. Variações de 5-10% nos parâmetros de entrada (VGV, custo de construção, margem) podem alterar o valor residual do terreno em 50% ou mais. Por isso a NBR 14653 exige que o involutivo seja aplicado com análise de sensibilidade obrigatória — testando cenários otimista, base e pessimista para cada variável crítica."},
+            {"tipo": "armadilha", "texto": "O erro mais perigoso no involutivo é usar premissas do incorporador como se fossem premissas de mercado. O incorporador tem custos específicos (escala, construtora, financiamento), VGV projetado com viés otimista, e margem ajustada ao seu apetite de risco. O avaliador deve usar premissas de mercado — custos médios de construção (CUB/SINAPI), VGV baseado em pesquisa de imóveis novos na região, e margem de incorporação praticada pelo mercado (12-18%)."},
+            {"tipo": "paragrafo", "texto": "Marcelo recalculou com premissas de mercado: VGV de R$ 1.150.000/unidade (média entre Tomás e sua pesquisa), custo de R$ 5.500/m² (CUB SP acrescido de 15% para alto padrão), margem de 13,5% (média de mercado). Resultado: residual de R$ 4.200.000. Comparativo: R$ 11.340.000. A divergência era brutal — e precisava ser explicada."},
+            {"tipo": "pratica", "texto": "Monte um residual estático para um terreno da sua região. Use o CUB local, pesquise VGV de lançamentos recentes, e calcule a outorga onerosa pela fórmula do seu município. Varie cada premissa em ±10% e observe como o residual oscila. Essa sensibilidade é o principal risco do método."},
+            {"tipo": "transicao", "texto": "A divergência entre comparativo (R$ 11,3M) e involutivo (R$ 4,2M) era o tipo de resultado que tira o sono de qualquer avaliador. No Capítulo 6, Marcelo investiga as causas — e descobre que os fatores físicos do terreno explicam mais do que se imagina."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "titulo": "Topografia, Forma e Frente: Os Multiplicadores Silenciosos",
+      "epigrafe": "Um metro quadrado de frente não vale o mesmo que um metro quadrado de fundo. Quem não sabe isso não avalia terrenos.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Marcelo voltou ao terreno de Dona Eunice com olhos de topógrafo. Desta vez trouxe um drone e um nível a laser. O terreno era quase plano — desnível de apenas 0,8 m entre a frente e o fundo, irrelevante para a construção. A forma era retangular limpa, com 30 m de frente e 40 m de profundidade. Sem recortes, sem reentrâncias, sem servidões. Era, sob o aspecto físico, um terreno ideal."},
+            {"tipo": "paragrafo", "texto": "E era justamente essa qualidade que explicava parte da divergência entre os métodos. O método comparativo capturava o valor do terreno 'como está' — e terrenos premium em Higienópolis, com forma regular e dimensões generosas, são raros e muito valorizados. O involutivo capturava o valor 'pelo que pode ser construído' — e a conta de incorporação em São Paulo em 2024 estava sendo esmagada pela outorga onerosa e pelos custos de construção inflacionados."},
+            {"tipo": "insight", "texto": "Quando o comparativo resulta significativamente acima do involutivo, há três explicações possíveis: (1) O mercado de terrenos está supervalorizado (bolha fundiária) — os preços pedidos não refletem viabilidade real. (2) As premissas do involutivo estão conservadoras demais — o projeto não otimiza o potencial. (3) O terreno tem valor de uso alternativo que o involutivo não captura — retenção patrimonial, uso comercial, estacionamento. Cabe ao avaliador investigar qual explicação se aplica."}
+          ]
+        },
+        {
+          "titulo": "Fatores físicos e seus impactos",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Marcelo sistematizou os fatores físicos que mais impactam o valor de terrenos urbanos, com base em sua experiência de 200+ avaliações fundiárias. A ordem de impacto, do mais relevante ao menos relevante, era: (1) Localização/bairro — pode variar 10x dentro da mesma cidade. (2) Potencial construtivo (CA) — determina o teto de geração de receita. (3) Frente (testada) — terrenos com frente generosa permitem projetos mais eficientes. (4) Área total — lotes maiores têm economia de escala para incorporação. (5) Forma — regularidade geométrica reduz áreas perdidas. (6) Topografia — terrenos planos eliminam custos de terraplanagem e contenção. (7) Posição na quadra — esquinas valem mais que meio de quadra em zonas comerciais."},
+            {"tipo": "caso", "titulo_caso": "O impacto quantificado da frente", "texto": "Marcelo comparou dois terrenos em Pinheiros: Terreno A — 500 m², frente de 10 m, profundidade de 50 m. Terreno B — 500 m², frente de 25 m, profundidade de 20 m. Mesma metragem, mesmo bairro, mesmo zoneamento. O Terreno B valia 35% a mais. Motivo: a frente de 25 m permitia um edifício com melhor ventilação, mais unidades por andar, e fachada comercializável mais atraente. A frente estreita do Terreno A limitava o projeto a 'lâminas' pouco eficientes, com corredores longos e áreas comuns proporcionalmente maiores."},
+            {"tipo": "armadilha", "texto": "O fator de testada (frente) é frequentemente subestimado em avaliações. Muitos avaliadores aplicam a fórmula F=(Tref/Tcomp)^0,25 mecanicamente, sem verificar se o expoente 0,25 reflete o mercado local. Em regiões de alta verticalização, o expoente pode chegar a 0,40 — porque a frente impacta diretamente a eficiência da planta tipo e, portanto, o VGV por m² de terreno."},
+            {"tipo": "pratica", "texto": "Pesquise 5 terrenos na mesma região com áreas similares mas frentes diferentes. Calcule o valor unitário (R$/m²) de cada um. Plote em um gráfico: eixo X = frente em metros, eixo Y = R$/m². A correlação positiva deveria ser evidente. Se não for, investigue outros fatores que podem estar mascarando o efeito."},
+            {"tipo": "transicao", "texto": "Antes de fechar o laudo, Marcelo precisava garantir que o terreno não escondia surpresas documentais. No Capítulo 7, mergulhamos na due diligence fundiária — o checklist que separa transações seguras de desastres anunciados."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "titulo": "Due Diligence Fundiária: O Checklist Que Salva Milhões",
+      "epigrafe": "Terreno bom com documento ruim não é terreno bom. É problema com vista bonita.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Gustavo ligou para Marcelo em pânico. O terreno que havia comprado em Santana — aquele de R$ 1,2 milhão, plano, bem proporcionado — tinha uma surpresa: servidão de passagem não averbada na matrícula, mas registrada em um processo de 1987 que apareceu apenas quando o vizinho dos fundos exigiu acesso. Quatro metros de largura, cortando o terreno pelo meio. A área útil caiu de 300 m² para 240 m² efetivos. O projeto teve que ser refeito. 'Marcelo, como eu não vi isso?'"},
+            {"tipo": "paragrafo", "texto": "A resposta era simples e dolorosa: due diligence incompleta. Gustavo havia verificado a matrícula — que estava limpa — mas não havia pesquisado processos judiciais envolvendo o imóvel, não havia consultado a Prefeitura sobre restrições não registrais, e não havia feito a varredura de ônus reais que qualquer advogado fundiário recomendaria."}
+          ]
+        },
+        {
+          "titulo": "Protocolo de Due Diligence do Terreno",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["ETAPA 1 — Matrícula atualizada (máx. 30 dias): verificar titularidade, ônus, penhoras, hipotecas, servidões averbadas, ações reais, indisponibilidades","ETAPA 2 — Certidões do proprietário: certidões negativas de distribuição (Justiça Federal, Estadual, Trabalhista), certidão de protestos, certidão fiscal (ISS, IPTU)","ETAPA 3 — Certidões do imóvel: IPTU quitado, certidão de dados cadastrais da Prefeitura, certidão de uso e ocupação do solo, certidão de zoneamento","ETAPA 4 — Consulta ambiental: verificar se há APP, Reserva Legal, contaminação registrada na CETESB (ou órgão equivalente), árvores protegidas","ETAPA 5 — Consulta urbanística: verificar tombamento (IPHAN, CONDEPHAAT, municipal), restrições de gabarito, recuos especiais, projetos viários que afetam o lote","ETAPA 6 — Verificação física: confrontar medidas da matrícula com medição em campo, verificar invasões, construções de vizinhos que avancem, marcos topográficos","ETAPA 7 — Pesquisa judicial: buscar processos envolvendo o CPF/CNPJ do proprietário e a matrícula do imóvel em todas as esferas"]},
+            {"tipo": "caso", "titulo_caso": "A penhora fantasma de Dona Eunice", "texto": "O terreno de Dona Eunice tinha uma averbação de penhora de 1996 — R$ 45.000 devidos ao INSS por uma empresa do falecido marido. A penhora havia sido extinta em 2001 por pagamento, mas nunca cancelada na matrícula. Marcelo alertou Dona Eunice: enquanto a penhora constasse na matrícula, nenhum comprador sério fecharia negócio. O custo para limpar: R$ 3.500 em honorários advocatícios e emolumentos. A demora: 60-90 dias. Sem essa limpeza, o terreno perdia liquidez — e terreno sem liquidez perde valor."},
+            {"tipo": "insight", "texto": "Índice de Atratividade Fundiária (IAF): Ricardo desenvolveu um índice que combinava qualidade física (nota 0-10), potencial construtivo (nota 0-10), situação documental (nota 0-10) e liquidez de mercado (nota 0-10). Terrenos com IAF acima de 7,5 eram classificados como 'alto investimento'. Entre 5,0 e 7,5, 'investimento com ressalvas'. Abaixo de 5,0, 'alto risco'. O terreno de Dona Eunice: físico 9,5, potencial 9,0, documental 6,0 (penhora), liquidez 8,5. IAF = 8,25 — excelente, desde que a questão documental fosse resolvida."},
+            {"tipo": "armadilha", "texto": "A due diligence incompleta é responsável por mais prejuízos no mercado fundiário do que avaliações erradas. Um terreno pode valer R$ 10 milhões pelo comparativo e pelo involutivo — mas se tiver contaminação ambiental que custe R$ 3 milhões para remediar, ou servidão que reduza 20% da área útil, o valor real é radicalmente diferente. A due diligence não é custo — é seguro."},
+            {"tipo": "transicao", "texto": "Com a documentação mapeada, Marcelo finalmente tinha todos os elementos para montar o quadro completo. No Capítulo 8, vemos como o incorporador pensa quando olha para um terreno — e como o avaliador deve pensar junto."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "titulo": "Pensar Como Incorporador, Calcular Como Avaliador",
+      "epigrafe": "O incorporador aposta. O avaliador mede. Juntos, chegam mais perto da verdade.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Tomás convidou Marcelo para almoçar em um restaurante na Oscar Freire. Não era cortesia — era aula. 'Marcelo, você é um dos melhores avaliadores que eu conheço. Mas você pensa como avaliador. Eu preciso que você entenda como eu penso, porque quando eu olho para um terreno, vejo coisas que o laudo não captura.'"},
+            {"tipo": "paragrafo", "texto": "O que Tomás descreveu nos 90 minutos seguintes foi uma masterclass em pensamento incorporador. Ele não olhava para um terreno e via metros quadrados. Via um produto: apartamentos de 65 m², 2 quartos, com varanda gourmet, para jovens profissionais de 30-40 anos com renda familiar de R$ 25-35 mil. Via uma velocidade de vendas: 18 meses para vender 70% das unidades. Via um financiamento: 36 meses de obra com repasse bancário no ato das chaves. Via uma margem: 13% líquida se tudo desse certo, 8% se o mercado desacelerasse."},
+            {"tipo": "insight", "texto": "Matriz de Vocação do Terreno: O incorporador classifica terrenos por vocação antes de calcular viabilidade. As vocações principais são: (1) Residencial vertical — terrenos em bairros residenciais com CA alto, demanda comprovada, e perfil de renda compatível. (2) Residencial horizontal — terrenos maiores em regiões de expansão. (3) Comercial — terrenos em eixos de comércio e serviços. (4) Misto — terrenos em zonas que permitem e valorizam uso misto. (5) Renda — terrenos para projetos built-to-suit ou built-to-rent. A vocação determina o tipo de conta que será feita — e, portanto, o valor residual."}
+          ]
+        },
+        {
+          "titulo": "Do estudo de viabilidade ao valor do terreno",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Tomás revelou que fazia pelo menos três estudos de viabilidade diferentes para cada terreno que analisava — variando o produto (apartamentos de 1, 2 ou 3 quartos), a velocidade de vendas (otimista, base, pessimista), e a margem mínima aceitável (12-15%). O valor máximo que ele pagava pelo terreno era o menor dos três residuais pessimistas. 'Eu não compro pelo cenário bom. Eu compro pelo cenário ruim que ainda me dá lucro.'"},
+            {"tipo": "caso", "titulo_caso": "Os três cenários para Dona Eunice", "texto": "Cenário A (apartamentos de 65 m², alto padrão): VGV R$ 79,2M, residual do terreno R$ 7,2M. Cenário B (apartamentos de 45 m², padrão médio+): VGV R$ 58,5M, residual do terreno R$ 5,8M. Cenário C (uso misto — comercial no térreo + residencial): VGV R$ 72,0M, residual do terreno R$ 6,5M. Tomás adotou o menor: R$ 5,8M como piso, R$ 7,2M como teto. Sua oferta de R$ 7M estava no topo da faixa — agressiva, mas justificável pela localização premium de Higienópolis."},
+            {"tipo": "armadilha", "texto": "Avaliadores que aplicam o involutivo com um único cenário estão fazendo ficção, não avaliação. A norma (NBR 14653-4) determina análise de sensibilidade. Na prática, isso significa pelo menos três cenários de produto e três cenários de mercado, resultando em uma matriz 3×3 de residuais possíveis. O valor adotado deve estar dentro dessa matriz — não acima do melhor cenário nem abaixo do pior."},
+            {"tipo": "paragrafo", "texto": "Marcelo entendeu algo fundamental naquele almoço: o valor de um terreno para incorporação não é um número. É uma faixa, definida pela interseção entre o que o mercado paga (comparativo), o que o projeto justifica (involutivo), e o que o incorporador aceita arriscar. Seu papel como avaliador era mapear essa faixa com rigor — não escolher um ponto por conveniência."},
+            {"tipo": "pratica", "texto": "Escolha um terreno à venda na sua região e monte três cenários de viabilidade: (A) produto premium, (B) produto econômico, (C) uso misto. Use CUB local, pesquise VGV de lançamentos, calcule outorga. Compare os três residuais. A faixa entre o menor e o maior é o intervalo de valor do terreno pelo involutivo."},
+            {"tipo": "transicao", "texto": "No Capítulo 9, saímos do terreno convencional e entramos nos casos especiais — esquinas, encravados, contaminados, tombados. Cada um com suas regras, seus riscos e seus prêmios ocultos."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "titulo": "Terrenos Que Fogem à Regra",
+      "epigrafe": "Os terrenos mais difíceis de avaliar são, paradoxalmente, os que mais ensinam.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Em 15 anos de carreira, Marcelo avaliou terrenos que desafiavam todas as tabelas: um lote triangular em Pinheiros que parecia inutilizável até que um arquiteto visionário projetou um edifício em leque; um terreno contaminado por posto de gasolina na Vila Mariana que valia 40% menos que o vizinho limpo; uma esquina em Moema que valia 25% mais que os lotes de meio de quadra ao redor; e um terreno tombado no Bixiga onde não se podia demolir o barracão de 1920, mas se podia construir sobre ele."},
+            {"tipo": "paragrafo", "texto": "Terrenos especiais exigem avaliações especiais. Não é possível aplicar os mesmos fatores de homogeneização padronizados e esperar resultados confiáveis. Cada anomalia — geométrica, ambiental, jurídica, urbanística — demanda tratamento específico."}
+          ]
+        },
+        {
+          "titulo": "Catálogo de terrenos especiais",
+          "conteudo": [
+            {"tipo": "insight", "texto": "Terrenos de esquina: em zonas comerciais, valem 15-30% a mais (dupla frente = dupla visibilidade). Em zonas residenciais verticais, o prêmio cai para 5-10% (a vantagem é ventilação e iluminação, não visibilidade). Em zonas horizontais, pode haver deságio se os recuos exigidos nas duas frentes reduzirem a área útil."},
+            {"tipo": "caso", "titulo_caso": "O terreno contaminado", "texto": "Marcelo avaliou um terreno de 800 m² na Vila Mariana, ex-posto de combustível. O passivo ambiental era real: contaminação por BTEX (benzeno, tolueno, etilbenzeno e xileno) no solo e no lençol freático. A CETESB exigia remediação antes de qualquer uso. Custo estimado da remediação: R$ 450.000 a R$ 700.000. Prazo: 18-36 meses. Valor do terreno limpo (comparativo): R$ 6.400.000. Valor com contaminação: R$ 6.400.000 - R$ 700.000 (remediação) - R$ 500.000 (risco + tempo + incerteza) = R$ 5.200.000. O desconto total era de 18,7% — mas poderia chegar a 30-40% se a contaminação se revelasse mais grave."},
+            {"tipo": "caso", "titulo_caso": "O terreno tombado", "texto": "No Bixiga, um terreno de 600 m² com um barracão de 1920 tombado pelo CONPRESP. Não podia demolir, mas o tombamento era do imóvel, não do terreno inteiro. Marcelo identificou que era possível: (a) restaurar o barracão e incorporá-lo ao térreo de um novo projeto, (b) construir sobre e atrás, respeitando recuos e gabarito. O custo adicional de restauro + projeto especial era de R$ 800.000. Mas o marketing de 'edifício com barracão tombado restaurado' agregava valor de venda. O terreno, paradoxalmente, valia 5% a mais que o vizinho não tombado — desde que o incorporador soubesse aproveitar o ativo histórico."},
+            {"tipo": "checklist", "items": ["Terrenos encravados (sem acesso direto à via pública): deságio de 30-50%, necessidade de servidão de passagem","Terrenos com formato irregular: calcular aproveitamento efetivo (área útil vs. área total), deságio de 10-25%","Terrenos em APP ou próximos a recursos hídricos: verificar faixa non aedificandi, deságio de 20-40% ou inviabilidade total","Terrenos com passivo tributário do proprietário: não afetam valor intrínseco, mas afetam liquidez e negociação","Terrenos muito grandes (acima de 5.000 m²): aplicar fator de elasticidade por tamanho, deságio de 10-20% por dificuldade de absorção"]},
+            {"tipo": "armadilha", "texto": "O maior erro na avaliação de terrenos especiais é aplicar um percentual de desconto 'de costume' sem fundamentação. Dizer que um terreno contaminado vale '30% menos' sem calcular o custo real de remediação é achismo disfarçado de técnica. Cada deságio precisa ser fundamentado com dados: custos, prazos, riscos quantificados."},
+            {"tipo": "transicao", "texto": "No capítulo final, Marcelo entrega o laudo de Dona Eunice — e enfrenta o desafio de comunicar um valor que nenhuma das partes esperava ouvir."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "titulo": "O Preço da Verdade: Comunicar Valor a Quem Não Quer Ouvir",
+      "epigrafe": "O laudo não é o fim. É o começo de uma conversa que pode durar meses — ou tribunais.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Marcelo marcou uma reunião com Dona Eunice em seu escritório. Ela veio acompanhada do filho mais velho, advogado, e de uma sobrinha que 'entendia de imóveis' por ter vendido dois apartamentos na vida. Tomás não estava presente — a avaliação era independente. Os laudos mostrariam a verdade técnica, e cada parte decidiria o que fazer com ela."},
+            {"tipo": "paragrafo", "texto": "O resultado do laudo era o seguinte: pelo Método Comparativo, o terreno valia R$ 11.340.000 (faixa de R$ 10.200.000 a R$ 12.500.000). Pelo Método Involutivo, com análise de sensibilidade em 9 cenários, o residual variava de R$ 4.800.000 a R$ 8.500.000, com média de R$ 6.800.000. O valor adotado por Marcelo: R$ 8.500.000 — ponderação entre os dois métodos, com peso maior para o involutivo (que refletia a capacidade real de pagamento do mercado incorporador) e validação pelo comparativo (que mostrava que o mercado fundiário praticava valores acima da viabilidade em Higienópolis)."},
+            {"tipo": "dialogo", "texto": "<span class='speaker'>Filho de Dona Eunice:</span> Doutor Marcelo, o senhor está dizendo que o terreno vale R$ 8,5 milhões. O incorporador ofereceu R$ 7 milhões. O corretor disse R$ 3,5 milhões. Afinal, qual é o valor real?<br><br><span class='speaker'>Marcelo:</span> Os três números têm contexto. O corretor avaliou pelo que se vende na superfície — ofertas de portais, sem estudo de viabilidade. Está errado por subestimar o potencial. O incorporador calculou pelo que ele pode pagar, dado seu custo de capital e sua margem — é o valor para ele, não o valor de mercado. Meu laudo reflete o valor de mercado: o que um comprador informado pagaria, sem pressão, com tempo adequado. R$ 8,5 milhões é o centro da faixa técnica."}
+          ]
+        },
+        {
+          "titulo": "A arte de comunicar o laudo",
+          "conteudo": [
+            {"tipo": "insight", "texto": "Regras de comunicação do laudo fundiário: (1) Sempre apresente faixa, não ponto. O proprietário entende 'entre R$ 8 e R$ 9 milhões' melhor do que 'R$ 8.500.000'. (2) Contextualize os métodos — explique POR QUE o comparativo deu um valor e o involutivo deu outro. (3) Não desqualifique o corretor ou o incorporador — diga que cada abordagem captura uma dimensão diferente do valor. (4) Deixe claro que valor de mercado não é preço de venda — o preço de venda depende de negociação, prazo e condições."},
+            {"tipo": "paragrafo", "texto": "Dona Eunice ouviu em silêncio. O filho fez as perguntas esperadas — por que não R$ 11 milhões? por que o involutivo pesa mais? — e Marcelo respondeu cada uma com calma e evidência. A sobrinha tentou comparar com 'aquele terreno que vendeu por R$ 15 mil o metro na Faria Lima', e Marcelo explicou que Faria Lima e Higienópolis eram mercados completamente diferentes, com zoneamentos, públicos e dinâmicas distintas."},
+            {"tipo": "paragrafo", "texto": "Três semanas depois, Dona Eunice vendeu o terreno. Não para Tomás, que manteve a oferta de R$ 7 milhões. Para outro incorporador, que ofereceu R$ 8.200.000 à vista, sem condições. O valor ficou dentro da faixa do laudo. E Dona Eunice, pela primeira vez desde a morte do marido, soube exatamente o que tinha — e o que estava vendendo."},
+            {"tipo": "caso", "titulo_caso": "O legado de uma avaliação bem feita", "texto": "Seis meses depois da venda, Gustavo encontrou Marcelo em um evento do IBAPE. 'Marcelo, eu aprendi mais com o caso da Dona Eunice do que em qualquer curso. A divergência entre comparativo e involutivo me obrigou a entender que terrenos não são commodities — são ativos únicos. Cada um tem sua história, seu potencial e seu preço justo. Desde então, nunca mais comprei terreno sem fazer as duas contas.' Era o melhor elogio que um avaliador poderia receber: ter mudado a forma como alguém pensa sobre valor."},
+            {"tipo": "pratica", "texto": "Exercício final: Escolha um terreno real, aplique os dois métodos (comparativo e involutivo), compare os resultados, e escreva um parágrafo explicando para um leigo por que os valores diferem e qual é o mais adequado para a finalidade da avaliação. Se conseguir explicar com clareza, você dominou a avaliação de terrenos."},
+            {"tipo": "transicao", "texto": "Encerramos aqui o universo dos terrenos. No Livro 05, subimos um nível de complexidade: a Engenharia de Avaliações, onde estatística, modelagem e rigor científico transformam a avaliação imobiliária em ciência aplicada. Professor Coutinho nos espera na sala de aula — e Clara, especialista em IA, na fronteira entre o tradicional e o futuro."}
+          ]
+        }
+      ]
+    }
+  ]
+}

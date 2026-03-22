@@ -1,0 +1,215 @@
+{
+  "metadata": {
+    "titulo": "O Mapa do Dinheiro Invisível",
+    "subtitulo": "Como Descobrir, Medir e Capturar o Valor Oculto dos Imóveis",
+    "autor": "Iule Miranda",
+    "serie": "Biblioteca IMI — Edição Especial",
+    "posicao": "Best-seller — Livro 0",
+    "numero": "00",
+    "slug": "livro-00-o-mapa-do-dinheiro-invisivel",
+    "dedicatoria": "A todos que já venderam por menos do que valia, compraram por mais do que deveriam, ou herdaram sem saber o que tinham. Este livro é o mapa que eu gostaria que alguém tivesse me dado antes.",
+    "personagens": ["Leitor (narrativa em segunda pessoa, jornada de descoberta)","Personagens da Biblioteca IMI em participações especiais"],
+    "frameworks": ["Os 7 Véus do Valor Imobiliário","Teste do Espelho (seu imóvel vale o que você pensa?)","Pirâmide do Dinheiro Invisível","Checklist do Proprietário Inteligente","Mapa das Oportunidades Ocultas","Framework DIV (Descobrir-Investigar-Valorizar)"]
+  },
+  "capitulos": [
+    {
+      "numero": 1,
+      "titulo": "Você Está Sentado em Dinheiro e Não Sabe",
+      "epigrafe": "O dinheiro mais caro é o que você não sabe que tem.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Existe um número que define uma parte enorme da sua vida financeira — e você provavelmente não sabe qual é. Não é o seu salário. Não é o saldo da sua conta bancária. Não é sequer o valor das suas aplicações financeiras. É o valor real do seu imóvel. E a distância entre o que você acha que ele vale e o que ele realmente vale pode ser a diferença entre uma aposentadoria confortável e uma aposentadoria apertada, entre uma herança justa e uma disputa familiar, entre um negócio lucrativo e um arrependimento de uma vida."},
+            {"tipo": "paragrafo", "texto": "No Brasil, o patrimônio imobiliário das famílias representa, em média, 70% da riqueza total. Setenta por cento. Isso significa que para a maioria dos brasileiros, o imóvel é o ativo mais importante que possuem — mais que carro, poupança, previdência e investimentos somados. E, paradoxalmente, é o ativo sobre o qual têm menos informação, menos controle e menos estratégia."},
+            {"tipo": "paragrafo", "texto": "Pense por um momento: você sabe exatamente quanto tem aplicado no banco. O extrato mostra centavo por centavo. Sabe quanto seu carro vale — basta consultar a tabela FIPE. Mas sabe quanto vale seu imóvel? Não o valor do IPTU (que quase nunca reflete a realidade). Não o valor que o corretor chutou no almoço de domingo. O valor real — aquele que alguém informado, em condições normais de mercado, pagaria hoje pelo seu patrimônio."},
+            {"tipo": "insight", "texto": "Pesquisas mostram que proprietários brasileiros erram a estimativa do valor do próprio imóvel em média 20 a 35%. Alguns subestimam — especialmente herdeiros que não acompanham o mercado. Outros superestimam — especialmente quem reformou recentemente ou quem se apegou emocionalmente. Essa distorção tem consequências reais: vendas abaixo do potencial, ITCMDs calculados incorretamente, seguros insuficientes, e partilhas injustas."}
+          ]
+        },
+        {
+          "titulo": "Os 7 Véus do Valor Imobiliário",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "A razão pela qual a maioria das pessoas não conhece o valor real do seu imóvel é que o valor está escondido atrás de camadas — véus que distorcem a percepção. Ao longo deste livro, vamos retirar cada véu, um por um, até que você enxergue com clareza total o que está na sua frente. Chamo esses obstáculos de Os 7 Véus do Valor Imobiliário."},
+            {"tipo": "checklist", "items": ["VÉU 1 — O viés emocional: 'Meu imóvel vale mais porque é meu' (o apego infla percepção em 15-25%)","VÉU 2 — A desinformação: confundir valor venal, valor de mercado e valor de avaliação","VÉU 3 — A comparação errada: 'O vizinho vendeu por X, então o meu vale X' (sem ajustar diferenças)","VÉU 4 — A reforma invisível: achar que toda reforma agrega valor proporcional ao custo (raramente agrega)","VÉU 5 — O tempo congelado: usar como referência o valor de quando comprou, sem atualizar","VÉU 6 — A área fantasma: não saber exatamente quantos metros quadrados tem (diferença entre área real, útil e IPTU)","VÉU 7 — O potencial ignorado: não saber o que poderia ser feito com o imóvel (regularização, mudança de uso, incorporação)"]},
+            {"tipo": "paragrafo", "texto": "Cada véu custou dinheiro a alguém. Nos próximos capítulos, vou mostrar exemplos reais — de famílias que perderam centenas de milhares de reais por causa de um véu, e de famílias que ganharam por terem retirado a tempo."},
+            {"tipo": "transicao", "texto": "No Capítulo 2, começamos pelo véu mais espesso: o viés emocional. Você vai fazer um teste simples — o Teste do Espelho — e descobrir se está vendo o imóvel como ele é ou como você gostaria que fosse."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "titulo": "O Teste do Espelho: Seu Imóvel Vale o Que Você Pensa?",
+      "epigrafe": "O espelho não mente. Mas nem todo mundo quer olhar.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Vamos fazer um exercício agora mesmo. Pegue um papel — ou abra o bloco de notas do celular — e escreva o valor que você acha que seu imóvel vale hoje. Sem pesquisar. Sem ligar para ninguém. O número que está na sua cabeça neste momento. Escreveu? Guarde esse número. Vamos voltar a ele no final deste capítulo."},
+            {"tipo": "paragrafo", "texto": "Esse número que você escreveu foi formado por uma mistura de memória ('paguei X quando comprei'), emoção ('gastei Y na reforma'), comparação ('o vizinho pediu Z'), e intuição ('o bairro valorizou'). Nenhuma dessas fontes é confiável isoladamente. A memória é seletiva. A emoção é inflacionária. A comparação é imprecisa. E a intuição, sem dados, é apenas esperança com convicção."},
+            {"tipo": "insight", "texto": "O Teste do Espelho funciona assim: compare seu número com três referências objetivas: (1) Valor do m² médio do seu bairro nos portais imobiliários (multiplique pela área do seu imóvel). (2) Valor de avaliação do banco (se você tem financiamento, o banco avaliou). (3) Valor venal do IPTU (multiplicado por 2 a 3, pois o valor venal costuma ser 30-50% do valor de mercado). Se seu número está dentro da faixa dessas três referências, sua percepção é razoável. Se está mais de 20% acima, você está no véu emocional. Se está mais de 20% abaixo, você está deixando dinheiro na mesa."}
+          ]
+        },
+        {
+          "titulo": "Por que erramos tanto",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "A psicologia econômica explica o viés do proprietário com dois conceitos: o efeito dotação e a ancoragem. O efeito dotação diz que atribuímos mais valor ao que já possuímos do que ao que estamos considerando adquirir. Estudos mostram que proprietários avaliam seus imóveis 10 a 30% acima do que compradores avaliam imóveis idênticos. A ancoragem diz que nos fixamos em números de referência — geralmente o preço de compra ou o valor da última reforma — e ajustamos insuficientemente a partir daí."},
+            {"tipo": "caso", "titulo_caso": "A família que vendeu por R$ 400 mil a menos", "texto": "Uma família no Jardim América, São Paulo, herdou um apartamento em 2019. O ITCMD foi calculado sobre o valor venal: R$ 1,2 milhão. O corretor sugeriu vender por R$ 1,8 milhão. A família aceitou, achando que R$ 600 mil acima do valor venal era lucro. Uma avaliação técnica posterior — feita para outro fim — revelou que o imóvel valia R$ 2,2 milhões pelo método comparativo. A família deixou R$ 400 mil na mesa porque confiou no valor venal como âncora e no corretor como bússola. Nem um nem outro estava calibrado."},
+            {"tipo": "armadilha", "texto": "Corretores não são avaliadores. Um bom corretor sabe vender imóveis — conhece demanda, sabe negociar, entende marketing. Mas estimar valor de mercado com metodologia científica não é função dele, nem sua formação. Quando o corretor diz 'seu imóvel vale R$ X', está dando uma opinião comercial, não uma avaliação técnica. A diferença pode custar mais do que os honorários de uma avaliação profissional."},
+            {"tipo": "pratica", "texto": "Faça o Teste do Espelho agora: (1) Anote seu número intuitivo. (2) Pesquise o valor do m² no seu bairro em portais imobiliários. (3) Multiplique pela área do seu imóvel. (4) Compare. Diferença maior que 20%? Você precisa de uma avaliação profissional."},
+            {"tipo": "transicao", "texto": "No próximo capítulo, desvendamos o segundo véu: a confusão entre valor venal, valor de mercado e valor de avaliação. São três números diferentes — e confundi-los pode custar uma fortuna."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "titulo": "Três Valores, Uma Confusão: Venal, Mercado e Avaliação",
+      "epigrafe": "O valor venal é o que o governo diz. O valor de mercado é o que o comprador paga. O valor de avaliação é o que a técnica demonstra. Confundir os três é o erro mais caro do Brasil.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Se você já pagou IPTU, já foi enganado por um número. O valor venal do seu imóvel — aquele que aparece no carnê — foi calculado pela Prefeitura com base em uma planta de valores genérica que pode ter 5, 10 ou 20 anos de defasagem. Ele quase nunca reflete o que seu imóvel vale no mercado. E, no entanto, é o número usado para calcular ITCMD em inventários, ITBI em compras, e até indenizações em desapropriações quando ninguém questiona."},
+            {"tipo": "paragrafo", "texto": "O valor de mercado é diferente: é o preço mais provável pelo qual um imóvel seria vendido em condições normais — vendedor e comprador informados, sem pressão, com tempo razoável de exposição. É o valor que uma avaliação técnica busca estimar. E o valor de avaliação é o resultado dessa estimativa — um número fundamentado em metodologia, dados e critérios técnicos, que pode ou não coincidir com o preço final de uma transação (porque o preço depende de negociação, e negociação depende de contexto)."},
+            {"tipo": "insight", "texto": "Relação típica entre os três valores no Brasil: Valor Venal (IPTU) = 30-50% do valor de mercado (em cidades com PGV desatualizada). Valor de Avaliação = 95-105% do valor de mercado (se feita com metodologia adequada). Preço de Transação = 85-115% do valor de mercado (dependendo da urgência, negociação e condições de pagamento). Conclusão: o valor venal é o menos confiável para qualquer decisão financeira. O valor de avaliação é o mais próximo da realidade."}
+          ]
+        },
+        {
+          "titulo": "O custo real da confusão",
+          "conteudo": [
+            {"tipo": "caso", "titulo_caso": "ITCMD calculado sobre valor errado", "texto": "Um pai transferiu um apartamento para o filho por doação. O advogado usou o valor venal como base de cálculo do ITCMD: R$ 800.000. A Fazenda Estadual questionou e avaliou o imóvel em R$ 1.500.000 — valor de mercado. A diferença no imposto (alíquota de 4%): R$ 28.000 a mais. Além disso, multa de 20% por declaração a menor: R$ 5.600. Total perdido: R$ 33.600. Uma avaliação técnica teria custado R$ 3.000 e antecipado o problema. O pai economizou R$ 3.000 e perdeu R$ 33.600."},
+            {"tipo": "caso", "titulo_caso": "Seguro insuficiente", "texto": "Uma proprietária segurou seu imóvel pelo valor venal: R$ 600.000. O imóvel valia R$ 1.100.000 no mercado. Houve incêndio parcial. A seguradora aplicou a regra de proporcionalidade: como o seguro cobria apenas 54% do valor real, a indenização foi proporcional — R$ 162.000 em vez de R$ 300.000 (dano estimado). A proprietária arcou com a diferença de R$ 138.000 do próprio bolso."},
+            {"tipo": "armadilha", "texto": "A armadilha mais comum: usar o valor venal como base para decisões financeiras porque é 'o número oficial'. É oficial, sim — para fins tributários municipais. Para qualquer outra decisão (venda, compra, partilha, seguro, garantia, financiamento), é inadequado. Use o valor de mercado estimado por avaliação técnica."},
+            {"tipo": "transicao", "texto": "No Capítulo 4, atacamos o terceiro véu: a comparação errada. Você vai aprender por que 'o vizinho vendeu por tanto' é a frase mais perigosa do mercado imobiliário."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "titulo": "O Vizinho Vendeu Por Tanto (E Daí?)",
+      "epigrafe": "Comparar seu imóvel com o do vizinho sem ajustar as diferenças é como comparar uma maçã com uma pera porque ambas são frutas.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Toda família tem aquele parente que sabe tudo sobre o mercado imobiliário. 'O apartamento da Dona Maria, no mesmo prédio, vendeu por R$ 900 mil. O nosso é igual, então vale R$ 900 mil.' Parece lógico. Não é. O apartamento da Dona Maria está no 12º andar com vista para o parque. O seu está no 2º andar com vista para a garagem. A Dona Maria reformou a cozinha e os banheiros há dois anos. Seu imóvel tem a cozinha original de 1994. A Dona Maria vendeu em março, quando o mercado estava aquecido. Você está tentando vender em agosto, depois que o Banco Central subiu a taxa de juros."},
+            {"tipo": "paragrafo", "texto": "A comparação direta sem ajuste é o método mais primitivo de avaliação — e o mais usado por leigos. A avaliação técnica também compara, mas compara com método: identifica as diferenças entre o seu imóvel e os comparáveis, quantifica o impacto de cada diferença, e ajusta o valor. É a diferença entre dizer 'os dois são parecidos' e demonstrar 'considerando as diferenças de andar, conservação, área e data, o valor ajustado é este.'"},
+            {"tipo": "insight", "texto": "Os seis fatores que mais geram diferença entre imóveis 'iguais' no mesmo prédio: (1) Andar — cada andar pode agregar 0,5% a 2% ao valor. (2) Posição solar — face norte vale mais no Sul, face leste é preferida no Nordeste. (3) Vista — vista aberta vs. bloqueada pode representar 10-20% de diferença. (4) Estado de conservação e reformas — cozinha e banheiro reformados agregam mais; quarto e sala, menos. (5) Vaga de garagem — vaga coberta, descoberta, dupla, nenhuma — cada uma com impacto diferente. (6) Data da transação — o mercado muda mês a mês."},
+            {"tipo": "pratica", "texto": "Pesquise 3 imóveis vendidos recentemente no seu prédio ou na sua rua. Liste as diferenças em relação ao seu (andar, estado, vista, vaga, data). Para cada diferença, estime se agrega ou reduz valor. Sem calcular percentuais exatos, apenas a direção. Seu imóvel vale mais ou menos que a média dos três? Esse exercício já é mais sofisticado que 90% das opiniões de mesa de bar."},
+            {"tipo": "transicao", "texto": "No Capítulo 5, enfrentamos o quinto véu: a reforma que nem sempre vale o que custou. Você vai descobrir quais reformas agregam valor — e quais são dinheiro jogado fora."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "titulo": "Nem Toda Reforma Vale o Que Custou",
+      "epigrafe": "Reforma é investimento quando agrega valor. É despesa quando agrada apenas o proprietário.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Uma das crenças mais arraigadas no mercado imobiliário brasileiro é que toda reforma aumenta o valor do imóvel na mesma proporção do que foi gasto. 'Gastei R$ 150 mil na reforma, então meu imóvel vale R$ 150 mil a mais.' Essa lógica não resiste a cinco minutos de análise. A verdade incômoda é que a maioria das reformas residenciais recupera entre 40% e 80% do valor investido. Algumas não recuperam nada. E poucas — muito poucas — geram retorno superior ao custo."},
+            {"tipo": "insight", "texto": "Hierarquia de retorno das reformas residenciais (do maior para o menor ROI): (1) Impermeabilização e correção estrutural — recupera 90-120% (resolve problemas que afastam compradores). (2) Cozinha e banheiros — recupera 70-100% (são os ambientes que mais influenciam a decisão de compra). (3) Pintura e acabamentos — recupera 60-80% (melhora percepção visual com custo relativamente baixo). (4) Ampliação de área — recupera 40-70% (depende se a ampliação é regularizada). (5) Paisagismo e área externa — recupera 30-60%. (6) Personalização de alto custo (home theater, adega, ofurô) — recupera 10-30% (agrada o proprietário, não o mercado)."},
+            {"tipo": "caso", "titulo_caso": "A reforma de R$ 200 mil que valeu R$ 80 mil", "texto": "Um casal em Moema gastou R$ 200.000 em reforma: piso de mármore importado na sala (R$ 45.000), home theater completo (R$ 38.000), closet planejado em madeira nobre (R$ 32.000), banheiro com banheira de hidromassagem (R$ 25.000), e acabamentos gerais (R$ 60.000). Quando venderam, a avaliação reconheceu apenas R$ 80.000 de valor agregado — 40% do investido. Motivo: o comprador não queria mármore importado (preferia porcelanato), não tinha uso para home theater (iria derrubar), e a banheira ocupava espaço que ele usaria para box amplo. A reforma foi feita para o gosto do casal, não para o mercado."},
+            {"tipo": "armadilha", "texto": "O erro fundamental: reformar para si antes de vender é gasto pessoal, não investimento. Se você pretende vender nos próximos 2-3 anos, consulte um avaliador ou corretor experiente antes de reformar. Pergunte: 'O que este imóvel precisa para valer mais?' — não 'O que eu gostaria de ter?'. A resposta será diferente."},
+            {"tipo": "pratica", "texto": "Liste todas as reformas que você fez no seu imóvel nos últimos 10 anos. Ao lado de cada uma, estime: quanto gastou e quanto um comprador pagaria a mais por causa dessa reforma. Some os dois lados. Se o total gasto é 50% maior que o total de valor agregado, você investiu em conforto, não em patrimônio. Isso não é errado — mas é importante saber."},
+            {"tipo": "transicao", "texto": "No Capítulo 6, revelamos o sexto véu: a área. Você sabe quantos metros quadrados seu imóvel realmente tem? E mais importante: sabe quais metros quadrados o mercado conta?"}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "titulo": "A Área Que Ninguém Mede Direito",
+      "epigrafe": "Metros quadrados são a moeda do mercado imobiliário. Errar a medida é errar o preço.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Quando alguém diz que seu apartamento tem 120 m², o que exatamente isso significa? A área privativa (que inclui varandas e paredes internas)? A área útil (que exclui paredes)? A área total (que inclui fração das áreas comuns)? A área do IPTU (que pode ser qualquer uma das anteriores, ou nenhuma)? A resposta é: depende de quem está falando. E essa ambiguidade é responsável por erros de avaliação de 10 a 25%."},
+            {"tipo": "insight", "texto": "Os quatro tipos de área que todo proprietário deveria conhecer: (1) Área Privativa Real — medida internamente, de parede a parede, incluindo varandas. É a área que o morador efetivamente usa. (2) Área Privativa da Matrícula — registrada no cartório, pode incluir ou não varandas e áreas técnicas. (3) Área Total (ou Área Construída) — área privativa + fração ideal das áreas comuns. É a que aparece em muitos anúncios. (4) Área do IPTU — declarada à Prefeitura, frequentemente desatualizada. Pode ser 10-20% diferente da área real se houve reforma ou ampliação não averbada."},
+            {"tipo": "caso", "titulo_caso": "O apartamento que tinha 30 m² a mais", "texto": "Uma proprietária em Copacabana descobriu que seu apartamento de '90 m²' (conforme matrícula e IPTU) na verdade tinha 118 m² de área privativa real. A diferença vinha de uma varanda fechada em 1985 (nunca averbada) e de uma incorporação do quarto de empregada ao espaço da cozinha, eliminando a parede. A matrícula nunca foi atualizada. Valor pelo mercado a 90 m²: R$ 1.080.000. Valor pelo mercado a 118 m²: R$ 1.416.000. Diferença: R$ 336.000. Custo da regularização e averbação: R$ 15.000. Retorno: 2.240%."},
+            {"tipo": "armadilha", "texto": "O contrário também acontece: proprietários que acham que têm mais área do que realmente têm. Áreas de varandas abertas, marquises, e sacadas nem sempre são contabilizadas como área privativa dependendo da convenção do condomínio e da norma ABNT vigente na época da incorporação. Meça. Sempre meça."},
+            {"tipo": "pratica", "texto": "Pegue uma trena e meça a área interna de cada cômodo do seu imóvel. Some tudo. Compare com a área da matrícula e do IPTU. Diferença maior que 5%? Investigue. Pode haver área não averbada (que pode ser regularizada) ou erro cadastral (que pode ser corrigido). Ambos impactam diretamente o valor."},
+            {"tipo": "transicao", "texto": "No Capítulo 7, atacamos o sétimo e último véu: o potencial ignorado. Seu imóvel pode valer muito mais do que vale hoje — se você souber o que pode ser feito com ele."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "titulo": "O Potencial Que Você Não Vê (Mas o Mercado Vê)",
+      "epigrafe": "O valor presente é o piso. O potencial é o teto. Quem não olha para cima vende pelo chão.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Um terreno com uma casa velha em um bairro que verticaliza. Uma casa térrea que pode virar sobrado. Um imóvel comercial que pode ser convertido em residencial. Uma laje que pode ser subdividida em salas menores. Um prédio antigo que pode ser retrofitado. Em todos esses casos, o imóvel como está tem um valor — mas o imóvel como pode ser tem outro valor, geralmente muito superior."},
+            {"tipo": "paragrafo", "texto": "O potencial imobiliário é a diferença entre o valor do uso atual e o valor do melhor uso possível. Avaliadores chamam isso de 'highest and best use' — o uso mais produtivo e legalmente permitido que maximiza o valor. A maioria dos proprietários nunca pensa nesses termos. Vê a casa e pensa 'casa'. O mercado vê o terreno e pensa 'prédio'."},
+            {"tipo": "insight", "texto": "Mapa das Oportunidades Ocultas — cinco situações onde o potencial é maior que o uso atual: (1) Terreno com casa antiga em zona de alta verticalização — o terreno vale mais que o imóvel. (2) Imóvel comercial em zona que se tornou residencial — conversão de uso pode duplicar o valor. (3) Imóvel com área não utilizada (subsolo, terraço, edícula) — regularização e uso agregam valor marginal alto. (4) Imóvel em zona de operação urbana — incentivos fiscais e potencial construtivo adicional. (5) Imóvel com vocação para renda (aluguel por temporada, coworking, dark kitchen) — valor pela renda pode superar valor de venda."},
+            {"tipo": "caso", "titulo_caso": "A casa que valia R$ 1,2 milhão — ou R$ 4,5 milhões", "texto": "Uma casa de 200 m² em terreno de 500 m² na Vila Madalena, São Paulo. Como residência, valia R$ 1,2 milhão. O terreno, porém, estava em zona ZM com CA 4,0. Um incorporador calculou que poderia construir um edifício de 8 andares com VGV de R$ 25 milhões. Pelo método involutivo, o terreno valia R$ 4,5 milhões. A proprietária não sabia — e o corretor que ela consultou também não, porque corretores de casas não fazem conta de incorporação. Quando um segundo corretor especializado em terrenos procurou a proprietária, ela descobriu que estava sentada em R$ 3,3 milhões de valor oculto."},
+            {"tipo": "pratica", "texto": "Framework DIV (Descobrir-Investigar-Valorizar): (D) Descubra o potencial: consulte o zoneamento do seu imóvel na Prefeitura e verifique o CA máximo. (I) Investigue a viabilidade: seu terreno comporta verticalização? Mudança de uso? Regularização de área? (V) Valorize com dados: pesquise quanto terrenos na mesma zona estão sendo vendidos. Se o valor do terreno supera o valor do imóvel pronto, você tem potencial oculto."},
+            {"tipo": "transicao", "texto": "Com os sete véus revelados, você está pronto para o próximo passo: aprender como funciona uma avaliação profissional e quando ela vale o investimento. No Capítulo 8, entramos nos bastidores do laudo."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "titulo": "Como Funciona Uma Avaliação de Verdade",
+      "epigrafe": "Avaliação profissional não é luxo. É a diferença entre saber e achar.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Você já passou pelo teste do espelho, entendeu a diferença entre os três valores, sabe que comparar sem ajustar é perigoso, que reformas nem sempre pagam, que área precisa ser medida, e que potencial oculto pode mudar tudo. A pergunta agora é prática: como obter uma avaliação profissional? O que esperar? Quanto custa? E quando vale a pena?"},
+            {"tipo": "paragrafo", "texto": "Uma avaliação profissional segue norma técnica — no Brasil, a NBR 14653 da ABNT. O avaliador visita o imóvel, pesquisa o mercado, aplica métodos reconhecidos, e produz um laudo documentado com fundamentação e grau de precisão declarados. Não é opinião — é engenharia aplicada ao valor."},
+            {"tipo": "insight", "texto": "Quando a avaliação profissional se paga: (1) Venda de imóvel acima de R$ 500 mil — erro de 10% no valor = R$ 50 mil perdidos. Custo da avaliação: R$ 2-5 mil. (2) Inventário e partilha — ITCMD calculado sobre valor errado pode gerar multa + juros. (3) Compra de imóvel — garante que você não está pagando acima do mercado. (4) Garantia bancária — valor de avaliação define o limite de crédito. (5) Seguro — valor subdeclarado gera indenização proporcional. (6) Decisão entre vender e alugar — avaliação permite calcular o cap rate e comparar com alternativas."},
+            {"tipo": "caso", "titulo_caso": "A avaliação que custou R$ 3 mil e economizou R$ 280 mil", "texto": "Um empresário em Brasília queria comprar uma casa por R$ 2,3 milhões — valor pedido pelo vendedor. Antes de assinar, contratou uma avaliação: R$ 3.000. O laudo indicou valor de mercado de R$ 2.020.000. O empresário negociou com o laudo na mão e fechou por R$ 2.050.000. Economia: R$ 250.000, menos o custo da avaliação. Retorno líquido: R$ 247.000. A avaliação se pagou 82 vezes."},
+            {"tipo": "armadilha", "texto": "Não confunda avaliação profissional com 'opinião de valor' ou 'parecer de mercado'. Esses documentos não seguem norma técnica, não declaram grau de precisão, e não são aceitos em tribunais ou instituições financeiras. Se alguém oferece 'avaliação' por R$ 200, desconfie — provavelmente é uma opinião vendida como se fosse laudo."},
+            {"tipo": "pratica", "texto": "Se você tem um imóvel acima de R$ 500 mil e nunca fez avaliação profissional, considere seriamente investir em uma. Procure um engenheiro ou arquiteto registrado no CREA/CAU, com experiência em avaliações e familiaridade com a NBR 14653. Peça referências. Exija laudo com ART ou RRT. O retorno é quase garantido."},
+            {"tipo": "transicao", "texto": "No Capítulo 9, reunimos tudo em um plano prático: o Checklist do Proprietário Inteligente — as 10 ações que você pode tomar nos próximos 30 dias para proteger e maximizar o valor do seu patrimônio."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "titulo": "O Checklist do Proprietário Inteligente",
+      "epigrafe": "Saber o valor é o primeiro passo. Proteger e maximizar é o segundo.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Você leu oito capítulos. Aprendeu sobre véus, viés, áreas, reformas, potencial, e avaliação profissional. Agora é hora de agir. Este capítulo é um plano de ação — dez passos concretos que qualquer proprietário pode executar nos próximos 30 dias para ter controle total sobre o valor do seu patrimônio imobiliário."},
+            {"tipo": "checklist", "items": ["AÇÃO 1 — Meça seu imóvel. Com trena, cômodo por cômodo. Compare com matrícula e IPTU. Anote discrepâncias.","AÇÃO 2 — Consulte o zoneamento. Acesse o site da Prefeitura e descubra o que seu terreno permite (CA, TO, uso).","AÇÃO 3 — Atualize a documentação. Matrícula com mais de 1 ano? Solicite certidão atualizada no cartório.","AÇÃO 4 — Pesquise comparáveis. Busque 5 imóveis similares à venda ou vendidos recentemente no seu bairro. Anote preços e diferenças.","AÇÃO 5 — Faça o Teste do Espelho (Capítulo 2). Compare sua estimativa com as referências objetivas.","AÇÃO 6 — Avalie a necessidade de regularização. Há área construída não averbada? Mudança de uso não registrada?","AÇÃO 7 — Revise seu seguro. O valor segurado está compatível com o valor de mercado? Seguro por valor venal é insuficiente.","AÇÃO 8 — Calcule o cap rate. Aluguel mensal ÷ valor do imóvel × 12 = rentabilidade anual. Está acima de 5%? Se não, considere alternativas.","AÇÃO 9 — Planeje antes de reformar. Se pretende reformar, consulte um profissional sobre quais melhorias agregam valor de mercado.","AÇÃO 10 — Contrate uma avaliação profissional. Se seu imóvel vale mais de R$ 500 mil ou se qualquer decisão importante depende do valor, invista em um laudo."]},
+            {"tipo": "caso", "titulo_caso": "O proprietário que executou as 10 ações", "texto": "Um médico em Belo Horizonte leu este livro e executou as 10 ações em 25 dias. Descobriu: (a) sua casa tinha 40 m² a mais que a matrícula registrava — edícula construída em 2010, nunca averbada. (b) O zoneamento permitia uso comercial — a casa estava em via coletora com potencial para consultório ou clínica. (c) O seguro cobria apenas R$ 500 mil para um imóvel que a avaliação profissional estimou em R$ 1.350.000. Ações tomadas: averbou a edícula (custo: R$ 8.000), atualizou o seguro (custo incremental: R$ 1.200/ano), e decidiu converter parte do imóvel em clínica em vez de vender. Valor protegido e potencializado: estimativa de R$ 400.000 em valor que estava oculto ou em risco."},
+            {"tipo": "transicao", "texto": "No capítulo final, olhamos para o futuro: como a tecnologia, a inteligência artificial e as mudanças no mercado vão transformar a forma como imóveis são avaliados — e o que isso significa para você."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "titulo": "O Futuro do Valor: Tecnologia, IA e Você",
+      "epigrafe": "O futuro da avaliação imobiliária já começou. A pergunta é se você está olhando.",
+      "secoes": [
+        {
+          "titulo": null,
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "Há dez anos, para saber quanto valia seu imóvel, você precisava ligar para um corretor ou contratar um engenheiro. Hoje, algoritmos de inteligência artificial processam milhões de dados de transações, anúncios, registros públicos e imagens de satélite para estimar valores em segundos. Plataformas como Zillow nos EUA e iniciativas emergentes no Brasil prometem avaliações instantâneas pelo celular. O futuro chegou — mas veio com um asterisco."},
+            {"tipo": "paragrafo", "texto": "As AVMs (Automated Valuation Models) são impressionantes em escala: conseguem estimar valores razoáveis para milhares de imóveis simultaneamente. Mas são limitadas no varejo: para o seu imóvel específico, com suas particularidades de reforma, vista, estado de conservação e potencial, o algoritmo ainda erra significativamente. A tecnologia é excelente para triagem e referência — mas a decisão final de valor, para qualquer transação importante, ainda requer olho humano e julgamento técnico."},
+            {"tipo": "insight", "texto": "A Pirâmide do Dinheiro Invisível resume tudo que você aprendeu neste livro: na base, o Conhecimento (saber o que seu imóvel vale de verdade). No meio, a Proteção (seguro adequado, documentação regularizada, planejamento tributário). No topo, a Maximização (reformas inteligentes, exploração de potencial, timing de mercado). A maioria dos proprietários não chega nem à base. Você, agora, tem o mapa para chegar ao topo."},
+            {"tipo": "paragrafo", "texto": "O dinheiro invisível está ao seu redor. No terreno que poderia ser verticalizado. Na área que nunca foi averbada. Na reforma que agrega valor de mercado. No zoneamento que permite uso mais rentável. No seguro que deveria ser atualizado. No inventário que precisa de avaliação justa. No imóvel que está sendo vendido abaixo do valor porque ninguém fez a conta certa."},
+            {"tipo": "paragrafo", "texto": "Este livro foi o primeiro passo. A Biblioteca IMI — com seus 27 volumes dedicados a cada dimensão da avaliação e da gestão imobiliária — é a jornada completa. Se você é proprietário, investidor, profissional do mercado ou simplesmente alguém que quer entender o valor das coisas, o mapa está traçado. Agora, caminhe."},
+            {"tipo": "pratica", "texto": "Exercício final: Escreva, em uma frase, o valor que você agora estima para o seu imóvel — depois de tudo que leu. Compare com o número que anotou no Capítulo 2. A diferença entre os dois números é o dinheiro invisível que este livro tornou visível."},
+            {"tipo": "transicao", "texto": "Se este livro despertou sua curiosidade, a Biblioteca IMI oferece o aprofundamento que cada tema merece: do Livro 1 (Avaliação na Prática) ao Livro 27 (Visão de Futuro), passando por perícia judicial, terrenos, engenharia de avaliações, investimentos, holding, tributação, e inteligência artificial aplicada ao mercado imobiliário. O dinheiro invisível só permanece invisível para quem escolhe não olhar."}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -172,7 +172,7 @@ const SECTIONS: NavSection[] = [
     {
         label: 'Inteligência',
         items: [
-            { label: 'Ebooks',       href: '/backoffice/inteligencia/ebooks',      icon: BookOpen  },
+            { label: 'Biblioteca',   href: '/backoffice/biblioteca',               icon: BookOpen  },
             { label: 'Relatórios',   href: '/backoffice/inteligencia/relatorios',  icon: FileStack },
             { label: 'Indicadores',  href: '/backoffice/inteligencia/indicadores', icon: LineChart },
             { label: 'Índices IMI',  href: '/backoffice/inteligencia/indices',     icon: Brain     },

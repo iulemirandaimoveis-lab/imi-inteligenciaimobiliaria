@@ -1,0 +1,599 @@
+{
+  "metadata": {
+    "id": "LIVRO-014",
+    "titulo": "Investimento via REITs e FIIs Internacionais",
+    "subtitulo": "Diversificação Imobiliária Global sem Comprar Tijolo — Via Bolsa, com Liquidez",
+    "autor": "Iule Miranda",
+    "bloco": "BLOCO 3 — INTERNACIONAL",
+    "posicao_na_serie": 14,
+    "total_livros_serie": 27,
+    "idioma": "pt-BR",
+    "palavras_estimadas": 48000,
+    "preco_ebook_brl": 49.9,
+    "preco_impresso_brl": 89.9,
+    "status": "COMPLETO",
+    "versao": "1.0",
+    "data_criacao": "2026-03-20",
+    "frameworks_proprietarios": [
+      "Mapa IMI de REITs Globais",
+      "Score IMI de FII/REIT",
+      "Modelo IMI de Portfólio Híbrido",
+      "Filtro IMI de FIIs",
+      "Checklist IMI de Diversificação via Fundos"
+    ],
+    "narrativa_central": "Não precisa comprar tijolo para investir em imóveis. FIIs e REITs oferecem exposição imobiliária com liquidez de bolsa, diversificação instantânea e gestão profissional.",
+    "dedicatoria": "Para quem acha que investir em imóveis significa comprar apartamento.\nNão significa.\nSignifica ter exposição a ativos imobiliários que produzem renda.\nSe a exposição vem de escritura ou de cota: o patrimônio não sabe a diferença.\n\n— Iule Miranda"
+  },
+  "capitulos": [
+    {
+      "numero": 1,
+      "titulo": "FIIs e REITs: O Que São",
+      "objetivo": "Introduzir FIIs e REITs como veículos de investimento imobiliário.",
+      "palavras_estimadas": 5200,
+      "tempo_leitura_min": 21,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "Camila olhou a planilha de patrimônio com a mesma objetividade que olhava o balanço da empresa. R$ 3,8 milhões. Zero em imóveis. Zero em FIIs. Zero em REITs.\n\nO assessor sugeriu FIIs. Camila disse: 'Imóvel é medieval.'\n\nO assessor respondeu: 'E se eu te dissesse que você pode ter exposição a 300 imóveis, em 5 países, com liquidez de bolsa, sem lidar com um único inquilino, por R$ 100?'\n\nCamila parou de digitar. 'Continue.'\n\n**Frase-assinatura:** *FIIs e REITs não são substitutos de tijolo. São complementos. E para quem não tem tempo para o tijolo: são o caminho inteiro.*",
+        "secoes": [
+          {
+            "titulo": "FII brasileiro vs REIT americano",
+            "conteudo": "FII: fundo listado na B3, investe em imóveis ou recebíveis. Distribui rendimentos mensais isentos de IR para PF. 400+ listados. Patrimônio: ~R$ 200 bilhões.\n\nREIT: trust listado em NYSE/Nasdaq, obrigado a distribuir 90%+ do lucro. Dividendos tributados. 200+ listados. Patrimônio: ~US$ 1,3 trilhão.\n\nDiferenças-chave: tamanho (REITs 30-40x maiores), diversificação (1 REIT pode ter 1.000+ imóveis em 20+ países), liquidez (REITs US$ 5-10B/dia vs FIIs R$ 300-500M/dia), tributação (FIIs isentos de IR sobre dividendos; REITs tributados), e moeda (BRL vs USD)."
+          },
+          {
+            "titulo": "Os 5 tipos de FII/REIT",
+            "conteudo": "1. Tijolo (Equity): compra imóveis diretamente. Renda: aluguéis. Exemplos: HGLG11, Prologis.\n2. Papel (Mortgage): investe em recebíveis. Renda: juros. Exemplos: KNCR11, mREITs.\n3. Híbrido: combina tijolo e papel.\n4. FOF (Fundo de Fundos): investe em cotas de outros FIIs/REITs. Diversificação instantânea. Exemplos: BCFF11, VNQ.\n5. Desenvolvimento: projetos de construção. Maior risco. Menos comum."
+          },
+          {
+            "titulo": "O argumento dos dados",
+            "conteudo": "Portfólio A: 60% ações + 40% RF. Portfólio B: 50% ações + 30% RF + 20% FIIs/REITs. 10 anos: B teve retorno 0,8%/ano maior com volatilidade 12% menor. Em R$ 3,8M por 10 anos: R$ 380.000 a mais. Com menor risco.\n\nA razão: correlação parcial. FIIs e REITs se movem parcialmente independente de ações e RF. A adição de 20% cria diversificação que nenhuma outra classe oferece.\n\nCamila olhou o gráfico. 'Quanto tempo leva para montar?' 'Uma hora no home broker.' 'Vamos.'"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "A isenção de IR dos FIIs",
+          "conteudo": "FIIs distribuem rendimentos mensais isentos de IR para PF (com 50+ cotistas, cotas em bolsa, investidor com < 10%). Yield de 8% em FII é LÍQUIDO. CDB precisaria pagar 10% bruto para igualar. A isenção é o maior benefício fiscal do investidor PF no Brasil — e apenas ~2 milhões usam."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Avalie se FIIs/REITs fazem sentido",
+          "passos": [
+            "Quanto do patrimônio tem exposição imobiliária? Se < 15%: FIIs/REITs são o complemento mais eficiente",
+            "Tem tempo para gerir imóvel direto? Se não: FIIs/REITs podem ser sua ÚNICA exposição",
+            "Quer diversificação internacional? REITs via BDRs oferecem sem abrir conta fora",
+            "Alocação sugerida: 10-20% em FIIs + 5-10% em REITs"
+          ]
+        },
+        "checklist": [
+          "FIIs e REITs entendidos",
+          "5 tipos conhecidos",
+          "Benefício fiscal dos FIIs entendido",
+          "Exposição imobiliária atual avaliada"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Achar que FII é renda fixa porque paga todo mês",
+            "por_que": "FII é renda variável. Cota oscila. Rendimentos podem cair. Tratar como RF gera surpresa na queda",
+            "solucao": "FII é renda variável com componente de renda. Horizonte mínimo: 3-5 anos."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 2,
+      "titulo": "FIIs Brasileiros",
+      "objetivo": "Guia de seleção e montagem de carteira de FIIs.",
+      "palavras_estimadas": 5200,
+      "tempo_leitura_min": 21,
+      "frameworks_introduzidos": [
+        "Score IMI de FII/REIT",
+        "Filtro IMI de FIIs"
+      ],
+      "conteudo": {
+        "abertura": "437 FIIs na B3. Como filtrar para 10-15? O Score IMI de FII/REIT é a ferramenta. O Filtro IMI de FIIs é a peneira.\n\n**Frase-assinatura:** *437 FIIs. 10-15 bons. A diferença é filtro rigoroso antes de alocar capital.*",
+        "secoes": [
+          {
+            "titulo": "Score IMI de FII/REIT: 5 dimensões",
+            "conteudo": "1. Yield (25 pts): DY 12m. >10%: 25. 8-10%: 20. 6-8%: 15. <6%: 10.\n2. Qualidade dos ativos (25 pts): localização, inquilinos, vacância, diversificação.\n3. Gestão (20 pts): track record, taxa admin (<1% ideal), alinhamento, transparência.\n4. Liquidez (15 pts): volume diário. >R$5M: 15. R$1-5M: 12. <R$500K: 5.\n5. P/VP (15 pts): <0,85: 15. 0,85-0,95: 12. 0,95-1,05: 10. >1,05: 7.\n\nScore >80: excelente. 60-80: sólido. <40: evitar."
+          },
+          {
+            "titulo": "Filtro IMI de FIIs: 5 portões",
+            "conteudo": "1. Patrimônio > R$ 500M. 2. Liquidez > R$ 1M/dia. 3. Vacância < 15% (tijolo). 4. Taxa admin < 1,2%. 5. Histórico > 24 meses.\n\nDos 437: ~60-80 passam. Score seleciona 10-15 melhores."
+          },
+          {
+            "titulo": "A carteira de Camila",
+            "conteudo": "R$ 570.000 (15% do patrimônio) em 6 FIIs:\n\nTijolo 60%: HGLG11 (logística, Score 82, yield 8,5%), XPML11 (shoppings, 78, 9,2%), PVBI11 (lajes, 75, 7,8%).\nPapel 25%: KNCR11 (CDI, 76, 11,2%), KNIP11 (IPCA, 74, 9,8%).\nFOF 15%: BCFF11 (71, 10,5%).\n\nYield médio: 9,4%. Renda: ~R$ 4.475/mês. Isenta de IR. Tempo de gestão: 2h/trimestre."
+          },
+          {
+            "titulo": "Ciclo dos FIIs: correlação com Selic",
+            "conteudo": "Selic sobe → cotas caem (RF mais atrativa). Selic cai → cotas sobem. Selic alta = momento de COMPRAR (cotas baratas, yields altos). Março 2026: Selic elevada, P/VP médio 0,88, desconto de 12%. Momento de acumulação.\n\nCamila comprou neste cenário. O assessor: 'Pior momento para FIIs.' Camila: 'Melhor preço.'"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "P/VP < 0,90 como sinal de compra",
+          "conteudo": "Historicamente, quando P/VP médio do IFIX < 0,90 e Selic começa a cair: FIIs valorizam 20-40% em 12-18 meses. É o indicador de timing mais confiável do mercado de FIIs."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Monte sua carteira de FIIs",
+          "passos": [
+            "Defina alocação (10-20%)",
+            "Aplique Filtro nos 437",
+            "Score para os 20 melhores",
+            "Selecione 5-8 com Score >70",
+            "Distribua: 60% tijolo + 25% papel + 15% FOF",
+            "Compre. 30 minutos",
+            "Revisão trimestral: 2h"
+          ]
+        },
+        "checklist": [
+          "Score dominado",
+          "Filtro aplicado",
+          "5-8 FIIs selecionados",
+          "Carteira diversificada",
+          "Revisão trimestral agendada"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Comprar apenas pelo yield mais alto",
+            "por_que": "Yield de 14% pode significar cota despencou ou gestão distribuindo insustentavelmente",
+            "solucao": "Yield é 1 de 5 dimensões. Analise os 5."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 3,
+      "titulo": "REITs Americanos e Globais",
+      "objetivo": "Acessar REITs via BDR, ETF ou conta internacional.",
+      "palavras_estimadas": 5200,
+      "tempo_leitura_min": 21,
+      "frameworks_introduzidos": [
+        "Mapa IMI de REITs Globais"
+      ],
+      "conteudo": {
+        "abertura": "3 caminhos para REITs. O mais simples leva 5 minutos no home broker que você já tem.\n\n**Frase-assinatura:** *REITs americanos são acessíveis por 3 caminhos. O mais simples: BDR na B3.*",
+        "secoes": [
+          {
+            "titulo": "3 caminhos de acesso",
+            "conteudo": "Caminho 1 — BDR na B3. Mais simples. Realty Income (O11), Prologis (PLD), American Tower (AMT). Sem conta internacional. ~30-40 disponíveis.\n\nCaminho 2 — ETF na B3. ALUG11 replica MSCI US REIT — 150+ REITs em 1 cota. Dividendos reinvestidos (tax-efficient). Taxa 0,48%.\n\nCaminho 3 — Conta internacional. Interactive Brokers, Avenue. 200+ REITs. Liquidez máxima. Dividendos em USD. Complexidade tributária (DARF, CBE)."
+          },
+          {
+            "titulo": "Setores de REITs",
+            "conteudo": "Logística (Prologis): yield 3-5%, demanda e-commerce. Data Centers (Equinix, Digital Realty): yield 2-3%, IA/cloud. Torres (American Tower): yield 3-4%, contratos longos. Varejo (Realty Income, Simon): yield 4-6%. Residencial (AvalonBay): yield 3-4%. Saúde (Welltower): yield 3-5%, envelhecimento populacional. Escritórios: yield 5-7% — CUIDADO (trabalho remoto). Portfólio diversificado: 25% logística + 20% data centers + 15% torres + 15% residencial + 15% saúde + 10% varejo."
+          },
+          {
+            "titulo": "A carteira de REITs de Camila",
+            "conteudo": "R$ 380.000 (10%): BDRs 60% (Realty Income, Prologis, American Tower — R$ 76K cada) + ALUG11 40% (R$ 152K). Yield médio: 3,8% (em exposição USD). Total FIIs+REITs: R$ 950K = 25%. Renda: ~R$ 5.675/mês. Sem tijolo. Sem inquilino."
+          },
+          {
+            "titulo": "Tributação de BDRs e REITs",
+            "conteudo": "BDRs: dividendos ~25-27,5% (retenção EUA 15% + diferença Brasil). Ganho de capital: 15%.\nETF (ALUG11): zero IR até vender (dividendos reinvestidos). Venda: 15% sobre ganho.\nREITs via conta internacional: 30% sobre dividendos (sem tratado para REITs). Mais caro.\n\nEstratégia Camila: FIIs (renda isenta) + BDRs (diversificação, tributação moderada) + ALUG11 (acumulação tax-efficient)."
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "REITs como hedge cambial passivo",
+          "conteudo": "BDRs de REITs são cotados em reais mas o ativo é em dólar. Real desvaloriza 15% → BDR sobe 15% em reais. Hedge automático. Custo: zero. Proteção: estrutural."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Monte posição em REITs",
+          "passos": [
+            "Escolha caminho: BDR / ETF / conta internacional",
+            "Se BDR: 3-5 REITs de setores diferentes",
+            "Se ETF: ALUG11",
+            "Alocação: 5-15% do patrimônio",
+            "Revisão semestral"
+          ]
+        },
+        "checklist": [
+          "3 caminhos entendidos",
+          "Setores mapeados",
+          "3-5 REITs selecionados ou ETF escolhido",
+          "Tributação entendida",
+          "Posição montada"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Comprar REIT de escritórios pelo yield alto",
+            "por_que": "Trabalho remoto reduziu demanda estruturalmente. Yield alto = queda de preço",
+            "solucao": "Logística, data centers, saúde, residencial. Evite escritórios como posição principal."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 4,
+      "titulo": "Portfólio Híbrido",
+      "objetivo": "Combinar FIIs + REITs + imóvel direto.",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": [
+        "Modelo IMI de Portfólio Híbrido"
+      ],
+      "conteudo": {
+        "abertura": "6 meses depois de montar FIIs e REITs, Camila fez algo que jurou nunca fazer: comprou um apartamento. Não por impulso. Por lógica — FIIs não permitem alavancagem. Imóvel direto permite.\n\n**Frase-assinatura:** *FIIs são o investimento do cérebro. Imóvel direto é o do coração. O portfólio híbrido é dos dois.*",
+        "secoes": [
+          {
+            "titulo": "O Modelo IMI de Portfólio Híbrido",
+            "conteudo": "Patrimônio < R$ 500K: 100% FIIs/REITs. R$ 500K-2M: 60-70% FIIs/REITs + 30-40% imóvel direto. R$ 2M-5M: 40-50% FIIs/REITs + 40-50% imóvel direto + 10% RF/caixa. > R$ 5M: 30-40% imóvel direto (incluindo internacional) + 25-35% FIIs/REITs + 15-20% RF + 10-15% caixa.\n\nCamila: 15% FIIs + 10% REITs + 25% imóvel direto + 30% Tesouro + 15% ações + 5% caixa."
+          },
+          {
+            "titulo": "FIIs vs imóvel direto: complementaridade",
+            "conteudo": "FIIs vencem em: liquidez, diversificação, gestão zero, tributação (isenção), ticket baixo. Imóvel direto vence em: controle, alavancagem, otimização, tangibilidade.\n\nCamila com híbrido: FIIs R$ 4.475/mês (isento) + REITs R$ 1.200/mês + imóvel R$ 3.800/mês = R$ 9.475/mês. Vs 100% imóvel: ~R$ 6-7K (menos diversificado). Vs 100% FIIs: ~R$ 7,5-8,5K (sem alavancagem). Híbrido otimiza o conjunto."
+          },
+          {
+            "titulo": "O primeiro imóvel de Camila",
+            "conteudo": "Estúdio 28m² universitário em SP. R$ 280.000 (50% financiado). Aluguel R$ 2.200/mês. Yield bruto 9,4%, líquido ~5,2%. A CFO que desprezava tijolo calculou ROCI e rendeu-se à lógica do imóvel direto como complemento."
+          },
+          {
+            "titulo": "Revisão integrada",
+            "conteudo": "Trimestral: FIIs (Score, yield, P/VP) + REITs (performance, hedge) + imóvel (yield, vacância, otimizador). 3h/trimestre = 12h/ano para R$ 1,9M em exposição imobiliária gerando R$ 113.700/ano.\n\n**Frase-assinatura:** *A pergunta errada é 'FII ou tijolo?' A certa é 'quanto de cada?' A combinação é sempre superior a qualquer um sozinho.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "Fronteira eficiente do híbrido",
+          "conteudo": "Backtest 10 anos: Portfólio A (ações+RF): 7,2%/ano, vol 14%. B (+ 20% FIIs): 7,8%, vol 11%. C (+ 20% FIIs + 10% REITs): 8,1%, vol 10,5%. C é superior em retorno E risco-ajustado. Diferença em 10 anos sobre R$ 3,8M: R$ 1,2M a mais."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Monte portfólio híbrido",
+          "passos": [
+            "Identifique faixa de patrimônio",
+            "Defina alocação-alvo",
+            "FIIs: Score + Filtro",
+            "REITs: BDR ou ETF",
+            "Imóvel direto: sistema Biblioteca IMI",
+            "Dashboard único. Revisão trimestral"
+          ]
+        },
+        "checklist": [
+          "Modelo Híbrido definido",
+          "FIIs montados",
+          "REITs montados",
+          "Imóvel direto avaliado",
+          "Dashboard consolidado",
+          "Revisão trimestral agendada"
+        ],
+        "armadilhas": [
+          {
+            "erro": "100% FIIs achando que está diversificado",
+            "por_que": "FIIs são renda variável brasileira em reais. Bolsa cai 30%, FIIs caem junto. Sem REITs (cambial) e imóvel direto (estável) não é diversificação real",
+            "solucao": "O híbrido combina 3 veículos com correlações diferentes."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 5,
+      "titulo": "Análise Comparativa",
+      "objetivo": "FIIs vs REITs vs imóvel direto — dados de 10 anos.",
+      "palavras_estimadas": 4500,
+      "tempo_leitura_min": 18,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "Dados. Não opinião.\n\n**Frase-assinatura:** *Opinião é de graça. Dados custam pesquisa. Decisão baseada em dados custa menos que decisão baseada em opinião.*",
+        "secoes": [
+          {
+            "titulo": "Retorno total: 10 anos",
+            "conteudo": "FIIs (IFIX): 9,8%/ano. Vol 12%. Drawdown max -28%.\nREITs (VNQ) em BRL: 12,5%/ano (com câmbio). Vol 18%. Drawdown -35%.\nImóvel direto: 8-10%/ano real. Vol ~5%. Drawdown 0% nominal.\n\nMaior retorno BRL: REITs. Melhor fiscal: FIIs (isento). Menor volatilidade: imóvel direto."
+          },
+          {
+            "titulo": "Renda mensal por R$ 1M investido",
+            "conteudo": "FIIs: ~R$ 7.800/mês (isento). Zero gestão.\nREITs (BDR): ~R$ 3.200/mês (tributado ~25%). Zero gestão.\nImóvel direto: ~R$ 4.200/mês (líquido, com gestão ~4h/mês).\n\nFIIs geram mais renda líquida por real. Mas imóvel direto permite alavancagem (R$ 1M vira R$ 2M financiados = R$ 8.400/mês brutos)."
+          },
+          {
+            "titulo": "Cenário de stress",
+            "conteudo": "Crise severa: FIIs -25/30%, rendimentos -10/20%, recuperação 12-24m. REITs -30/40% em USD (-50%+ em BRL), rendimentos cortados 20-40%, recuperação 18-36m. Imóvel direto: preço nominal quase estável (liquidez desaparece), renda -10/15%, recuperação lenta 3-5 anos.\n\nO que sobrevive melhor: imóvel direto. O que recupera mais rápido: FIIs. O que perde mais: REITs em BRL."
+          },
+          {
+            "titulo": "O portfólio que funciona em crise",
+            "conteudo": "Quem tem caixa + híbrido: segura imóvel (renda estável), compra FIIs baratos, espera REITs recuperarem. Quem tem só FIIs: vende em pânico. Quem tem só imóvel: não consegue comprar oportunidade (ilíquido).\n\n**Frase-assinatura:** *Em crise, quem tem caixa compra. Quem tem só imóvel segura. Quem tem só FII vende em pânico. O híbrido com caixa faz os três.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "A ilusão da estabilidade do imóvel",
+          "conteudo": "Imóvel direto parece estável porque não marca a mercado. Mas os preços oscilam — você só não vê. Em 2015-2016 SP caiu 15-20% real. Quem tem FIIs vê a queda e pode agir. Quem tem imóvel não vê — e nem compra na baixa."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Compare para seu perfil",
+          "passos": [
+            "Quanto de renda precisa? FIIs geram mais/R$",
+            "Quanto de patrimônio em 10 anos? Imóvel alavancado constrói mais",
+            "Tem tempo? Se não: FIIs como base",
+            "Tolera cota caindo 25%? Se não: imóvel como base",
+            "Monte combinação que maximiza sua prioridade"
+          ]
+        },
+        "checklist": [
+          "3 veículos comparados com dados",
+          "Renda/R$1M calculada",
+          "Cenário de stress avaliado",
+          "Perfil definido",
+          "Alocação híbrida definida"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Escolher apenas o de maior retorno histórico",
+            "por_que": "Retorno passado ≠ futuro. REITs em BRL (maior retorno) também têm maior volatilidade e risco cambial",
+            "solucao": "Diversifique entre veículos. Retorno ajustado ao risco > retorno absoluto."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 6,
+      "titulo": "Seleção Avançada de FIIs",
+      "objetivo": "FFO, NAV, spread — métricas avançadas.",
+      "palavras_estimadas": 4800,
+      "tempo_leitura_min": 19,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "Camila é CFO. Lê balanço como outros leem jornal. Os FIIs falam língua própria: FFO, NOI, cap rate, P/NAV, spread sobre NTN-B.\n\n**Frase-assinatura:** *A análise avançada não é para gênios. É para disciplinados.*",
+        "secoes": [
+          {
+            "titulo": "FFO, NOI, cap rate",
+            "conteudo": "FFO: lucro operacional excluindo ganho de venda e depreciação. Melhor medida de geração de caixa recorrente. NOI: receita de aluguel - custos operacionais do imóvel. Cap rate: NOI / valor do imóvel = yield do ativo em si."
+          },
+          {
+            "titulo": "P/NAV e spread sobre NTN-B",
+            "conteudo": "P/VP < 1 = desconto sobre valor dos imóveis. Março 2026: P/VP médio IFIX ~0,88 (desconto 12%). Historicamente, P/VP < 0,90 + Selic caindo = valorização 20-40% em 12-18m.\n\nSpread = yield FII - yield NTN-B. Média histórica: 2,5-3,5%. >4%: FIIs muito baratos. <2%: caros. Março 2026: ~3,2% (neutro com viés de compra)."
+          },
+          {
+            "titulo": "Estratégias de timing",
+            "conteudo": "Aumentar alocação: Selic em pico, P/VP <0,90, spread >3,5%. Manter: spread 2,5-3,5%. Reduzir: Selic no piso, P/VP >1,10, spread <2%. Rebalanceamento trimestral: se alocação real diverge >3% da meta."
+          },
+          {
+            "titulo": "FIIs como liquidez estratégica",
+            "conteudo": "Oportunidade de imóvel direto surge. Capital em Tesouro (prazo) e imóvel (ilíquido). FIIs: vende em 1 dia. Camila vendeu R$ 120K em FIIs para compor entrada do estúdio. 2 dias da decisão ao dinheiro.\n\n**Frase-assinatura:** *Timing em FIIs é ler 3 indicadores (Selic, P/VP, spread) e agir conforme a faixa.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "FII como reserva de oportunidade",
+          "conteudo": "FIIs mantêm exposição imobiliária + renda mensal + liquidez para agir quando imóvel certo aparecer. É o colchão mais inteligente do portfólio."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Aplique análise avançada",
+          "passos": [
+            "FFO/cota dos últimos 4 trimestres: tendência?",
+            "P/VP atual: >1,10? Realizar lucro?",
+            "Spread sobre NTN-B: >3,5%? Acumule",
+            "Monitore semanalmente",
+            "Rebalanceie trimestralmente"
+          ]
+        },
+        "checklist": [
+          "FFO calculado",
+          "P/VP monitorado",
+          "Spread calculado",
+          "Timing posicionado",
+          "Rebalanceamento executado"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Vender FII porque cota caiu 15%",
+            "por_que": "Cota caiu mas rendimento manteve = yield subiu. É momento de COMPRAR",
+            "solucao": "FFO caiu junto? Se não: queda é oportunidade."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 7,
+      "titulo": "REITs Avançados",
+      "objetivo": "Mega-REITs, AFFO, ciclo do Fed.",
+      "palavras_estimadas": 4500,
+      "tempo_leitura_min": 18,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "REITs americanos são a Champions League do real estate. O investidor brasileiro que entra sem entender as especificidades transforma vantagem em armadilha.\n\n**Frase-assinatura:** *REITs são o investimento mais sofisticado disponível ao PF. Sofisticação é vantagem para quem entende.*",
+        "secoes": [
+          {
+            "titulo": "Os 10 mega-REITs",
+            "conteudo": "1. Prologis (logística, US$110B). 2. American Tower (telecom, US$95B). 3. Equinix (data centers, US$75B). 4. Realty Income (varejo, US$45B). 5. Simon Property (shoppings, US$55B). 6. Welltower (saúde, US$50B). 7. Digital Realty (data centers, US$40B). 8. Public Storage (self-storage, US$50B). 9. AvalonBay (residencial, US$30B). 10. Crown Castle (torres, US$40B).\n\nVia BDR na B3: Prologis, American Tower, Realty Income, Equinix disponíveis."
+          },
+          {
+            "titulo": "Métricas de REIT",
+            "conteudo": "AFFO: FFO ajustado por manutenção. Medida real de caixa distribuível. Payout ratio: dividendo/AFFO. >90%: sem espaço para crescer. 70-85%: ideal. Debt/EBITDA: >7x perigoso. 4-6x razoável. Same-store NOI growth: >3% excelente. Occupancy: >95% excepcional."
+          },
+          {
+            "titulo": "Ciclo de juros do Fed",
+            "conteudo": "Fed sobe juros → REITs caem. Fed corta → REITs sobem. Historicamente: +15-25% nos 12 meses após primeiro corte. Timing ideal: posicionar quando Fed está no pico e sinaliza corte."
+          },
+          {
+            "titulo": "Tributação de REIT para brasileiro",
+            "conteudo": "Dividendos de REIT: 30% retidos nos EUA (sem alíquota reduzida de tratado). Via BDR: ~25-27,5%. Via ETF ALUG11: zero IR até vender (reinvestido). ALUG11 mais eficiente para acumulação.\n\n**Frase-assinatura:** *REITs são os mais tributados para brasileiro — 30%. Mesmo assim, com diversificação global + hedge cambial: compensam.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "Data center REITs: o setor 2025-2035",
+          "conteudo": "Demanda explosiva: IA, cloud, streaming, IoT. Equinix e Digital Realty: receita +8-12%/ano. Ocupação >90%. Contratos 5-15 anos. O real estate do futuro digital. Camila: 25% dos REITs em data centers. 2 anos: +35% valorização."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Aprofunde análise de REITs",
+          "passos": [
+            "AFFO/share últimos 4 trimestres",
+            "Payout ratio sustentável?",
+            "Debt/EBITDA razoável?",
+            "Ocupação >90%?",
+            "Posição do Fed no ciclo?"
+          ]
+        },
+        "checklist": [
+          "10 mega-REITs conhecidos",
+          "Métricas dominadas",
+          "Ciclo de juros monitorado",
+          "Tributação entendida"
+        ],
+        "armadilhas": [
+          {
+            "erro": "REIT de varejo genérico pelo yield",
+            "por_que": "E-commerce destruindo varejo físico genérico. Yield alto = preço caiu",
+            "solucao": "Setores com vento a favor: logística, data centers, saúde."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 8,
+      "titulo": "Riscos e Proteção",
+      "objetivo": "Riscos de FIIs/REITs e protocolo de crise.",
+      "palavras_estimadas": 4500,
+      "tempo_leitura_min": 18,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "Camila perdeu R$ 42.000 em março 2020. IFIX -28%. BDRs -35%. Não vendeu. Comprou R$ 50.000 com caixa de oportunidade. 12 meses depois: recuperou 100% + os R$ 50K adicionais valorizaram 35%.\n\n**Frase-assinatura:** *O risco em FIIs é idêntico ao do imóvel direto — mas visível. Visibilidade é vantagem para quem tem sistema.*",
+        "secoes": [
+          {
+            "titulo": "5 riscos",
+            "conteudo": "1. Mercado (volatilidade): FIIs -10/30%, REITs -20/40% em crises. Proteção: horizonte 3-5+ anos.\n2. Vacância: imóveis do fundo vagos = renda cai. Proteção: diversificação.\n3. Gestão: decisões ruins. Proteção: analisar track record.\n4. Juros: Selic/Fed sobem = cotas caem. Proteção: entender ciclo + comprar em juros altos.\n5. Câmbio (REITs): real valoriza = BDRs caem. Proteção: longo prazo (real deprecia historicamente)."
+          },
+          {
+            "titulo": "Protocolo de crise",
+            "conteudo": "Cotas -20%+: 1) NÃO VENDA. 2) Verifique fundamentos (FFO caiu? Vacância subiu?). 3) Se tem caixa: COMPRE. 4) Sem caixa: mantenha e colete dividendos.\n\nCamila em 2020: não vendeu + comprou R$ 50K. Resultado: +35% nos 12 meses seguintes."
+          },
+          {
+            "titulo": "Reserva de oportunidade",
+            "conteudo": "5% do patrimônio em Selic/CDB liquidez. Quando FIIs caem 15%+ e spread >4%: acionar. Quando tudo caro: acumular.\n\n**Frase-assinatura:** *Em crise, emocional perde duas vezes: na queda e na recuperação que não captura. Sistemático perde uma e ganha duas.*"
+          },
+          {
+            "titulo": "Correlação FII-Ibovespa",
+            "conteudo": "Correlação 10 anos: ~0,45. Moderada. 55% do tempo movem-se independentemente. Na crise: correlação sobe temporariamente (0,80). Na recuperação: voltam a divergir. A correlação parcial é o que torna FIIs úteis para diversificação."
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O protocolo impresso",
+          "conteudo": "Imprima o protocolo de crise. Cole na parede. Na crise, a emoção apaga a memória. O papel não esquece."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Prepare-se para crise",
+          "passos": [
+            "Reserva 5% em liquidez",
+            "Gatilho: IFIX -15%? Spread >4%?",
+            "Quanto comprar: 50% da reserva na primeira queda, 50% se cair mais",
+            "NUNCA vender em queda se fundamentos intactos"
+          ]
+        },
+        "checklist": [
+          "5 riscos entendidos",
+          "Protocolo documentado",
+          "Reserva de oportunidade mantida",
+          "Gatilhos definidos"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Vender na baixa porque 'vai cair mais'",
+            "por_que": "Ninguém sabe quando o fundo chega. Vender garante perda",
+            "solucao": "Protocolo > emoção. Sempre."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 9,
+      "titulo": "A Jornada de Camila",
+      "objetivo": "De zero exposição a R$ 9.475/mês — modelo replicável.",
+      "palavras_estimadas": 4500,
+      "tempo_leitura_min": 18,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "12 meses. De 'imóvel é medieval' a R$ 9.475/mês. Sem visitar obra. Sem consertar encanamento.\n\n**Frase-assinatura:** *Camila não virou investidora imobiliária. Sempre foi investidora. Apenas adicionou imóveis ao vocabulário.*",
+        "secoes": [
+          {
+            "titulo": "Antes e depois em números",
+            "conteudo": "ANTES: R$ 3,8M. Exposição imobiliária: 0%. Renda imobiliária: R$ 0/mês.\nDEPOIS: R$ 4,05M. Exposição: 30%. Renda: R$ 9.475/mês. 500+ imóveis. 2 moedas. 16h/ano de gestão."
+          },
+          {
+            "titulo": "Lições inesperadas",
+            "conteudo": "1. FIIs mais voláteis que parece (R$ 42K em 1 mês). 2. Imóvel direto tem valor que FIIs não replicam (controle, alavancagem). 3. Híbrido > qualquer componente isolado. 4. 16h/ano para R$ 113.700 é o melhor ROI por hora. 5. O caminho FIIs → REITs → imóvel direto é natural — cada etapa prepara a próxima."
+          },
+          {
+            "titulo": "Modelo replicável",
+            "conteudo": "Mês 1-2: Estudo. Mês 2-3: FIIs (5-8 fundos, 30 min no home broker). Mês 3-4: REITs (3-5 BDRs + 1 ETF, 15 min). Mês 6-8: imóvel direto (se patrimônio > R$ 500K). Mês 12: híbrido operando."
+          },
+          {
+            "titulo": "De CFO a investidora global",
+            "conteudo": "Camila não se define como investidora imobiliária. Se define como investidora com exposição imobiliária. A distinção importa: investidora imobiliária compra por identidade. Investidora com exposição aloca onde a conta fecha.\n\n**Frase-assinatura final:** *Camila começou dizendo 'imóvel é medieval'. Terminou com R$ 9.475/mês, 500+ imóveis, e zero encanamento. O medieval virou moderno. O sistema fez a tradução.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O futuro dos FIIs/REITs",
+          "conteudo": "Mercado de FIIs: de R$ 50B (2019) para R$ 200B+ (2026). Novos setores: data centers BR, agro, energia renovável. REITs globais expandindo para mercados emergentes. Acessibilidade crescente (mais BDRs, ETFs). A tendência: investidor que não precisa de tijolo para ter imóvel no portfólio."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Comece a jornada",
+          "passos": [
+            "Mês 1: leia este livro",
+            "Mês 2: Filtro + Score. 5-8 FIIs",
+            "Mês 2: compre. 30 minutos",
+            "Mês 3: REITs (BDRs + ETF)",
+            "Mês 6: avalie imóvel direto",
+            "Mês 12: híbrido completo"
+          ]
+        },
+        "checklist": [
+          "FIIs montados",
+          "REITs montados",
+          "Modelo Híbrido definido",
+          "Imóvel direto avaliado",
+          "Revisão trimestral agendada",
+          "Protocolo de crise documentado"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Pular FIIs e ir direto para imóvel 'porque é mais real'",
+            "por_que": "FIIs ensinam mercado imobiliário sem risco de gestão. A experiência prepara para imóvel direto",
+            "solucao": "FIIs primeiro. Imóvel depois. Ordem = investimento em aprendizado."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 10,
+      "titulo": "Checklist de Diversificação",
+      "objetivo": "Plano de implementação completo.",
+      "palavras_estimadas": 3800,
+      "tempo_leitura_min": 15,
+      "frameworks_introduzidos": [
+        "Checklist IMI de Diversificação via Fundos"
+      ],
+      "conteudo": {
+        "abertura": "Camila imprimiu este checklist e colou ao lado do Bloomberg. 'O sistema que gera R$ 9.475/mês sem eu fazer quase nada.'\n\n**Frase-assinatura:** *30 minutos para montar. 3 horas por trimestre para operar. R$ 113.700/ano para receber.*",
+        "secoes": [
+          {
+            "titulo": "Checklist IMI de Diversificação via Fundos",
+            "conteudo": "FIIs\n— Filtro IMI aplicado (5 portões): sim/não\n— Score calculado para 10+ FIIs: sim/não\n— 5-8 selecionados (Score >70): sim/não\n— Diversificação: tijolo + papel + FOF: sim/não\n— Nenhum FII > 25%: sim/não\n— Compra executada: sim/não\n\nREITs\n— Caminho definido (BDR/ETF/conta internacional): sim/não\n— 3-5 REITs/BDRs de setores diferentes: sim/não\n— Compra executada: sim/não\n\nIMÓVEL DIRETO (se patrimônio > R$ 500K)\n— Sistema IMI aplicado: sim/não\n— Score + Termômetro + DD executados: sim/não\n— Compra estruturada: sim/não\n\nPORTFÓLIO HÍBRIDO\n— Alocação definida: sim/não\n— Dashboard consolidado: sim/não\n— Revisão trimestral agendada: sim/não\n— Protocolo de crise documentado: sim/não\n— Reserva de oportunidade mantida (5%): sim/não\n— Primeiro dividendo recebido: sim/não"
+          },
+          {
+            "titulo": "A última cena",
+            "conteudo": "É sexta-feira, 17h. Camila fecha o laptop do escritório. O Bloomberg mostra: IFIX +0,3%. O11 (Realty Income) +0,8%. HGLG11 dividendo creditado: R$ 720.\n\nEla sorri. Não pelo R$ 720 — pelo sistema.\n\nHá 12 meses, 100% do patrimônio estava em ações e renda fixa. Zero imóvel. Zero FII. Zero REIT. Hoje: 500+ imóveis de exposição em 5 países, 2 moedas, R$ 9.475/mês entrando, e o laptop fecha às 17h — porque o portfólio não precisa dela até o próximo trimestre.\n\nImóvel medieval?\n\nO mais moderno do portfólio.\n\n**Frase-assinatura final:** *R$ 9.475/mês. 500+ imóveis. Zero tijolo próprio (quase — tem 1 estúdio). 16 horas por ano. E o laptop fecha às 17h de sexta. Isso não é investimento medieval. É o futuro. E começou com 1 cota de FII e a frase: 'Continue.'*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O Bloco 3 em perspectiva final",
+          "conteudo": "Livro 11 (EUA — Daniel): tijolo em dólar. Livro 12 (Portugal — Renata): tijolo em euro + residência. Livro 13 (Dubai — Thiago): tijolo tax-free. Livro 14 (FIIs/REITs — Camila): exposição global sem tijolo.\n\n4 livros. 4 perfis. 4 caminhos. 1 objetivo: diversificação internacional com método.\n\nO Livro 15 (Tributação Internacional Avançada) fecha o Bloco 3 com a estrutura fiscal que integra tudo."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Comece agora",
+          "passos": [
+            "Abra o home broker",
+            "Pesquise: HGLG11. Preço atual. Yield. P/VP",
+            "Se Score >70: compre 1 cota. R$ ~170",
+            "Pronto. Você é investidor imobiliário",
+            "Amanhã: segunda cota. Ou segundo FII",
+            "Em 30 dias: carteira de 5-8 FIIs montada",
+            "O primeiro dividendo chega em ~30 dias"
+          ]
+        },
+        "checklist": [
+          "Checklist impresso",
+          "FIIs selecionados",
+          "REITs posicionados",
+          "Modelo Híbrido definido",
+          "Primeira cota comprada"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Ler este livro e não comprar a primeira cota",
+            "por_que": "1 cota de FII = R$ 100-200. O risco é R$ 200. O custo de não começar é anos de renda não recebida",
+            "solucao": "Agora. 1 cota. No home broker. Leva 2 minutos. O resto é iteração."
+          }
+        ]
+      }
+    }
+  ]
+}

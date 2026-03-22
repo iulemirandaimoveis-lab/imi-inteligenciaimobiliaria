@@ -1,0 +1,667 @@
+[
+  {
+    "slug": "bonus-01-glossario-definitivo-avaliacao-imobiliaria",
+    "title": "Glossário Definitivo da Avaliação Imobiliária",
+    "subtitle": "500+ Termos Técnicos, Jurídicos e de Mercado — Do Básico ao Avançado",
+    "author": "Iule Miranda",
+    "category": "bonus",
+    "chapters": 5,
+    "chapter_titles": [
+      "Termos Fundamentais de Avaliação (A-C)",
+      "Termos de Avaliação e Mercado (D-H)",
+      "Termos Avançados e Especializados (I-N)",
+      "Termos de Mercado, Tributação e Gestão (O-R)",
+      "Termos Contemporâneos e de Fronteira (S-Z)"
+    ]
+  },
+  {
+    "slug": "bonus-02-checklist-master-avaliador-imobiliario",
+    "title": "Checklist Master do Avaliador Imobiliário",
+    "subtitle": "127 Verificações Essenciais Para Laudos à Prova de Impugnação",
+    "author": "Iule Miranda",
+    "category": "bonus",
+    "chapters": 5,
+    "chapter_titles": [
+      "Pré-Avaliação: Antes de Aceitar o Trabalho",
+      "Vistoria: No Imóvel e No Entorno",
+      "Pesquisa de Mercado: Coleta e Verificação",
+      "Cálculos, Modelo e Diagnóstico",
+      "Redação, Apresentação e Entrega"
+    ]
+  },
+  {
+    "slug": "bonus-03-modelos-laudos-templates-profissionais",
+    "title": "Modelos de Laudos e Templates Profissionais",
+    "subtitle": "Estruturas Prontas Para Avaliação Residencial, Comercial, Terrenos e Perícia Judicial",
+    "author": "Iule Miranda",
+    "category": "bonus",
+    "chapters": 5,
+    "chapter_titles": [
+      "Template 1: Laudo de Avaliação Residencial Urbana",
+      "Template 2: Laudo de Avaliação Comercial",
+      "Template 3: Laudo de Avaliação de Terreno",
+      "Template 4: Laudo Pericial Judicial",
+      "Template 5: Parecer de Valor e Relatório Executivo"
+    ]
+  },
+  {
+    "slug": "livro-00-o-mapa-do-dinheiro-invisivel",
+    "title": "O Mapa do Dinheiro Invisível",
+    "subtitle": "Como Descobrir, Medir e Capturar o Valor Oculto dos Imóveis",
+    "author": "Iule Miranda",
+    "category": "geral",
+    "chapters": 10,
+    "chapter_titles": [
+      "Você Está Sentado em Dinheiro e Não Sabe",
+      "O Teste do Espelho: Seu Imóvel Vale o Que Você Pensa?",
+      "Três Valores, Uma Confusão: Venal, Mercado e Avaliação",
+      "O Vizinho Vendeu Por Tanto (E Daí?)",
+      "Nem Toda Reforma Vale o Que Custou",
+      "A Área Que Ninguém Mede Direito",
+      "O Potencial Que Você Não Vê (Mas o Mercado Vê)",
+      "Como Funciona Uma Avaliação de Verdade",
+      "O Checklist do Proprietário Inteligente",
+      "O Futuro do Valor: Tecnologia, IA e Você"
+    ]
+  },
+  {
+    "slug": "livro-01-avaliacao-imoveis-na-pratica - cópia",
+    "title": "Avaliação de Imóveis na Prática",
+    "subtitle": "O Método Completo para Determinar o Valor Justo de Qualquer Imóvel — Com Precisão, Dados e Sistema",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Valor",
+      "O Método Comparativo",
+      "A Vistoria",
+      "O Laudo",
+      "Os Métodos Alternativos",
+      "Tipologias",
+      "Fatores de Valor",
+      "Mercado",
+      "O Modelo IMI de Avaliação",
+      "Execução"
+    ]
+  },
+  {
+    "slug": "livro-02-avaliacao-imobiliaria-para-investidores",
+    "title": "Avaliação Imobiliária para Investidores",
+    "subtitle": "Como Analisar se um Imóvel é Bom Investimento Antes de Comprar — Com Números, Não com Esperança",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Erro de R$ 480 Mil",
+      "Yield e Rentabilidade",
+      "Localização para Investimento",
+      "Comparação com Alternativas",
+      "Due Diligence",
+      "Análise de Aluguel",
+      "Negociação de Compra",
+      "Portfólio",
+      "O Modelo IMI de Investimento",
+      "Execução"
+    ]
+  },
+  {
+    "slug": "livro-03-avaliacao-judicial-de-imoveis",
+    "title": "Avaliação Judicial de Imóveis",
+    "subtitle": "Perícia, Laudos e Defesa Técnica em Litígios Imobiliários",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Tribunal Que Não Sabia o Preço",
+      "Aceitar ou Recusar: A Decisão Que Ninguém Ensina",
+      "Vistoria Judicial: Olhos de Perito, Mãos de Cirurgião",
+      "Pesquisa de Mercado Sob Juramento",
+      "Métodos Sob Fogo Cruzado",
+      "O Laudo Que Se Defende Sozinho",
+      "Quesitos: O Campo Minado do Perito",
+      "Impugnação: Quando o Laudo Vai para a Guerra",
+      "Honorários: A Conta Que Ninguém Quer Pagar",
+      "O Perito Diante do Juiz"
+    ]
+  },
+  {
+    "slug": "livro-03-avaliacao-processos-judiciais",
+    "title": "Avaliação Imobiliária para Processos Judiciais",
+    "subtitle": "Perícia, Laudo Técnico e Defesa — O Guia Completo do Perito Avaliador",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Papel do Perito",
+      "Tipos de Perícia Imobiliária",
+      "Normas Técnicas Aplicáveis",
+      "Estrutura de Laudo Pericial",
+      "Metodologias Aceitas",
+      "Coleta de Provas e Dados",
+      "Redação Técnica",
+      "Defesa do Laudo",
+      "Erros que Invalidam Perícias",
+      "Modelo IMI de Laudo"
+    ]
+  },
+  {
+    "slug": "livro-04-avaliacao-de-terrenos-urbanos",
+    "title": "Avaliação de Terrenos Urbanos",
+    "subtitle": "Do Lote Vazio ao Potencial Construtivo — Métodos, Incorporação e Valor",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Terreno Que Valia Uma Fortuna Escondida",
+      "O Código Que Define o Valor: Zoneamento e Potencial Construtivo",
+      "Nem Todo Lote é Igual: Tipologia de Terrenos",
+      "Método Comparativo Para Terrenos: A Arte da Homogeneização",
+      "Método Involutivo: O Terreno Vale Pelo Que Pode Nascer Nele",
+      "Topografia, Forma e Frente: Os Multiplicadores Silenciosos",
+      "Due Diligence Fundiária: O Checklist Que Salva Milhões",
+      "Pensar Como Incorporador, Calcular Como Avaliador",
+      "Terrenos Que Fogem à Regra",
+      "O Preço da Verdade: Comunicar Valor a Quem Não Quer Ouvir"
+    ]
+  },
+  {
+    "slug": "livro-04-avaliar-terrenos-lotes",
+    "title": "Como Avaliar Terrenos e Lotes",
+    "subtitle": "Zoneamento, Potencial Construtivo e Valor — A Avaliação que o Mercado Não Ensina",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "Natureza do Valor de Terrenos",
+      "Zoneamento e Potencial",
+      "Índices Construtivos",
+      "Avaliação por Comparação",
+      "Avaliação por Viabilidade",
+      "Análise de Entorno",
+      "Riscos em Terrenos",
+      "Terrenos para Incorporação",
+      "Método IMI para Terrenos",
+      "Checklist de Avaliação"
+    ]
+  },
+  {
+    "slug": "livro-05-engenharia-avaliacoes-simplificada",
+    "title": "Engenharia de Avaliações Simplificada",
+    "subtitle": "Estatística, Regressão e Modelos Práticos — Sem a Complexidade que Ninguém Precisa",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "Fundamentos da Engenharia de Avaliações",
+      "Métodos Clássicos",
+      "Estatística Aplicada",
+      "Regressão Simplificada",
+      "Ajustes de Variáveis",
+      "Interpretação de Dados",
+      "Modelos Práticos",
+      "Limitações Técnicas",
+      "Aplicação no Dia a Dia",
+      "Framework IMI"
+    ]
+  },
+  {
+    "slug": "livro-05-engenharia-de-avaliacoes",
+    "title": "Engenharia de Avaliações",
+    "subtitle": "Estatística, Modelagem e Ciência Aplicada ao Valor Imobiliário",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "A Sala de Aula Onde Números Contam Histórias",
+      "Os Alicerces: Estatística Para Quem Avalia",
+      "Regressão Linear: O Motor da Avaliação Científica",
+      "Variáveis e Transformações: A Matéria-Prima do Modelo",
+      "Diagnóstico do Modelo: A Autópsia Antes do Enterro",
+      "Graus de Fundamentação e Precisão: A Régua da Norma",
+      "Avaliação em Massa: Um Modelo Para Mil Imóveis",
+      "Geoestatística: O Valor Está no Mapa",
+      "Séries Temporais: O Mercado Que Não Para",
+      "A Fronteira: Machine Learning, IA e o Futuro da Avaliação"
+    ]
+  },
+  {
+    "slug": "livro-06-identificar-imoveis-abaixo-valor",
+    "title": "Como Identificar Imóveis Abaixo do Valor de Mercado",
+    "subtitle": "Ineficiências, Oportunidades e o Sistema que Transforma Dados em Vantagem",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "Ineficiências do Mercado",
+      "Psicologia de Preço",
+      "Tipos de Oportunidade",
+      "Onde Encontrar Descontos",
+      "Como Analisar Rápido",
+      "Erros de Iniciantes",
+      "Negociação Estratégica",
+      "Score IMI de Oportunidade",
+      "Estudos de Caso",
+      "Checklist de Aquisição"
+    ]
+  },
+  {
+    "slug": "livro-07-investir-imoveis-seguranca",
+    "title": "Como Investir em Imóveis com Segurança",
+    "subtitle": "Due Diligence, Risco Calculado e Estrutura de Proteção — O Manual do Investidor que Não Perde",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "Fundamentos do Investimento Seguro",
+      "Tipos de Investimento",
+      "Due Diligence",
+      "Análise Jurídica",
+      "Análise Financeira",
+      "Gestão de Risco",
+      "Estrutura de Compra",
+      "Erros Críticos",
+      "Estratégia IMI",
+      "Plano de Ação"
+    ]
+  },
+  {
+    "slug": "livro-08-estrategias-renda-aluguel",
+    "title": "Estratégias de Renda com Aluguel",
+    "subtitle": "Como Transformar Imóveis em Máquinas de Fluxo de Caixa que Trabalham Enquanto Você Dorme",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Conceito de Renda Imobiliária",
+      "Tipos de Locação",
+      "Yield Imobiliário",
+      "Otimização de Receita",
+      "Gestão de Inquilinos",
+      "Redução de Vacância",
+      "Custos e Margens",
+      "Escala de Portfólio",
+      "Método IMI de Renda",
+      "Checklist de Operação"
+    ]
+  },
+  {
+    "slug": "livro-09-construir-patrimonio-imoveis",
+    "title": "Como Construir Patrimônio com Imóveis",
+    "subtitle": "Ciclos, Alavancagem e a Arquitetura de Riqueza que Atravessa Gerações",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "Mentalidade de Patrimônio",
+      "Ciclos Imobiliários",
+      "Alavancagem",
+      "Reinvestimento",
+      "Diversificação",
+      "Gestão de Crescimento",
+      "Proteção de Capital",
+      "Estratégias Avançadas",
+      "Modelo IMI",
+      "Plano de Longo Prazo"
+    ]
+  },
+  {
+    "slug": "livro-10-fundamentos-investimento-imobiliario",
+    "title": "Fundamentos do Investimento Imobiliário",
+    "subtitle": "Capital, Risco e Decisão — O Mapa Completo para Quem Quer Começar Certo",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "Imóvel como Investimento",
+      "Classes de Ativos Imobiliários",
+      "Risco e Retorno",
+      "Score IMI de Investimento",
+      "Filtro de Oportunidade",
+      "Financiamento Inteligente",
+      "Tributação Básica",
+      "Erros do Iniciante",
+      "Framework de Decisão",
+      "Plano de Ação"
+    ]
+  },
+  {
+    "slug": "livro-11-investir-imoveis-eua",
+    "title": "Como Investir em Imóveis nos EUA",
+    "subtitle": "LLC, Financiamento, Tributação e o Passo a Passo para o Brasileiro que Quer Renda em Dólar",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "Por Que os EUA",
+      "Mercados Americanos",
+      "Estrutura Jurídica",
+      "Seleção de Imóvel",
+      "Financiamento nos EUA",
+      "Tributação Brasil-EUA",
+      "Operação Remota",
+      "Due Diligence Internacional",
+      "Erros e Lições",
+      "Plano de Ação Internacional"
+    ]
+  },
+  {
+    "slug": "livro-12-investir-imoveis-portugal",
+    "title": "Como Investir em Imóveis em Portugal",
+    "subtitle": "Residência, Renda em Euro e o Plano B que Virou Plano A",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "Portugal como Destino",
+      "Mercados Portugueses",
+      "Estrutura Legal",
+      "Arrendamento Português",
+      "Tributação em Portugal",
+      "Seleção e Compra",
+      "Erros e Adaptação",
+      "Motor de Renda em Euro",
+      "Estratégia de Longo Prazo",
+      "Checklist Portugal"
+    ]
+  },
+  {
+    "slug": "livro-13-investir-imoveis-dubai",
+    "title": "Como Investir em Imóveis em Dubai e Emirados",
+    "subtitle": "Zero Income Tax, Yields de 7%+ e as Armadilhas que o Instagram Não Mostra",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Encantamento",
+      "Mercado de Dubai",
+      "Estrutura Legal",
+      "Yield e Custos Reais",
+      "Operação e Gestão",
+      "Saída Fiscal",
+      "Riscos Específicos",
+      "Erros e Recalibração",
+      "Dubai no Portfólio Global",
+      "Checklist Dubai"
+    ]
+  },
+  {
+    "slug": "livro-14-reits-fiis-internacionais",
+    "title": "Investimento via REITs e FIIs Internacionais",
+    "subtitle": "Diversificação Imobiliária Global sem Comprar Tijolo — Via Bolsa, com Liquidez",
+    "author": "Iule Miranda",
+    "category": "investimento",
+    "chapters": 10,
+    "chapter_titles": [
+      "FIIs e REITs: O Que São",
+      "FIIs Brasileiros",
+      "REITs Americanos e Globais",
+      "Portfólio Híbrido",
+      "Análise Comparativa",
+      "Seleção Avançada de FIIs",
+      "REITs Avançados",
+      "Riscos e Proteção",
+      "A Jornada de Camila",
+      "Checklist de Diversificação"
+    ]
+  },
+  {
+    "slug": "livro-15-tributacao-internacional",
+    "title": "Tributação Internacional para Investidores Imobiliários",
+    "subtitle": "Como Estruturar, Declarar e Otimizar Impostos em Múltiplas Jurisdições — Sem Pagar a Mais e Sem Omitir",
+    "author": "Iule Miranda",
+    "category": "patrimonial",
+    "chapters": 10,
+    "chapter_titles": [
+      "Residência Fiscal",
+      "Tributação Comparada",
+      "Compensação e Tratados",
+      "Estruturas Otimizadas",
+      "Declarações Obrigatórias",
+      "Ganho de Capital Internacional",
+      "Planejamento Sucessório Internacional",
+      "Casos Práticos Integrados",
+      "Erros Fiscais que Custam Fortunas",
+      "Plano de Ação Tributário"
+    ]
+  },
+  {
+    "slug": "livro-16-holding-patrimonial",
+    "title": "Holding Patrimonial Imobiliária",
+    "subtitle": "Como Estruturar, Tributar e Proteger Patrimônio Imobiliário com Pessoa Jurídica",
+    "author": "Iule Miranda",
+    "category": "patrimonial",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Que É e Por Que Existe",
+      "Constituição",
+      "Tributação da Holding",
+      "Transferência de Imóveis",
+      "Proteção Patrimonial",
+      "Planejamento Sucessório via Holding",
+      "Operação Diária",
+      "Casos Práticos",
+      "Erros Comuns e Armadilhas",
+      "Plano de Implementação"
+    ]
+  },
+  {
+    "slug": "livro-17-planejamento-sucessorio-imobiliario",
+    "title": "Planejamento Sucessório Imobiliário",
+    "subtitle": "Como Transferir Patrimônio para a Próxima Geração sem Destruir o que Você Construiu",
+    "author": "Iule Miranda",
+    "category": "patrimonial",
+    "chapters": 10,
+    "chapter_titles": [
+      "Sucessão",
+      "Inventário",
+      "Estruturação",
+      "Holding Familiar",
+      "Testamento",
+      "Proteção",
+      "Conflitos",
+      "Planejamento",
+      "Modelo IMI",
+      "Execução"
+    ]
+  },
+  {
+    "slug": "livro-18-protecao-avancada-de-ativos",
+    "title": "Proteção Avançada de Ativos",
+    "subtitle": "Como Blindar Seu Patrimônio Imobiliário Contra os Riscos que Você Ainda Não Enxergou",
+    "author": "Iule Miranda",
+    "category": "patrimonial",
+    "chapters": 10,
+    "chapter_titles": [
+      "Riscos",
+      "Blindagem",
+      "Estruturas",
+      "Separação",
+      "Holding",
+      "Jurídico",
+      "Financeiro",
+      "Estratégia",
+      "Modelo IMI",
+      "Aplicação"
+    ]
+  },
+  {
+    "slug": "livro-19-planejamento-patrimonial-longo-prazo",
+    "title": "Planejamento Patrimonial de Longo Prazo",
+    "subtitle": "O Masterplan de 20 Anos para Construir, Proteger e Transferir Riqueza Imobiliária",
+    "author": "Iule Miranda",
+    "category": "patrimonial",
+    "chapters": 10,
+    "chapter_titles": [
+      "Visão",
+      "Diagnóstico",
+      "Crescimento",
+      "Diversificação",
+      "Otimização",
+      "Governança",
+      "Cenários",
+      "Transferência",
+      "Modelo IMI",
+      "Execução"
+    ]
+  },
+  {
+    "slug": "livro-20-como-montar-um-bpo-imobiliario",
+    "title": "Como Montar um BPO Imobiliário",
+    "subtitle": "O Negócio de Avaliar Imóveis para Bancos, Seguradoras e Fundos — Do Zero à Operação Escalável",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Que é BPO",
+      "Mercado",
+      "Estrutura",
+      "Serviços",
+      "Gestão",
+      "Financeiro",
+      "Clientes",
+      "Escala",
+      "Modelo IMI",
+      "Operação"
+    ]
+  },
+  {
+    "slug": "livro-21-gestao-profissional-de-imoveis",
+    "title": "Gestão Profissional de Imóveis",
+    "subtitle": "Como Administrar Portfólios Imobiliários com Sistemas, Métricas e Inteligência Operacional",
+    "author": "Iule Miranda",
+    "category": "profissional",
+    "chapters": 10,
+    "chapter_titles": [
+      "Gestão",
+      "Locação",
+      "Manutenção",
+      "Financeiro",
+      "Inquilinos",
+      "Contratos",
+      "Eficiência",
+      "Escala",
+      "Modelo IMI",
+      "Operação"
+    ]
+  },
+  {
+    "slug": "livro-22-pericia-imobiliaria-judicial",
+    "title": "Perícia Imobiliária Judicial",
+    "subtitle": "Como Atuar como Perito Avaliador em Processos Judiciais e Construir uma Carreira de Alto Valor",
+    "author": "Iule Miranda",
+    "category": "avaliacao",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Papel do Perito",
+      "Tipos de Perícia",
+      "Normas Técnicas",
+      "Estrutura do Laudo",
+      "Honorários",
+      "Defesa do Laudo",
+      "Relacionamento com o Judiciário",
+      "Erros",
+      "Modelo IMI",
+      "Execução"
+    ]
+  },
+  {
+    "slug": "livro-23-corretagem-estrategica",
+    "title": "Corretagem Estratégica",
+    "subtitle": "Como Transformar Corretagem de Imóveis de Vendas Avulsas em Negócio Posicionado, Escalável e de Alto Valor",
+    "author": "Iule Miranda",
+    "category": "profissional",
+    "chapters": 10,
+    "chapter_titles": [
+      "Posicionamento",
+      "Nicho",
+      "Serviço",
+      "Marketing",
+      "Negociação",
+      "Tecnologia",
+      "Escala",
+      "Marca",
+      "Modelo IMI",
+      "Execução"
+    ]
+  },
+  {
+    "slug": "livro-24-ia-no-mercado-imobiliario",
+    "title": "IA no Mercado Imobiliário",
+    "subtitle": "Como a Inteligência Artificial Está Redefinindo Avaliação, Investimento, Gestão e o Futuro de Quem Vive de Imóveis",
+    "author": "Iule Miranda",
+    "category": "tecnologia",
+    "chapters": 10,
+    "chapter_titles": [
+      "Introdução à IA",
+      "IA na Avaliação",
+      "IA no Investimento",
+      "IA na Gestão",
+      "IA no Marketing",
+      "IA na Análise de Dados",
+      "Ferramentas",
+      "Estratégia",
+      "Modelo IMI",
+      "Futuro"
+    ]
+  },
+  {
+    "slug": "livro-25-proptech-e-inovacao-imobiliaria",
+    "title": "PropTech e Inovação Imobiliária",
+    "subtitle": "As Tecnologias que Estão Reconstruindo o Mercado de Imóveis — e Como se Posicionar Antes que Reconstruam Você",
+    "author": "Iule Miranda",
+    "category": "tecnologia",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Ecossistema PropTech",
+      "Construção Inteligente",
+      "Transação Digital",
+      "Smart Buildings",
+      "Realidade Virtual e Experiências Imersivas",
+      "Fintech Imobiliária",
+      "Dados Geoespaciais e Inteligência de Localização",
+      "O Ecossistema Brasileiro",
+      "Modelo IMI",
+      "Execução"
+    ]
+  },
+  {
+    "slug": "livro-26-automacao-operacoes-imobiliarias",
+    "title": "Automação de Operações Imobiliárias",
+    "subtitle": "Como Eliminar Trabalho Manual, Escalar sem Proporcionalmente Contratar e Operar Imóveis como Sistema",
+    "author": "Iule Miranda",
+    "category": "tecnologia",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Princípio da Automação",
+      "Workflows de Automação",
+      "Automação do BPO",
+      "Automação da Gestão",
+      "Automação da Corretagem",
+      "Integrações e Ecossistema",
+      "Segurança e LGPD",
+      "Métricas de Automação",
+      "Modelo IMI",
+      "Execução"
+    ]
+  },
+  {
+    "slug": "livro-27-o-futuro-do-mercado-imobiliario",
+    "title": "O Futuro do Mercado Imobiliário",
+    "subtitle": "Uma Visão de 20 Anos para Quem Constrói, Investe, Avalia, Gere e Vive de Imóveis — E o Legado da Biblioteca IMI",
+    "author": "Iule Miranda",
+    "category": "tecnologia",
+    "chapters": 10,
+    "chapter_titles": [
+      "O Jantar",
+      "O Profissional de 2036",
+      "Cidades e Moradia",
+      "Investimento em 2036",
+      "Regulação e Governança",
+      "Sustentabilidade",
+      "O Papel Humano",
+      "Legado",
+      "O Modelo IMI Final",
+      "A Carta"
+    ]
+  }
+]

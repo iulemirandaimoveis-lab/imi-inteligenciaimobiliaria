@@ -1,0 +1,589 @@
+{
+  "metadata": {
+    "id": "LIVRO-015",
+    "titulo": "Tributação Internacional para Investidores Imobiliários",
+    "subtitulo": "Como Estruturar, Declarar e Otimizar Impostos em Múltiplas Jurisdições — Sem Pagar a Mais e Sem Omitir",
+    "autor": "Iule Miranda",
+    "bloco": "BLOCO 3 — INTERNACIONAL",
+    "posicao_na_serie": 15,
+    "total_livros_serie": 27,
+    "idioma": "pt-BR",
+    "palavras_estimadas": 46000,
+    "preco_ebook_brl": 64.9,
+    "preco_impresso_brl": 109.9,
+    "status": "COMPLETO",
+    "versao": "1.0",
+    "data_criacao": "2026-03-20",
+    "nota_editorial": "Este é o livro de REFERÊNCIA do Bloco 3. Formato consultável — capítulos densos, tabelas comparativas, fluxogramas de decisão. Menos narrativa, mais framework. Integra a tributação dos Livros 11-14 em sistema único. Não tem protagonista com arco — usa os 4 personagens dos livros anteriores como exemplos práticos.",
+    "frameworks_proprietarios": [
+      "Mapa IMI de Tributação Comparada",
+      "Fluxograma IMI de Residência Fiscal",
+      "Modelo IMI de Compensação Tributária",
+      "Checklist IMI de Compliance Internacional",
+      "Estrutura IMI Multi-Jurisdicional"
+    ],
+    "narrativa_central": "A tributação internacional não é obstáculo — é variável de otimização. O investidor que estrutura corretamente economiza 20-40% em impostos. O que ignora paga a mais — ou omite e arrisca processo criminal.",
+    "dedicatoria": "Para o tributarista do investidor — que merece um guia que não existe em português.\nE para o investidor que é seu próprio tributarista — que merece saber o suficiente para fazer as perguntas certas.\n\n— Iule Miranda"
+  },
+  "capitulos": [
+    {
+      "numero": 1,
+      "titulo": "Residência Fiscal",
+      "objetivo": "Definir onde você paga imposto — a decisão mais importante da tributação internacional.",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": [
+        "Fluxograma IMI de Residência Fiscal"
+      ],
+      "conteudo": {
+        "abertura": "A primeira pergunta de qualquer planejamento tributário internacional: onde é sua residência fiscal?\n\nA resposta determina tudo. Se é residente fiscal no Brasil: paga IR brasileiro sobre renda mundial (incluindo EUA, Portugal, Dubai). Se transferiu residência para Emirados: paga zero sobre renda mundial — mas continua pagando sobre renda de FONTE brasileira.\n\nO erro mais caro: achar que mudar de país muda automaticamente a residência fiscal. Não muda. A residência fiscal é formalizada por declaração — não por passagem aérea.\n\n**Frase-assinatura:** *Residência fiscal não é onde você mora. É onde você declara morar. A diferença custa centenas de milhares de reais.*",
+        "secoes": [
+          {
+            "titulo": "O Fluxograma IMI de Residência Fiscal",
+            "conteudo": "Pergunta 1: Mora 183+ dias/ano no Brasil? → SIM: residente fiscal no Brasil. Paga IR sobre renda mundial. → NÃO: Pergunta 2.\n\nPergunta 2: Formalizou saída definitiva (Comunicação + Declaração à RFB)? → NÃO: ainda residente fiscal brasileiro (mesmo morando fora). Paga IR sobre renda mundial. → SIM: Pergunta 3.\n\nPergunta 3: Tem renda de fonte brasileira (aluguel, dividendos, salário)? → SIM: paga IR na fonte sobre renda brasileira (15% para não-residente). Zero sobre renda do exterior. → NÃO: zero obrigação tributária no Brasil (exceto CBE se patrimônio exterior > US$ 1M).\n\nPergunta 4: Onde é residente fiscal agora? → Emirados: zero income tax pessoal. → Portugal: IRS sobre renda de arrendamento (28% tributação autónoma ou englobamento). → EUA: complexo — depende de status (nonresident alien vs resident alien).\n\nAplicação prática:\n— Daniel (Livro 11): residente fiscal no Brasil. Paga IR sobre renda dos EUA com compensação do imposto americano.\n— Renata (Livro 12): residente fiscal no Brasil. Paga IRS em Portugal (28%) + compensa no Brasil.\n— Thiago (Livro 13): residente fiscal nos Emirados (saída definitiva). Zero IR sobre renda mundial. 15% na fonte sobre renda brasileira.\n— Camila (Livro 14): residente fiscal no Brasil. FIIs isentos. REITs tributados com compensação."
+          },
+          {
+            "titulo": "A saída definitiva: passo a passo",
+            "conteudo": "Para quem decide sair formalmente da residência fiscal brasileira:\n\n1. Comunicação de Saída Definitiva: formulário via e-CAC/RFB. Prazo: até último dia de fevereiro do ano seguinte à saída.\n\n2. Declaração de Saída Definitiva: DIRPF do ano de saída com rendimentos de janeiro até a data de saída. Prazo: abril do ano seguinte.\n\n3. Nomeação de procurador fiscal no Brasil: obrigatório enquanto tiver bens ou rendimentos no Brasil.\n\n4. Comunicação às fontes pagadoras: inquilinos/administradoras passam a reter IR na fonte a 15% (não mais tabela progressiva).\n\n5. DARF final: IR proporcional ao período de residência.\n\nCusto: R$ 5.000-15.000 (tributarista + advogado). Economia anual: depende da renda — para Thiago (R$ 120K/mês): ~R$ 480.000/ano. Payback: 1 mês."
+          },
+          {
+            "titulo": "O risco da residência dual não planejada",
+            "conteudo": "Cenário: brasileiro muda para Dubai mas não formaliza saída. Mora 200 dias em Dubai, 165 no Brasil.\n\nResultado: é residente fiscal em AMBOS os países (Brasil por não ter formalizado saída; Emirados por morar 183+ dias). No Brasil: deve IR sobre renda mundial. Nos Emirados: zero (não cobram de qualquer forma).\n\nO brasileiro que não formaliza: paga imposto no Brasil que não deveria pagar (se tivesse formalizado). E arrisca: se a RFB descobre renda não declarada no exterior: multa de 75-150% + juros + potencial processo criminal.\n\nA formalização não é opcional para quem quer economizar. É requisito.\n\n**Frase-assinatura:** *A residência fiscal é binária: ou você é residente, ou não é. O meio-termo é o mais caro dos mundos.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O CRS e a troca automática de informações",
+          "conteudo": "O CRS (Common Reporting Standard) é acordo multilateral onde 100+ países trocam informações bancárias automaticamente. Brasil, Portugal, EUA (via FATCA) e Emirados participam.\n\nSignificado: a conta bancária que você tem nos EUA, Portugal ou Dubai é reportada ao Brasil. A RFB sabe que você tem dinheiro fora — mesmo que não declare. A omissão não é mais viável como estratégia.\n\nA única estratégia que funciona: declarar tudo corretamente e otimizar LEGALMENTE. Sonegação via omissão morreu com o CRS."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Defina sua residência fiscal",
+          "passos": [
+            "Onde mora 183+ dias/ano?",
+            "Formalizou saída definitiva se mora fora? Se não: prioridade #1",
+            "Tem renda de fonte brasileira? Configure retenção na fonte adequada",
+            "Tem patrimônio exterior > US$ 1M? Declare CBE ao BACEN",
+            "Consulte tributarista ANTES de qualquer mudança de residência"
+          ]
+        },
+        "checklist": [
+          "Residência fiscal definida e documentada",
+          "Saída definitiva formalizada (se aplicável)",
+          "Procurador fiscal nomeado (se não-residente)",
+          "CBE declarado (se patrimônio exterior > US$ 1M)",
+          "Fontes pagadoras no Brasil comunicadas"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Mudar de país sem formalizar saída fiscal",
+            "por_que": "Sem formalização: continua devendo IR brasileiro sobre renda MUNDIAL. CRS garante que a RFB descobre",
+            "solucao": "Formalize antes de sair — ou nos primeiros meses. O custo é R$ 5-15K. O risco de não formalizar: R$ 500K+."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 2,
+      "titulo": "Tributação Comparada",
+      "objetivo": "Tabela comparativa de tributação em Brasil, EUA, Portugal e Emirados.",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": [
+        "Mapa IMI de Tributação Comparada"
+      ],
+      "conteudo": {
+        "abertura": "Este capítulo é tabela. Consultável. Imprimível. O mapa que mostra quanto se paga em cada jurisdição — e onde otimizar.\n\n**Frase-assinatura:** *A tabela que todo investidor internacional deveria ter na parede do escritório.*",
+        "secoes": [
+          {
+            "titulo": "Mapa IMI de Tributação Comparada",
+            "conteudo": "IMPOSTO SOBRE RENDA DE ALUGUEL:\n— Brasil PF: até 27,5% (tabela progressiva via carnê-leão).\n— Brasil PJ (holding LP): ~11,33% (PIS+COFINS+IRPJ+CSLL sobre base presumida 32%).\n— EUA (nonresident alien): 10-37% federal progressivo + 0-13,3% estadual (0% em FL/TX).\n— Portugal (não-residente): 28% tributação autónoma (flat). Ou englobamento (14,5-48%).\n— Emirados: 0%.\n\nIMPOSTO SOBRE GANHO DE CAPITAL NA VENDA:\n— Brasil: 15% sobre ganho (com reduções por prazo de posse).\n— EUA: 15-20% federal (long-term) + estadual. FIRPTA retém 15% bruto antecipadamente.\n— Portugal: 28% sobre 100% da mais-valia (não-residente). 50% englobada (residente).\n— Emirados: 0%.\n\nIMPOSTO ANUAL SOBRE PROPRIEDADE:\n— Brasil (IPTU): 0,5-1,5% do valor venal.\n— EUA (property tax): 0,8-2,5% do assessed value (varia por estado/county).\n— Portugal (IMI): 0,3-0,45% do VPT.\n— Emirados: 0% (mas 5% municipal fee sobre aluguel, pago pelo inquilino).\n\nIMPOSTO NA COMPRA (TRANSFERÊNCIA):\n— Brasil (ITBI): 2-3%.\n— EUA: varia (0-2% dependendo do estado/county).\n— Portugal (IMT): 0-8% (tabela progressiva, mais alto para investimento).\n— Emirados (DLD fee): 4%."
+          },
+          {
+            "titulo": "A comparação que importa: carga total",
+            "conteudo": "Para investimento de US$ 300.000 gerando US$ 18.000/ano de renda líquida (yield 6%):\n\n— Brasil (PF): ITBI 2,5% + IPTU 1% + IR 22% efetivo = custo fiscal ~25-27% da renda.\n— Brasil (holding): ITBI 2,5% + IPTU 1% + IR 11,3% = custo fiscal ~14-16%.\n— EUA (FL, nonresident): closing 3% + property tax 1% + IR federal ~18% = custo fiscal ~22%.\n— Portugal (não-residente): IMT 5% + IMI 0,4% + IRS 28% = custo fiscal ~33%.\n— Emirados: DLD 4% + service charges ~2% + IR 0% = custo fiscal ~6%.\n\nOrdenação por custo fiscal total sobre renda: Emirados (6%) < Brasil holding (16%) < EUA FL (22%) < Brasil PF (27%) < Portugal (33%).\n\nEmirados é dramaticamente mais eficiente. Mas: exige mudança de residência para maximizar. Brasil com holding é surpreendentemente competitivo. Portugal é o mais caro para renda — mas oferece residência europeia."
+          },
+          {
+            "titulo": "Onde cada personagem da Biblioteca IMI paga",
+            "conteudo": "Daniel (EUA, residente fiscal BR): ~22% de carga fiscal total. Compensação BR-EUA funciona. Eficiente.\n\nRenata (Portugal, residente fiscal BR): ~33% sobre renda PT (IRS 28% sem dedução + IMI). Mas compensa no IR brasileiro. Carga consolidada: ~28-30%. Mais caro — mas o preço da opcionalidade europeia.\n\nThiago (Dubai, residente fiscal EAU): 0% sobre renda Dubai. 15% na fonte sobre renda BR. Carga consolidada: ~3-5% total. O mais eficiente — mas exigiu mudança de país.\n\nCamila (FIIs/REITs, residente fiscal BR): FIIs 0% (isento). REITs ~25-30% sobre dividendos. Imóvel BR via holding ~11%. Carga média ponderada: ~8-10%. Eficiente pela isenção dos FIIs.\n\n**Frase-assinatura:** *A tributação ideal depende de onde você mora, onde investe, e como estrutura. Não existe resposta universal — existe resposta otimizada para cada perfil.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O custo escondido da otimização",
+          "conteudo": "A estrutura fiscal ótima tem custos de manutenção: advogado (R$ 5-15K/ano), contador em cada jurisdição (R$ 3-8K/ano por jurisdição), renovação de LLC/freezone (US$ 200-5.000/ano), e tempo (10-20 horas/ano em declarações e compliance).\n\nPara Thiago (3 jurisdições: BR+EAU+imóveis BR): custo anual de estrutura fiscal ~R$ 60.000. Economia fiscal: ~R$ 480.000/ano. ROI: 700%.\n\nPara Daniel (2 jurisdições: BR+EUA): custo ~R$ 15.000/ano. Economia (vs não ter LLC): ~R$ 40.000/ano. ROI: 167%.\n\nA otimização fiscal sempre se paga — para patrimônio acima de R$ 1M em investimento. Abaixo: o custo pode não justificar a complexidade."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Monte sua tabela de tributação pessoal",
+          "passos": [
+            "Liste todas as jurisdições onde tem ativos",
+            "Para cada: identifique alíquota sobre renda + ganho de capital + propriedade",
+            "Calcule carga fiscal total por jurisdição",
+            "Calcule carga consolidada (com compensações)",
+            "Compare com cenário otimizado (holding? mudança de residência?)",
+            "Se economia > R$ 20.000/ano: consulte tributarista internacional"
+          ]
+        },
+        "checklist": [
+          "Tributação de cada jurisdição mapeada",
+          "Carga fiscal total calculada",
+          "Cenário otimizado comparado",
+          "Decisão de otimizar tomada (ou não)"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Otimizar uma jurisdição e ignorar o impacto na outra",
+            "por_que": "Holding no Brasil reduz IR brasileiro mas pode não afetar tributação nos EUA. A otimização deve ser CONSOLIDADA",
+            "solucao": "Analise o impacto em TODAS as jurisdições simultaneamente. Tributarista com visão multi-jurisdicional é essencial."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 3,
+      "titulo": "Compensação e Tratados",
+      "objetivo": "Como evitar bitributação — mecanismos de compensação e tratados disponíveis.",
+      "palavras_estimadas": 4800,
+      "tempo_leitura_min": 19,
+      "frameworks_introduzidos": [
+        "Modelo IMI de Compensação Tributária"
+      ],
+      "conteudo": {
+        "abertura": "Bitributação — pagar imposto sobre a mesma renda em 2 países — é o medo #1 do investidor internacional. E é largamente evitável.\n\n**Frase-assinatura:** *Bitributação é problema de quem não planeja. Compensação é solução de quem planeja. A diferença é um tributarista.*",
+        "secoes": [
+          {
+            "titulo": "Modelo IMI de Compensação Tributária",
+            "conteudo": "A compensação funciona assim: o imposto pago no exterior é creditado contra o imposto devido no Brasil sobre a mesma renda.\n\nExemplo Daniel (EUA→Brasil): renda de aluguel nos EUA: US$ 18.000. IR pago nos EUA (federal): US$ 3.600 (20%). IR brasileiro sobre a mesma renda: R$ 27.000 × 27,5% = ~R$ 7.425 (a 27,5% da tabela). Crédito do imposto americano: R$ 3.600 × 6,00 (câmbio) = R$ 21.600 — EXCEDE o imposto brasileiro. Resultado: zero IR adicional no Brasil.\n\nExemplo Renata (Portugal→Brasil): renda em Portugal: €10.800. IRS pago: €3.024 (28%). IR brasileiro: R$ 64.800 × 27,5% = ~R$ 17.820. Crédito do IRS português: €3.024 × 6,00 = R$ 18.144 — excede. Zero adicional no Brasil.\n\nNos dois casos: o imposto estrangeiro é suficiente para cobrir o brasileiro. Bitributação: zero.\n\nQuando a compensação NÃO cobre: quando a alíquota estrangeira é menor que a brasileira. Exemplo hipotético: país X cobra 10% sobre renda. Brasil cobra 27,5%. Crédito: 10%. Paga 17,5% no Brasil. Total: 27,5% (=alíquota brasileira). Não há bitributação — paga o máximo das duas."
+          },
+          {
+            "titulo": "Tratados de dupla tributação (ADT)",
+            "conteudo": "Brasil tem ADT com Portugal (Decreto 4.012/2001): define qual país tributa o quê e garante compensação.\n\nBrasil NÃO tem ADT formal com EUA: mas existe reciprocidade de compensação (art. 26 da Lei 9.249/95). O imposto americano é compensável no Brasil — mas sem as garantias formais de um tratado.\n\nBrasil NÃO tem ADT com Emirados: mas os Emirados não cobram imposto — então não há o que compensar (nem bitributar).\n\nNa prática: a compensação funciona para EUA e Portugal. Para Emirados: não há imposto para compensar — a economia é direta (se residência fiscal nos Emirados)."
+          },
+          {
+            "titulo": "Declaração prática da compensação",
+            "conteudo": "No carnê-leão (mensal): declare a renda do exterior convertida em BRL pelo câmbio do dia do recebimento. Na coluna 'imposto pago no exterior': informe o valor pago na jurisdição estrangeira, convertido pelo mesmo câmbio.\n\nNa DIRPF (anual): consolide os valores mensais. O programa da RFB calcula automaticamente o crédito compensável.\n\nDocumentação necessária: comprovante de pagamento do imposto estrangeiro (tax return nos EUA, declaração de IRS em Portugal). Mantenha por 5 anos.\n\n**Frase-assinatura:** *A compensação é direito, não favor. Mas exige documentação e declaração correta. O imposto que você não declara como pago no exterior é imposto que paga de novo no Brasil.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O limite da compensação",
+          "conteudo": "A compensação no Brasil é limitada ao imposto brasileiro calculado sobre a mesma renda. Se pagou 30% nos EUA e o IR brasileiro seria 22%: credita apenas 22%. Os 8% excedentes são perdidos — não são devolvidos nem carregados.\n\nImplicação: para renda tributada a alíquota alta no exterior (>27,5%): a compensação cobre 100% do brasileiro, mas o excesso é custo irrecuperável. Planeje para minimizar o imposto na jurisdição de alíquota mais alta."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Calcule sua compensação",
+          "passos": [
+            "Para cada renda do exterior: calcule IR pago no exterior (em moeda local)",
+            "Converta para BRL pelo câmbio do dia",
+            "Calcule IR brasileiro sobre a mesma renda",
+            "Compare: exterior ≥ brasileiro? Se sim: zero adicional no Brasil",
+            "Se exterior < brasileiro: pague a diferença no Brasil via DARF",
+            "Documente tudo. Mantenha por 5 anos"
+          ]
+        },
+        "checklist": [
+          "Compensação entendida",
+          "IR estrangeiro documentado",
+          "Carnê-leão mensal declarado com renda exterior",
+          "DIRPF com consolidação anual",
+          "Documentação arquivada (5 anos)"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Não declarar renda do exterior achando que o imposto pago lá 'já resolve'",
+            "por_que": "O Brasil tributa renda mundial de residentes. O imposto pago fora é CRÉDITO — não isenção. Se não declarar: está omitindo renda = evasão fiscal",
+            "solucao": "Declare SEMPRE. Compense SEMPRE. A compensação reduz a zero na maioria dos casos — mas a declaração é obrigatória."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 4,
+      "titulo": "Estruturas Otimizadas",
+      "objetivo": "Holdings, LLCs e combinações que otimizam a tributação multi-jurisdicional.",
+      "palavras_estimadas": 5200,
+      "tempo_leitura_min": 21,
+      "frameworks_introduzidos": [
+        "Estrutura IMI Multi-Jurisdicional"
+      ],
+      "conteudo": {
+        "abertura": "A estrutura correta economiza 20-40% em impostos. A errada custa o mesmo — a mais.\n\n**Frase-assinatura:** *A estrutura fiscal não é luxo de bilionário. É ferramenta de investidor com R$ 1M+ em patrimônio. O custo de estruturar é R$ 10-30K. O custo de não estruturar é R$ 50-200K ao longo de 10 anos.*",
+        "secoes": [
+          {
+            "titulo": "A Estrutura IMI Multi-Jurisdicional",
+            "conteudo": "Para investidor com ativos em Brasil + 1 destino internacional:\n\nBrasil: holding patrimonial (LTDA, Lucro Presumido). Imóveis brasileiros dentro da holding. IR sobre renda: ~11,33%. Sucessão: via doação de cotas.\n\nEUA: LLC (Wyoming, single-member, disregarded entity). Imóveis americanos dentro da LLC. IR: federal progressivo + estadual. FIRPTA na venda.\n\nPortugal: pessoa física (NIF como não-residente). Imóveis portugueses no CPF/NIF. IRS: 28% tributação autónoma.\n\nEmirados: freezone company (se visa) ou pessoa física. Imóveis em Dubai no nome da empresa ou PF. IR: 0%.\n\nA integração: cada jurisdição com sua estrutura ótima. No Brasil: holding para eficiência fiscal + sucessória. No exterior: estrutura mais simples da jurisdição (LLC nos EUA, PF em Portugal, PF ou empresa nos Emirados).\n\nNÃO recomendo estrutura complexa (holding offshore → LLC → imóvel) para patrimônio < US$ 2M. A complexidade e o custo de manutenção não compensam."
+          },
+          {
+            "titulo": "Holding patrimonial brasileira: o pilar",
+            "conteudo": "Para 80% dos investidores desta série: a holding brasileira é a estrutura mais impactante.\n\nEconomia: 16pp de IR sobre renda de aluguel (27,5% → 11,33%). Em R$ 100.000/ano de renda: R$ 16.000/ano economizados. Em 10 anos: R$ 160.000+.\n\nProteção: imóveis no CNPJ da holding, não no CPF. Litígio pessoal não atinge patrimônio da empresa (salvo desconsideração).\n\nSucessão: doação de cotas (não de imóveis). Sem inventário judicial. ITCMD sobre valor contábil (não de mercado). Economia de 30-50% vs inventário.\n\nLivro 16 detalha a implementação completa. Aqui o ponto é: para patrimônio > R$ 1M em imóveis de renda no Brasil, a holding é pré-requisito de eficiência."
+          },
+          {
+            "titulo": "LLC americana: quando e como",
+            "conteudo": "Para brasileiro com imóvel nos EUA: LLC é padrão. Proteção + operacionalidade + planejamento fiscal.\n\nEstrutura recomendada: LLC em Wyoming (single-member) com registro como foreign LLC no estado do imóvel. Tributação: disregarded entity (renda tributada como PF estrangeira via 1040-NR).\n\nCusto anual: US$ 200-500 (registered agent + annual report). CPA: US$ 300-800/ano.\n\nQuando NÃO usar LLC: para 1 único imóvel de valor < US$ 200.000 onde a simplificidade de compra PF supera o benefício. Mas mesmo nesse caso: a LLC protege contra probate e litígio."
+          },
+          {
+            "titulo": "Combinações avançadas",
+            "conteudo": "Para patrimônio > US$ 2M em 3+ jurisdições:\n\n1. Holding BR (imóveis BR) + LLC (imóveis EUA) + PF (imóvel PT) + Freezone (Dubai). Cada ativo na estrutura ótima da jurisdição. Integração: declaração consolidada no Brasil (se residente fiscal BR) ou nos Emirados (se residente fiscal EAU).\n\n2. Para quem tem residência fiscal nos Emirados + ativos em BR + EUA + PT: a integração é simples — zero IR sobre renda dos Emirados, compensação nas outras jurisdições (ou retenção na fonte).\n\n3. Trust para planejamento sucessório internacional: para patrimônio > US$ 5M com herdeiros em múltiplos países. Exige assessoria jurídica especializada em trust law. Não é DIY.\n\n**Frase-assinatura:** *A melhor estrutura é a mais simples que atende todos os objetivos. Cada camada adicional de complexidade precisa justificar seu custo. Se não justifica: simplifique.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O custo de manutenção como critério de decisão",
+          "conteudo": "Estrutura fiscal ideal: holding BR + LLC EUA + PF Portugal = custo anual ~R$ 35.000-50.000 (contabilidade + advogados + taxas). Para patrimônio de R$ 5M com renda de R$ 300.000/ano: a economia fiscal é R$ 60.000-120.000/ano. ROI: 120-340%.\n\nPara patrimônio de R$ 1M com renda de R$ 60.000/ano: economia ~R$ 12.000/ano. Custo de estrutura: R$ 35.000/ano. ROI: NEGATIVO. Não compensa.\n\nA regra: estrutura multi-jurisdicional se paga a partir de R$ 200.000/ano de renda combinada (ou R$ 3M+ em patrimônio). Abaixo: holding brasileira + PF no exterior é suficiente."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Desenhe sua estrutura",
+          "passos": [
+            "Liste todos os ativos por jurisdição",
+            "Para cada jurisdição: identifique estrutura ótima (holding? LLC? PF?)",
+            "Calcule custo anual de manutenção de cada estrutura",
+            "Calcule economia fiscal de cada estrutura vs PF puro",
+            "Se economia > custo + 30% de margem: implemente",
+            "Se não: simplifique (PF no exterior, holding no Brasil)"
+          ]
+        },
+        "checklist": [
+          "Estrutura por jurisdição definida",
+          "Custo de manutenção calculado",
+          "Economia fiscal estimada",
+          "ROI da estrutura > 100%",
+          "Profissionais identificados (por jurisdição)"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Criar estrutura complexa porque 'parece profissional'",
+            "por_que": "Complexidade sem benefício é custo puro. Holding offshore → LLC → trust para R$ 500K em patrimônio é overkill que custa R$ 40K/ano para economizar R$ 10K",
+            "solucao": "Simplifique. A estrutura mais simples que atende é a melhor."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 5,
+      "titulo": "Declarações Obrigatórias",
+      "objetivo": "Tudo que precisa declarar — DIRPF, CBE, DARF, 1040-NR, IRS Portugal.",
+      "palavras_estimadas": 4800,
+      "tempo_leitura_min": 19,
+      "frameworks_introduzidos": [
+        "Checklist IMI de Compliance Internacional"
+      ],
+      "conteudo": {
+        "abertura": "O compliance internacional não é opcional. É obrigação legal com consequências severas por descumprimento.\n\n**Frase-assinatura:** *Declarar corretamente custa R$ 5.000/ano. Não declarar custa R$ 500.000+ quando a Receita descobre.*",
+        "secoes": [
+          {
+            "titulo": "Checklist IMI de Compliance Internacional",
+            "conteudo": "BRASIL (se residente fiscal):\n— DIRPF anual: declarar todos os bens no exterior + rendas exteriores + imposto pago fora. Prazo: abril.\n— Carnê-leão mensal: recolher DARF sobre renda exterior no mês do recebimento. Prazo: último dia útil do mês seguinte.\n— CBE (Capitais Brasileiros no Exterior): se patrimônio exterior > US$ 1M em 31/dez. Prazo: 5 abril (anual). Se > US$ 100M: trimestral.\n— DCBE (declaração): via sistema do BACEN.\n\nEUA (se tem LLC/imóvel):\n— 1040-NR: declaração anual de nonresident alien. Prazo: 15 abril (ou extensão até 15 outubro).\n— Form 8833: se invocar tratado fiscal.\n— State return: se o estado cobra income tax.\n— W-8BEN: formulário de isenção de withholding para não-residentes (apresentado ao banco/broker).\n\nPORTUGAL (se tem imóvel):\n— Modelo 3 IRS: declaração anual de rendimentos. Prazo: abril-junho.\n— IMI: pago em maio (1 prestação) ou maio/novembro (2).\n— IUC: se tem veículo.\n\nEMIRADOS:\n— Zero obrigação fiscal pessoal (sem declaração de IR).\n— Corporate tax return: se tem freezone company com receita > AED 375.000.\n— VAT return: se registrado para VAT."
+          },
+          {
+            "titulo": "Prazos consolidados: calendário fiscal",
+            "conteudo": "Janeiro: preparar documentação do ano anterior para todas as jurisdições.\nFevereiro: carnê-leão de dezembro (BR). Comunicação de saída (se aplicável).\nMarço: preparar DIRPF + CBE. Solicitar 1040-NR ao CPA americano.\nAbril: entregar DIRPF + CBE (BR). Entregar 1040-NR (EUA). Iniciar Modelo 3 IRS (PT).\nMaio: pagar IMI 1ª prestação (PT).\nJunho: finalizar Modelo 3 IRS (PT).\nJulho-setembro: monitoramento.\nOutubro: extensão 1040-NR se solicitada.\nNovembro: pagar IMI 2ª prestação (PT).\nDezembro: planejamento fiscal do ano seguinte.\n\nO investidor com 3 jurisdições tem ~8-10 obrigações fiscais/ano. Gerenciável com calendário + profissionais."
+          },
+          {
+            "titulo": "O custo de NÃO declarar",
+            "conteudo": "Multas por omissão no Brasil: 75% do imposto não pago (multa de ofício) + 150% se comprovada fraude + juros Selic desde o vencimento + potencial processo criminal por evasão fiscal.\n\nMultas por omissão do CBE: 1-5% do valor não declarado. Para patrimônio de US$ 1M: R$ 60.000-300.000 de multa.\n\nMultas nos EUA por não entregar 1040-NR: 5% do imposto devido por mês de atraso (até 25%). + penalidade por failure to file.\n\nMultas em Portugal por não pagar IMI: coima de €30-3.750 + juros.\n\nO custo consolidado de omitir em 3 jurisdições por 3 anos: potencialmente R$ 500.000-1.500.000. Vs custo de declarar corretamente: R$ 15.000-30.000/ano.\n\n**Frase-assinatura:** *O compliance é chato. A multa é pior. E o processo criminal é catastrófico. Declare. Pague. Durma.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "A estratégia de compliance zero-surpresa",
+          "conteudo": "O investidor que quer zero surpresa fiscal implementa: tributarista no Brasil (que conhece as obrigações de residente com ativos no exterior), CPA nos EUA (que conhece nonresident alien), advogado/contabilista em Portugal (se imóvel lá), e calendário fiscal integrado (todas as datas em 1 lugar).\n\nCusto: R$ 15.000-30.000/ano. Resultado: zero multa, zero surpresa, zero stress."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Monte seu calendário fiscal",
+          "passos": [
+            "Liste todas as obrigações por jurisdição (use o checklist acima)",
+            "Insira no Google Calendar com alertas 30 dias antes",
+            "Identifique profissional responsável por cada obrigação",
+            "Cada janeiro: reunião com tributarista para planejar o ano fiscal",
+            "Cada abril: consolidar declarações de todas as jurisdições"
+          ]
+        },
+        "checklist": [
+          "Todas as obrigações listadas por jurisdição",
+          "Calendário fiscal montado com alertas",
+          "Profissional por jurisdição identificado",
+          "Documentação do ano anterior organizada",
+          "Reunião de planejamento fiscal anual agendada"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Deixar as declarações para o último dia do prazo",
+            "por_que": "Erro de última hora = multa por atraso + stress + documentação faltante que só percebe quando é tarde",
+            "solucao": "Comece em janeiro. Entregue em março. Prazo real é de conforto — não de emergência."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 6,
+      "titulo": "Ganho de Capital Internacional",
+      "objetivo": "Tributação na venda de imóvel no exterior — FIRPTA, mais-valias, reduções.",
+      "palavras_estimadas": 4500,
+      "tempo_leitura_min": 18,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "A compra é planejada. A venda frequentemente não é. E é na venda que a tributação surpreende.\n\n**Frase-assinatura:** *O imposto na compra você pesquisa. O imposto na venda, muitos descobrem no dia do closing. Este capítulo elimina a surpresa.*",
+        "secoes": [
+          {
+            "titulo": "EUA: FIRPTA e capital gains",
+            "conteudo": "Na venda por nonresident alien: FIRPTA retém 15% do preço BRUTO (não do lucro). Se vendeu por US$ 350.000: US$ 52.500 retidos. Mesmo que o lucro seja US$ 20.000.\n\nRecuperação do excesso: via 1040-NR mostrando ganho real e imposto devido. Prazo de devolução: 3-12 meses. O capital fica preso.\n\nCapital gains tax: 15% (long-term, >1 ano de posse) ou taxa ordinária (short-term). + estadual (0% em FL/TX).\n\nNo Brasil: declarar o ganho na DIRPF. Compensar o imposto americano. Se a alíquota americana ≥ brasileira (15% ambos): zero adicional.\n\nEstratégia: planeje a venda com CPA antecipadamente. Mantenha capital de reserva para absorver a retenção FIRPTA por 3-12 meses."
+          },
+          {
+            "titulo": "Portugal: mais-valias para não-residente",
+            "conteudo": "28% sobre 100% da mais-valia para não-residente. Sem englobamento de 50%. Sem deduções significativas.\n\nExemplo: comprou €180.000, vendeu €230.000 após 5 anos. Mais-valia: €50.000 - custos documentados (IMT, notário, obras: ~€10.000) = €40.000. IRS: €40.000 × 28% = €11.200.\n\nNo Brasil: declarar ganho e compensar IRS português. Se alíquota BR sobre ganho de capital (15%) < 28%: zero adicional no Brasil.\n\nEstratégia: se planeja vender, considere transferir residência fiscal para Portugal antes (183+ dias/ano). Como residente: apenas 50% da mais-valia é englobada → tributação potencialmente menor."
+          },
+          {
+            "titulo": "Emirados: a liberdade total",
+            "conteudo": "Zero imposto sobre ganho de capital. Ponto.\n\nNa venda: DLD transfer fee de 4% + agent 2% = ~6% de custos de transação. Mas zero imposto sobre o lucro.\n\nSe residente fiscal nos Emirados: zero no Brasil também (desde que saída definitiva formalizada).\n\nSe residente fiscal no Brasil: declara ganho na DIRPF e paga 15% sobre ganho de capital. Sem crédito de imposto emiradense (porque não pagou nada lá).\n\n**Frase-assinatura:** *A venda nos Emirados é a mais limpa fiscalmente. A venda em Portugal é a mais cara. A venda nos EUA é a mais burocrática. Planeje cada uma como planejearia a compra.*"
+          },
+          {
+            "titulo": "A variação cambial como ganho de capital",
+            "conteudo": "Atenção: para o brasileiro residente fiscal, a variação cambial na venda de ativo no exterior é ganho de capital TRIBUTÁVEL.\n\nExemplo: Daniel comprou imóvel nos EUA por US$ 285.000 quando USD/BRL = 5,50 (custo em BRL: R$ 1.567.500). Vendeu por US$ 285.000 (zero ganho em USD) quando USD/BRL = 6,50 (receita em BRL: R$ 1.852.500). Ganho em BRL: R$ 285.000. IR de 15%: R$ 42.750.\n\nDaniel pagou R$ 42.750 de IR sobre um ganho ZERO em dólares. Apenas pela variação cambial.\n\nIsso é legal? Sim. É justo? Debate. É real? Absolutamente. E é a surpresa mais dolorosa da tributação internacional para brasileiros.\n\nEstratégia: se planeja vender ativo no exterior, calcule o ganho cambial ANTES. Se o real desvalorizou muito desde a compra: o imposto sobre câmbio pode ser significativo."
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "A redução por prazo de posse no Brasil",
+          "conteudo": "Para imóveis adquiridos no Brasil: existe redução progressiva do ganho de capital por prazo de posse (5-100% dependendo do ano de aquisição).\n\nPara imóveis NO EXTERIOR: a redução NÃO se aplica. O ganho é tributado integralmente a 15% (ou taxas progressivas de 15-22,5% conforme faixa).\n\nIsso torna a venda de imóvel no exterior fiscalmente mais cara que no Brasil para o investidor residente brasileiro. Mais um argumento para: horizonte de longo prazo (minimiza frequência de vendas) e planejamento antecipado de cada saída."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Planeje a venda antes de vender",
+          "passos": [
+            "Calcule ganho de capital em moeda local",
+            "Calcule ganho cambial em BRL",
+            "Calcule imposto na jurisdição estrangeira (FIRPTA? Mais-valias? Zero?)",
+            "Calcule imposto no Brasil (15% sobre ganho total em BRL)",
+            "Calcule compensação (crédito do imposto estrangeiro)",
+            "Resultado: quanto paga no total? Em quanto tempo recupera FIRPTA?",
+            "Tome decisão de vender com base no NET após todos os impostos"
+          ]
+        },
+        "checklist": [
+          "Ganho de capital em moeda local calculado",
+          "Ganho cambial em BRL calculado",
+          "Imposto estrangeiro + brasileiro estimados",
+          "Compensação calculada",
+          "Net pós-impostos definido",
+          "FIRPTA (se EUA): reserva de capital planejada"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Não considerar a variação cambial como ganho tributável",
+            "por_que": "O brasileiro paga IR sobre ganho cambial mesmo com zero ganho em moeda estrangeira. É a surpresa mais dolorosa da tributação internacional",
+            "solucao": "Calcule SEMPRE o ganho em BRL — não apenas em USD/EUR. O fisco brasileiro tributa em reais."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 7,
+      "titulo": "Planejamento Sucessório Internacional",
+      "objetivo": "Como transferir patrimônio internacional para a próxima geração sem destruição fiscal.",
+      "palavras_estimadas": 4800,
+      "tempo_leitura_min": 19,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "O patrimônio que atravessa fronteiras precisa de planejamento sucessório que também atravesse.\n\n**Frase-assinatura:** *Patrimônio sem planejamento sucessório é patrimônio que a burocracia destrói na transferência. E burocracia internacional destrói mais rápido.*",
+        "secoes": [
+          {
+            "titulo": "O problema do probate internacional",
+            "conteudo": "Se o investidor morre com imóvel nos EUA em nome pessoal (sem LLC): o imóvel entra em probate americano. Custo: 3-8% do valor + 6-18 meses + advogado americano. Para imóvel de US$ 300.000: US$ 9.000-24.000 + tempo.\n\nCom LLC: as cotas da LLC são transferidas no Brasil (inventário brasileiro, não americano). Zero probate americano. Economia: US$ 9.000-24.000 + meses de burocracia.\n\nEm Portugal: o probate é menos custoso (processo de habilitação de herdeiros) mas ainda exige advogado português e pode levar 3-12 meses.\n\nNos Emirados: o probate pode ser complexo para estrangeiros (a sharia law pode se aplicar em alguns aspectos se não houver testamento registrado no DIFC). Solução: registrar testamento no DIFC Wills Service Centre."
+          },
+          {
+            "titulo": "A doação de cotas como estratégia universal",
+            "conteudo": "A estratégia que funciona em TODAS as jurisdições: holding patrimonial com doação progressiva de cotas em vida.\n\nBrasil: holding brasileira + doação de cotas com reserva de usufruto. ITCMD sobre valor contábil (não de mercado). Economia: 30-60% vs inventário.\n\nEUA: LLC + doação de membership interest (cotas) da LLC a trust ou diretamente a herdeiros. Evita probate. Mas: estate tax americano pode incidir sobre ativos > US$ 60.000 para nonresident aliens (vs US$ 12,92M para cidadãos americanos). A LLC mitiga parcialmente.\n\nPortugal: doação de imóvel em vida (isenção de IMT para cônjuge e descendentes). IRS sobre mais-valias pode incidir.\n\nEmirados: testamento registrado no DIFC + doação em vida quando possível.\n\nA integração: cada jurisdição tem mecanismo. O planejador sucessório precisa mapear todos e criar estratégia consolidada.\n\n**Frase-assinatura:** *O planejamento sucessório internacional é o capítulo mais técnico e mais importante deste livro. Porque tudo que você construiu — em todas as jurisdições — pode ser destruído em 1 inventário mal planejado.*"
+          },
+          {
+            "titulo": "Estate tax americano: a armadilha dos US$ 60.000",
+            "conteudo": "Cidadãos americanos: isenção de estate tax até US$ 12,92 milhões (2023). Nonresident aliens (brasileiros): isenção de apenas US$ 60.000.\n\nIsso significa: se um brasileiro morre com imóvel de US$ 300.000 nos EUA: estate tax de 18-40% sobre US$ 240.000 (acima da isenção de US$ 60.000). Potencialmente US$ 70.000+ de imposto.\n\nA LLC NÃO elimina completamente o estate tax (o IRS pode look through a LLC). Mas dificulta a aplicação e cria argumentos de defesa.\n\nSoluções mais robustas: irrevocable trust (para patrimônio > US$ 1M nos EUA). Ou: manter o investimento via REITs em vez de imóvel direto (REITs não estão sujeitos a estate tax da mesma forma).\n\nPara patrimônio < US$ 1M nos EUA: LLC é proteção suficiente na maioria dos casos práticos. Para > US$ 1M: consulte estate planning attorney americano."
+          },
+          {
+            "titulo": "O testamento que funciona em 4 jurisdições",
+            "conteudo": "O brasileiro com ativos em BR + EUA + PT + EAU precisa de:\n\n1. Testamento brasileiro: válido para ativos no Brasil.\n2. LLC no EUA: transferência via operating agreement (sem probate americano se bem estruturada).\n3. Em Portugal: doação em vida ou testamento registrado em Portugal (obrigatório para imóvel português).\n4. Em Dubai: testamento registrado no DIFC Wills Service Centre (essencial — sem ele, a sharia law pode ser aplicada).\n\nO planejamento sucessório completo é projeto de R$ 20.000-50.000 em honorários — mas protege R$ 5-20M em patrimônio. ROI: 100-1000%."
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O cost of dying com patrimônio internacional",
+          "conteudo": "Sem planejamento: probate US (3-8% + 6-18m) + inventário BR (4-8% ITCMD + 12-36m) + habilitação PT (2-5% + 3-12m) + Dubai sem testamento (risco de sharia). Custo total: 10-20% do patrimônio + 2-3 anos.\n\nCom planejamento: LLC (evita probate US) + holding BR com doação (evita inventário) + doação PT + testamento DIFC. Custo: 3-5% do patrimônio + 3-6 meses de processo administrativo.\n\nEconomia do planejamento: 7-15% do patrimônio. Para R$ 10M: R$ 700.000-1.500.000 economizados."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Planeje sua sucessão internacional",
+          "passos": [
+            "Liste todos os ativos por jurisdição",
+            "Para cada: identifique o mecanismo de transferência mais eficiente",
+            "Brasil: holding + doação de cotas em vida",
+            "EUA: LLC + operating agreement que prevê transferência",
+            "Portugal: doação em vida ou testamento PT",
+            "Dubai: testamento DIFC",
+            "Contrate advogado de sucessões com experiência internacional",
+            "Prazo: implementar nos próximos 12 meses"
+          ]
+        },
+        "checklist": [
+          "Ativos por jurisdição mapeados",
+          "Mecanismo de transferência definido por jurisdição",
+          "LLC com operating agreement adequado",
+          "Holding BR com cláusula de doação/usufruto",
+          "Testamento DIFC (se ativos em Dubai)",
+          "Advogado sucessório contratado"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Ignorar estate tax americano para nonresident aliens",
+            "por_que": "Isenção de US$ 60.000 é absurdamente baixa. Imóvel de US$ 300K gera potencialmente US$ 70K+ de estate tax",
+            "solucao": "LLC mitiga parcialmente. Para patrimônio > US$ 1M nos EUA: irrevocable trust ou estrutura mais robusta."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 8,
+      "titulo": "Casos Práticos Integrados",
+      "objetivo": "4 cenários completos usando os personagens da série.",
+      "palavras_estimadas": 5000,
+      "tempo_leitura_min": 20,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "Teoria deu. Agora: os 4 cenários reais dos personagens da Biblioteca IMI — com números, estruturas e declarações.\n\n**Frase-assinatura:** *4 investidores. 4 perfis. 4 estruturas. 1 sistema. Os números que cada um paga — e economiza.*",
+        "secoes": [
+          {
+            "titulo": "Caso Daniel: Brasil + EUA",
+            "conteudo": "Perfil: residente fiscal BR. 2 casas em Orlando (LLC Wyoming). Renda: US$ 48.600/ano.\n\nEstrutura: LLC single-member → 1040-NR nos EUA (federal ~18% = US$ 8.748) + carnê-leão BR com compensação (27,5% BR - 18% EUA compensado = ~9,5% adicional = ~R$ 27.700). Holding BR para imóveis em Recife.\n\nCarga total sobre renda EUA: ~27,5% (= alíquota brasileira, após compensação). Sobre renda BR via holding: ~11,3%.\n\nObrigações anuais: DIRPF + CBE (patrimônio > US$ 1M) + 1040-NR + carnê-leão mensal.\nCusto de compliance: ~R$ 18.000/ano (tributarista BR + CPA EUA).\nEconomia vs sem holding BR: ~R$ 40.000/ano."
+          },
+          {
+            "titulo": "Caso Renata: Brasil + Portugal",
+            "conteudo": "Perfil: residente fiscal BR. 1 T2 no Porto (PF/NIF). Renda: €10.800/ano.\n\nEstrutura: PF em Portugal → IRS 28% (€3.024) + DIRPF BR com compensação (27,5% - 28% compensado = zero adicional no BR). Holding BR para imóveis em Recife.\n\nCarga total sobre renda PT: 28% (IRS português). Sobre renda BR: ~11,3% (holding).\n\nObrigações: DIRPF + Modelo 3 IRS Portugal + IMI + carnê-leão mensal.\nCusto: ~R$ 12.000/ano (tributarista BR + contabilista PT).\nEconomia vs PF pura no BR: ~R$ 25.000/ano (holding)."
+          },
+          {
+            "titulo": "Caso Thiago: Emirados + Brasil",
+            "conteudo": "Perfil: residente fiscal EAU (saída definitiva BR). 1 apto Dubai + 2 aptos BR.\n\nEstrutura: freezone company (visa) + PF nos Emirados. Imóveis BR via holding. Renda Dubai: US$ 23.140/ano (zero IR). Renda BR: R$ 86.400/ano (15% na fonte como não-residente = R$ 12.960).\n\nCarga total: zero sobre Dubai + 15% sobre BR = ~R$ 12.960/ano total.\nSe fosse residente fiscal BR: pagaria ~R$ 480.000/ano sobre renda de trabalho. Economia: ~R$ 467.000/ano.\n\nObrigações: zero declaração pessoal nos Emirados. No BR: procurador fiscal declara rendimentos de fonte brasileira.\nCusto: ~R$ 60.000/ano (freezone + procurador BR + contabilidade).\nEconomia líquida: ~R$ 407.000/ano."
+          },
+          {
+            "titulo": "Caso Camila: Brasil (FIIs + REITs + imóvel)",
+            "conteudo": "Perfil: residente fiscal BR. FIIs + BDRs REITs + 1 estúdio SP.\n\nEstrutura: PF para FIIs (isenção) + PF para BDRs (tributação na fonte + carnê-leão) + holding para estúdio.\n\nFIIs: R$ 53.700/ano → IR: R$ 0 (isento).\nBDRs REITs: R$ 14.400/ano → IR: ~R$ 3.600 (25% efetivo após compensação).\nEstúdio via holding: R$ 45.600/ano → IR: ~R$ 5.160 (11,3%).\n\nCarga total: R$ 8.760/ano sobre R$ 113.700 de renda = 7,7% efetivo.\n\nSe tudo em PF sem holding: R$ 113.700 × 27,5% = R$ 31.268. Economia da estrutura: R$ 22.508/ano.\n\nObrigações: DIRPF (com FIIs + BDRs + holding).\nCusto: ~R$ 5.000/ano (contador para holding).\nEconomia líquida: ~R$ 17.500/ano.\n\n**Frase-assinatura:** *4 cenários. Economia combinada dos 4 investidores: ~R$ 532.000/ano. A tributação internacional não é obstáculo — é a maior alavanca de patrimônio que ninguém usa.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O efeito composto da economia fiscal",
+          "conteudo": "Daniel economiza R$ 40.000/ano com holding BR. Reinvestidos a 8% real por 15 anos: R$ 1.090.000 de patrimônio adicional.\n\nThiago economiza R$ 407.000/ano. Reinvestidos: R$ 11.100.000 em 15 anos.\n\nA economia fiscal reinvestida é a alavanca mais poderosa de patrimônio. Não é ganha — é preservada e multiplicada."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Calcule sua economia potencial",
+          "passos": [
+            "Calcule carga fiscal atual (sem estrutura)",
+            "Calcule carga fiscal com estrutura ótima (holding + LLC + residência)",
+            "Diferença = economia anual",
+            "Economia × 15 anos a 8% = patrimônio adicional",
+            "Se patrimônio adicional > R$ 200.000: a estrutura se paga muitas vezes"
+          ]
+        },
+        "checklist": [
+          "Cenário pessoal mapeado",
+          "Carga atual vs otimizada calculada",
+          "Economia anual estimada",
+          "Efeito composto projetado em 15 anos",
+          "Decisão de estruturar tomada"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Copiar a estrutura de outro investidor sem adaptar",
+            "por_que": "Cada perfil tem estrutura ótima diferente. Thiago precisa de saída fiscal. Daniel não. Camila precisa de FIIs. Renata precisa de Portugal. Copiar é sub-otimizar",
+            "solucao": "Análise individual com tributarista. O que funciona para Thiago pode ser desastroso para Daniel."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 9,
+      "titulo": "Erros Fiscais que Custam Fortunas",
+      "objetivo": "Os 8 erros de tributação internacional mais caros — e como evitar cada um.",
+      "palavras_estimadas": 4500,
+      "tempo_leitura_min": 18,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "Cada erro neste capítulo já custou R$ 50.000+ a algum investidor brasileiro real. Alguns custaram R$ 500.000+.\n\n**Frase-assinatura:** *Erros fiscais não são como erros de mercado — não se recuperam com tempo. São permanentes. E a Receita não esquece.*",
+        "secoes": [
+          {
+            "titulo": "Os 8 erros fatais",
+            "conteudo": "1. Não formalizar saída fiscal ao mudar de país. Custo: IR brasileiro sobre renda mundial que não deveria. R$ 100K-500K+/ano.\n\n2. Não declarar CBE. Custo: multa de 1-5% do valor. Para US$ 1M: R$ 60K-300K.\n\n3. Ignorar FIRPTA na venda nos EUA. Custo: US$ 30K-100K presos por 3-12 meses sem planejamento.\n\n4. Não compensar imposto estrangeiro no Brasil. Custo: pagar imposto 2x sobre a mesma renda. R$ 10K-50K/ano.\n\n5. Manter imóveis de renda no CPF quando holding é viável. Custo: 16pp de IR a mais. R$ 16K-80K/ano.\n\n6. Não considerar ganho cambial na venda de ativo exterior. Custo: R$ 30K-200K de IR surpresa.\n\n7. Não registrar testamento no DIFC (Dubai). Custo: risco de sharia na sucessão + R$ 100K-500K em processo.\n\n8. Comprar imóvel nos EUA como PF sem LLC. Custo: probate de US$ 10K-40K + estate tax de US$ 70K+ se falecer.\n\nCada erro tem antídoto nos capítulos anteriores. O investidor que segue o Checklist IMI de Compliance Internacional (Cap 5) é imune aos 8."
+          },
+          {
+            "titulo": "O erro mais caro de todos: inércia",
+            "conteudo": "O erro que não está na lista — porque não é ação, é omissão.\n\nO investidor que sabe que deveria ter holding, que deveria ter LLC, que deveria ter planejamento sucessório — e não faz. Por preguiça. Por medo de complexidade. Por achar que 'vai resolver depois'.\n\n'Depois' custa. Todo ano de inércia é R$ 16.000-480.000 em impostos pagos a mais (dependendo do perfil). Em 5 anos: R$ 80.000-2.400.000.\n\nA inércia é o imposto mais caro que existe. Porque é voluntário.\n\n**Frase-assinatura:** *Os 8 erros custam dinheiro. A inércia custa mais. Porque acontece todo dia, em silêncio, sem multa — mas com o mesmo resultado: patrimônio que poderia existir e não existe.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "O perfil de risco fiscal do investidor brasileiro no exterior",
+          "conteudo": "A RFB classifica contribuintes com ativos no exterior como 'alto risco' para fiscalização. A probabilidade de malha fina para quem tem CBE é significativamente maior que para contribuinte sem ativos internacionais.\n\nIsso não é motivo para não investir fora. É motivo para investir fora COM COMPLIANCE PERFEITO. O investidor internacional que declara tudo corretamente não tem o que temer na malha fina — apenas inconveniência de documentação."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Audite-se contra os 8 erros",
+          "passos": [
+            "Para cada erro: estou exposto? Sim/não",
+            "Se sim: qual o custo potencial?",
+            "Qual o antídoto (capítulo correspondente)?",
+            "Prazo para resolver: ___ dias",
+            "Priorize pelo custo: resolva o mais caro primeiro"
+          ]
+        },
+        "checklist": [
+          "8 erros avaliados contra minha situação",
+          "Exposições identificadas",
+          "Antídotos definidos",
+          "Prazo de resolução estabelecido"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Achar que 'é pouco para a Receita se importar'",
+            "por_que": "A RFB cruza dados automaticamente (CRS, FATCA). Não há valor mínimo. US$ 10.000 na conta nos EUA é reportado",
+            "solucao": "Declare TUDO. Independente do valor. O custo de declarar R$ 100 é zero. O custo de omitir R$ 100.000 é catastrófico."
+          }
+        ]
+      }
+    },
+    {
+      "numero": 10,
+      "titulo": "Plano de Ação Tributário",
+      "objetivo": "Plano de implementação de compliance e otimização fiscal.",
+      "palavras_estimadas": 4000,
+      "tempo_leitura_min": 16,
+      "frameworks_introduzidos": [],
+      "conteudo": {
+        "abertura": "Este livro é denso. Técnico. Consultável. Não é para ler de capa a capa — é para ter na estante e consultar a cada decisão fiscal.\n\nMas a primeira ação é agora.\n\n**Frase-assinatura:** *O plano tributário não é projeto de 1 ano. É sistema permanente. Uma vez configurado: opera com 10-15 horas/ano de manutenção. E economiza R$ 20.000-500.000/ano.*",
+        "secoes": [
+          {
+            "titulo": "Os 5 passos de implementação",
+            "conteudo": "Passo 1 (Semana 1-2): Diagnóstico. Mapeie todos os ativos por jurisdição. Identifique residência fiscal. Liste obrigações atuais. Calcule carga fiscal atual.\n\nPasso 2 (Semana 3-4): Otimização. Identifique estrutura ótima (holding BR? LLC? Mudança de residência?). Calcule economia potencial. Se economia > custo + 30%: implementar.\n\nPasso 3 (Mês 2-3): Implementação. Constituir holding. Abrir LLC. Formalizar saída (se aplicável). Contratar profissionais por jurisdição.\n\nPasso 4 (Mês 3-4): Compliance. Montar calendário fiscal. Configurar alertas. Organizar documentação. Primeira rodada de declarações.\n\nPasso 5 (Permanente): Manutenção. Reunião anual com tributarista. Revisão de estrutura a cada 3 anos. Acompanhar mudanças legislativas.\n\nTempo de implementação: 2-4 meses. Tempo de manutenção: 10-15 horas/ano. Economia: R$ 20.000-500.000/ano dependendo do perfil."
+          },
+          {
+            "titulo": "O encerramento do Bloco 3",
+            "conteudo": "Este livro — Livro 15 — fecha o Bloco 3 (Internacional). 5 livros. 50 capítulos. De EUA a Portugal, de Dubai a FIIs/REITs, de estrutura a tributação.\n\nO investidor que domina o Bloco 3 tem: exposição em 3+ moedas, ativos em 3+ jurisdições, estrutura fiscal otimizada, compliance perfeito, e planejamento sucessório que atravessa fronteiras.\n\nOs Blocos 4-6 expandem: patrimônio (holding, sucessório), operação profissional (BPO, gestão), e tecnologia (IA no imobiliário).\n\nMas a internacionalização está completa. Com método.\n\n**Frase-assinatura final:** *A tributação internacional parece labirinto. Com este livro, é corredor com 7 portas. Cada porta tem chave. As chaves estão nos 10 capítulos. Abra cada uma. E do outro lado: patrimônio protegido, otimizado, e pronto para atravessar gerações.*"
+          }
+        ],
+        "insight_tecnico": {
+          "titulo": "A Biblioteca IMI em perspectiva",
+          "conteudo": "15 livros completos. 150 capítulos. 3 blocos.\n\nBloco 1 (Avaliação): saber quanto vale.\nBloco 2 (Investimento): saber como decidir.\nBloco 3 (Internacional): saber como expandir.\n\nOs Blocos 4-6 constroem sobre essa fundação: como proteger (Patrimônio), como operar (BPO), e como inovar (Tecnologia).\n\nMas a fundação está completa. Avaliação + Investimento + Internacional. Com esses 3 blocos, o investidor opera com sistema em qualquer mercado, qualquer jurisdição, qualquer escala."
+        },
+        "aplicacao_pratica": {
+          "titulo": "Comece o plano tributário",
+          "passos": [
+            "Esta semana: liste todos os ativos por jurisdição + residência fiscal atual",
+            "Próxima semana: identifique tributarista com experiência internacional",
+            "Mês 1: diagnóstico completo + cálculo de economia potencial",
+            "Mês 2-3: implementação de estrutura ótima",
+            "Mês 4: compliance configurado + calendário fiscal montado",
+            "Permanente: 10-15h/ano de manutenção. Economia: R$ 20K-500K/ano"
+          ]
+        },
+        "checklist": [
+          "Diagnóstico fiscal completo",
+          "Estrutura ótima identificada",
+          "Economia potencial calculada",
+          "Implementação em andamento",
+          "Calendário fiscal montado",
+          "Profissionais por jurisdição contratados",
+          "Bloco 3 dominado"
+        ],
+        "armadilhas": [
+          {
+            "erro": "Ler este livro e não fazer o diagnóstico",
+            "por_que": "Cada mês de inércia é R$ 1.500-40.000 em impostos pagos a mais (dependendo do perfil)",
+            "solucao": "Abra planilha. Liste ativos. Calcule carga atual. Ligue para tributarista. Hoje."
+          }
+        ]
+      }
+    }
+  ]
+}

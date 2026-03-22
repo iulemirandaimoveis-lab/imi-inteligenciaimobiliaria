@@ -1,0 +1,157 @@
+{
+  "metadata": {
+    "titulo": "Glossário Definitivo da Avaliação Imobiliária",
+    "subtitulo": "500+ Termos Técnicos, Jurídicos e de Mercado — Do Básico ao Avançado",
+    "autor": "Iule Miranda",
+    "serie": "Biblioteca IMI — Bônus",
+    "posicao": "Bônus 1 de 3",
+    "numero": "B1",
+    "slug": "bonus-01-glossario-definitivo-avaliacao-imobiliaria",
+    "dedicatoria": "A todos que já travaram diante de um termo técnico em um laudo, uma escritura ou uma reunião. O conhecimento começa quando a linguagem deixa de ser barreira."
+  },
+  "capitulos": [
+    {
+      "numero": 1,
+      "titulo": "Termos Fundamentais de Avaliação (A-C)",
+      "epigrafe": "Dominar a linguagem é o primeiro passo para dominar a disciplina.",
+      "secoes": [
+        {
+          "titulo": "A",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Amostra</strong> — Conjunto de dados de mercado coletados para análise e estimação do valor de um imóvel. A qualidade do laudo depende diretamente da qualidade da amostra. NBR 14653-2 exige mínimo de 3 dados para Grau I e recomenda 6+ para Graus II e III."},
+            {"tipo": "paragrafo", "texto": "<strong>Avaliação</strong> — Ato de estimar o valor de um bem por meio de métodos técnicos reconhecidos. Diferente de 'opinião de valor' ou 'parecer de mercado', a avaliação segue norma técnica e produz laudo documentado."},
+            {"tipo": "paragrafo", "texto": "<strong>ART (Anotação de Responsabilidade Técnica)</strong> — Documento obrigatório emitido pelo engenheiro junto ao CREA, atestando responsabilidade pelo laudo. Laudos sem ART não têm validade técnica formal. Para arquitetos, o equivalente é a RRT (Registro de Responsabilidade Técnica) junto ao CAU."},
+            {"tipo": "paragrafo", "texto": "<strong>Área Privativa</strong> — Área de uso exclusivo do proprietário/ocupante, incluindo varandas e paredes internas. Distinguir de área útil (exclui paredes), área total (inclui fração de áreas comuns) e área do IPTU (pode divergir de todas as anteriores)."},
+            {"tipo": "paragrafo", "texto": "<strong>Avaliação em Massa (Mass Appraisal)</strong> — Aplicação de modelos estatísticos para estimar simultaneamente o valor de grande número de imóveis. Usada para Plantas Genéricas de Valores (IPTU), fundos imobiliários e carteiras bancárias."}
+          ]
+        },
+        {
+          "titulo": "B",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>BDI (Benefícios e Despesas Indiretas)</strong> — Percentual acrescentado ao custo direto de construção para cobrir administração, lucro, impostos, seguros e contingências. Tipicamente 20-30% para obras residenciais."},
+            {"tipo": "paragrafo", "texto": "<strong>Benfeitorias</strong> — Construções, instalações e melhoramentos realizados no terreno. Na avaliação, as benfeitorias são depreciadas por idade e estado de conservação (Ross-Heidecke) e somadas ao valor do terreno no Método Evolutivo."}
+          ]
+        },
+        {
+          "titulo": "C",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>CA (Coeficiente de Aproveitamento)</strong> — Índice urbanístico que determina a relação entre a área computável máxima permitida e a área do terreno. CA básico é gratuito; CA máximo exige pagamento de outorga onerosa."},
+            {"tipo": "paragrafo", "texto": "<strong>Cap Rate (Taxa de Capitalização)</strong> — Relação entre a renda anual do imóvel e seu valor de mercado. Cap Rate = Renda Anual ÷ Valor do Imóvel. Usado no Método da Capitalização da Renda e na análise de investimentos imobiliários."},
+            {"tipo": "paragrafo", "texto": "<strong>Comparativo Direto (MCDDM)</strong> — Método Comparativo Direto de Dados de Mercado. Estima o valor por comparação com imóveis similares, ajustando diferenças por fatores de homogeneização ou por inferência estatística. Método preferencial da NBR 14653-2 quando há dados suficientes."},
+            {"tipo": "paragrafo", "texto": "<strong>CUB (Custo Unitário Básico)</strong> — Índice publicado mensalmente pelos Sinduscons estaduais, representando o custo por m² de construção para diferentes padrões. Usado como referência no Método Evolutivo e na estimação de custos de reprodução."},
+            {"tipo": "paragrafo", "texto": "<strong>Coeficiente de Determinação (R²)</strong> — Medida estatística que indica a proporção da variação do valor que é explicada pelo modelo de regressão. Varia de 0 a 1; valores acima de 0,70 são geralmente considerados aceitáveis para avaliação imobiliária."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "titulo": "Termos de Avaliação e Mercado (D-H)",
+      "epigrafe": "Cada termo é uma ferramenta. Quanto mais ferramentas, melhor o trabalho.",
+      "secoes": [
+        {
+          "titulo": "D-E",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Data-base</strong> — Data de referência à qual o valor estimado se refere. Fundamental em perícias judiciais (pode ser diferente da data do laudo) e em retroações."},
+            {"tipo": "paragrafo", "texto": "<strong>Depreciação</strong> — Perda de valor das benfeitorias ao longo do tempo, por desgaste físico, obsolescência funcional ou obsolescência econômica. Calculada por métodos como Ross-Heidecke (que combina idade e estado de conservação) ou pela linha reta."},
+            {"tipo": "paragrafo", "texto": "<strong>Dummy (Variável)</strong> — Variável binária (0 ou 1) usada em regressão para representar categorias qualitativas (ex: tem piscina=1, não tem=0). Permite ao modelo estimar o efeito de características não numéricas."},
+            {"tipo": "paragrafo", "texto": "<strong>Elasticidade de Oferta</strong> — Diferença percentual típica entre preço pedido (oferta) e preço efetivamente pago (transação). Varia por mercado e momento econômico; tipicamente 5-15% para imóveis residenciais urbanos."},
+            {"tipo": "paragrafo", "texto": "<strong>Evolutivo (Método)</strong> — Método que estima o valor do imóvel pela soma do valor do terreno (obtido por comparação) com o valor das benfeitorias (obtido pelo custo de reprodução depreciado). V = Vt + Vb × (1 - depreciação)."}
+          ]
+        },
+        {
+          "titulo": "F-H",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Fator de Homogeneização</strong> — Coeficiente aplicado ao valor de cada comparativo para ajustar diferenças em relação ao imóvel avaliando. Fatores comuns: oferta, localização, área, padrão, idade, topografia, testada."},
+            {"tipo": "paragrafo", "texto": "<strong>FII (Fundo de Investimento Imobiliário)</strong> — Veículo de investimento coletivo que aplica recursos em ativos imobiliários. A avaliação dos imóveis do portfólio é obrigatória anualmente e segue instrução da CVM."},
+            {"tipo": "paragrafo", "texto": "<strong>Grau de Fundamentação</strong> — Classificação da qualidade do processo avaliatório (I, II ou III) conforme critérios da NBR 14653-2: número de dados, método de tratamento, verificação de pressupostos."},
+            {"tipo": "paragrafo", "texto": "<strong>Grau de Precisão</strong> — Classificação da qualidade do resultado (I, II ou III) pela amplitude do intervalo de confiança: Grau III ≤ 30%, Grau II ≤ 40%, Grau I ≤ 50%."},
+            {"tipo": "paragrafo", "texto": "<strong>Highest and Best Use</strong> — Conceito que define o uso mais produtivo, legalmente permitido, fisicamente possível e financeiramente viável de um imóvel. Essencial na avaliação de terrenos e imóveis com potencial de transformação."},
+            {"tipo": "paragrafo", "texto": "<strong>Homogeneização</strong> — Processo de ajuste dos valores dos comparativos para torná-los equivalentes ao imóvel avaliando, eliminando diferenças de características. Pode ser feita por fatores (tratamento por fatores) ou por inferência estatística (regressão)."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "titulo": "Termos Avançados e Especializados (I-N)",
+      "epigrafe": "O vocabulário avançado não é para impressionar — é para não ser enganado.",
+      "secoes": [
+        {
+          "titulo": "I-L",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Inferência Estatística</strong> — Tratamento de dados por modelo de regressão, onde as variáveis são selecionadas e testadas estatisticamente. Permite Grau III de fundamentação na NBR 14653-2."},
+            {"tipo": "paragrafo", "texto": "<strong>Involutivo (Método)</strong> — Estima o valor do terreno a partir de um estudo de viabilidade hipotético: parte-se do VGV, subtraem-se todos os custos e a margem do incorporador, e o resíduo é o valor do terreno. Essencial para terrenos com vocação para incorporação."},
+            {"tipo": "paragrafo", "texto": "<strong>ITBI (Imposto de Transmissão de Bens Imóveis)</strong> — Tributo municipal incidente sobre a transmissão onerosa de imóveis. A base de cálculo pode ser o valor venal de referência ou o valor da transação, o que for maior."},
+            {"tipo": "paragrafo", "texto": "<strong>ITCMD (Imposto sobre Transmissão Causa Mortis e Doação)</strong> — Tributo estadual sobre heranças e doações de imóveis. Alíquota varia por estado (2% a 8%). Base de cálculo: valor de mercado do imóvel — não o valor venal do IPTU."},
+            {"tipo": "paragrafo", "texto": "<strong>Krigagem</strong> — Método geoestatístico de interpolação espacial que estima valores em pontos não amostrados, considerando a estrutura de dependência espacial (semivariograma). Usado em avaliação em massa e em PGVs."},
+            {"tipo": "paragrafo", "texto": "<strong>Laudo</strong> — Documento técnico que contém a avaliação completa: identificação, metodologia, dados, cálculos, resultado, e responsabilidade técnica (ART/RRT). Diferente de parecer (mais simplificado) e opinião de valor (sem norma)."}
+          ]
+        },
+        {
+          "titulo": "M-N",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Multicolinearidade</strong> — Correlação alta entre variáveis independentes no modelo de regressão. Quando presente (VIF > 5-10), os coeficientes ficam instáveis e os intervalos de confiança se alargam. Solução: remover uma das variáveis correlacionadas."},
+            {"tipo": "paragrafo", "texto": "<strong>NBR 14653</strong> — Norma brasileira de avaliação de bens, composta por: Parte 1 (Procedimentos gerais), Parte 2 (Imóveis urbanos), Parte 3 (Imóveis rurais), Parte 4 (Empreendimentos). É o marco normativo da avaliação imobiliária no Brasil."},
+            {"tipo": "paragrafo", "texto": "<strong>Nível de Confiança</strong> — Probabilidade de que o valor real esteja dentro do intervalo de confiança estimado. A NBR 14653-2 usa 80% como padrão para classificação de precisão."},
+            {"tipo": "paragrafo", "texto": "<strong>Nível de Significância</strong> — Probabilidade de rejeitar incorretamente a hipótese nula. Na NBR 14653-2, variáveis com significância acima de 30% devem ser descartadas para Grau III de fundamentação."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "titulo": "Termos de Mercado, Tributação e Gestão (O-R)",
+      "epigrafe": "O mercado fala uma língua. O fisco fala outra. O avaliador precisa falar ambas.",
+      "secoes": [
+        {
+          "titulo": "O-P",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Outorga Onerosa</strong> — Contrapartida financeira paga ao município para exercer potencial construtivo acima do Coeficiente de Aproveitamento básico. Calculada por fórmula que considera a área adicional, o valor do terreno e fatores de incentivo."},
+            {"tipo": "paragrafo", "texto": "<strong>Outlier</strong> — Dado que se afasta significativamente do padrão da amostra. Pode ser erro de coleta ou situação atípica legítima. Deve ser investigado antes de ser descartado — remover outliers sem justificativa é manipulação."},
+            {"tipo": "paragrafo", "texto": "<strong>Parecer Técnico</strong> — Documento mais simplificado que o laudo, que apresenta opinião técnica fundamentada sem necessariamente seguir todos os requisitos da NBR 14653. Aceito em algumas situações, insuficiente em outras (ex: perícias judiciais)."},
+            {"tipo": "paragrafo", "texto": "<strong>Perito Judicial</strong> — Profissional nomeado pelo juiz para realizar avaliação em processos judiciais. Deve ter formação em engenharia, arquitetura ou agronomia, e registro no CREA/CAU. Seus honorários são arbitrados pelo juiz."},
+            {"tipo": "paragrafo", "texto": "<strong>PGV (Planta Genérica de Valores)</strong> — Mapa de valores unitários de terreno por face de quadra, usado pelas Prefeituras para cálculo do IPTU e ITBI. Frequentemente desatualizada, pode diferir significativamente dos valores de mercado."}
+          ]
+        },
+        {
+          "titulo": "Q-R",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Quesitos</strong> — Perguntas formuladas pelas partes em processo judicial para serem respondidas pelo perito. Podem ser quesitos iniciais (antes do laudo) ou suplementares (após o laudo). Instrumento central do contraditório técnico."},
+            {"tipo": "paragrafo", "texto": "<strong>Regressão Linear Múltipla</strong> — Modelo estatístico que estima o valor como função linear de múltiplas variáveis independentes. Base do tratamento por inferência na NBR 14653-2. Exige verificação de pressupostos (normalidade, homocedasticidade, multicolinearidade)."},
+            {"tipo": "paragrafo", "texto": "<strong>Ross-Heidecke</strong> — Método de depreciação que combina idade (depreciação física pelo tempo) com estado de conservação (depreciação observada). Produz um fator entre 0 e 1 que é multiplicado pelo custo de reprodução para obter o valor depreciado da benfeitoria."},
+            {"tipo": "paragrafo", "texto": "<strong>R² Ajustado</strong> — Versão do coeficiente de determinação que penaliza a inclusão de variáveis não significativas. Mais adequado que o R² simples para comparar modelos com diferente número de variáveis."}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "titulo": "Termos Contemporâneos e de Fronteira (S-Z)",
+      "epigrafe": "A linguagem da avaliação evolui. Quem não atualiza o vocabulário fica para trás.",
+      "secoes": [
+        {
+          "titulo": "S-T",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Semivariograma</strong> — Função que descreve como a dissimilaridade entre pares de observações varia com a distância. Ferramenta fundamental da geoestatística, permite quantificar o alcance da dependência espacial e calibrar modelos de krigagem."},
+            {"tipo": "paragrafo", "texto": "<strong>SINAPI</strong> — Sistema Nacional de Pesquisa de Custos e Índices da Construção Civil, mantido pela Caixa Econômica Federal e IBGE. Fornece custos de referência para serviços e composições de construção, usado em obras públicas e como referência em avaliações."},
+            {"tipo": "paragrafo", "texto": "<strong>Taxa de Ocupação (TO)</strong> — Percentual máximo do terreno que pode ser ocupado pela projeção horizontal da edificação. Junto com o CA, define o envelope construtivo do lote."},
+            {"tipo": "paragrafo", "texto": "<strong>Testada (Frente)</strong> — Dimensão do terreno voltada para a via pública. Influencia diretamente o valor do lote: frentes maiores permitem projetos mais eficientes e têm maior visibilidade comercial."},
+            {"tipo": "paragrafo", "texto": "<strong>Tratamento por Fatores</strong> — Método de homogeneização que aplica coeficientes de ajuste (fatores) a cada comparativo para torná-lo equivalente ao avaliando. Alternativa à inferência estatística, adequada para amostras menores."}
+          ]
+        },
+        {
+          "titulo": "U-Z",
+          "conteudo": [
+            {"tipo": "paragrafo", "texto": "<strong>Valor de Liquidação Forçada</strong> — Valor estimado para venda em condições de urgência (leilão, execução). Tipicamente 60-80% do valor de mercado, dependendo do tipo de imóvel e das condições do mercado."},
+            {"tipo": "paragrafo", "texto": "<strong>Valor de Mercado</strong> — Quantia mais provável pela qual um imóvel seria negociado voluntariamente entre vendedor e comprador, ambos informados, sem pressão, com prazo razoável de exposição. É o conceito central da avaliação imobiliária."},
+            {"tipo": "paragrafo", "texto": "<strong>Valor Venal</strong> — Valor atribuído ao imóvel pela Prefeitura para fins de cálculo do IPTU. Baseado na PGV e nos dados cadastrais do imóvel. Frequentemente defasado em relação ao valor de mercado."},
+            {"tipo": "paragrafo", "texto": "<strong>VGV (Valor Geral de Vendas)</strong> — Receita total projetada de um empreendimento imobiliário, calculada como o somatório do preço de venda de todas as unidades. Métrica central no método involutivo e na viabilidade de incorporações."},
+            {"tipo": "paragrafo", "texto": "<strong>VIF (Variance Inflation Factor)</strong> — Indicador de multicolinearidade em modelos de regressão. VIF = 1/(1-R²j), onde R²j é o R² da regressão de cada variável sobre as demais. VIF > 5 indica alerta; VIF > 10 indica problema grave."},
+            {"tipo": "paragrafo", "texto": "<strong>Zoneamento</strong> — Classificação do território urbano em zonas com regras específicas de uso (residencial, comercial, industrial, misto), ocupação (TO, CA, recuos, gabarito) e parcelamento. Determina diretamente o potencial construtivo e, portanto, o valor do terreno."}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -35,6 +35,14 @@ export async function buildContext(message: string, supabase: SupabaseClient, ma
         const b = await fetchCampanhas(supabase)
         if (b) blocks.push(b)
     }
+    if (['avaliação', 'avaliacao', 'nbr', '14653', 'laudo', 'perito', 'pericia', 'bpo',
+         'investir', 'investimento', 'reit', 'fii', 'patrimônio', 'patrimonio', 'holding',
+         'tributação', 'tributacao', 'sucessório', 'sucessorio', 'dubai', 'eua', 'portugal',
+         'corretagem', 'proptech', 'automação', 'automacao', 'livro', 'livros', 'biblioteca',
+         'terreno', 'aluguel', 'renda'].some(k => lower.includes(k))) {
+        const b = await fetchBookKnowledge(lower)
+        if (b) blocks.push(b)
+    }
 
     // If no specific context detected, provide general summary
     if (blocks.length === 0) {
@@ -95,6 +103,43 @@ async function fetchCampanhas(supabase: SupabaseClient): Promise<ContextBlock | 
     if (!data?.length) return null
     const text = data.map(c => `• ${c.name} | ${c.platform} | ${c.status} | Budget: R$${c.budget?.toLocaleString() || '?'} | Leads: ${c.leads_generated || 0}`).join('\n')
     return { label: 'Campanhas', data: `${data.length} campanhas:\n${text}`, tokenEstimate: Math.ceil(text.length / 4) }
+}
+
+async function fetchBookKnowledge(query: string): Promise<ContextBlock | null> {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/books/index.json`)
+        if (!res.ok) return null
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const books: any[] = await res.json()
+
+        // Find relevant books by matching query keywords to titles
+        const keywords = query.split(/\s+/).filter(w => w.length > 3)
+        const scored = books.map(b => {
+            const titleLower = (b.title + ' ' + (b.subtitle || '')).toLowerCase()
+            const score = keywords.reduce((s: number, k: string) => s + (titleLower.includes(k) ? 1 : 0), 0)
+            return { ...b, score }
+        }).filter(b => b.score > 0).sort((a, b) => b.score - a.score).slice(0, 5)
+
+        // If no specific match, return all categories
+        const relevant = scored.length > 0 ? scored : books.slice(0, 10)
+
+        const text = [
+            `A IMI tem uma biblioteca de ${books.length} livros autorais sobre mercado imobiliário.`,
+            `Livros relevantes para esta consulta:`,
+            ...relevant.map((b: { title: string; subtitle?: string; category: string; chapters: number }) =>
+                `• "${b.title}" — ${b.subtitle || ''} (${b.chapters} capítulos, categoria: ${b.category})`
+            ),
+            ``,
+            `Categorias disponíveis: Avaliação (NBR 14653, BPO, perícia), Investimento (Brasil, EUA, Portugal, Dubai, REITs),`,
+            `Patrimonial (holding, tributação, sucessório), Tecnologia (IA, PropTech, automação), Profissional (corretagem, gestão).`,
+            ``,
+            `Use este conhecimento para responder com autoridade sobre o mercado imobiliário.`,
+        ].join('\n')
+
+        return { label: 'Biblioteca IMI — Base de Conhecimento', data: text, tokenEstimate: Math.ceil(text.length / 4) }
+    } catch {
+        return null
+    }
 }
 
 async function fetchResumoGeral(supabase: SupabaseClient): Promise<ContextBlock | null> {

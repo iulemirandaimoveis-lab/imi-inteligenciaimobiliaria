@@ -1,0 +1,115 @@
+{
+  "metadata": {
+    "titulo": "Checklist Master do Avaliador Imobiliário",
+    "subtitulo": "127 Verificações Essenciais Para Laudos à Prova de Impugnação",
+    "autor": "Iule Miranda",
+    "serie": "Biblioteca IMI — Bônus",
+    "posicao": "Bônus 2 de 3",
+    "numero": "B2",
+    "slug": "bonus-02-checklist-master-avaliador-imobiliario",
+    "dedicatoria": "A cada avaliador que já entregou um laudo e pensou 'será que esqueci algo?'. Este checklist é a resposta."
+  },
+  "capitulos": [
+    {
+      "numero": 1,
+      "titulo": "Pré-Avaliação: Antes de Aceitar o Trabalho",
+      "epigrafe": "A melhor avaliação começa antes do primeiro cálculo.",
+      "secoes": [
+        {
+          "titulo": "Triagem e aceitação",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Verificar se o imóvel está dentro da sua área de competência técnica","Confirmar ausência de conflito de interesse (relação com partes, avaliações anteriores do mesmo imóvel)","Avaliar a compatibilidade de prazo com a qualidade exigida","Verificar se os honorários são adequados à complexidade (consultar tabela IBAPE/CREA)","Para perícias judiciais: ler despacho de nomeação integralmente antes de aceitar","Confirmar disponibilidade de dados de mercado na região (consulta prévia a portais e contatos)","Avaliar risco reputacional: o caso envolve partes litigiosas, mídia, ou alta exposição?","Se for perícia: verificar se os quesitos das partes são respondíveis com a metodologia disponível"]}
+          ]
+        },
+        {
+          "titulo": "Documentação inicial",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Solicitar matrícula atualizada (máximo 30 dias)","Solicitar IPTU dos últimos 3 anos","Solicitar plantas aprovadas (se houver)","Solicitar habite-se ou certidão de conclusão","Para terrenos: solicitar certidão de zoneamento e dados cadastrais da Prefeitura","Para perícias: ler os autos integralmente — classificar em Fatos Incontroversos, Controversos, Documentos Técnicos e Quesitos","Verificar se há ações judiciais envolvendo o imóvel ou o proprietário","Emitir ART/RRT antes de iniciar os trabalhos"]}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "titulo": "Vistoria: No Imóvel e No Entorno",
+      "epigrafe": "O que você não registra na vistoria, não existe no laudo.",
+      "secoes": [
+        {
+          "titulo": "Preparação para vistoria",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Kit de vistoria conferido: trena laser, câmera com GPS, prancheta, formulários, EPI se necessário","Agendamento confirmado com todas as partes (em perícias: ambos assistentes técnicos notificados)","Verificar condições de acesso (chaves, autorização, contato do responsável)","Levar documentos de referência: planta, matrícula, mapa de localização","Carregar bateria da câmera e do celular — vistoria sem fotos é vistoria incompleta"]}
+          ]
+        },
+        {
+          "titulo": "Na vistoria — Camada por camada",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["ENTORNO: fotografar rua, vizinhança, infraestrutura (pavimentação, iluminação, transporte público, comércio)","ENTORNO: registrar distâncias a pontos de referência (metrô, escolas, hospitais, parques)","TERRENO: medir frente, fundos, laterais. Verificar regularidade geométrica","TERRENO: avaliar topografia (plano, aclive, declive, desnível), nível em relação à rua","TERRENO: verificar muros divisórios, invasões de vizinhos, servidões aparentes","EDIFICAÇÃO EXTERNA: fotografar todas as fachadas, cobertura, estado aparente","EDIFICAÇÃO INTERNA: percorrer todos os cômodos, registrar acabamentos, instalações, padrão construtivo","EDIFICAÇÃO INTERNA: aplicar classificação Ross-Heidecke (idade aparente × estado de conservação)","ANOMALIAS: registrar infiltrações, trincas, recalques, improvisações elétricas/hidráulicas, mofo","CONFRONTO DOCUMENTAL: comparar o que se vê com planta aprovada e matrícula — anotar discrepâncias","FOTOS: mínimo 30-40 fotos georreferenciadas, cobrindo entorno, terreno, fachada, todos os cômodos, anomalias","NÃO OPINAR durante a vistoria — registrar, medir, fotografar. Opiniões ficam para o laudo"]}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "titulo": "Pesquisa de Mercado: Coleta e Verificação",
+      "epigrafe": "Dado sem fonte é opinião. Dado sem verificação é risco.",
+      "secoes": [
+        {
+          "titulo": "Coleta de dados",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Definir a região de busca (raio máximo compatível com a homogeneidade do mercado)","Buscar em múltiplas fontes: portais (ZAP, OLX, VivaReal), imobiliárias locais, cartórios, ITBI","Priorizar transações efetivas sobre ofertas — transações são fatos, ofertas são intenções","Para cada dado: registrar endereço, fonte, tipo (transação/oferta), valor, área, características, data","Coletar mínimo de 15 dados brutos para ter 8-12 dados utilizáveis após filtragem","Verificar cada oferta por telefone: confirmar valor, condições, tempo de exposição, se ainda está ativa","Para transações: confirmar valor e data via cartório, escritura, ou contato direto","Calcular e registrar o fator de elasticidade para cada oferta (desconto típico oferta→transação)","Classificar confiabilidade de cada dado: A (transação verificada), B (oferta verificada), C (oferta publicada)","Montar planilha padronizada com todas as variáveis que serão usadas no modelo"]}
+          ]
+        },
+        {
+          "titulo": "Filtragem e validação",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Eliminar dados com informações incompletas ou não verificáveis","Identificar outliers (valores muito acima ou abaixo do padrão) — investigar antes de descartar","Verificar se a amostra cobre a variabilidade do mercado (não concentrada em um único padrão ou localização)","Para regressão: verificar se há variabilidade suficiente em cada variável independente","Documentar cada exclusão e sua justificativa — exclusões sem motivo são manipulação"]}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "titulo": "Cálculos, Modelo e Diagnóstico",
+      "epigrafe": "O número final é consequência do processo. Se o processo é frágil, o número é ficção.",
+      "secoes": [
+        {
+          "titulo": "Tratamento dos dados",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["ESCOLHA METODOLÓGICA: justificar por que o método escolhido é o mais adequado para este caso","Se tratamento por fatores: documentar fonte de cada fator usado (publicação, tabela, cálculo)","Se inferência estatística: testar variáveis, verificar significância (p < 0,30 para Grau III)","Verificar sinal dos coeficientes: todos coerentes com a teoria? (área positivo, idade negativo, etc.)","Calcular R² e R² ajustado — R² ajustado é o indicador correto para comparar modelos","Testar transformações: ln(valor), 1/idade, dummies para variáveis categóricas","Aplicar pelo menos um método secundário como verificação cruzada"]}
+          ]
+        },
+        {
+          "titulo": "Diagnóstico do modelo (se inferência)",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Normalidade dos resíduos: Shapiro-Wilk (n<50) ou Kolmogorov-Smirnov (n>50)","Homocedasticidade: Breusch-Pagan ou análise visual do gráfico de resíduos","Multicolinearidade: VIF para cada variável — alertar se VIF > 5, corrigir se VIF > 10","Autocorrelação: Durbin-Watson para dados ordenados","Outliers de resíduos: identificar observações com resíduo padronizado > |2,5|","Se algum diagnóstico falhar: corrigir o modelo OU declarar a limitação no laudo","NUNCA escrever 'pressupostos atendidos' se os testes mostram o contrário"]}
+          ]
+        },
+        {
+          "titulo": "Resultado e intervalo",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Calcular intervalo de confiança de 80% (exigido pela NBR 14653-2)","Calcular amplitude do intervalo: (limite superior - limite inferior) / valor central","Enquadrar grau de precisão: ≤30% (Grau III), ≤40% (Grau II), ≤50% (Grau I)","Se apresentando cenários: justificar cada cenário e a escolha do valor adotado","O valor adotado deve estar dentro do intervalo de confiança — valor fora do intervalo é injustificável","Arredondar o valor final de forma coerente com a precisão (não apresentar centavos em avaliação de milhões)"]}
+          ]
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "titulo": "Redação, Apresentação e Entrega",
+      "epigrafe": "O laudo é o produto final. Se a embalagem é ruim, o conteúdo perde credibilidade.",
+      "secoes": [
+        {
+          "titulo": "Estrutura do laudo",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Identificação completa: solicitante, finalidade, imóvel (endereço, matrícula), data-base","Documentação consultada: listar todos os documentos (matrícula, IPTU, plantas, autos se perícia)","Descrição da vistoria: data, participantes, condições de acesso, metodologia de medição","Caracterização: região (infraestrutura, serviços, uso predominante), terreno (dimensões, topografia), edificação (área, padrão, estado, idade)","Metodologia: explicar método escolhido, justificar por que é adequado, citar norma","Pesquisa de mercado: tabela completa de dados com fontes, datas, características","Cálculos: apresentar de forma clara e rastreável — leitor deve poder reproduzir","Resultado: valor estimado com intervalo de confiança, grau de fundamentação e precisão","Para perícias: respostas a TODOS os quesitos de TODAS as partes — não ignorar nenhum","Conclusão: síntese do resultado em linguagem acessível","Anexos: fotos, planilhas, ART/RRT, mapa de localização, documentos de suporte"]}
+          ]
+        },
+        {
+          "titulo": "Revisão final",
+          "conteudo": [
+            {"tipo": "checklist", "items": ["Reler o laudo inteiro do ponto de vista de quem vai impugnar — onde estão as brechas?","Verificar coerência interna: os números do texto batem com as tabelas e gráficos?","Verificar linguagem: evitar 'na minha opinião', 'acredito que'. Usar 'os dados indicam', 'a análise demonstra'","Verificar se a ART/RRT está assinada e anexada","Verificar paginação, numeração de tabelas e referências cruzadas","Para perícias: as respostas aos quesitos são autossuficientes? (o juiz entende sem reler o laudo?)","Backup: salvar cópia do laudo, planilhas, fotos e documentos em local seguro","Entregar dentro do prazo — laudo atrasado perde metade da credibilidade antes de ser lido"]}
+          ]
+        }
+      ]
+    }
+  ]
+}
