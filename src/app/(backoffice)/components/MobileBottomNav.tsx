@@ -13,7 +13,7 @@ import {
     QrCode, Sparkles, Building, Brain, LineChart, Wand2, BarChart3, Shield,
     UserPlus, CalendarPlus, ClipboardList,
     BookMarked, Inbox, MoreHorizontal,
-    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell, Handshake,
+    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell, Handshake, MessageCircle,
 } from 'lucide-react'
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
@@ -91,6 +91,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
             { name: 'Indicadores', href: '/backoffice/inteligencia/indicadores',  icon: LineChart },
             { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain,       badge: 'NEW' },
             { name: 'Widgets',     href: '/backoffice/inteligencia/widgets',      icon: LayoutGrid,  badge: 'NEW' },
+            { name: 'AI Chat',     href: '/backoffice/ai-chat',                  icon: MessageCircle, badge: 'NEW' },
             { name: 'Agentes IA',  href: '/backoffice/ia/agentes',               icon: Bot,         badge: 'NEW' },
         ],
     },

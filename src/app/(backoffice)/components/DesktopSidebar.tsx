@@ -10,7 +10,7 @@ import {
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
     Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot,
-    Map as MapIcon, Handshake,
+    Map as MapIcon, Handshake, MessageCircle,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -177,6 +177,7 @@ const SECTIONS: NavSection[] = [
             { label: 'Indicadores',  href: '/backoffice/inteligencia/indicadores', icon: LineChart },
             { label: 'Índices IMI',  href: '/backoffice/inteligencia/indices',     icon: Brain     },
             { label: 'Widgets',      href: '/backoffice/inteligencia/widgets',     icon: Layers    },
+            { label: 'AI Chat',      href: '/backoffice/ai-chat',                   icon: MessageCircle },
             { label: 'Central de IA',href: '/backoffice/ia',                        icon: Sparkles  },
             { label: 'Agentes IA',   href: '/backoffice/ia/agentes',               icon: Bot       },
             { label: 'Automações',   href: '/backoffice/automacoes',               icon: Zap       },
