@@ -1,21 +1,30 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { parseBody, brokerCreateSchema } from '@/lib/schemas'
+
+function generateTempPassword(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
+    let pw = ''
+    for (let i = 0; i < 12; i++) pw += chars.charAt(Math.floor(Math.random() * chars.length))
+    return pw
+}
+
 export async function POST(request: Request) {
     try {
-        // Auth check — only authenticated users can create brokers
         const supabase = await createClient()
         const { data: { user }, error: sessionErr } = await supabase.auth.getUser()
         if (sessionErr || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
-        const parsed = await parseBody(request, brokerCreateSchema)
-        if (!parsed.success) {
-            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+
+        const body = await request.json()
+        const { name, email, phone, creci, role, status, permissions } = body
+
+        if (!name || !email) {
+            return NextResponse.json({ error: 'Nome e email são obrigatórios' }, { status: 400 })
         }
-        const { name, email, phone, creci, password, status, permissions } = parsed.data
-        // 0. Check if broker with this email already exists in our table
+
+        // Check if broker already exists
         const { data: existingBroker } = await supabaseAdmin
             .from('brokers')
             .select('id, email')
@@ -27,66 +36,46 @@ export async function POST(request: Request) {
                 { status: 409 }
             )
         }
-        // 1. Create auth user with service role (admin.createUser requires service role)
-        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-            email,
-            password,
-            email_confirm: true,
-            user_metadata: { name },
-        })
-        if (authError) {
-            // If auth user already exists (orphaned from a failed previous attempt),
-            // find and delete it so we can recreate cleanly.
-            if (authError.message.includes('already been registered') || authError.message.includes('already registered')) {
-                // List users to find the orphaned one
-                const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
-                const orphan = users?.find(u => u.email === email)
-                if (orphan) {
-                    // Delete orphaned auth user and retry
-                    await supabaseAdmin.auth.admin.deleteUser(orphan.id)
-                    // Retry auth user creation
-                    const { data: retryAuth, error: retryError } = await supabaseAdmin.auth.admin.createUser({
-                        email,
-                        password,
-                        email_confirm: true,
-                        user_metadata: { name },
-                    })
-                    if (retryError) {
-                        return NextResponse.json({ error: retryError.message }, { status: 400 })
-                    }
-                    // Continue with the retried auth user
-                    const userId = retryAuth.user.id
-                    const { data: broker, error: brokerError } = await supabaseAdmin
-                        .from('brokers')
-                        .insert({
-                            user_id: userId,
-                            name,
-                            email,
-                            phone: phone || null,
-                            creci,
-                            status: status || 'active',
-                            permissions: permissions || [],
-                            role: 'broker',
-                            created_at: new Date().toISOString(),
-                            updated_at: new Date().toISOString(),
-                        })
-                        .select()
-                        .single()
-                    if (brokerError) {
-                        await supabaseAdmin.auth.admin.deleteUser(userId)
-                        return NextResponse.json({ error: brokerError.message }, { status: 500 })
-                    }
-                    return NextResponse.json(broker, { status: 201 })
-                }
-                return NextResponse.json(
-                    { error: 'Este email já está em uso. Tente outro email.' },
-                    { status: 409 }
-                )
+
+        // Generate temporary password — user will change on first login
+        const tempPassword = generateTempPassword()
+
+        // Check if auth user already exists (from a previous failed attempt)
+        const { data: { users: existingUsers } } = await supabaseAdmin.auth.admin.listUsers()
+        const existingAuth = existingUsers?.find(u => u.email === email)
+
+        let userId: string
+
+        if (existingAuth) {
+            // Auth user exists but no broker record — reuse the auth user
+            userId = existingAuth.id
+            // Update the password to the new temp password
+            await supabaseAdmin.auth.admin.updateUserById(userId, {
+                password: tempPassword,
+                user_metadata: {
+                    ...existingAuth.user_metadata,
+                    full_name: name,
+                    must_change_password: true,
+                },
+            })
+        } else {
+            // Create new auth user with temp password
+            const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+                email,
+                password: tempPassword,
+                email_confirm: true,
+                user_metadata: {
+                    full_name: name,
+                    must_change_password: true,
+                },
+            })
+            if (authError) {
+                return NextResponse.json({ error: authError.message }, { status: 400 })
             }
-            return NextResponse.json({ error: authError.message }, { status: 400 })
+            userId = authData.user.id
         }
-        const userId = authData.user.id
-        // 2. Create broker record
+
+        // Create broker record
         const { data: broker, error: brokerError } = await supabaseAdmin
             .from('brokers')
             .insert({
@@ -94,21 +83,31 @@ export async function POST(request: Request) {
                 name,
                 email,
                 phone: phone || null,
-                creci,
+                creci: creci || null,
                 status: status || 'active',
-                permissions: permissions || [],
-                role: 'broker',
+                role: role || 'broker',
+                permissions: permissions?.length ? permissions : ['dashboard', 'imoveis', 'leads', 'agenda'],
+                created_by: user.id,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             })
             .select()
             .single()
+
         if (brokerError) {
-            // Rollback: delete the auth user to avoid orphaned records
-            await supabaseAdmin.auth.admin.deleteUser(userId)
+            // Only delete auth user if WE just created it (not reused)
+            if (!existingAuth) {
+                await supabaseAdmin.auth.admin.deleteUser(userId)
+            }
             return NextResponse.json({ error: brokerError.message }, { status: 500 })
         }
-        return NextResponse.json(broker, { status: 201 })
+
+        // Return broker + temp password (admin sees it once to share with user)
+        return NextResponse.json({
+            ...broker,
+            temp_password: tempPassword,
+            message: `Corretor ${name} cadastrado. Senha provisória gerada. O usuário deve alterá-la no primeiro acesso.`,
+        }, { status: 201 })
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }

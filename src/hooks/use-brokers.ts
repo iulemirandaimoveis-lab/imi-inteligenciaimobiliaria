@@ -20,10 +20,10 @@ export interface BrokerFormData {
     name: string
     email: string
     phone?: string
-    creci: string
-    password: string
-    status: 'active' | 'inactive'
-    permissions: string[]
+    creci?: string
+    role?: 'broker' | 'broker_manager'
+    status?: 'active' | 'inactive'
+    permissions?: string[]
 }
 // Hook para listar corretores — uses API route to bypass RLS
 export function useBrokers(filters?: {
