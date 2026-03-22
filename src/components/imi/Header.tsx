@@ -9,7 +9,7 @@ export default function Header() {
     return (
         <>
             <header className="w-full fixed top-0 left-0 z-50 bg-white border-b border-neutral-200">
-                <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[72px] flex items-center justify-between">
 
                     <div className="flex items-center gap-3">
                         <span className="text-2xl font-serif font-black tracking-tight text-black">

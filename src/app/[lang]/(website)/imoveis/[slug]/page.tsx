@@ -207,7 +207,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             <AnchorNav sections={ANCHOR_SECTIONS} />
 
             <div className="container-custom py-10 md:py-16">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-14">
                     {/* Main content */}
                     <div className="lg:col-span-8 space-y-12 md:space-y-20">
                         <section id="detalhes">

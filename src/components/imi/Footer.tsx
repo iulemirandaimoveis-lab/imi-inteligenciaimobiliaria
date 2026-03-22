@@ -34,10 +34,10 @@ const LANGUAGES = [
 export default function Footer() {
     return (
         <footer className="bg-navy-950 text-white">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
                 {/* Main grid */}
-                <div className="py-16 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
+                <div className="py-12 sm:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8">
 
                     {/* Brand col */}
                     <div className="md:col-span-5">

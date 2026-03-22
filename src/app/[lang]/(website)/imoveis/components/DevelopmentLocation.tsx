@@ -57,7 +57,7 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
             </motion.div>
 
             {/* Address card + Google Maps link */}
-            <motion.div variants={slideUp} className="flex items-center justify-between gap-4 flex-wrap">
+            <motion.div variants={slideUp} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                 <div
                     className="inline-flex items-center gap-3 p-4 rounded-xl"
                     style={{ background: '#0B1928', border: '1px solid rgba(200,164,74,0.12)' }}
