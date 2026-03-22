@@ -177,6 +177,30 @@ export default function SocialInboxPage() {
             }
         } catch { /* whatsapp not connected */ }
 
+        // Fetch social messages (Instagram DMs, Facebook Messenger, Twitter, LinkedIn)
+        try {
+            const socialRes = await fetch('/api/social/inbox?limit=100')
+            if (socialRes.ok) {
+                const socialData = await socialRes.json()
+                if (socialData.messages) {
+                    all.push(...socialData.messages.map((m: {
+                        id: string; platform: string; sender_name: string; sender_avatar?: string;
+                        content: string; conversation_id?: string; status: string; created_at: string;
+                    }) => ({
+                        id: m.id,
+                        channel: m.platform as Exclude<Channel, 'all'>,
+                        from: m.sender_name || 'Desconhecido',
+                        preview: (m.content || '').slice(0, 100),
+                        body: m.content,
+                        timestamp: m.created_at,
+                        unread: m.status === 'received',
+                        threadId: m.conversation_id,
+                        messageId: m.id,
+                    })))
+                }
+            }
+        } catch { /* social inbox not available */ }
+
         // Sort by timestamp desc
         all.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
         setMessages(all)
@@ -231,8 +255,23 @@ export default function SocialInboxPage() {
                     body: JSON.stringify({ message_id: selected.id, reply }),
                 })
                 toast.success('Mensagem enviada via WhatsApp!')
+            } else if (['instagram', 'facebook', 'twitter', 'linkedin'].includes(selected.channel)) {
+                // Use social reply API for Instagram DMs, Facebook Messenger, Twitter DMs
+                const socialRes = await fetch('/api/social/reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message_id: selected.id,
+                        content: reply,
+                        platform: selected.channel,
+                    }),
+                })
+                if (!socialRes.ok) {
+                    const err = await socialRes.json()
+                    throw new Error(err.error || 'Erro ao enviar')
+                }
+                toast.success(`Mensagem enviada via ${CHANNEL_CFG[selected.channel].label}!`)
             } else {
-                // Future feature — intentional toast.info
                 toast.info(`Resposta via ${CHANNEL_CFG[selected.channel].label} em breve!`)
             }
             setReply('')
@@ -258,19 +297,39 @@ export default function SocialInboxPage() {
                 ]}
                 actions={
                     <div className="flex items-center gap-2">
-                        <button onClick={fetchMessages}
-                            className="p-2 rounded-[6px] transition-colors hover:opacity-70 flex-shrink-0"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                            <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
+                        <button
+                            onClick={async () => {
+                                try {
+                                    for (const p of ['instagram', 'facebook']) {
+                                        await fetch('/api/social/sync-messages', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ platform: p }),
+                                        })
+                                    }
+                                    toast.success('Mensagens sincronizadas!')
+                                    fetchMessages()
+                                } catch { toast.error('Erro ao sincronizar') }
+                            }}
+                            className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-[11px] font-semibold flex-shrink-0"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
+                            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+                            Sincronizar
                         </button>
                         {!gmailConnected && (
                             <a href="/api/auth/google"
-                                className="flex items-center gap-1.5 h-10 px-4 rounded-[6px] text-xs font-semibold flex-shrink-0"
+                                className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-[11px] font-semibold flex-shrink-0"
                                 style={{ background: 'rgba(234,67,53,0.12)', color: '#EA4335' }}>
-                                <Mail size={13} />
-                                Conectar Gmail
+                                <Mail size={12} />
+                                Gmail
                             </a>
                         )}
+                        <a href="/api/auth/meta"
+                            className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-[11px] font-semibold flex-shrink-0"
+                            style={{ background: 'rgba(225,48,108,0.12)', color: '#E1306C' }}>
+                            <Instagram size={12} />
+                            Instagram
+                        </a>
                     </div>
                 }
             />

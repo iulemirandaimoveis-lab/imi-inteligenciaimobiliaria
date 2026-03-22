@@ -8,8 +8,10 @@ import {
     CheckCircle, AlertCircle, XCircle, Clock,
     X, Eye, EyeOff, ExternalLink,
     RefreshCw, Settings, Plug, Linkedin, Music2,
-    Sparkles
+    Sparkles, LogIn, MessageSquare, BarChart3,
+    Twitter
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { INTEGRACOES, CATEGORIAS_INTEGRACAO } from '@/lib/integracoes-registry'
 import type { Integracao, IntegracaoStatus } from '@/types/contratos'
 import { PageIntelHeader, KPICard } from '../../components/ui'
@@ -226,12 +228,72 @@ function ConfigModal({
         </motion.div>
     )
 }
+// ── OAuth connect URLs ───────────────────────────────────────
+const OAUTH_ROUTES: Record<string, { route: string; label: string; icon: React.ElementType; color: string }> = {
+    meta_ads:       { route: '/api/auth/meta',      label: 'Conectar com Facebook',  icon: Facebook,  color: '#1877F2' },
+    instagram:      { route: '/api/auth/meta',      label: 'Conectar com Instagram', icon: Instagram, color: '#E4405F' },
+    linkedin_ads:   { route: '/api/auth/linkedin',  label: 'Conectar com LinkedIn',  icon: Linkedin,  color: '#0A66C2' },
+    tiktok_ads:     { route: '/api/auth/tiktok',    label: 'Conectar com TikTok',    icon: Music2,    color: '#000000' },
+    twitter:        { route: '/api/auth/twitter',    label: 'Conectar com X',         icon: Twitter,   color: '#1DA1F2' },
+    google_drive:   { route: '/api/auth/google',     label: 'Conectar com Google',    icon: HardDrive, color: '#4285F4' },
+    google_calendar:{ route: '/api/auth/google',     label: 'Conectar com Google',    icon: Calendar,  color: '#4285F4' },
+}
+function handleOAuthConnect(integrationId: string) {
+    const oauth = OAUTH_ROUTES[integrationId]
+    if (oauth) {
+        window.location.href = oauth.route
+    }
+}
+
+// ── Social account stats (connected platforms) ───────────────
+function SocialAccountInfo({ integrationId, status }: { integrationId: string; status: string }) {
+    if (status !== 'conectado') return null
+    const isSocial = ['meta_ads', 'instagram', 'linkedin_ads', 'tiktok_ads', 'twitter'].includes(integrationId)
+    if (!isSocial) return null
+    return (
+        <div className="flex items-center gap-3 mt-3 pt-3" style={{ borderTop: `1px solid ${T.border}` }}>
+            <a href="/backoffice/omnichannel/inbox"
+                className="flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-1.5 rounded-md transition-colors hover:opacity-80"
+                style={{ background: 'rgba(96,165,250,0.08)', color: 'var(--info)' }}>
+                <MessageSquare size={10} /> Inbox
+            </a>
+            <a href={`/backoffice/conteudo/calendario`}
+                className="flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-1.5 rounded-md transition-colors hover:opacity-80"
+                style={{ background: 'rgba(167,139,250,0.08)', color: 'var(--platinum-400)' }}>
+                <PenTool size={10} /> Publicar
+            </a>
+            <a href="/backoffice/tracking"
+                className="flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-1.5 rounded-md transition-colors hover:opacity-80"
+                style={{ background: T.activeBg, color: T.accent }}>
+                <BarChart3 size={10} /> Métricas
+            </a>
+        </div>
+    )
+}
+
 // ── Página principal ──────────────────────────────────────────
 export default function IntegracoesPage() {
     const [categoriaAtiva, setCategoriaAtiva] = useState('todas')
     const [integracaoAberta, setIntegracaoAberta] = useState<Integracao | null>(null)
     const [statusOverride, setStatusOverride] = useState<Record<string, IntegracaoStatus>>({})
     const [loadingStatus, setLoadingStatus] = useState(true)
+    // Show success toast if redirected from OAuth
+    useEffect(() => {
+        const url = new URL(window.location.href)
+        const successProvider = url.searchParams.get('success')
+        if (successProvider) {
+            toast.success(`${successProvider.charAt(0).toUpperCase() + successProvider.slice(1)} conectado com sucesso!`)
+            url.searchParams.delete('success')
+            window.history.replaceState({}, '', url.pathname)
+        }
+        const errorProvider = url.searchParams.get('error')
+        if (errorProvider) {
+            toast.error(`Erro ao conectar: ${errorProvider}`)
+            url.searchParams.delete('error')
+            window.history.replaceState({}, '', url.pathname)
+        }
+    }, [])
+
     // Fetch saved integration statuses from DB on mount
     useEffect(() => {
         async function loadSavedStatuses() {
@@ -371,18 +433,36 @@ export default function IntegracoesPage() {
                                         )}
                                     </div>
                                 </div>
-                                {/* Action */}
-                                <button
-                                    onClick={() => setIntegracaoAberta(integ)}
-                                    className="mt-3 w-full h-9 rounded-[6px] text-xs font-semibold transition-all"
-                                    style={{
-                                        background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bg-active)',
-                                        border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
-                                        color: connected ? 'var(--success)' : T.accent,
-                                    }}
-                                >
-                                    {connected ? '⚙ Gerenciar' : '+ Configurar'}
-                                </button>
+                                {/* Social quick links */}
+                                <SocialAccountInfo integrationId={integ.id} status={status} />
+
+                                {/* Action — OAuth or manual config */}
+                                {!connected && OAUTH_ROUTES[integ.id] ? (
+                                    <button
+                                        onClick={() => handleOAuthConnect(integ.id)}
+                                        className="mt-3 w-full h-10 rounded-[6px] text-xs font-bold transition-all flex items-center justify-center gap-2"
+                                        style={{
+                                            background: OAUTH_ROUTES[integ.id].color,
+                                            color: '#FFFFFF',
+                                            border: 'none',
+                                        }}
+                                    >
+                                        <LogIn size={13} />
+                                        {OAUTH_ROUTES[integ.id].label}
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => setIntegracaoAberta(integ)}
+                                        className="mt-3 w-full h-9 rounded-[6px] text-xs font-semibold transition-all"
+                                        style={{
+                                            background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bg-active)',
+                                            border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
+                                            color: connected ? 'var(--success)' : T.accent,
+                                        }}
+                                    >
+                                        {connected ? '⚙ Gerenciar' : '+ Configurar'}
+                                    </button>
+                                )}
                             </motion.div>
                         )
                     })}

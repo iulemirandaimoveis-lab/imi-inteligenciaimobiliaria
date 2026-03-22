@@ -204,6 +204,8 @@ export async function publishToSocialMedia(params: PublishParams): Promise<Publi
         case 'facebook':  return publishToFacebook(params)
         case 'instagram': return publishToInstagram(params)
         case 'linkedin':  return publishToLinkedIn(params)
+        case 'tiktok':    return publishToTikTok(params)
+        case 'twitter':   return publishToTwitter(params)
         default:
             return { success: false, error_code: 'UNSUPPORTED', error_message: `Plataforma ${params.platform} ainda não suportada` }
     }
@@ -254,4 +256,196 @@ export async function processPublishingQueue() {
     }
 
     return { processed: queueItems.length, success: successCount, failed: failedCount }
+}
+
+// ── Instagram DM Functions ────────────────────────────────────────────────────
+
+// ── Read Instagram DMs ──
+export async function getInstagramMessages(access_token: string, ig_user_id: string) {
+    const res = await fetch(
+        `https://graph.facebook.com/v19.0/${ig_user_id}/conversations?platform=instagram&fields=participants,messages{id,created_time,from,to,message}&access_token=${access_token}`
+    )
+    if (!res.ok) throw new Error(`Instagram DM fetch failed: ${res.status}`)
+    return res.json()
+}
+
+// ── Reply to Instagram DM ──
+export async function replyInstagramDM(access_token: string, ig_user_id: string, recipient_id: string, message: string) {
+    const res = await fetch(
+        `https://graph.facebook.com/v19.0/${ig_user_id}/messages`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                recipient: { id: recipient_id },
+                message: { text: message },
+                access_token
+            })
+        }
+    )
+    if (!res.ok) throw new Error(`Instagram DM reply failed: ${res.status}`)
+    return res.json()
+}
+
+// ── Facebook Messenger Functions ──────────────────────────────────────────────
+
+// ── Read Facebook Messenger ──
+export async function getFacebookMessages(access_token: string, page_id: string) {
+    const res = await fetch(
+        `https://graph.facebook.com/v19.0/${page_id}/conversations?fields=participants,messages{message,from,created_time}&access_token=${access_token}`
+    )
+    if (!res.ok) throw new Error(`Facebook Messenger fetch failed: ${res.status}`)
+    return res.json()
+}
+
+// ── Reply via Facebook Messenger ──
+export async function replyFacebookMessage(access_token: string, page_id: string, recipient_id: string, message: string) {
+    const res = await fetch(
+        `https://graph.facebook.com/v19.0/${page_id}/messages`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                recipient: { id: recipient_id },
+                message: { text: message },
+                messaging_type: 'RESPONSE',
+                access_token
+            })
+        }
+    )
+    if (!res.ok) throw new Error(`Facebook reply failed: ${res.status}`)
+    return res.json()
+}
+
+// ── Post Metrics ──────────────────────────────────────────────────────────────
+
+// ── Fetch Post Metrics ──
+export async function getPostMetrics(access_token: string, post_id: string, platform: SocialPlatform): Promise<Record<string, number>> {
+    if (platform === 'facebook') {
+        const res = await fetch(
+            `https://graph.facebook.com/v19.0/${post_id}?fields=shares,likes.summary(true),comments.summary(true),insights.metric(post_impressions,post_engaged_users,post_clicks)&access_token=${access_token}`
+        )
+        if (!res.ok) return {}
+        const data = await res.json()
+        const insights = (data.insights?.data || []).reduce((acc: Record<string, number>, m: any) => {
+            acc[m.name] = m.values?.[0]?.value || 0
+            return acc
+        }, {} as Record<string, number>)
+        return {
+            likes: data.likes?.summary?.total_count || 0,
+            comments: data.comments?.summary?.total_count || 0,
+            shares: data.shares?.count || 0,
+            impressions: insights.post_impressions || 0,
+            reach: insights.post_engaged_users || 0,
+            clicks: insights.post_clicks || 0,
+        }
+    }
+    if (platform === 'instagram') {
+        const res = await fetch(
+            `https://graph.facebook.com/v19.0/${post_id}/insights?metric=impressions,reach,likes,comments,shares,saved&access_token=${access_token}`
+        )
+        if (!res.ok) return {}
+        const data = await res.json()
+        return (data.data || []).reduce((acc: Record<string, number>, m: any) => {
+            acc[m.name] = m.values?.[0]?.value || 0
+            return acc
+        }, {} as Record<string, number>)
+    }
+    if (platform === 'linkedin') {
+        const res = await fetch(
+            `https://api.linkedin.com/v2/socialActions/${post_id}?fields=likes,comments,shares`,
+            { headers: { 'Authorization': `Bearer ${access_token}` } }
+        )
+        if (!res.ok) return {}
+        const data = await res.json()
+        return {
+            likes: data.likes?.summary?.totalCount || 0,
+            comments: data.comments?.summary?.totalCount || 0,
+            shares: data.shares?.summary?.totalCount || 0,
+        }
+    }
+    return {}
+}
+
+// ── TikTok Publishing ─────────────────────────────────────────────────────────
+
+// ── Publish to TikTok ──
+export async function publishToTikTok({ access_token, content, video_url }: PublishParams): Promise<PublishResult> {
+    if (!video_url) {
+        return { success: false, error_code: 'NO_VIDEO', error_message: 'TikTok requer vídeo' }
+    }
+    try {
+        const initRes = await fetch('https://open.tiktokapis.com/v2/post/publish/video/init/', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                post_info: {
+                    title: (content || '').slice(0, 150),
+                    privacy_level: 'PUBLIC_TO_EVERYONE',
+                    disable_duet: false,
+                    disable_stitch: false,
+                    disable_comment: false,
+                },
+                source_info: { source: 'PULL_FROM_URL', video_url }
+            })
+        })
+        const initData = await initRes.json()
+        if (initData.error?.code) {
+            return { success: false, error_code: 'TIKTOK_ERROR', error_message: initData.error.message }
+        }
+        return { success: true, external_post_id: initData.data?.publish_id }
+    } catch (err: unknown) {
+        return { success: false, error_code: 'TIKTOK_EXCEPTION', error_message: err instanceof Error ? err.message : 'Unknown error' }
+    }
+}
+
+// ── Twitter/X Publishing & DMs ────────────────────────────────────────────────
+
+// ── Publish to Twitter/X ──
+export async function publishToTwitter({ access_token, content }: PublishParams): Promise<PublishResult> {
+    try {
+        const res = await fetch('https://api.twitter.com/2/tweets', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${access_token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: (content || '').slice(0, 280) })
+        })
+        const data = await res.json()
+        if (data.errors) {
+            return { success: false, error_code: 'TWITTER_ERROR', error_message: data.errors[0]?.detail || 'Unknown error' }
+        }
+        return {
+            success: true,
+            external_post_id: data.data?.id,
+            external_post_url: `https://x.com/i/status/${data.data?.id}`
+        }
+    } catch (err: unknown) {
+        return { success: false, error_code: 'TWITTER_EXCEPTION', error_message: err instanceof Error ? err.message : 'Unknown error' }
+    }
+}
+
+// ── Read Twitter/X DMs ──
+export async function getTwitterDMs(access_token: string) {
+    const res = await fetch(
+        'https://api.twitter.com/2/dm_events?dm_event.fields=id,text,created_at,dm_conversation_id,sender_id&max_results=50',
+        { headers: { 'Authorization': `Bearer ${access_token}` } }
+    )
+    if (!res.ok) throw new Error(`Twitter DM fetch failed: ${res.status}`)
+    return res.json()
+}
+
+// ── Reply Twitter/X DM ──
+export async function replyTwitterDM(access_token: string, conversation_id: string, message: string) {
+    const res = await fetch(
+        `https://api.twitter.com/2/dm_conversations/${conversation_id}/messages`,
+        {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: message })
+        }
+    )
+    if (!res.ok) throw new Error(`Twitter DM reply failed: ${res.status}`)
+    return res.json()
 }
