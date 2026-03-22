@@ -356,7 +356,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
               { icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
               { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics` },
               { icon: Scale, label: 'Avaliação', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}` },
-              { icon: QrCode, label: 'QR Code', href: `/backoffice/tracking/qr?imovel=${id}` },
+              { icon: QrCode, label: 'QR Code', href: `/backoffice/tracking/qr?propertyId=${id}&propertyName=${encodeURIComponent(dev?.name || '')}` },
               { icon: Zap, label: 'Campanha', href: `/backoffice/campanhas?imovel=${id}` },
             ].map(({ icon: Icon, label, href }) => (
               <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.14)', borderRadius: 10, padding: '14px 16px', textDecoration: 'none' }}>

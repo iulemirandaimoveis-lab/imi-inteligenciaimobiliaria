@@ -25,9 +25,10 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
     // Prioritize JSONB 'images' structure if available, fallback to legacy columns
     const imagesJson = dbProp.images || {};
 
-    const gallery = Array.isArray(imagesJson.gallery)
-        ? imagesJson.gallery
-        : (Array.isArray(dbProp.gallery_images) ? dbProp.gallery_images : []);
+    // Merge both JSONB images.gallery AND legacy gallery_images column — deduplicate
+    const jsonbGallery = Array.isArray(imagesJson.gallery) ? imagesJson.gallery : [];
+    const textGallery = Array.isArray(dbProp.gallery_images) ? dbProp.gallery_images : [];
+    const gallery = [...new Set([...jsonbGallery, ...textGallery])].filter(Boolean);
 
     const baseVideos = Array.isArray(imagesJson.videos)
         ? imagesJson.videos

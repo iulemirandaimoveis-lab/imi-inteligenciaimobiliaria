@@ -52,9 +52,10 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
     // Main image: prefer images JSONB > gallery_images > legacy image column > fallback
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const imagesJson = (typeof data.images === 'object' && data.images ? data.images : {}) as Record<string, any>
-    const gallery: string[] = Array.isArray(imagesJson.gallery)
-        ? imagesJson.gallery
-        : (Array.isArray(data.gallery_images) ? data.gallery_images : [])
+    // Merge both JSONB images.gallery AND legacy gallery_images — deduplicate
+    const jsonbGallery: string[] = Array.isArray(imagesJson.gallery) ? imagesJson.gallery : []
+    const textGallery: string[] = Array.isArray(data.gallery_images) ? data.gallery_images : []
+    const gallery: string[] = [...new Set([...jsonbGallery, ...textGallery])].filter(Boolean)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rawImage: string = imagesJson.main || gallery[0] || (data as any).image || ''
     // Ensure absolute URL — local paths get the BASE prepended
@@ -147,7 +148,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     const location = [data.neighborhood, data.city, data.country !== 'Brasil' ? data.country : data.state].filter(Boolean).join(', ')
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const imagesJson = (typeof data.images === 'object' && data.images ? data.images : {}) as Record<string, any>
-    const gallery: string[] = Array.isArray(imagesJson.gallery) ? imagesJson.gallery : (Array.isArray(data.gallery_images) ? data.gallery_images : [])
+    // Merge both JSONB + legacy gallery columns (same as metadata above)
+    const gallery: string[] = [...new Set([
+        ...(Array.isArray(imagesJson.gallery) ? imagesJson.gallery : []),
+        ...(Array.isArray(data.gallery_images) ? data.gallery_images : []),
+    ])].filter(Boolean)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rawImg: string = imagesJson.main || gallery[0] || (data as any).image || ''
     const mainImage: string = rawImg ? (rawImg.startsWith('http') ? rawImg : `${BASE}${rawImg}`) : ''

@@ -69,7 +69,7 @@ const BASE = 'https://www.iulemirandaimoveis.com.br'
 
 export default function QRGeneratorPage() {
     const searchParams = useSearchParams()
-    const prefilledId = searchParams.get('propertyId')
+    const prefilledId = searchParams.get('propertyId') || searchParams.get('imovel')
     const prefilledName = searchParams.get('propertyName')
 
     // Form state

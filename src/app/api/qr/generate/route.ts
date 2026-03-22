@@ -32,9 +32,13 @@ export async function POST(request: Request) {
         }
         const devSlug = dev.slug || dev.name.toLowerCase().replace(/\s+/g, '-')
         // originalUrl = public website (destination after redirect)
-        // shortUrl base = THIS deployment (where /l/[shortCode] route lives)
+        // shortUrl base = ALWAYS the public domain for QR codes (printed materials, placas, etc.)
+        // In development, use NEXT_PUBLIC_SITE_URL for testing; in production, hardcode public domain
         const publicSiteUrl = 'https://www.iulemirandaimoveis.com.br'
-        const trackingBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
+        const isDev = process.env.NODE_ENV === 'development'
+        const trackingBaseUrl = isDev
+            ? (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
+            : publicSiteUrl
         const params = new URLSearchParams()
         params.set('utm_source', utm_source)
         params.set('utm_medium', utm_medium)
