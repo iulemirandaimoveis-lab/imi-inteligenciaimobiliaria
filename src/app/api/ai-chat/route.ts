@@ -32,16 +32,21 @@ export async function POST(req: NextRequest) {
     if (!perms.chatEnabled) return new Response(JSON.stringify({ error: 'AI Chat não habilitado para sua conta' }), { status: 403 })
     if (!perms.allowedModels.includes(model)) return new Response(JSON.stringify({ error: `Modelo ${model} não permitido` }), { status: 403 })
 
-    // Check daily usage
-    const today = new Date().toISOString().split('T')[0]
-    const { count: todayTokens } = await supabaseAdmin.from('ai_chat_usage_log').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', `${today}T00:00:00`)
-    if ((todayTokens || 0) >= perms.maxConversationsPerDay) {
-        return new Response(JSON.stringify({ error: 'Limite diário de conversas atingido', resetAt: `${today}T23:59:59` }), { status: 429 })
-    }
+    // Check daily usage — graceful if table doesn't exist
+    try {
+        const today = new Date().toISOString().split('T')[0]
+        const { count: todayTokens } = await supabaseAdmin.from('ai_chat_usage_log').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', `${today}T00:00:00`)
+        if ((todayTokens || 0) >= perms.maxConversationsPerDay) {
+            return new Response(JSON.stringify({ error: 'Limite diário de conversas atingido', resetAt: `${today}T23:59:59` }), { status: 429 })
+        }
+    } catch { /* table not yet created — allow request */ }
 
-    // Build context from Supabase data
-    const { data: config } = await supabaseAdmin.from('ai_chat_config').select('system_prompt').single()
-    const systemPrompt = config?.system_prompt || DEFAULT_SYSTEM_PROMPT
+    // Build context from Supabase data — graceful if config table missing
+    let systemPrompt = DEFAULT_SYSTEM_PROMPT
+    try {
+        const { data: config } = await supabaseAdmin.from('ai_chat_config').select('system_prompt').single()
+        if (config?.system_prompt) systemPrompt = config.system_prompt
+    } catch { /* use default */ }
     const contextData = await buildContext(message, supabaseAdmin)
 
     // Build messages array

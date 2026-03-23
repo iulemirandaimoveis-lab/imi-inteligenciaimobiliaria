@@ -198,13 +198,15 @@ export default function ConnectPage() {
         if (!showNewChannel || !user) return
         setLoadingBrokers(true)
         const supabase = createClient()
+        // Fetch ALL profiles (not just is_active=true) since auto-created profiles may not have that flag
         supabase.from('profiles')
             .select('id, name, email, avatar_url')
             .neq('id', user.id)
-            .eq('is_active', true)
             .order('name')
             .then(({ data }) => {
-                setAvailableBrokers(data ?? [])
+                // Filter out test accounts but include all real users
+                const real = (data ?? []).filter(b => b.email && !b.email.includes('teste@') && !b.email.includes('testando@'))
+                setAvailableBrokers(real)
                 setLoadingBrokers(false)
             })
     }, [showNewChannel, user])
@@ -334,13 +336,29 @@ export default function ConnectPage() {
                     </div>
                 ) : filteredChannels.length === 0 ? (
                     <div style={{ padding: 32, textAlign: 'center' }}>
-                        <MessageSquare size={32} style={{ color: T.textDim, margin: '0 auto 12px' }} />
-                        <p style={{ fontSize: 14, fontWeight: 600, color: T.text, marginBottom: 4 }}>
-                            Nenhuma conversa
+                        <div style={{
+                            width: 56, height: 56, borderRadius: 16, margin: '0 auto 16px',
+                            background: T.activeBg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                            <MessageSquare size={28} style={{ color: T.gold }} />
+                        </div>
+                        <p style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>
+                            Nenhuma conversa ainda
                         </p>
-                        <p style={{ fontSize: 13, color: T.textDim }}>
-                            Crie um canal para começar
+                        <p style={{ fontSize: 13, color: T.textDim, marginBottom: 20, maxWidth: 200, margin: '0 auto 20px' }}>
+                            Inicie uma conversa com sua equipe ou crie um canal
                         </p>
+                        <button
+                            onClick={() => setShowNewChannel(true)}
+                            style={{
+                                background: T.gold, color: '#0B1928',
+                                border: 'none', borderRadius: 10, padding: '10px 24px',
+                                fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                display: 'inline-flex', alignItems: 'center', gap: 8,
+                            }}
+                        >
+                            <Plus size={15} /> Iniciar Conversa
+                        </button>
                     </div>
                 ) : (
                     filteredChannels.map(ch => (
