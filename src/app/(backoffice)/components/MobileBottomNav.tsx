@@ -64,6 +64,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         label: 'Conversão', color: 'var(--success)', bg: 'var(--success-bg)',
         items: [
             { name: 'Parcerias', href: '/backoffice/parcerias',        icon: Handshake,   badge: 'NEW' },
+            { name: 'Chat Equipe', href: '/backoffice/connect',       icon: MessageSquare, badge: 'NEW' },
             { name: 'Pipeline',  href: '/backoffice/leads/pipeline',   icon: TrendingUp },
             { name: 'Simulações',href: '/backoffice/credito/simulador',icon: CreditCard },
             { name: 'Agenda',    href: '/backoffice/agenda',           icon: CalendarDays },

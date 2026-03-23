@@ -52,6 +52,13 @@ export async function GET(
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
         request.headers.get('x-real-ip') || 'unknown'
     const { deviceType, browser, os } = parseUserAgent(userAgent)
+    // Geolocation from Vercel edge headers
+    const country = request.headers.get('x-vercel-ip-country') || null
+    const region = request.headers.get('x-vercel-ip-country-region') || null
+    const city = request.headers.get('x-vercel-ip-city') || null
+    const latitude = request.headers.get('x-vercel-ip-latitude') || null
+    const longitude = request.headers.get('x-vercel-ip-longitude') || null
+    const location = [city, region, country].filter(Boolean).join(', ') || null
     // 4. Extract UTMs from the URL
     let utms: Record<string, string | null> = {}
     try {
@@ -89,9 +96,17 @@ export async function GET(
                 ip_address: ip,
                 referrer: referer,
                 utm_params: utms,
+                location,
                 metadata: {
                     user_agent: userAgent.substring(0, 500),
                     short_code: shortCode,
+                    country,
+                    region,
+                    city,
+                    latitude,
+                    longitude,
+                    browser,
+                    os,
                 },
                 created_at: new Date().toISOString()
             }),
@@ -119,6 +134,22 @@ export async function GET(
             metadata: { short_code: shortCode, link_id: link.id },
         }).then(() => {}, () => {}) // swallow — best-effort logging
     }
+    // Notify broker/admin that a QR/link was scanned
+    const propertyName = link.campaign_name || link.label || shortCode
+    void supabaseAdmin.from('notifications').insert({
+        type: 'tracking',
+        title: '📲 Link acessado',
+        message: `Alguém escaneou o QR/link "${propertyName}" de ${city || 'localização desconhecida'} (${deviceType}, ${browser})`,
+        data: {
+            link_id: link.id,
+            short_code: shortCode,
+            device: deviceType,
+            browser,
+            city,
+            country,
+        },
+        read: false,
+    }).then(() => {}, () => {})
     // 8. Build final redirect URL with UTM passthrough
     let finalUrl = targetUrl
     try {

@@ -54,6 +54,7 @@ const SECTIONS: NavSection[] = [
             { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
             { label: 'Leads',     href: '/backoffice/leads',     icon: Users            },
             { label: 'Parcerias', href: '/backoffice/parcerias', icon: Handshake, badge: 'NEW' },
+            { label: 'Chat Equipe', href: '/backoffice/connect', icon: MessageSquare },
             { label: 'Agenda',    href: '/backoffice/agenda',    icon: CalendarDays    },
             { label: 'Imóveis',   href: '/backoffice/imoveis',   icon: Building2        },
         ]

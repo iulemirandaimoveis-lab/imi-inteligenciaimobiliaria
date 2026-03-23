@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
         const { data, error, count } = await supabase
             .from('notifications')
             .select('*', { count: 'exact' })
+            .or(`user_id.eq.${user.id},user_id.is.null`)
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1)
         if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
@@ -47,6 +48,7 @@ export async function PUT(req: NextRequest) {
                 .from('notifications')
                 .update({ read: true, read_at: new Date().toISOString() })
                 .eq('read', false)
+                .or(`user_id.eq.${user.id},user_id.is.null`)
             if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
             return NextResponse.json({ success: true })
         }
@@ -56,6 +58,7 @@ export async function PUT(req: NextRequest) {
             .from('notifications')
             .update({ read: true, read_at: new Date().toISOString() })
             .eq('id', id)
+            .or(`user_id.eq.${user.id},user_id.is.null`)
         if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         return NextResponse.json({ success: true })
     } catch (err: unknown) {

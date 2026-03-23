@@ -54,6 +54,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/agenda': 'Agenda',
     '/backoffice/perfil': 'Meu Perfil',
     '/backoffice/parcerias': 'Parcerias',
+    '/backoffice/connect': 'Chat Equipe',
 }
 
 function getPageTitle(pathname: string): string {
@@ -179,13 +180,12 @@ export default function MobileHeader() {
 
     // Fetch notifications
     useEffect(() => {
-        fetch('/api/notifications')
+        fetch('/api/notifications?limit=50')
             .then(r => r.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    setNotifications(data.slice(0, 20))
-                    setUnreadCount(data.filter((n: Notification) => !n.read).length)
-                }
+            .then(json => {
+                const items: Notification[] = Array.isArray(json) ? json : (json.data || [])
+                setNotifications(items.slice(0, 20))
+                setUnreadCount(items.filter((n: Notification) => !n.read).length)
             })
             .catch(() => {})
     }, [pathname])
