@@ -267,8 +267,8 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     style={{
                         fontFamily: 'var(--font-sans)',
                         fontSize: 14,
-                        color: isParentActive || open ? 'var(--accent-400)' : 'var(--text-secondary)',
-                        background: isParentActive || open ? 'rgba(61,111,255,0.10)' : 'transparent',
+                        color: isParentActive || open ? 'var(--gold, #C8A44A)' : 'var(--text-secondary)',
+                        background: isParentActive || open ? 'rgba(200,164,74,.10)' : 'transparent',
                         fontWeight: isParentActive ? 600 : 500,
                     }}
                 >
@@ -321,14 +321,15 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             className="relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all"
             style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: 13,
-                color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)',
-                background: isActive ? 'rgba(61,111,255,0.10)' : 'transparent',
+                fontSize: 10,
+                color: isActive ? 'var(--gold, #C8A44A)' : 'var(--text-secondary)',
+                background: isActive ? 'rgba(200,164,74,.10)' : 'transparent',
+                borderLeft: isActive ? '2px solid var(--gold, #C8A44A)' : '2px solid transparent',
                 fontWeight: isActive ? 600 : 400,
             }}
             onMouseEnter={(e) => {
                 if (!isActive) {
-                    e.currentTarget.style.background = 'rgba(61,111,255,0.06)'
+                    e.currentTarget.style.background = 'rgba(200,164,74,0.06)'
                     e.currentTarget.style.transform = 'translateX(2px)'
                 }
             }}
@@ -339,16 +340,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 }
             }}
         >
-            {/* Active indicator bar */}
-            {isActive && (
-                <motion.div
-                    layoutId="sidebar-active"
-                    className="absolute -left-[11px] top-1/2 w-[4px] h-5 rounded-full"
-                    style={{ background: 'var(--accent-400)', transform: 'translateY(-50%)', boxShadow: '0 0 8px rgba(61,111,255,0.4)' }}
-                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                />
-            )}
-            <item.icon size={16} className="flex-shrink-0" style={{ color: isActive ? 'var(--platinum-400)' : undefined }} />
+            <item.icon size={16} className="flex-shrink-0" style={{ color: isActive ? 'var(--gold, #C8A44A)' : undefined }} />
             <span className="flex-1">{item.label}</span>
             {item.badge && (
                 <span style={badgeStyle(item.badge)}>
@@ -446,8 +438,10 @@ export function DesktopSidebar() {
         <aside
             className="hidden lg:flex flex-col h-screen fixed left-0 top-0 z-40"
             style={{
-                width: 248,
-                background: 'var(--bg-void)',
+                width: 240,
+                background: 'rgba(10,22,36,.92)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
                 borderRight: '1px solid var(--border-subtle)',
             }}
         >

@@ -37,7 +37,7 @@ const ACCENT_CONFIG: Record<string, { glow: string; iconBg: string; iconColor: s
 
 const VALUE_SIZES: Record<string, string> = { sm: '20px', md: '26px', lg: '34px' }
 const ICON_SIZES: Record<string, number> = { sm: 28, md: 30, lg: 34 }
-const PAD: Record<string, string> = { sm: '10px 12px', md: '12px 14px', lg: '14px 16px' }
+const PAD: Record<string, string> = { sm: '14px 16px', md: '18px 20px', lg: '22px 24px' }
 
 export function KPICard({
   label,
@@ -64,10 +64,10 @@ export function KPICard({
         padding: PAD[size],
         // Theme-aware surface with accent glow
         background: 'var(--bg-surface)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         border: `1px solid var(--border-default)`,
-        borderRadius: '12px',
+        borderRadius: '14px',
         boxShadow: `var(--shadow-sm), inset 0 0 20px ${a.glow}`,
         transition: 'all 200ms ease',
         position: 'relative',
@@ -90,11 +90,11 @@ export function KPICard({
         <span
           style={{
             fontFamily: 'var(--font-ui)',
-            fontSize: 10,
+            fontSize: '7px',
             fontWeight: 700,
             color: 'var(--text-tertiary)',
             textTransform: 'uppercase' as const,
-            letterSpacing: '0.1em',
+            letterSpacing: '2px',
             lineHeight: 1.3,
           }}
         >

@@ -165,9 +165,9 @@ export function PageIntelHeader({
           <div className="flex items-center gap-3 flex-wrap">
             <h1
               style={{
-                fontSize: '24px',
+                fontSize: '20px',
                 fontFamily: 'var(--font-serif)',
-                fontWeight: 700,
+                fontWeight: 500,
                 lineHeight: 1.2,
                 letterSpacing: '-0.02em',
                 color: 'var(--text-primary)',
@@ -204,7 +204,7 @@ export function PageIntelHeader({
           {subtitle && (
             <p
               style={{
-                fontSize: '13px',
+                fontSize: '10px',
                 fontFamily: 'var(--font-sans)',
                 color: 'var(--text-tertiary)',
                 lineHeight: 1.4,

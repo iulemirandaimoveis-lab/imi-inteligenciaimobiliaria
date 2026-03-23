@@ -23,12 +23,12 @@ export default function GlassCard({
     style,
 }: GlassCardProps) {
     const baseStyle: React.CSSProperties = {
-        background: 'rgba(15, 32, 53, 0.60)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        border: '1px solid rgba(200, 164, 74, 0.15)',
+        background: 'rgba(14,28,48,.52)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(200,164,74,.12)',
         borderRadius: 16,
-        boxShadow: '0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25)',
+        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
         transition: 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         overflow: 'hidden',
         ...style,
