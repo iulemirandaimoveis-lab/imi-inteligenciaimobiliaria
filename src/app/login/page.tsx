@@ -104,28 +104,28 @@ export default function LoginPage() {
     }
 
     const logoTextStyle: React.CSSProperties = {
-        fontFamily: T.playfair,
+        fontFamily: "'Playfair Display', Georgia, serif",
         fontWeight: 700,
         fontSize: '20px',
         color: '#FFFFFF',
+        letterSpacing: '2px',
         lineHeight: 1,
     }
 
     const logoSepStyle: React.CSSProperties = {
         width: '1px',
-        height: '22px',
-        background: T.gold,
+        height: '26px',
+        background: '#C8A44A',
         flexShrink: 0,
     }
 
     const logoTagStyle: React.CSSProperties = {
-        fontFamily: T.outfit,
-        fontWeight: 500,
         fontSize: '7px',
-        letterSpacing: '2px',
+        fontWeight: 600,
+        letterSpacing: '2.2px',
         textTransform: 'uppercase',
-        color: T.gold,
-        lineHeight: 1.4,
+        color: '#C8A44A',
+        lineHeight: 1.45,
     }
 
     const titleStyle: React.CSSProperties = {

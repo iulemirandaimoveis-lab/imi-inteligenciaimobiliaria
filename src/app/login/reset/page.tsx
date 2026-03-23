@@ -59,11 +59,12 @@ export default function ResetPasswordPage() {
                 </Link>
 
                 {/* Logo */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '40px' }}>
-                    <span style={{ fontSize: '22px', fontWeight: 800, color: '#fff', fontFamily: "'Playfair Display', Georgia, serif" }}>IMI</span>
-                    <div style={{ width: '1px', height: '22px', background: 'rgba(255,255,255,0.15)' }} />
-                    <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)' }}>
-                        Inteligência<br />Imobiliária
+                {/* Logo — Brand Identity v1.1 DARK */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '40px' }}>
+                    <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '20px', fontWeight: 700, color: '#FFFFFF', letterSpacing: '2px', lineHeight: 1 }}>IMI</span>
+                    <div style={{ width: '1px', height: '26px', background: '#C8A44A', flexShrink: 0 }} />
+                    <span style={{ fontSize: '7px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2.2px', color: '#C8A44A', lineHeight: 1.45 }}>
+                        INTELIGÊNCIA<br />IMOBILIÁRIA
                     </span>
                 </div>
 

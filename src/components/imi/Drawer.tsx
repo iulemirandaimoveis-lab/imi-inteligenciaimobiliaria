@@ -54,13 +54,35 @@ export default function Drawer({ open, setOpen }: Props) {
             >
                 {/* Header */}
                 <div className="px-5 py-4 flex items-center justify-between border-b border-neutral-100">
-                    <div className="flex items-center gap-3">
-                        <span className="text-xl font-serif font-black tracking-tight text-black">
+                    <div className="flex items-center gap-2.5">
+                        {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 LIGHT */}
+                        <span
+                            className="leading-none select-none"
+                            style={{
+                                fontFamily: "'Playfair Display', Georgia, serif",
+                                fontSize: 20,
+                                fontWeight: 700,
+                                color: '#0B1928',
+                                letterSpacing: '2px',
+                            }}
+                        >
                             IMI
                         </span>
-                        <div className="h-5 w-px bg-neutral-200" />
-                        <span className="text-[9px] tracking-[1.5px] text-slate-500 uppercase font-bold leading-tight">
-                            Inteligência<br />Imobiliária
+                        {/* Gold divider · 1px · Brand Identity v1.1 LIGHT */}
+                        <div style={{ width: 1, height: 22, background: '#A8842A', flexShrink: 0 }} />
+                        {/* Tagline · Brand Identity v1.1 LIGHT — navy on light bg */}
+                        <span
+                            className="select-none"
+                            style={{
+                                fontSize: '7px',
+                                fontWeight: 600,
+                                letterSpacing: '2.2px',
+                                textTransform: 'uppercase',
+                                color: '#0B1928',
+                                lineHeight: 1.45,
+                            }}
+                        >
+                            INTELIGÊNCIA<br />IMOBILIÁRIA
                         </span>
                     </div>
                     <button

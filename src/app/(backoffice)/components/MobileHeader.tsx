@@ -312,33 +312,32 @@ export default function MobileHeader() {
                                     transition={{ duration: 0.18 }}
                                     className="flex items-center gap-2"
                                 >
-                                    {/* IMI wordmark — Cormorant Garamond Bold, matches brand reference */}
+                                    {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 DARK */}
                                     <span style={{
-                                        fontFamily: 'var(--font-cormorant), "Cormorant Garamond", Georgia, serif',
-                                        fontSize: 22,
+                                        fontFamily: "'Playfair Display', Georgia, serif",
+                                        fontSize: 20,
                                         fontWeight: 700,
-                                        color: 'var(--text-primary)',
-                                        letterSpacing: '0.04em',
+                                        color: '#FFFFFF',
+                                        letterSpacing: '2px',
                                         lineHeight: 1,
                                     }}>
                                         IMI
                                     </span>
-                                    {/* Thin gold separator */}
+                                    {/* Gold divider · 1px · Brand Identity v1.1 DARK */}
                                     <div style={{
                                         width: 1,
-                                        height: 18,
-                                        background: 'var(--accent-400)',
+                                        height: 22,
+                                        background: '#C8A44A',
                                         flexShrink: 0,
                                     }} />
-                                    {/* Tagline — sans-serif, uppercase, wide tracking */}
+                                    {/* Tagline · Brand Identity v1.1 DARK — gold on dark bg */}
                                     <span style={{
-                                        fontSize: 9,
-                                        fontWeight: 400,
-                                        color: 'var(--accent-400)',
-                                        letterSpacing: '0.22em',
+                                        fontSize: '7px',
+                                        fontWeight: 600,
+                                        color: '#C8A44A',
+                                        letterSpacing: '2.2px',
                                         textTransform: 'uppercase',
-                                        lineHeight: 1.3,
-                                        fontFamily: 'var(--font-sans)',
+                                        lineHeight: 1.45,
                                     }}>
                                         INTELIGÊNCIA<br />IMOBILIÁRIA
                                     </span>

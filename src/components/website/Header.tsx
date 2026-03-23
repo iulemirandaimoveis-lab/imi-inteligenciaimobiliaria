@@ -105,15 +105,34 @@ export default function Header({ lang, settings }: HeaderProps) {
                             href={`/${lang}`}
                             className="flex items-center gap-2.5 sm:gap-3 group flex-shrink-0"
                         >
+                            {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 LIGHT */}
                             <span
-                                className="text-[20px] sm:text-[22px] lg:text-[24px] font-black tracking-tight text-[#1A1A1A] group-hover:text-[#486581] transition-colors duration-200"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                className="leading-none select-none"
+                                style={{
+                                    fontFamily: "'Playfair Display', Georgia, serif",
+                                    fontSize: 26,
+                                    fontWeight: 700,
+                                    color: '#0B1928',
+                                    letterSpacing: '2px',
+                                }}
                             >
                                 IMI
                             </span>
-                            <div className="h-4 w-px bg-black/15" />
-                            <span className="text-[9px] font-bold text-[#8A95A0] uppercase tracking-[0.18em] leading-[1.35]">
-                                Inteligência<br />Imobiliária
+                            {/* Gold divider · 1px · Brand Identity v1.1 LIGHT */}
+                            <div style={{ width: 1, height: 22, background: '#A8842A', flexShrink: 0 }} />
+                            {/* Tagline · Brand Identity v1.1 LIGHT — navy on light bg */}
+                            <span
+                                className="select-none"
+                                style={{
+                                    fontSize: '7px',
+                                    fontWeight: 600,
+                                    letterSpacing: '2.2px',
+                                    textTransform: 'uppercase',
+                                    color: '#0B1928',
+                                    lineHeight: 1.45,
+                                }}
+                            >
+                                INTELIGÊNCIA<br />IMOBILIÁRIA
                             </span>
                         </Link>
 

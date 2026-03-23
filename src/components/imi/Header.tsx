@@ -13,34 +13,34 @@ export default function Header() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[72px] flex items-center justify-between">
 
                     <Link href="/pt" className="flex items-center gap-2.5 no-underline" aria-label="IMI - Página inicial">
-                        {/* IMI wordmark — Playfair Display 700 per brandkit */}
+                        {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 LIGHT */}
                         <span
                             className="leading-none select-none"
                             style={{
-                                fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+                                fontFamily: "'Playfair Display', Georgia, serif",
                                 fontSize: 26,
                                 fontWeight: 700,
                                 color: '#0B1928',
-                                letterSpacing: '0.04em',
+                                letterSpacing: '2px',
                             }}
                         >
                             IMI
                         </span>
-                        {/* Gold separator — brandkit: height of letter M */}
+                        {/* Gold divider · 1px · Brand Identity v1.1 LIGHT */}
                         <div
                             className="flex-shrink-0"
-                            style={{ width: 1, height: 22, background: '#C49D5B' }}
+                            style={{ width: 1, height: 22, background: '#A8842A' }}
                         />
-                        {/* Tagline — sans-serif, uppercase, wide tracking, navy */}
+                        {/* Tagline · Brand Identity v1.1 LIGHT — navy on light bg */}
                         <span
-                            className="leading-[1.25] select-none hidden sm:block"
+                            className="select-none hidden sm:block"
                             style={{
-                                fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif",
-                                fontSize: 10,
-                                fontWeight: 500,
-                                letterSpacing: '0.18em',
+                                fontSize: '7px',
+                                fontWeight: 600,
+                                letterSpacing: '2.2px',
                                 textTransform: 'uppercase' as const,
-                                color: '#4A5568',
+                                color: '#0B1928',
+                                lineHeight: 1.45,
                             }}
                         >
                             INTELIGÊNCIA<br />IMOBILIÁRIA

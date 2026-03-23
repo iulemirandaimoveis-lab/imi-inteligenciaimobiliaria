@@ -42,28 +42,31 @@ export default function Footer() {
                     {/* Brand col */}
                     <div className="md:col-span-5">
                         <div className="flex items-center gap-3 mb-5">
+                            {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 DARK */}
                             <span
                                 className="leading-none select-none"
                                 style={{
-                                    fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+                                    fontFamily: "'Playfair Display', Georgia, serif",
                                     fontSize: 26,
                                     fontWeight: 700,
                                     color: '#FFFFFF',
-                                    letterSpacing: '0.04em',
+                                    letterSpacing: '2px',
                                 }}
                             >
                                 IMI
                             </span>
-                            <div className="flex-shrink-0" style={{ width: 1, height: 22, background: '#C49D5B' }} />
+                            {/* Gold divider · 1px · Brand Identity v1.1 DARK */}
+                            <div className="flex-shrink-0" style={{ width: 1, height: 26, background: '#C8A44A' }} />
+                            {/* Tagline · Brand Identity v1.1 DARK — gold on dark bg */}
                             <span
-                                className="leading-[1.25] select-none"
+                                className="select-none"
                                 style={{
-                                    fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif",
-                                    fontSize: 10,
-                                    fontWeight: 500,
-                                    letterSpacing: '0.18em',
+                                    fontSize: '7px',
+                                    fontWeight: 600,
+                                    letterSpacing: '2.2px',
                                     textTransform: 'uppercase',
-                                    color: 'rgba(255,255,255,0.5)',
+                                    color: '#C8A44A',
+                                    lineHeight: 1.45,
                                 }}
                             >
                                 INTELIGÊNCIA<br />IMOBILIÁRIA

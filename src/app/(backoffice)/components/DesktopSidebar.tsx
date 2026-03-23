@@ -446,38 +446,39 @@ export function DesktopSidebar() {
                 borderRight: '1px solid var(--border-subtle)',
             }}
         >
-            {/* Logo — IMI Brand Identity */}
+            {/* Logo — IMI Brand Identity v1.1 DARK */}
             <div
                 className="flex items-center gap-3 px-5 h-16 flex-shrink-0"
                 style={{ borderBottom: '1px solid var(--border-subtle)' }}
             >
-                {/* Wordmark: Cormorant Garamond Bold — matches brand reference exactly */}
+                {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 DARK */}
                 <span
-                    className="text-white leading-none select-none"
+                    className="leading-none select-none"
                     style={{
-                        fontFamily: 'var(--font-cormorant), "Cormorant Garamond", Georgia, serif',
-                        fontSize: 28,
+                        fontFamily: "'Playfair Display', Georgia, serif",
+                        fontSize: 20,
                         fontWeight: 700,
-                        letterSpacing: '0.04em',
+                        letterSpacing: '2px',
+                        color: '#FFFFFF',
                     }}
                 >
                     IMI
                 </span>
-                {/* Thin gold separator */}
+                {/* Gold divider · 1px · Brand Identity v1.1 DARK */}
                 <div
                     className="flex-shrink-0"
-                    style={{ width: 1, height: 38, background: 'var(--accent-400)' }}
+                    style={{ width: 1, height: 26, background: '#C8A44A' }}
                 />
-                {/* Tagline: sans-serif, uppercase, wide tracking */}
+                {/* Tagline · Brand Identity v1.1 DARK — gold on dark bg */}
                 <span
-                    className="leading-[1.3] select-none"
+                    className="select-none"
                     style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: 10,
-                        fontWeight: 400,
-                        letterSpacing: '0.22em',
+                        fontSize: '7px',
+                        fontWeight: 600,
+                        letterSpacing: '2.2px',
                         textTransform: 'uppercase',
-                        color: 'var(--accent-400)',
+                        color: '#C8A44A',
+                        lineHeight: 1.45,
                     }}
                 >
                     INTELIGÊNCIA<br />IMOBILIÁRIA

@@ -51,17 +51,34 @@ export default function MobileMenu({
             {/* Panel */}
             <div className="absolute top-0 right-0 bottom-0 w-full max-w-[320px] bg-white shadow-2xl flex flex-col">
                 <div className="flex items-center justify-between px-6 py-6">
-                    <div className="flex items-center gap-4">
-                        <span className="font-serif text-2xl font-black text-[#1A1D23] tracking-tighter">IMI</span>
-                        <div className="h-6 w-[1px] bg-gray-200"></div>
-                        <div className="flex flex-col justify-center">
-                            <span className="text-[9px] uppercase tracking-[0.2em] text-[#1A1D23]/60 font-bold mb-0.5">
-                                Inteligência
-                            </span>
-                            <span className="text-[9px] uppercase tracking-[0.2em] text-[#1A1D23]/60 font-bold">
-                                Imobiliária
-                            </span>
-                        </div>
+                    <div className="flex items-center gap-2.5">
+                        {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 LIGHT */}
+                        <span
+                            className="leading-none select-none"
+                            style={{
+                                fontFamily: "'Playfair Display', Georgia, serif",
+                                fontSize: 20,
+                                fontWeight: 700,
+                                color: '#0B1928',
+                                letterSpacing: '2px',
+                            }}
+                        >
+                            IMI
+                        </span>
+                        <div style={{ width: 1, height: 22, background: '#A8842A', flexShrink: 0 }} />
+                        <span
+                            className="select-none"
+                            style={{
+                                fontSize: '7px',
+                                fontWeight: 600,
+                                letterSpacing: '2.2px',
+                                textTransform: 'uppercase',
+                                color: '#0B1928',
+                                lineHeight: 1.45,
+                            }}
+                        >
+                            INTELIGÊNCIA<br />IMOBILIÁRIA
+                        </span>
                     </div>
                     <button
                         onClick={onClose}
