@@ -74,7 +74,7 @@ export function WidgetGlobalCompare() {
                             borderRadius: 6,
                             border: 'none',
                             background: metric === m ? 'var(--bg-surface)' : 'transparent',
-                            color: metric === m ? 'var(--accent-400,#3D6FFF)' : 'var(--text-secondary)',
+                            color: metric === m ? 'var(--accent-400,#C8A44A)' : 'var(--text-secondary)',
                             fontSize: 10,
                             fontWeight: metric === m ? 700 : 500,
                             fontFamily: 'var(--font-ui)',
@@ -119,7 +119,7 @@ export function WidgetGlobalCompare() {
                                     height: '100%',
                                     width: `${barPct}%`,
                                     background: isHighlight
-                                        ? 'linear-gradient(90deg, var(--accent-400,#3D6FFF), rgba(200,164,74,0.7))'
+                                        ? 'linear-gradient(90deg, var(--accent-400,#C8A44A), rgba(200,164,74,0.7))'
                                         : 'linear-gradient(90deg, rgba(200,164,74,0.35), rgba(200,164,74,0.15))',
                                     borderRadius: 5,
                                     transition: 'width 0.45s cubic-bezier(0.4,0,0.2,1)',
@@ -166,7 +166,7 @@ export function WidgetGlobalCompare() {
                 border: '1px solid rgba(200,164,74,0.20)',
                 borderRadius: 8,
             }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-400,#3D6FFF)', flexShrink: 0 }} />
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-400,#C8A44A)', flexShrink: 0 }} />
                 <span style={{ fontSize: 10, color: 'var(--text-primary)', fontFamily: 'var(--font-ui)' }}>
                     Recife oferece melhor custo-benefício entre as capitais brasileiras em {metric.toLowerCase()}
                 </span>

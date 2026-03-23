@@ -76,7 +76,7 @@ export function WidgetValuation() {
                             <span>Confiabilidade do Modelo</span><span>87%</span>
                         </div>
                         <div style={{ height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 99 }}>
-                            <div style={{ height: '100%', width: '87%', background: 'var(--gold,#3D6FFF)', borderRadius: 99 }} />
+                            <div style={{ height: '100%', width: '87%', background: 'var(--gold,#C8A44A)', borderRadius: 99 }} />
                         </div>
                     </div>
                 </div>

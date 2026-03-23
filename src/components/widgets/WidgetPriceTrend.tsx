@@ -68,12 +68,12 @@ export function WidgetPriceTrend() {
             <svg width="100%" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ height: 120 }}>
                 <defs>
                     <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="var(--gold,#3D6FFF)" stopOpacity="0.18" />
-                        <stop offset="100%" stopColor="var(--gold,#3D6FFF)" stopOpacity="0" />
+                        <stop offset="0%" stopColor="var(--gold,#C8A44A)" stopOpacity="0.18" />
+                        <stop offset="100%" stopColor="var(--gold,#C8A44A)" stopOpacity="0" />
                     </linearGradient>
                 </defs>
                 <polyline points={`${pts} ${w},${h} 0,${h}`} fill="url(#tg)" stroke="none" />
-                <polyline points={pts} fill="none" stroke="var(--accent-400,#3D6FFF)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points={pts} fill="none" stroke="var(--accent-400,#C8A44A)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-secondary)' }}>

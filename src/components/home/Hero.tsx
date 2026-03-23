@@ -95,7 +95,7 @@ export default function Hero({ dict }: HeroProps) {
             {/* Trust pills */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
-              className="flex items-center gap-3 mb-6 flex-wrap"
+              className="flex flex-col gap-3 items-start mb-6"
             >
               {TRUST.map(t => {
                 const Icon = t.icon
@@ -130,11 +130,11 @@ export default function Hero({ dict }: HeroProps) {
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.55 } } }}
               className="flex flex-col sm:flex-row gap-3 w-full"
             >
-              <ButtonGhost dark strong href={`/${lang}/avaliacoes#form`} size="lg" full className="sm:w-auto sm:flex-none">
+              <ButtonGhost dark strong href={`/${lang}/avaliacoes#form`} size="lg" full className="w-full sm:w-auto min-w-[240px] h-14">
                 {dict.cta_appraisal || 'Solicitar Avaliação'}
               </ButtonGhost>
 
-              <ButtonGhost dark onClick={handleWhatsApp} size="lg" full className="sm:w-auto sm:flex-none" icon={<MessageCircle size={15} />} arrow={false}>
+              <ButtonGhost dark onClick={handleWhatsApp} size="lg" full className="w-full sm:w-auto min-w-[240px] h-14" icon={<MessageCircle size={15} />} arrow={false}>
                 {dict.cta_whatsapp || 'Falar com especialista'}
               </ButtonGhost>
             </motion.div>
@@ -208,7 +208,7 @@ export default function Hero({ dict }: HeroProps) {
           >
             {STATS.map(stat => (
               <div key={stat.label} className="flex flex-col items-center px-3 sm:px-4 py-2 sm:py-0 text-center">
-                <span className="text-xl sm:text-3xl font-bold text-white">
+                <span className="text-xl sm:text-3xl font-bold text-[#C8A44A]" style={{ fontFamily: 'var(--font-mono)' }}>
                   <StatCounter to={stat.value} suffix={stat.suffix} />
                 </span>
                 <span className="text-[10px] sm:text-xs text-white/40 mt-0.5 leading-snug">{stat.label}</span>

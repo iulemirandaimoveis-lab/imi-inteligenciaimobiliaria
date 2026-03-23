@@ -60,12 +60,12 @@ export default function AppraisalForm() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={staggerContainer}
-            className="bg-white/80 backdrop-blur-md shadow-soft rounded-2xl shadow-lg p-8 md:p-12"
+            className="bg-[#0D1B2A] backdrop-blur-md rounded-2xl shadow-lg p-6 sm:p-8 md:p-12 border border-[#1C2F42]"
         >
-            <motion.h2 variants={slideUp} className="text-3xl font-bold text-imi-900 mb-2">
+            <motion.h2 variants={slideUp} className="text-3xl font-bold text-white mb-2">
                 Solicitar Avaliação Técnica
             </motion.h2>
-            <motion.p variants={slideUp} className="text-imi-600 mb-8">
+            <motion.p variants={slideUp} className="text-gray-400 mb-8">
                 Preencha o formulário abaixo e entraremos em contato em até 24 horas.
             </motion.p>
 
@@ -168,7 +168,7 @@ export default function AppraisalForm() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full h-16 bg-navy-800 text-white rounded-2xl font-bold text-lg hover:bg-navy-700 transition-all duration-300 disabled:opacity-50 shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)] border border-navy-700 border-l-4 border-l-[#334E68] border-r-4 border-r-[#E53935] flex items-center justify-center hover:-translate-y-1"
+                        className="w-full h-14 bg-[#C8A44A] text-[#0D1B2A] rounded-xl font-bold text-lg hover:bg-[#D4B86A] transition-all duration-300 disabled:opacity-50 shadow-[0_8px_24px_rgba(200,164,74,0.25)] hover:shadow-[0_12px_32px_rgba(200,164,74,0.35)] flex items-center justify-center hover:-translate-y-0.5"
                     >
                         {isSubmitting ? 'Enviando...' : 'Solicitar Avaliação'}
                     </button>

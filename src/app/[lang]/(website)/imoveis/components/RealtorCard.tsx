@@ -26,7 +26,7 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
         <div className="rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm">
             {/* Header */}
             <div className="bg-[#102A43] px-5 py-3">
-                <p className="text-[10px] font-bold text-[#3D6FFF] tracking-[0.15em] uppercase">
+                <p className="text-[10px] font-bold text-[#C8A44A] tracking-[0.15em] uppercase">
                     Corretor Responsável
                 </p>
             </div>

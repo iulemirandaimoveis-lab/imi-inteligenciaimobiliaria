@@ -41,14 +41,14 @@ export function WidgetImiIndex() {
             <svg width="100%" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ height: 80 }}>
                 <defs>
                     <linearGradient id="ig" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="var(--gold,#3D6FFF)" stopOpacity="0.20" />
-                        <stop offset="100%" stopColor="var(--gold,#3D6FFF)" stopOpacity="0" />
+                        <stop offset="0%" stopColor="var(--gold,#C8A44A)" stopOpacity="0.20" />
+                        <stop offset="100%" stopColor="var(--gold,#C8A44A)" stopOpacity="0" />
                     </linearGradient>
                 </defs>
                 <polyline points={`${pts} ${w},${h} 0,${h}`} fill="url(#ig)" stroke="none" />
-                <polyline points={pts} fill="none" stroke="var(--accent-400,#3D6FFF)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points={pts} fill="none" stroke="var(--accent-400,#C8A44A)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 {/* Last point dot */}
-                <circle cx={w} cy={h - ((IDX_BASE - min) / range) * (h - 10) - 2} r="4" fill="var(--accent-400,#3D6FFF)" />
+                <circle cx={w} cy={h - ((IDX_BASE - min) / range) * (h - 10) - 2} r="4" fill="var(--accent-400,#C8A44A)" />
             </svg>
 
             {/* Stats grid */}

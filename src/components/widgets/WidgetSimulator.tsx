@@ -75,7 +75,7 @@ export function WidgetSimulator() {
 
     const sliderStyle: React.CSSProperties = {
         width: '100%',
-        accentColor: 'var(--accent-400,#3D6FFF)',
+        accentColor: 'var(--accent-400,#C8A44A)',
         cursor: 'pointer',
     }
 
@@ -119,7 +119,7 @@ export function WidgetSimulator() {
                 <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <label style={{ ...labelStyle, marginBottom: 0 }}>Entrada</label>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-400,#3D6FFF)' }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-400,#C8A44A)' }}>
                             {entrada}% — {formatBRL(valorImovel * entrada / 100)}
                         </span>
                     </div>
@@ -135,7 +135,7 @@ export function WidgetSimulator() {
                 <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <label style={{ ...labelStyle, marginBottom: 0 }}>Prazo</label>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-400,#3D6FFF)' }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-400,#C8A44A)' }}>
                             {prazo} anos ({prazo * 12} meses)
                         </span>
                     </div>
@@ -157,7 +157,7 @@ export function WidgetSimulator() {
             }}>
                 <div>
                     <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-secondary)', marginBottom: 4 }}>Parcela Mensal</div>
-                    <div style={{ fontSize: 32, fontWeight: 700, color: 'var(--accent-400,#3D6FFF)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
+                    <div style={{ fontSize: 32, fontWeight: 700, color: 'var(--accent-400,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
                         {formatBRL(parcela)}
                     </div>
                     <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 4 }}>
@@ -188,22 +188,22 @@ export function WidgetSimulator() {
                 <svg width="100%" viewBox={`0 0 ${spW} ${spH}`} preserveAspectRatio="none" style={{ height: spH }}>
                     <defs>
                         <linearGradient id="amortGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="var(--accent-400,#3D6FFF)" stopOpacity="0.18" />
-                            <stop offset="100%" stopColor="var(--accent-400,#3D6FFF)" stopOpacity="0" />
+                            <stop offset="0%" stopColor="var(--accent-400,#C8A44A)" stopOpacity="0.18" />
+                            <stop offset="100%" stopColor="var(--accent-400,#C8A44A)" stopOpacity="0" />
                         </linearGradient>
                     </defs>
                     <polyline points={`${spPts} ${spW},${spH} 0,${spH}`} fill="url(#amortGrad)" stroke="none" />
-                    <polyline points={spPts} fill="none" stroke="var(--accent-400,#3D6FFF)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline points={spPts} fill="none" stroke="var(--accent-400,#C8A44A)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             </div>
 
             {/* CTA */}
             <button style={{
                 background: 'transparent',
-                border: '1px solid var(--accent-400,#3D6FFF)',
+                border: '1px solid var(--accent-400,#C8A44A)',
                 borderRadius: 7,
                 padding: '9px 16px',
-                color: 'var(--accent-400,#3D6FFF)',
+                color: 'var(--accent-400,#C8A44A)',
                 fontSize: 11,
                 fontWeight: 600,
                 fontFamily: 'var(--font-ui)',

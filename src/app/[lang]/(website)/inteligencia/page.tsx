@@ -43,7 +43,7 @@ const SECTIONS = [
         label: 'Relatórios',
         description: 'Estudos técnicos de mercado, dossiês de bairro e análises comparativas para download.',
         tag: 'PDF & Exclusivos',
-        tagColor: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
+        tagColor: 'text-[#C8A44A] bg-[#C8A44A]/10 border-[#C8A44A]/20',
     },
 ]
 

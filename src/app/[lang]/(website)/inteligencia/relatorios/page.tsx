@@ -91,7 +91,7 @@ function formatDate(iso: string | null) {
 const CATEGORY_COLORS: Record<string, string> = {
     'Panorama Anual': 'text-navy-100 bg-navy-200/10 border-navy-200/20',
     'Dossiê de Bairro': 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
-    'Análise Comparativa': 'text-purple-400 bg-purple-400/10 border-purple-400/20',
+    'Análise Comparativa': 'text-[#C8A44A] bg-[#C8A44A]/10 border-[#C8A44A]/20',
     'default': 'text-white/50 bg-white/[0.05] border-white/[0.08]',
 }
 

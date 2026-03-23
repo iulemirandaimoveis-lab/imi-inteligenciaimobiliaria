@@ -18,7 +18,7 @@ const APPRAISAL_TYPES = [
     icon: Landmark,
     title: 'Garantia Bancária',
     tag: 'Financiamentos',
-    tagColor: 'bg-blue-50 text-blue-600',
+    tagColor: 'bg-[#C8A44A]/10 text-[#C8A44A]',
     description: 'Laudos técnicos aceitos por Caixa, Bradesco, Itaú e Santander. Conformidade total com as exigências bancárias.',
     points: ['Aceito por todos os grandes bancos', 'Formato PTAM', 'Prazo expresso disponível'],
   },
@@ -26,7 +26,7 @@ const APPRAISAL_TYPES = [
     icon: Scale,
     title: 'Judicial / Extrajudicial',
     tag: 'Perícia Técnica',
-    tagColor: 'bg-purple-50 text-purple-600',
+    tagColor: 'bg-[#C8A44A]/10 text-[#C8A44A]',
     description: 'Perícia técnica para processos judiciais, inventários, partilhas e arbitragens. Fundamentação normativa para uso legal.',
     points: ['Habilitado junto ao TJPE', 'Assistência técnica judicial', 'Laudo pericial fundamentado'],
   },
@@ -102,10 +102,10 @@ export default function AppraisalsPage() {
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-8 h-px bg-navy-800" />
-              <span className="text-navy-300 text-[11px] font-bold uppercase tracking-[0.25em]">CNAI 53290</span>
+              <span className="text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.25em]">CNAI 53290</span>
             </div>
             <h1 className="text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-              Avaliações <span className="text-navy-300">Imobiliárias</span>
+              Avaliações <span className="text-[#C8A44A]">Imobiliárias</span>
             </h1>
             <p className="text-[17px] lg:text-[19px] leading-relaxed font-light text-white/50 max-w-2xl">
               Laudos técnicos com metodologia normativa <span className="text-white font-medium">NBR 14653</span>. Decisões seguras baseadas em análise profissional e independente.
@@ -113,7 +113,7 @@ export default function AppraisalsPage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-12 flex flex-wrap gap-x-10 gap-y-6">
               {[{ v: '+500', l: 'Laudos emitidos' }, { v: 'NBR', l: '14653 metodologia' }, { v: '72h', l: 'Prazo expresso' }].map((s, i) => (
                 <div key={i}>
-                  <div className="text-[30px] font-black text-navy-300 leading-none mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
+                  <div className="text-[30px] font-black text-[#C8A44A] leading-none mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40">{s.l}</div>
                 </div>
               ))}
@@ -134,11 +134,11 @@ export default function AppraisalsPage() {
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
-                  <item.icon className="w-5 h-5 text-navy-300" strokeWidth={1.5} />
+                  <item.icon className="w-5 h-5 text-[#C8A44A]" strokeWidth={1.5} />
                 </div>
                 <div>
                   <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-neutral-900">{item.t}</p>
-                  <p className="text-[11px] text-white/40">{item.s}</p>
+                  <p className="text-[11px] text-gray-500">{item.s}</p>
                 </div>
               </div>
             ))}
@@ -150,9 +150,9 @@ export default function AppraisalsPage() {
       <section className="section-padding bg-white">
         <div className="container-custom">
           <div className="text-center mb-14">
-            <span className="text-navy-300 text-[11px] font-bold uppercase tracking-[0.25em]">Serviços</span>
+            <span className="text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.25em]">Serviços</span>
             <h2 className="text-[32px] lg:text-[44px] font-black mt-4 mb-4 text-neutral-900" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Tipos de Avaliação</h2>
-            <p className="text-white/40 text-lg max-w-xl mx-auto font-light">Serviços especializados para cada necessidade de mercado e conformidade legal</p>
+            <p className="text-gray-500 text-lg max-w-xl mx-auto font-light">Serviços especializados para cada necessidade de mercado e conformidade legal</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {APPRAISAL_TYPES.map((item, i) => (
@@ -165,11 +165,11 @@ export default function AppraisalsPage() {
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${item.tagColor}`}>{item.tag}</span>
                 </div>
                 <h3 className="text-[15px] font-bold text-neutral-900 mb-2">{item.title}</h3>
-                <p className="text-[13px] text-white/40 leading-relaxed mb-5">{item.description}</p>
+                <p className="text-[13px] text-gray-500 leading-relaxed mb-5">{item.description}</p>
                 <ul className="space-y-2">
                   {item.points.map((pt, j) => (
                     <li key={j} className="flex items-start gap-2 text-[12px] text-gray-600">
-                      <CheckCircle className="w-3.5 h-3.5 text-navy-300 flex-shrink-0 mt-0.5" strokeWidth={2} />{pt}
+                      <CheckCircle className="w-3.5 h-3.5 text-[#C8A44A] flex-shrink-0 mt-0.5" strokeWidth={2} />{pt}
                     </li>
                   ))}
                 </ul>
@@ -184,9 +184,9 @@ export default function AppraisalsPage() {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-14">
-              <span className="text-navy-300 text-[11px] font-bold uppercase tracking-[0.25em]">Processo</span>
+              <span className="text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.25em]">Processo</span>
               <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-neutral-900" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Nossa Metodologia</h2>
-              <p className="text-white/40 max-w-lg mx-auto font-light">Todas as avaliações seguem rigorosamente a <strong className="text-neutral-900">NBR 14653</strong> e as diretrizes do IBAPE.</p>
+              <p className="text-gray-500 max-w-lg mx-auto font-light">Todas as avaliações seguem rigorosamente a <strong className="text-neutral-900">NBR 14653</strong> e as diretrizes do IBAPE.</p>
             </div>
             <div className="grid lg:grid-cols-3 gap-8">
               {PROCESS.map((step, i) => (
@@ -194,7 +194,7 @@ export default function AppraisalsPage() {
                   <div className="w-11 h-11 flex-shrink-0 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[12px] font-black">{step.n}</div>
                   <div>
                     <h3 className="font-bold text-neutral-900 mb-1.5">{step.title}</h3>
-                    <p className="text-[13px] text-white/40 leading-relaxed">{step.desc}</p>
+                    <p className="text-[13px] text-gray-500 leading-relaxed">{step.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -208,9 +208,9 @@ export default function AppraisalsPage() {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-14">
-              <span className="text-navy-300 text-[11px] font-bold uppercase tracking-[0.25em]">Solicitar</span>
+              <span className="text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.25em]">Solicitar</span>
               <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-neutral-900" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Solicitar Avaliação Técnica</h2>
-              <p className="text-white/40 max-w-md mx-auto font-light">Preencha o formulário e retornaremos em até 24 horas com um orçamento detalhado.</p>
+              <p className="text-gray-500 max-w-md mx-auto font-light">Preencha o formulário e retornaremos em até 24 horas com um orçamento detalhado.</p>
             </div>
             <AppraisalForm />
           </div>
@@ -222,7 +222,7 @@ export default function AppraisalsPage() {
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-14">
-              <span className="text-navy-300 text-[11px] font-bold uppercase tracking-[0.25em]">Dúvidas Frequentes</span>
+              <span className="text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.25em]">Dúvidas Frequentes</span>
               <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-neutral-900" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Perguntas Frequentes</h2>
             </div>
             <div className="space-y-4">
@@ -230,9 +230,9 @@ export default function AppraisalsPage() {
                 <details key={i} className="group bg-white border border-[#E9ECEF] rounded-xl overflow-hidden">
                   <summary className="flex items-center justify-between cursor-pointer p-5 text-[15px] font-semibold text-neutral-900 hover:bg-gray-50 transition-colors">
                     {faq.question}
-                    <span className="ml-4 text-navy-300 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+                    <span className="ml-4 text-[#C8A44A] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
                   </summary>
-                  <div className="px-5 pb-5 text-[14px] text-white/40 leading-relaxed">
+                  <div className="px-5 pb-5 text-[14px] text-gray-500 leading-relaxed">
                     {faq.answer}
                   </div>
                 </details>

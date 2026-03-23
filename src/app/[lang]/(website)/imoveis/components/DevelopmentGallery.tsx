@@ -262,7 +262,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                                 ? 'w-5'
                                                 : 'hover:bg-white/60 w-1.5'
                                         }`}
-                                        style={{ background: i === lightboxIndex ? '#3D6FFF' : 'rgba(255,255,255,0.35)' }}
+                                        style={{ background: i === lightboxIndex ? '#C8A44A' : 'rgba(255,255,255,0.35)' }}
                                     />
                                 ))}
                             </div>
@@ -277,7 +277,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
 function SectionTitle({ label }: { label: string }) {
     return (
         <div className="flex items-center gap-3 mb-6">
-            <div className="w-1 h-6 rounded-full" style={{ background: '#3D6FFF' }} />
+            <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
             <h2 className="text-xl text-gray-900 font-bold tracking-tight" style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}>
                 {label}
             </h2>

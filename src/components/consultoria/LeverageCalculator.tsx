@@ -33,7 +33,7 @@ export function LeverageCalculator() {
                         step="0.5"
                         value={appreciationRate}
                         onChange={(e) => setAppreciationRate(Number(e.target.value))}
-                        className="w-full h-2 bg-navy-800 rounded-lg appearance-none cursor-pointer accent-[#486581]"
+                        className="w-full h-2 bg-navy-800 rounded-lg appearance-none cursor-pointer accent-[#C8A44A]"
                     />
                 </div>
 
@@ -48,7 +48,7 @@ export function LeverageCalculator() {
                         <div className="absolute top-0 right-0 w-24 h-24 bg-navy-800 opacity-10 rounded-full blur-2xl -mr-12 -mt-12" />
                         <div className="relative z-10">
                             <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-4">Financiado (40% down)</div>
-                            <div className="text-3xl font-bold text-navy-300 mb-1">{leveragedRoi.toFixed(0)}%</div>
+                            <div className="text-3xl font-bold text-[#C8A44A] mb-1">{leveragedRoi.toFixed(0)}%</div>
                             <p className="text-[10px] text-white/50 font-medium">ROI Alavancado em 5 Anos</p>
                         </div>
                     </div>
@@ -56,7 +56,7 @@ export function LeverageCalculator() {
 
                 <div className="bg-navy-800/5 border border-navy-600/10 p-4 rounded-xl">
                     <p className="text-xs text-gray-300 leading-relaxed font-medium">
-                        <span className="text-navy-300 font-bold block mb-1">Insight Estratégico:</span>
+                        <span className="text-[#C8A44A] font-bold block mb-1">Insight Estratégico:</span>
                         Ao usar o crédito bancário, você ganha a valorização sobre o valor TOTAL do imóvel, tendo investido apenas a entrada. Isso gera um efeito multiplicador no seu capital.
                     </p>
                 </div>

@@ -55,7 +55,7 @@ export function QualificationCTA() {
                             { label: 'Suporte VIP', value: '24/7' }
                         ].map((item, i) => (
                             <div key={i} className="text-center">
-                                <div className="text-xl font-bold text-navy-300 mb-1">{item.value}</div>
+                                <div className="text-xl font-bold text-[#C8A44A] mb-1">{item.value}</div>
                                 <div className="text-[10px] uppercase tracking-widest text-white/50 font-bold">{item.label}</div>
                             </div>
                         ))}

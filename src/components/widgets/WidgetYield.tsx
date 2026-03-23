@@ -116,7 +116,7 @@ export function WidgetYield() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.25)', borderRadius: 8, padding: '10px 12px' }}>
                     <div style={{ fontSize: 9, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Yield Bruto a.a.</div>
-                    <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--accent-400,#3D6FFF)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
+                    <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--accent-400,#C8A44A)', fontFamily: 'var(--font-display,"Playfair Display",serif)', lineHeight: 1 }}>
                         {yieldBruto.toFixed(2)}%
                     </div>
                 </div>
@@ -139,7 +139,7 @@ export function WidgetYield() {
                     <div style={{
                         position: 'absolute', left: 0, top: 0, height: '100%',
                         width: `${barWidth}%`,
-                        background: 'linear-gradient(90deg, var(--accent-400,#3D6FFF), rgba(200,164,74,0.6))',
+                        background: 'linear-gradient(90deg, var(--accent-400,#C8A44A), rgba(200,164,74,0.6))',
                         borderRadius: 5,
                         transition: 'width 0.4s ease',
                     }} />
@@ -167,14 +167,14 @@ export function WidgetYield() {
                                     height: '100%',
                                     width: `${(n.yield / 10) * 100}%`,
                                     background: n.yield >= BENCHMARK
-                                        ? 'linear-gradient(90deg, var(--accent-400,#3D6FFF), rgba(200,164,74,0.7))'
+                                        ? 'linear-gradient(90deg, var(--accent-400,#C8A44A), rgba(200,164,74,0.7))'
                                         : 'linear-gradient(90deg, rgba(200,164,74,0.5), rgba(200,164,74,0.3))',
                                     borderRadius: 3,
                                 }} />
                             </div>
                             <div style={{
                                 width: 38, textAlign: 'right', fontSize: 11, fontWeight: 600,
-                                color: n.yield >= BENCHMARK ? 'var(--accent-400,#3D6FFF)' : 'var(--text-secondary)',
+                                color: n.yield >= BENCHMARK ? 'var(--accent-400,#C8A44A)' : 'var(--text-secondary)',
                                 fontFamily: 'var(--font-ui)',
                             }}>
                                 {n.yield.toFixed(1)}%

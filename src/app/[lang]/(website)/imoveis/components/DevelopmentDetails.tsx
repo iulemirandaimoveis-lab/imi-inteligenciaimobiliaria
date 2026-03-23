@@ -6,7 +6,7 @@ import { Bed, Maximize, Bath, Car, Check, Sparkles, Building2, Waves, TreePine, 
 import { Development } from '../types/development';
 import { slideUp, staggerContainer } from '@/lib/animations';
 
-const GOLD = '#3D6FFF';
+const GOLD = '#C8A44A';
 const NAVY = '#0B1928';
 
 interface DevelopmentDetailsProps {
@@ -75,21 +75,21 @@ function FinancialSimulator({ price }: { price: number }) {
     const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
     return (
-        <section className="mt-8 p-6 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50 border border-gray-200 dark:border-gray-700">
+        <section className="mt-8 p-4 sm:p-6 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50 border border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-bold mb-1" style={{ fontFamily: "var(--font-serif, 'Libre Baskerville', Georgia, serif)" }}>
                 Simulador Financeiro
             </h2>
             <p className="text-sm text-gray-500 mb-6">Simule o financiamento deste imóvel</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div>
-                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Entrada ({entrada}%)</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Entrada ({entrada}%)</label>
                     <input type="range" min={10} max={50} step={5} value={entrada} onChange={e => setEntrada(Number(e.target.value))}
-                        className="w-full mt-2 accent-amber-600" />
-                    <p className="text-sm font-mono mt-1">{fmt(entradaValor)}</p>
+                        className="w-full mt-2 accent-[#C8A44A]" />
+                    <p className="text-sm mt-1" style={{ fontFamily: "var(--font-mono, 'DM Mono', monospace)" }}>{fmt(entradaValor)}</p>
                 </div>
                 <div>
-                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Prazo</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Prazo</label>
                     <select value={prazo} onChange={e => setPrazo(Number(e.target.value))}
                         className="w-full mt-2 h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm">
                         <option value={120}>10 anos (120x)</option>
@@ -99,23 +99,23 @@ function FinancialSimulator({ price }: { price: number }) {
                     </select>
                 </div>
                 <div>
-                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Taxa anual (%)</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Taxa anual (%)</label>
                     <input type="number" min={5} max={15} step={0.1} value={taxa} onChange={e => setTaxa(Number(e.target.value))}
-                        className="w-full mt-2 h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-mono" />
+                        className="w-full mt-2 h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm" style={{ fontFamily: "var(--font-mono, 'DM Mono', monospace)" }} />
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tabela SAC</p>
-                    <p className="text-2xl font-bold font-mono" style={{ color: 'var(--accent, #C49D5B)' }}>
+                    <p className="text-2xl font-bold" style={{ color: '#C8A44A', fontFamily: "var(--font-mono, 'DM Mono', monospace)" }}>
                         {fmt(primeiraParcSAC)}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">1ª parcela · última: {fmt(ultimaParcSAC)}</p>
                 </div>
                 <div className="p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tabela PRICE</p>
-                    <p className="text-2xl font-bold font-mono" style={{ color: 'var(--accent, #C49D5B)' }}>
+                    <p className="text-2xl font-bold" style={{ color: '#C8A44A', fontFamily: "var(--font-mono, 'DM Mono', monospace)" }}>
                         {fmt(parcelaPrice)}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">Parcela fixa por {prazo} meses</p>

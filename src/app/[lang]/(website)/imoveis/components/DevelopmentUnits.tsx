@@ -60,7 +60,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
                 <div>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-1 h-6 rounded-full" style={{ background: '#3D6FFF' }} />
+                        <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
                         <h2
                             className="text-xl text-gray-900 font-bold tracking-tight"
                             style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}

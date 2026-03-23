@@ -62,8 +62,8 @@ export function WidgetHeatmap() {
               padding: '4px 14px', borderRadius: 6, fontSize: 11, cursor: 'pointer',
               fontFamily: 'inherit', transition: 'all 150ms',
               background: view === v ? 'var(--bg-active,rgba(200,164,74,0.12))' : 'var(--bg-surface,rgba(255,255,255,0.04))',
-              border: `1px solid ${view === v ? 'var(--accent-400,#3D6FFF)' : 'var(--border-default,rgba(200,164,74,0.12))'}`,
-              color: view === v ? 'var(--accent-400,#3D6FFF)' : 'var(--text-secondary,rgba(232,224,208,0.5))',
+              border: `1px solid ${view === v ? 'var(--accent-400,#C8A44A)' : 'var(--border-default,rgba(200,164,74,0.12))'}`,
+              color: view === v ? 'var(--accent-400,#C8A44A)' : 'var(--text-secondary,rgba(232,224,208,0.5))',
               fontWeight: view === v ? 700 : 400,
             }}
           >
@@ -170,11 +170,11 @@ export function WidgetHeatmap() {
               <div style={{ width: 80, height: 4, background: 'rgba(255,255,255,0.07)', borderRadius: 99, flexShrink: 0 }}>
                 <div style={{
                   height: '100%', width: `${Math.round(t * 100)}%`,
-                  background: 'var(--accent-400,#3D6FFF)', borderRadius: 99,
+                  background: 'var(--accent-400,#C8A44A)', borderRadius: 99,
                   transition: 'width 400ms ease',
                 }} />
               </div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-400,#3D6FFF)', width: 72, textAlign: 'right', flexShrink: 0 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-400,#C8A44A)', width: 72, textAlign: 'right', flexShrink: 0 }}>
                 {view === 'price'
                   ? `R$${(nb.price / 1000).toFixed(1)}k`
                   : `+${nb.val12m.toFixed(1)}%`}

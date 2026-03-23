@@ -643,7 +643,7 @@ export default function AdvancedFilter({
 
                         {/* Desktop active filter badge */}
                         {activeFilterCount > 0 && (
-                            <span className="hidden lg:flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold flex-shrink-0">
+                            <span className="hidden lg:flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-[#C8A44A]/20 text-[#C8A44A] border border-[#C8A44A]/30 text-[10px] font-bold flex-shrink-0">
                                 {activeFilterCount}
                             </span>
                         )}

@@ -9,7 +9,7 @@ export function ForWhom() {
         {
             title: 'Perfil Ideal',
             icon: PlusCircle,
-            color: 'text-navy-300',
+            color: 'text-[#C8A44A]',
             borderColor: 'border-navy-600/30',
             bgColor: 'bg-navy-950',
             items: [
@@ -66,10 +66,10 @@ export function ForWhom() {
 
                             <ul className="space-y-8">
                                 {cat.items.map((item, j) => (
-                                    <li key={j} className="flex gap-4">
+                                    <li key={j} className="flex items-start gap-3">
                                         <div className="mt-1 flex-shrink-0">
                                             {i === 0 ? (
-                                                <ShieldCheck className="w-5 h-5 text-navy-300" />
+                                                <ShieldCheck className="w-5 h-5 text-[#C8A44A]" />
                                             ) : (
                                                 <div className="w-5 h-px bg-white/20 mt-2.5" />
                                             )}

@@ -18,9 +18,9 @@ export function HeroSection() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6 }}
-                            className="inline-flex items-center gap-3 bg-white/[0.04] border border-white/10 px-6 py-3 rounded-full text-navy-300 text-sm font-semibold mb-8 backdrop-blur-sm"
+                            className="inline-flex items-center gap-3 bg-white/[0.04] border border-white/10 px-6 py-3 rounded-full text-[#C8A44A] text-sm font-semibold mb-8 backdrop-blur-sm"
                         >
-                            <span className="w-2 h-2 bg-navy-800 rounded-full animate-pulse" />
+                            <span className="w-2 h-2 bg-[#C8A44A] rounded-full animate-pulse" />
                             <span className="uppercase tracking-widest text-xs">Consultoria Estratégica Internacional</span>
                         </motion.div>
 
@@ -32,7 +32,7 @@ export function HeroSection() {
                             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight "
                         >
                             Renda em Dólar com<br />
-                            <span className="text-navy-300">Imóveis Internacionais</span>
+                            <span className="text-[#C8A44A]">Imóveis Internacionais</span>
                         </motion.h1>
 
                         {/* Subheadline */}
@@ -54,7 +54,7 @@ export function HeroSection() {
                         >
                             <a
                                 href="#simulator"
-                                className="inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-navy-800 text-white rounded-xl border border-navy-700 border-l-2 border-navy-600 shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:bg-navy-700 transition-all duration-300"
+                                className="inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-[#C8A44A] text-navy-950 rounded-xl border border-[#C8A44A] shadow-[0_8px_32px_rgba(200,164,74,0.25)] hover:bg-[#b8943a] transition-all duration-300"
                             >
                                 Simular Estratégia
                                 <ArrowRight className="w-5 h-5 ml-3" />
@@ -83,7 +83,7 @@ export function HeroSection() {
                                 '15 Anos de Mercado'
                             ].map((item, i) => (
                                 <div key={i} className="flex items-center gap-3">
-                                    <CheckCircle className="w-5 h-5 text-navy-300" strokeWidth={1.5} />
+                                    <CheckCircle className="w-5 h-5 text-[#C8A44A]" strokeWidth={1.5} />
                                     <span className="font-medium text-white/50">{item}</span>
                                 </div>
                             ))}

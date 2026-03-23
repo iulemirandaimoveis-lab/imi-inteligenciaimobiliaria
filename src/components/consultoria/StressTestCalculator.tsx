@@ -40,7 +40,7 @@ export function StressTestCalculator() {
                 </div>
 
                 <div className={`p-8 rounded-2xl border-2 transition-all duration-500 flex flex-col items-center text-center ${isSafe ? 'bg-navy-950 border-white/[0.05]' : 'bg-red-500/10 border-red-500/30 shadow-lg shadow-[#EF4444]/10'}`}>
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 ${isSafe ? 'bg-navy-800 text-navy-300 border border-white/10' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 ${isSafe ? 'bg-navy-800 text-[#C8A44A] border border-white/10' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
                         {isSafe ? <CheckCircle2 className="w-8 h-8" /> : <AlertTriangle className="w-8 h-8 animate-pulse" />}
                     </div>
 
