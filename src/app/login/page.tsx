@@ -111,7 +111,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div style={{ minHeight: '100dvh', display: 'flex', background: '#080E18' }}>
+        <div style={{ minHeight: '100dvh', display: 'flex', background: '#050B14' }}>
 
             {/* ── Left Panel ── */}
             <div style={{
@@ -237,8 +237,16 @@ export default function LoginPage() {
             <div style={{
                 flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 padding: '32px 24px', position: 'relative',
-                background: 'linear-gradient(160deg, #0D1117 0%, #080E18 100%)',
+                background: '#050B14',
             }}>
+                {/* Film grain overlay */}
+                <div style={{
+                    position: 'absolute', inset: 0, opacity: 0.035, pointerEvents: 'none',
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: '128px 128px',
+                    mixBlendMode: 'overlay',
+                }} />
                 {/* Subtle glow */}
                 <div style={{ position: 'absolute', top: '20%', right: '-40px', width: '220px', height: '220px', borderRadius: '50%', background: 'rgba(72,101,129,0.08)', filter: 'blur(80px)', pointerEvents: 'none' }} />
 
@@ -330,28 +338,55 @@ export default function LoginPage() {
                             </motion.div>
                         )}
 
-                        {/* Submit */}
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            style={{
-                                width: '100%', height: '52px', borderRadius: '14px',
-                                fontSize: '14px', fontWeight: 800, letterSpacing: '0.04em',
-                                color: '#0D1117', background: '#FFFFFF',
-                                border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-                                opacity: loading ? 0.65 : 1,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                                marginTop: '4px', transition: 'all 0.18s ease',
-                            }}
-                            onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.background = '#E8EEF4'; (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)' } }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FFFFFF'; (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
-                        >
-                            {loading
-                                ? <Loader2 size={18} style={{ animation: 'spin 0.8s linear infinite' }} />
-                                : 'Acessar Backoffice'
-                            }
-                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-                        </button>
+                        {/* Submit — MASTER v2: navy bg, white text, gold gradient line */}
+                        <div style={{ position: 'relative', marginTop: 4 }}>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: 6,
+                                    fontFamily: "'Outfit', system-ui, sans-serif",
+                                    fontWeight: 600,
+                                    letterSpacing: '1px',
+                                    textTransform: 'uppercase' as const,
+                                    cursor: loading ? 'not-allowed' : 'pointer',
+                                    fontSize: 11,
+                                    padding: '12px 22px',
+                                    borderRadius: 6,
+                                    background: '#0A1624',
+                                    color: '#FFF',
+                                    border: '1px solid rgba(255,255,255,.08)',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    width: '100%',
+                                    opacity: loading ? 0.65 : 1,
+                                    transition: 'all 0.18s ease',
+                                }}
+                                onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.background = '#0F1F33'; (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)' } }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#0A1624'; (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
+                            >
+                                {loading
+                                    ? <Loader2 size={16} style={{ animation: 'spin 0.8s linear infinite' }} />
+                                    : 'ENTRAR'
+                                }
+                            </button>
+                            {/* Gold gradient line */}
+                            <div style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: '12%',
+                                right: '12%',
+                                height: 2,
+                                background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)',
+                                opacity: 0.6,
+                                borderRadius: 1,
+                                pointerEvents: 'none',
+                            }} />
+                        </div>
+                        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                     </form>
 
                     <div style={{ marginTop: '28px', textAlign: 'center' }}>

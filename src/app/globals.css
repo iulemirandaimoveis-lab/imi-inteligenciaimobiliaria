@@ -286,94 +286,126 @@
 }
 
 .dark {
-  /* ══ DARK THEME — DS v6 Precision Dark ══ */
-  --color-offwhite:       #F0ECE4;
-  --color-offwhite-dim:   rgba(240, 236, 228, 0.70);
-  --color-offwhite-mute:  rgba(240, 236, 228, 0.40);
+  /* ══ DARK THEME — IMI MASTER v2 Canonical Tokens ══ */
 
-  /* DS3.1 Surface System — dark originals */
-  --surface-base:         #0B1928;
-  --surface-raised:       #0F2035;
-  --surface-overlay:      #162840;
-  --surface-float:        #1D3450;
-  --surface-border:       #243D5C;
+  /* ── MASTER v2 Raw Tokens ── */
+  --bg: #050B14;
+  --n: #0A1624;
+  --n2: #0E1C30;
+  --n3: #132440;
+  --n4: #1A3050;
+  --n5: #213C5E;
+  --gold: #C8A44A;
+  --gb: #D4B86A;
+  --gd: #A8842A;
+  --g06: rgba(200,164,74,.06);
+  --g10: rgba(200,164,74,.10);
+  --g20: rgba(200,164,74,.20);
+  --w: #FFF;
+  --t1: #E8E4DC;
+  --t2: #8E99AB;
+  --t3: #4F5B6B;
+  --grn: #4ADE80;
+  --red: #F87171;
+  --blu: #60A5FA;
+  --amb: #FBBF24;
+  --cyan: #22D3EE;
+  --prp: #A78BFA;
+  --bdr: rgba(255,255,255,.05);
+  --bdg: rgba(200,164,74,.14);
+  --fd: 'Playfair Display', Georgia, serif;
+  --fu: 'Outfit', system-ui, sans-serif;
+  --fm: 'JetBrains Mono', monospace;
+  --ease: cubic-bezier(.16,1,.3,1);
+
+  /* ── MASTER v2 → Theme System Mapping ── */
+  --color-offwhite:       #E8E4DC;
+  --color-offwhite-dim:   rgba(232, 228, 220, 0.70);
+  --color-offwhite-mute:  rgba(232, 228, 220, 0.40);
+
+  /* DS3.1 Surface System — MASTER v2 values */
+  --surface-base:         #050B14;
+  --surface-raised:       #0A1624;
+  --surface-overlay:      #0E1C30;
+  --surface-float:        #132440;
+  --surface-border:       #1A3050;
   --surface-border-gold:  rgba(200, 164, 74, 0.30);
 
-  --bg-base:      #080D18;
-  --bg-surface:   #0D1424;
-  --bg-elevated:  #121B2E;
-  --bg-subtle:    rgba(255,255,255,0.04);
+  --bg-base:      #050B14;
+  --bg-surface:   #0A1624;
+  --bg-elevated:  #0E1C30;
+  --bg-subtle:    rgba(200,164,74,.06);
   --bg-muted:     rgba(255,255,255,0.02);
   --bg-overlay:   rgba(255,255,255,0.06);
-  --bg-hover:     rgba(255,255,255,0.08);
-  --bg-active:    rgba(255,255,255,0.12);
+  --bg-hover:     rgba(200,164,74,.06);
+  --bg-active:    rgba(200,164,74,.10);
 
-  --border-subtle:  #1A2540;
-  --border-default: #243050;
-  --border-strong:  #2E3D63;
-  --border-focus:   var(--imi-gold-500);
+  --border-subtle:  rgba(255,255,255,.05);
+  --border-default: rgba(200,164,74,.14);
+  --border-strong:  rgba(200,164,74,.20);
+  --border-focus:   #C8A44A;
 
-  --text-primary:   #E8EEFF;
-  --text-secondary: #8899BB;
-  --text-tertiary:  #4A5A7A;
+  --text-primary:   #E8E4DC;
+  --text-secondary: #8E99AB;
+  --text-tertiary:  #4F5B6B;
   --text-disabled:  #2E3D63;
-  --text-inverse:   #05080F;
-  --text-gold:      #F0B429;
+  --text-inverse:   #050B14;
+  --text-gold:      #C8A44A;
 
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.4), 0 0 0 1px #1A2540;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px #243050;
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px #243050;
-  --shadow-lg: 0 16px 40px rgba(0,0,0,0.7), 0 0 0 1px #2E3D63;
-  --shadow-xl: 0 32px 64px rgba(0,0,0,0.8), 0 0 0 1px #2E3D63;
-  --shadow-gold: 0 0 20px rgba(240,180,41,0.20);
-  --shadow-glow: 0 0 20px rgba(61,111,255,0.30);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,.05);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,164,74,.14);
+  --shadow-md: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(200,164,74,.14);
+  --shadow-xl: 0 32px 64px rgba(0,0,0,0.8), 0 0 0 1px rgba(200,164,74,.20);
+  --shadow-gold: 0 0 20px rgba(200,164,74,0.20);
+  --shadow-glow: 0 0 40px rgba(200,164,74,.04);
 
-  --success:    #00D68F;
-  --success-bg: rgba(0,214,143,0.12);
-  --warning:    #F0B429;
-  --warning-bg: rgba(240,180,41,0.12);
-  --error:      #FF4D6A;
-  --error-bg:   rgba(255,77,106,0.12);
-  --info:       #3498DB;
-  --info-bg:    rgba(52,152,219,0.12);
+  --success:    #4ADE80;
+  --success-bg: rgba(74,222,128,0.06);
+  --warning:    #FBBF24;
+  --warning-bg: rgba(251,191,36,0.06);
+  --error:      #F87171;
+  --error-bg:   rgba(248,113,113,0.06);
+  --info:       #60A5FA;
+  --info-bg:    rgba(96,165,250,0.06);
 
-  /* ── Legacy backoffice aliases ── */
+  /* ── Legacy backoffice aliases — MASTER v2 mapped ── */
   --bo-bg:             var(--bg-base);
   --bo-surface:        var(--bg-base);
-  --bo-surface-alt:    var(--imi-navy-800);
-  --bo-elevated:       var(--imi-navy-700);
+  --bo-surface-alt:    #0E1C30;
+  --bo-elevated:       #132440;
   --bo-border:         var(--border-default);
   --bo-border-light:   var(--border-subtle);
-  --bo-border-gold:    rgba(184,148,58,0.22);
+  --bo-border-gold:    rgba(200,164,74,0.14);
   --bo-text:           var(--text-primary);
   --bo-text-muted:     var(--text-secondary);
   --bo-text-tertiary:  var(--text-tertiary);
-  --bo-text-dim:       var(--imi-navy-400);
-  --bo-text-accent:    var(--imi-gold-400);
-  --bo-text-accent-dim:var(--imi-gold-500);
+  --bo-text-dim:       #4F5B6B;
+  --bo-text-accent:    #C8A44A;
+  --bo-text-accent-dim:#A8842A;
   --bo-hover:          var(--bg-hover);
   --bo-active-bg:      var(--bg-active);
-  --bo-icon-bg:        rgba(184,148,58,0.08);
+  --bo-icon-bg:        rgba(200,164,74,0.06);
   --bo-shadow:         var(--shadow-sm);
   --bo-card-shadow:    var(--shadow-md);
   --bo-shadow-elevated:var(--shadow-xl);
-  --bo-surface-highlight: inset 0 1px 0 rgba(184,148,58,0.07);
-  --bo-drawer-bg:      var(--imi-navy-900);
-  --header-bg:         rgba(11,17,32,0.97);
-  --backdrop-bg:       rgba(5,8,15,0.85);
-  --btn-primary-bg:    var(--imi-navy-800);
-  --btn-primary-hover: var(--imi-navy-700);
+  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.04);
+  --bo-drawer-bg:      #0A1624;
+  --header-bg:         rgba(5,11,20,0.97);
+  --backdrop-bg:       rgba(5,11,20,0.85);
+  --btn-primary-bg:    #0A1624;
+  --btn-primary-hover: #0E1C30;
   --btn-primary-text:  #FFFFFF;
-  --bo-accent:         var(--imi-gold-500);
-  --bo-accent-dim:     var(--imi-gold-700);
-  --bo-card:           var(--imi-navy-700);
-  --bo-card-hover:     var(--imi-navy-600);
+  --bo-accent:         #C8A44A;
+  --bo-accent-dim:     #A8842A;
+  --bo-card:           #0E1C30;
+  --bo-card-hover:     #132440;
   --bo-border-subtle:  var(--border-subtle);
-  --bo-border-strong:  rgba(184,148,58,0.30);
-  --nav-bg:            rgba(11,17,32,0.98);
-  --nav-border:        rgba(184,148,58,0.15);
-  --nav-active:        var(--imi-gold-500);
-  --nav-inactive:      var(--imi-navy-400);
+  --bo-border-strong:  rgba(200,164,74,0.20);
+  --nav-bg:            rgba(5,11,20,0.98);
+  --nav-border:        rgba(200,164,74,0.14);
+  --nav-active:        #C8A44A;
+  --nav-inactive:      #4F5B6B;
   --bo-success:        var(--success);
   --bo-success-bg:     var(--success-bg);
   --bo-warning:        var(--warning);
@@ -382,43 +414,43 @@
   --bo-error-bg:       var(--error-bg);
   --bo-info:           var(--info);
   --bo-info-bg:        var(--info-bg);
-  --bo-transition:        150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --bo-transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --bo-transition:        150ms var(--ease);
+  --bo-transition-spring: 300ms var(--ease);
 
-  --sidebar-bg:          var(--imi-navy-800);
-  --sidebar-border:      rgba(184,148,58,0.18);
-  --sidebar-hover:       rgba(184,148,58,0.07);
-  --sidebar-active:      rgba(184,148,58,0.14);
-  --sidebar-text:        var(--imi-navy-300);
-  --sidebar-text-active: #F0F2F8;
+  --sidebar-bg:          #0A1624;
+  --sidebar-border:      rgba(200,164,74,0.14);
+  --sidebar-hover:       rgba(200,164,74,0.06);
+  --sidebar-active:      rgba(200,164,74,0.10);
+  --sidebar-text:        #8E99AB;
+  --sidebar-text-active: #E8E4DC;
 
-  --chart-grid:  rgba(255,255,255,0.06);
-  --chart-label: var(--imi-navy-300);
+  --chart-grid:  rgba(255,255,255,0.05);
+  --chart-label: #8E99AB;
 
-  /* ── DS v6 Precision Dark — Gold accent (brandkit) ── */
+  /* ── MASTER v2 — Gold accent (brandkit) ── */
   --accent-100: #FFF8E8;
   --accent-200: #FFE8A8;
-  --accent-300: #D4A843;
-  --accent-400: var(--imi-gold-500);
-  --accent-500: var(--imi-gold-700);
+  --accent-300: #D4B86A;
+  --accent-400: #C8A44A;
+  --accent-500: #A8842A;
   --accent-600: #8B6914;
-  --accent-glow: rgba(184,148,58,0.30);
+  --accent-glow: rgba(200,164,74,0.30);
 
-  /* ── DS v6 Warm Platinum (replaces Gold for premium elements) ── */
+  /* ── Warm Platinum (premium elements) ── */
   --platinum-100: #FFF8E8;
   --platinum-200: #FFE8A8;
-  --platinum-300: #FFD166;
-  --platinum-400: #F0B429;
-  --platinum-500: #D4960A;
-  --platinum-glow: rgba(240,180,41,0.20);
+  --platinum-300: #D4B86A;
+  --platinum-400: #C8A44A;
+  --platinum-500: #A8842A;
+  --platinum-glow: rgba(200,164,74,0.20);
 
-  /* ── DS v6 Lead temperature ── */
-  --lead-hot:    #FF4D6A;
-  --lead-warm:   #F0B429;
-  --lead-neutral:#5B9BD5;
-  --lead-cold:   #4A5A7A;
+  /* ── Lead temperature — MASTER v2 ── */
+  --lead-hot:    #F87171;
+  --lead-warm:   #FBBF24;
+  --lead-neutral:#60A5FA;
+  --lead-cold:   #4F5B6B;
 
-  /* ── DS v6 Border radius ── */
+  /* ── Border radius ── */
   --radius-sm:   6px;
   --radius-md:   10px;
   --radius-lg:   14px;
@@ -2414,4 +2446,172 @@ img, video, iframe, canvas, svg {
 /* Safe area helpers for mobile */
 .imi-safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 .imi-safe-top { padding-top: env(safe-area-inset-top); }
+
+/* ============================================================ */
+/*  IMI MASTER v2 — Utility Classes                             */
+/* ============================================================ */
+
+/* IMI MASTER v2 Glass Cards */
+.G {
+    background: rgba(14,28,48,.52);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(200,164,74,.12);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: all .35s var(--ease);
+}
+.G::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
+}
+.G:hover {
+    border-color: rgba(200,164,74,.25);
+    box-shadow: 0 8px 32px rgba(0,0,0,.25), 0 0 40px rgba(200,164,74,.04), inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* IMI MASTER v2 Buttons */
+.btn-pri {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--fu);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 10px 22px;
+    border-radius: 6px;
+    background: var(--n);
+    color: var(--w);
+    border: 1px solid rgba(255,255,255,.08);
+    position: relative;
+    overflow: hidden;
+    transition: all .25s var(--ease);
+    white-space: nowrap;
+}
+.btn-pri::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 12%;
+    right: 12%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: .6;
+}
+.btn-pri:hover {
+    background: #0D1E32;
+    border-color: var(--g20);
+    transform: translateY(-1px);
+}
+
+.btn-sec {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--fu);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 10px 22px;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--bdg);
+    transition: all .25s var(--ease);
+    white-space: nowrap;
+}
+.btn-sec:hover {
+    background: var(--g06);
+    border-color: var(--gold);
+}
+
+.btn-glow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--fu);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 10px 22px;
+    border-radius: 6px;
+    background: var(--n);
+    color: var(--w);
+    border: 1px solid var(--g20);
+    box-shadow: 0 0 14px rgba(200,164,74,.08);
+    position: relative;
+    overflow: hidden;
+    transition: all .25s var(--ease);
+    white-space: nowrap;
+}
+.btn-glow::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gb), transparent);
+    opacity: .7;
+}
+.btn-glow:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(200,164,74,.12);
+    transform: translateY(-1px);
+}
+
+/* IMI MASTER v2 Inputs */
+.inp {
+    background: rgba(20,36,64,.4);
+    border: 1px solid var(--bdg);
+    color: var(--t1);
+    padding: 10px 14px;
+    font-family: var(--fu);
+    font-size: 11px;
+    border-radius: 8px;
+    outline: none;
+    width: 100%;
+    transition: all .15s;
+}
+.inp::placeholder { color: var(--t3); }
+.inp:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200,164,74,.08);
+}
+
+/* IMI MASTER v2 Badges */
+.b-gold { background: var(--g10); color: var(--gold); border: 1px solid var(--g20); }
+.b-grn { background: rgba(74,222,128,.06); color: var(--grn); border: 1px solid rgba(74,222,128,.12); }
+.b-red { background: rgba(248,113,113,.06); color: var(--red); border: 1px solid rgba(248,113,113,.1); }
+.b-blu { background: rgba(96,165,250,.06); color: var(--blu); border: 1px solid rgba(96,165,250,.1); }
+.b-amb { background: rgba(251,191,36,.06); color: var(--amb); border: 1px solid rgba(251,191,36,.1); }
+
+/* Film grain overlay */
+body.dark::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: .015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 

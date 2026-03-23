@@ -1,48 +1,48 @@
 /**
- * Centralized backoffice theme tokens — IMI Design System v3
+ * Centralized backoffice theme tokens — IMI MASTER v2
  * Single source of truth — import from here instead of redefining T per file
  * Maps to CSS variables defined in globals.css
  */
 export const T = {
     // Layout
     bg: 'transparent',
-    base: 'var(--bg-base)',
-    surface: 'var(--bg-surface)',
-    surfaceAlt: 'var(--bg-subtle)',
-    elevated: 'var(--bg-elevated)',
-    subtle: 'var(--bg-subtle)',
+    base: 'var(--bg, #050B14)',
+    surface: 'var(--n, #0A1624)',
+    surfaceAlt: 'var(--n2, #0E1C30)',
+    elevated: 'var(--n2, #0E1C30)',
+    subtle: 'var(--n2, #0E1C30)',
     muted: 'var(--bg-muted)',
     overlay: 'var(--bg-overlay)',
-    card: 'var(--bg-surface)',
+    card: 'var(--n, #0A1624)',
     // Borders
-    border: 'var(--border-default)',
-    borderLight: 'var(--border-subtle)',
-    borderSubtle: 'var(--border-subtle)',
-    borderStrong: 'var(--border-strong)',
-    borderGold: 'rgba(61,111,255,0.25)',
-    borderActive: 'rgba(61,111,255,0.25)',
+    border: 'var(--bdg, rgba(200,164,74,.14))',
+    borderLight: 'var(--bdr, rgba(255,255,255,.05))',
+    borderSubtle: 'var(--bdr, rgba(255,255,255,.05))',
+    borderStrong: 'var(--bdg, rgba(200,164,74,.14))',
+    borderGold: 'var(--bdg, rgba(200,164,74,.14))',
+    borderActive: 'var(--bdg, rgba(200,164,74,.14))',
     borderFocus: 'var(--border-focus)',
-    // Text — DS3 semantic
-    text: 'var(--text-primary)',
-    textMuted: 'var(--text-secondary)',
-    textDim: 'var(--text-tertiary)',
-    textTertiary: 'var(--text-tertiary)',
+    // Text — MASTER v2 semantic
+    text: 'var(--t1, #E8E4DC)',
+    textMuted: 'var(--t2, #8E99AB)',
+    textDim: 'var(--t3, #4F5B6B)',
+    textTertiary: 'var(--t3, #4F5B6B)',
     textDisabled: 'var(--text-disabled)',
-    textGold: 'var(--text-gold)',
+    textGold: 'var(--gold, #C8A44A)',
     textInverse: 'var(--text-inverse)',
     // Aliases (for legacy compat)
-    sub: 'var(--text-secondary)',
+    sub: 'var(--t2, #8E99AB)',
     // Accent
-    accent: 'var(--accent-400)',
-    accentDim: 'rgba(61,111,255,0.6)',
-    accentBg: 'var(--bg-active)',
-    activeBg: 'var(--bg-active)',
-    gold: 'var(--accent-400)',
+    accent: 'var(--gold, #C8A44A)',
+    accentDim: 'rgba(200,164,74,0.6)',
+    accentBg: 'var(--g10, rgba(200,164,74,.10))',
+    activeBg: 'var(--g10, rgba(200,164,74,.10))',
+    gold: 'var(--gold, #C8A44A)',
     // States
-    hover: 'var(--bg-hover)',
-    active: 'var(--bg-active)',
+    hover: 'var(--g06, rgba(200,164,74,.06))',
+    active: 'var(--g10, rgba(200,164,74,.10))',
     shadow: 'var(--shadow-sm)',
-    // Semantic colors — DS3 tokens
+    // Semantic colors
     success: 'var(--success)',
     successBg: 'var(--success-bg)',
     warning: 'var(--warning)',
@@ -51,7 +51,7 @@ export const T = {
     errorBg: 'var(--error-bg)',
     info: 'var(--info)',
     infoBg: 'var(--info-bg)',
-    // Radius — DS3 scale
+    // Radius
     radius: {
         xs: 'var(--r-xs, 4px)',
         sm: 'var(--r-sm, 4px)',
@@ -61,7 +61,7 @@ export const T = {
         '2xl': 'var(--r-2xl, 4px)',
         full: '9999px',
     },
-    // Shadow — DS3 depth scale
+    // Shadow
     shadowXs: 'var(--shadow-xs)',
     shadowSm: 'var(--shadow-sm)',
     shadowMd: 'var(--shadow-md)',
@@ -69,7 +69,7 @@ export const T = {
     shadowXl: 'var(--shadow-xl)',
     shadowGold: 'var(--shadow-gold)',
     cardShadow: 'var(--shadow-md)',
-    // Transition — DS3 motion
+    // Transition
     transition: {
         fast: 'var(--dur-1) var(--ease)',
         normal: 'var(--dur-2) var(--ease)',
@@ -80,14 +80,14 @@ export const T = {
     dur: { micro: 'var(--dur-1)', fast: 'var(--dur-2)', normal: 'var(--dur-3)', slow: 'var(--dur-4)' },
     // Easing
     ease: { default: 'var(--ease)', spring: 'var(--ease-spring)', out: 'var(--ease-out)' },
-    // Font families — DS3.1 semantic roles
+    // Font families — MASTER v2 semantic roles
     font: {
-        serif: 'var(--font-serif)',
-        sans: 'var(--font-sans)',
-        mono: 'var(--font-mono)',
-        display: 'var(--font-display)',
-        ui: 'var(--font-ui)',
-        data: 'var(--font-data)',
+        display: "var(--fd, 'Playfair Display', Georgia, serif)",
+        serif: "var(--fd, 'Playfair Display', Georgia, serif)",
+        sans: "var(--fu, 'Outfit', system-ui, sans-serif)",
+        ui: "var(--fu, 'Outfit', system-ui, sans-serif)",
+        data: "var(--fm, 'JetBrains Mono', monospace)",
+        mono: "var(--fm, 'JetBrains Mono', monospace)",
     },
 }
 
@@ -95,26 +95,24 @@ export const T = {
 export const ctaColor = T.accent
 export const ctaShadow = 'none'
 
-/** Common inline styles — DS3 */
+/** Common inline styles — MASTER v2 */
 export const cardStyle: React.CSSProperties = {
-    background: 'var(--bg-surface)',
-    border: '1px solid var(--border-subtle)',
+    background: 'var(--n, #0A1624)',
+    border: '1px solid var(--bdr, rgba(255,255,255,.05))',
     borderRadius: 'var(--r-xl, 4px)',
     boxShadow: 'var(--shadow-xs)',
 }
 
 export const inputStyle: React.CSSProperties = {
-    width: '100%',
-    height: 40,
-    padding: '0 14px',
-    background: 'var(--bg-surface)',
-    border: '1.5px solid var(--border-default)',
-    borderRadius: 'var(--r-md, 4px)',
-    color: 'var(--text-primary)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: 14,
+    background: 'rgba(20,36,64,.4)',
+    border: '1px solid var(--bdg, rgba(200,164,74,.14))',
+    color: 'var(--t1, #E8E4DC)',
+    padding: '10px 14px',
+    fontFamily: "var(--fu, 'Outfit', system-ui, sans-serif)",
+    fontSize: 11,
+    borderRadius: 8,
     outline: 'none',
-    transition: 'all var(--dur-2) var(--ease)',
+    width: '100%',
 }
 
 // Importar React para CSSProperties
