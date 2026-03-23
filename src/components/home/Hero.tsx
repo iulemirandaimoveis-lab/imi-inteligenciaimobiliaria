@@ -64,14 +64,21 @@ export default function Hero({ dict }: HeroProps) {
 
   return (
     <section className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
-      {/* Background image */}
+      {/* Background video */}
       <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center sm:bg-[bottom_right] md:bg-[85%_center] bg-no-repeat"
-          style={{ backgroundImage: "url('/hero-bg.jpg')" }}
-        />
-        {/* Dark overlay gradient - stronger on the left for text readibility */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg-base) 0%, rgba(16,24,48,0.8) 50%, transparent 100%)' }} />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          poster="/hero-bg.jpg"
+        >
+          <source src="/hero-bg.mp4" type="video/mp4" />
+        </video>
+        {/* Dark overlay gradient — stronger on left for text, bottom for fade */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(11,25,40,0.85) 0%, rgba(11,25,40,0.5) 50%, rgba(11,25,40,0.2) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg-base) 0%, transparent 40%)' }} />
       </div>
 
       {/* Gold glow orb */}
