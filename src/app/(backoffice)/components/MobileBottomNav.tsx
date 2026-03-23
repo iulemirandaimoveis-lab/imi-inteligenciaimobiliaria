@@ -18,15 +18,15 @@ import {
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
 const BOTTOM_ITEMS = [
-    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,          color: 'var(--nav-active)', bg: 'rgba(61,111,255,0.13)'  },
-    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,    color: 'var(--nav-active)', bg: 'rgba(61,111,255,0.13)'  },
-    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,        color: 'var(--nav-active)', bg: 'rgba(61,111,255,0.13)' },
-    { name: 'Agenda',  href: '/backoffice/agenda',    icon: CalendarDays, color: 'var(--nav-active)', bg: 'rgba(61,111,255,0.13)'  },
+    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,          color: 'var(--nav-active)', bg: 'rgba(184,148,58,0.13)'  },
+    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,    color: 'var(--nav-active)', bg: 'rgba(184,148,58,0.13)'  },
+    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,        color: 'var(--nav-active)', bg: 'rgba(184,148,58,0.13)' },
+    { name: 'Agenda',  href: '/backoffice/agenda',    icon: CalendarDays, color: 'var(--nav-active)', bg: 'rgba(184,148,58,0.13)'  },
 ]
 
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
-    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--accent-400)', iconBg: 'rgba(61,111,255,0.14)'  },
+    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--accent-400)', iconBg: 'rgba(184,148,58,0.14)'  },
     { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: 'var(--info)',              iconBg: 'rgba(96,165,250,0.14)'  },
     { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--platinum-400)',              iconBg: 'rgba(167,139,250,0.14)' },
     { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus, color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },

@@ -27,13 +27,13 @@ export function StepIdentificacao({ form, errors, developers, set, isMobile }: {
           {TYPES.map(({ value, icon: Icon, desc }) => {
             const sel = form.type === value
             return (
-              <button key={value} type="button" onClick={() => set('type', value)} style={{ background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: isMobile ? '12px 8px' : '16px 10px', cursor: 'pointer', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, transition: 'all var(--dur-2) var(--ease)', boxShadow: sel ? 'var(--shadow-gold)' : 'none' }}>
+              <button key={`type-${value}`} type="button" onClick={() => set('type', value)} style={{ position: 'relative', background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: isMobile ? '12px 8px' : '16px 10px', cursor: 'pointer', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, transition: 'all var(--dur-2) var(--ease)', boxShadow: sel ? 'var(--shadow-gold)' : 'none' }}>
                 <div style={{ width: 36, height: 36, borderRadius: 6, background: sel ? 'rgba(61,111,255,0.15)' : 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon size={18} color={sel ? T.gold : T.textSub} />
                 </div>
                 <span style={{ fontSize: 12, fontWeight: 700, color: sel ? T.gold : T.text, fontFamily: 'var(--font-sans)' }}>{value}</span>
                 <span style={{ fontSize: 11, color: T.textDim, fontFamily: 'var(--font-sans)', lineHeight: 1.3 }}>{desc}</span>
-                {sel && <div style={{ position: 'absolute', top: 6, right: 6, width: 16, height: 16, borderRadius: '50%', background: T.gold, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Check size={9} color={T.navy} /></div>}
+                {sel && <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, borderRadius: '50%', background: T.gold, marginTop: 2 }}><Check size={9} color={T.navy} /></div>}
               </button>
             )
           })}

@@ -40,7 +40,7 @@ type TimeRange = '7d' | '30d' | '90d'
 
 /* ─── Constants ─── */
 const CHART_PRIMARY = '#C49D5B'
-const CHART_SECONDARY = '#3D6FFF'
+const CHART_SECONDARY = '#5B9BD5'
 const CHART_TERTIARY = '#22C55E'
 const CHART_QUATERNARY = '#F59E0B'
 

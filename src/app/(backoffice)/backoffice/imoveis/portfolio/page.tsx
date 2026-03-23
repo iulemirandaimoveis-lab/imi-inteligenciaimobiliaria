@@ -184,7 +184,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
       `}</style>
 
       {/* ── Header ── */}
-      <div style={{ borderBottom: `1px solid ${DT.border}`, padding: '28px 40px 24px' }}>
+      <div style={{ borderBottom: `1px solid ${DT.border}`, padding: '20px 40px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
             {/* Breadcrumb */}
@@ -219,10 +219,10 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
         </div>
       </div>
 
-      <div style={{ padding: '32px 40px' }}>
+      <div style={{ padding: '24px 40px' }}>
 
         {/* ── KPI Strip ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
           {[
             { label: 'Total Imóveis', value: loading ? '—' : String(total), icon: <Building2 size={20} color={DT.gold} /> },
             { label: 'VGV Total', value: loading ? '—' : fmt(vgvTotal), icon: <TrendingUp size={20} color="var(--success)" /> },
@@ -247,7 +247,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
 
         {/* ── Charts Row ── */}
         {!loading && total > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
 
             {/* Distribution by type */}
             <div style={{ ...card, padding: '24px' }}>

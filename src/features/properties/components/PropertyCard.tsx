@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles } from 'lucide-react'
 import { IMIScoreBadge } from './IMIScoreBadge'
+import { getMainImage } from '@/utils/propertyImages'
 import type { IMIProperty } from '../types'
 
 function fmt(n?: number | null, prefix = 'R$'): string {
@@ -56,7 +57,8 @@ export function PropertyCard({
   const isAboveMarket = marketDelta < 0
   const isBelowMarket = marketDelta > 0
 
-  const imageUrl = p.cover_image_url
+  const imageUrl = getMainImage(p)
+    ?? p.cover_image_url
     ?? (Array.isArray(p.image_urls) ? p.image_urls[0] : undefined)
     ?? (Array.isArray(p.images) ? p.images[0] : undefined)
 
@@ -70,7 +72,7 @@ export function PropertyCard({
   }
   const statusLabels: Record<string, string> = {
     disponivel: 'Disponível', lancamento: 'Lançamento',
-    em_construcao: 'Construção', reservado: 'Reservado',
+    em_construcao: 'Em Construção', reservado: 'Reservado',
     em_negociacao: 'Negociação', vendido: 'Vendido',
     published: 'Disponível', draft: 'Rascunho',
   }
@@ -156,8 +158,12 @@ export function PropertyCard({
               letterSpacing: '1px', textTransform: 'uppercase',
               color: statusColor,
               fontFamily: 'var(--font-outfit, sans-serif)',
+              whiteSpace: 'nowrap',
+              overflow: 'visible',
+              flexShrink: 0,
+              minWidth: 'fit-content',
             }}>
-              <span style={{ width: 4, height: 4, borderRadius: '50%', background: statusColor }} />
+              <span style={{ width: 4, height: 4, borderRadius: '50%', background: statusColor, flexShrink: 0 }} />
               {statusLabel}
             </span>
           </div>
@@ -180,7 +186,7 @@ export function PropertyCard({
                   border: `1px solid ${isFavorited ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.1)'}`,
                 }}
               >
-                <Heart size={12} style={{ color: isFavorited ? '#3D6FFF' : '#9FAAB8' }} fill={isFavorited ? '#3D6FFF' : 'none'} />
+                <Heart size={12} style={{ color: isFavorited ? '#C8A44A' : '#9FAAB8' }} fill={isFavorited ? '#C8A44A' : 'none'} />
               </button>
             )}
             {onCompare && (
@@ -193,7 +199,7 @@ export function PropertyCard({
                   border: `1px solid ${isComparing ? 'rgba(200,164,74,0.5)' : 'rgba(255,255,255,0.1)'}`,
                 }}
               >
-                <Scale size={12} style={{ color: isComparing ? '#3D6FFF' : '#9FAAB8' }} />
+                <Scale size={12} style={{ color: isComparing ? '#C8A44A' : '#9FAAB8' }} />
               </button>
             )}
             {/* Quick navigation actions */}
@@ -206,7 +212,7 @@ export function PropertyCard({
                 border: '1px solid rgba(200,164,74,0.35)',
               }}
             >
-              <ExternalLink size={11} style={{ color: '#3D6FFF' }} />
+              <ExternalLink size={11} style={{ color: '#C8A44A' }} />
             </button>
             <button
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/backoffice/tracking/qr?property=${p.id}`) }}
@@ -239,7 +245,7 @@ export function PropertyCard({
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
             <div>
               <div style={{
-                fontFamily: 'var(--font-dm-mono, monospace)',
+                fontFamily: "var(--font-mono, 'DM Mono', monospace)",
                 fontSize: size === 'sm' ? '16px' : '19px',
                 fontWeight: 400,
                 color: 'var(--text-primary, #EBE7E0)',
@@ -250,7 +256,7 @@ export function PropertyCard({
               </div>
               {p.price_per_sqm && (
                 <div style={{
-                  fontFamily: 'var(--font-dm-mono, monospace)',
+                  fontFamily: "var(--font-mono, 'DM Mono', monospace)",
                   fontSize: '10px',
                   color: 'var(--text-tertiary, #5C6B7D)',
                   marginTop: 2,
@@ -272,7 +278,7 @@ export function PropertyCard({
                   : <TrendingUp size={10} style={{ color: '#E06B6B' }} />
                 }
                 <span style={{
-                  fontFamily: 'var(--font-dm-mono, monospace)',
+                  fontFamily: "var(--font-mono, 'DM Mono', monospace)",
                   fontSize: '9px',
                   color: isBelowMarket ? '#5DB887' : '#E06B6B',
                   fontWeight: 400,
@@ -360,7 +366,7 @@ export function PropertyCard({
             borderTop: '1px solid rgba(255,255,255,0.05)',
           }}>
             <span style={{
-              fontFamily: 'var(--font-dm-mono, monospace)',
+              fontFamily: "var(--font-mono, 'DM Mono', monospace)",
               fontSize: '9px', color: '#5C6B7D',
               display: 'flex', alignItems: 'center', gap: 3,
             }}>
@@ -368,7 +374,7 @@ export function PropertyCard({
               {viewsCount !== undefined ? viewsCount.toLocaleString('pt-BR') : '—'}
             </span>
             <span style={{
-              fontFamily: 'var(--font-dm-mono, monospace)',
+              fontFamily: "var(--font-mono, 'DM Mono', monospace)",
               fontSize: '9px', color: '#5C6B7D',
               display: 'flex', alignItems: 'center', gap: 3,
             }}>
@@ -421,7 +427,7 @@ if (typeof document !== 'undefined' && !document.getElementById('prop-card-style
       cursor: pointer; transition: all 0.15s;
     }
     .imi-checkbox-overlay.selected {
-      background: #3D6FFF; border-color: #3D6FFF;
+      background: #C8A44A; border-color: #C8A44A;
     }
   `
   document.head.appendChild(s)
@@ -458,7 +464,7 @@ function MetricPill({ label, value, color }: { label: string; value: string; col
         {label}
       </span>
       <span style={{
-        fontFamily: 'var(--font-dm-mono, monospace)',
+        fontFamily: "var(--font-mono, 'DM Mono', monospace)",
         fontSize: '11px',
         color,
         fontWeight: 400,
@@ -486,7 +492,7 @@ export function PropertyListRow({
   }
   const statusLabels: Record<string, string> = {
     disponivel: 'Disponível', lancamento: 'Lançamento',
-    em_construcao: 'Construção', reservado: 'Reservado',
+    em_construcao: 'Em Construção', reservado: 'Reservado',
     em_negociacao: 'Negociação', vendido: 'Vendido',
     published: 'Disponível', draft: 'Rascunho',
   }
@@ -528,7 +534,7 @@ export function PropertyListRow({
 
         {/* Price */}
         <div style={{
-          fontFamily: 'var(--font-dm-mono, monospace)',
+          fontFamily: "var(--font-mono, 'DM Mono', monospace)",
           fontSize: '12px',
           color: 'var(--text-primary, #EBE7E0)',
           padding: '12px 4px',
@@ -538,7 +544,7 @@ export function PropertyListRow({
 
         {/* Price/m² */}
         <div style={{
-          fontFamily: 'var(--font-dm-mono, monospace)',
+          fontFamily: "var(--font-mono, 'DM Mono', monospace)",
           fontSize: '11px',
           color: 'var(--text-secondary, #9FAAB8)',
           padding: '12px 4px',
@@ -548,7 +554,7 @@ export function PropertyListRow({
 
         {/* Yield */}
         <div style={{
-          fontFamily: 'var(--font-dm-mono, monospace)',
+          fontFamily: "var(--font-mono, 'DM Mono', monospace)",
           fontSize: '11px',
           color: '#5DB887',
           padding: '12px 4px',
@@ -574,7 +580,7 @@ export function PropertyListRow({
 
         {/* Area */}
         <div style={{
-          fontFamily: 'var(--font-dm-mono, monospace)',
+          fontFamily: "var(--font-mono, 'DM Mono', monospace)",
           fontSize: '11px',
           color: 'var(--text-secondary, #9FAAB8)',
           padding: '12px 4px',
@@ -602,7 +608,7 @@ export function PropertyListRow({
             cursor: 'pointer', textDecoration: 'none',
           }}
         >
-          <ExternalLink size={11} style={{ color: '#3D6FFF' }} />
+          <ExternalLink size={11} style={{ color: '#C8A44A' }} />
         </Link>
         <Link
           href={`/backoffice/tracking/qr?property=${p.id}`}

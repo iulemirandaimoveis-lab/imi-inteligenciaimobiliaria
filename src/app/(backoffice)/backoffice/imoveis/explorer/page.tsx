@@ -1080,7 +1080,7 @@ function RankingTab() {
   const maxYield = Math.max(...data.map(d => d.yield))
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <p style={{ fontSize: '11px', color: T.textDim, fontFamily: T.font.ui }}>
           {neighborhoods.length} bairros · dados de benchmark IMI
@@ -1346,7 +1346,7 @@ function MobileExplorer() {
         ))}
       </div>
 
-      <div style={{ flex: 1, paddingTop: 104, paddingBottom: 72, paddingLeft: 14, paddingRight: 14, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ flex: 1, paddingTop: 104, paddingBottom: 72, paddingLeft: 14, paddingRight: 14, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {activeTab === 'search' && (
           <>
             <div style={{ paddingTop: 4 }}>

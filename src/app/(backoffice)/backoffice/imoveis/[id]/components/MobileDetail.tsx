@@ -9,6 +9,8 @@ import {
   ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles, Scale,
 } from 'lucide-react'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { getMainImage, getGalleryImages } from '@/utils/propertyImages'
+import { translateType } from '@/utils/propertyLabels'
 import {
   calcIMIScore,
   calcYieldEst,
@@ -86,11 +88,13 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
 
   // Derived values
   const images: string[] = (() => {
-    if (dev.gallery_images && dev.gallery_images.length > 0) return dev.gallery_images
+    const gallery = getGalleryImages(dev)
+    if (gallery.length > 0) return gallery
+    const main = getMainImage(dev)
     const list: string[] = []
-    const cover = dev.image ?? dev.cover_image_url
+    const cover = main ?? dev.cover_image_url
     if (cover) list.push(cover)
-    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== cover))
+    if (dev.image_urls) list.push(...dev.image_urls.filter((u: string) => u !== cover))
     return list
   })()
 
@@ -337,15 +341,17 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
           <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>Detalhes Técnicos</p>
           <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.15)', borderRadius: 12, overflow: 'hidden' }}>
             {[
-              { label: 'Tipo', value: dev.type ?? '—' },
-              { label: 'Condição', value: dev.condition ?? '—' },
-              { label: 'Incorporadora', value: dev.developer?.name ?? '—' },
-              { label: 'CEP', value: dev.cep ?? '—' },
-              { label: 'Estado', value: dev.state ?? '—' },
+              { label: 'Tipo', value: dev.type ? translateType(dev.type) : null },
+              { label: 'Condição', value: dev.condition || null },
+              { label: 'Incorporadora', value: dev.developer?.name || null },
+              { label: 'CEP', value: dev.cep || null },
+              { label: 'Estado', value: dev.state || null },
             ].map(({ label, value }, i) => (
               <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: i < 4 ? '1px solid rgba(61,111,255,0.08)' : 'none' }}>
                 <span style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif' }}>{label}</span>
-                <span style={{ fontSize: 13, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>{value}</span>
+                <span style={{ fontSize: 13, color: value ? 'var(--text-primary)' : undefined, fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>
+                  {value || <span style={{ color: 'var(--text-tertiary)', fontStyle: 'italic', fontSize: 11 }}>Não informado</span>}
+                </span>
               </div>
             ))}
           </div>

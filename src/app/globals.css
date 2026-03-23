@@ -361,8 +361,8 @@
   --bo-drawer-bg:      var(--imi-navy-900);
   --header-bg:         rgba(11,17,32,0.97);
   --backdrop-bg:       rgba(5,8,15,0.85);
-  --btn-primary-bg:    #3D6FFF;
-  --btn-primary-hover: #2550E8;
+  --btn-primary-bg:    var(--imi-navy-800);
+  --btn-primary-hover: var(--imi-navy-700);
   --btn-primary-text:  #FFFFFF;
   --bo-accent:         var(--imi-gold-500);
   --bo-accent-dim:     var(--imi-gold-700);
@@ -372,7 +372,7 @@
   --bo-border-strong:  rgba(184,148,58,0.30);
   --nav-bg:            rgba(11,17,32,0.98);
   --nav-border:        rgba(184,148,58,0.15);
-  --nav-active:        #3D6FFF;
+  --nav-active:        var(--imi-gold-500);
   --nav-inactive:      var(--imi-navy-400);
   --bo-success:        var(--success);
   --bo-success-bg:     var(--success-bg);
@@ -395,14 +395,14 @@
   --chart-grid:  rgba(255,255,255,0.06);
   --chart-label: var(--imi-navy-300);
 
-  /* ── DS v6 Precision Dark — Electric Blue accent ── */
-  --accent-100: #EBF2FF;
-  --accent-200: #A8C4FF;
-  --accent-300: #6B9FFF;
-  --accent-400: #3D6FFF;
-  --accent-500: #2550E8;
-  --accent-600: #1A3BC0;
-  --accent-glow: rgba(61,111,255,0.30);
+  /* ── DS v6 Precision Dark — Gold accent (brandkit) ── */
+  --accent-100: #FFF8E8;
+  --accent-200: #FFE8A8;
+  --accent-300: #D4A843;
+  --accent-400: var(--imi-gold-500);
+  --accent-500: var(--imi-gold-700);
+  --accent-600: #8B6914;
+  --accent-glow: rgba(184,148,58,0.30);
 
   /* ── DS v6 Warm Platinum (replaces Gold for premium elements) ── */
   --platinum-100: #FFF8E8;
