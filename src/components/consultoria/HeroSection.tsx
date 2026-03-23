@@ -54,10 +54,12 @@ export function HeroSection() {
                         >
                             <a
                                 href="#simulator"
-                                className="inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-[#C8A44A] text-navy-950 rounded-xl border border-[#C8A44A] shadow-[0_8px_32px_rgba(200,164,74,0.25)] hover:bg-[#b8943a] transition-all duration-300"
+                                className="inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest rounded-[6px] transition-all duration-300 relative overflow-hidden"
+                                style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}
                             >
                                 Simular Estratégia
                                 <ArrowRight className="w-5 h-5 ml-3" />
+                                <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                             </a>
 
                             <a

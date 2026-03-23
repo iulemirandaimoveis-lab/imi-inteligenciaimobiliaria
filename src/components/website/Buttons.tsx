@@ -2,18 +2,18 @@
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { ReactNode } from 'react'
+import { ReactNode, CSSProperties } from 'react'
 
 // ─────────────────────────────────────────────────────────────────────────────
-// IMI Design System — Standard Buttons
+// IMI Design System — MASTER v2 Buttons
 //
-//  ButtonPrimary  — filled navy (#102A43), works on any background
-//  ButtonGhost    — outlined; use dark=true on dark backgrounds (white borders)
+//  ButtonPrimary  — navy bg (#0A1624) + white text + gold gradient line at bottom
+//  ButtonGhost    — transparent bg, gold text + gold outline, no gold line
 //
 // Usage:
 //   <ButtonPrimary href="/avaliacoes">Solicitar Avaliação</ButtonPrimary>
 //   <ButtonPrimary onClick={fn} arrow={false} size="lg">Enviar</ButtonPrimary>
-//   <ButtonGhost dark href="/sobre">Conhecer a IMI</ButtonGhost>
+//   <ButtonGhost href="/sobre">Conhecer a IMI</ButtonGhost>
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface BtnProps {
@@ -25,99 +25,136 @@ interface BtnProps {
     full?: boolean
     size?: 'sm' | 'md' | 'lg'
     className?: string
+    style?: CSSProperties
     disabled?: boolean
     type?: 'button' | 'submit'
     target?: string
     rel?: string
 }
 
-const sizes = {
-    sm: 'h-[40px] px-5 text-[11px] tracking-[0.1em]',
-    md: 'h-[52px] px-7 text-[12px] tracking-[0.1em]',
-    lg: 'h-[56px] px-8 text-[13px] tracking-[0.12em]',
+const sizeStyles: Record<string, CSSProperties> = {
+    sm: { height: 40, padding: '0 20px', fontSize: 11, letterSpacing: '0.1em' },
+    md: { height: 52, padding: '0 28px', fontSize: 12, letterSpacing: '0.1em' },
+    lg: { height: 56, padding: '0 32px', fontSize: 13, letterSpacing: '0.12em' },
 }
 
-// ── Primary: filled navy ──────────────────────────────────────────────────────
+// ── Primary: navy bg + gold gradient line at bottom ─────────────────────────
 export function ButtonPrimary({
     children, href, onClick, icon, arrow = true,
-    full, size = 'md', className = '', disabled, type = 'button', target, rel,
+    full, size = 'md', className = '', style: extraStyle, disabled, type = 'button', target, rel,
 }: BtnProps) {
-    const cls = [
-        'group inline-flex items-center justify-center gap-2.5 rounded-[4px]',
-        'font-bold uppercase',
-        'bg-navy-800 text-white hover:bg-navy-900',
-        'transition-all duration-200 active:scale-[0.97]',
-        'shadow-[0_4px_14px_rgba(16,42,67,0.30)] hover:shadow-[0_6px_20px_rgba(16,42,67,0.42)]',
-        full ? 'w-full' : 'w-auto',
-        sizes[size],
-        disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : '',
-        className,
-    ].join(' ')
+    const baseStyle: CSSProperties = {
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        background: '#0A1624',
+        color: '#fff',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 6,
+        fontFamily: "var(--fu, 'Outfit', sans-serif)",
+        fontWeight: 600,
+        textTransform: 'uppercase',
+        textDecoration: 'none',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
+        width: full ? '100%' : 'auto',
+        transition: 'all 200ms',
+        ...sizeStyles[size],
+        ...extraStyle,
+    }
 
     const content = (
         <>
-            {icon && <span className="shrink-0">{icon}</span>}
+            {icon && <span style={{ flexShrink: 0 }}>{icon}</span>}
             <span>{children}</span>
             {arrow && (
                 <ArrowRight
                     size={13}
                     strokeWidth={2.5}
-                    className="shrink-0 opacity-60 group-hover:translate-x-0.5 transition-transform duration-150"
+                    style={{ flexShrink: 0, opacity: 0.6 }}
                 />
             )}
+            {/* Gold gradient line at bottom */}
+            <span style={{
+                position: 'absolute',
+                bottom: 0,
+                left: '12%',
+                right: '12%',
+                height: 2,
+                background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)',
+                opacity: 0.6,
+                pointerEvents: 'none',
+            }} />
         </>
     )
 
-    if (href) return <Link href={href} target={target} rel={rel} className={cls}>{content}</Link>
+    if (href) return <Link href={href} target={target} rel={rel} style={baseStyle} className={className}>{content}</Link>
     return (
-        <button type={type} onClick={onClick} disabled={disabled} className={cls}>
+        <button type={type} onClick={onClick} disabled={disabled} style={baseStyle} className={className}>
             {content}
         </button>
     )
 }
 
-// ── Ghost: outlined ───────────────────────────────────────────────────────────
+// ── Ghost: gold text + gold outline, NO gold gradient line ──────────────────
 interface GhostBtnProps extends BtnProps {
     dark?: boolean    // true = white border/text for dark backgrounds
-    strong?: boolean  // with dark=true: brighter white border (50% vs 20%) for hero CTAs
+    strong?: boolean  // with dark=true: brighter white border for hero CTAs
 }
 
 export function ButtonGhost({
     children, href, onClick, icon, arrow = false,
-    full, size = 'md', dark = false, strong = false, className = '', disabled, type = 'button', target, rel,
+    full, size = 'md', dark = false, strong = false, className = '', style: extraStyle, disabled, type = 'button', target, rel,
 }: GhostBtnProps) {
-    const cls = [
-        'group inline-flex items-center justify-center gap-2.5 rounded-[4px]',
-        'font-bold uppercase',
-        dark && strong
-            ? 'border border-white/50 text-white hover:bg-white/[0.08] hover:border-white/70'
-            : dark
-                ? 'border border-white/20 text-white hover:bg-white/[0.07] hover:border-white/30'
-                : 'border border-navy-800/25 text-navy-800 hover:bg-navy-800/[0.05] hover:border-navy-800/40',
-        'transition-all duration-200 active:scale-[0.97]',
-        full ? 'w-full' : 'w-auto',
-        sizes[size],
-        disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : '',
-        className,
-    ].join(' ')
+    const borderColor = dark && strong
+        ? 'rgba(255,255,255,0.50)'
+        : dark
+            ? 'rgba(255,255,255,0.20)'
+            : 'rgba(200,164,74,0.30)'
+
+    const textColor = dark ? '#fff' : '#C8A44A'
+
+    const baseStyle: CSSProperties = {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        background: 'transparent',
+        color: textColor,
+        border: `1px solid ${borderColor}`,
+        borderRadius: 6,
+        fontFamily: "var(--fu, 'Outfit', sans-serif)",
+        fontWeight: 600,
+        textTransform: 'uppercase',
+        textDecoration: 'none',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
+        width: full ? '100%' : 'auto',
+        transition: 'all 200ms',
+        ...sizeStyles[size],
+        ...extraStyle,
+    }
 
     const content = (
         <>
-            {icon && <span className="shrink-0">{icon}</span>}
+            {icon && <span style={{ flexShrink: 0 }}>{icon}</span>}
             <span>{children}</span>
             {arrow && (
                 <ArrowRight
                     size={13}
                     strokeWidth={2.5}
-                    className="shrink-0 opacity-60 group-hover:translate-x-0.5 transition-transform duration-150"
+                    style={{ flexShrink: 0, opacity: 0.6 }}
                 />
             )}
         </>
     )
 
-    if (href) return <Link href={href} target={target} rel={rel} className={cls}>{content}</Link>
+    if (href) return <Link href={href} target={target} rel={rel} style={baseStyle} className={className}>{content}</Link>
     return (
-        <button type={type} onClick={onClick} disabled={disabled} className={cls}>
+        <button type={type} onClick={onClick} disabled={disabled} style={baseStyle} className={className}>
             {content}
         </button>
     )

@@ -289,8 +289,11 @@ export default function ContactPage() {
                                     disabled={isSubmitting}
                                     className="w-full h-13 py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 hover:opacity-90 disabled:opacity-50"
                                     style={{
-                                        background: 'linear-gradient(135deg, #C8A44A, #9A7B30)',
-                                        color: '#0D0F14',
+                                        background: '#0A1624',
+                                        color: '#fff',
+                                        border: '1px solid rgba(255,255,255,0.08)',
+                                        position: 'relative',
+                                        overflow: 'hidden',
                                     }}
                                 >
                                     {isSubmitting ? (
@@ -298,6 +301,7 @@ export default function ContactPage() {
                                     ) : (
                                         <><Send className="w-4 h-4" /> Enviar Mensagem</>
                                     )}
+                                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                                 </button>
                             </form>
                         </motion.div>

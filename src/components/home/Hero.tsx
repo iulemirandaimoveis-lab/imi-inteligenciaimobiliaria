@@ -77,7 +77,7 @@ export default function Hero({ dict }: HeroProps) {
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
         {/* Dark overlay gradient — stronger on left for text, bottom for fade */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(11,25,40,0.85) 0%, rgba(11,25,40,0.5) 50%, rgba(11,25,40,0.2) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(5,11,20,0.92) 0%, rgba(5,11,20,0.7) 40%, rgba(5,11,20,0.2) 70%, transparent 100%)' }} />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg-base) 0%, transparent 40%)' }} />
       </div>
 
@@ -152,52 +152,50 @@ export default function Hero({ dict }: HeroProps) {
               className="mt-8 sm:mt-10"
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/30 mb-3">Explorar portfólio</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2 w-full max-w-xs">
                 {[
-                  { label: 'Alto Padrão', icon: Building2, href: `/${lang}/imoveis` },
-                  { label: 'Dubai',        icon: Globe,     href: `/${lang}/imoveis?pais=dubai` },
-                  { label: 'Pronta Entrega', icon: Home,   href: `/${lang}/imoveis?status=ready` },
+                  { label: 'Alto Padrão',    icon: Building2, href: `/${lang}/imoveis`, primary: false },
+                  { label: 'Dubai',           icon: Globe,     href: `/${lang}/imoveis?pais=dubai`, primary: false },
+                  { label: 'Pronta Entrega',  icon: Home,      href: `/${lang}/imoveis?status=ready`, primary: false },
+                  { label: 'Ver todos',       icon: ArrowRight, href: `/${lang}/imoveis`, primary: true },
                 ].map(item => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="group flex items-center gap-2 px-4 py-2 text-xs font-semibold transition-all duration-200"
                     style={{
+                      position: 'relative',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                      padding: '10px 14px',
+                      background: item.primary ? '#0A1624' : 'rgba(10,22,36,0.7)',
+                      backdropFilter: item.primary ? undefined : 'blur(12px)',
+                      border: item.primary
+                        ? '1px solid rgba(255,255,255,0.08)'
+                        : '1px solid rgba(200,164,74,0.15)',
                       borderRadius: 6,
-                      background: 'rgba(255,255,255,0.06)',
-                      border: '1px solid rgba(255,255,255,0.10)',
-                      color: 'rgba(255,255,255,0.60)',
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.10)'
-                      ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.20)'
-                      ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.95)'
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'
-                      ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.10)'
-                      ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.60)'
+                      color: item.primary ? '#fff' : '#E8E4DC',
+                      fontSize: item.primary ? 11 : 12,
+                      fontWeight: item.primary ? 600 : 500,
+                      textDecoration: 'none',
+                      whiteSpace: 'nowrap',
+                      textTransform: item.primary ? 'uppercase' as const : undefined,
+                      letterSpacing: item.primary ? '0.1em' : undefined,
                     }}
                   >
                     <item.icon size={11} />
                     {item.label}
+                    {item.primary && (
+                      <span style={{
+                        position: 'absolute', bottom: 0, left: '12%', right: '12%',
+                        height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)',
+                        opacity: 0.6, pointerEvents: 'none',
+                      }} />
+                    )}
                   </Link>
                 ))}
-                <Link
-                  href={`/${lang}/imoveis`}
-                  className="group flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all duration-200"
-                  style={{
-                    borderRadius: 6,
-                    background: 'var(--accent-400)',
-                    border: '1px solid transparent',
-                    color: '#0A1017',
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '0.88' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '1' }}
-                >
-                  Ver todos
-                  <ArrowRight size={10} />
-                </Link>
               </div>
             </motion.div>
           </motion.div>

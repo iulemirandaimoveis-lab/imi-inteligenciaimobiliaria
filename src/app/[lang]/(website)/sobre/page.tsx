@@ -440,10 +440,12 @@ export default async function AboutPage({
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
                             href={`/${lang}/contato`}
-                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold bg-[#C8A44A] text-navy-950 hover:bg-[#b8943a] rounded-[4px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#C8A44A]/30"
+                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold rounded-[6px] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden"
+                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                         >
                             <MessageCircle className="w-4 h-4" />
                             Entrar em Contato
+                            <span className="absolute bottom-0 left-[12%] right-[12%] h-[2px] pointer-events-none" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                         </Link>
                         <a
                             href="https://wa.me/5581997230455"

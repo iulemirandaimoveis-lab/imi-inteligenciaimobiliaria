@@ -325,10 +325,11 @@ export default async function ProjetosWebsitePage({
                     <div className="text-center mt-10">
                         <Link
                             href={`/${lang}/contato`}
-                            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-sm transition-all hover:opacity-90"
-                            style={{ background: '#C8A44A', color: '#141420' }}
+                            className="inline-flex items-center gap-2 px-8 py-4 rounded-[6px] font-bold text-sm transition-all hover:opacity-90 relative overflow-hidden"
+                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                         >
                             Cadastrar como Investidor Qualificado <ArrowRight size={15} />
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                         </Link>
                     </div>
                 </div>

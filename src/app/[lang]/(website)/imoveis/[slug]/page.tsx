@@ -251,10 +251,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 h-[52px] rounded-xl text-sm font-bold shadow-lg"
-                        style={{ background: '#C8A44A', color: '#0B1928' }}
+                        className="flex-1 flex items-center justify-center gap-2 h-[52px] rounded-xl text-sm font-bold shadow-lg relative overflow-hidden"
+                        style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                     >
                         Falar com Especialista
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                     </a>
                     <a
                         href="tel:+5581997230455"

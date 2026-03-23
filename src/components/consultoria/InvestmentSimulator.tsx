@@ -176,8 +176,9 @@ export function InvestmentSimulator() {
                     </div>
 
                     <div className="mt-12 relative z-10">
-                        <button className="w-full inline-flex items-center justify-center gap-3 h-14 px-8 text-sm sm:text-base font-bold uppercase tracking-widest bg-[#C8A44A] text-navy-950 rounded-xl border border-[#C8A44A] shadow-[0_8px_32px_rgba(200,164,74,0.25)] hover:bg-[#b8943a] transition-all duration-300">
+                        <button className="w-full inline-flex items-center justify-center gap-3 h-14 px-8 text-sm sm:text-base font-bold uppercase tracking-widest rounded-[6px] transition-all duration-300 relative overflow-hidden" style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}>
                             Receber Plano Detalhado
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                         </button>
                     </div>
                 </div>

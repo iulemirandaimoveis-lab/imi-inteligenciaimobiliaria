@@ -168,9 +168,11 @@ export default function AppraisalForm() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full h-14 bg-[#C8A44A] text-[#0D1B2A] rounded-xl font-bold text-lg hover:bg-[#D4B86A] transition-all duration-300 disabled:opacity-50 shadow-[0_8px_24px_rgba(200,164,74,0.25)] hover:shadow-[0_12px_32px_rgba(200,164,74,0.35)] flex items-center justify-center hover:-translate-y-0.5"
+                        className="w-full h-14 rounded-[6px] font-bold text-sm uppercase tracking-[0.1em] transition-all duration-300 disabled:opacity-50 flex items-center justify-center relative overflow-hidden"
+                        style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}
                     >
                         {isSubmitting ? 'Enviando...' : 'Solicitar Avaliação'}
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                     </button>
                 </motion.div>
 

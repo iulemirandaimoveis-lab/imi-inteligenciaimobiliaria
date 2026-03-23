@@ -56,9 +56,11 @@ export default function GlobalError({
                     <div className="flex gap-4">
                         <button
                             onClick={() => reset()}
-                            className="px-6 py-3 bg-[#C8A44A] text-[#0B1928] rounded-xl font-bold hover:bg-[#D4B35A] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            className="px-6 py-3 rounded-[6px] font-bold text-sm uppercase tracking-[0.1em] transition-all transform hover:-translate-y-0.5 relative overflow-hidden"
+                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}
                         >
                             Tentar novamente
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                         </button>
                         <Link
                             href="/"

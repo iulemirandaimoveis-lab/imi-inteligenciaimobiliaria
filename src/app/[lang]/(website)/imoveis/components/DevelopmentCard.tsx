@@ -230,9 +230,11 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                     )}
                     <Link
                         href={`/${lang}/imoveis/${development.slug}`}
-                        className="ml-auto inline-flex items-center justify-center h-[38px] px-5 rounded-[10px] border border-[#C8A44A] text-[#C8A44A] text-[11px] font-bold tracking-wide uppercase no-underline transition-all duration-200 bg-transparent hover:bg-[#C8A44A] hover:text-[#0D1B2A]"
+                        className="ml-auto inline-flex items-center justify-center h-[38px] px-5 rounded-[6px] text-[11px] font-bold tracking-wide uppercase no-underline transition-all duration-200 relative overflow-hidden"
+                        style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}
                     >
                         Ver Imóvel
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                     </Link>
                 </div>
             </div>
