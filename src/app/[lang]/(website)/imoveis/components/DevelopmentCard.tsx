@@ -95,7 +95,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                 )}
 
                 {/* Gradient overlay */}
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.40) 40%, transparent 70%)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.65) 35%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.15) 100%)' }} />
 
                 {/* Status badge — top left */}
                 <div style={{ position: 'absolute', top: 12, left: 12 }}>
