@@ -76,8 +76,9 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                 {development.images.main ? (
                     <Image
                         src={development.images.main}
-                        alt={development.name}
+                        alt={`${development.name} - Imóvel em ${development.location.city || development.location.state || 'destaque'}`}
                         fill
+                        loading="lazy"
                         className="object-cover"
                         style={{ transition: 'transform 600ms ease' }}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

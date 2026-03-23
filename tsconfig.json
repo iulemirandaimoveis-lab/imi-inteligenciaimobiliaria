@@ -38,6 +38,8 @@
         "node_modules",
         "backups",
         "scripts",
-        "tmp-blocos"
+        "tmp-blocos",
+        "e2e",
+        "playwright.config.ts"
     ]
 }

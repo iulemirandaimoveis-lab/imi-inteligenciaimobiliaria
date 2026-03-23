@@ -26,6 +26,11 @@ export default async function WebsiteLayout({
 
     return (
         <div className="flex flex-col min-h-screen overflow-x-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
+            {/* Performance: DNS prefetch & preconnect for external origins */}
+            <link rel="dns-prefetch" href="https://zocffccwjjyelwrgunhu.supabase.co" />
+            <link rel="preconnect" href="https://zocffccwjjyelwrgunhu.supabase.co" crossOrigin="anonymous" />
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationSchema, webSiteSchema, localBusinessSchema]) }}

@@ -95,8 +95,9 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                         >
                                             <Image
                                                 src={img}
-                                                alt={`${development.name} - ${idx + 2}`}
+                                                alt={`${development.name} - Foto ${idx + 2}`}
                                                 fill
+                                                loading="lazy"
                                                 className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                                 sizes="(max-width: 768px) 50vw, 33vw"
                                             />
@@ -147,7 +148,9 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                             src={plan}
                                             alt={`${development.name} - Planta ${idx + 1}`}
                                             fill
+                                            loading="lazy"
                                             className="object-contain"
+                                            sizes="(max-width: 640px) 85vw, (max-width: 1024px) 70vw, 100vw"
                                         />
                                     </div>
                                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-gray-900/80 backdrop-blur text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
@@ -193,7 +196,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                         <button
                             className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
                             onClick={closeLightbox}
-                            aria-label="Fechar"
+                            aria-label="Fechar galeria"
                         >
                             <X size={20} />
                         </button>
@@ -208,7 +211,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                             <button
                                 className="absolute left-3 sm:left-5 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
                                 onClick={e => { e.stopPropagation(); prevImage(); }}
-                                aria-label="Anterior"
+                                aria-label="Foto anterior"
                             >
                                 <ChevronLeft size={22} />
                             </button>
@@ -240,7 +243,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                             <button
                                 className="absolute right-3 sm:right-5 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
                                 onClick={e => { e.stopPropagation(); nextImage(); }}
-                                aria-label="Próxima"
+                                aria-label="Próxima foto"
                             >
                                 <ChevronRight size={22} />
                             </button>

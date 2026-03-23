@@ -1,6 +1,13 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import ImoveisClient from './ImoveisClient'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
+import { PAGE_METADATA } from '@/lib/page-metadata'
+
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+    return PAGE_METADATA.imoveis(params.lang)
+}
+
 // ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
 export const revalidate = 60
 export default async function ImoveisPage({

@@ -79,6 +79,7 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
                     {broker.phone && (
                         <a
                             href={`tel:${broker.phone}`}
+                            aria-label={`Ligar para ${broker.name}`}
                             className="flex items-center gap-2.5 text-sm text-gray-600 hover:text-[#102A43] transition-colors"
                         >
                             <svg className="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -95,6 +96,7 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
                         href={whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`Conversar no WhatsApp com ${broker.name}`}
                         className="flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-[#102A43] text-white text-sm font-semibold hover:bg-[#0D2137] transition-colors"
                     >
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">

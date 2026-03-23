@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { resolveUserPermissions } from '@/lib/ai-chat/permissions'
 import { buildContext } from '@/lib/ai-chat/context-engine'
 import { estimateCost } from '@/lib/ai-chat/billing'
+import { rateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 120 // 2 minutes for long responses
@@ -14,6 +15,10 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) return new Response(JSON.stringify({ error: 'Não autenticado' }), { status: 401 })
+
+    // Rate limit: 30 requests per minute per user
+    const rl = await rateLimit(`ai-chat:${user.id}`, { limit: 30, windowMs: 60_000 })
+    if (!rl.success) return new Response(JSON.stringify({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }), { status: 429 })
 
     const { message, model, conversationId, history = [] } = await req.json()
     if (!message || !model) return new Response(JSON.stringify({ error: 'Mensagem e modelo obrigatórios' }), { status: 400 })

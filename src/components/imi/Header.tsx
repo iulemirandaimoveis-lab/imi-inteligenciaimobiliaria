@@ -12,7 +12,7 @@ export default function Header() {
             <header className="w-full fixed top-0 left-0 z-50 bg-white border-b border-neutral-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[72px] flex items-center justify-between">
 
-                    <Link href="/pt" className="flex items-center gap-2.5 no-underline">
+                    <Link href="/pt" className="flex items-center gap-2.5 no-underline" aria-label="IMI - Página inicial">
                         {/* IMI wordmark — Playfair Display 700 per brandkit */}
                         <span
                             className="leading-none select-none"
@@ -50,7 +50,7 @@ export default function Header() {
                     <button
                         onClick={() => setOpen(true)}
                         className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-neutral-50 transition-colors"
-                        aria-label="Menu"
+                        aria-label="Abrir menu de navegação"
                     >
                         <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
                             <path d="M0 1h20M0 7h20M0 13h20" stroke="#0B1928" strokeWidth="1.5" strokeLinecap="round" />

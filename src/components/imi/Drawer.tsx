@@ -46,6 +46,9 @@ export default function Drawer({ open, setOpen }: Props) {
 
             {/* Panel */}
             <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="Menu de navegação"
                 className={`fixed top-0 right-0 h-full w-full max-w-[340px] bg-white z-[80] transform transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"
                     } shadow-2xl flex flex-col`}
             >
@@ -63,6 +66,7 @@ export default function Drawer({ open, setOpen }: Props) {
                     <button
                         onClick={() => setOpen(false)}
                         className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100 transition-colors"
+                        aria-label="Fechar menu"
                     >
                         <X size={20} strokeWidth={1.5} className="text-neutral-500" />
                     </button>
