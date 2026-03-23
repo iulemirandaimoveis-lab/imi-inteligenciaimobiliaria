@@ -26,7 +26,7 @@ const BOTTOM_ITEMS = [
 
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
-    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--accent-400)', iconBg: 'rgba(184,148,58,0.14)'  },
+    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--accent-400)', iconBg: 'rgba(200,164,74,0.14)'  },
     { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: 'var(--info)',              iconBg: 'rgba(96,165,250,0.14)'  },
     { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--platinum-400)',              iconBg: 'rgba(167,139,250,0.14)' },
     { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus, color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },
@@ -369,7 +369,7 @@ export function MobileBottomNav() {
                                     height: 44,
                                     borderRadius: 6,
                                     background: open ? 'var(--accent-400)' : 'var(--bg-elevated)',
-                                    border: `1px solid ${open ? 'var(--accent-400)' : 'rgba(184,148,58,0.2)'}`,
+                                    border: `1px solid ${open ? 'var(--accent-400)' : 'rgba(200,164,74,0.2)'}`,
                                     transition: 'background 0.2s, border-color 0.2s',
                                 }}
                             >
@@ -606,7 +606,7 @@ export function MobileBottomNav() {
                                 >
                                     <div className="flex gap-2">
                                         {[
-                                            { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--accent-400)', bg: 'rgba(184,148,58,0.12)' },
+                                            { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--accent-400)', bg: 'rgba(200,164,74,0.12)' },
                                             { label: 'Imóveis', value: '—', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
                                             { label: 'Leads', value: '—', color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
                                         ].map((w, i) => (
@@ -675,8 +675,8 @@ export function MobileBottomNav() {
                                                         onHoverStart={e => {
                                                             const el = (e.target as HTMLElement).closest('[data-quick-card]') as HTMLElement | null
                                                             if (el) {
-                                                                el.style.borderColor = 'rgba(184,148,58,0.45)'
-                                                                el.style.boxShadow = '0 2px 10px rgba(184,148,58,0.10)'
+                                                                el.style.borderColor = 'rgba(200,164,74,0.45)'
+                                                                el.style.boxShadow = '0 2px 10px rgba(200,164,74,0.10)'
                                                             }
                                                         }}
                                                         onHoverEnd={e => {
