@@ -10,7 +10,7 @@ export function ForWhom() {
             title: 'Perfil Ideal',
             icon: PlusCircle,
             color: 'text-[#C8A44A]',
-            borderColor: 'border-navy-600/30',
+            borderColor: 'border-[#C8A44A]/30',
             bgColor: 'bg-navy-950',
             items: [
                 { title: 'Capital Regularizado', desc: 'Mínimo de USD 100k disponíveis para investir.' },
@@ -58,7 +58,7 @@ export function ForWhom() {
                             className={`p-10 rounded-3xl border ${cat.borderColor} ${cat.bgColor} shadow-[0_8px_32px_rgba(0,0,0,0.2)]`}
                         >
                             <div className="flex items-center gap-4 mb-10">
-                                <div className={`w-12 h-12 ${cat.color} bg-navy-800 rounded-2xl flex items-center justify-center shadow-sm border border-white/10`}>
+                                <div className={`w-12 h-12 ${cat.color} bg-[#C8A44A]/10 rounded-2xl flex items-center justify-center shadow-sm border border-[#C8A44A]/20`}>
                                     <cat.icon className="w-6 h-6" strokeWidth={2} />
                                 </div>
                                 <h3 className="text-2xl font-bold text-white font-display">{cat.title}</h3>
