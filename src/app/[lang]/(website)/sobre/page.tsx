@@ -62,8 +62,8 @@ const SOCIAL = [
         label: 'LinkedIn',
         handle: '/iule-miranda-imoveis',
         href: 'https://www.linkedin.com/in/iule-miranda-imoveis',
-        color: '#0077b5',
-        colorBg: 'rgba(0,119,181,0.08)',
+        color: '#C8A44A',
+        colorBg: 'rgba(200,164,74,0.10)',
         description: 'Artigos técnicos sobre avaliação imobiliária, laudos NBR 14653, mercado de alto padrão e inteligência patrimonial.',
         cta: 'Seguir no LinkedIn',
     },
@@ -72,8 +72,8 @@ const SOCIAL = [
         label: 'YouTube',
         handle: '@iulemirandaimoveis',
         href: 'https://www.youtube.com/@iulemirandaimoveis',
-        color: '#FF0000',
-        colorBg: 'rgba(255,0,0,0.08)',
+        color: '#C8A44A',
+        colorBg: 'rgba(200,164,74,0.10)',
         description: 'Vídeos educativos sobre avaliação de imóveis, análise de mercado, investimentos imobiliários no Brasil e exterior.',
         cta: 'Inscrever-se',
     },
@@ -82,8 +82,8 @@ const SOCIAL = [
         label: 'Instagram',
         handle: '@iulemirandaimoveis',
         href: 'https://www.instagram.com/iulemirandaimoveis',
-        color: '#E1306C',
-        colorBg: 'rgba(225,48,108,0.08)',
+        color: '#C8A44A',
+        colorBg: 'rgba(200,164,74,0.10)',
         description: 'Bastidores de perícias judiciais, lançamentos premium, análises de mercado e conteúdo de inteligência imobiliária.',
         cta: 'Seguir no Instagram',
     },
@@ -92,8 +92,8 @@ const SOCIAL = [
         label: 'TikTok',
         handle: '@iulemirandaimoveis',
         href: 'https://www.tiktok.com/@iulemirandaimoveis',
-        color: '#ffffff',
-        colorBg: 'rgba(255,255,255,0.05)',
+        color: '#C8A44A',
+        colorBg: 'rgba(200,164,74,0.10)',
         description: 'Dicas rápidas de avaliação imobiliária, análises de mercado em formato curto e conteúdo educativo.',
         cta: 'Seguir no TikTok',
     },
@@ -221,7 +221,19 @@ export default async function AboutPage({
                                 href="https://www.linkedin.com/in/iule-miranda-imoveis"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-3 px-8 h-12 rounded-[4px] bg-[#0077b5] text-white font-semibold text-sm transition-all duration-300 hover:bg-[#005e8e] shadow-lg shadow-[#0077b5]/20"
+                                style={{
+                                    background: '#0A1624',
+                                    color: '#C8A44A',
+                                    border: '1px solid rgba(200,164,74,0.3)',
+                                    borderRadius: 6,
+                                    padding: '10px 20px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    fontWeight: 600,
+                                    fontSize: 13,
+                                    textDecoration: 'none',
+                                }}
                             >
                                 <Linkedin className="w-4 h-4" strokeWidth={2} />
                                 Conectar no LinkedIn

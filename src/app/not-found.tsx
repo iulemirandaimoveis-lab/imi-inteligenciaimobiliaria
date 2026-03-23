@@ -20,7 +20,7 @@ export default function NotFound() {
                 <div className="flex flex-col w-full gap-3">
                     <Link
                         href="/backoffice"
-                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#C8A44A] text-[#0B1928] rounded-xl font-bold hover:bg-[#D4B35A] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#0A1624] text-white border border-[rgba(200,164,74,0.3)] rounded-xl font-bold hover:bg-[#0E1C30] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
                         <Home className="w-4 h-4" />
                         Ir para Backoffice

@@ -313,6 +313,7 @@
   --prp: #A78BFA;
   --bdr: rgba(255,255,255,.05);
   --bdg: rgba(200,164,74,.14);
+  --font-sans: var(--font-outfit), 'Outfit', system-ui, sans-serif;
   --fd: var(--font-playfair), 'Playfair Display', Georgia, serif;
   --fu: 'Outfit', system-ui, sans-serif;
   --fm: var(--font-jetbrains), 'JetBrains Mono', 'DM Mono', monospace;
@@ -526,14 +527,13 @@
     color: var(--imi-navy-900, #0B1120);
   }
 
-  /* Scrollbar — usar padrão do sistema */
-  * {
-    scrollbar-width: none;
-  }
+  /* Scrollbar — gold brandkit */
+  * { scrollbar-width: thin; scrollbar-color: var(--gd, #A8842A) transparent; }
 
-  ::-webkit-scrollbar {
-    display: none;
-  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gd, #A8842A); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold, #C8A44A); }
 }
 
 /* ── KEYFRAMES ──────────────────────────────────────────────── */

@@ -40,7 +40,7 @@ const STRUCTURING_FRAMEWORK = [
         description: 'Análise completa da situação atual',
         duration: '1-2 semanas',
         icon: FileText,
-        color: 'blue',
+        color: 'amber',
         tasks: [
             'Levantamento de ativos',
             'Análise tributária',
@@ -54,7 +54,7 @@ const STRUCTURING_FRAMEWORK = [
         description: 'Escolha estratégica de territórios',
         duration: '1 semana',
         icon: Globe,
-        color: 'purple',
+        color: 'amber',
         tasks: [
             'Análise regulatória',
             'Comparativo tributário',
@@ -110,7 +110,7 @@ const MULTIDISCIPLINARY_NETWORK = [
     {
         role: 'Advogado Tributarista',
         icon: Shield,
-        color: 'blue',
+        color: 'amber',
         responsibilities: [
             'Estruturação jurídica',
             'Compliance tributário',
@@ -132,7 +132,7 @@ const MULTIDISCIPLINARY_NETWORK = [
     {
         role: 'BPO Financeiro',
         icon: DollarSign,
-        color: 'purple',
+        color: 'amber',
         responsibilities: [
             'Gestão patrimonial',
             'Consolidação de ativos',
@@ -188,8 +188,8 @@ export default function StructuringDashboard({ consultationId }: { consultationI
     const getStatusBadge = (status: string) => {
         const configs: Record<string, { label: string; color: string }> = {
             'pending': { label: 'Pendente', color: 'bg-gray-100 text-gray-700' },
-            'analyzing': { label: 'Em Análise', color: 'bg-blue-100 text-blue-700' },
-            'structuring': { label: 'Estruturando', color: 'bg-purple-100 text-purple-700' },
+            'analyzing': { label: 'Em Análise', color: 'bg-amber-100 text-amber-700' },
+            'structuring': { label: 'Estruturando', color: 'bg-amber-100 text-amber-700' },
             'executing': { label: 'Executando', color: 'bg-orange-100 text-orange-700' },
             'completed': { label: 'Concluído', color: 'bg-green-100 text-green-700' }
         }
@@ -228,7 +228,7 @@ export default function StructuringDashboard({ consultationId }: { consultationI
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header */}
-            <div className="bg-gradient-to-r from-accent-50 to-blue-50 rounded-2xl border border-accent-200 p-8 shadow-sm">
+            <div className="bg-gradient-to-r from-accent-50 to-amber-50 rounded-2xl border border-accent-200 p-8 shadow-sm">
                 <div className="flex items-start justify-between mb-6">
                     <div>
                         <h1 className="text-3xl font-bold text-imi-900 mb-2">
@@ -256,7 +256,7 @@ export default function StructuringDashboard({ consultationId }: { consultationI
 
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm">
-                            <Clock size={24} className="text-blue-600" />
+                            <Clock size={24} className="text-amber-600" />
                         </div>
                         <div>
                             <div className="text-sm text-imi-600">Urgência</div>
@@ -296,8 +296,8 @@ export default function StructuringDashboard({ consultationId }: { consultationI
                         // Dynamic classes for colors to avoid PurgeCSS/JIT issues if not safe-listed
                         // Using fixed classes based on phase color would be better, but inline logic here simulates that.
                         let phaseColorClass = 'bg-gray-100 text-gray-600';
-                        if (phase.color === 'blue') phaseColorClass = 'bg-blue-100 text-blue-600';
-                        if (phase.color === 'purple') phaseColorClass = 'bg-purple-100 text-purple-600';
+                        if (phase.color === 'blue') phaseColorClass = 'bg-amber-100 text-amber-600';
+                        if (phase.color === 'amber') phaseColorClass = 'bg-amber-100 text-amber-600';
                         if (phase.color === 'green') phaseColorClass = 'bg-green-100 text-green-600';
                         if (phase.color === 'orange') phaseColorClass = 'bg-orange-100 text-orange-600';
                         if (phase.color === 'pink') phaseColorClass = 'bg-pink-100 text-pink-600';
@@ -405,9 +405,9 @@ export default function StructuringDashboard({ consultationId }: { consultationI
 
                         let memberColorClass = 'bg-gray-200 text-gray-400';
                         if (isActive) {
-                            if (member.color === 'blue') memberColorClass = 'bg-blue-500 text-white';
+                            if (member.color === 'blue') memberColorClass = 'bg-amber-500 text-white';
                             if (member.color === 'green') memberColorClass = 'bg-green-500 text-white';
-                            if (member.color === 'purple') memberColorClass = 'bg-purple-500 text-white';
+                            if (member.color === 'amber') memberColorClass = 'bg-amber-500 text-white';
                             if (member.color === 'yellow') memberColorClass = 'bg-yellow-500 text-white';
                         }
 
@@ -508,12 +508,12 @@ export default function StructuringDashboard({ consultationId }: { consultationI
             </div>
 
             {/* Compliance Notice */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 shadow-sm">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 shadow-sm">
                 <div className="flex gap-3">
-                    <AlertCircle size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-700">
+                    <AlertCircle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-amber-700">
                         <p className="font-medium mb-2">Compliance e Conformidade</p>
-                        <p className="text-blue-600">
+                        <p className="text-amber-600">
                             Toda estruturação é construída dentro das normas vigentes de cada jurisdição.
                             A IMI não realiza estruturações ilegais, evasão fiscal ou promessas de blindagem absoluta.
                         </p>

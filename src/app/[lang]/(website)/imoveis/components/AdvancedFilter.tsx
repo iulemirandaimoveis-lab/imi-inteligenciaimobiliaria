@@ -33,7 +33,7 @@ const PRICE_MAX = 10_000_000;
 const PRICE_STEP = 50_000;
 
 const STATUS_OPTIONS = [
-    { label: 'Lançamento', value: 'launch', color: '#3B82F6', dot: '🔵' },
+    { label: 'Lançamento', value: 'launch', color: '#C8A44A', dot: '🟡' },
     { label: 'Em Construção', value: 'under_construction', color: '#F59E0B', dot: '🟡' },
     { label: 'Pronta Entrega', value: 'ready', color: '#10B981', dot: '🟢' },
 ];

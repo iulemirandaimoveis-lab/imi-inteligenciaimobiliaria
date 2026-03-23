@@ -95,7 +95,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                 )}
 
                 {/* Gradient overlay */}
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11,25,40,0.85) 0%, rgba(11,25,40,0.2) 40%, transparent 70%)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.40) 40%, transparent 70%)' }} />
 
                 {/* Status badge — top left */}
                 <div style={{ position: 'absolute', top: 12, left: 12 }}>
@@ -111,6 +111,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                         color: status.color,
                         border: `1px solid ${status.color}40`,
                         backdropFilter: 'blur(8px)',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.4)',
                     }}>
                         {status.label}
                     </span>
@@ -147,6 +148,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                             fontWeight: 700,
                             fontFamily: "var(--font-mono, 'DM Mono', monospace)",
                             border: `1px solid ${T.border}`,
+                            textShadow: '0 1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.4)',
                         }}>
                             {fmtPrice(development.priceRange.min)}
                         </span>
@@ -161,6 +163,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                         background: 'rgba(11,25,40,0.6)', backdropFilter: 'blur(8px)',
                         color: T.textSub, fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
                         border: '1px solid rgba(255,255,255,0.08)',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.4)',
                     }}>
                         <MapPin size={8} style={{ opacity: 0.6 }} />
                         {REGION_LABELS[development.region] || development.region || 'BR'}

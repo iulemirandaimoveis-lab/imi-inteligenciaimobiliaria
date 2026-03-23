@@ -68,7 +68,7 @@ export function PropertyImageUpload({
                 className={`
           border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
           transition-colors
-          ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
+          ${isDragActive ? 'border-amber-500 bg-amber-50' : 'border-gray-300 hover:border-gray-400'}
           ${uploading || images.length >= maxImages ? 'opacity-50 cursor-not-allowed' : ''}
         `}
             >
@@ -76,7 +76,7 @@ export function PropertyImageUpload({
                 <div className="flex flex-col items-center gap-2">
                     {uploading ? (
                         <>
-                            <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+                            <Loader2 className="w-12 h-12 text-amber-500 animate-spin" />
                             <p className="text-sm text-gray-600">Fazendo upload...</p>
                         </>
                     ) : (

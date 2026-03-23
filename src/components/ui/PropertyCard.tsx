@@ -35,7 +35,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 {/* Badges Overlay */}
                 <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                     {property.status === 'lancamento' && (
-                        <Badge variant="info" className="bg-blue-600 text-white border-none px-3 py-1 shadow-lg">Lançamento</Badge>
+                        <Badge variant="info" className="bg-[#C8A44A] text-white border-none px-3 py-1 shadow-lg">Lançamento</Badge>
                     )}
                     {property.technicalAnalysisAvailable && (
                         <Badge variant="success" className="bg-emerald-600 text-white border-none px-3 py-1 shadow-lg">Análise Técnica</Badge>

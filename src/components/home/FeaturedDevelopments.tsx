@@ -42,7 +42,7 @@ function FeaturedCard({
     const statusColor = dev.status === 'ready'
         ? 'bg-emerald-900/50 text-emerald-300 border-emerald-700/30'
         : dev.status === 'launch'
-        ? 'bg-blue-900/40 text-blue-300 border-blue-700/30'
+        ? 'bg-[#C8A44A]/10 text-[#C8A44A] border-[#C8A44A]/30'
         : 'bg-white/10 text-white/70 border-white/10'
     // country shorthand
     const country = dev.location.country && dev.location.country !== 'Brasil' ? dev.location.country : null

@@ -114,10 +114,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-[28px] h-[28px] bg-navy-800 rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-blue-600 transition-colors border border-white/[0.04]">
+                                    <div className="w-[28px] h-[28px] bg-navy-800 rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.04]">
                                         <Linkedin className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-white/50 group-hover:text-blue-600 transition-colors text-[11px] font-medium">linkedin.com/in/iule-miranda</span>
+                                    <span className="text-white/50 group-hover:text-[#C8A44A] transition-colors text-[11px] font-medium">linkedin.com/in/iule-miranda</span>
                                 </a>
                             </div>
                         </div>

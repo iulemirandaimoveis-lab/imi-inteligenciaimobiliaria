@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { slideUp, staggerContainer } from '@/lib/animations'
 import { MapPin, Phone, Mail, MessageCircle, Send, Loader2 } from 'lucide-react'
@@ -39,12 +40,12 @@ export default function ContactPage() {
                     subject: '',
                     message: ''
                 })
-                alert('Mensagem enviada com sucesso! Nossa IA já está processando seu perfil e um especialista entrará em contato.')
+                toast.success('Mensagem enviada!', { description: 'Um especialista entrará em contato em breve.' })
             } else {
                 throw new Error('Erro ao enviar')
             }
         } catch (err) {
-            alert('Erro ao enviar mensagem. Tente pelo WhatsApp abaixo.')
+            toast.error('Erro ao enviar', { description: 'Tente novamente ou entre em contato pelo WhatsApp.' })
         } finally {
             setIsSubmitting(false)
         }

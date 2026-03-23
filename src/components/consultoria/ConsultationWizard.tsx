@@ -65,7 +65,7 @@ const CONSULTATION_TYPES = [
         label: 'Aquisição Estratégica',
         description: 'Compra de imóvel internacional com estrutura jurídica',
         icon: Building2,
-        color: 'blue'
+        color: 'amber'
     },
     {
         value: 'holding',
@@ -79,7 +79,7 @@ const CONSULTATION_TYPES = [
         label: 'LLC nos EUA',
         description: 'Constituição de empresa americana (Wyoming, Delaware)',
         icon: Globe,
-        color: 'purple'
+        color: 'amber'
     },
     {
         value: 'dubai',
@@ -100,7 +100,7 @@ const CONSULTATION_TYPES = [
         label: 'Family Governance',
         description: 'Organização e gestão do patrimônio familiar',
         icon: FileText,
-        color: 'indigo'
+        color: 'amber'
     },
     {
         value: 'full_structure',
@@ -318,12 +318,11 @@ export default function ConsultationWizard() {
                     // Usando classes fixas baseadas na prop color seria o ideal se configurado no tailwind.config
                     // Vou usar classes padrão do Tailwind condicionalmente.
                     let bgClass = 'bg-gray-100 text-gray-600'
-                    if (type.color === 'blue') bgClass = 'bg-blue-100 text-blue-600'
+                    if (type.color === 'blue') bgClass = 'bg-amber-100 text-amber-700'
                     if (type.color === 'green') bgClass = 'bg-green-100 text-green-600'
-                    if (type.color === 'purple') bgClass = 'bg-purple-100 text-purple-600'
+                    if (type.color === 'amber') bgClass = 'bg-amber-100 text-amber-700'
                     if (type.color === 'orange') bgClass = 'bg-orange-100 text-orange-600'
                     if (type.color === 'pink') bgClass = 'bg-pink-100 text-pink-600'
-                    if (type.color === 'indigo') bgClass = 'bg-indigo-100 text-indigo-600'
                     if (type.color === 'yellow') bgClass = 'bg-yellow-100 text-yellow-600'
                     if (isSelected) {
                         bgClass = 'bg-accent-500 text-white'
@@ -403,12 +402,12 @@ export default function ConsultationWizard() {
                 <h2 className="text-2xl font-bold text-imi-900 mb-2">Coordenação Multidisciplinar</h2>
                 <p className="text-imi-600">Estrutura de apoio necessária</p>
             </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-6">
                 <div className="flex gap-3">
-                    <AlertCircle size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-700">
+                    <AlertCircle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-amber-700">
                         <p className="font-medium mb-2">Rede Técnica Coordenada pela IMI</p>
-                        <p className="text-blue-600">
+                        <p className="text-amber-600">
                             Coordenamos uma rede de especialistas certificados para garantir
                             compliance e eficiência em toda a estruturação.
                         </p>
