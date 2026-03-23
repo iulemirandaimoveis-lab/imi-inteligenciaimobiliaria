@@ -324,8 +324,14 @@
   --color-offwhite-dim:   rgba(232, 228, 220, 0.70);
   --color-offwhite-mute:  rgba(232, 228, 220, 0.40);
 
-  /* DS3.1 Surface System — MASTER v2 values */
+  /* v3.2 Surface System */
   --surface-base:         #050B14;
+  --surface-primary:      #0A1624;
+  --surface-secondary:    #0E1C30;
+  --surface-tertiary:     #132440;
+  --surface-elevated:     #1A3050;
+  --surface-hover:        #213C5E;
+  /* DS3.1 aliases kept for compat */
   --surface-raised:       #0A1624;
   --surface-overlay:      #0E1C30;
   --surface-float:        #132440;
@@ -451,12 +457,27 @@
   --lead-neutral:#60A5FA;
   --lead-cold:   #4F5B6B;
 
-  /* ── Border radius ── */
-  --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg:   14px;
-  --radius-xl:   20px;
-  --radius-full: 9999px;
+  /* v3.2 Radius — ANGULAR, not pill */
+  --radius-xs:   3px;
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   10px;
+  --radius-xl:   14px;
+  --radius-full: 9999px; /* ONLY avatars & dots */
+
+  /* v3.2 Touch targets */
+  --touch-min: 44px;
+
+  /* v3.2 Font sizes (accessible minimums) */
+  --text-xs:    0.75rem;
+  --text-sm:    0.8125rem;
+  --text-base:  0.875rem;
+  --text-label: 0.6875rem;
+
+  /* v3.2 Typography — Outfit for ALL UI, Playfair ONLY logo */
+  --font-logo: 'Playfair Display', Georgia, serif;
+  --font-body: var(--font-outfit), 'Outfit', system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', monospace;
 }
 
 /* ── Liquid Glass Utilities ─────────────────────────────────── */

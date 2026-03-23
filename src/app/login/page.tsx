@@ -114,15 +114,15 @@ export default function LoginPage() {
 
     const logoSepStyle: React.CSSProperties = {
         width: '1px',
-        height: '26px',
+        height: '28px',
         background: '#C8A44A',
         flexShrink: 0,
     }
 
     const logoTagStyle: React.CSSProperties = {
-        fontSize: '7px',
+        fontSize: '11px',
         fontWeight: 600,
-        letterSpacing: '2.2px',
+        letterSpacing: '2.5px',
         textTransform: 'uppercase',
         color: '#C8A44A',
         lineHeight: 1.45,

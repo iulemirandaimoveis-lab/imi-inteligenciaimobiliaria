@@ -326,16 +326,16 @@ export default function MobileHeader() {
                                     {/* Gold divider · 1px · Brand Identity v1.1 DARK */}
                                     <div style={{
                                         width: 1,
-                                        height: 22,
+                                        height: 28,
                                         background: '#C8A44A',
                                         flexShrink: 0,
                                     }} />
                                     {/* Tagline · Brand Identity v1.1 DARK — gold on dark bg */}
                                     <span style={{
-                                        fontSize: '7px',
+                                        fontSize: '11px',
                                         fontWeight: 600,
                                         color: '#C8A44A',
-                                        letterSpacing: '2.2px',
+                                        letterSpacing: '2.5px',
                                         textTransform: 'uppercase',
                                         lineHeight: 1.45,
                                     }}>

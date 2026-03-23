@@ -67,7 +67,7 @@ export function KPICard({
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         border: `1px solid var(--border-default)`,
-        borderRadius: '14px',
+        borderRadius: '10px',
         boxShadow: `var(--shadow-sm), inset 0 0 20px ${a.glow}`,
         transition: 'all 200ms ease',
         position: 'relative',

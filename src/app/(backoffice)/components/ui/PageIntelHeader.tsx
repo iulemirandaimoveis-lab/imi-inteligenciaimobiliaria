@@ -166,8 +166,8 @@ export function PageIntelHeader({
             <h1
               style={{
                 fontSize: '20px',
-                fontFamily: 'var(--font-serif)',
-                fontWeight: 500,
+                fontFamily: "var(--font-body, 'Outfit', sans-serif)",
+                fontWeight: 700,
                 lineHeight: 1.2,
                 letterSpacing: '-0.02em',
                 color: 'var(--text-primary)',

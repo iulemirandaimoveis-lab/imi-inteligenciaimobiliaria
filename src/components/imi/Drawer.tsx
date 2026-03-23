@@ -69,14 +69,14 @@ export default function Drawer({ open, setOpen }: Props) {
                             IMI
                         </span>
                         {/* Gold divider · 1px · Brand Identity v1.1 LIGHT */}
-                        <div style={{ width: 1, height: 22, background: '#A8842A', flexShrink: 0 }} />
+                        <div style={{ width: 1, height: 28, background: '#A8842A', flexShrink: 0 }} />
                         {/* Tagline · Brand Identity v1.1 LIGHT — navy on light bg */}
                         <span
                             className="select-none"
                             style={{
-                                fontSize: '7px',
+                                fontSize: '11px',
                                 fontWeight: 600,
-                                letterSpacing: '2.2px',
+                                letterSpacing: '2.5px',
                                 textTransform: 'uppercase',
                                 color: '#0B1928',
                                 lineHeight: 1.45,

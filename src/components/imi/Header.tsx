@@ -29,15 +29,15 @@ export default function Header() {
                         {/* Gold divider · 1px · Brand Identity v1.1 LIGHT */}
                         <div
                             className="flex-shrink-0"
-                            style={{ width: 1, height: 22, background: '#A8842A' }}
+                            style={{ width: 1, height: 28, background: '#A8842A' }}
                         />
                         {/* Tagline · Brand Identity v1.1 LIGHT — navy on light bg */}
                         <span
                             className="select-none hidden sm:block"
                             style={{
-                                fontSize: '7px',
+                                fontSize: '11px',
                                 fontWeight: 600,
-                                letterSpacing: '2.2px',
+                                letterSpacing: '2.5px',
                                 textTransform: 'uppercase' as const,
                                 color: '#0B1928',
                                 lineHeight: 1.45,
