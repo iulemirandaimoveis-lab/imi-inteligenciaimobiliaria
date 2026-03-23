@@ -62,7 +62,7 @@ BASE DE CONHECIMENTO INDEXADA (${topics!.length} tópicos relevantes encontrados
 ${context}` : `
 BASE DE CONHECIMENTO: Vazia — responda com base no seu treinamento sobre ABNT NBR 14653 e boas práticas de avaliação imobiliária no Brasil.`}`
         // 4. Call Claude — streaming (modelo atual)
-        const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+        const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY || '' })
         const stream = await client.messages.stream({
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 2048,

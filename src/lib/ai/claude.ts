@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { AIRequest, AIProvider } from '@/types/commercial-system';
 // Configuração do cliente Claude
 const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY!,
+    apiKey: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY || '',
 });
 export interface ClaudeRequestParams {
     tenant_id: string;

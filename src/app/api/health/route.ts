@@ -28,7 +28,7 @@ export async function GET() {
         // Auth check — Supabase URL configured
         checks.auth = !!process.env.NEXT_PUBLIC_SUPABASE_URL
         // AI check — Anthropic key configured
-        checks.ai = !!process.env.ANTHROPIC_API_KEY
+        checks.ai = !!(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY)
     } catch (err: unknown) {
     }
     const serviceChecks = [checks.database, checks.storage, checks.auth, checks.ai]

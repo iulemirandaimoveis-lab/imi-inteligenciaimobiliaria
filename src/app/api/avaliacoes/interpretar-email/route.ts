@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     if (!emailText || emailText.trim().length < 20) {
       return NextResponse.json({ error: 'Texto do e-mail muito curto' }, { status: 400 })
     }
-    const apiKey = process.env.ANTHROPIC_API_KEY
+    const apiKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY
     if (!apiKey) {
       return NextResponse.json({ error: 'ANTHROPIC_API_KEY não configurada' }, { status: 500 })
     }

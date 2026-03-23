@@ -54,8 +54,8 @@ export async function POST(req: NextRequest) {
 
     // Call Anthropic API with streaming
     const startTime = Date.now()
-    const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
-    if (!ANTHROPIC_API_KEY) return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY não configurada' }), { status: 500 })
+    const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY
+    if (!ANTHROPIC_API_KEY) return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY ou CLAUDE_API_KEY não configurada no Vercel' }), { status: 500 })
 
     const apiRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',

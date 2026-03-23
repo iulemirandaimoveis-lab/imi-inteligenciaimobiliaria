@@ -4,7 +4,7 @@ import Anthropic from '@anthropic-ai/sdk'
 export const runtime = 'nodejs'
 export const maxDuration = 30
 const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+  apiKey: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY,
 })
 const SYSTEM_PROMPT = `Você é o assistente de inteligência da IMI — Inteligência Imobiliária.
 Especialista em mercado imobiliário premium brasileiro.

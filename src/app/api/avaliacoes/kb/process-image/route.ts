@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         if (!imageBase64 || !sourceFile) {
             return NextResponse.json({ error: 'imageBase64 e sourceFile são obrigatórios' }, { status: 400 })
         }
-        const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+        const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY || '' })
         // 1. Extract knowledge with Claude Vision
         const extractionPrompt = `Você é um especialista em avaliação imobiliária. Analise esta página de material técnico sobre avaliação de imóveis (ABNT NBR 14653, PTAM, metodologia de avaliação) e extraia estruturadamente:
 1. TÍTULO DA PÁGINA (se visível)

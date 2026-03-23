@@ -50,7 +50,7 @@ Mensagem recebida:
 
 Escreva uma resposta profissional e eficaz:`
 
-    const apiKey = process.env.ANTHROPIC_API_KEY
+    const apiKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY
     if (!apiKey) {
         // Fallback response if no key
         return NextResponse.json({

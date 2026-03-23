@@ -20,7 +20,7 @@ export async function POST(request: Request) {
                 { status: 400 }
             )
         }
-        if (!process.env.ANTHROPIC_API_KEY) {
+        if (!(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY)) {
             return NextResponse.json(
                 { error: 'API Key não configurada' },
                 { status: 500 }
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': process.env.ANTHROPIC_API_KEY,
+                'x-api-key': (process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY) as string,
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
@@ -106,7 +106,7 @@ export async function GET() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    const hasApiKey = !!process.env.ANTHROPIC_API_KEY
+    const hasApiKey = !!(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY)
     return NextResponse.json({
         status: hasApiKey ? 'configured' : 'missing_api_key',
         message: hasApiKey

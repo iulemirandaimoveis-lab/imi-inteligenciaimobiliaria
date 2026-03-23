@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         if (!tema || !canal || !development?.name) {
             return NextResponse.json({ error: 'tema, canal e development.name são obrigatórios' }, { status: 400 })
         }
-        if (!process.env.ANTHROPIC_API_KEY) {
+        if (!(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY)) {
             return NextResponse.json({ error: 'API Key não configurada' }, { status: 500 })
         }
         const canalLabel = canal === 'instagram' ? 'Instagram' : canal === 'linkedin' ? 'LinkedIn' : 'Newsletter/E-mail'
@@ -55,7 +55,7 @@ Retorne EXATAMENTE este JSON (sem markdown, sem código, só o objeto JSON puro)
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': process.env.ANTHROPIC_API_KEY,
+                'x-api-key': (process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY) as string,
                 'anthropic-version': '2023-06-01',
             },
             body: JSON.stringify({

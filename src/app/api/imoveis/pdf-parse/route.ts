@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         }
         const buffer = await file.arrayBuffer()
         const base64Pdf = Buffer.from(buffer).toString('base64')
-        const apiKey = process.env.ANTHROPIC_API_KEY
+        const apiKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY
         if (!apiKey) {
             return NextResponse.json({ error: 'Chave da API Anthropic não configurada. Configure ANTHROPIC_API_KEY nas variáveis de ambiente do Vercel.' }, { status: 500 })
         }

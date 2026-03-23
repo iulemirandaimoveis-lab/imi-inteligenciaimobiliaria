@@ -99,7 +99,7 @@ async function callClaude(
     temperature: number,
     max_tokens: number
 ): Promise<{ result: string; tokens_input: number; tokens_output: number; cost_usd: number }> {
-    const apiKey = process.env.ANTHROPIC_API_KEY
+    const apiKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY
     if (!apiKey) throw new Error('ANTHROPIC_API_KEY não configurada')
     const modelId = model === 'claude-sonnet' ? 'claude-sonnet-4-6' : 'claude-haiku-4-5-20251001'
     const response = await fetch('https://api.anthropic.com/v1/messages', {

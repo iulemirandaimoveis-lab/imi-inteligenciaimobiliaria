@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
         })
       }
       case 'anthropic_claude': {
-        const key = values.anthropic_api_key || process.env.ANTHROPIC_API_KEY
+        const key = values.anthropic_api_key || process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY
         if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',

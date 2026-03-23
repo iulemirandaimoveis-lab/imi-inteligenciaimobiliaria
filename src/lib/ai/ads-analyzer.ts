@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { AdsCampaign, AdsMetrics } from '@/types/commercial-system';
 
 const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
+    apiKey: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY,
 });
 
 interface AnalyzeCampaignParams {
