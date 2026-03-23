@@ -178,16 +178,21 @@ export default function MobileHeader() {
         })
     }, [])
 
-    // Fetch notifications
+    // Fetch notifications (on mount, route change, and every 30s)
     useEffect(() => {
-        fetch('/api/notifications?limit=50')
-            .then(r => r.json())
-            .then(json => {
-                const items: Notification[] = Array.isArray(json) ? json : (json.data || [])
-                setNotifications(items.slice(0, 20))
-                setUnreadCount(items.filter((n: Notification) => !n.read).length)
-            })
-            .catch(() => {})
+        const fetchNotifications = () => {
+            fetch('/api/notifications?limit=50')
+                .then(r => r.json())
+                .then(json => {
+                    const items: Notification[] = Array.isArray(json) ? json : (json.data || [])
+                    setNotifications(items.slice(0, 20))
+                    setUnreadCount(items.filter((n: Notification) => !n.read).length)
+                })
+                .catch(() => {})
+        }
+        fetchNotifications()
+        const interval = setInterval(fetchNotifications, 30_000)
+        return () => clearInterval(interval)
     }, [pathname])
 
     // Close panels on outside click

@@ -169,22 +169,24 @@ export function useRealtimeNotifications(userId?: string) {
     // Fetch inicial (seria bom ter, mas o hook foca no realtime. Deixando para componente pai ou expandindo)
     // Por enquanto, apenas realtime
 
+    // Subscribe without server-side filter so we also catch broadcast
+    // notifications (user_id IS NULL). We filter client-side instead.
     useRealtimeTable({
         table: 'notifications',
-        filter: userId ? `user_id=eq.${userId}` : undefined,
         onInsert: (notification) => {
+            // Only accept notifications for this user or broadcasts (null user_id)
+            if (notification.user_id && notification.user_id !== userId) return
             setNotifications((prev) => [notification, ...prev])
             if (!notification.read) {
                 setUnreadCount((prev) => prev + 1)
-                // Som de notificação (opcional)
                 playNotificationSound()
             }
         },
         onUpdate: (notification) => {
+            if (notification.user_id && notification.user_id !== userId) return
             setNotifications((prev) =>
                 prev.map(n => n.id === notification.id ? notification : n)
             )
-            // Recalcular unread count seria ideal com fetch completo, aqui é aproximado
         }
     })
 
@@ -209,7 +211,7 @@ export function useRealtimeNotifications(userId?: string) {
         await supabase
             .from('notifications')
             .update({ read: true })
-            .eq('user_id', userId)
+            .or(`user_id.eq.${userId},user_id.is.null`)
             .eq('read', false)
 
         setNotifications((prev) =>

@@ -87,6 +87,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
     {
         label: 'Inteligência', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)',
         items: [
+            { name: 'Biblioteca',  href: '/backoffice/biblioteca',                icon: BookOpen, badge: 'NEW' },
             { name: 'eBooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen  },
             { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack,   badge: 'NEW' },
             { name: 'Indicadores', href: '/backoffice/inteligencia/indicadores',  icon: LineChart },

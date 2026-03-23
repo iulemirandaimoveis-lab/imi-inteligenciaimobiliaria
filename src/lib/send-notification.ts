@@ -3,7 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 interface NotificationPayload {
     title: string
     message: string
-    type?: 'info' | 'success' | 'warning' | 'error' | 'tracking' | 'lead' | 'system'
+    type?: 'info' | 'success' | 'warning' | 'error' | 'tracking' | 'lead' | 'system' | 'deploy'
     userId?: string | null  // null = broadcast to all
     data?: Record<string, unknown>
 }

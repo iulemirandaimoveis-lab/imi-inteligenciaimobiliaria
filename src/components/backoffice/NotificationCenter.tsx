@@ -46,7 +46,7 @@ export default function NotificationCenter() {
             const { data, error } = await supabase
                 .from('notifications')
                 .select('*')
-                .eq('user_id', user.id)
+                .or(`user_id.eq.${user.id},user_id.is.null`)
                 .order('created_at', { ascending: false })
                 .limit(20)
             if (error) throw error
@@ -115,7 +115,7 @@ export default function NotificationCenter() {
             const { error } = await supabase
                 .from('notifications')
                 .update({ read: true, read_at: new Date().toISOString() })
-                .eq('user_id', user.id)
+                .or(`user_id.eq.${user.id},user_id.is.null`)
                 .eq('read', false)
             if (error) throw error
             setNotifications(prev => prev.map(n => ({ ...n, read: true })))

@@ -10,15 +10,25 @@ export async function GET() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { data, error } = await supabase
-        .from('widgets_config')
-        .select('*')
-        .order('display_order', { ascending: true })
+    try {
+        const { data, error } = await supabase
+            .from('widgets_config')
+            .select('*')
+            .order('display_order', { ascending: true })
 
-    if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-    return NextResponse.json(data ?? [], {
-        headers: { 'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1800' },
-    })
+        if (error) {
+            // Table might not exist — return empty array gracefully
+            console.warn('widgets_config query error:', error.message)
+            return NextResponse.json([], {
+                headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+            })
+        }
+        return NextResponse.json(data ?? [], {
+            headers: { 'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1800' },
+        })
+    } catch {
+        return NextResponse.json([], { status: 200 })
+    }
 }
 
 export async function PUT(req: NextRequest) {
