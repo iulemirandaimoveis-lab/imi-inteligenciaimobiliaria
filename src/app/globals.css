@@ -88,6 +88,13 @@
   --color-offwhite-dim:   rgba(11, 25, 40, 0.70);
   --color-offwhite-mute:  rgba(11, 25, 40, 0.40);
 
+  /* ── IMI Brandkit v5 Canonical Tokens ── */
+  --color-navy-raised: #0F2035;
+  --color-navy-overlay: #162840;
+  --glass-bg: rgba(15, 32, 53, 0.60);
+  --glass-border: rgba(200, 164, 74, 0.15);
+  --glass-blur: 16px;
+
   /* ── DS3.1 Surface System (light theme overrides) ── */
   --surface-base:         var(--imi-cream);
   --surface-raised:       #FFFFFF;
@@ -417,6 +424,22 @@
   --radius-lg:   14px;
   --radius-xl:   20px;
   --radius-full: 9999px;
+}
+
+/* ── Liquid Glass Utilities ─────────────────────────────────── */
+.glass-card {
+    background: rgba(15, 32, 53, 0.60);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(200, 164, 74, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25);
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.glass-card:hover {
+    border-color: rgba(200, 164, 74, 0.30);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
 }
 
 /* ── BASE RESETS ────────────────────────────────────────────── */
@@ -1998,6 +2021,20 @@
 /* Page header */
 .backoffice-root .page-header::after {
   background: linear-gradient(90deg, var(--accent-500), transparent);
+}
+
+/* Better text wrapping for modern browsers */
+.backoffice-root h1,
+.backoffice-root h2,
+.backoffice-root h3,
+.backoffice-root p {
+    text-wrap: pretty;
+}
+
+/* Limit text containers for readability */
+.backoffice-root .prose,
+.backoffice-root .description-text {
+    max-width: 65ch;
 }
 
 /* ── B11 BACKOFFICE DARK ADDITIONS ── */

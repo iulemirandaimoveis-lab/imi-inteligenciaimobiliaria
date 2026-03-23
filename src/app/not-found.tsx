@@ -6,28 +6,28 @@ import { FileQuestion, Home } from 'lucide-react'
 
 export default function NotFound() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-imi-900 p-8">
-            <div className="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center max-w-md w-full border border-slate-100">
-                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-                    <FileQuestion className="w-8 h-8 text-slate-400" />
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[#0B1928] text-[#F0ECE4] p-8">
+            <div className="bg-[#142840] p-8 rounded-2xl shadow-xl flex flex-col items-center max-w-md w-full border border-[rgba(200,164,74,0.18)]">
+                <div className="w-16 h-16 bg-[#1A3250] rounded-full flex items-center justify-center mb-6">
+                    <FileQuestion className="w-8 h-8 text-[#C8A44A]" />
                 </div>
 
-                <h2 className="text-2xl font-bold mb-2">Página não encontrada (404)</h2>
-                <p className="text-slate-500 text-center mb-8">
-                    A página que você está tentando acessar não existe ou foi removida.
+                <h2 className="text-2xl font-bold mb-2 text-[#F0ECE4]">Pagina nao encontrada (404)</h2>
+                <p className="text-[#A8B0BC] text-center mb-8">
+                    A pagina que voce esta tentando acessar nao existe ou foi removida.
                 </p>
 
                 <div className="flex flex-col w-full gap-3">
                     <Link
                         href="/backoffice"
-                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-imi-900 text-white rounded-xl font-bold hover:bg-imi-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#C8A44A] text-[#0B1928] rounded-xl font-bold hover:bg-[#D4B35A] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
                         <Home className="w-4 h-4" />
                         Ir para Backoffice
                     </Link>
                     <Link
                         href="/"
-                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#142840] border border-[rgba(200,164,74,0.25)] text-[#A8B0BC] rounded-xl font-bold hover:bg-[#1A3250] transition-all"
                     >
                         Voltar ao Site
                     </Link>

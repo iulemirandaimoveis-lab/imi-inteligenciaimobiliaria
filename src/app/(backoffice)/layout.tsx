@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DesktopSidebar } from './components/DesktopSidebar'
@@ -10,6 +11,14 @@ import { BackofficeRealtimeProvider } from './components/BackofficeRealtimeProvi
 import { ErrorBoundary } from './components/ErrorBoundary'
 import OnboardingWrapper from './components/OnboardingWrapper'
 import PWAManager from './components/PWAManager'
+
+export const metadata: Metadata = {
+    title: {
+        default: 'IMI Backoffice',
+        template: '%s | IMI Backoffice',
+    },
+    description: 'IMI — Inteligência Imobiliária | Backoffice',
+}
 
 export default async function BackofficeLayout({
     children,

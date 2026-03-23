@@ -10,7 +10,6 @@ import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTabs'
 import { MobileLeadCard } from '@/app/(backoffice)/components/ui/MobileLeadCard'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
-import { T } from '@/app/(backoffice)/lib/theme'
 
 // ── Types ──────────────────────────────────────────────────────────
 interface Lead {

@@ -24,7 +24,7 @@ const PerformanceChart = dynamic(
     },
 )
 import { KPICard, MetricBar, StatusBadge, SectionHeader, MarketTicker } from '../../components/ui'
-import { AvatarGroup as OldAvatarGroup, type BrokerAvatar } from '@/components/ui/AvatarGroup'
+import { type BrokerAvatar } from '@/components/ui/AvatarGroup'
 import { AvatarGroup, AvatarGroupTooltip } from '@/components/animate-ui/components/animate/avatar-group'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { T } from '@/app/(backoffice)/lib/theme'

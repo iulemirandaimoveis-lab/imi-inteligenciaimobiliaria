@@ -48,6 +48,7 @@ export function PropertyCard({
   onSelect,
 }: PropertyCardProps) {
   const [hovered, setHovered] = useState(false)
+  const [imgError, setImgError] = useState(false)
   const router = useRouter()
   const p = property
   const score = p.imi_score ?? 0
@@ -109,8 +110,8 @@ export function PropertyCard({
       >
         {/* Image */}
         <div style={{ position: 'relative', aspectRatio: '16/9', background: 'var(--navy-raised, #1A3250)' }}>
-          {imageUrl ? (
-            <Image src={imageUrl} alt={p.name} fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 400px" />
+          {imageUrl && !imgError ? (
+            <Image src={imageUrl} alt={p.name} fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 400px" onError={() => setImgError(true)} />
           ) : (
             <div style={{
               position: 'absolute', inset: 0,

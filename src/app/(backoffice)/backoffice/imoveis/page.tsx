@@ -4,16 +4,15 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   Plus, Search, Grid3X3, List, SortAsc, SortDesc,
-  Building2, TrendingUp, BarChart2, Sparkles,
+  Building2, TrendingUp, BarChart2, Sparkles, Scale, LineChart,
   ChevronDown, RefreshCw, Loader2, X, SlidersHorizontal,
-  Scale, LineChart, BarChart, Bed, Bath, Car, Ruler, MapPin, Star,
   CheckSquare, Keyboard,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { PropertyCard, PropertyListRow } from '@/features/properties/components/PropertyCard'
 import { AdvancedFilterPanel } from '@/features/properties/components/AdvancedFilterPanel'
-import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
-import { mapDevToProperty, normalizeStatus as normSt } from '@/features/properties/services/mapDevToProperty'
+import { enrichProperty } from '@/features/properties/services/score.service'
+import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty, PropertyFilters } from '@/features/properties/types'
 import { DEFAULT_FILTERS } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
@@ -307,7 +306,7 @@ function DesktopImoveisList(props: SharedProps) {
           {/* Mobile quick nav chips */}
           <div className="imi-mobile-chips">
             <Link href="/backoffice/imoveis/explorer">
-              <button className="imi-chip"><BarChart size={11} />Explorer</button>
+              <button className="imi-chip"><BarChart2 size={11} />Explorer</button>
             </Link>
             <Link href="/backoffice/imoveis/comparar">
               <button className="imi-chip"><Scale size={11} />Comparar</button>

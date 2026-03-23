@@ -61,3 +61,5 @@ export type { HealthMetric, HealthGrade, PortfolioHealthRingProps } from './Port
 
 export { YieldCalculator } from './YieldCalculator'
 export type { YieldResults, YieldCalculatorProps } from './YieldCalculator'
+
+export { default as GlassCard } from './GlassCard'
