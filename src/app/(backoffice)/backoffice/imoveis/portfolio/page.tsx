@@ -204,16 +204,18 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
           </div>
           <Link href="/backoffice/imoveis/novo" style={{ textDecoration: 'none' }}>
             <button className="desk-new-btn" style={{
+              position: 'relative', overflow: 'hidden',
               display: 'flex', alignItems: 'center', gap: 8,
-              background: DT.gold, color: 'var(--bg-base)',
-              border: 'none', borderRadius: 6,
+              background: '#0A1624', color: '#fff',
+              border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6,
               padding: '10px 20px', cursor: 'pointer',
               fontFamily: 'var(--font-sans)',
               fontSize: 13, fontWeight: 600,
-              transition: 'background 0.15s',
+              transition: 'all 0.15s',
             }}>
               <Plus size={15} />
               Novo Imóvel
+              <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
             </button>
           </Link>
         </div>
@@ -315,7 +317,8 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
               </div>
               <Link href="/backoffice/imoveis/novo" style={{ textDecoration: 'none' }}>
                 <button style={{
-                  background: DT.gold, color: 'var(--bg-base)', border: 'none', borderRadius: 6,
+                  position: 'relative', overflow: 'hidden',
+                  background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6,
                   padding: '10px 20px', cursor: 'pointer',
                   fontFamily: 'var(--font-sans)',
                   fontSize: 13, fontWeight: 600,
@@ -323,6 +326,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                 }}>
                   <Plus size={14} />
                   Cadastrar Imóvel
+                  <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                 </button>
               </Link>
             </div>
@@ -518,15 +522,17 @@ function MobilePortfolio({ properties, loading }: { properties: IMIProperty[]; l
           action={
             <Link href="/backoffice/imoveis/novo" style={{ textDecoration: 'none' }}>
               <button style={{
+                position: 'relative', overflow: 'hidden',
                 display: 'flex', alignItems: 'center', gap: 5,
-                background: T.gold, color: T.textInv,
-                border: 'none', borderRadius: 6,
+                background: '#0A1624', color: '#fff',
+                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6,
                 padding: '6px 12px', cursor: 'pointer',
                 fontSize: 12, fontWeight: 600,
                 fontFamily: 'var(--font-outfit, sans-serif)',
               }}>
                 <Plus size={12} />
                 Novo
+                <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
               </button>
             </Link>
           }

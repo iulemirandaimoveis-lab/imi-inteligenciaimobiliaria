@@ -2,13 +2,17 @@
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { ReactNode, CSSProperties } from 'react'
+import { ReactNode, CSSProperties, ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react'
 
 // ─────────────────────────────────────────────────────────────────────────────
-// IMI Design System — MASTER v2 Buttons
+// IMI Design System — MASTER v3 Buttons
+//
+// RULE: NO gold/yellow fill buttons. Ever.
 //
 //  ButtonPrimary  — navy bg (#0A1624) + white text + gold gradient line at bottom
-//  ButtonGhost    — transparent bg, gold text + gold outline, no gold line
+//  ButtonGhost    — transparent bg, gold text + subtle gold border (secondary)
+//
+// The login page "ENTRAR" button is the canonical reference.
 //
 // Usage:
 //   <ButtonPrimary href="/avaliacoes">Solicitar Avaliação</ButtonPrimary>
@@ -33,12 +37,12 @@ interface BtnProps {
 }
 
 const sizeStyles: Record<string, CSSProperties> = {
-    sm: { height: 40, padding: '0 20px', fontSize: 11, letterSpacing: '0.1em' },
-    md: { height: 52, padding: '0 28px', fontSize: 12, letterSpacing: '0.1em' },
-    lg: { height: 56, padding: '0 32px', fontSize: 13, letterSpacing: '0.12em' },
+    sm: { height: 40, padding: '0 20px', fontSize: 11, letterSpacing: '1px' },
+    md: { height: 52, padding: '0 28px', fontSize: 11, letterSpacing: '1px' },
+    lg: { height: 56, padding: '0 32px', fontSize: 13, letterSpacing: '1px' },
 }
 
-// ── Primary: navy bg + gold gradient line at bottom ─────────────────────────
+// ── Primary: navy #0A1624 bg + white text + gold gradient line at bottom ────
 export function ButtonPrimary({
     children, href, onClick, icon, arrow = true,
     full, size = 'md', className = '', style: extraStyle, disabled, type = 'button', target, rel,
@@ -50,8 +54,9 @@ export function ButtonPrimary({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
+        width: full ? '100%' : 'auto',
         background: '#0A1624',
-        color: '#fff',
+        color: '#FFFFFF',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 6,
         fontFamily: "var(--fu, 'Outfit', sans-serif)",
@@ -60,10 +65,20 @@ export function ButtonPrimary({
         textDecoration: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.5 : 1,
-        width: full ? '100%' : 'auto',
-        transition: 'all 200ms',
+        transition: 'all 0.25s cubic-bezier(.16,1,.3,1)',
         ...sizeStyles[size],
         ...extraStyle,
+    }
+
+    const goldLine: CSSProperties = {
+        position: 'absolute',
+        bottom: 0,
+        left: '12%',
+        right: '12%',
+        height: 2,
+        background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)',
+        opacity: 0.6,
+        pointerEvents: 'none',
     }
 
     const content = (
@@ -77,17 +92,8 @@ export function ButtonPrimary({
                     style={{ flexShrink: 0, opacity: 0.6 }}
                 />
             )}
-            {/* Gold gradient line at bottom */}
-            <span style={{
-                position: 'absolute',
-                bottom: 0,
-                left: '12%',
-                right: '12%',
-                height: 2,
-                background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)',
-                opacity: 0.6,
-                pointerEvents: 'none',
-            }} />
+            {/* Gold gradient line at bottom — the ONLY gold accent allowed */}
+            <span style={goldLine} />
         </>
     )
 
@@ -99,7 +105,7 @@ export function ButtonPrimary({
     )
 }
 
-// ── Ghost: gold text + gold outline, NO gold gradient line ──────────────────
+// ── Ghost / Secondary: transparent bg, gold text, subtle gold border ────────
 interface GhostBtnProps extends BtnProps {
     dark?: boolean    // true = white border/text for dark backgrounds
     strong?: boolean  // with dark=true: brighter white border for hero CTAs
@@ -113,7 +119,7 @@ export function ButtonGhost({
         ? 'rgba(255,255,255,0.50)'
         : dark
             ? 'rgba(255,255,255,0.20)'
-            : 'rgba(200,164,74,0.30)'
+            : 'rgba(200,164,74,0.14)'
 
     const textColor = dark ? '#fff' : '#C8A44A'
 
@@ -122,6 +128,7 @@ export function ButtonGhost({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
+        width: full ? '100%' : 'auto',
         background: 'transparent',
         color: textColor,
         border: `1px solid ${borderColor}`,
@@ -132,8 +139,7 @@ export function ButtonGhost({
         textDecoration: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.5 : 1,
-        width: full ? '100%' : 'auto',
-        transition: 'all 200ms',
+        transition: 'all 0.25s cubic-bezier(.16,1,.3,1)',
         ...sizeStyles[size],
         ...extraStyle,
     }

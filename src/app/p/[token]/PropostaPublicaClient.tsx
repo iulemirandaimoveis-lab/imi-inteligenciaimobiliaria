@@ -405,14 +405,16 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                 handleAccept()
               }}
               style={{
+                position: 'relative', overflow: 'hidden',
                 width: '100%', padding: '16px', borderRadius: 10, cursor: 'pointer',
-                background: C.gold, border: 'none', color: '#000',
+                background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', color: '#fff',
                 fontWeight: 700, fontSize: 15, fontFamily: "'Outfit', sans-serif",
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
               }}
             >
               <CheckCircle size={17} />
               Aceitar Proposta
+              <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
             </button>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -485,9 +487,10 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                     </div>
                     <button
                       onClick={handleCounter}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '11px', background: C.gold, border: 'none', borderRadius: 8, color: '#000', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
+                      style={{ position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '11px', background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
                     >
                       <Send size={14} /> Enviar Contraproposta
+                      <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                     </button>
                   </div>
                 </motion.div>

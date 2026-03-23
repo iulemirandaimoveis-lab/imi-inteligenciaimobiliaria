@@ -174,7 +174,7 @@ export default function Hero({ dict }: HeroProps) {
                       backdropFilter: item.primary ? undefined : 'blur(12px)',
                       border: item.primary
                         ? '1px solid rgba(255,255,255,0.08)'
-                        : '1px solid rgba(200,164,74,0.15)',
+                        : '1px solid rgba(200,164,74,0.12)',
                       borderRadius: 6,
                       color: item.primary ? '#fff' : '#E8E4DC',
                       fontSize: item.primary ? 11 : 12,

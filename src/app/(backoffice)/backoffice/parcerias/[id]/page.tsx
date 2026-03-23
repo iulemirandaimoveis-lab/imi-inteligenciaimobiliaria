@@ -348,8 +348,8 @@ export default function PartnershipChatPage() {
                                 style={{
                                     width: 42, height: 42, borderRadius: T.radius.md, border: 'none',
                                     cursor: sending || !newMessage.trim() ? 'not-allowed' : 'pointer',
-                                    background: sending || !newMessage.trim() ? T.surface : T.gold,
-                                    color: sending || !newMessage.trim() ? T.textDim : T.textInverse,
+                                    background: sending || !newMessage.trim() ? T.surface : '#0A1624',
+                                    color: sending || !newMessage.trim() ? T.textDim : '#fff',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     flexShrink: 0, transition: `all ${T.transition.fast}`,
                                 }}>

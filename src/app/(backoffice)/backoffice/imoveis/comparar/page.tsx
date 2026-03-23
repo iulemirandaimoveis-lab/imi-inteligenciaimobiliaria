@@ -129,16 +129,18 @@ function EmptyState() {
       </div>
       <Link href="/backoffice/imoveis">
         <button style={{
+          position: 'relative', overflow: 'hidden',
           display: 'flex', alignItems: 'center', gap: 8,
           padding: '10px 22px', borderRadius: 6,
-          background: 'var(--gold, var(--accent-400))', border: 'none',
-          color: 'var(--navy, #0B1120)',
+          background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)',
+          color: '#fff',
           fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px',
           textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
           cursor: 'pointer',
         }}>
           <ArrowLeft size={13} />
           Ver Lista de Imóveis
+          <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
         </button>
       </Link>
     </div>
@@ -758,16 +760,18 @@ function DesktopComparar() {
               {properties.length < 5 && (
                 <Link href="/backoffice/imoveis">
                   <button style={{
+                    position: 'relative', overflow: 'hidden',
                     display: 'flex', alignItems: 'center', gap: 6,
                     padding: '8px 14px', borderRadius: 6,
-                    background: 'var(--gold, var(--accent-400))', border: 'none',
-                    color: 'var(--navy, #0B1120)',
+                    background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)',
+                    color: '#fff',
                     fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
                     textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
                     cursor: 'pointer',
                   }}>
                     <Plus size={12} />
                     Adicionar Imóvel
+                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                   </button>
                 </Link>
               )}

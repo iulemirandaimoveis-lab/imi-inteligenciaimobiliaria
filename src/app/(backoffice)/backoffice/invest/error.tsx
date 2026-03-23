@@ -50,18 +50,27 @@ export default function Error({
       <button
         onClick={reset}
         style={{
-          background: 'var(--accent-400, #C8A44A)',
-          color: '#0B1928',
-          border: 'none',
+          position: 'relative',
+          overflow: 'hidden',
+          background: 'var(--n, #0A1624)',
+          color: '#fff',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 6,
-          padding: '10px 20px',
-          fontSize: 14,
+          padding: '12px 22px',
+          fontFamily: "var(--fu, 'Outfit', sans-serif)",
           fontWeight: 600,
-          fontFamily: 'var(--font-outfit, sans-serif)',
+          fontSize: 11,
+          letterSpacing: '1px',
+          textTransform: 'uppercase' as const,
           cursor: 'pointer',
         }}
       >
         Tentar Novamente
+        <span style={{
+          position: 'absolute', bottom: 0, left: '12%', right: '12%',
+          height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)',
+          opacity: 0.6, pointerEvents: 'none' as const,
+        }} />
       </button>
     </div>
   )

@@ -91,8 +91,8 @@ export const T = {
     },
 }
 
-/** Standard CTA button — solid accent, no gradients */
-export const ctaColor = T.accent
+/** Standard CTA button — navy bg + gold gradient line (IMI Design System) */
+export const ctaColor = 'var(--n, #0A1624)'
 export const ctaShadow = 'none'
 
 /** Common inline styles — MASTER v2 */

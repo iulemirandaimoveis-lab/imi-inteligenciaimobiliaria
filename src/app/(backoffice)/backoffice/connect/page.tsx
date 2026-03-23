@@ -351,13 +351,17 @@ export default function ConnectPage() {
                         <button
                             onClick={() => setShowNewChannel(true)}
                             style={{
-                                background: T.gold, color: '#0B1928',
-                                border: 'none', borderRadius: 10, padding: '10px 24px',
-                                fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                position: 'relative', overflow: 'hidden',
+                                background: 'var(--n, #0A1624)', color: '#fff',
+                                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6, padding: '12px 22px',
+                                fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                                fontWeight: 600, fontSize: 11, letterSpacing: '1px',
+                                textTransform: 'uppercase' as const, cursor: 'pointer',
                                 display: 'inline-flex', alignItems: 'center', gap: 8,
                             }}
                         >
                             <Plus size={15} /> Iniciar Conversa
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                         </button>
                     </div>
                 ) : (

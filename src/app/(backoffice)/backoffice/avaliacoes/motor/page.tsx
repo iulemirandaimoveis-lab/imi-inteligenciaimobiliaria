@@ -235,8 +235,9 @@ function TabConsultar() {
             style={{ flex: 1, padding: '10px 14px', borderRadius: 6, background: T.elevated, border: `1px solid ${T.border}`, color: T.text, fontSize: 12.5, resize: 'none', fontFamily: 'inherit', transition: 'all 150ms' }}
           />
           <button onClick={() => send()} disabled={loading || !input.trim()}
-            style={{ width: 44, height: 44, borderRadius: 6, border: 'none', cursor: loading || !input.trim() ? 'not-allowed' : 'pointer', background: loading || !input.trim() ? T.surface : T.gold, color: loading || !input.trim() ? T.textDim : T.navy, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 150ms' }}>
+            style={{ position: 'relative', overflow: 'hidden', width: 44, height: 44, borderRadius: 6, border: loading || !input.trim() ? 'none' : '1px solid rgba(255,255,255,0.08)', cursor: loading || !input.trim() ? 'not-allowed' : 'pointer', background: loading || !input.trim() ? T.surface : 'var(--n, #0A1624)', color: loading || !input.trim() ? T.textDim : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 150ms' }}>
             {loading ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Send size={16} />}
+            {!loading && input.trim() && <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' as const }} />}
           </button>
         </div>
 
@@ -485,9 +486,10 @@ function TabCalculadora() {
       {/* Calculate button */}
       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
         <button onClick={calculate} disabled={loading || !area}
-          style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 28px', borderRadius: 6, border: 'none', cursor: loading || !area ? 'not-allowed' : 'pointer', background: loading || !area ? T.surface : T.gold, color: loading || !area ? T.textDim : T.navy, fontSize: 13, fontWeight: 700, transition: 'all 150ms' }}>
+          style={{ position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 8, padding: '12px 28px', borderRadius: 6, border: loading || !area ? 'none' : '1px solid rgba(255,255,255,0.08)', cursor: loading || !area ? 'not-allowed' : 'pointer', background: loading || !area ? T.surface : 'var(--n, #0A1624)', color: loading || !area ? T.textDim : '#fff', fontSize: 13, fontWeight: 700, transition: 'all 150ms' }}>
           {loading ? <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} /> : <Calculator size={15} />}
           {loading ? 'Calculando...' : 'Calcular Valor'}
+          {!loading && area && <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' as const }} />}
         </button>
         {error && <span style={{ fontSize: 12, color: T.error }}>{error}</span>}
       </div>
@@ -737,9 +739,10 @@ function TabProcessar() {
       {files.length > 0 && (
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <button onClick={processAll} disabled={processing}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 22px', borderRadius: 6, border: 'none', cursor: processing ? 'wait' : 'pointer', background: processing ? T.surface : T.gold, color: processing ? T.textDim : T.navy, fontSize: 12, fontWeight: 700, transition: 'all 150ms' }}>
+            style={{ position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 8, padding: '10px 22px', borderRadius: 6, border: processing ? 'none' : '1px solid rgba(255,255,255,0.08)', cursor: processing ? 'wait' : 'pointer', background: processing ? T.surface : 'var(--n, #0A1624)', color: processing ? T.textDim : '#fff', fontSize: 12, fontWeight: 700, transition: 'all 150ms' }}>
             {processing ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Brain size={14} />}
             {processing ? 'Processando...' : `Processar ${files.length} página${files.length > 1 ? 's' : ''} com IA`}
+            {!processing && <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' as const }} />}
           </button>
           {!processing && (
             <button onClick={() => { setFiles([]); setResults([]) }}

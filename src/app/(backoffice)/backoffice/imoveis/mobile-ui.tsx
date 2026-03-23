@@ -238,11 +238,11 @@ export function MobileAppBarAction({ icon, href, onClick, active, badge, label, 
       className="mob-btn-tap"
       style={{
         minWidth: 44, height: 44, borderRadius: 'var(--r-md)',
-        background: isPrimary ? T.gold : active ? `rgba(184,148,58,0.12)` : 'transparent',
-        border: 'none', cursor: 'pointer',
+        background: isPrimary ? '#0A1624' : active ? `rgba(184,148,58,0.12)` : 'transparent',
+        border: isPrimary ? '1px solid rgba(255,255,255,0.08)' : 'none', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        color: isPrimary ? T.textInv : active ? T.gold : 'var(--text-secondary)',
-        position: 'relative',
+        color: isPrimary ? '#fff' : active ? T.gold : 'var(--text-secondary)',
+        position: 'relative', overflow: isPrimary ? 'hidden' : undefined,
         gap: 4, padding: '0 10px',
       }}
     >
@@ -251,8 +251,11 @@ export function MobileAppBarAction({ icon, href, onClick, active, badge, label, 
         <span style={{
           fontFamily: 'var(--font-sans)',
           fontSize: 11, fontWeight: 600,
-          color: isPrimary ? T.textInv : active ? T.gold : 'var(--text-secondary)',
+          color: isPrimary ? '#fff' : active ? T.gold : 'var(--text-secondary)',
         }}>{label}</span>
+      )}
+      {isPrimary && (
+        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
       )}
       {badge != null && badge > 0 && (
         <span style={{
@@ -731,14 +734,16 @@ export function MobileEmptyState({ title = 'Nenhum imóvel', subtitle = 'Tente a
           <button
             className="mob-btn-tap"
             style={{
+              position: 'relative', overflow: 'hidden',
               height: 44, padding: '0 24px', borderRadius: 'var(--r-md)',
-              background: T.gold, border: 'none', cursor: 'pointer',
+              background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer',
               fontFamily: 'var(--font-sans)',
               fontSize: 12, fontWeight: 700, letterSpacing: '1px',
-              textTransform: 'uppercase', color: T.textInv,
+              textTransform: 'uppercase', color: '#fff',
             }}
           >
             {action.label}
+            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
           </button>
         </Link>
       )}

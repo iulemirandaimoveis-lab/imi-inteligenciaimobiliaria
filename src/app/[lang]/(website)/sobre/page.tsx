@@ -402,7 +402,7 @@ export default async function AboutPage({
                                     <div className="flex gap-2.5">
                                         <Link
                                             href={`/${lang}/biblioteca/${book.slug}`}
-                                            className="flex-1 h-10 flex items-center justify-center rounded-[4px] bg-[#C8A44A]/10 border border-[#C8A44A]/20 text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-[#C8A44A]/20 transition-all"
+                                            className="flex-1 h-10 flex items-center justify-center rounded-[4px] bg-transparent border border-[#C8A44A]/14 text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-[#C8A44A]/10 transition-all"
                                         >
                                             Ver Livro
                                         </Link>
