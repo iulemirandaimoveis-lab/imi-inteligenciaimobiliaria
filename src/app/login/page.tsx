@@ -3,62 +3,23 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Eye, EyeOff, Loader2, ShieldCheck, Zap, BarChart3, TrendingUp, Users, Building2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 
-// Animated counter hook
-function useCounter(target: number, duration = 1200) {
-    const [value, setValue] = useState(0)
-    useEffect(() => {
-        let start = 0
-        const step = target / (duration / 16)
-        const timer = setInterval(() => {
-            start += step
-            if (start >= target) { setValue(target); clearInterval(timer) }
-            else setValue(Math.floor(start))
-        }, 16)
-        return () => clearInterval(timer)
-    }, [target, duration])
-    return value
-}
-
-const STATS = [
-    { icon: Users, label: 'Leads Gerenciados', value: 847, suffix: '+', color: '#486581' },
-    { icon: Building2, label: 'Empreendimentos', value: 124, suffix: '', color: '#627D98' },
-    { icon: TrendingUp, label: 'Em Carteira', value: 8, suffix: '.2M', prefix: 'R$', color: '#486581' },
-]
-
-function StatCard({ stat, index }: { stat: typeof STATS[0], index: number }) {
-    const val = useCounter(stat.value, 1400 + index * 200)
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 + index * 0.15, duration: 0.5 }}
-            style={{
-                padding: '14px 18px', borderRadius: '14px',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.07)',
-            }}
-        >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{
-                    width: '32px', height: '32px', borderRadius: '9px', flexShrink: 0,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: `${stat.color}22`, border: `1px solid ${stat.color}44`,
-                }}>
-                    <stat.icon size={15} style={{ color: stat.color }} />
-                </div>
-                <div>
-                    <p style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.02em' }}>
-                        {stat.prefix || ''}{val}{stat.suffix}
-                    </p>
-                    <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 500, marginTop: '2px' }}>{stat.label}</p>
-                </div>
-            </div>
-        </motion.div>
-    )
+/* ─── MASTER v2 Design Tokens ─── */
+const T = {
+    bg: '#050B14',
+    n: '#0A1624',
+    gold: '#C8A44A',
+    t1: '#E8E4DC',
+    t3: '#4F5B6B',
+    g10: 'rgba(200,164,74,.06)',
+    g20: 'rgba(200,164,74,.14)',
+    inputBg: 'rgba(20,36,64,.4)',
+    inputBorder: 'rgba(200,164,74,.14)',
+    focusShadow: 'rgba(200,164,74,.08)',
+    playfair: "'Playfair Display', Georgia, serif",
+    outfit: "'Outfit', system-ui, sans-serif",
 }
 
 export default function LoginPage() {
@@ -86,7 +47,7 @@ export default function LoginPage() {
         try {
             const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
             if (authError) {
-                setError('Credenciais inválidas. Verifique seu e-mail e senha.')
+                setError('Credenciais inv\u00e1lidas. Verifique seu e-mail e senha.')
                 return
             }
             if (data.session) {
@@ -94,313 +55,348 @@ export default function LoginPage() {
                 router.refresh()
             }
         } catch {
-            setError('Erro técnico ao processar login.')
+            setError('Erro t\u00e9cnico ao processar login.')
         } finally {
             setLoading(false)
         }
     }
 
-    const inputBase: React.CSSProperties = {
-        width: '100%', height: '52px', padding: '0 16px',
-        borderRadius: '14px', fontSize: '14px', color: '#fff',
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        outline: 'none', caretColor: '#486581',
-        transition: 'border-color 0.18s ease',
+    /* ─── Inline style objects ─── */
+
+    const pageStyle: React.CSSProperties = {
+        minHeight: '100dvh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: T.bg,
+        position: 'relative',
+        fontFamily: T.outfit,
+        margin: 0,
+        padding: 0,
+    }
+
+    const grainStyle: React.CSSProperties = {
+        position: 'absolute',
+        inset: 0,
+        opacity: 0.015,
+        pointerEvents: 'none',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+        backgroundSize: '128px 128px',
+        mixBlendMode: 'overlay',
+    }
+
+    const cardStyle: React.CSSProperties = {
+        width: '100%',
+        maxWidth: '420px',
+        padding: '32px',
+        position: 'relative',
+        zIndex: 1,
         boxSizing: 'border-box',
     }
 
-    return (
-        <div style={{ minHeight: '100dvh', display: 'flex', background: '#050B14' }}>
+    const logoWrapStyle: React.CSSProperties = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        marginBottom: '36px',
+        justifyContent: 'center',
+    }
 
-            {/* ── Left Panel ── */}
-            <div style={{
-                display: 'none',
-                width: '58%', padding: '48px 56px', flexDirection: 'column',
-                justifyContent: 'space-between', position: 'relative', overflow: 'hidden',
-                background: 'linear-gradient(160deg, #0D1A2A 0%, #0A1520 50%, #060E18 100%)',
-            }}
-                className="lg:flex"
-            >
-                {/* Dot grid pattern */}
-                <div style={{
-                    position: 'absolute', inset: 0, opacity: 0.035,
-                    backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)',
-                    backgroundSize: '28px 28px',
-                }} />
-                {/* Glow blobs */}
-                <div style={{ position: 'absolute', top: '-80px', left: '-80px', width: '360px', height: '360px', borderRadius: '50%', background: 'rgba(72,101,129,0.12)', filter: 'blur(100px)' }} />
-                <div style={{ position: 'absolute', bottom: '10%', right: '-60px', width: '280px', height: '280px', borderRadius: '50%', background: 'rgba(51,78,104,0.10)', filter: 'blur(80px)' }} />
+    const logoTextStyle: React.CSSProperties = {
+        fontFamily: T.playfair,
+        fontWeight: 700,
+        fontSize: '20px',
+        color: '#FFFFFF',
+        lineHeight: 1,
+    }
+
+    const logoSepStyle: React.CSSProperties = {
+        width: '1px',
+        height: '22px',
+        background: T.gold,
+        flexShrink: 0,
+    }
+
+    const logoTagStyle: React.CSSProperties = {
+        fontFamily: T.outfit,
+        fontWeight: 500,
+        fontSize: '7px',
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        color: T.gold,
+        lineHeight: 1.4,
+    }
+
+    const titleStyle: React.CSSProperties = {
+        fontFamily: T.playfair,
+        fontWeight: 500,
+        fontSize: '22px',
+        color: '#FFFFFF',
+        margin: 0,
+        textAlign: 'center',
+    }
+
+    const subtitleStyle: React.CSSProperties = {
+        fontFamily: T.outfit,
+        fontWeight: 400,
+        fontSize: '10px',
+        color: T.t3,
+        margin: '4px 0 0 0',
+        textAlign: 'center',
+    }
+
+    const labelStyle: React.CSSProperties = {
+        display: 'block',
+        fontFamily: T.outfit,
+        fontWeight: 500,
+        fontSize: '7px',
+        letterSpacing: '2.5px',
+        textTransform: 'uppercase',
+        color: T.t3,
+        marginBottom: '6px',
+        marginLeft: '2px',
+    }
+
+    const inputStyle: React.CSSProperties = {
+        width: '100%',
+        padding: '10px 14px',
+        borderRadius: '8px',
+        fontSize: '11px',
+        fontFamily: T.outfit,
+        fontWeight: 400,
+        color: T.t1,
+        background: T.inputBg,
+        border: `1px solid ${T.inputBorder}`,
+        outline: 'none',
+        caretColor: T.gold,
+        boxSizing: 'border-box',
+        transition: 'border-color 0.18s ease, box-shadow 0.18s ease',
+    }
+
+    const btnStyle: React.CSSProperties = {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '6px',
+        fontFamily: T.outfit,
+        fontWeight: 600,
+        fontSize: '11px',
+        letterSpacing: '1px',
+        textTransform: 'uppercase',
+        cursor: loading ? 'not-allowed' : 'pointer',
+        padding: '12px 22px',
+        borderRadius: '6px',
+        background: T.n,
+        color: '#FFFFFF',
+        border: '1px solid rgba(255,255,255,.08)',
+        position: 'relative',
+        overflow: 'hidden',
+        width: '100%',
+        opacity: loading ? 0.65 : 1,
+        transition: 'all 0.18s ease',
+    }
+
+    const goldLineStyle: React.CSSProperties = {
+        position: 'absolute',
+        bottom: 0,
+        left: '12%',
+        right: '12%',
+        height: '2px',
+        background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`,
+        opacity: 0.6,
+        borderRadius: '1px',
+        pointerEvents: 'none',
+    }
+
+    const forgotStyle: React.CSSProperties = {
+        fontFamily: T.outfit,
+        fontWeight: 400,
+        fontSize: '9px',
+        color: T.t3,
+        textDecoration: 'none',
+        transition: 'color 0.15s',
+        display: 'block',
+        textAlign: 'center',
+        marginTop: '16px',
+    }
+
+    const badgeStyle: React.CSSProperties = {
+        fontFamily: T.outfit,
+        fontWeight: 600,
+        fontSize: '7px',
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
+        color: T.gold,
+        background: T.g10,
+        border: `1px solid ${T.g20}`,
+        borderRadius: '99px',
+        padding: '3px 10px',
+        lineHeight: 1,
+    }
+
+    const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.currentTarget.style.borderColor = T.gold
+        e.currentTarget.style.boxShadow = `0 0 0 3px ${T.focusShadow}`
+    }
+
+    const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.currentTarget.style.borderColor = T.inputBorder
+        e.currentTarget.style.boxShadow = 'none'
+    }
+
+    return (
+        <div style={pageStyle}>
+            {/* Film grain */}
+            <div style={grainStyle} />
+
+            {/* Card */}
+            <div style={cardStyle}>
 
                 {/* Logo */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    style={{ position: 'relative', zIndex: 2 }}
-                >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <span style={{
-                            fontSize: '24px', fontWeight: 800, color: '#FFFFFF',
-                            fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '-0.01em',
-                        }}>IMI</span>
-                        <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.15)' }} />
-                        <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.4)', lineHeight: 1.2 }}>
-                            Inteligência<br />Imobiliária
-                        </span>
-                    </div>
-                </motion.div>
-
-                {/* Hero content */}
-                <div style={{ position: 'relative', zIndex: 2, maxWidth: '520px' }}>
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 0.6 }}
-                        style={{
-                            display: 'inline-flex', alignItems: 'center', gap: '8px',
-                            marginBottom: '20px', padding: '5px 14px', borderRadius: '99px',
-                            background: 'rgba(72,101,129,0.15)', border: '1px solid rgba(72,101,129,0.25)',
-                        }}
-                    >
-                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981', animation: 'pulse 2s ease-in-out infinite' }} />
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
-                            Plataforma ao vivo
-                        </span>
-                    </motion.div>
-
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3, duration: 0.6 }}
-                        style={{
-                            fontSize: '42px', fontWeight: 800, color: '#FFFFFF',
-                            lineHeight: 1.1, marginBottom: '20px', letterSpacing: '-0.02em',
-                            fontFamily: "'Playfair Display', Georgia, serif",
-                        }}
-                    >
-                        A plataforma definitiva para{' '}
-                        <span style={{ color: '#627D98', fontStyle: 'italic' }}>Alta Performance</span>{' '}
-                        Imobiliária.
-                    </motion.h2>
-
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '32px' }}
-                    >
-                        {[
-                            { icon: Zap, title: 'Automação IA', desc: 'Geração de conteúdo e gestão de leads com inteligência artificial.' },
-                            { icon: BarChart3, title: 'Analytics 360', desc: 'Dashboards em tempo real para controle de ROI e conversão.' },
-                        ].map((item, i) => (
-                            <motion.div
-                                key={item.title}
-                                initial={{ opacity: 0, y: 12 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.5 + i * 0.1 }}
-                                style={{ padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)' }}
-                            >
-                                <div style={{ width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', marginBottom: '10px' }}>
-                                    <item.icon size={16} style={{ color: '#627D98' }} />
-                                </div>
-                                <p style={{ fontSize: '13px', fontWeight: 700, color: '#fff', marginBottom: '4px' }}>{item.title}</p>
-                                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>{item.desc}</p>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-
-                    {/* Stats */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
-                        {STATS.map((s, i) => <StatCard key={s.label} stat={s} index={i} />)}
-                    </div>
+                <div style={logoWrapStyle}>
+                    <span style={logoTextStyle}>IMI</span>
+                    <div style={logoSepStyle} />
+                    <span style={logoTagStyle}>INTELIG&Ecirc;NCIA<br />IMOBILI&Aacute;RIA</span>
                 </div>
 
-                {/* Footer */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2 }}
-                    style={{
-                        position: 'relative', zIndex: 2,
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '20px',
-                    }}
-                >
-                    <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>© 2026 IMI — Inteligência Imobiliária</p>
-                    <ShieldCheck size={15} style={{ color: 'rgba(255,255,255,0.2)' }} />
-                </motion.div>
-                <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>
-            </div>
+                {/* Title */}
+                <div style={{ marginBottom: '28px' }}>
+                    <h1 style={titleStyle}>Acessar</h1>
+                    <p style={subtitleStyle}>Backoffice IMI</p>
+                </div>
 
-            {/* ── Right Panel — Form ── */}
-            <div style={{
-                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                padding: '32px 24px', position: 'relative',
-                background: '#050B14',
-            }}>
-                {/* Film grain overlay */}
-                <div style={{
-                    position: 'absolute', inset: 0, opacity: 0.035, pointerEvents: 'none',
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
-                    backgroundRepeat: 'repeat',
-                    backgroundSize: '128px 128px',
-                    mixBlendMode: 'overlay',
-                }} />
-                {/* Subtle glow */}
-                <div style={{ position: 'absolute', top: '20%', right: '-40px', width: '220px', height: '220px', borderRadius: '50%', background: 'rgba(72,101,129,0.08)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+                {/* Form */}
+                <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    style={{ width: '100%', maxWidth: '400px', position: 'relative', zIndex: 1 }}
-                >
-                    {/* Mobile logo */}
-                    <div className="lg:hidden" style={{ marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <span style={{ fontSize: '22px', fontWeight: 800, color: '#fff', fontFamily: "'Playfair Display', Georgia, serif" }}>IMI</span>
-                        <div style={{ width: '1px', height: '22px', background: 'rgba(255,255,255,0.15)' }} />
-                        <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)' }}>Inteligência<br />Imobiliária</span>
+                    {/* Email */}
+                    <div>
+                        <label style={labelStyle}>E-MAIL</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            placeholder="seu@email.com.br"
+                            required
+                            style={inputStyle}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
+                        />
                     </div>
 
-                    <div style={{ marginBottom: '32px' }}>
-                        <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#FFFFFF', marginBottom: '6px', letterSpacing: '-0.02em' }}>Bem-vindo</h1>
-                        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>Insira suas credenciais para acessar o painel.</p>
-                    </div>
-
-                    <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {/* Email */}
-                        <div>
-                            <label style={{ display: 'block', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', marginBottom: '8px', marginLeft: '2px' }}>
-                                E-mail
-                            </label>
+                    {/* Password */}
+                    <div>
+                        <label style={labelStyle}>SENHA</label>
+                        <div style={{ position: 'relative' }}>
                             <input
-                                type="email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                                placeholder="seu@email.com.br"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                placeholder="••••••••"
                                 required
-                                style={inputBase}
-                                onFocus={e => (e.currentTarget.style.borderColor = 'rgba(72,101,129,0.55)')}
-                                onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+                                style={{ ...inputStyle, paddingRight: '42px' }}
+                                onFocus={handleInputFocus}
+                                onBlur={handleInputBlur}
                             />
-                        </div>
-
-                        {/* Password */}
-                        <div>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', marginLeft: '2px' }}>
-                                <label style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)' }}>
-                                    Senha
-                                </label>
-                                <Link
-                                    href="/login/reset"
-                                    style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.35)', textDecoration: 'none', letterSpacing: '0.05em' }}
-                                    onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
-                                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
-                                >
-                                    Esqueci minha senha
-                                </Link>
-                            </div>
-                            <div style={{ position: 'relative' }}>
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={e => setPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    required
-                                    style={{ ...inputBase, paddingRight: '48px' }}
-                                    onFocus={e => (e.currentTarget.style.borderColor = 'rgba(72,101,129,0.55)')}
-                                    onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(v => !v)}
-                                    style={{
-                                        position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)',
-                                        background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)',
-                                        padding: '4px', transition: 'color 0.15s',
-                                    }}
-                                    onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
-                                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
-                                >
-                                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Error */}
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
-                                style={{ padding: '12px 16px', borderRadius: '12px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.18)' }}
-                            >
-                                <p style={{ fontSize: '12px', color: '#F87171', fontWeight: 600, textAlign: 'center' }}>{error}</p>
-                            </motion.div>
-                        )}
-
-                        {/* Submit — MASTER v2: navy bg, white text, gold gradient line */}
-                        <div style={{ position: 'relative', marginTop: 4 }}>
                             <button
-                                type="submit"
-                                disabled={loading}
+                                type="button"
+                                onClick={() => setShowPassword(v => !v)}
                                 style={{
-                                    display: 'inline-flex',
+                                    position: 'absolute',
+                                    right: '12px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    color: T.t3,
+                                    padding: '4px',
+                                    transition: 'color 0.15s',
+                                    display: 'flex',
                                     alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: 6,
-                                    fontFamily: "'Outfit', system-ui, sans-serif",
-                                    fontWeight: 600,
-                                    letterSpacing: '1px',
-                                    textTransform: 'uppercase' as const,
-                                    cursor: loading ? 'not-allowed' : 'pointer',
-                                    fontSize: 11,
-                                    padding: '12px 22px',
-                                    borderRadius: 6,
-                                    background: '#0A1624',
-                                    color: '#FFF',
-                                    border: '1px solid rgba(255,255,255,.08)',
-                                    position: 'relative',
-                                    overflow: 'hidden',
-                                    width: '100%',
-                                    opacity: loading ? 0.65 : 1,
-                                    transition: 'all 0.18s ease',
                                 }}
-                                onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.background = '#0F1F33'; (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)' } }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#0A1624'; (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
+                                onMouseEnter={e => { e.currentTarget.style.color = T.gold }}
+                                onMouseLeave={e => { e.currentTarget.style.color = T.t3 }}
                             >
-                                {loading
-                                    ? <Loader2 size={16} style={{ animation: 'spin 0.8s linear infinite' }} />
-                                    : 'ENTRAR'
-                                }
+                                {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                             </button>
-                            {/* Gold gradient line */}
-                            <div style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                left: '12%',
-                                right: '12%',
-                                height: 2,
-                                background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)',
-                                opacity: 0.6,
-                                borderRadius: 1,
-                                pointerEvents: 'none',
-                            }} />
                         </div>
-                        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-                    </form>
-
-                    <div style={{ marginTop: '28px', textAlign: 'center' }}>
-                        <Link
-                            href="/"
-                            style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.2)', textDecoration: 'none', transition: 'color 0.15s' }}
-                            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}
-                            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.2)')}
-                        >
-                            ← Voltar para o Site
-                        </Link>
                     </div>
-                </motion.div>
+
+                    {/* Error */}
+                    {error && (
+                        <div style={{
+                            padding: '10px 14px',
+                            borderRadius: '8px',
+                            background: 'rgba(239,68,68,0.08)',
+                            border: '1px solid rgba(239,68,68,0.18)',
+                        }}>
+                            <p style={{
+                                fontSize: '10px',
+                                fontFamily: T.outfit,
+                                color: '#F87171',
+                                fontWeight: 600,
+                                textAlign: 'center',
+                                margin: 0,
+                            }}>{error}</p>
+                        </div>
+                    )}
+
+                    {/* Submit Button */}
+                    <div style={{ position: 'relative', marginTop: '4px' }}>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            style={btnStyle}
+                            onMouseEnter={e => {
+                                if (!loading) {
+                                    e.currentTarget.style.background = '#0F1F33'
+                                    e.currentTarget.style.transform = 'translateY(-1px)'
+                                }
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.background = T.n
+                                e.currentTarget.style.transform = 'translateY(0)'
+                            }}
+                        >
+                            {loading
+                                ? <Loader2 size={14} style={{ animation: 'spin 0.8s linear infinite' }} />
+                                : 'ENTRAR'
+                            }
+                        </button>
+                        {/* Gold gradient line */}
+                        <div style={goldLineStyle} />
+                    </div>
+                </form>
+
+                {/* Forgot password */}
+                <Link
+                    href="/login/reset"
+                    style={forgotStyle}
+                    onMouseEnter={e => { e.currentTarget.style.color = T.gold }}
+                    onMouseLeave={e => { e.currentTarget.style.color = T.t3 }}
+                >
+                    Esqueceu a senha?
+                </Link>
+
+                {/* Bottom badges */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    marginTop: '32px',
+                }}>
+                    {['SSO', '2FA', 'LGPD'].map(b => (
+                        <span key={b} style={badgeStyle}>{b}</span>
+                    ))}
+                </div>
             </div>
+
+            <style>{`
+                @keyframes spin { to { transform: rotate(360deg); } }
+                input::placeholder { color: ${T.t3} !important; opacity: 1 !important; }
+            `}</style>
         </div>
     )
 }

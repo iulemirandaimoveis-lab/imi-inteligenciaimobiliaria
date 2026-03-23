@@ -77,7 +77,10 @@ export function usePartnership(id: string) {
 // Criar nova parceria
 export async function createPartnership(data: {
     property_id: string
-    partner_id: string
+    property_name: string
+    property_price: number
+    owner_broker_id: string
+    message: string
     commission_owner_pct: number
     commission_partner_pct: number
     lead_name?: string

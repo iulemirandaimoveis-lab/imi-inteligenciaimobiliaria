@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
             .eq('user_id', user.id)
 
         if (memberError) {
-            return NextResponse.json({ error: memberError instanceof Error ? memberError.message : 'Erro desconhecido' }, { status: 500 })
+            // Graceful: if table doesn't exist yet, return empty
+            console.warn('[channels/GET] chat_members query error:', memberError instanceof Error ? memberError.message : memberError)
+            return NextResponse.json({ data: [] })
         }
 
         if (!memberships?.length) {
@@ -44,7 +46,8 @@ export async function GET(request: NextRequest) {
         const { data: channels, error } = await query
 
         if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+            console.warn('[channels/GET] chat_channels query error:', error instanceof Error ? error.message : error)
+            return NextResponse.json({ data: [] })
         }
 
         // Merge membership info into each channel

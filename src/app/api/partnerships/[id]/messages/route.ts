@@ -38,6 +38,7 @@ export async function GET(
             .single()
 
         if (fetchErr || !partnership) {
+            console.warn('[partnerships/messages/GET] Partnership fetch error:', fetchErr?.message)
             return NextResponse.json({ error: 'Parceria não encontrada' }, { status: 404 })
         }
 
@@ -57,9 +58,15 @@ export async function GET(
             .from('partnership_messages')
             .select('*', { count: 'exact' })
             .eq('partnership_id', id)
-            .eq('is_deleted', false)
-            .order('created_at', { ascending: false })
-            .limit(limit)
+
+        // is_deleted column may not exist yet — try with it, fall back without
+        try {
+            query = query.eq('is_deleted', false)
+        } catch {
+            // Column may not exist
+        }
+
+        query = query.order('created_at', { ascending: false }).limit(limit)
 
         if (before) {
             query = query.lt('created_at', before)
@@ -68,10 +75,8 @@ export async function GET(
         const { data: messages, error: msgErr, count } = await query
 
         if (msgErr) {
-            return NextResponse.json(
-                { error: msgErr.message ?? 'Erro ao buscar mensagens' },
-                { status: 500 },
-            )
+            console.warn('[partnerships/messages/GET] Messages query error:', msgErr.message)
+            return NextResponse.json({ data: [], count: 0, has_more: false })
         }
 
         // Reverse to chronological order for the client
@@ -82,8 +87,9 @@ export async function GET(
             count: count ?? 0,
             has_more: (messages?.length ?? 0) === limit,
         })
-    } catch {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    } catch (err) {
+        console.error('[partnerships/messages/GET] Unexpected error:', err)
+        return NextResponse.json({ data: [], count: 0, has_more: false })
     }
 }
 

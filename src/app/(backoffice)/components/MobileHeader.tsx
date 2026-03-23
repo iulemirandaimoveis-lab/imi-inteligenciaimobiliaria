@@ -105,7 +105,7 @@ function AvatarButton({
                 overflow: 'hidden',
                 outline: accountOpen
                     ? '2px solid var(--platinum-400)'
-                    : '2px solid rgba(61,111,255,0.35)',
+                    : '2px solid var(--border-gold, rgba(193,163,104,0.45))',
                 outlineOffset: 1,
                 background: avatarUrl ? 'transparent' : 'var(--accent-400)',
                 transition: 'outline-color 0.2s',
@@ -155,24 +155,51 @@ export default function MobileHeader() {
     const segments = pathname?.split('/').filter(Boolean) || []
     const isSubPage = segments.length > 2
 
-    // Load Supabase user info and avatar
+    // Load Supabase user info and avatar (check brokers + profiles + auth metadata)
     useEffect(() => {
         const supabase = createClient()
         supabase.auth.getUser().then(async ({ data: { user } }) => {
             if (user) {
                 const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Admin'
                 const initials = name.split(' ').slice(0, 2).map((n: string) => n[0]).join('').toUpperCase()
-                const avatar = user.user_metadata?.avatar_url || null
-                setAvatarUrl(avatar)
+
+                // Try brokers table first (source of truth), then profiles, then auth metadata
+                let avatar: string | null = null
                 let role: string | undefined
                 try {
-                    const { data: dbUser } = await supabase
-                        .from('profiles')
-                        .select('role')
-                        .eq('email', user.email)
-                        .single()
-                    role = dbUser?.role as string | undefined
+                    const { data: broker } = await supabase
+                        .from('brokers')
+                        .select('avatar_url')
+                        .eq('user_id', user.id)
+                        .maybeSingle()
+                    if (broker?.avatar_url) avatar = broker.avatar_url
                 } catch {}
+                if (!avatar) {
+                    try {
+                        const { data: profile } = await supabase
+                            .from('profiles')
+                            .select('role, avatar_url')
+                            .eq('id', user.id)
+                            .maybeSingle()
+                        if (profile?.avatar_url) avatar = profile.avatar_url
+                        role = profile?.role as string | undefined
+                    } catch {}
+                }
+                if (!avatar) avatar = user.user_metadata?.avatar_url || null
+
+                // If we didn't get role yet, fetch it
+                if (!role) {
+                    try {
+                        const { data: dbUser } = await supabase
+                            .from('profiles')
+                            .select('role')
+                            .eq('id', user.id)
+                            .maybeSingle()
+                        role = dbUser?.role as string | undefined
+                    } catch {}
+                }
+
+                setAvatarUrl(avatar)
                 setUserInfo({ name, email: user.email || '', initials, role })
             }
         })
@@ -422,7 +449,7 @@ export default function MobileHeader() {
                                     style={{
                                         width: 40, height: 40, minWidth: 40, minHeight: 40, aspectRatio: '1/1',
                                         background: avatarUrl ? 'transparent' : 'var(--accent-400)',
-                                        border: '1.5px solid rgba(61,111,255,0.35)',
+                                        border: '1.5px solid var(--border-gold, rgba(193,163,104,0.45))',
                                     }}
                                 >
                                     {avatarUrl ? (
@@ -447,7 +474,7 @@ export default function MobileHeader() {
                                         <span
                                             className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
                                             style={{
-                                                background: 'rgba(61,111,255,0.10)',
+                                                background: 'rgba(193,163,104,0.12)',
                                                 color: 'var(--accent-400)',
                                                 borderRadius: 'var(--r-sm)',
                                                 fontFamily: 'var(--font-mono)',

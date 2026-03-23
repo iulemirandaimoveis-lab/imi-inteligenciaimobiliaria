@@ -138,12 +138,21 @@ export default function PerfilPage() {
             if (uploadError) throw uploadError
 
             const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
-            setProfile(p => ({ ...p, avatar_url: publicUrl }))
+            // Cache-bust so browser always loads the fresh image
+            const finalUrl = `${publicUrl}?t=${Date.now()}`
+
+            // Persist immediately to all sources (don't wait for "Salvar")
+            await supabase.auth.updateUser({ data: { avatar_url: finalUrl } })
+            await supabase.from('brokers').update({ avatar_url: finalUrl }).eq('user_id', user.id)
+            await supabase.from('profiles').upsert({ id: user.id, avatar_url: finalUrl }, { onConflict: 'id' })
+
+            setProfile(p => ({ ...p, avatar_url: finalUrl }))
             toast.success('Foto atualizada!')
         } catch {
             toast.error('Erro ao enviar foto')
         } finally {
             setUploading(false)
+            if (fileInputRef.current) fileInputRef.current.value = ''
         }
     }
 

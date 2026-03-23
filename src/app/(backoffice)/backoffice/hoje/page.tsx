@@ -98,13 +98,28 @@ export default function HojePage() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return
       const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Corretor'
       setUserName(name.split(' ')[0])
-      if (user.user_metadata?.avatar_url) setAvatarUrl(user.user_metadata.avatar_url)
+
+      // Try brokers first, then profiles, then auth metadata
+      let avatar: string | null = null
+      try {
+        const { data: broker } = await supabase.from('brokers').select('avatar_url').eq('user_id', user.id).maybeSingle()
+        if (broker?.avatar_url) avatar = broker.avatar_url
+      } catch {}
+      if (!avatar) {
+        try {
+          const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).maybeSingle()
+          if (profile?.avatar_url) avatar = profile.avatar_url
+        } catch {}
+      }
+      if (!avatar) avatar = user.user_metadata?.avatar_url || null
+      if (avatar) setAvatarUrl(avatar)
+
       // Load role
-      supabase.from('profiles').select('role').eq('email', user.email).single()
+      supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
         .then(({ data }) => { if (data?.role) setUserRole(data.role as string) })
     })
   }, [])
@@ -122,10 +137,13 @@ export default function HojePage() {
       const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
       if (upErr) throw upErr
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
-      await supabase.auth.updateUser({ data: { avatar_url: publicUrl } })
-      // Also save to profiles table
-      await supabase.from('profiles').upsert({ id: user.id, avatar_url: publicUrl }, { onConflict: 'id' })
-      setAvatarUrl(publicUrl)
+      // Cache-bust to force browser reload after upload
+      const finalUrl = `${publicUrl}?t=${Date.now()}`
+      await supabase.auth.updateUser({ data: { avatar_url: finalUrl } })
+      // Save to profiles AND brokers for consistency across all modules
+      await supabase.from('profiles').upsert({ id: user.id, avatar_url: finalUrl }, { onConflict: 'id' })
+      await supabase.from('brokers').update({ avatar_url: finalUrl }).eq('user_id', user.id)
+      setAvatarUrl(finalUrl)
       toast.success('Foto atualizada!')
     } catch {
       toast.error('Erro ao atualizar foto')

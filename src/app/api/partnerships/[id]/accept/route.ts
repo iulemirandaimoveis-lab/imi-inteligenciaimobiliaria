@@ -30,6 +30,7 @@ export async function POST(
             .single()
 
         if (fetchErr || !partnership) {
+            console.warn('[partnerships/accept] Fetch error:', fetchErr?.message)
             return NextResponse.json({ error: 'Parceria não encontrada' }, { status: 404 })
         }
 

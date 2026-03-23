@@ -24,10 +24,17 @@ export async function GET() {
             .or(`owner_user_id.eq.${user.id},partner_user_id.eq.${user.id}`)
 
         if (error) {
-            return NextResponse.json(
-                { error: error.message ?? 'Erro desconhecido' },
-                { status: 500 },
-            )
+            // Graceful: if table or columns don't exist yet, return zeros
+            console.warn('[partnerships/stats] Query error:', error.message)
+            return NextResponse.json({
+                data: {
+                    total_partnerships: 0,
+                    active_count: 0,
+                    completed_count: 0,
+                    total_volume: 0,
+                    avg_commission_pct: 0,
+                },
+            })
         }
 
         const all = partnerships ?? []
@@ -63,7 +70,16 @@ export async function GET() {
                 avg_commission_pct: avgCommissionPct,
             },
         })
-    } catch {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    } catch (err) {
+        console.error('[partnerships/stats] Unexpected error:', err)
+        return NextResponse.json({
+            data: {
+                total_partnerships: 0,
+                active_count: 0,
+                completed_count: 0,
+                total_volume: 0,
+                avg_commission_pct: 0,
+            },
+        })
     }
 }

@@ -30,6 +30,8 @@ export async function GET(
             .single()
 
         if (error || !partnership) {
+            // Graceful: could be table schema mismatch
+            console.warn('[partnerships/GET:id] Fetch error:', error?.message)
             return NextResponse.json({ error: 'Parceria não encontrada' }, { status: 404 })
         }
 
@@ -38,22 +40,27 @@ export async function GET(
             return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
         }
 
-        // Fetch messages
-        const { data: messages, error: msgErr } = await supabaseAdmin
-            .from('partnership_messages')
-            .select('*')
-            .eq('partnership_id', id)
-            .order('created_at', { ascending: true })
+        // Fetch messages (graceful)
+        let messages: unknown[] = []
+        try {
+            const { data: msgData, error: msgErr } = await supabaseAdmin
+                .from('partnership_messages')
+                .select('*')
+                .eq('partnership_id', id)
+                .order('created_at', { ascending: true })
 
-        if (msgErr) {
-            return NextResponse.json(
-                { error: msgErr.message ?? 'Erro ao buscar mensagens' },
-                { status: 500 },
-            )
+            if (msgErr) {
+                console.warn('[partnerships/GET:id] Messages query error:', msgErr.message)
+            } else {
+                messages = msgData ?? []
+            }
+        } catch (msgCatchErr) {
+            console.warn('[partnerships/GET:id] Messages fetch failed:', msgCatchErr)
         }
 
-        return NextResponse.json({ data: { ...partnership, messages: messages ?? [] } })
-    } catch {
+        return NextResponse.json({ data: { ...partnership, messages } })
+    } catch (err) {
+        console.error('[partnerships/GET:id] Unexpected error:', err)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
