@@ -93,15 +93,15 @@ export default function Method({ dict }: MethodProps) {
                                     className="text-[52px] font-black leading-none mb-4 select-none"
                                     style={{
                                         color: 'transparent',
-                                        WebkitTextStroke: '1px rgba(61,81,138,0.35)',
-                                        fontFamily: 'var(--font-display)',
+                                        WebkitTextStroke: '1.5px rgba(200,164,74,0.35)',
+                                        fontFamily: 'var(--font-mono)',
                                     }}
                                 >
                                     {step.num}
                                 </div>
 
                                 {/* Accent line */}
-                                <div className="w-8 h-px mb-4" style={{ background: 'var(--text-tertiary)' }} />
+                                <div className="w-8 h-px mb-4" style={{ background: 'rgba(200,164,74,0.5)' }} />
 
                                 <h3 className="text-[15px] font-bold text-white mb-2">{step.title}</h3>
                                 <p className="text-[13px] text-white/45 leading-relaxed">{step.desc}</p>
