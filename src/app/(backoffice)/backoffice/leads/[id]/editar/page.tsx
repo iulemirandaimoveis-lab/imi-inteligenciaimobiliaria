@@ -217,7 +217,7 @@ export default function EditarLeadPage() {
     const getScoreColor = () => {
         if (score >= 15) return 'text-green-400'
         if (score >= 10) return 'text-orange-400'
-        return 'text-blue-400'
+        return 'text-[var(--info)]'
     }
     const getScoreLabel = () => {
         if (score >= 15) return 'Quente 🔥'
@@ -599,12 +599,12 @@ export default function EditarLeadPage() {
                             Alterações
                         </h3>
                         {/* Info */}
-                        <div className="p-4 rounded-lg" style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)' }}>
+                        <div className="p-4 rounded-lg" style={{ background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.25)' }}>
                             <div className="flex gap-3">
-                                <AlertCircle size={20} className="text-blue-400 flex-shrink-0 mt-0.5" />
+                                <AlertCircle size={20} className="text-[var(--info)] flex-shrink-0 mt-0.5" />
                                 <div className="text-sm">
-                                    <p className="font-medium text-blue-300 mb-1">Histórico Preservado</p>
-                                    <p className="text-blue-400">
+                                    <p className="font-medium text-[var(--info)] mb-1">Histórico Preservado</p>
+                                    <p className="text-[var(--info)]">
                                         Todas as alterações são registradas na timeline do lead.
                                     </p>
                                 </div>

@@ -28,7 +28,7 @@ function formatDate(iso: string | null) {
 }
 
 const CATEGORY_COLORS: Record<string, { color: string; bg: string }> = {
-    mercado: { color: 'var(--info)', bg: 'rgba(59,130,246,0.1)' },
+    mercado: { color: 'var(--info)', bg: 'rgba(96,165,250,0.1)' },
     residencial: { color: 'var(--success)', bg: 'rgba(16,185,129,0.1)' },
     comercial: { color: 'var(--warning)', bg: 'rgba(245,158,11,0.1)' },
     luxo: { color: 'var(--accent-400)', bg: 'rgba(139,92,246,0.1)' },

@@ -129,7 +129,7 @@ const getRoleAccentColor = (color: string) => {
     const colors: Record<string, string> = {
         red: 'rgba(239,68,68,0.15)',
         orange: 'rgba(249,115,22,0.15)',
-        blue: 'rgba(59,130,246,0.15)',
+        blue: 'rgba(96,165,250,0.15)',
         purple: 'rgba(168,85,247,0.15)',
         green: 'rgba(34,197,94,0.15)',
     }

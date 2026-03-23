@@ -499,14 +499,14 @@ export default function CreditoDetalhesPage() {
                                             <div
                                                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
                                                     item.status === 'completed' ? 'bg-green-500/15' :
-                                                    item.status === 'current'   ? 'bg-blue-500/15' : ''
+                                                    item.status === 'current'   ? 'bg-[rgba(96,165,250,0.15)]' : ''
                                                 }`}
                                                 style={item.status === 'pending' ? { background: T.elevated } : undefined}
                                             >
                                                 {item.status === 'completed' ? (
                                                     <CheckCircle size={16} className="text-green-500" />
                                                 ) : item.status === 'current' ? (
-                                                    <Clock size={16} className="text-blue-400" />
+                                                    <Clock size={16} className="text-[var(--info)]" />
                                                 ) : (
                                                     <div className="w-2 h-2 rounded-full" style={{ background: T.textMuted }} />
                                                 )}

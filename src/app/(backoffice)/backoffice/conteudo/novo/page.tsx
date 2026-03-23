@@ -50,7 +50,7 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
 const TIPOS_CONTEUDO = [
-  { id: 'blog',      label: 'Artigo Blog',       icon: FileText,  desc: 'SEO-friendly, 800-2000 palavras',     color: 'var(--info)', bg: 'rgba(59,130,246,0.12)'  },
+  { id: 'blog',      label: 'Artigo Blog',       icon: FileText,  desc: 'SEO-friendly, 800-2000 palavras',     color: 'var(--info)', bg: 'rgba(96,165,250,0.12)'  },
   { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: 'var(--success)', bg: 'rgba(74,222,128,0.12)'  },
   { id: 'instagram', label: 'Post Instagram',    icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars',  color: 'var(--error)', bg: 'rgba(244,114,182,0.12)' },
   { id: 'linkedin',  label: 'Post LinkedIn',     icon: Linkedin,  desc: 'Artigo ou post profissional',         color: 'var(--info)', bg: 'rgba(96,165,250,0.12)'  },

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
-import { Syne } from 'next/font/google';
+import { Syne, Playfair_Display, JetBrains_Mono } from 'next/font/google';
 // DEPLOY_VERSION: v6.0.0 - DS6 PRECISION DARK
 import './globals.css';
 
@@ -11,6 +11,20 @@ const syne = Syne({
     subsets: ['latin'],
     weight: ['400', '500', '600', '700', '800'],
     variable: '--font-syne',
+    display: 'swap',
+});
+
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
+    variable: '--font-playfair',
+    display: 'swap',
+});
+
+const jetbrains = JetBrains_Mono({
+    subsets: ['latin'],
+    weight: ['400', '500', '700'],
+    variable: '--font-jetbrains',
     display: 'swap',
 });
 
@@ -81,8 +95,8 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="pt-BR" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} ${cormorant.variable} ${outfit.variable} ${dmMono.variable} ${syne.variable}`}>
-            <body className={`${GeistSans.className} min-h-screen bg-[var(--bg-base,#080D18)] relative`}>
+        <html lang="pt-BR" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} ${cormorant.variable} ${outfit.variable} ${dmMono.variable} ${syne.variable} ${playfair.variable} ${jetbrains.variable}`}>
+            <body className="min-h-screen bg-[var(--bg-base,#080D18)] relative" style={{ fontFamily: "var(--fu, 'Outfit', system-ui, sans-serif)" }}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="dark"

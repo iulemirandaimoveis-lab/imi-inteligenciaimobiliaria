@@ -630,7 +630,7 @@ export default function DashboardClient({
     const dateStr = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]}`
 
     const ACTIONS = [
-        { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale,    color: 'rgba(59,130,246,0.12)',  fg: 'var(--accent-400)', raw: '59,130,246' },
+        { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale,    color: 'rgba(96,165,250,0.12)',  fg: 'var(--accent-400)', raw: '96,165,250' },
         { label: 'Novo Lead',       href: '/backoffice/leads/novo',      icon: Users,    color: 'rgba(74,222,128,0.10)',  fg: 'var(--success)',          raw: '74,222,128' },
         { label: 'Novo Imóvel',     href: '/backoffice/imoveis/novo',    icon: Building2,color: 'rgba(34,211,238,0.10)',  fg: 'var(--info)',          raw: '34,211,238' },
         { label: 'Ver Relatórios',  href: '/backoffice/relatorios',      icon: BarChart2,color: 'rgba(251,191,36,0.10)',  fg: 'var(--warning)',          raw: '251,191,36' },
@@ -644,7 +644,7 @@ export default function DashboardClient({
     const alertaColor: Record<string, { border: string; bg: string; text: string; btn: string }> = {
         warning: { border: 'rgba(245,158,11,0.3)',  bg: 'rgba(245,158,11,0.06)',  text: 'var(--warning)', btn: 'rgba(245,158,11,0.15)' },
         danger:  { border: 'rgba(239,68,68,0.3)',   bg: 'rgba(239,68,68,0.06)',   text: 'var(--error)', btn: 'rgba(239,68,68,0.15)' },
-        info:    { border: 'rgba(59,130,246,0.3)',  bg: 'rgba(59,130,246,0.06)',  text: 'var(--info)', btn: 'rgba(59,130,246,0.15)' },
+        info:    { border: 'rgba(96,165,250,0.3)',  bg: 'rgba(96,165,250,0.06)',  text: 'var(--info)', btn: 'rgba(96,165,250,0.15)' },
     }
 
     const completionRate = avStats.total > 0
@@ -806,8 +806,8 @@ export default function DashboardClient({
                 className="relative overflow-hidden rounded-lg"
                 style={{
                     background: T.card,
-                    border: '1px solid var(--info-border, rgba(59,130,246,0.28))',
-                    boxShadow: '0 0 0 1px rgba(59,130,246,0.06) inset, 0 4px 20px rgba(0,0,0,0.15)',
+                    border: '1px solid var(--info-border, rgba(96,165,250,0.28))',
+                    boxShadow: '0 0 0 1px rgba(96,165,250,0.06) inset, 0 4px 20px rgba(0,0,0,0.15)',
                     padding: '20px',
                 }}
             >
@@ -817,7 +817,7 @@ export default function DashboardClient({
                 }} />
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                    style={{ background: 'linear-gradient(90deg, rgba(59,130,246,0.80) 0%, rgba(59,130,246,0.30) 60%, transparent 100%)' }} />
+                    style={{ background: 'linear-gradient(90deg, rgba(96,165,250,0.80) 0%, rgba(96,165,250,0.30) 60%, transparent 100%)' }} />
 
                 <div className="relative flex items-center justify-between gap-4 flex-wrap">
                     {/* Primary metric */}
@@ -1118,7 +1118,7 @@ export default function DashboardClient({
                                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
                                         <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
-                                            style={{ background: 'var(--info-bg, rgba(59,130,246,0.14))', color: 'var(--accent-400)' }}>
+                                            style={{ background: 'var(--info-bg, rgba(96,165,250,0.14))', color: 'var(--accent-400)' }}>
                                             {lead.name?.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">

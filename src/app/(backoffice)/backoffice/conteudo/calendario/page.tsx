@@ -24,7 +24,7 @@ interface ConteudoItem {
 
 const TIPO_CONFIG: Record<string, { icon: React.ElementType; label: string; color: string; bg: string }> = {
     instagram: { icon: Instagram, label: 'Instagram', color: '#EC4899', bg: 'rgba(236,72,153,0.12)' },
-    linkedin:  { icon: Linkedin,  label: 'LinkedIn',  color: 'var(--info)', bg: 'rgba(59,130,246,0.12)' },
+    linkedin:  { icon: Linkedin,  label: 'LinkedIn',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
     facebook:  { icon: Facebook,  label: 'Facebook',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
     email:     { icon: Mail,      label: 'E-mail',    color: 'var(--success)', bg: 'rgba(16,185,129,0.12)' },
     blog:      { icon: Globe,     label: 'Blog',      color: 'var(--accent-400)', bg: 'rgba(72,101,129,0.12)' },
@@ -171,7 +171,7 @@ export default function CalendarioPage() {
                         <button
                             onClick={() => router.push('/backoffice/conteudo/novo')}
                             className="bo-btn bo-btn-primary"
-                            style={{ background: T.accent, boxShadow: '0 0 16px rgba(59,130,246,0.28)' }}
+                            style={{ background: T.accent, boxShadow: '0 0 16px rgba(96,165,250,0.28)' }}
                         >
                             <Plus size={16} />
                             Novo
@@ -183,10 +183,10 @@ export default function CalendarioPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total no Mês', value: stats.total, color: T.text, bg: T.elevated, accent: 'rgba(59,130,246,0.08)' },
+                    { label: 'Total no Mês', value: stats.total, color: T.text, bg: T.elevated, accent: 'rgba(96,165,250,0.08)' },
                     { label: 'Publicados', value: stats.publicados, color: 'var(--success)', bg: 'rgba(16,185,129,0.10)', accent: 'rgba(16,185,129,0.08)' },
                     { label: 'Agendados', value: stats.agendados, color: 'var(--info)', bg: 'rgba(96,165,250,0.10)', accent: 'rgba(96,165,250,0.08)' },
-                    { label: 'Rascunhos', value: stats.rascunhos, color: T.textMuted, bg: T.elevated, accent: 'rgba(59,130,246,0.04)' },
+                    { label: 'Rascunhos', value: stats.rascunhos, color: T.textMuted, bg: T.elevated, accent: 'rgba(96,165,250,0.04)' },
                 ].map(s => (
                     <div key={s.label} className="rounded-lg p-4 transition-all" style={{
                         background: s.bg,
@@ -251,7 +251,7 @@ export default function CalendarioPage() {
                     {view === 'mes' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* Calendário */}
-                            <div className="lg:col-span-2 rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-md, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 50%)' }}>
+                            <div className="lg:col-span-2 rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-md, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(96,165,250,0.04) 0%, transparent 50%)' }}>
                                 <div className="flex items-center justify-between mb-6">
                                     <button onClick={mesAnterior} className="w-9 h-9 flex items-center justify-center rounded-[6px]" style={{ color: T.textMuted }}>
                                         <ChevronLeft size={18} />
@@ -404,7 +404,7 @@ export default function CalendarioPage() {
                     )}
 
                     {view === 'lista' && (
-                        <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-md, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 40%)' }}>
+                        <div className="rounded-lg overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--shadow-md, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(96,165,250,0.04) 0%, transparent 40%)' }}>
                             {conteudosFiltrados.length === 0 ? (
                                 <div className="text-center py-12">
                                     <Calendar size={40} className="mx-auto mb-3" style={{ color: T.border }} />

@@ -29,7 +29,7 @@ const STATUS_LABELS: Record<string, string> = {
     under_construction: 'Em Obra',
 }
 const STATUS_COLORS: Record<string, string> = {
-    launch: '#3B82F6',
+    launch: '#60A5FA',
     ready: '#10B981',
     under_construction: '#F59E0B',
 }
@@ -129,7 +129,7 @@ export default function PropertyMap({
         const addMarkers = () => {
             validDevelopments.forEach((dev) => {
                 const { lat, lng } = dev.location.coordinates
-                const statusColor = STATUS_COLORS[dev.status] || '#3B82F6'
+                const statusColor = STATUS_COLORS[dev.status] || '#60A5FA'
                 // Custom marker element
                 const el = document.createElement('div')
                 el.className = 'imi-property-marker'
@@ -186,7 +186,7 @@ export default function PropertyMap({
                                     ${STATUS_LABELS[dev.status] || dev.status}
                                 </div>
                             </div>`
-                            : `<div style="height:60px;background:linear-gradient(135deg,#1D4ED820,#3B82F620);display:flex;align-items:center;justify-content:center;font-size:28px;">🏢</div>`
+                            : `<div style="height:60px;background:linear-gradient(135deg,#1D4ED820,#60A5FA20);display:flex;align-items:center;justify-content:center;font-size:28px;">🏢</div>`
                         }
                         <div style="padding:12px 14px 14px;">
                             <div style="font-weight:800;font-size:13px;margin-bottom:3px;line-height:1.3;color:#F9FAFB;">${dev.name}</div>
@@ -209,7 +209,7 @@ export default function PropertyMap({
                             </div>
                             <a href="/${lang}/imoveis/${dev.slug}" style="
                                 display:block;text-align:center;
-                                background:linear-gradient(135deg,#1D4ED8,#3B82F6);
+                                background:linear-gradient(135deg,#1D4ED8,#60A5FA);
                                 color:white;font-size:12px;font-weight:700;
                                 padding:9px 16px;border-radius:9px;text-decoration:none;
                                 letter-spacing:0.01em;
@@ -351,7 +351,7 @@ export default function PropertyMap({
                     <div style={{
                         width: 36, height: 36,
                         border: '3px solid rgba(59,130,246,0.2)',
-                        borderTopColor: '#3B82F6', borderRadius: '50%',
+                        borderTopColor: '#60A5FA', borderRadius: '50%',
                         animation: 'spin 0.8s linear infinite',
                     }} />
                     <p style={{ color: '#9CA3AF', fontSize: 13, margin: 0 }}>Carregando mapa...</p>
@@ -375,7 +375,7 @@ export default function PropertyMap({
             <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
             {/* Floating property card — shown on marker click */}
             {selectedProperty && (() => {
-                const sc = STATUS_COLORS[selectedProperty.status] || '#3B82F6'
+                const sc = STATUS_COLORS[selectedProperty.status] || '#60A5FA'
                 return (
                     <div style={{
                         position: 'absolute',
@@ -477,7 +477,7 @@ export default function PropertyMap({
                                 href={`/${lang}/imoveis/${selectedProperty.slug}`}
                                 style={{
                                     display: 'block', textAlign: 'center',
-                                    background: 'linear-gradient(135deg,#1D4ED8,#3B82F6)',
+                                    background: 'linear-gradient(135deg,#1D4ED8,#60A5FA)',
                                     color: 'white', fontSize: 13, fontWeight: 700,
                                     padding: '10px 16px', borderRadius: 10,
                                     textDecoration: 'none', letterSpacing: '0.01em',

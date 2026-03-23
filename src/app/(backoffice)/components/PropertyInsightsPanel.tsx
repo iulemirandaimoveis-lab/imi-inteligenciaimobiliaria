@@ -171,8 +171,8 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
             className="rounded-lg overflow-hidden transition-all"
             style={{
                 background: T.surface,
-                border: `1px solid ${insights ? 'rgba(59,130,246,0.3)' : T.border}`,
-                boxShadow: insights ? '0 0 20px rgba(59,130,246,0.08)' : 'none',
+                border: `1px solid ${insights ? 'rgba(96,165,250,0.3)' : T.border}`,
+                boxShadow: insights ? '0 0 20px rgba(96,165,250,0.08)' : 'none',
             }}
         >
             {/* Toggle Header */}
@@ -183,7 +183,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                 <div className="flex items-center gap-2.5">
                     <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style={{ background: 'rgba(59,130,246,0.15)' }}
+                        style={{ background: 'rgba(96,165,250,0.15)' }}
                     >
                         <Brain size={14} style={{ color: T.accent }} className={loading ? 'animate-pulse' : ''} />
                     </div>
@@ -318,7 +318,7 @@ export default function PropertyInsightsPanel({ developmentId, data }: PropertyI
                                                 ))}
                                             </div>
                                         </div>
-                                        <p className="text-[10px] mt-1 px-2 py-1.5 rounded-lg" style={{ background: 'rgba(59,130,246,0.08)', color: T.accent }}>
+                                        <p className="text-[10px] mt-1 px-2 py-1.5 rounded-lg" style={{ background: 'rgba(96,165,250,0.08)', color: T.accent }}>
                                             💡 {insights.competitive_analysis.opportunity}
                                         </p>
                                     </div>

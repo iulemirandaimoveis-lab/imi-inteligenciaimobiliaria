@@ -150,7 +150,7 @@ export default function CampanhaAnalyticsPage() {
         {/* Orçamento */}
         <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)' }}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(96,165,250,0.12)' }}>
               <DollarSign size={20} style={{ color: 'var(--info)' }} />
             </div>
             <div className="text-right">
@@ -212,7 +212,7 @@ export default function CampanhaAnalyticsPage() {
 
       {/* Meta Ads Notice */}
       <div className="rounded-lg p-5 flex items-start gap-4"
-        style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)' }}>
+        style={{ background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.2)' }}>
         <Zap size={20} style={{ color: 'var(--info)', flexShrink: 0, marginTop: 2 }} />
         <div>
           <p className="text-sm font-bold mb-1" style={{ color: T.text }}>Métricas de performance em tempo real</p>

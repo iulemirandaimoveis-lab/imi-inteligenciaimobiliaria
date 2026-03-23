@@ -254,8 +254,8 @@ export default function RelatoriosExecutivoPage() {
           {/* Pipeline */}
           <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '6px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Target size={15} color="#3B82F6" />
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(96,165,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Target size={15} color="var(--info, #60A5FA)" />
               </div>
               <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Est. Pipeline
@@ -266,7 +266,7 @@ export default function RelatoriosExecutivoPage() {
             </p>
             <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Leads quentes em negociação</p>
             <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
-              <Target size={52} color="#3B82F6" />
+              <Target size={52} color="var(--info, #60A5FA)" />
             </div>
           </div>
 
@@ -347,8 +347,8 @@ export default function RelatoriosExecutivoPage() {
             <svg width="100%" height="100%" viewBox={`0 0 ${currentVelocity.length * 60} 120`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
               <defs>
                 <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.35" />
-                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.02" />
+                  <stop offset="0%" stopColor="var(--info, #60A5FA)" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="var(--info, #60A5FA)" stopOpacity="0.02" />
                 </linearGradient>
               </defs>
               {/* Area fill */}
@@ -364,14 +364,14 @@ export default function RelatoriosExecutivoPage() {
               <polyline
                 points={currentVelocity.map((v, i) => `${i * 60},${120 - (v / maxVelocity) * 100}`).join(' ')}
                 fill="none"
-                stroke="#3B82F6"
+                stroke="var(--info, #60A5FA)"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
               {/* Dots on peaks */}
               {currentVelocity.map((v, i) => v === maxVelocity && (
-                <circle key={i} cx={i * 60} cy={120 - (v / maxVelocity) * 100} r="4" fill="#3B82F6" />
+                <circle key={i} cx={i * 60} cy={120 - (v / maxVelocity) * 100} r="4" fill="var(--info, #60A5FA)" />
               ))}
             </svg>
           </div>
@@ -401,7 +401,7 @@ export default function RelatoriosExecutivoPage() {
                   {/* Residential 75% */}
                   <circle
                     cx="40" cy="40" r="32" fill="none"
-                    stroke="#3B82F6" strokeWidth="10"
+                    stroke="var(--info, #60A5FA)" strokeWidth="10"
                     strokeDasharray={`${2 * Math.PI * 32 * 0.75} ${2 * Math.PI * 32}`}
                     strokeLinecap="round"
                     transform="rotate(-90 40 40)"
@@ -509,15 +509,15 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Total Leads Indicator ────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
-        <div style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #0F172A 100%)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '6px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #0F172A 100%)', border: '1px solid rgba(96,165,250,0.2)', borderRadius: '6px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '6px' }}>Total Leads Capturados</p>
             <p style={{ fontSize: '40px', fontWeight: 900, color: 'var(--text-inverse)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>
               {loading ? <Loader2 size={24} className="animate-spin" /> : totalLeads.toLocaleString('pt-BR')}
             </p>
           </div>
-          <div style={{ width: '56px', height: '56px', borderRadius: '6px', background: 'rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Users size={26} color="#3B82F6" />
+          <div style={{ width: '56px', height: '56px', borderRadius: '6px', background: 'rgba(96,165,250,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Users size={26} color="var(--info, #60A5FA)" />
           </div>
         </div>
       </motion.div>

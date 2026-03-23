@@ -366,7 +366,7 @@ export default function AvaliacaoDetalhesPage() {
                                 <div className="flex flex-wrap gap-2">
                                     {caracteristicas.map((f: string, i: number) => (
                                         <span key={i} className="px-3 py-1.5 rounded-lg text-sm"
-                                            style={{ background: 'rgba(59,130,246,0.1)', color: 'var(--accent-400)' }}>
+                                            style={{ background: 'rgba(96,165,250,0.1)', color: 'var(--accent-400)' }}>
                                             {f}
                                         </span>
                                     ))}
@@ -408,7 +408,7 @@ export default function AvaliacaoDetalhesPage() {
                                                 <div className="absolute inset-y-0 left-0 rounded-full"
                                                     style={{
                                                         width: `${rangePct}%`,
-                                                        background: 'linear-gradient(to right, #3B82F6, #8B5CF6)',
+                                                        background: 'linear-gradient(to right, var(--info, #60A5FA), #8B5CF6)',
                                                     }} />
                                                 {/* Marker dot */}
                                                 <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-5 h-5 rounded-full flex items-center justify-center"

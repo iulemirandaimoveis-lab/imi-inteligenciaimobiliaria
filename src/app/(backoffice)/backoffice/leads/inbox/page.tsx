@@ -153,7 +153,7 @@ export default function LeadsInboxPage() {
                             style={{
                                 background: showSearch ? T.accent : T.elevated,
                                 border: `1px solid ${T.border}`,
-                                boxShadow: showSearch ? '0 0 14px rgba(59,130,246,0.28)' : 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                                boxShadow: showSearch ? '0 0 14px rgba(96,165,250,0.28)' : 'inset 0 1px 0 rgba(255,255,255,0.06)',
                             }}
                         >
                             <Search size={14} style={{ color: showSearch ? '#fff' : T.textMuted }} />

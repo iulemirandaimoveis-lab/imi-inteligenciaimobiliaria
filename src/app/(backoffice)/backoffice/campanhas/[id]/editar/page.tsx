@@ -59,7 +59,7 @@ interface FormData {
 }
 const canais = [
   { value: 'instagram', label: 'Instagram Ads', icon: Instagram, color: 'bg-pink-500' },
-  { value: 'facebook', label: 'Facebook Ads', icon: Facebook, color: 'bg-blue-600' },
+  { value: 'facebook', label: 'Facebook Ads', icon: Facebook, color: 'bg-[var(--info)]' },
   { value: 'google', label: 'Google Ads', icon: Search, color: 'bg-red-500' },
   { value: 'email', label: 'Email Marketing', icon: Mail, color: 'bg-green-500' },
   { value: 'whatsapp', label: 'WhatsApp Business', icon: MessageSquare, color: 'bg-green-600' },

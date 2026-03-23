@@ -47,10 +47,10 @@ function LeadsBarChart({ data }: { data: number[] }) {
                     return (
                         <g key={i}>
                             <rect x={x + 1} y={H - barH} width={barW} height={barH} rx={3}
-                                fill={isPeak ? 'var(--info)' : 'rgba(59,130,246,0.25)'} />
+                                fill={isPeak ? 'var(--info)' : 'rgba(96,165,250,0.25)'} />
                             {isPeak && (
                                 <>
-                                    <rect x={x - 8} y={H - barH - 20} width={26} height={16} rx={4} fill="#3B82F6" />
+                                    <rect x={x - 8} y={H - barH - 20} width={26} height={16} rx={4} fill="var(--info, #60A5FA)" />
                                     <text x={x + 5} y={H - barH - 8} textAnchor="middle" fontSize={11} fontWeight={700} fill="#fff">{v}</text>
                                 </>
                             )}
@@ -273,7 +273,7 @@ export default function AdsPerformancePage() {
                     <Link
                         href="/backoffice/campanhas/nova"
                         className="flex items-center justify-center gap-2 h-13 rounded-lg text-sm font-bold text-white"
-                        style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 4px 20px rgba(59,130,246,0.3)', height: 52 }}
+                        style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 4px 20px rgba(96,165,250,0.3)', height: 52 }}
                     >
                         <Zap size={16} />
                         Nova Campanha

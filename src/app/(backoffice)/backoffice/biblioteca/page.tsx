@@ -25,7 +25,7 @@ interface Book {
 const CATEGORIES: Record<string, { label: string; icon: any; accent: string }> = {
   all:           { label: 'Todos',         icon: Library,      accent: T.accent },
   avaliacao:     { label: 'Avaliacao',     icon: Scale,        accent: '#10B981' },
-  investimento:  { label: 'Investimento',  icon: TrendingUp,   accent: '#3B82F6' },
+  investimento:  { label: 'Investimento',  icon: TrendingUp,   accent: 'var(--info, #60A5FA)' },
   patrimonial:   { label: 'Patrimonial',   icon: Shield,       accent: '#8B5CF6' },
   tecnologia:    { label: 'Tecnologia',    icon: Cpu,          accent: '#F59E0B' },
   profissional:  { label: 'Profissional',  icon: Award,        accent: '#EC4899' },

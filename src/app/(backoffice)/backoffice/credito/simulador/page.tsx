@@ -215,7 +215,7 @@ export default function SimuladorCreditoPage() {
                 {/* RIGHT: Results */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Resumo */}
-                    <div className="rounded-lg p-8 text-white" style={{ background: 'linear-gradient(135deg, #1E3A5F, #0B1929)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                    <div className="rounded-lg p-8 text-white" style={{ background: 'linear-gradient(135deg, #1E3A5F, #0B1929)', border: '1px solid rgba(96,165,250,0.2)' }}>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             {[
                                 { l: 'Parcela Mensal', v: fmt(monthlyPayment), large: true },

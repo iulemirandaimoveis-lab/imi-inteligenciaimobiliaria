@@ -1,3 +1,7 @@
+> ⚠️ DEPRECATED — Este arquivo é da versão Atlantis v1 (descartada).
+> O design system atual é o IMI MASTER v2 (navy × gold × Playfair + Outfit + JetBrains Mono).
+> Referência canônica: src/app/globals.css (.dark theme) + src/app/(backoffice)/lib/theme.ts
+
 # Design System Master File
 
 > **LOGIC:** When building a specific page, first check `design-system/pages/[page-name].md`.

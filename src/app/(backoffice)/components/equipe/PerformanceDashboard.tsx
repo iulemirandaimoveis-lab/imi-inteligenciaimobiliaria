@@ -147,7 +147,7 @@ export default function PerformanceDashboard() {
             )}
 
             {/* AI Insights Button + Panel */}
-            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid rgba(59,130,246,0.2)` }}>
+            <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid rgba(96,165,250,0.2)` }}>
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                         <Brain size={14} style={{ color: T.accent }} />

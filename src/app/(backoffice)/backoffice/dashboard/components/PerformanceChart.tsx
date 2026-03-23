@@ -54,7 +54,7 @@ export default function PerformanceChart({ chartData }: PerformanceChartProps) {
                             onClick={() => setPeriod(opt.value)}
                             className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
                             style={{
-                                background: period === opt.value ? 'rgba(59,130,246,0.18)' : 'transparent',
+                                background: period === opt.value ? 'rgba(200,164,74,0.18)' : 'transparent',
                                 color: period === opt.value ? 'var(--accent-400)' : 'var(--text-muted)',
                             }}
                         >
@@ -69,8 +69,8 @@ export default function PerformanceChart({ chartData }: PerformanceChartProps) {
                         <AreaChart data={filteredChartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                             <defs>
                                 <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%"  stopColor="#3B82F6" stopOpacity={0.28} />
-                                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.01} />
+                                    <stop offset="5%"  stopColor="var(--info, #60A5FA)" stopOpacity={0.28} />
+                                    <stop offset="95%" stopColor="var(--info, #60A5FA)" stopOpacity={0.01} />
                                 </linearGradient>
                                 <linearGradient id="greenGrad2" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%"  stopColor="#22C55E" stopOpacity={0.24} />

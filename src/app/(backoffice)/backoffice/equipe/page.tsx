@@ -22,7 +22,7 @@ import { getStatusConfig } from '../../lib/constants'
 const ROLE_CFG: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
     broker:         { label: 'Corretor',  icon: User,   color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
     broker_manager: { label: 'Gerente',   icon: Crown,  color: 'var(--warning)', bg: 'rgba(251,191,36,0.12)' },
-    admin:          { label: 'Admin',     icon: Shield, color: 'var(--platinum-400)', bg: 'rgba(167,139,250,0.12)' },
+    admin:          { label: 'Admin',     icon: Shield, color: 'var(--prp, #A78BFA)', bg: 'rgba(167,139,250,0.12)' },
 }
 
 /* ─── BROKER CARD ──────────────────────────────────────────────── */
@@ -77,8 +77,8 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                         <div
                             className="w-12 h-12 rounded-[6px] overflow-hidden flex items-center justify-center text-sm font-bold"
                             style={{
-                                background: isActive ? 'rgba(59,130,246,0.15)' : T.elevated,
-                                border: `1px solid ${isActive ? 'rgba(59,130,246,0.25)' : T.border}`,
+                                background: isActive ? 'rgba(96,165,250,0.15)' : T.elevated,
+                                border: `1px solid ${isActive ? 'rgba(96,165,250,0.25)' : T.border}`,
                                 color: isActive ? 'var(--info)' : T.textMuted,
                             }}
                         >

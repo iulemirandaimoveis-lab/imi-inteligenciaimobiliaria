@@ -251,11 +251,11 @@ export default function LeadRulesPage() {
             </div>
 
             {/* Info box */}
-            <div className="rounded-lg p-4 flex items-start gap-3" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
-                <Info size={16} className="text-blue-400 flex-shrink-0 mt-0.5" />
+            <div className="rounded-lg p-4 flex items-start gap-3" style={{ background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)' }}>
+                <Info size={16} className="text-[var(--info)] flex-shrink-0 mt-0.5" />
                 <div>
-                    <p className="text-sm font-medium text-blue-300">Como funciona o Lead Scoring</p>
-                    <p className="text-xs text-blue-400 mt-0.5">
+                    <p className="text-sm font-medium text-[var(--info)]">Como funciona o Lead Scoring</p>
+                    <p className="text-xs text-[var(--info)] mt-0.5">
                         Cada lead começa com 0 pontos. As regras somam ou subtraem pontos automaticamente.
                         Leads com score ≥ 50 são classificados como <strong>Quentes</strong>,
                         20-49 como <strong>Mornos</strong>, e abaixo de 20 como <strong>Frios</strong>.

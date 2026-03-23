@@ -300,12 +300,12 @@ export default function CriadorIAPage() {
                 disabled={generating}
                 style={{
                     width: '100%', height: 52, borderRadius: 16,
-                    background: generating ? 'rgba(59,130,246,0.4)' : 'var(--accent-400)',
+                    background: generating ? 'rgba(96,165,250,0.4)' : 'var(--accent-400)',
                     color: '#fff', fontSize: 15, fontWeight: 600,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
                     border: generating ? 'none' : '1px solid rgba(255,255,255,0.12)',
                     cursor: generating ? 'not-allowed' : 'pointer',
-                    boxShadow: generating ? 'none' : '0 0 24px rgba(59,130,246,0.32), inset 0 1px 0 rgba(255,255,255,0.12)',
+                    boxShadow: generating ? 'none' : '0 0 24px rgba(96,165,250,0.32), inset 0 1px 0 rgba(255,255,255,0.12)',
                     marginBottom: 28, transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                 }}
             >
@@ -404,7 +404,7 @@ export default function CriadorIAPage() {
                                         background: 'var(--btn-primary-bg)',
                                         color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                                         border: '1px solid rgba(255,255,255,0.1)',
-                                        boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
+                                        boxShadow: '0 0 20px rgba(96,165,250,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
                                         transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                                     }}
                                     onClick={() => toast.success('Agendado para publicação!')}

@@ -129,7 +129,7 @@ export default function IASettingsPage() {
       style={{
         width: '46px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer',
         position: 'relative', transition: 'background 0.2s',
-        background: checked ? '#3B82F6' : T.elevated,
+        background: checked ? 'var(--gold, #C8A44A)' : T.elevated,
         outline: checked ? 'none' : `1px solid ${T.border}`,
         flexShrink: 0,
       }}
@@ -158,7 +158,7 @@ export default function IASettingsPage() {
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 h-11 px-5 rounded-[6px] font-semibold text-white transition-all disabled:opacity-60"
-            style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 0 18px rgba(59,130,246,0.25)' }}
+            style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 0 18px rgba(200,164,74,0.25)' }}
           >
             {saving
               ? <><Loader2 size={15} className="animate-spin" /> Salvando...</>
@@ -170,10 +170,10 @@ export default function IASettingsPage() {
 
       {/* System Status Banner */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-        <div style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.25)', borderRadius: '16px', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.25)', borderRadius: '16px', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)', boxShadow: '0 0 8px rgba(74,222,128,0.6)', flexShrink: 0, animation: 'pulse 2s infinite' }} />
           <div>
-            <p style={{ fontSize: '11px', fontWeight: 800, color: '#3B82F6', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 800, color: 'var(--info, #60A5FA)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
               System Core: Active
             </p>
             <p style={{ fontSize: '12px', color: T.textMuted }}>
@@ -192,7 +192,7 @@ export default function IASettingsPage() {
         <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Sliders size={16} color="#3B82F6" />
+              <Sliders size={16} color="var(--info, #60A5FA)" />
               <span style={{ fontSize: '13px', fontWeight: 700, color: T.text, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
                 Lead Scoring Logic
               </span>
@@ -202,7 +202,7 @@ export default function IASettingsPage() {
             </button>
           </div>
 
-          <ScoreSlider label="Tempo no Site" value={weights.timeOnSite} onChange={v => setWeights(w => ({ ...w, timeOnSite: v }))} icon={Zap} color="#3B82F6" />
+          <ScoreSlider label="Tempo no Site" value={weights.timeOnSite} onChange={v => setWeights(w => ({ ...w, timeOnSite: v }))} icon={Zap} color="var(--info, #60A5FA)" />
           <ScoreSlider label="Imóveis Visualizados" value={weights.propertiesViewed} onChange={v => setWeights(w => ({ ...w, propertiesViewed: v }))} icon={Briefcase} color="#A78BFA" />
           <ScoreSlider label="Formulário Completo" value={weights.formCompletion} onChange={v => setWeights(w => ({ ...w, formCompletion: v }))} icon={Check} color="var(--success)" />
           <ScoreSlider label="Engajamento WhatsApp" value={weights.whatsappEngagement} onChange={v => setWeights(w => ({ ...w, whatsappEngagement: v }))} icon={MessageSquare} color="var(--warning)" />
@@ -237,17 +237,17 @@ export default function IASettingsPage() {
                   style={{
                     padding: '16px', borderRadius: '14px', border: 'none', cursor: 'pointer',
                     textAlign: 'center', transition: 'all 0.2s',
-                    background: isActive ? 'rgba(59,130,246,0.12)' : T.surface ?? T.elevated,
-                    outline: isActive ? '2px solid #3B82F6' : `1px solid ${T.border}`,
+                    background: isActive ? 'rgba(200,164,74,0.12)' : T.surface ?? T.elevated,
+                    outline: isActive ? '2px solid var(--gold, #C8A44A)' : `1px solid ${T.border}`,
                   }}
                 >
-                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', margin: '0 auto 10px', background: isActive ? 'rgba(59,130,246,0.2)' : T.elevated, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon size={20} color={isActive ? '#3B82F6' : T.textMuted} />
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', margin: '0 auto 10px', background: isActive ? 'rgba(200,164,74,0.2)' : T.elevated, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon size={20} color={isActive ? 'var(--gold, #C8A44A)' : T.textMuted} />
                   </div>
-                  <p style={{ fontSize: '14px', fontWeight: 700, color: isActive ? '#3B82F6' : T.text, marginBottom: '4px' }}>{opt.label}</p>
+                  <p style={{ fontSize: '14px', fontWeight: 700, color: isActive ? 'var(--gold, #C8A44A)' : T.text, marginBottom: '4px' }}>{opt.label}</p>
                   <p style={{ fontSize: '10px', color: T.textMuted }}>{opt.desc}</p>
                   {isActive && (
-                    <div style={{ marginTop: '8px', width: '20px', height: '20px', borderRadius: '50%', background: '#3B82F6', margin: '8px auto 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ marginTop: '8px', width: '20px', height: '20px', borderRadius: '50%', background: 'var(--gold, #C8A44A)', margin: '8px auto 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Check size={12} color="#fff" />
                     </div>
                   )}
@@ -269,8 +269,8 @@ export default function IASettingsPage() {
             {/* Enable Auto-Meetings */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Calendar size={15} color="#3B82F6" />
+                <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: 'rgba(96,165,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Calendar size={15} color="var(--info, #60A5FA)" />
                 </div>
                 <div>
                   <p style={{ fontSize: '13px', fontWeight: 700, color: T.text }}>Enable Auto-Meetings</p>
@@ -298,7 +298,7 @@ export default function IASettingsPage() {
                 >
                   −
                 </button>
-                <span style={{ fontSize: '16px', fontWeight: 800, color: '#3B82F6', minWidth: '36px', textAlign: 'center' }}>{rules.minScoreThreshold}</span>
+                <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--gold, #C8A44A)', minWidth: '36px', textAlign: 'center' }}>{rules.minScoreThreshold}</span>
                 <button
                   onClick={() => setRules(r => ({ ...r, minScoreThreshold: Math.min(100, r.minScoreThreshold + 5) }))}
                   style={{ width: '28px', height: '28px', borderRadius: '6px', background: T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
@@ -333,7 +333,7 @@ export default function IASettingsPage() {
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {[
-              { key: 'weeklyNewsletter', label: 'Newsletter Semanal', desc: 'Resumo do mercado toda segunda 08:00', color: '#3B82F6' },
+              { key: 'weeklyNewsletter', label: 'Newsletter Semanal', desc: 'Resumo do mercado toda segunda 08:00', color: 'var(--info, #60A5FA)' },
               { key: 'dailyInstaPost', label: 'Post Diário Instagram', desc: 'Publicação automática 10:00 dias úteis', color: '#F472B6' },
               { key: 'linkedinReport', label: 'Report LinkedIn Mensal', desc: 'Análise trimestral de dados do mercado', color: '#60A5FA' },
             ].map(item => (
@@ -362,7 +362,7 @@ export default function IASettingsPage() {
             background: 'var(--btn-primary-bg)',
             color: '#fff', fontSize: '15px', fontWeight: 800, letterSpacing: '0.02em',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-            boxShadow: '0 0 24px rgba(59,130,246,0.3)',
+            boxShadow: '0 0 24px rgba(200,164,74,0.3)',
             opacity: saving ? 0.8 : 1,
           }}
         >

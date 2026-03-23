@@ -225,7 +225,7 @@ export default function AlinhamentoPage() {
           Empresa
         </span>
         <span className="flex items-center gap-1.5">
-          <Users className="w-3.5 h-3.5 text-blue-400" />
+          <Users className="w-3.5 h-3.5 text-[var(--info)]" />
           Departamento
         </span>
         <span className="flex items-center gap-1.5">

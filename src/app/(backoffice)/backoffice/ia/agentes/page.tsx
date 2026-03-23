@@ -20,8 +20,8 @@ const AGENTS = [
         name: 'Agente Qualificador',
         description: 'Analisa leads automaticamente e classifica por temperatura, perfil e probabilidade de conversão.',
         icon: Users,
-        color: '#3B82F6',
-        colorRaw: '59,130,246',
+        color: 'var(--info, #60A5FA)',
+        colorRaw: '96,165,250',
         status: 'active' as const,
         model: 'Claude Sonnet',
         tasksToday: 0,
@@ -185,8 +185,8 @@ const AGENTS = [
         name: 'Hormozi Ads',
         description: 'Criativos e copy para anúncios Meta/Google com metodologia Hormozi. Hooks que param o scroll, provas sociais irresistíveis e CTAs diretos.',
         icon: Zap,
-        color: '#3B82F6',
-        colorRaw: '59,130,246',
+        color: 'var(--info, #60A5FA)',
+        colorRaw: '96,165,250',
         status: 'idle' as const,
         model: 'Claude Sonnet',
         tasksToday: 0,
@@ -397,7 +397,7 @@ export default function AgentesIAPage() {
             <div
                 className="rounded-lg p-4 mb-6 flex items-center gap-4"
                 style={{
-                    background: 'linear-gradient(135deg, rgba(139,92,246,0.10) 0%, rgba(59,130,246,0.08) 100%)',
+                    background: 'linear-gradient(135deg, rgba(139,92,246,0.10) 0%, rgba(96,165,250,0.08) 100%)',
                     border: '1px solid rgba(139,92,246,0.20)',
                 }}
             >

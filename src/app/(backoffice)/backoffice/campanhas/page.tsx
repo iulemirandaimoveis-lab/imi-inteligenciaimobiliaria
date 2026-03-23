@@ -69,14 +69,14 @@ function useCampanhas(filters: { search?: string; status?: string; type?: string
 }
 
 const CHANNEL_MAP: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  google: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
+  google: { label: 'Google Ads', icon: Globe, color: 'var(--info, #60A5FA)' },
   facebook: { label: 'Facebook', icon: Facebook, color: '#6366F1' },
   instagram: { label: 'Instagram', icon: Instagram, color: '#F472B6' },
   email: { label: 'Email', icon: Mail, color: '#22D3EE' },
   whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'var(--success)' },
   site: { label: 'Site', icon: Globe, color: '#34D399' },
   // Legacy keys for backward compat
-  google_ads: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
+  google_ads: { label: 'Google Ads', icon: Globe, color: 'var(--info, #60A5FA)' },
   organic: { label: 'Orgânico', icon: TrendingUp, color: '#34D399' },
   referral: { label: 'Indicação', icon: Users, color: '#A78BFA' },
   other: { label: 'Outro', icon: BarChart3, color: '#8B949E' },

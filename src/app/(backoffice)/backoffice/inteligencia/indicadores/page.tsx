@@ -37,7 +37,7 @@ type NewForm = {
 const CATEGORIES = ['performance', 'liquidez', 'preco', 'oferta', 'macro']
 
 const CATEGORY_META: Record<string, { label: string; color: string; bg: string; Icon: React.ElementType }> = {
-    performance: { label: 'Performance',  color: 'var(--info)', bg: 'rgba(59,130,246,0.10)',  Icon: BarChart3 },
+    performance: { label: 'Performance',  color: 'var(--info)', bg: 'rgba(96,165,250,0.10)',  Icon: BarChart3 },
     liquidez:    { label: 'Liquidez',     color: 'var(--success)', bg: 'rgba(16,185,129,0.10)',  Icon: Gauge },
     preco:       { label: 'Preço',        color: 'var(--warning)', bg: 'rgba(245,158,11,0.10)',  Icon: DollarSign },
     oferta:      { label: 'Oferta',       color: 'var(--accent-400)', bg: 'rgba(139,92,246,0.10)',  Icon: Package },

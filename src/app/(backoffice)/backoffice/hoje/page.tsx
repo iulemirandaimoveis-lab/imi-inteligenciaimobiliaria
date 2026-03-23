@@ -54,7 +54,7 @@ const QUICK_ACTIONS = [
 
 // ── Agent activity default (zeroed — real data fetched from API) ──
 const AGENT_ACTIVITY_DEFAULT = [
-  { name: 'Qualificador', tasksToday: 0, color: '#3B82F6', raw: '59,130,246', status: 'active' },
+  { name: 'Qualificador', tasksToday: 0, color: 'var(--info, #60A5FA)', raw: '96,165,250', status: 'active' },
   { name: 'Conteúdo',     tasksToday: 0, color: '#8B5CF6', raw: '139,92,246', status: 'active' },
   { name: 'Matchmaker',   tasksToday: 0, color: '#F59E0B', raw: '245,158,11', status: 'active' },
   { name: 'Follow-up',    tasksToday: 0, color: 'var(--error)', raw: '239,68,68',  status: 'idle'   },
@@ -555,7 +555,7 @@ export default function HojePage() {
           <div
             className="px-4 py-2.5 flex items-center gap-2"
             style={{
-              background: 'linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(59,130,246,0.05) 100%)',
+              background: 'linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(96,165,250,0.05) 100%)',
               borderBottom: '1px solid var(--border-default)',
             }}
           >

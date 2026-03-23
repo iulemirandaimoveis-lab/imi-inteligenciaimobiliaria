@@ -215,7 +215,7 @@ export default function AuditPage() {
           { label: 'Total de Eventos',  value: loading ? '…' : stats.total,    textColor: T.text,      bg: T.elevated,                      icon: Shield },
           { label: 'Críticos',          value: loading ? '…' : stats.criticos,  textColor: 'var(--error)',   bg: 'rgba(239,68,68,0.08)',           icon: AlertTriangle },
           { label: 'Atenção',           value: loading ? '…' : stats.atencao,   textColor: '#FCD34D',   bg: 'rgba(245,158,11,0.08)',          icon: AlertTriangle },
-          { label: 'Usuários Ativos',   value: loading ? '…' : stats.usuarios,  textColor: 'var(--info)',   bg: 'rgba(59,130,246,0.08)',          icon: User },
+          { label: 'Usuários Ativos',   value: loading ? '…' : stats.usuarios,  textColor: 'var(--info)',   bg: 'rgba(96,165,250,0.08)',          icon: User },
         ].map(s => {
           const Icon = s.icon
           return (

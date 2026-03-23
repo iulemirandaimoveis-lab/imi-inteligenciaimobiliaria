@@ -27,7 +27,7 @@ interface CalendarEvent {
 }
 
 const EVENT_TYPES: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
-  vistoria: { label: 'Vistoria',  color: '#3B82F6', bg: 'rgba(59,130,246,0.14)',  icon: Home     },
+  vistoria: { label: 'Vistoria',  color: 'var(--info, #60A5FA)', bg: 'rgba(96,165,250,0.14)',  icon: Home     },
   reuniao:  { label: 'Reunião',   color: '#A78BFA', bg: 'rgba(167,139,250,0.14)', icon: Users    },
   visita:   { label: 'Visita',    color: 'var(--success)', bg: 'rgba(74,222,128,0.12)',  icon: MapPin   },
   entrega:  { label: 'Entrega',   color: 'var(--warning)', bg: 'rgba(251,191,36,0.14)',  icon: FileText },
@@ -285,7 +285,7 @@ export default function AgendaPage() {
                       transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                       background: viewMode === mode ? 'var(--accent-400)' : 'transparent',
                       color: viewMode === mode ? '#fff' : 'var(--text-secondary)',
-                      boxShadow: viewMode === mode ? '0 0 12px rgba(59,130,246,0.2)' : 'none',
+                      boxShadow: viewMode === mode ? '0 0 12px rgba(200,164,74,0.2)' : 'none',
                     }}
                   >
                     {mode === 'day' ? 'Dia' : 'Semana'}
@@ -303,7 +303,7 @@ export default function AgendaPage() {
                   background: 'var(--btn-primary-bg)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   cursor: 'pointer',
-                  boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
+                  boxShadow: '0 0 20px rgba(200,164,74,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
                   whiteSpace: 'nowrap',
                   transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                 }}
@@ -329,7 +329,7 @@ export default function AgendaPage() {
           border: '1px solid var(--border-default)',
           borderRadius: '18px', padding: '16px 20px',
           boxShadow: 'var(--card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)',
-          backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 50%)',
+          backgroundImage: 'linear-gradient(135deg, rgba(200,164,74,0.04) 0%, transparent 50%)',
         }}>
           {/* Week nav */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
@@ -367,18 +367,18 @@ export default function AgendaPage() {
                     background: isSelected
                       ? 'var(--accent-400)'
                       : todayBool
-                        ? 'rgba(59,130,246,0.1)'
+                        ? 'rgba(200,164,74,0.1)'
                         : 'transparent',
-                    boxShadow: isSelected ? '0 0 16px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.15)' : 'none',
+                    boxShadow: isSelected ? '0 0 16px rgba(200,164,74,0.28), inset 0 1px 0 rgba(255,255,255,0.15)' : 'none',
                   }}
                 >
                   <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.06em', color: isSelected ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)' }}>
                     {getDow(dayStr)}
                   </span>
-                  <span style={{ fontSize: '17px', fontWeight: 800, color: isSelected ? '#fff' : todayBool ? '#3B82F6' : 'var(--text-primary)' }}>
+                  <span style={{ fontSize: '17px', fontWeight: 800, color: isSelected ? '#fff' : todayBool ? 'var(--gold, #C8A44A)' : 'var(--text-primary)' }}>
                     {getDayNum(dayStr)}
                   </span>
-                  <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: hasEvts ? (isSelected ? '#fff' : '#3B82F6') : 'transparent' }} />
+                  <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: hasEvts ? (isSelected ? '#fff' : 'var(--gold, #C8A44A)') : 'transparent' }} />
                 </button>
               )
             })}
@@ -394,12 +394,12 @@ export default function AgendaPage() {
               {/* Header */}
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Clock size={16} color="#3B82F6" />
+                  <Clock size={16} color="var(--info, #60A5FA)" />
                   <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'capitalize' }}>
                     {selectedDayLabel}
                   </span>
                   {selectedDayEvents.length > 0 && (
-                    <span style={{ fontSize: '11px', fontWeight: 700, background: '#3B82F6', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, background: 'var(--gold, #C8A44A)', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>
                       {selectedDayEvents.length}
                     </span>
                   )}
@@ -479,7 +479,7 @@ export default function AgendaPage() {
                         {/* Actions */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                           {isOnline ? (
-                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, color: '#fff', background: '#3B82F6', border: 'none', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.3)' }}>
+                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, color: '#fff', background: 'var(--n, #0A1624)', border: '1px solid var(--bdg, rgba(200,164,74,.14))', cursor: 'pointer', boxShadow: '0 0 12px rgba(200,164,74,0.2)' }}>
                               <Video size={13} />
                               Entrar
                             </button>
@@ -548,7 +548,7 @@ export default function AgendaPage() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                           <button
                             onClick={() => setShowModal(true)}
-                            style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 600, color: '#fff', background: 'var(--btn-primary-bg)', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.22)' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 600, color: '#fff', background: 'var(--btn-primary-bg)', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', boxShadow: '0 0 12px rgba(200,164,74,0.22)' }}
                           >
                             <Check size={12} />
                             Aceitar
@@ -588,11 +588,11 @@ export default function AgendaPage() {
                           padding: '12px 8px',
                           borderRight: i < 6 ? '1px solid var(--border-default)' : 'none',
                           cursor: 'pointer',
-                          background: isSelected ? 'rgba(59,130,246,0.06)' : 'transparent',
+                          background: isSelected ? 'rgba(200,164,74,0.06)' : 'transparent',
                           transition: 'background 0.15s',
                         }}
                       >
-                        <p style={{ fontSize: '9px', fontWeight: 700, color: todayBool ? '#3B82F6' : 'var(--text-secondary)', letterSpacing: '0.05em', textAlign: 'center', marginBottom: '8px' }}>
+                        <p style={{ fontSize: '9px', fontWeight: 700, color: todayBool ? 'var(--gold, #C8A44A)' : 'var(--text-secondary)', letterSpacing: '0.05em', textAlign: 'center', marginBottom: '8px' }}>
                           {getDow(dayStr)}
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
@@ -692,7 +692,7 @@ export default function AgendaPage() {
                 <button
                   onClick={handleCreate}
                   disabled={saving || !form.title || !form.start_time}
-                  style={{ flex: 1, height: '44px', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--btn-primary-bg)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(59,130,246,0.22)' }}
+                  style={{ flex: 1, height: '44px', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--btn-primary-bg)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(200,164,74,0.22)' }}
                 >
                   <Plus size={16} />
                   {saving ? 'Salvando...' : 'Criar Evento'}

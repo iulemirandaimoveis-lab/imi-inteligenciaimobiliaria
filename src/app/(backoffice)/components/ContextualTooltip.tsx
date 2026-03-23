@@ -165,7 +165,7 @@ export default function ContextualTooltip({
                         left: pos.spotlightRect.left - 4,
                         width: pos.spotlightRect.width + 8,
                         height: pos.spotlightRect.height + 8,
-                        boxShadow: '0 0 0 9999px rgba(0,0,0,0.45), 0 0 20px rgba(59,130,246,0.3)',
+                        boxShadow: '0 0 0 9999px rgba(0,0,0,0.45), 0 0 20px rgba(96,165,250,0.3)',
                         border: '2px solid var(--accent-400)',
                     }}
                 />

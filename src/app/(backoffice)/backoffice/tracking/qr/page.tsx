@@ -303,7 +303,7 @@ export default function QRGeneratorPage() {
 
             {/* Pre-fill banner */}
             {prefilledId && (
-                <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg" style={{ background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)' }}>
                     <Building2 size={14} style={{ color: 'var(--info)' }} />
                     <p className="text-xs font-medium" style={{ color: 'var(--info)' }}>
                         Imóvel selecionado: <strong>{prefilledName ? decodeURIComponent(prefilledName) : 'Carregando...'}</strong>
@@ -323,7 +323,7 @@ export default function QRGeneratorPage() {
                             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all"
                             style={{ background: T.elevated, border: `1px solid ${showDevDD ? T.borderGold : T.border}` }}
                         >
-                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(59,130,246,0.12)' }}>
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(96,165,250,0.12)' }}>
                                 <Building2 size={15} style={{ color: 'var(--info)' }} />
                             </div>
                             <span className="flex-1 text-left text-sm font-semibold truncate" style={{ color: T.text }}>
@@ -530,7 +530,7 @@ export default function QRGeneratorPage() {
                     {qrDataUrl && selectedDev && (
                         <div className="w-full rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                             <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(59,130,246,0.12)' }}>
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(96,165,250,0.12)' }}>
                                     <Building2 size={14} style={{ color: 'var(--info)' }} />
                                 </div>
                                 <div className="min-w-0">
@@ -554,7 +554,7 @@ export default function QRGeneratorPage() {
                                 </span>
                                 <button onClick={() => copyUrl(shortUrl)}
                                     className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0 transition-all"
-                                    style={{ background: copied ? 'rgba(34,197,94,0.15)' : 'rgba(59,130,246,0.15)', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'rgba(59,130,246,0.3)'}` }}
+                                    style={{ background: copied ? 'rgba(34,197,94,0.15)' : 'rgba(96,165,250,0.15)', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'rgba(96,165,250,0.3)'}` }}
                                 >
                                     {copied ? <Check size={13} style={{ color: 'var(--success)' }} /> : <Copy size={13} style={{ color: 'var(--info)' }} />}
                                 </button>
@@ -581,7 +581,7 @@ export default function QRGeneratorPage() {
                                     onClick={handleDownloadSVG}
                                     disabled={!shortUrl}
                                     className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-lg text-[11px] font-bold transition-all disabled:opacity-30"
-                                    style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', color: 'var(--info)' }}
+                                    style={{ background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)', color: 'var(--info)' }}
                                 >
                                     <Download size={12} /> SVG
                                 </button>

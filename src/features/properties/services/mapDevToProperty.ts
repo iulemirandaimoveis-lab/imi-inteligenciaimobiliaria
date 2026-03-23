@@ -12,7 +12,7 @@ export function mapDevToProperty(d: Record<string, any>): IMIProperty {
   // Images: handle JSONB `images` field or array fields
   const imagesObj = d.images as { main?: string; gallery?: string[]; videos?: string[]; floorPlans?: string[] } | null
   const gallery = imagesObj?.gallery ?? d.gallery_images ?? d.image_urls ?? []
-  const cover = imagesObj?.main ?? d.image ?? d.cover_image_url ?? null
+  const cover = imagesObj?.main ?? d.image ?? d.cover_image_url ?? d.image_url ?? null
 
   // Area: handle multiple naming conventions
   const area = d.area_from ?? d.area ?? null

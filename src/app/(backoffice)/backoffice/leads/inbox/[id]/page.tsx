@@ -307,7 +307,7 @@ export default function LeadInboxDetailPage() {
                     background: T.elevated,
                     border: `1px solid ${T.border}`,
                     boxShadow: '0 4px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.06)',
-                    backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.05) 0%, transparent 60%)',
+                    backgroundImage: 'linear-gradient(135deg, rgba(96,165,250,0.05) 0%, transparent 60%)',
                 }}
             >
                 {/* Header row */}
@@ -523,7 +523,7 @@ export default function LeadInboxDetailPage() {
                                 <div style={{
                                     width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    background: isBot ? 'rgba(74,222,128,0.15)' : 'rgba(59,130,246,0.15)',
+                                    background: isBot ? 'rgba(74,222,128,0.15)' : 'rgba(96,165,250,0.15)',
                                 }}>
                                     {isBot ? (
                                         <Bot size={13} style={{ color: 'var(--success)' }} />
@@ -627,7 +627,7 @@ export default function LeadInboxDetailPage() {
                                     style={{
                                         width: 38, height: 38, borderRadius: 12, border: 'none', cursor: 'pointer',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        background: chatInput.trim() ? '#3B82F6' : T.elevated,
+                                        background: chatInput.trim() ? 'var(--n, #0A1624)' : T.elevated,
                                         opacity: chatInput.trim() ? 1 : 0.5,
                                         transition: 'all 0.15s',
                                     }}
@@ -672,7 +672,7 @@ export default function LeadInboxDetailPage() {
                             fontSize: 14, fontWeight: 600, color: '#ffffff',
                             background: 'var(--btn-primary-bg)',
                             border: '1px solid rgba(255,255,255,0.1)',
-                            boxShadow: '0 0 24px rgba(59,130,246,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
+                            boxShadow: '0 0 24px rgba(96,165,250,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
                         }}
                     >
                         <Calendar size={18} />

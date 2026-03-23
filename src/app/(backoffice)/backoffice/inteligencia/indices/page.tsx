@@ -194,7 +194,7 @@ export default function IndicesBackofficePage() {
                             {/* Header row */}
                             <div className="p-5 flex items-center justify-between" style={{ borderBottom: `1px solid ${T.border}` }}>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.1)' }}>
+                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(96,165,250,0.1)' }}>
                                         <TrendingUp size={15} style={{ color: 'var(--info)' }} />
                                     </div>
                                     <div>
@@ -217,7 +217,7 @@ export default function IndicesBackofficePage() {
                                     <button
                                         onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }}
                                         className="w-9 h-9 rounded-[6px] flex items-center justify-center hover:opacity-70 transition-opacity"
-                                        style={{ background: editingId === idx.id ? 'rgba(59,130,246,0.1)' : 'rgba(255,255,255,0.04)', border: `1px solid ${editingId === idx.id ? 'var(--info)' : T.border}` }}
+                                        style={{ background: editingId === idx.id ? 'rgba(96,165,250,0.1)' : 'rgba(255,255,255,0.04)', border: `1px solid ${editingId === idx.id ? 'var(--info)' : T.border}` }}
                                     >
                                         <Save size={14} style={{ color: editingId === idx.id ? 'var(--info)' : T.textMuted }} />
                                     </button>
