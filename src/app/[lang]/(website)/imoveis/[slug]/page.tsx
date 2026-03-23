@@ -203,6 +203,30 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 <Breadcrumbs items={breadcrumbs} />
             </div>
 
+            {/* Key Facts Bar */}
+            <div className="container-custom pt-4 pb-0">
+                <div style={{
+                    display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                    gap: 1, background: 'rgba(200,164,74,0.08)', borderRadius: 12,
+                    overflow: 'hidden', marginBottom: 24,
+                }}>
+                    {[
+                        { label: 'Quartos', value: development.specs.bedroomsRange, icon: '\u{1F6CF}\u{FE0F}' },
+                        { label: 'Área', value: development.specs.areaRange, icon: '\u{1F4D0}' },
+                        { label: 'Vagas', value: development.specs.parkingRange || '\u2014', icon: '\u{1F697}' },
+                        ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, icon: '\u{1F4C5}' }] : []),
+                    ].map((item, i) => (
+                        <div key={i} style={{
+                            background: '#0A1624', padding: '16px 12px', textAlign: 'center' as const,
+                        }}>
+                            <span style={{ fontSize: 20 }}>{item.icon}</span>
+                            <p style={{ fontSize: 18, fontWeight: 700, color: '#E8E4DC', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", marginTop: 4, margin: '4px 0 0' }}>{item.value}</p>
+                            <p style={{ fontSize: 9, color: '#8E99AB', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' as const, marginTop: 2, margin: '2px 0 0' }}>{item.label}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Anchor Navigation */}
             <AnchorNav sections={ANCHOR_SECTIONS} />
 
@@ -242,29 +266,33 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 <SimilarProperties developments={similarDevs} lang={params.lang} />
             )}
 
-            {/* Mobile Sticky CTA Bar — Premium dark */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden backdrop-blur-xl px-4 py-3 safe-area-pb"
-                style={{ background: 'rgba(11,25,40,0.97)', borderTop: '1px solid rgba(200,164,74,0.15)' }}
-            >
-                <div className="flex gap-3 max-w-lg mx-auto">
-                    <a
-                        href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 h-[52px] rounded-xl text-sm font-bold shadow-lg relative overflow-hidden"
-                        style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-                    >
+            {/* Sticky Mobile CTA — always visible */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
+                style={{
+                    background: 'rgba(5,11,20,0.95)',
+                    backdropFilter: 'blur(20px)',
+                    borderTop: '1px solid rgba(200,164,74,0.15)',
+                    padding: '12px 16px max(12px, env(safe-area-inset-bottom))',
+                }}>
+                <div className="flex items-center gap-3 max-w-lg mx-auto">
+                    <div className="flex-1 min-w-0">
+                        <p style={{ fontSize: 10, color: '#8E99AB', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>A partir de</p>
+                        <p style={{ fontSize: 20, fontWeight: 700, color: '#E8E4DC', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
+                            {development.priceRange.min > 0 ? `R$ ${development.priceRange.min >= 1000000 ? `${(development.priceRange.min / 1000000).toFixed(1).replace(/\.0$/, '')}M` : development.priceRange.min.toLocaleString('pt-BR')}` : 'Consulte'}
+                        </p>
+                    </div>
+                    <a href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`} target="_blank" rel="noopener noreferrer" style={{
+                        position: 'relative', overflow: 'hidden',
+                        background: '#0A1624', color: '#fff',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: 6, padding: '12px 20px',
+                        fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                        fontWeight: 600, fontSize: 11, letterSpacing: '1px',
+                        textTransform: 'uppercase', textDecoration: 'none',
+                        whiteSpace: 'nowrap',
+                    }}>
                         Falar com Especialista
-                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
-                    </a>
-                    <a
-                        href="tel:+5581997230455"
-                        className="flex items-center justify-center w-[52px] h-[52px] rounded-xl"
-                        style={{ border: '1px solid rgba(200,164,74,0.25)', background: 'rgba(200,164,74,0.08)', color: '#C8A44A' }}
-                    >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                     </a>
                 </div>
             </div>

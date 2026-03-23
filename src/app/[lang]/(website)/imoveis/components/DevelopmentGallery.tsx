@@ -17,6 +17,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
     const hasFloorPlans = development.images.floorPlans && development.images.floorPlans.length > 0;
 
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+    const [touchStart, setTouchStart] = useState<number | null>(null);
 
     const closeLightbox = useCallback(() => setLightboxIndex(null), []);
 
@@ -66,6 +67,17 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                 viewport={{ once: true }}
                                 onClick={() => setLightboxIndex(0)}
                                 className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100 group block cursor-zoom-in"
+                                onTouchStart={e => setTouchStart(e.touches[0].clientX)}
+                                onTouchEnd={e => {
+                                    if (touchStart === null) return
+                                    const diff = touchStart - e.changedTouches[0].clientX
+                                    if (Math.abs(diff) > 50) {
+                                        e.preventDefault()
+                                        if (diff > 0) setLightboxIndex(Math.min(allImages.length - 1, 1))
+                                        else setLightboxIndex(allImages.length - 1)
+                                    }
+                                    setTouchStart(null)
+                                }}
                             >
                                 <Image
                                     src={allImages[0]}
@@ -77,6 +89,16 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                 />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
                                     <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-lg" size={32} />
+                                </div>
+                                {/* Photo counter overlay */}
+                                <div style={{
+                                    position: 'absolute', bottom: 12, right: 12, zIndex: 10,
+                                    background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
+                                    borderRadius: 20, padding: '6px 12px',
+                                    fontSize: 11, fontWeight: 600, color: '#fff',
+                                    fontFamily: "var(--fm, 'JetBrains Mono', monospace)",
+                                }}>
+                                    1 / {allImages.length}
                                 </div>
                             </motion.button>
 
@@ -227,6 +249,16 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                             className="relative w-full h-full"
                             style={{ maxWidth: '90vw', maxHeight: '85vh', margin: '0 auto' }}
                             onClick={e => e.stopPropagation()}
+                            onTouchStart={e => setTouchStart(e.touches[0].clientX)}
+                            onTouchEnd={e => {
+                                if (touchStart === null) return
+                                const diff = touchStart - e.changedTouches[0].clientX
+                                if (Math.abs(diff) > 50) {
+                                    if (diff > 0) nextImage()
+                                    else prevImage()
+                                }
+                                setTouchStart(null)
+                            }}
                         >
                             <Image
                                 src={allImages[lightboxIndex]}

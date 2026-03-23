@@ -156,6 +156,21 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                 </h2>
             </motion.div>
 
+            {/* Available units urgency indicator */}
+            {development.units && development.units.length > 0 && (
+                <motion.div variants={slideUp}>
+                    <div style={{
+                        background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.15)',
+                        borderRadius: 8, padding: '10px 16px', marginBottom: 16,
+                        display: 'flex', alignItems: 'center', gap: 8,
+                    }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#C8A44A', letterSpacing: '0.5px' }}>
+                            {development.units.filter(u => u.status === 'available').length} unidades disponíveis
+                        </span>
+                    </div>
+                </motion.div>
+            )}
+
             {/* O Que Torna Especial */}
             {development.features && development.features.length > 0 && (
                 <motion.div variants={slideUp} className="mb-10">

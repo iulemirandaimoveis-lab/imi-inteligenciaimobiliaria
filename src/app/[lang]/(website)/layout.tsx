@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/website/Header'
 import Footer from '@/components/website/Footer'
 import AnalyticsProvider from '@/components/website/AnalyticsProvider'
+import { WhatsAppFAB } from '@/components/website/WhatsAppFAB'
 import { generateOrganizationSchema, generateWebSiteSchema, generateLocalBusinessSchema } from '@/lib/seo'
 import { getGlobalSettings } from '@/lib/settings'
 
@@ -44,6 +45,7 @@ export default async function WebsiteLayout({
             <Header lang={lang} settings={settings} />
             <main className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
             <Footer lang={lang} settings={settings} />
+            <WhatsAppFAB />
         </div>
     )
 }
