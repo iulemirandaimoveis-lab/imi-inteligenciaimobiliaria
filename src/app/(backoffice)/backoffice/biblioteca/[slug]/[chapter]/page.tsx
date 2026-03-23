@@ -55,22 +55,43 @@ export default function ChapterReaderPage() {
     const params = useParams()
     const router = useRouter()
     const slug = params.slug as string
-    const chapterIdx = parseInt(params.chapter as string, 10)
+    const rawChapter = params.chapter as string
+    const chapterIdx = Number.isFinite(Number(rawChapter)) ? parseInt(rawChapter, 10) : NaN
 
     const [book, setBook] = useState<BookData | null>(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    // Redirect invalid index values early (NaN, negative)
+    useEffect(() => {
+        if (isNaN(chapterIdx) || chapterIdx < 0) {
+            router.replace(`/backoffice/biblioteca/${slug}/0`)
+        }
+    }, [chapterIdx, slug, router])
 
     useEffect(() => {
-        if (!slug) return
+        if (!slug || isNaN(chapterIdx) || chapterIdx < 0) return
 
         async function loadBook() {
             try {
                 const res = await fetch(`/books/${slug}.json`)
-                if (!res.ok) throw new Error('Livro não encontrado')
+                if (!res.ok) {
+                    setError(res.status === 404 ? 'Livro não encontrado' : `Erro ${res.status}`)
+                    return
+                }
                 const data: BookData = await res.json()
+                if (!data?.capitulos?.length) {
+                    setError('Livro sem capítulos disponíveis')
+                    return
+                }
+                if (chapterIdx >= data.capitulos.length) {
+                    setError(`Capítulo ${chapterIdx} não existe. Este livro tem ${data.capitulos.length} capítulos.`)
+                    return
+                }
                 setBook(data)
             } catch (err) {
                 console.error('Erro ao carregar capítulo:', err)
+                setError('Não foi possível carregar o capítulo.')
                 toast.error('Não foi possível carregar o capítulo.')
             } finally {
                 setLoading(false)
@@ -78,7 +99,7 @@ export default function ChapterReaderPage() {
         }
 
         loadBook()
-    }, [slug])
+    }, [slug, chapterIdx])
 
     if (loading) {
         return (
@@ -88,7 +109,23 @@ export default function ChapterReaderPage() {
         )
     }
 
-    if (!book || isNaN(chapterIdx) || chapterIdx < 0 || chapterIdx >= book.capitulos.length) {
+    if (error || !book) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <BookOpen size={40} style={{ color: T.textDim }} />
+                <p className="text-sm" style={{ color: T.textMuted }}>
+                    {error || 'Capítulo não encontrado.'}
+                </p>
+                <Link href={`/backoffice/biblioteca/${slug}`}
+                    className="flex items-center gap-2 text-sm font-medium" style={{ color: T.accent }}>
+                    <ArrowLeft size={14} /> Voltar ao índice
+                </Link>
+            </div>
+        )
+    }
+
+    const chapter = book.capitulos?.[chapterIdx]
+    if (!chapter) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <BookOpen size={40} style={{ color: T.textDim }} />
@@ -101,7 +138,6 @@ export default function ChapterReaderPage() {
         )
     }
 
-    const chapter = book.capitulos[chapterIdx]
     const chapterNum = chapter.numero || chapterIdx + 1
     const totalChapters = book.capitulos.length
     const prevChapter = chapterIdx > 0 ? book.capitulos[chapterIdx - 1] : null
