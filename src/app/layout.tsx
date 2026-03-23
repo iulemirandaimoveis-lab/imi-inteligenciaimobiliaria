@@ -88,6 +88,7 @@ export const metadata: Metadata = {
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import CookieConsent from '@/components/CookieConsent';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 
 export default function RootLayout({
     children,
@@ -107,6 +108,7 @@ export default function RootLayout({
                     <CookieConsent />
                     <ServiceWorkerRegistration />
                 </ThemeProvider>
+                <InstallPrompt />
             </body>
         </html>
     )

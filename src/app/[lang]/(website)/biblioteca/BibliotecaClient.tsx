@@ -324,37 +324,25 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
 }
 
 function PlaceholderCover({ title, pilar }: { title: string; pilar: string | null }) {
-    const fallbackColor = { text: '#C8A44A', bg: 'rgba(72,101,129,0.1)', border: 'rgba(72,101,129,0.2)' }
-    const color = (pilar && pilar in PILAR_COLORS) ? PILAR_COLORS[pilar] : fallbackColor
-    const initials = title
-        .split(' ')
-        .filter(w => w.length > 3)
-        .slice(0, 2)
-        .map(w => w[0].toUpperCase())
-        .join('')
-        || title.slice(0, 2).toUpperCase()
-
     return (
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-6"
-            style={{ background: 'linear-gradient(145deg, #0E1420 0%, #141A2A 100%)' }}>
-            {/* Decorative lines */}
-            <div className="absolute top-4 left-4 right-4 h-px" style={{ background: color.text, opacity: 0.1 }} />
-            <div className="absolute top-5 left-4 right-4 h-px" style={{ background: color.text, opacity: 0.06 }} />
-            <div className="absolute bottom-4 left-4 right-4 h-px" style={{ background: color.text, opacity: 0.1 }} />
-            <div className="absolute bottom-5 left-4 right-4 h-px" style={{ background: color.text, opacity: 0.06 }} />
-
-            {/* Monogram */}
-            <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 text-xl font-bold"
-                style={{ background: color.bg, color: color.text, fontFamily: "'Playfair Display', Georgia, serif" }}
-            >
-                {initials}
-            </div>
-
-            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-center leading-relaxed"
-                style={{ color: color.text, opacity: 0.6 }}>
-                IMI<br />Inteligência<br />Imobiliária
-            </p>
+        <div
+            className="absolute inset-0 flex flex-col justify-end overflow-hidden"
+            style={{
+                background: 'linear-gradient(135deg, #0A1624, #162840)',
+                padding: 24,
+            }}
+        >
+            {/* Gold accent line at top */}
+            <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
+            {/* Book title */}
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 600, color: '#E8E4DC', margin: 0 }}>{title}</p>
+            {/* "Em Breve" badge */}
+            <span style={{
+                position: 'absolute', top: 12, right: 12,
+                background: 'rgba(200,164,74,0.15)', border: '1px solid rgba(200,164,74,0.3)',
+                borderRadius: 4, padding: '3px 8px', fontSize: 9, fontWeight: 600,
+                color: '#C8A44A', letterSpacing: '0.5px', textTransform: 'uppercase',
+            }}>Em Breve</span>
         </div>
     )
 }

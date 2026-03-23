@@ -1,4 +1,27 @@
 // @ts-check
+const withPWA = require('next-pwa')({
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === 'development',
+    runtimeCaching: [
+        {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*/i,
+            handler: 'CacheFirst',
+            options: { cacheName: 'imi-images', expiration: { maxEntries: 200, maxAgeSeconds: 7 * 24 * 60 * 60 } },
+        },
+        {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
+            handler: 'NetworkFirst',
+            options: { cacheName: 'imi-api', expiration: { maxEntries: 50, maxAgeSeconds: 5 * 60 } },
+        },
+        {
+            urlPattern: /^https:\/\/fonts\.(?:gstatic|googleapis)\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: { cacheName: 'google-fonts', expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 } },
+        },
+    ],
+})
 const { withSentryConfig } = require('@sentry/nextjs')
 
 /** @type {import('next').NextConfig} */
@@ -63,7 +86,7 @@ const nextConfig = {
     },
 }
 
-module.exports = withSentryConfig(nextConfig, {
+module.exports = withSentryConfig(withPWA(nextConfig), {
     silent: true,
     hideSourceMaps: true,
     disableServerWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
