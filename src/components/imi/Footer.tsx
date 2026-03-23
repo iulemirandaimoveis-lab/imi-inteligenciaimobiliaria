@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Linkedin } from 'lucide-react'
 
 const NAV_COLS = [
     {
@@ -21,6 +20,13 @@ const NAV_COLS = [
             { label: 'Contato', href: '/pt/contato' },
         ],
     },
+    {
+        title: 'Legal',
+        links: [
+            { label: 'Termos de Uso', href: '/pt/termos' },
+            { label: 'Privacidade', href: '/pt/privacidade' },
+        ],
+    },
 ]
 
 const LANGUAGES = [
@@ -31,129 +37,154 @@ const LANGUAGES = [
     { code: 'es', label: 'ES' },
 ]
 
+/* ── Inline styles using DS tokens ── */
+const S = {
+    footer: { background: '#0B1928' } as React.CSSProperties,
+    sectionTitle: {
+        fontSize: 11, fontWeight: 700, letterSpacing: '2.5px',
+        textTransform: 'uppercase' as const, color: '#C8A44A',
+        marginBottom: 16, fontFamily: "var(--font-body, 'Outfit', sans-serif)",
+    } as React.CSSProperties,
+    link: {
+        fontSize: 13, color: '#8E99AB', textDecoration: 'none',
+        transition: 'color 0.2s', display: 'block', padding: '3px 0',
+        fontFamily: "var(--font-body, 'Outfit', sans-serif)",
+    } as React.CSSProperties,
+    contactCard: {
+        background: 'rgba(14,28,48,0.52)', backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(200,164,74,0.12)', borderRadius: 14,
+        padding: '20px 24px', marginTop: 20,
+    } as React.CSSProperties,
+    contactRow: {
+        display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0',
+        fontSize: 13, color: '#8E99AB', textDecoration: 'none',
+    } as React.CSSProperties,
+    iconBox: {
+        width: 36, height: 36, borderRadius: 8, display: 'flex',
+        alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.12)',
+    } as React.CSSProperties,
+    langChip: {
+        padding: '6px 12px', borderRadius: 4, fontSize: 11, fontWeight: 600,
+        letterSpacing: '1px', color: '#8E99AB', textDecoration: 'none',
+        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+        transition: 'all 0.2s',
+    } as React.CSSProperties,
+}
+
 export default function Footer() {
     return (
-        <footer className="bg-navy-950 text-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <footer style={S.footer}>
+            <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
 
                 {/* Main grid */}
-                <div className="py-12 sm:py-16 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-12">
+                <div style={{ padding: '48px 0 32px', display: 'grid', gridTemplateColumns: '1fr', gap: 32 }}>
 
-                    {/* Brand col */}
-                    <div className="md:col-span-5">
-                        <div className="flex items-center gap-3 mb-5">
-                            {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 DARK */}
-                            <span
-                                className="leading-none select-none"
-                                style={{
-                                    fontFamily: "'Playfair Display', Georgia, serif",
-                                    fontSize: 26,
-                                    fontWeight: 700,
-                                    color: '#FFFFFF',
-                                    letterSpacing: '2px',
-                                }}
-                            >
-                                IMI
-                            </span>
-                            {/* Gold divider · 1px · Brand Identity v1.1 DARK */}
-                            <div className="flex-shrink-0" style={{ width: 1, height: 28, background: '#C8A44A' }} />
-                            {/* Tagline · Brand Identity v1.1 DARK — gold on dark bg */}
-                            <span
-                                className="select-none"
-                                style={{
-                                    fontSize: '11px',
-                                    fontWeight: 600,
-                                    letterSpacing: '2.5px',
-                                    textTransform: 'uppercase',
-                                    color: '#C8A44A',
-                                    lineHeight: 1.45,
-                                }}
-                            >
-                                INTELIGÊNCIA<br />IMOBILIÁRIA
-                            </span>
+                    {/* Logo + Description */}
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                            <span style={{
+                                fontFamily: "'Playfair Display', Georgia, serif",
+                                fontSize: 20, fontWeight: 700, color: '#FFFFFF', letterSpacing: '2px',
+                            }}>IMI</span>
+                            <div style={{ width: 1, height: 28, background: '#C8A44A', flexShrink: 0 }} />
+                            <span style={{
+                                fontSize: 11, fontWeight: 600, letterSpacing: '2.5px',
+                                textTransform: 'uppercase', color: '#C8A44A', lineHeight: 1.45,
+                            }}>INTELIGÊNCIA<br />IMOBILIÁRIA</span>
                         </div>
 
-                        <p className="text-slate-400 text-sm leading-relaxed max-w-sm mb-6">
-                            Decisões imobiliárias baseadas em inteligência,
-                            método e segurança.
+                        <p style={{ fontSize: 13, color: '#8E99AB', lineHeight: 1.7, maxWidth: 420, marginBottom: 4 }}>
+                            Decisões imobiliárias baseadas em inteligência, método e segurança.
+                            Transformamos incerteza em capital protegido.
                         </p>
-
-                        {/* Compact contact */}
-                        <div className="space-y-2 text-sm text-slate-400">
-                            <p className="font-semibold text-white text-base">Iule Miranda</p>
-                            <p className="text-[11px] text-navy-200 font-bold uppercase tracking-widest">
-                                CRECI 17933 · CNAI 53290
-                            </p>
-                            <div className="pt-2 space-y-1.5">
-                                <a href="mailto:iulemirandaimoveis@gmail.com" className="block hover:text-white transition-colors">
-                                    iulemirandaimoveis@gmail.com
-                                </a>
-                                <a href="https://wa.me/5581997230455" className="block hover:text-white transition-colors">
-                                    +55 81 9 9723-0455
-                                </a>
-                            </div>
-                            <a
-                                href="https://www.linkedin.com/in/iule-miranda"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
-                                style={{ background: '#0A66C2' }}
-                            >
-                                <Linkedin className="w-4 h-4" />
-                                LinkedIn
-                            </a>
-                        </div>
                     </div>
 
-                    {/* Nav cols */}
-                    {NAV_COLS.map((col) => (
-                        <div key={col.title} className="md:col-span-2">
-                            <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-5">
-                                {col.title}
-                            </h4>
-                            <ul className="space-y-3">
-                                {col.links.map((link) => (
-                                    <li key={link.href}>
-                                        <Link
-                                            href={link.href}
-                                            className="text-sm text-slate-400 hover:text-white transition-colors"
-                                        >
+                    {/* Contact card — glass */}
+                    <div style={S.contactCard}>
+                        <p style={{ fontSize: 15, fontWeight: 700, color: '#FFFFFF', marginBottom: 2 }}>Iule Miranda</p>
+                        <p style={{
+                            fontSize: 11, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase',
+                            color: '#C8A44A', marginBottom: 16,
+                            fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
+                        }}>CRECI 17933 | CNAI 53290</p>
+
+                        <a href="mailto:iulemirandaimoveis@gmail.com" style={S.contactRow}>
+                            <div style={S.iconBox}>
+                                <svg width="16" height="16" fill="none" stroke="#C8A44A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 8l9 6 9-6M3 8v10a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9-4 9 4"/></svg>
+                            </div>
+                            iulemirandaimoveis@gmail.com
+                        </a>
+                        <a href="https://wa.me/5581997230455" style={S.contactRow}>
+                            <div style={S.iconBox}>
+                                <svg width="16" height="16" fill="none" stroke="#C8A44A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1zm0 0a5 5 0 0 0 5 5m0 0a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1h1z"/></svg>
+                            </div>
+                            +55 81 9 9723-0455
+                        </a>
+                        <a href="https://www.linkedin.com/in/iule-miranda" target="_blank" rel="noopener noreferrer" style={S.contactRow}>
+                            <div style={S.iconBox}>
+                                <svg width="16" height="16" fill="none" stroke="#C8A44A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                            </div>
+                            linkedin.com/in/iule-miranda
+                        </a>
+                    </div>
+
+                    {/* Nav columns — responsive grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 24 }}>
+                        {NAV_COLS.map((col) => (
+                            <div key={col.title}>
+                                <p style={S.sectionTitle}>{col.title}</p>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                    {col.links.map((link) => (
+                                        <Link key={link.href} href={link.href} style={S.link}>
                                             {link.label}
                                         </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
 
-                    {/* Language col */}
-                    <div className="md:col-span-3">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-5">
-                            Idioma
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                            {LANGUAGES.map((lang) => (
-                                <Link
-                                    key={lang.code}
-                                    href={`/${lang.code}`}
-                                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-widest text-slate-400 bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] hover:text-white transition-all first:text-white first:bg-navy-800/40 first:border-navy-600/30"
-                                >
-                                    {lang.label}
-                                </Link>
-                            ))}
+                        {/* Languages */}
+                        <div>
+                            <p style={S.sectionTitle}>Idioma</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                                {LANGUAGES.map((lang) => (
+                                    <Link key={lang.code} href={`/${lang.code}`} style={S.langChip}>
+                                        {lang.label}
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                {/* Credentials bar */}
+                <div style={{
+                    padding: '16px 0', borderTop: '1px solid rgba(200,164,74,0.08)',
+                    display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12,
+                }}>
+                    {['CRECI 17933', 'CNAI 53290', 'NBR 14653'].map(cred => (
+                        <span key={cred} style={{
+                            fontSize: 11, fontWeight: 600, letterSpacing: '1px',
+                            color: '#C8A44A', padding: '4px 10px', borderRadius: 4,
+                            background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.10)',
+                            fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
+                        }}>{cred}</span>
+                    ))}
+                </div>
+
                 {/* Bottom bar */}
-                <div className="py-6 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-3">
-                    <p className="text-[11px] text-slate-600 font-medium">
-                        © 2026 IMI – Inteligência Imobiliária. Todos os direitos reservados.
+                <div style={{
+                    padding: '16px 0 24px', borderTop: '1px solid rgba(255,255,255,0.04)',
+                    display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 8,
+                }}>
+                    <p style={{ fontSize: 11, color: '#4F5B6B' }}>
+                        © 2026 IMI — Inteligência Imobiliária. Todos os direitos reservados.
                     </p>
-                    <div className="flex gap-6 text-[11px] text-slate-600">
-                        <Link href="/pt/termos" className="hover:text-slate-400 transition-colors">Termos</Link>
-                        <Link href="/pt/privacidade" className="hover:text-slate-400 transition-colors">Privacidade</Link>
-                    </div>
+                    <p style={{ fontSize: 11, color: '#4F5B6B' }}>
+                        iulemirandaimoveis.com.br
+                    </p>
                 </div>
 
             </div>
