@@ -590,7 +590,7 @@ function PropertyCard({
 }) {
   const sc = property.imi_score ?? 0
   const scColor = getScoreStyle(sc).color
-  const stColor = STATUS_COLORS[property.status] ?? 'var(--text-tertiary)'
+  const stColor = STATUS_COLORS[property.status] ?? T.textDim
   const stLabel = STATUS_LABELS[property.status] ?? property.status
 
   if (view === 'list') {
@@ -1109,7 +1109,7 @@ function RankingTab() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
               <div style={{ flex: 1, height: 6, borderRadius: 6, background: T.hover }}>
-                <div style={{ height: '100%', borderRadius: 6, width: `${((sortBy === 'yield' ? d.yield : d.avgSqm) / (sortBy === 'yield' ? maxYield : maxSqm)) * 100}%`, background: i === 0 ? 'linear-gradient(90deg, #A8842A, var(--accent-400))' : `linear-gradient(90deg, rgba(61,111,255,${0.25 + (1 - i / sorted.length) * 0.45}), rgba(61,111,255,${0.45 + (1 - i / sorted.length) * 0.35}))`, transition: 'width 0.6s cubic-bezier(0.16,1,0.3,1)' }} />
+                <div style={{ height: '100%', borderRadius: 6, width: `${((sortBy === 'yield' ? d.yield : d.avgSqm) / (sortBy === 'yield' ? maxYield : maxSqm)) * 100}%`, background: i === 0 ? `linear-gradient(90deg, #A8842A, ${T.accent})` : `linear-gradient(90deg, rgba(61,111,255,${0.25 + (1 - i / sorted.length) * 0.45}), rgba(61,111,255,${0.45 + (1 - i / sorted.length) * 0.35}))`, transition: 'width 0.6s cubic-bezier(0.16,1,0.3,1)' }} />
               </div>
             </div>
           </div>
@@ -1240,7 +1240,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
   function PropertyRow({ p, rank, metric }: { p: IMIProperty; rank: number; metric?: string }) {
     const sc = p.imi_score ?? 0
     const scColor = getScoreStyle(sc).color
-    const stColor = STATUS_COLORS[p.status] ?? 'var(--text-tertiary)'
+    const stColor = STATUS_COLORS[p.status] ?? T.textDim
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderBottom: `1px solid ${T.borderSubtle}` }}>
         <span style={{ fontFamily: T.font.data, fontSize: '12px', width: 24, flexShrink: 0, textAlign: 'center', color: rank <= 3 ? T.accent : T.textDim, fontWeight: rank <= 3 ? 600 : 400 }}>{rank}</span>
@@ -1358,7 +1358,7 @@ function MobileExplorer() {
                 <span style={{ color: T.textDim, fontSize: '12px' }}>Carregando…</span>
               </div>
             ) : properties.map(p => {
-              const stColor = STATUS_COLORS[p.status] ?? 'var(--text-tertiary)'
+              const stColor = STATUS_COLORS[p.status] ?? T.textDim
               return (
                 <Link key={p.id} href={`/backoffice/imoveis/${p.id}`}>
                   <div style={{ background: T.elevated, border: `1px solid ${T.borderSubtle}`, borderRadius: 6, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -1560,7 +1560,7 @@ function InteligenciaTab({ properties }: { properties: IMIProperty[] }) {
               <div style={{
                 width: '100%', maxWidth: 48,
                 height: `${(b.count / maxBucket) * 100}px`,
-                background: `linear-gradient(180deg, var(--accent-400) 0%, rgba(61,111,255,0.3) 100%)`,
+                background: `linear-gradient(180deg, ${T.accent} 0%, ${T.accentBg} 100%)`,
                 borderRadius: '4px 4px 0 0',
                 transition: 'height 0.5s ease',
                 minHeight: b.count > 0 ? 4 : 0,
@@ -1656,7 +1656,7 @@ function InteligenciaTab({ properties }: { properties: IMIProperty[] }) {
       </div>
 
       {/* Investment Simulator Quick */}
-      <div style={{ background: 'linear-gradient(135deg, rgba(61,111,255,0.08) 0%, var(--bg-surface) 100%)', border: `1px solid ${T.borderActive}`, borderRadius: 6, padding: 20 }}>
+      <div style={{ background: `linear-gradient(135deg, ${T.active} 0%, ${T.surface} 100%)`, border: `1px solid ${T.borderActive}`, borderRadius: 6, padding: 20 }}>
         <Eyebrow>Insights de Carteira</Eyebrow>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginTop: 16 }}>
           {[
