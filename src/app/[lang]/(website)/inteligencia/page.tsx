@@ -27,7 +27,7 @@ const SECTIONS = [
         label: 'Índices IMI',
         description: 'O Índice Imobiliário IMI — metodologia proprietária de precificação e tendência para João Pessoa e regiões monitoradas.',
         tag: 'Metodologia Própria',
-        tagColor: 'text-[#86A8C8] bg-[#86A8C8]/10 border-[#86A8C8]/20',
+        tagColor: 'text-[#C8A44A] bg-[#C8A44A]/10 border-[#C8A44A]/20',
     },
     {
         href: 'inteligencia/mapa',
@@ -80,10 +80,10 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                     <div className="max-w-4xl">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="w-12 h-px bg-[#334E68]" />
-                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Market Intelligence</span>
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Market Intelligence</span>
                         </div>
                         <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
-                            Centro de <br /><span className="text-[#486581] italic">Inteligência</span> Imobiliária
+                            Centro de <br /><span className="text-[#C8A44A] italic">Inteligência</span> Imobiliária
                         </h1>
                         <p className="text-[#9CA3AF] text-lg sm:text-xl font-light leading-relaxed max-w-2xl">
                             Dados precisos, índices proprietários e análises técnicas para fundamentar decisões de investimento com profundidade que portais não oferecem.
@@ -103,20 +103,20 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                                 className="group block p-7 sm:p-8 md:p-10 rounded-3xl bg-[#141420] border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-300"
                             >
                                 <div className="flex items-start justify-between mb-8">
-                                    <div className="w-14 h-14 bg-[#1A1E2A] text-[#486581] rounded-2xl flex items-center justify-center border border-white/[0.05] group-hover:scale-110 transition-transform">
+                                    <div className="w-14 h-14 bg-[#1A1E2A] text-[#C8A44A] rounded-2xl flex items-center justify-center border border-white/[0.05] group-hover:scale-110 transition-transform">
                                         <s.icon className="w-6 h-6" strokeWidth={1.5} />
                                     </div>
                                     <span className={`text-[10px] font-bold uppercase tracking-[0.15em] px-2.5 py-1 rounded-full border ${s.tagColor}`}>
                                         {s.tag}
                                     </span>
                                 </div>
-                                <h2 className="font-display text-2xl font-bold text-white mb-3 group-hover:text-[#86A8C8] transition-colors">
+                                <h2 className="font-display text-2xl font-bold text-white mb-3 group-hover:text-[#C8A44A] transition-colors">
                                     {s.label}
                                 </h2>
                                 <p className="text-[#9CA3AF] text-sm leading-relaxed mb-6 font-light">
                                     {s.description}
                                 </p>
-                                <span className="flex items-center gap-2 text-[#486581] text-sm font-semibold">
+                                <span className="flex items-center gap-2 text-[#C8A44A] text-sm font-semibold">
                                     Acessar
                                     <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </span>
@@ -132,11 +132,11 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                     <div className="text-center mb-14">
                         <div className="flex items-center justify-center gap-3 mb-4">
                             <div className="w-8 h-px bg-[#334E68]" />
-                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Nossa Metodologia</span>
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Nossa Metodologia</span>
                             <div className="w-8 h-px bg-[#334E68]" />
                         </div>
                         <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
-                            Inteligência com <span className="text-[#486581] italic">Rigor Técnico</span>
+                            Inteligência com <span className="text-[#C8A44A] italic">Rigor Técnico</span>
                         </h2>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -145,7 +145,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                                 key={i}
                                 className="p-8 rounded-3xl bg-[#141420] border border-white/[0.05] text-center"
                             >
-                                <div className="w-14 h-14 bg-[#1A1E2A] text-[#486581] rounded-2xl flex items-center justify-center mb-6 mx-auto border border-white/[0.05]">
+                                <div className="w-14 h-14 bg-[#1A1E2A] text-[#C8A44A] rounded-2xl flex items-center justify-center mb-6 mx-auto border border-white/[0.05]">
                                     <p.icon className="w-6 h-6" strokeWidth={1.5} />
                                 </div>
                                 <h3 className="font-display text-lg font-bold text-white mb-3">{p.title}</h3>
@@ -162,7 +162,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                     style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
                     <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
-                        Precisa de uma <span className="text-[#486581] italic">Análise Personalizada</span>?
+                        Precisa de uma <span className="text-[#C8A44A] italic">Análise Personalizada</span>?
                     </h2>
                     <p className="text-[#9CA3AF] text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
                         Dossiê de bairro, estudo de viabilidade ou laudo técnico — nossa equipe entrega com metodologia ABNT e dados exclusivos.

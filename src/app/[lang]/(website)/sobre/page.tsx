@@ -139,13 +139,13 @@ export default async function AboutPage({
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-navy-800/5 -skew-x-12 translate-x-1/4" />
                 <div className="container-custom relative z-10 max-w-4xl">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-12 h-px bg-navy-800" />
-                        <span className="text-navy-300 font-bold uppercase tracking-[0.25em] text-[11px]">Quem Somos</span>
+                        <div className="w-12 h-px bg-[#C8A44A]" />
+                        <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Quem Somos</span>
                     </div>
                     <h1
                         className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white"
                     >
-                        IMI – Inteligência <br /><span className="text-navy-300 italic">Imobiliária</span>
+                        IMI – Inteligência <br /><span className="text-[#C8A44A] italic">Imobiliária</span>
                     </h1>
                     <div className="space-y-5 text-white/50 text-lg sm:text-xl font-light leading-relaxed max-w-3xl">
                         <p>
@@ -154,7 +154,7 @@ export default async function AboutPage({
                             perícias judiciais e extrajudiciais, corretagem estratégica e consultoria
                             no Brasil e mercados internacionais selecionados.
                         </p>
-                        <p className="text-navy-200 font-medium text-base">
+                        <p className="text-[#C8A44A] font-medium text-base">
                             Prioridade técnica antes do viés comercial — segurança, clareza e consistência
                             em decisões imobiliárias de médio e longo prazo.
                         </p>
@@ -177,7 +177,7 @@ export default async function AboutPage({
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/60 via-transparent to-transparent" />
                             <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4">
                                 <p className="text-white font-bold text-sm">Iule Miranda</p>
-                                <p className="text-navy-300 text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
+                                <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
                                     CRECI 17933 · CNAI 53290 · Perito Judicial
                                 </p>
                             </div>
@@ -186,15 +186,15 @@ export default async function AboutPage({
                         {/* Bio */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
-                                <div className="w-8 h-px bg-navy-600" />
-                                <span className="text-navy-200 font-bold uppercase tracking-[0.25em] text-[11px]">Identidade Profissional</span>
+                                <div className="w-8 h-px bg-[#C8A44A]" />
+                                <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Identidade Profissional</span>
                             </div>
                             <h2
                                 className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white mb-3"
                             >
                                 Iule Miranda
                             </h2>
-                            <p className="text-navy-300 text-sm font-bold uppercase tracking-[0.15em] mb-6">
+                            <p className="text-[#C8A44A] text-sm font-bold uppercase tracking-[0.15em] mb-6">
                                 Avaliador Imobiliário · Analista de Mercado · Estrategista em Inteligência Imobiliária
                             </p>
                             <div className="space-y-4 text-white/50 leading-relaxed text-[15px] mb-8">
@@ -212,7 +212,7 @@ export default async function AboutPage({
                             </div>
                             <div className="flex flex-wrap gap-2 mb-8">
                                 {['Avaliação Imobiliária', 'Perícia Judicial', 'NBR 14653', 'Alto Padrão', 'Dubai · EUA', 'Inteligência de Mercado'].map(tag => (
-                                    <span key={tag} className="text-[11px] font-bold uppercase tracking-[0.1em] px-3 py-1.5 rounded-full bg-navy-800 text-navy-200 border border-white/[0.06]">
+                                    <span key={tag} className="text-[11px] font-bold uppercase tracking-[0.1em] px-3 py-1.5 rounded-full bg-[#C8A44A]/10 text-[#C8A44A] border border-[#C8A44A]/20">
                                         {tag}
                                     </span>
                                 ))}
@@ -236,9 +236,9 @@ export default async function AboutPage({
                 <div className="container-custom">
                     <div className="text-center mb-14">
                         <div className="flex items-center justify-center gap-3 mb-5">
-                            <div className="w-8 h-px bg-navy-600" />
-                            <span className="text-navy-200 font-bold uppercase tracking-[0.25em] text-[11px]">Princípios</span>
-                            <div className="w-8 h-px bg-navy-600" />
+                            <div className="w-8 h-px bg-[#C8A44A]" />
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Princípios</span>
+                            <div className="w-8 h-px bg-[#C8A44A]" />
                         </div>
                         <h2
                             className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
@@ -250,9 +250,9 @@ export default async function AboutPage({
                         {values.map((item) => (
                             <div
                                 key={item.title}
-                                className="p-8 rounded-2xl bg-navy-950 border border-white/[0.05] transition-all duration-300 group hover:border-navy-600/30"
+                                className="p-8 rounded-2xl bg-navy-950 border border-white/[0.05] transition-all duration-300 group hover:border-[#C8A44A]/30"
                             >
-                                <div className="w-12 h-12 bg-navy-800 text-navy-200 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-white/[0.05]">
+                                <div className="w-12 h-12 bg-[#C8A44A]/10 text-[#C8A44A] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-[#C8A44A]/20">
                                     <item.icon className="w-5 h-5" strokeWidth={1.5} />
                                 </div>
                                 <h3
@@ -278,7 +278,7 @@ export default async function AboutPage({
                                 >
                                     {stat.number}
                                 </div>
-                                <div className="text-sm text-navy-200 font-medium">{stat.label}</div>
+                                <div className="text-sm text-[#C8A44A] font-medium">{stat.label}</div>
                             </div>
                         ))}
                     </div>
@@ -290,13 +290,13 @@ export default async function AboutPage({
                 <div className="container-custom">
                     <div className="mb-12">
                         <div className="flex items-center gap-3 mb-5">
-                            <div className="w-8 h-px bg-navy-600" />
-                            <span className="text-navy-200 font-bold uppercase tracking-[0.25em] text-[11px]">Presença Digital</span>
+                            <div className="w-8 h-px bg-[#C8A44A]" />
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Presença Digital</span>
                         </div>
                         <h2
                             className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
                         >
-                            Conteúdo que <span className="text-navy-300 italic">Educa</span> e Inspira
+                            Conteúdo que <span className="text-[#C8A44A] italic">Educa</span> e Inspira
                         </h2>
                         <p className="text-white/50 text-lg font-light max-w-2xl">
                             Acompanhe análises de mercado, metodologias de avaliação e inteligência imobiliária em todas as plataformas.
@@ -317,7 +317,7 @@ export default async function AboutPage({
                                         <Icon className="w-6 h-6" style={{ color: s.color }} />
                                     </div>
                                     <p className="font-bold text-white text-[15px] mb-1">{s.label}</p>
-                                    <p className="text-navy-300 text-[11px] font-medium mb-3">{s.handle}</p>
+                                    <p className="text-[#C8A44A] text-[11px] font-medium mb-3">{s.handle}</p>
                                     <p className="text-white/50 text-xs leading-relaxed flex-1 mb-5">{s.description}</p>
                                     <a
                                         href={s.href}
@@ -346,13 +346,13 @@ export default async function AboutPage({
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
                         <div>
                             <div className="flex items-center gap-3 mb-5">
-                                <div className="w-8 h-px bg-navy-600" />
-                                <span className="text-navy-200 font-bold uppercase tracking-[0.25em] text-[11px]">Publicações</span>
+                                <div className="w-8 h-px bg-[#C8A44A]" />
+                                <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Publicações</span>
                             </div>
                             <h2
                                 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
                             >
-                                Biblioteca <span className="text-navy-300 italic">IMI</span>
+                                Biblioteca <span className="text-[#C8A44A] italic">IMI</span>
                             </h2>
                             <p className="text-white/50 text-lg font-light max-w-xl">
                                 E-books e guias técnicos sobre avaliação imobiliária, mercado de alto padrão e investimentos no exterior.
@@ -360,7 +360,7 @@ export default async function AboutPage({
                         </div>
                         <Link
                             href={`/${lang}/biblioteca`}
-                            className="flex items-center gap-2 text-navy-300 text-sm font-bold hover:text-white transition-colors shrink-0"
+                            className="flex items-center gap-2 text-[#C8A44A] text-sm font-bold hover:text-white transition-colors shrink-0"
                         >
                             Ver Biblioteca Completa
                             <ArrowRight className="w-4 h-4" />
@@ -370,19 +370,19 @@ export default async function AboutPage({
                         {EBOOKS.map((book) => (
                             <article
                                 key={book.slug}
-                                className="group bg-navy-950 border border-white/[0.05] hover:border-navy-600/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] flex flex-col"
+                                className="group bg-navy-950 border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] flex flex-col"
                             >
                                 <div className="relative aspect-[3/2] bg-gradient-to-br from-[#1A1E2A] to-[#0D1117] flex items-center justify-center border-b border-white/[0.05]">
                                     <div className="text-center p-6">
-                                        <BookOpen className="w-10 h-10 text-navy-300 mx-auto mb-3" strokeWidth={1} />
-                                        <p className="text-navy-300 text-[10px] font-bold uppercase tracking-[0.2em]">E-book IMI</p>
+                                        <BookOpen className="w-10 h-10 text-[#C8A44A] mx-auto mb-3" strokeWidth={1} />
+                                        <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em]">E-book IMI</p>
                                     </div>
                                     <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '24px 24px' }} />
                                 </div>
                                 <div className="p-6 flex flex-col flex-1">
-                                    <p className="text-navy-300 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{book.subtitle}</p>
+                                    <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{book.subtitle}</p>
                                     <h3
-                                        className="font-display text-white font-bold text-[15px] leading-snug mb-3 group-hover:text-navy-300 transition-colors"
+                                        className="font-display text-white font-bold text-[15px] leading-snug mb-3 group-hover:text-[#C8A44A] transition-colors"
                                     >
                                         {book.title}
                                     </h3>
@@ -390,7 +390,7 @@ export default async function AboutPage({
                                     <div className="flex gap-2.5">
                                         <Link
                                             href={`/${lang}/biblioteca/${book.slug}`}
-                                            className="flex-1 h-10 flex items-center justify-center rounded-[4px] bg-navy-800 border border-white/[0.06] text-white text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-navy-700 transition-all"
+                                            className="flex-1 h-10 flex items-center justify-center rounded-[4px] bg-[#C8A44A]/10 border border-[#C8A44A]/20 text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-[#C8A44A]/20 transition-all"
                                         >
                                             Ver Livro
                                         </Link>
@@ -420,7 +420,7 @@ export default async function AboutPage({
                     <h2
                         className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight"
                     >
-                        Vamos <span className="text-navy-300 italic">Conversar?</span>
+                        Vamos <span className="text-[#C8A44A] italic">Conversar?</span>
                     </h2>
                     <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
                         Conte-nos sobre seu projeto e descubra como podemos ajudar você a alcançar seus objetivos.
@@ -428,7 +428,7 @@ export default async function AboutPage({
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
                             href={`/${lang}/contato`}
-                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold bg-navy-800 text-white hover:bg-navy-700 rounded-[4px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#102A43]/30"
+                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold bg-[#C8A44A] text-navy-950 hover:bg-[#b8943a] rounded-[4px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#C8A44A]/30"
                         >
                             <MessageCircle className="w-4 h-4" />
                             Entrar em Contato

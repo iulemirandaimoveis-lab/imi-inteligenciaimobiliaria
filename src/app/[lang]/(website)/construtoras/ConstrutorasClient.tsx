@@ -39,10 +39,10 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                     >
                         <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
                             <div className="w-12 h-px bg-[#102A43]" />
-                            <span className="text-[#486581] font-bold uppercase tracking-[0.3em] text-xs">Parceiros</span>
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.3em] text-xs">Parceiros</span>
                         </motion.div>
                         <motion.h1 variants={slideUp} className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight">
-                            Nossas <br /><span className="text-[#486581] italic">Construtoras Parceiras</span>
+                            Nossas <br /><span className="text-[#C8A44A] italic">Construtoras Parceiras</span>
                         </motion.h1>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl font-light leading-relaxed max-w-2xl">
                             Trabalhamos com as incorporadoras mais renomadas do mercado, garantindo qualidade construtiva e solidez nos investimentos.
@@ -106,13 +106,13 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
 
                                 {/* Conteúdo */}
                                 <div className="p-6 flex flex-col flex-1 relative z-10">
-                                    <h3 className="font-display font-bold text-xl text-white mb-2 group-hover:text-[#486581] transition-colors">
+                                    <h3 className="font-display font-bold text-xl text-white mb-2 group-hover:text-[#C8A44A] transition-colors">
                                         {dev.name}
                                     </h3>
 
                                     {(dev.city || dev.state) && (
                                         <div className="flex items-center gap-2 text-[#9CA3AF] text-sm mb-4">
-                                            <MapPin className="w-4 h-4 text-[#486581]" />
+                                            <MapPin className="w-4 h-4 text-[#C8A44A]" />
                                             <span>{[dev.city, dev.state].filter(Boolean).join(', ')}</span>
                                         </div>
                                     )}
@@ -158,7 +158,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         viewport={{ once: true }}
                     >
                         <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
-                            Representa uma <span className="text-[#486581] italic">construtora?</span>
+                            Representa uma <span className="text-[#C8A44A] italic">construtora?</span>
                         </h2>
                         <p className="text-[#9CA3AF] text-lg mb-8 max-w-xl mx-auto">
                             Estamos sempre em busca de novos parceiros para ampliar nosso portfólio.

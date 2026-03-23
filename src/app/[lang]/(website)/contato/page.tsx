@@ -83,10 +83,10 @@ export default function ContactPage() {
                     >
                         <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
                             <div className="w-12 h-px bg-[#102A43]" />
-                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Fale Conosco</span>
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Fale Conosco</span>
                         </motion.div>
                         <motion.h1 variants={slideUp} className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
-                            Atendimento Técnico <br /><span className="text-[#486581] italic">Personalizado</span>
+                            Atendimento Técnico <br /><span className="text-[#C8A44A] italic">Personalizado</span>
                         </motion.h1>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg sm:text-xl font-light leading-relaxed max-w-2xl">
                             Entre em contato conosco e descubra como nossa inteligência pode proteger e valorizar seu patrimônio.
@@ -110,7 +110,7 @@ export default function ContactPage() {
                                 variants={slideUp}
                                 className="p-8 sm:p-10 rounded-3xl bg-[#141420] border border-white/[0.05] transition-all duration-300 group hover:border-[#334E68]/30 hover:shadow-[0_8px_32px_rgba(26,26,46,0.1)]"
                             >
-                                <div className="w-14 h-14 bg-[#1A1E2A] text-[#486581] rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform border border-white/[0.05]">
+                                <div className="w-14 h-14 bg-[#1A1E2A] text-[#C8A44A] rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform border border-white/[0.05]">
                                     <item.icon className="w-6 h-6" strokeWidth={1.5} />
                                 </div>
                                 <h3 className="text-xl font-bold text-white mb-4 font-display">
@@ -119,7 +119,7 @@ export default function ContactPage() {
                                 {item.link ? (
                                     <a
                                         href={item.link}
-                                        className="text-[#9CA3AF] leading-relaxed text-sm hover:text-[#486581] transition-colors break-words"
+                                        className="text-[#9CA3AF] leading-relaxed text-sm hover:text-[#C8A44A] transition-colors break-words"
                                     >
                                         {item.content}
                                     </a>
@@ -146,7 +146,7 @@ export default function ContactPage() {
                         >
                             <div className="text-center mb-10 md:mb-12">
                                 <h2 className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white mb-4">
-                                    Envie sua <span className="text-[#486581] italic">Mensagem</span>
+                                    Envie sua <span className="text-[#C8A44A] italic">Mensagem</span>
                                 </h2>
                                 <p className="text-[#9CA3AF] text-lg font-light">
                                     Preencha o formulário abaixo e retornaremos em breve.
@@ -249,7 +249,7 @@ export default function ContactPage() {
                         viewport={{ once: true }}
                     >
                         <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
-                            Respostas <span className="text-[#486581] italic">Imediatas</span>
+                            Respostas <span className="text-[#C8A44A] italic">Imediatas</span>
                         </h2>
                         <p className="text-[#9CA3AF] text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
                             Precisa de agilidade? Fale diretamente com nossa equipe técnica pelo WhatsApp.

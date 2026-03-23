@@ -42,7 +42,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
             <section className="section-padding bg-navy-950">
                 <div className="container-custom">
                     <div className="text-center mb-16">
-                        <span className="text-navy-300 font-bold tracking-widest uppercase text-xs">Destinos de Investimento</span>
+                        <span className="text-[#C8A44A] font-bold tracking-widest uppercase text-xs">Destinos de Investimento</span>
                         <h2 className="text-3xl md:text-5xl font-display font-bold mt-4 mb-6 text-white">
                             Estratégias Prontas por Praça
                         </h2>
@@ -60,7 +60,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
                             >
                                 <div className="flex items-center gap-3 mb-6">
                                     <span className="text-3xl">{city.flag}</span>
-                                    <h3 className="text-xl font-bold text-white font-display group-hover:text-navy-300 transition-colors">
+                                    <h3 className="text-xl font-bold text-white font-display group-hover:text-[#C8A44A] transition-colors">
                                         {city.name}
                                     </h3>
                                 </div>
@@ -82,7 +82,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
                 <div className="container-custom">
                     <div className="max-w-6xl mx-auto">
                         <div className="text-center mb-16">
-                            <span className="text-navy-300 font-bold tracking-widest uppercase text-xs">Análise de Viabilidade</span>
+                            <span className="text-[#C8A44A] font-bold tracking-widest uppercase text-xs">Análise de Viabilidade</span>
                             <h2 className="text-3xl md:text-5xl font-display font-bold mt-4 mb-6 text-white">
                                 Simule seu Investimento em Tempo Real
                             </h2>

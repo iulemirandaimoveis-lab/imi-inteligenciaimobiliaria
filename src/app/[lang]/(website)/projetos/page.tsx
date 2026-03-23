@@ -34,7 +34,7 @@ const PROJETOS = [
             'Target: sovereign wealth funds e family offices',
         ],
         cor: 'from-[#141420] to-[#1e1e35]',
-        acento: '#486581',
+        acento: '#C8A44A',
         contato: true,
     },
     {
@@ -88,7 +88,7 @@ const PROJETOS = [
 ]
 
 const STATUS_CONFIG: Record<string, { dotColor: string; badgeBg: string; badgeBorder: string; badgeColor: string }> = {
-    'pre-lancamento': { dotColor: '#486581', badgeBg: 'rgba(16,42,67,0.1)', badgeBorder: 'rgba(51,78,104,0.4)', badgeColor: '#486581' },
+    'pre-lancamento': { dotColor: '#C8A44A', badgeBg: 'rgba(16,42,67,0.1)', badgeBorder: 'rgba(51,78,104,0.4)', badgeColor: '#C8A44A' },
     lancamento: { dotColor: '#34d399', badgeBg: 'rgba(52,211,153,0.1)', badgeBorder: 'rgba(52,211,153,0.4)', badgeColor: '#34d399' },
     obras: { dotColor: '#60a5fa', badgeBg: 'rgba(96,165,250,0.1)', badgeBorder: 'rgba(96,165,250,0.4)', badgeColor: '#60a5fa' },
     pronto: { dotColor: '#9ca3af', badgeBg: 'rgba(156,163,175,0.1)', badgeBorder: 'rgba(156,163,175,0.4)', badgeColor: '#9ca3af' },
@@ -122,7 +122,7 @@ export default async function ProjetosWebsitePage({
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="w-10 h-px bg-[#102A43]" />
-                        <span className="text-[#486581] text-xs font-bold uppercase tracking-[0.25em]">Portfólio</span>
+                        <span className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.25em]">Portfólio</span>
                     </div>
                     <h1 className="font-bold text-4xl sm:text-5xl md:text-5xl lg:text-6xl mb-6 leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         Projetos &amp; Empreendimentos
@@ -280,7 +280,7 @@ export default async function ProjetosWebsitePage({
                                         </div>
                                         <Link
                                             href={`/${lang}/contato`}
-                                            className="flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-[#334E68] hover:text-[#486581] transition-all group-hover:border-gray-300"
+                                            className="flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-[#334E68] hover:text-[#C8A44A] transition-all group-hover:border-gray-300"
                                         >
                                             Solicitar informações <ArrowRight size={13} />
                                         </Link>
@@ -296,7 +296,7 @@ export default async function ProjetosWebsitePage({
             <section className="bg-[#141420] text-white py-16 lg:py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <p className="text-[#486581] text-xs font-bold uppercase tracking-[0.25em] mb-4">Para Investidores Institucionais</p>
+                        <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.25em] mb-4">Para Investidores Institucionais</p>
                         <h2 className="font-bold text-3xl lg:text-4xl mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                             Acesso Privilegiado ao Pipeline IMI
                         </h2>
@@ -314,7 +314,7 @@ export default async function ProjetosWebsitePage({
                             return (
                                 <div key={item.title} className="bg-white/5 rounded-2xl p-7 border border-white/[0.08] hover:border-[#334E68]/30 transition-all">
                                     <div className="w-10 h-10 rounded-xl bg-[#102A43]/10 flex items-center justify-center mb-5">
-                                        <Icon size={18} className="text-[#486581]" />
+                                        <Icon size={18} className="text-[#C8A44A]" />
                                     </div>
                                     <h3 className="font-semibold text-white mb-2">{item.title}</h3>
                                     <p className="text-white/50 text-sm leading-relaxed">{item.desc}</p>
@@ -326,7 +326,7 @@ export default async function ProjetosWebsitePage({
                         <Link
                             href={`/${lang}/contato`}
                             className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-sm transition-all hover:opacity-90"
-                            style={{ background: '#486581', color: '#141420' }}
+                            style={{ background: '#C8A44A', color: '#141420' }}
                         >
                             Cadastrar como Investidor Qualificado <ArrowRight size={15} />
                         </Link>

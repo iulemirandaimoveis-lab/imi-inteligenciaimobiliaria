@@ -324,7 +324,7 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
 }
 
 function PlaceholderCover({ title, pilar }: { title: string; pilar: string | null }) {
-    const fallbackColor = { text: '#486581', bg: 'rgba(72,101,129,0.1)', border: 'rgba(72,101,129,0.2)' }
+    const fallbackColor = { text: '#C8A44A', bg: 'rgba(72,101,129,0.1)', border: 'rgba(72,101,129,0.2)' }
     const color = (pilar && pilar in PILAR_COLORS) ? PILAR_COLORS[pilar] : fallbackColor
     const initials = title
         .split(' ')

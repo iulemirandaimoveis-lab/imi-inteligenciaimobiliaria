@@ -35,7 +35,7 @@ export function StressTestCalculator() {
                         step="5"
                         value={vacancyRate}
                         onChange={(e) => setVacancyRate(Number(e.target.value))}
-                        className={`w-full h-2 rounded-lg appearance-none cursor-pointer transition-colors duration-500 ${isSafe ? 'bg-navy-800 accent-[#486581]' : 'bg-red-500/20 accent-[#EF4444]'}`}
+                        className={`w-full h-2 rounded-lg appearance-none cursor-pointer transition-colors duration-500 ${isSafe ? 'bg-navy-800 accent-[#C8A44A]' : 'bg-red-500/20 accent-[#EF4444]'}`}
                     />
                 </div>
 

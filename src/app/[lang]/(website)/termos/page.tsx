@@ -64,8 +64,8 @@ export default function TermosPage() {
                 <div className="absolute top-0 right-0 w-80 h-80 rounded-full blur-[120px] opacity-15" style={{ background: '#334E68' }} />
                 <div className="max-w-[900px] mx-auto px-6 lg:px-8 py-20 lg:py-28 relative z-10">
                     <div className="flex items-center gap-3 mb-5">
-                        <FileText size={18} style={{ color: '#486581' }} />
-                        <span className="text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: '#486581' }}>Legal</span>
+                        <FileText size={18} style={{ color: '#C8A44A' }} />
+                        <span className="text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: '#C8A44A' }}>Legal</span>
                     </div>
                     <h1
                         className="text-4xl lg:text-5xl font-bold text-white leading-[1.1] mb-4"
@@ -102,7 +102,7 @@ export default function TermosPage() {
                             <div className="flex items-start gap-4">
                                 <span
                                     className="text-[11px] font-black uppercase tracking-widest mt-1 flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center"
-                                    style={{ background: '#F0F4F8', color: '#486581' }}
+                                    style={{ background: '#F0F4F8', color: '#C8A44A' }}
                                 >
                                     {section.id}
                                 </span>
@@ -128,7 +128,7 @@ export default function TermosPage() {
                     style={{ background: '#0D1117' }}
                 >
                     <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: '#1A2333' }}>
-                        <Mail size={20} style={{ color: '#486581' }} />
+                        <Mail size={20} style={{ color: '#C8A44A' }} />
                     </div>
                     <div className="flex-1">
                         <p className="text-sm font-bold text-white mb-1">Dúvidas jurídicas ou comerciais?</p>
@@ -137,7 +137,7 @@ export default function TermosPage() {
                             <a
                                 href="mailto:iulemirandaimoveis@gmail.com"
                                 className="font-semibold underline"
-                                style={{ color: '#486581' }}
+                                style={{ color: '#C8A44A' }}
                             >
                                 iulemirandaimoveis@gmail.com
                             </a>

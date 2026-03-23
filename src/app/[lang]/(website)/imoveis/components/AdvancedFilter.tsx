@@ -103,8 +103,8 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
         <div className="px-1">
             {/* Labels */}
             <div className="flex justify-between mb-5">
-                <span style={{ color: '#486581', fontSize: 12, fontWeight: 700 }}>{fmtPrice(value[0])}</span>
-                <span style={{ color: '#486581', fontSize: 12, fontWeight: 700 }}>{fmtPrice(value[1])}</span>
+                <span style={{ color: '#C8A44A', fontSize: 12, fontWeight: 700 }}>{fmtPrice(value[0])}</span>
+                <span style={{ color: '#C8A44A', fontSize: 12, fontWeight: 700 }}>{fmtPrice(value[1])}</span>
             </div>
 
             {/* Track */}
@@ -123,7 +123,7 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                     left: `${toPercent(value[0])}%`,
                     right: `${100 - toPercent(value[1])}%`,
                     height: 4, borderRadius: 6,
-                    background: 'linear-gradient(90deg, #334E68, #486581)',
+                    background: 'linear-gradient(90deg, #334E68, #C8A44A)',
                     transform: 'translateY(-50%)',
                     pointerEvents: 'none',
                 }} />
@@ -170,7 +170,7 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                     left: `${toPercent(value[0])}%`,
                     transform: 'translate(-50%, -50%)',
                     width: 18, height: 18, borderRadius: '50%',
-                    background: 'white', border: '2.5px solid #486581',
+                    background: 'white', border: '2.5px solid #C8A44A',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
                     pointerEvents: 'none', zIndex: 6,
                 }} />
@@ -179,7 +179,7 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                     left: `${toPercent(value[1])}%`,
                     transform: 'translate(-50%, -50%)',
                     width: 18, height: 18, borderRadius: '50%',
-                    background: 'white', border: '2.5px solid #486581',
+                    background: 'white', border: '2.5px solid #C8A44A',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
                     pointerEvents: 'none', zIndex: 6,
                 }} />

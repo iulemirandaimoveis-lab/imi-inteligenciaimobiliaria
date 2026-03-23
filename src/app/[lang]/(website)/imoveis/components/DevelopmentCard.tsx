@@ -22,11 +22,11 @@ const T = {
 }
 
 const STATUS_CFG: Record<string, { label: string; bg: string; color: string }> = {
-    launch:            { label: 'Lançamento',    bg: T.goldBg,              color: T.gold    },
+    launch:            { label: 'Lançamento',    bg: '#D4B86A',              color: '#0D1B2A' },
     ready:             { label: 'Pronta Entrega', bg: 'rgba(107,184,123,0.18)', color: T.success },
     under_construction:{ label: 'Em Obra',        bg: 'rgba(245,158,11,0.18)', color: '#F59E0B' },
     reserved:          { label: 'Reservado',      bg: 'rgba(167,139,250,0.18)',color: '#A78BFA' },
-    available:         { label: 'Disponível',     bg: 'rgba(107,184,123,0.18)', color: T.success },
+    available:         { label: 'Disponível',     bg: '#C8A44A',              color: '#0D1B2A' },
 }
 
 const REGION_LABELS: Record<string, string> = {
@@ -145,7 +145,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                             color: T.gold,
                             fontSize: 13,
                             fontWeight: 700,
-                            fontFamily: "'Playfair Display', Georgia, serif",
+                            fontFamily: "var(--font-mono, 'DM Mono', monospace)",
                             border: `1px solid ${T.border}`,
                         }}>
                             {fmtPrice(development.priceRange.min)}
@@ -227,19 +227,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                     )}
                     <Link
                         href={`/${lang}/imoveis/${development.slug}`}
-                        style={{
-                            marginLeft: 'auto',
-                            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                            height: 38, paddingInline: 20,
-                            borderRadius: 10,
-                            border: `1px solid ${T.borderHi}`,
-                            color: T.gold,
-                            fontSize: 11, fontWeight: 700, letterSpacing: '0.06em',
-                            textTransform: 'uppercase',
-                            transition: 'background 0.2s',
-                            background: T.goldBg,
-                            textDecoration: 'none',
-                        }}
+                        className="ml-auto inline-flex items-center justify-center h-[38px] px-5 rounded-[10px] border border-[#C8A44A] text-[#C8A44A] text-[11px] font-bold tracking-wide uppercase no-underline transition-all duration-200 bg-transparent hover:bg-[#C8A44A] hover:text-[#0D1B2A]"
                     >
                         Ver Imóvel
                     </Link>
