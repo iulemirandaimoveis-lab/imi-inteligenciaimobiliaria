@@ -96,7 +96,7 @@ export function calcLiquidityIndex(property: IMIProperty): number {
 export function getScoreColor(score: number): string {
   if (score >= 80) return '#FF4D6A'   // red   — HOT
   if (score >= 65) return '#F0B429'   // amber — QUENTE
-  if (score >= 50) return '#3D6FFF'   // blue  — NEUTRO (DS v6 Electric Blue)
+  if (score >= 50) return '#5B9BD5'   // steel — NEUTRO
   if (score >= 35) return '#8899BB'   // muted — FRIO
   return '#4A5A7A'                    // dim   — INATIVO
 }

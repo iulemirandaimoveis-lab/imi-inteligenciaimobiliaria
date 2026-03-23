@@ -28,7 +28,7 @@ export function StepIdentificacao({ form, errors, developers, set, isMobile }: {
             const sel = form.type === value
             return (
               <button key={`type-${value}`} type="button" onClick={() => set('type', value)} style={{ position: 'relative', background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: isMobile ? '12px 8px' : '16px 10px', cursor: 'pointer', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, transition: 'all var(--dur-2) var(--ease)', boxShadow: sel ? 'var(--shadow-gold)' : 'none' }}>
-                <div style={{ width: 36, height: 36, borderRadius: 6, background: sel ? 'rgba(61,111,255,0.15)' : 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 6, background: sel ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon size={18} color={sel ? T.gold : T.textSub} />
                 </div>
                 <span style={{ fontSize: 12, fontWeight: 700, color: sel ? T.gold : T.text, fontFamily: 'var(--font-sans)' }}>{value}</span>
@@ -202,7 +202,7 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
         </div>
         <div onDrop={handleDropInner} onDragOver={e => e.preventDefault()} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onClick={() => fileInputRef.current?.click()} style={{ border: `2px dashed ${isDragging ? T.gold : T.border}`, borderRadius: 6, padding: isMobile ? '28px 20px' : '40px 32px', textAlign: 'center', cursor: 'pointer', background: isDragging ? T.goldBg : T.elevated, transition: 'all var(--dur-2) var(--ease)', boxShadow: isDragging ? 'var(--shadow-gold)' : 'none' }}>
           <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleImageInput} />
-          <div style={{ width: 56, height: 56, borderRadius: 6, background: isDragging ? 'rgba(61,111,255,0.15)' : 'rgba(255,255,255,0.04)', border: `1px solid ${isDragging ? T.gold : T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', transition: 'all var(--dur-2) var(--ease)' }}>
+          <div style={{ width: 56, height: 56, borderRadius: 6, background: isDragging ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.04)', border: `1px solid ${isDragging ? T.gold : T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', transition: 'all var(--dur-2) var(--ease)' }}>
             <Upload size={24} color={isDragging ? T.gold : T.textDim} />
           </div>
           <div style={{ fontSize: 14, fontWeight: 600, color: isDragging ? T.gold : T.textSub, fontFamily: 'var(--font-sans)', marginBottom: 4 }}>{isDragging ? 'Soltar para adicionar' : 'Arraste imagens ou clique para selecionar'}</div>

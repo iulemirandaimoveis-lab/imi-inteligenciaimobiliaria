@@ -18,7 +18,7 @@ interface MarketTrendChartProps {
 
 export function MarketTrendChart({
   data,
-  color = '#3D6FFF',
+  color = '#C8A44A',
   height = 60,
   showLabels = false,
   className = '',
@@ -109,7 +109,7 @@ export function MarketTrendChart({
 }
 
 /** Mini sparkline — inline, no fills */
-export function Sparkline({ data, color = '#3D6FFF', width = 60, height = 20 }: {
+export function Sparkline({ data, color = '#C8A44A', width = 60, height = 20 }: {
   data: number[]
   color?: string
   width?: number
@@ -165,7 +165,7 @@ export function NeighborhoodBars({ data, metric }: {
               height: '100%',
               width: `${(d.value / max) * 100}%`,
               background: i === 0
-                ? 'linear-gradient(90deg, #A8842A, #3D6FFF)'
+                ? 'linear-gradient(90deg, #A8842A, #C8A44A)'
                 : 'linear-gradient(90deg, rgba(200,164,74,0.3), rgba(200,164,74,0.6))',
               borderRadius: 6,
               transition: `width ${600 + i * 80}ms cubic-bezier(0.16, 1, 0.3, 1)`,

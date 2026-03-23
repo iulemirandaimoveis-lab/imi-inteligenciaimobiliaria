@@ -203,8 +203,8 @@ export default function CreditoDetalhesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-500/15 flex items-center justify-center">
-                            <Home size={20} className="text-blue-400" />
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(184,148,58,0.12)' }}>
+                            <Home size={20} style={{ color: '#C8A44A' }} />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Valor do Imóvel</p>
                     </div>
@@ -264,7 +264,7 @@ export default function CreditoDetalhesPage() {
                     {/* Dados do Cliente */}
                     <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid #7BA3C2` }}>
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                            <User size={20} className="text-blue-400" />
+                            <User size={20} style={{ color: '#C8A44A' }} />
                             Dados do Cliente
                         </h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -355,7 +355,8 @@ export default function CreditoDetalhesPage() {
                                 </h3>
                                 <button
                                     onClick={() => setShowAmortization(!showAmortization)}
-                                    className="flex items-center gap-2 text-sm font-medium text-blue-400 hover:text-blue-300"
+                                    className="flex items-center gap-2 text-sm font-medium hover:opacity-80"
+                                    style={{ color: '#C8A44A' }}
                                 >
                                     {showAmortization ? 'Ocultar' : 'Mostrar'} tabela
                                     {showAmortization ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -458,7 +459,7 @@ export default function CreditoDetalhesPage() {
                     {documents.length > 0 && (
                         <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                                <FileText size={20} className="text-blue-400" />
+                                <FileText size={20} style={{ color: '#C8A44A' }} />
                                 Documentos
                             </h3>
                             <div className="space-y-3">

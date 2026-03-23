@@ -368,7 +368,7 @@ export function MobileBottomNav() {
                                     height: 44,
                                     borderRadius: 6,
                                     background: open ? 'var(--accent-400)' : 'var(--bg-elevated)',
-                                    border: `1px solid ${open ? 'var(--accent-400)' : 'rgba(61,111,255,0.2)'}`,
+                                    border: `1px solid ${open ? 'var(--accent-400)' : 'rgba(184,148,58,0.2)'}`,
                                     transition: 'background 0.2s, border-color 0.2s',
                                 }}
                             >
@@ -605,7 +605,7 @@ export function MobileBottomNav() {
                                 >
                                     <div className="flex gap-2">
                                         {[
-                                            { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--accent-400)', bg: 'rgba(61,111,255,0.12)' },
+                                            { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--accent-400)', bg: 'rgba(184,148,58,0.12)' },
                                             { label: 'Imóveis', value: '—', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
                                             { label: 'Leads', value: '—', color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
                                         ].map((w, i) => (
@@ -674,8 +674,8 @@ export function MobileBottomNav() {
                                                         onHoverStart={e => {
                                                             const el = (e.target as HTMLElement).closest('[data-quick-card]') as HTMLElement | null
                                                             if (el) {
-                                                                el.style.borderColor = 'rgba(61,111,255,0.45)'
-                                                                el.style.boxShadow = '0 2px 10px rgba(61,111,255,0.10)'
+                                                                el.style.borderColor = 'rgba(184,148,58,0.45)'
+                                                                el.style.boxShadow = '0 2px 10px rgba(184,148,58,0.10)'
                                                             }
                                                         }}
                                                         onHoverEnd={e => {

@@ -311,7 +311,7 @@
   --border-subtle:  #1A2540;
   --border-default: #243050;
   --border-strong:  #2E3D63;
-  --border-focus:   #3D6FFF;
+  --border-focus:   var(--imi-gold-500);
 
   --text-primary:   #E8EEFF;
   --text-secondary: #8899BB;
@@ -334,8 +334,8 @@
   --warning-bg: rgba(240,180,41,0.12);
   --error:      #FF4D6A;
   --error-bg:   rgba(255,77,106,0.12);
-  --info:       #3D6FFF;
-  --info-bg:    rgba(61,111,255,0.12);
+  --info:       #3498DB;
+  --info-bg:    rgba(52,152,219,0.12);
 
   /* ── Legacy backoffice aliases ── */
   --bo-bg:             var(--bg-base);
@@ -415,7 +415,7 @@
   /* ── DS v6 Lead temperature ── */
   --lead-hot:    #FF4D6A;
   --lead-warm:   #F0B429;
-  --lead-neutral:#3D6FFF;
+  --lead-neutral:#5B9BD5;
   --lead-cold:   #4A5A7A;
 
   /* ── DS v6 Border radius ── */

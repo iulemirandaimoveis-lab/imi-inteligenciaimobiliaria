@@ -101,7 +101,7 @@ function WidgetCard({ config }: WidgetCardProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: config.description ? 4 : 0 }}>
           <span style={{
             display: 'inline-block', width: 3, height: 12, borderRadius: 2,
-            background: 'var(--accent-400, #3D6FFF)', flexShrink: 0,
+            background: 'var(--accent-400, #C8A44A)', flexShrink: 0,
           }} />
           <span style={{
             fontSize: 11,
@@ -119,7 +119,7 @@ function WidgetCard({ config }: WidgetCardProps) {
               fontWeight: 600,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: 'var(--accent-400, #3D6FFF)',
+              color: 'var(--accent-400, #C8A44A)',
               opacity: 0.6,
             }}>
               {config.category}
@@ -188,7 +188,7 @@ export default function InteligenciaPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
             <div style={{
               width: 32, height: 2,
-              background: 'var(--accent-400, #3D6FFF)',
+              background: 'var(--accent-400, #C8A44A)',
               borderRadius: 2,
             }} />
             <span style={{
@@ -196,7 +196,7 @@ export default function InteligenciaPage() {
               fontWeight: 700,
               letterSpacing: '0.25em',
               textTransform: 'uppercase',
-              color: 'var(--accent-400, #3D6FFF)',
+              color: 'var(--accent-400, #C8A44A)',
             }}>
               Inteligência de Mercado
             </span>
@@ -241,13 +241,13 @@ export default function InteligenciaPage() {
               border: '1px solid rgba(200,164,74,0.22)',
               fontSize: 11,
               fontWeight: 600,
-              color: 'var(--accent-400, #3D6FFF)',
+              color: 'var(--accent-400, #C8A44A)',
               letterSpacing: '0.06em',
             }}>
               {/* dot */}
               <span style={{
                 width: 6, height: 6, borderRadius: '50%',
-                background: 'var(--accent-400, #3D6FFF)',
+                background: 'var(--accent-400, #C8A44A)',
                 boxShadow: '0 0 6px rgba(200,164,74,0.6)',
                 flexShrink: 0,
               }} />

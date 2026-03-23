@@ -749,7 +749,7 @@ export default function EditarCampanhaPage() {
               {/* UTM Parameters */}
               <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
                 <h3 className="text-sm font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                  <Sparkles size={16} className="text-blue-500" />
+                  <Sparkles size={16} className="text-amber-500" />
                   Parâmetros UTM (Tracking)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

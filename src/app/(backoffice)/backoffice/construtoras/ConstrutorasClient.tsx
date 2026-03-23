@@ -187,7 +187,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                             style={{ borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Projetos</p>
-                                <p className="text-lg font-bold text-blue-400">{construtora.empreendimentosAtivos || 0}</p>
+                                <p className="text-lg font-bold" style={{ color: '#C8A44A' }}>{construtora.empreendimentosAtivos || 0}</p>
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Vendas</p>
