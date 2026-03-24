@@ -120,6 +120,9 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
             { name: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp  },
             { name: 'A Pagar',     href: '/backoffice/financeiro/pagar',   icon: TrendingDown },
             { name: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target      },
+            { name: 'BPO',         href: '/backoffice/bpo',               icon: Briefcase,   badge: 'NEW' as NavItemBadge },
+            { name: 'DRE',         href: '/backoffice/bpo/dre',           icon: FileText     },
+            { name: 'Conciliação', href: '/backoffice/bpo/conciliacao',   icon: Scale        },
         ],
     },
     {

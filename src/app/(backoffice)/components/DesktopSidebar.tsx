@@ -175,6 +175,14 @@ const SECTIONS: NavSection[] = [
             { label: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp  },
             { label: 'A Pagar',     href: '/backoffice/financeiro/pagar',   icon: TrendingDown },
             { label: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target      },
+            {
+                label: 'BPO Financeiro', icon: Briefcase, badge: 'NEW',
+                children: [
+                    { label: 'Dashboard',    href: '/backoffice/bpo',             icon: Briefcase },
+                    { label: 'DRE',          href: '/backoffice/bpo/dre',         icon: FileText  },
+                    { label: 'Conciliação',  href: '/backoffice/bpo/conciliacao', icon: Scale     },
+                ]
+            },
         ]
     },
     {

@@ -57,6 +57,9 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/connect': 'Chat Equipe',
     '/backoffice/rentals': 'Rentals',
     '/backoffice/rentals/calendar': 'Calendário Rentals',
+    '/backoffice/bpo': 'BPO Financeiro',
+    '/backoffice/bpo/dre': 'DRE',
+    '/backoffice/bpo/conciliacao': 'Conciliação',
 }
 
 function getPageTitle(pathname: string): string {
