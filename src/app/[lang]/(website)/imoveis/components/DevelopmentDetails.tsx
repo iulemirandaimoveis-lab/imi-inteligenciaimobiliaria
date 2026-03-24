@@ -196,25 +196,26 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                 </p>
             </motion.div>
 
-            {/* Specs Grid — premium dark cards */}
-            <motion.div variants={slideUp} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-14">
+            {/* Specs Grid — glass cards */}
+            <motion.div variants={slideUp} className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-14">
                 {specs.map((spec, idx) => (
                     <div
                         key={idx}
-                        className="rounded-2xl p-5 md:p-6 relative overflow-hidden group transition-all duration-300 hover:translate-y-[-2px]"
+                        className="rounded-2xl p-5 md:p-7 relative overflow-hidden group transition-all duration-300 hover:translate-y-[-2px]"
                         style={{
                             background: `linear-gradient(145deg, ${NAVY} 0%, #102A43 100%)`,
                             border: '1px solid rgba(200,164,74,0.12)',
-                            boxShadow: '0 4px 20px rgba(11,25,40,0.3)',
+                            boxShadow: '0 4px 24px rgba(11,25,40,0.4)',
+                            backdropFilter: 'blur(12px)',
                         }}
                     >
                         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(200,164,74,0.08) 0%, transparent 70%)' }} />
                         <div className="relative z-10">
-                            <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'rgba(200,164,74,0.1)', border: '1px solid rgba(200,164,74,0.12)' }}>
-                                <spec.icon className="w-4 h-4" strokeWidth={1.5} style={{ color: GOLD }} />
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(200,164,74,0.1)', border: '1px solid rgba(200,164,74,0.15)' }}>
+                                <spec.icon className="w-5 h-5" strokeWidth={1.5} style={{ color: GOLD }} />
                             </div>
-                            <p className="text-[10px] uppercase tracking-[0.18em] font-bold mb-1.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{spec.label}</p>
-                            <p className="text-white font-bold text-lg md:text-xl" style={{ fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)" }}>
+                            <p className="uppercase tracking-[0.2em] font-bold mb-2" style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>{spec.label}</p>
+                            <p className="text-white font-bold" style={{ fontSize: 22, lineHeight: 1.1, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
                                 {spec.value}{spec.unit}
                             </p>
                         </div>
@@ -273,7 +274,7 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
             </motion.div>
 
             {/* Simulador Financeiro */}
-            <motion.div variants={slideUp}>
+            <motion.div variants={slideUp} id="financiamento">
                 <FinancialSimulator price={development.priceRange.min || development.priceRange.max} />
             </motion.div>
         </motion.div>

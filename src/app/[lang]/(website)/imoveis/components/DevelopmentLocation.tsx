@@ -13,8 +13,26 @@ interface DevelopmentLocationProps {
 
 export default function DevelopmentLocation({ development }: DevelopmentLocationProps) {
     const { lat, lng } = development.location.coordinates;
-    const mapSrc = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
-    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+    // Build full address string for geocoding fallback
+    const addressParts = [
+        development.location.address,
+        development.location.neighborhood,
+        development.location.city,
+        development.location.state,
+    ].filter(Boolean);
+    const fullAddress = addressParts.join(', ');
+
+    // If coordinates are still the Recife defaults, use address-based geocoding instead
+    const isDefaultCoords = (lat === -8.0476 && lng === -34.8770);
+    const hasRealCoords = lat && lng && !isDefaultCoords;
+
+    const mapSrc = hasRealCoords
+        ? `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`
+        : `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress || 'Recife, PE, Brasil')}&output=embed`;
+    const mapsUrl = hasRealCoords
+        ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress || 'Recife, PE, Brasil')}`;
 
     return (
         <motion.div

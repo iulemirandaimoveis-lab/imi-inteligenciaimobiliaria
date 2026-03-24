@@ -92,6 +92,7 @@ const ANCHOR_SECTIONS = [
     { id: 'galeria', label: 'Galeria' },
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
+    { id: 'financiamento', label: 'Financiamento' },
 ]
 
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {

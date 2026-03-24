@@ -69,16 +69,16 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
         developer: developerName,
         developerLogo: developerLogo,
         status: status as Development['status'],
-        region: (dbProp.region as Development['region']) || 'paraiba',
+        region: (dbProp.region as Development['region']) || 'pernambuco',
         location: {
             neighborhood: dbProp.neighborhood || '',
             city: dbProp.city || '',
-            state: dbProp.state || 'PB', // Default to PB if unknown
-            region: dbProp.region || 'paraiba',
+            state: dbProp.state || 'PE',
+            region: dbProp.region || 'pernambuco',
             country: dbProp.country || 'Brasil',
             coordinates: {
-                lat: dbProp.lat || -7.1150,
-                lng: dbProp.lng || -34.8230
+                lat: dbProp.lat || -8.0476,   // Recife, PE
+                lng: dbProp.lng || -34.8770
             },
             address: dbProp.address || ''
         },
