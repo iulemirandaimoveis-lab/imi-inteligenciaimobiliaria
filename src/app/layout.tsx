@@ -85,6 +85,10 @@ export const metadata: Metadata = {
     },
 };
 
+// Force all pages to be server-rendered (no SSG) — prevents build errors
+// from Supabase calls that need runtime env vars not available at build time
+export const dynamic = 'force-dynamic';
+
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import CookieConsent from '@/components/CookieConsent';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
