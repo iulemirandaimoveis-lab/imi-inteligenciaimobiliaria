@@ -1,22 +1,22 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import webpush from 'web-push'
-
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
-// Configure VAPID
-const vapidKeys = {
-    publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
-    privateKey: process.env.VAPID_PRIVATE_KEY || '',
-}
-
-if (vapidKeys.publicKey && vapidKeys.privateKey) {
-    webpush.setVapidDetails(
-        'mailto:contato@iulemirandaimoveis.com.br',
-        vapidKeys.publicKey,
-        vapidKeys.privateKey
-    )
+// Lazy import to avoid build-time crashes when web-push native deps aren't available
+async function getWebPush() {
+    const wp = await import('web-push')
+    const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''
+    const privateKey = process.env.VAPID_PRIVATE_KEY || ''
+    if (publicKey && privateKey) {
+        wp.default.setVapidDetails(
+            'mailto:contato@iulemirandaimoveis.com.br',
+            publicKey,
+            privateKey
+        )
+    }
+    return wp.default
 }
 
 // POST — Subscribe to push notifications

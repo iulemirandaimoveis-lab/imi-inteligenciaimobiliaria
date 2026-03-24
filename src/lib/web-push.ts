@@ -1,15 +1,18 @@
-import webpush from 'web-push'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
-const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''
-const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY || ''
-
-if (vapidPublicKey && vapidPrivateKey) {
-    webpush.setVapidDetails(
-        'mailto:contato@iulemirandaimoveis.com.br',
-        vapidPublicKey,
-        vapidPrivateKey
-    )
+// Lazy import web-push to avoid build-time native module crashes
+let _webpush: typeof import('web-push').default | null = null
+async function getWebPush() {
+    if (!_webpush) {
+        const wp = await import('web-push')
+        _webpush = wp.default
+        const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''
+        const privateKey = process.env.VAPID_PRIVATE_KEY || ''
+        if (publicKey && privateKey) {
+            _webpush.setVapidDetails('mailto:contato@iulemirandaimoveis.com.br', publicKey, privateKey)
+        }
+    }
+    return _webpush
 }
 
 export async function sendWebPush(userId: string, payload: { title: string; body: string; url?: string }) {
@@ -32,7 +35,7 @@ export async function sendWebPush(userId: string, payload: { title: string; body
 
         for (const sub of subscriptions) {
             try {
-                await webpush.sendNotification({
+                await (await getWebPush()).sendNotification({
                     endpoint: sub.endpoint,
                     keys: { p256dh: sub.p256dh, auth: sub.auth },
                 }, notification)
@@ -69,7 +72,7 @@ export async function sendWebPushToAll(payload: { title: string; body: string; u
 
         for (const sub of subscriptions) {
             try {
-                await webpush.sendNotification({
+                await (await getWebPush()).sendNotification({
                     endpoint: sub.endpoint,
                     keys: { p256dh: sub.p256dh, auth: sub.auth },
                 }, notification)
