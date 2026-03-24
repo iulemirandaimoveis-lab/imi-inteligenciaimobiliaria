@@ -10,7 +10,7 @@ import {
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
     Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot,
-    Map as MapIcon, Handshake, MessageCircle, Camera,
+    Map as MapIcon, Handshake, MessageCircle, Camera, Key,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -157,6 +157,13 @@ const SECTIONS: NavSection[] = [
                 children: [
                     { label: 'Operações',  href: '/backoffice/credito',            icon: CreditCard },
                     { label: 'Simulador',  href: '/backoffice/credito/simulador',  icon: CreditCard },
+                ]
+            },
+            {
+                label: 'Rentals', icon: Key,
+                children: [
+                    { label: 'Dashboard',   href: '/backoffice/rentals',           icon: Key },
+                    { label: 'Calendário',  href: '/backoffice/rentals/calendar',  icon: CalendarDays },
                 ]
             },
         ]

@@ -13,7 +13,7 @@ import {
     QrCode, Sparkles, Building, Brain, LineChart, Wand2, BarChart3, Shield,
     UserPlus, CalendarPlus, ClipboardList,
     BookMarked, Inbox, MoreHorizontal,
-    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell, Handshake, MessageCircle,
+    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell, Handshake, MessageCircle, Key,
 } from 'lucide-react'
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
@@ -109,6 +109,8 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
             { name: 'Consultoria',    href: '/backoffice/consultorias',                icon: Briefcase     },
             { name: 'Nova Consult.',  href: '/backoffice/consultorias/nova',           icon: Briefcase     },
             { name: 'Crédito',        href: '/backoffice/credito',                     icon: CreditCard    },
+            { name: 'Rentals',        href: '/backoffice/rentals',                    icon: Key, badge: 'NEW' as NavItemBadge },
+            { name: 'Calendário',     href: '/backoffice/rentals/calendar',           icon: CalendarDays  },
         ],
     },
     {

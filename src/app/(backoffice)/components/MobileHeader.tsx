@@ -55,6 +55,8 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/perfil': 'Meu Perfil',
     '/backoffice/parcerias': 'Parcerias',
     '/backoffice/connect': 'Chat Equipe',
+    '/backoffice/rentals': 'Rentals',
+    '/backoffice/rentals/calendar': 'Calendário Rentals',
 }
 
 function getPageTitle(pathname: string): string {
