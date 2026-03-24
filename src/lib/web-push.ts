@@ -1,11 +1,12 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 // Lazy import web-push to avoid build-time native module crashes
-let _webpush: typeof import('web-push').default | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _webpush: any = null
 async function getWebPush() {
     if (!_webpush) {
         const wp = await import('web-push')
-        _webpush = wp.default
+        _webpush = wp.default || wp
         const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''
         const privateKey = process.env.VAPID_PRIVATE_KEY || ''
         if (publicKey && privateKey) {
