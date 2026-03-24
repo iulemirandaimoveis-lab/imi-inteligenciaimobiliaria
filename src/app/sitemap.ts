@@ -1,6 +1,6 @@
 // src/app/sitemap.ts
 import { MetadataRoute } from 'next'
-import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
 const LANGS = ['pt', 'en', 'es']
@@ -18,8 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch published development slugs for dynamic property pages
   let propertyUrls: MetadataRoute.Sitemap = []
   try {
-    const supabase = await createClient()
-    const { data } = await supabase
+    const { data } = await supabaseAdmin
       .from('developments')
       .select('slug, updated_at')
       .eq('status_commercial', 'published')
