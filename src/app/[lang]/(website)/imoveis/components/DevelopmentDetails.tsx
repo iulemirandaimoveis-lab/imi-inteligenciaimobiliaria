@@ -76,7 +76,7 @@ function FinancialSimulator({ price }: { price: number }) {
 
     return (
         <section className="mt-8 p-4 sm:p-6 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-bold mb-1" style={{ fontFamily: "var(--font-serif, 'Libre Baskerville', Georgia, serif)" }}>
+            <h2 className="text-xl font-bold mb-1" style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}>
                 Simulador Financeiro
             </h2>
             <p className="text-sm text-gray-500 mb-6">Simule o financiamento deste imóvel</p>
@@ -150,7 +150,7 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                 </div>
                 <h2
                     className="text-2xl md:text-[32px] text-gray-900 font-bold tracking-tight leading-tight"
-                    style={{ fontFamily: "var(--font-serif, 'Libre Baskerville', Georgia, serif)" }}
+                    style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
                 >
                     Sobre o empreendimento
                 </h2>
@@ -174,7 +174,7 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
             {/* O Que Torna Especial */}
             {development.features && development.features.length > 0 && (
                 <motion.div variants={slideUp} className="mb-10">
-                    <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "var(--font-serif, 'Libre Baskerville', Georgia, serif)" }}>
+                    <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}>
                         O Que Torna Especial
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -232,7 +232,7 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                         </div>
                         <h3
                             className="text-xl md:text-2xl text-gray-900 font-bold tracking-tight"
-                            style={{ fontFamily: "var(--font-serif, 'Libre Baskerville', Georgia, serif)" }}
+                            style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
                         >
                             Diferenciais e Lazer
                         </h3>

@@ -310,7 +310,7 @@ function SectionTitle({ label }: { label: string }) {
     return (
         <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
-            <h2 className="text-xl text-gray-900 font-bold tracking-tight" style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}>
+            <h2 className="text-xl text-gray-900 font-bold tracking-tight" style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}>
                 {label}
             </h2>
         </div>

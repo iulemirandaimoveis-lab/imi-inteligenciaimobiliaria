@@ -134,14 +134,14 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                 className="object-cover"
                                 sizes="100vw"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1017] via-[#0A1017]/40 to-transparent" />
+                            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.95) 0%, rgba(5,11,20,0.7) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.1) 100%)' }} />
                         </button>
 
                         {/* "Ver X fotos" button */}
                         <button
                             onClick={() => openLightbox(0)}
-                            className="absolute bottom-4 right-4 z-10 flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg hover:shadow-xl transition-all backdrop-blur-sm"
-                            style={{ background: 'rgba(255,255,255,0.95)', color: '#0B1928' }}
+                            className="absolute bottom-4 right-4 z-10 flex items-center gap-2 px-4 py-2.5 text-xs font-bold shadow-lg hover:shadow-xl transition-all"
+                            style={{ background: 'rgba(10,22,36,0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(200,164,74,0.15)', borderRadius: 4, color: '#E8E4DC' }}
                         >
                             <Camera size={14} />
                             Ver {totalPhotos} {totalPhotos === 1 ? 'foto' : 'fotos'}
@@ -150,8 +150,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                         {/* Share button */}
                         <button
                             onClick={handleShare}
-                            className="absolute top-4 right-4 z-10 flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors backdrop-blur-md"
-                            style={{ background: 'rgba(11,25,40,0.55)', color: 'white', border: '1px solid rgba(255,255,255,0.12)' }}
+                            className="absolute top-4 right-4 z-10 flex items-center gap-2 px-3.5 py-2.5 text-xs font-semibold transition-colors"
+                            style={{ background: 'rgba(10,22,36,0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(200,164,74,0.15)', borderRadius: 4, color: '#E8E4DC' }}
                         >
                             {copied ? <Check size={14} /> : <Share2 size={14} />}
                             {copied ? 'Copiado!' : 'Compartilhar'}
@@ -164,7 +164,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                 )}
 
                 {/* ── Content overlay ── */}
-                <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 md:bg-gradient-to-t md:from-[#0A1017] md:via-[#0A1017]/80 md:to-transparent md:pointer-events-none">
+                <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 md:pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.95) 0%, rgba(5,11,20,0.7) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.1) 100%)' }}>
                     <div className="container-custom pb-8 md:pb-12 pt-6 md:pt-32 md:pointer-events-auto">
                         <motion.div
                             initial="hidden"
@@ -176,7 +176,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                                 <motion.div variants={slideUp} className="flex items-center gap-3">
                                     <span
-                                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest"
+                                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-[3px] text-[10px] font-bold uppercase tracking-widest"
                                         style={{ background: statusCfg.bg, color: statusCfg.color }}
                                     >
                                         {development.status === 'ready' && (
@@ -186,7 +186,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                     </span>
                                     {/* Trust badge */}
                                     <span
-                                        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest"
+                                        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] text-[9px] font-bold uppercase tracking-widest"
                                         style={{ background: 'rgba(200,164,74,0.12)', color: GOLD, border: `1px solid rgba(200,164,74,0.2)` }}
                                     >
                                         <Shield size={10} />
@@ -210,7 +210,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             <motion.h1
                                 variants={slideUp}
                                 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-5 leading-[1.08] tracking-tight"
-                                style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
+                                style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
                             >
                                 {development.name}
                             </motion.h1>
@@ -248,7 +248,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                         <p className="text-[10px] mb-1.5 uppercase tracking-[0.25em] font-bold" style={{ color: GOLD, opacity: 0.7 }}>A partir de</p>
                                         <p
                                             className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white tracking-tight"
-                                            style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
+                                            style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
                                         >
                                             <span className="text-base md:text-xl mr-2 font-sans font-normal" style={{ color: '#627D98' }}>R$</span>
                                             {formatPrice(development.priceRange.min)}

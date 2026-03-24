@@ -92,8 +92,8 @@ export default function Method({ dict }: MethodProps) {
                                 <div
                                     className="text-[52px] font-black leading-none mb-4 select-none"
                                     style={{
-                                        color: 'transparent',
-                                        WebkitTextStroke: '1.5px rgba(200,164,74,0.35)',
+                                        color: 'rgba(200,164,74,0.15)',
+                                        WebkitTextStroke: '1.5px rgba(200,164,74,0.15)',
                                         fontFamily: 'var(--font-mono)',
                                     }}
                                 >

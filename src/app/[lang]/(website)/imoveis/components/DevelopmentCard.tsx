@@ -95,14 +95,14 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                 )}
 
                 {/* Gradient overlay */}
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.65) 35%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.15) 100%)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.1) 70%, transparent 100%)' }} />
 
                 {/* Status badge — top left */}
                 <div style={{ position: 'absolute', top: 12, left: 12 }}>
                     <span style={{
                         display: 'inline-block',
                         padding: '4px 10px',
-                        borderRadius: 8,
+                        borderRadius: 3,
                         fontSize: 10,
                         fontWeight: 700,
                         letterSpacing: '0.08em',
@@ -176,7 +176,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                 {/* Title */}
                 <Link href={`/${lang}/imoveis/${development.slug}`}>
                     <h3 style={{
-                        color: T.text, fontFamily: "'Playfair Display', Georgia, serif",
+                        color: T.text, fontFamily: "var(--font-body, 'Outfit', sans-serif)",
                         fontSize: 17, fontWeight: 700, lineHeight: 1.3,
                         marginBottom: 6, transition: 'color 0.2s',
                     }}>
