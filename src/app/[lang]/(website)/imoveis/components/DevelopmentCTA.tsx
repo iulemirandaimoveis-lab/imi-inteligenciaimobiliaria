@@ -43,16 +43,16 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
         <>
             <div className="lg:sticky lg:top-28 space-y-4">
                 {/* Main CTA Card */}
-                <div className="rounded-2xl overflow-hidden shadow-xl" style={{ background: '#0B1928', border: `1px solid rgba(200,164,74,0.15)` }}>
+                <div className="rounded-[10px] overflow-hidden shadow-xl" style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)' }}>
                     {/* Price Header with gold gradient */}
                     <div className="p-6 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0B1928 0%, #102A43 100%)' }}>
                         <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl" style={{ background: 'rgba(200,164,74,0.08)' }} />
-                        <p className="text-[10px] uppercase tracking-[0.2em] font-bold mb-1.5" style={{ color: GOLD, opacity: 0.7 }}>A partir de</p>
+                        <p className="text-[11px] uppercase tracking-[0.2em] font-bold mb-1.5" style={{ color: GOLD, opacity: 0.7, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
                         <p
-                            className="text-[28px] font-bold text-white tracking-tight relative z-10"
-                            style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
+                            className="text-[28px] font-bold tracking-tight relative z-10"
+                            style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: GOLD }}
                         >
-                            <span className="text-sm font-sans font-normal mr-1.5" style={{ color: '#627D98' }}>R$</span>
+                            <span className="text-sm font-normal mr-1.5" style={{ color: '#627D98', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>
                             {formatPrice(development.priceRange.min)}
                         </p>
                     </div>
@@ -68,20 +68,22 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                     <div className="p-5 space-y-2.5">
                         <button
                             onClick={() => handleCTAClick('info')}
-                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-sm font-bold transition-all duration-200 hover:brightness-110"
-                            style={{ background: GOLD, color: '#0B1928' }}
+                            className="relative w-full flex items-center justify-center gap-2.5 h-12 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
+                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
                             <MessageCircle className="w-4 h-4" />
                             Falar com Especialista
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                         </button>
 
                         <button
                             onClick={() => handleCTAClick('table')}
-                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-sm font-semibold transition-all duration-200"
-                            style={{ border: `1px solid rgba(200,164,74,0.25)`, color: '#9FB3C8', background: 'rgba(200,164,74,0.06)' }}
+                            className="relative w-full flex items-center justify-center gap-2.5 h-12 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
+                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
                             <FileText className="w-4 h-4" style={{ color: GOLD, opacity: 0.6 }} />
                             Solicitar Tabela
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.4 }} />
                         </button>
 
                         {development.images.brochure && (
@@ -89,24 +91,25 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                                 href={development.images.brochure}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-sm font-semibold transition-all duration-200"
-                                style={{ border: `1px solid rgba(200,164,74,0.15)`, color: '#627D98' }}
+                                className="relative w-full flex items-center justify-center gap-2.5 h-12 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
+                                style={{ background: '#0A1624', color: '#9FB3C8', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)", textDecoration: 'none' }}
                             >
                                 <Download className="w-4 h-4" style={{ opacity: 0.6 }} />
                                 Baixar Material
+                                <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.3 }} />
                             </a>
                         )}
                     </div>
 
                     {/* Trust indicators */}
                     <div className="px-5 pb-5 flex items-center gap-3">
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider" style={{ color: '#627D98' }}>
-                            <Shield size={11} style={{ color: GOLD, opacity: 0.5 }} />
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#627D98' }}>
+                            <Shield size={12} style={{ color: GOLD, opacity: 0.5 }} />
                             Verificado
                         </div>
                         <div className="w-px h-3" style={{ background: 'rgba(200,164,74,0.15)' }} />
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider" style={{ color: '#627D98' }}>
-                            <Star size={11} style={{ color: GOLD, opacity: 0.5 }} />
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#627D98' }}>
+                            <Star size={12} style={{ color: GOLD, opacity: 0.5 }} />
                             Premium
                         </div>
                     </div>
@@ -115,11 +118,12 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                 {/* Quick phone */}
                 <a
                     href="tel:+5581997230455"
-                    className="flex items-center justify-center gap-2 h-11 rounded-xl text-xs font-semibold transition-colors"
-                    style={{ background: 'rgba(200,164,74,0.06)', color: '#9FB3C8', border: '1px solid rgba(200,164,74,0.1)' }}
+                    className="relative flex items-center justify-center gap-2 h-11 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-colors overflow-hidden"
+                    style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                 >
-                    <Phone className="w-3.5 h-3.5" style={{ color: GOLD, opacity: 0.5 }} />
+                    <Phone className="w-3.5 h-3.5" style={{ color: GOLD, opacity: 0.7 }} />
                     (81) 9 9723-0455
+                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.4 }} />
                 </a>
             </div>
 

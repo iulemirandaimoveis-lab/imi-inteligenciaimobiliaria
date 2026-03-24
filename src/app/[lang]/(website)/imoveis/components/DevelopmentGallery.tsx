@@ -66,7 +66,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 onClick={() => setLightboxIndex(0)}
-                                className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100 group block cursor-zoom-in"
+                                className="relative w-full aspect-[16/10] rounded-[14px] overflow-hidden bg-gray-100 group block cursor-zoom-in"
                                 onTouchStart={e => setTouchStart(e.touches[0].clientX)}
                                 onTouchEnd={e => {
                                     if (touchStart === null) return
@@ -94,7 +94,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                 <div style={{
                                     position: 'absolute', bottom: 12, right: 12, zIndex: 10,
                                     background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
-                                    borderRadius: 20, padding: '6px 12px',
+                                    borderRadius: 4, padding: '6px 12px',
                                     fontSize: 11, fontWeight: 600, color: '#fff',
                                     fontFamily: "var(--fm, 'JetBrains Mono', monospace)",
                                 }}>
@@ -113,7 +113,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                             viewport={{ once: true }}
                                             transition={{ delay: idx * 0.05 }}
                                             onClick={() => setLightboxIndex(idx + 1)}
-                                            className="relative aspect-[16/10] rounded-xl overflow-hidden bg-gray-100 group cursor-zoom-in"
+                                            className="relative aspect-[16/10] rounded-[10px] overflow-hidden bg-gray-100 group cursor-zoom-in"
                                         >
                                             <Image
                                                 src={img}
@@ -142,7 +142,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                         <SectionTitle label="Vídeo" />
                         <div className="space-y-3">
                             {development.images.videos.map((video, idx) => (
-                                <div key={idx} className="aspect-video rounded-2xl overflow-hidden bg-gray-900 shadow-lg">
+                                <div key={idx} className="aspect-video rounded-[14px] overflow-hidden bg-gray-900 shadow-lg">
                                     <iframe
                                         src={video}
                                         className="w-full h-full border-0"
@@ -163,7 +163,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                             {development.images.floorPlans.map((plan, idx) => (
                                 <div
                                     key={idx}
-                                    className="relative flex-shrink-0 w-[85vw] sm:w-[70vw] lg:w-full aspect-[4/3] bg-white rounded-2xl overflow-hidden snap-start border border-gray-100 p-6"
+                                    className="relative flex-shrink-0 w-[85vw] sm:w-[70vw] lg:w-full aspect-[4/3] bg-white rounded-[14px] overflow-hidden snap-start border border-gray-100 p-6"
                                 >
                                     <div className="relative w-full h-full">
                                         <Image
@@ -175,7 +175,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                             sizes="(max-width: 640px) 85vw, (max-width: 1024px) 70vw, 100vw"
                                         />
                                     </div>
-                                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-gray-900/80 backdrop-blur text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
+                                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-gray-900/80 backdrop-blur text-white text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-[3px]">
                                         Planta {idx + 1}
                                     </div>
                                 </div>
@@ -188,13 +188,13 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                 {development.images.virtualTour && (
                     <div>
                         <SectionTitle label="Tour Virtual 360°" />
-                        <div className="relative w-full aspect-video md:h-[480px] rounded-2xl overflow-hidden border border-gray-100 shadow-lg">
+                        <div className="relative w-full aspect-video md:h-[480px] rounded-[14px] overflow-hidden border border-gray-100 shadow-lg">
                             <iframe
                                 src={development.images.virtualTour}
                                 className="w-full h-full border-0"
                                 allowFullScreen
                             />
-                            <div className="absolute top-4 left-4 bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-xl flex items-center gap-2.5 text-xs font-semibold">
+                            <div className="absolute top-4 left-4 bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-[4px] flex items-center gap-2.5 text-xs font-semibold">
                                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                                 Tour Interativo
                             </div>
@@ -319,7 +319,7 @@ function SectionTitle({ label }: { label: string }) {
 
 function Placeholder({ label, icon }: { label: string; icon: React.ReactNode }) {
     return (
-        <div className="aspect-video bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-200 border-dashed">
+        <div className="aspect-video bg-gray-50 rounded-[14px] flex items-center justify-center border border-gray-200 border-dashed">
             <div className="text-center">
                 {icon}
                 <p className="text-gray-400 font-medium mt-3 text-sm">{label}</p>

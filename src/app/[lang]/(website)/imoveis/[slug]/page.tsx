@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
+import { Bed, Ruler, Car, Calendar } from 'lucide-react'
 import DevelopmentHero from '../components/DevelopmentHero'
 import DevelopmentDetails from '../components/DevelopmentDetails'
 import DevelopmentGallery from '../components/DevelopmentGallery'
@@ -191,7 +192,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
 
     return (
-        <main className="bg-gray-50 pb-24 lg:pb-0">
+        <main className="pb-24 lg:pb-0" style={{ background: '#F7F5F2' }}>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -208,21 +209,21 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             <div className="container-custom pt-4 pb-0">
                 <div style={{
                     display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                    gap: 1, background: 'rgba(200,164,74,0.08)', borderRadius: 12,
+                    gap: 1, background: 'rgba(200,164,74,0.08)', borderRadius: 10,
                     overflow: 'hidden', marginBottom: 24,
                 }}>
                     {[
-                        { label: 'Quartos', value: development.specs.bedroomsRange, icon: '\u{1F6CF}\u{FE0F}' },
-                        { label: 'Área', value: development.specs.areaRange, icon: '\u{1F4D0}' },
-                        { label: 'Vagas', value: development.specs.parkingRange || '\u2014', icon: '\u{1F697}' },
-                        ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, icon: '\u{1F4C5}' }] : []),
+                        { label: 'Quartos', value: development.specs.bedroomsRange, Icon: Bed },
+                        { label: 'Área', value: development.specs.areaRange, Icon: Ruler },
+                        { label: 'Vagas', value: development.specs.parkingRange || '\u2014', Icon: Car },
+                        ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, Icon: Calendar }] : []),
                     ].map((item, i) => (
                         <div key={i} style={{
                             background: '#0A1624', padding: '16px 12px', textAlign: 'center' as const,
                         }}>
-                            <span style={{ fontSize: 20 }}>{item.icon}</span>
-                            <p style={{ fontSize: 18, fontWeight: 700, color: '#E8E4DC', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", marginTop: 4, margin: '4px 0 0' }}>{item.value}</p>
-                            <p style={{ fontSize: 9, color: '#8E99AB', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' as const, marginTop: 2, margin: '2px 0 0' }}>{item.label}</p>
+                            <item.Icon size={18} style={{ color: '#C8A44A', opacity: 0.7, margin: '0 auto' }} />
+                            <p style={{ fontSize: 18, fontWeight: 700, color: '#E8E4DC', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '4px 0 0' }}>{item.value}</p>
+                            <p style={{ fontSize: 11, color: '#8E99AB', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '2px 0 0' }}>{item.label}</p>
                         </div>
                     ))}
                 </div>
@@ -277,7 +278,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 }}>
                 <div className="flex items-center gap-3 max-w-lg mx-auto">
                     <div className="flex-1 min-w-0">
-                        <p style={{ fontSize: 10, color: '#8E99AB', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>A partir de</p>
+                        <p style={{ fontSize: 11, color: '#8E99AB', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>A partir de</p>
                         <p style={{ fontSize: 20, fontWeight: 700, color: '#E8E4DC', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
                             {development.priceRange.min > 0 ? `R$ ${development.priceRange.min >= 1000000 ? `${(development.priceRange.min / 1000000).toFixed(1).replace(/\.0$/, '')}M` : development.priceRange.min.toLocaleString('pt-BR')}` : 'Consulte'}
                         </p>
@@ -286,11 +287,12 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         position: 'relative', overflow: 'hidden',
                         background: '#0A1624', color: '#fff',
                         border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: 6, padding: '12px 20px',
+                        borderRadius: 4, padding: '12px 20px',
                         fontFamily: "var(--fu, 'Outfit', sans-serif)",
                         fontWeight: 600, fontSize: 11, letterSpacing: '1px',
                         textTransform: 'uppercase', textDecoration: 'none',
                         whiteSpace: 'nowrap',
+                        minHeight: 44, display: 'flex', alignItems: 'center',
                     }}>
                         Falar com Especialista
                         <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />

@@ -44,7 +44,7 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                 <div className="w-1 h-6 rounded-full" style={{ background: GOLD }} />
                 <h2
                     className="text-xl text-gray-900 font-bold tracking-tight"
-                    style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
+                    style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                 >
                     Localização
                 </h2>
@@ -59,7 +59,7 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
             {/* Map */}
             <motion.div
                 variants={slideUp}
-                className="aspect-[16/9] rounded-2xl overflow-hidden mb-5 shadow-lg"
+                className="aspect-[16/9] rounded-[10px] overflow-hidden mb-5 shadow-lg"
                 style={{ border: '1px solid rgba(200,164,74,0.1)' }}
             >
                 <iframe
@@ -77,11 +77,11 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
             {/* Address card + Google Maps link */}
             <motion.div variants={slideUp} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                 <div
-                    className="inline-flex items-center gap-3 p-4 rounded-xl"
-                    style={{ background: '#0B1928', border: '1px solid rgba(200,164,74,0.12)' }}
+                    className="inline-flex items-center gap-3 p-4 rounded-[10px]"
+                    style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)' }}
                 >
                     <div
-                        className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                        className="w-9 h-9 rounded-[4px] flex items-center justify-center flex-shrink-0"
                         style={{ background: 'rgba(200,164,74,0.1)' }}
                     >
                         <MapPin className="w-4 h-4" style={{ color: GOLD }} />
@@ -98,11 +98,12 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                     href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 hover:brightness-110"
-                    style={{ background: 'rgba(200,164,74,0.1)', color: GOLD, border: '1px solid rgba(200,164,74,0.2)' }}
+                    className="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
+                    style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)", minHeight: 44 }}
                 >
                     <Navigation size={12} />
                     Abrir no Maps
+                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                 </a>
             </motion.div>
         </motion.div>

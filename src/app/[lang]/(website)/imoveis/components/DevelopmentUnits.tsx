@@ -36,7 +36,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+            <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-[10px] border border-dashed border-gray-200">
                 <Loader2 className="w-6 h-6 text-gray-300 animate-spin mb-3" />
                 <p className="text-gray-400 font-semibold text-xs uppercase tracking-widest">Carregando unidades...</p>
             </div>
@@ -63,7 +63,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                         <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
                         <h2
                             className="text-xl text-gray-900 font-bold tracking-tight"
-                            style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
+                            style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
                             Disponibilidade
                         </h2>
@@ -72,22 +72,22 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                         Unidades disponíveis para investimento neste empreendimento.
                     </p>
                 </div>
-                <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-lg text-gray-400 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">
+                <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-[4px] text-gray-400 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap">
                     <Info className="w-3.5 h-3.5 text-navy-200" />
                     <span>{units.length} {units.length === 1 ? 'unidade' : 'unidades'}</span>
                 </div>
             </div>
 
             {/* Desktop Table */}
-            <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-100">
+            <div className="hidden md:block overflow-hidden rounded-[10px] border border-gray-100">
                 <table className="w-full border-collapse">
                     <thead>
                         <tr className="bg-gray-50/80 border-b border-gray-100">
-                            <th className="text-left p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Unidade</th>
-                            <th className="text-left p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Tipologia</th>
-                            <th className="text-left p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Área</th>
-                            <th className="text-right p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Valor</th>
-                            <th className="text-center p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Ação</th>
+                            <th className="text-left p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Unidade</th>
+                            <th className="text-left p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Tipologia</th>
+                            <th className="text-left p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Área</th>
+                            <th className="text-right p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Valor</th>
+                            <th className="text-center p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Ação</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,7 +95,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                             <tr key={unit.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                                 <td className="p-4 font-bold text-gray-900 text-sm">{unit.unit_name}</td>
                                 <td className="p-4">
-                                    <span className="text-[10px] font-bold py-0.5 px-2.5 bg-gray-50 border border-gray-100 rounded text-gray-400 uppercase tracking-wider">
+                                    <span className="text-[11px] font-bold py-0.5 px-2.5 bg-gray-50 border border-gray-100 rounded text-gray-400 uppercase tracking-wider">
                                         {unit.unit_type === 'apartment' ? 'Apto' : unit.unit_type}
                                     </span>
                                 </td>
@@ -106,10 +106,12 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                                 <td className="p-4 text-center">
                                     <button
                                         onClick={() => handleWhatsApp(unit)}
-                                        className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-gray-200 text-gray-500 hover:border-navy-600 hover:text-gray-700 transition-colors"
+                                        className="relative inline-flex items-center gap-1.5 h-9 px-4 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-colors overflow-hidden"
+                                        style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', minHeight: 44 }}
                                     >
                                         <MessageCircle className="w-3 h-3" />
                                         Consultar
+                                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                                     </button>
                                 </td>
                             </tr>
@@ -121,10 +123,10 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
             {/* Mobile Cards */}
             <div className="md:hidden space-y-3">
                 {unitsToShow.map((unit) => (
-                    <div key={unit.id} className="bg-white border border-gray-100 rounded-xl p-4">
+                    <div key={unit.id} className="bg-white border border-gray-100 rounded-[10px] p-4">
                         <div className="flex justify-between items-center mb-3">
                             <span className="font-bold text-gray-900">Unidade {unit.unit_name}</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 bg-gray-50 text-gray-400 rounded uppercase tracking-wider">
+                            <span className="text-[11px] font-bold px-2 py-0.5 bg-gray-50 text-gray-400 rounded-[3px] uppercase tracking-wider">
                                 {unit.unit_type === 'apartment' ? 'Apto' : unit.unit_type}
                             </span>
                         </div>
@@ -139,9 +141,11 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                             </div>
                             <button
                                 onClick={() => handleWhatsApp(unit)}
-                                className="h-9 px-4 rounded-lg bg-navy-800 text-white text-xs font-semibold hover:bg-navy-700 transition-colors"
+                                className="relative h-11 px-4 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-colors overflow-hidden"
+                                style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', minHeight: 44 }}
                             >
                                 Consultar
+                                <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                             </button>
                         </div>
                     </div>

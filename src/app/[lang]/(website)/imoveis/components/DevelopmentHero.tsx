@@ -21,10 +21,10 @@ const formatPrice = (price: number) => {
     return price.toLocaleString('pt-BR');
 };
 
-const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-    launch: { label: 'Lançamento', color: '#0B1928', bg: GOLD },
-    ready: { label: 'Pronta Entrega', color: '#0B1928', bg: '#6BB87B' },
-    under_construction: { label: 'Em Construção', color: '#0B1928', bg: '#F59E0B' },
+const STATUS_LABELS: Record<string, { label: string; color: string; bg: string; border: string }> = {
+    launch: { label: 'Lançamento', color: GOLD, bg: 'rgba(200,164,74,0.12)', border: 'rgba(200,164,74,0.25)' },
+    ready: { label: 'Pronta Entrega', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', border: 'rgba(107,184,123,0.25)' },
+    under_construction: { label: 'Em Construção', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.25)' },
 };
 
 export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
@@ -176,8 +176,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                                 <motion.div variants={slideUp} className="flex items-center gap-3">
                                     <span
-                                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-[3px] text-[10px] font-bold uppercase tracking-widest"
-                                        style={{ background: statusCfg.bg, color: statusCfg.color }}
+                                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-[3px] text-[11px] font-bold uppercase tracking-widest"
+                                        style={{ background: statusCfg.bg, color: statusCfg.color, border: `1px solid ${statusCfg.border}`, backdropFilter: 'blur(12px)' }}
                                     >
                                         {development.status === 'ready' && (
                                             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
@@ -186,8 +186,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                     </span>
                                     {/* Trust badge */}
                                     <span
-                                        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] text-[9px] font-bold uppercase tracking-widest"
-                                        style={{ background: 'rgba(200,164,74,0.12)', color: GOLD, border: `1px solid rgba(200,164,74,0.2)` }}
+                                        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] text-[11px] font-bold uppercase tracking-widest"
+                                        style={{ background: 'rgba(200,164,74,0.12)', color: GOLD, border: `1px solid rgba(200,164,74,0.2)`, backdropFilter: 'blur(12px)' }}
                                     >
                                         <Shield size={10} />
                                         Verificado IMI
@@ -245,12 +245,12 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             <motion.div variants={slideUp} className="flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-10">
                                 {development.priceRange.min > 0 && (
                                     <div>
-                                        <p className="text-[10px] mb-1.5 uppercase tracking-[0.25em] font-bold" style={{ color: GOLD, opacity: 0.7 }}>A partir de</p>
+                                        <p className="text-[11px] mb-1.5 uppercase tracking-[0.25em] font-bold" style={{ color: GOLD, opacity: 0.7, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
                                         <p
-                                            className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white tracking-tight"
-                                            style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
+                                            className="text-3xl sm:text-4xl md:text-[44px] font-bold tracking-tight"
+                                            style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: GOLD }}
                                         >
-                                            <span className="text-base md:text-xl mr-2 font-sans font-normal" style={{ color: '#627D98' }}>R$</span>
+                                            <span className="text-base md:text-xl mr-2 font-normal" style={{ color: '#627D98', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>
                                             {formatPrice(development.priceRange.min)}
                                         </p>
                                     </div>
@@ -259,21 +259,21 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                 {/* Specs pills */}
                                 <div className="flex flex-wrap gap-2 pb-1">
                                     {development.specs?.bedroomsRange && development.specs.bedroomsRange !== '—' && (
-                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg"
+                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-[4px]"
                                             style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>
                                             <Bed size={12} style={{ color: GOLD, opacity: 0.6 }} />
                                             <span className="text-xs font-semibold text-white/80">{development.specs.bedroomsRange} quartos</span>
                                         </div>
                                     )}
                                     {development.specs?.areaRange && development.specs.areaRange !== '—' && (
-                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg"
+                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-[4px]"
                                             style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>
                                             <Ruler size={12} style={{ color: GOLD, opacity: 0.6 }} />
                                             <span className="text-xs font-semibold text-white/80">{development.specs.areaRange}</span>
                                         </div>
                                     )}
                                     {development.tags?.length > 0 && (
-                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg"
+                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-[4px]"
                                             style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>
                                             <Building2 size={12} style={{ color: GOLD, opacity: 0.6 }} />
                                             <span className="text-xs font-semibold text-white/80 capitalize">{development.tags[0]}</span>

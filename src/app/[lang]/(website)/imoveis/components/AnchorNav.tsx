@@ -55,10 +55,11 @@ export default function AnchorNav({ sections }: AnchorNavProps) {
                     <button
                         key={s.id}
                         onClick={() => scrollTo(s.id)}
-                        className="relative px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200"
+                        className="relative px-4 text-sm font-medium whitespace-nowrap transition-colors duration-200"
                         style={{
                             color: active === s.id ? GOLD : '#8E99AB',
                             fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                            minHeight: 44, display: 'flex', alignItems: 'center',
                         }}
                     >
                         {s.label}

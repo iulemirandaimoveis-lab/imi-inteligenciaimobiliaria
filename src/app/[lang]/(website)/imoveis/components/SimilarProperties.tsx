@@ -30,7 +30,7 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
                     <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
                     <h2
                         className="text-xl md:text-2xl font-bold tracking-tight"
-                        style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif", color: '#EBE7E0' }}
+                        style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)", color: '#EBE7E0' }}
                     >
                         Empreendimentos semelhantes
                     </h2>
@@ -47,8 +47,8 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
                         >
                             <Link
                                 href={`/${lang}/imoveis/${dev.slug}`}
-                                className="group block rounded-2xl overflow-hidden transition-all duration-200"
-                                style={{ background: '#0F2035', border: '1px solid rgba(200,164,74,0.12)' }}
+                                className="group block rounded-[10px] overflow-hidden transition-all duration-200"
+                                style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)' }}
                             >
                                 {/* Image */}
                                 <div className="relative aspect-[16/10] overflow-hidden" style={{ background: '#142840' }}>
@@ -70,7 +70,7 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
 
                                 {/* Content */}
                                 <div className="p-4">
-                                    <h3 className="text-sm font-bold truncate mb-1 transition-colors" style={{ color: '#EBE7E0', fontFamily: "'Libre Baskerville', Georgia, serif" }}>
+                                    <h3 className="text-sm font-bold truncate mb-1 transition-colors" style={{ color: '#EBE7E0', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
                                         {dev.name}
                                     </h3>
                                     <div className="flex items-center gap-1 text-xs mb-3" style={{ color: '#627D98' }}>
@@ -95,8 +95,8 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
                                     {/* Price */}
                                     {dev.priceRange.min > 0 && (
                                         <div>
-                                            <p className="text-[9px] uppercase tracking-wider font-semibold" style={{ color: '#C8A44A', opacity: 0.6 }}>A partir de</p>
-                                            <p className="text-base font-bold" style={{ color: '#EBE7E0', fontFamily: "'Libre Baskerville', Georgia, serif" }}>
+                                            <p className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: '#C8A44A', opacity: 0.6, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
+                                            <p className="text-base font-bold" style={{ color: '#C8A44A', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
                                                 {formatPrice(dev.priceRange.min)}
                                             </p>
                                         </div>
