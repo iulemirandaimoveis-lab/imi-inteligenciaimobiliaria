@@ -295,8 +295,8 @@ export default function LeadsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="rounded-lg text-center"
-              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '40px 16px' }}
+              className="rounded-[10px] text-center"
+              style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)', borderRadius: '10px', boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)', padding: '40px 16px' }}
             >
               <Users size={28} style={{ color: 'var(--text-secondary)', opacity: 0.2, margin: '0 auto 12px' }} />
               <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>

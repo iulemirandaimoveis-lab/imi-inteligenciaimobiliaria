@@ -116,7 +116,7 @@ function FeaturedCard({
                                 </>
                             )}
                         </div>
-                        <div className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full border backdrop-blur-sm transition-all duration-300 group-hover:scale-110"
+                        <div className="w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full border backdrop-blur-sm transition-all duration-300 group-hover:scale-110"
                             style={{ background: 'rgba(61,111,255,0.15)', borderColor: 'rgba(61,111,255,0.3)' }}>
                             <ArrowRight size={13} className="text-white transition-transform duration-300 group-hover:translate-x-0.5" />
                         </div>
@@ -226,7 +226,7 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
                     <div className="sm:hidden mt-6 text-center">
                         <Link
                             href={`/${lang}/imoveis`}
-                            className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 text-white" style={{ borderRadius: 6, background: 'var(--bg-elevated, #162040)', fontFamily: 'var(--font-sans)' }}
+                            className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-3 min-h-[44px] text-white" style={{ borderRadius: 6, background: 'var(--bg-elevated, #162040)', fontFamily: 'var(--font-sans)' }}
                             >
                             Ver portfólio completo <ArrowRight size={14} />
                         </Link>

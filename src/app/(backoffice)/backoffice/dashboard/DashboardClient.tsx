@@ -164,13 +164,18 @@ function ConversaoFonteWidget() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.52, duration: 0.35 }}
-            className="rounded-lg overflow-hidden"
+            className="rounded-[10px] overflow-hidden"
             style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-default)',
-                boxShadow: 'var(--shadow-xs)',
+                background: 'rgba(14,28,48,.52)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(200,164,74,.12)',
+                borderRadius: '10px',
+                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                 padding: '20px',
             }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.30)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.12)')}
         >
             <div className="flex items-center gap-2 mb-4">
                 <TrendingUp size={13} style={{ color: 'var(--success)' }} />
@@ -249,12 +254,17 @@ function ProximosCompromissosWidget() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.56, duration: 0.35 }}
-            className="rounded-lg overflow-hidden"
+            className="rounded-[10px] overflow-hidden"
             style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-default)',
-                boxShadow: 'var(--shadow-xs)',
+                background: 'rgba(14,28,48,.52)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(200,164,74,.12)',
+                borderRadius: '10px',
+                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
             }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.30)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.12)')}
         >
             <div className="flex items-center justify-between px-4 py-3"
                 style={{ borderBottom: '1px solid var(--border-default)' }}>
@@ -365,13 +375,18 @@ function TopImoveisWidget() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.60, duration: 0.35 }}
-            className="rounded-lg overflow-hidden"
+            className="rounded-[10px] overflow-hidden"
             style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-default)',
-                boxShadow: 'var(--shadow-xs)',
+                background: 'rgba(14,28,48,.52)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(200,164,74,.12)',
+                borderRadius: '10px',
+                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                 padding: '20px',
             }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.30)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.12)')}
         >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -460,11 +475,14 @@ function VelocidadeRespostaWidget() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.64, duration: 0.35 }}
-            className="rounded-lg overflow-hidden"
+            className="rounded-[10px] overflow-hidden"
             style={{
-                background: status ? status.bg : 'var(--bg-surface)',
-                border: `1px solid ${status ? status.border : 'var(--border-default)'}`,
-                boxShadow: 'var(--shadow-xs)',
+                background: status ? status.bg : 'rgba(14,28,48,.52)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: `1px solid ${status ? status.border : 'rgba(200,164,74,.12)'}`,
+                borderRadius: '10px',
+                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                 padding: '20px',
             }}
         >
@@ -803,11 +821,14 @@ export default function DashboardClient({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.08, duration: 0.35 }}
-                className="relative overflow-hidden rounded-lg"
+                className="relative overflow-hidden rounded-[10px]"
                 style={{
-                    background: T.card,
+                    background: 'rgba(14,28,48,.52)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
                     border: '1px solid var(--info-border, rgba(96,165,250,0.28))',
-                    boxShadow: '0 0 0 1px rgba(96,165,250,0.06) inset, 0 4px 20px rgba(0,0,0,0.15)',
+                    borderRadius: '10px',
+                    boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                     padding: '20px',
                 }}
             >
@@ -974,11 +995,14 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.22, duration: 0.35 }}
-                    className="md:col-span-2 lg:col-span-2 rounded-lg overflow-hidden"
+                    className="md:col-span-2 lg:col-span-2 rounded-[10px] overflow-hidden"
                     style={{
-                        background: T.card,
-                        border: `1px solid ${T.border}`,
-                        boxShadow: T.shadowMd,
+                        background: 'rgba(14,28,48,.52)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(200,164,74,.12)',
+                        borderRadius: '10px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                         padding: '20px',
                     }}
                 >
@@ -990,11 +1014,14 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.28, duration: 0.35 }}
-                    className="rounded-lg overflow-hidden"
+                    className="rounded-[10px] overflow-hidden"
                     style={{
-                        background: T.card,
-                        border: '1px solid var(--border-default)',
-                        boxShadow: T.shadowMd,
+                        background: 'rgba(14,28,48,.52)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(200,164,74,.12)',
+                        borderRadius: '10px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                         padding: '20px',
                     }}
                 >
@@ -1044,11 +1071,14 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.35, duration: 0.35 }}
-                    className="rounded-lg overflow-hidden"
+                    className="rounded-[10px] overflow-hidden"
                     style={{
-                        background: T.card,
-                        border: '1px solid var(--border-default)',
-                        boxShadow: T.shadowMd,
+                        background: 'rgba(14,28,48,.52)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(200,164,74,.12)',
+                        borderRadius: '10px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                         padding: '20px',
                     }}
                 >
@@ -1085,11 +1115,14 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.40, duration: 0.35 }}
-                    className="rounded-lg overflow-hidden"
+                    className="rounded-[10px] overflow-hidden"
                     style={{
-                        background: T.card,
-                        border: '1px solid var(--border-default)',
-                        boxShadow: T.shadowMd,
+                        background: 'rgba(14,28,48,.52)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(200,164,74,.12)',
+                        borderRadius: '10px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                     }}
                 >
                     <div className="flex items-center justify-between px-4 py-3"
@@ -1148,11 +1181,14 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.45, duration: 0.35 }}
-                    className="rounded-lg overflow-hidden"
+                    className="rounded-[10px] overflow-hidden"
                     style={{
-                        background: T.card,
-                        border: '1px solid var(--border-default)',
-                        boxShadow: T.shadowMd,
+                        background: 'rgba(14,28,48,.52)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(200,164,74,.12)',
+                        borderRadius: '10px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                     }}
                 >
                     <div className="flex items-center justify-between px-4 py-3"

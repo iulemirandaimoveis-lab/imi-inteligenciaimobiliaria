@@ -47,7 +47,8 @@ const S = {
     } as React.CSSProperties,
     link: {
         fontSize: 13, color: '#8E99AB', textDecoration: 'none',
-        transition: 'color 0.2s', display: 'block', padding: '3px 0',
+        transition: 'color 0.2s', display: 'block', padding: '10px 0',
+        minHeight: 44,
         fontFamily: "var(--font-body, 'Outfit', sans-serif)",
     } as React.CSSProperties,
     contactCard: {
@@ -58,6 +59,7 @@ const S = {
     } as React.CSSProperties,
     contactRow: {
         display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0',
+        minHeight: 44,
         fontSize: 13, color: '#8E99AB', textDecoration: 'none',
     } as React.CSSProperties,
     iconBox: {
@@ -66,10 +68,11 @@ const S = {
         background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.12)',
     } as React.CSSProperties,
     langChip: {
-        padding: '6px 12px', borderRadius: 4, fontSize: 11, fontWeight: 600,
+        padding: '10px 14px', borderRadius: 4, fontSize: 11, fontWeight: 600,
         letterSpacing: '1px', color: '#8E99AB', textDecoration: 'none',
         background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-        transition: 'all 0.2s',
+        transition: 'all 0.2s', minHeight: 44, minWidth: 44,
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
     } as React.CSSProperties,
 }
 
@@ -110,11 +113,11 @@ export default function Footer() {
                             fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
                         }}>CRECI 17933 | CNAI 53290</p>
 
-                        <a href="mailto:iulemirandaimoveis@gmail.com" style={S.contactRow}>
+                        <a href="mailto:iulemirandaimoveis@gmail.com" style={{ ...S.contactRow, wordBreak: 'break-all' as const }}>
                             <div style={S.iconBox}>
                                 <svg width="16" height="16" fill="none" stroke="#C8A44A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 8l9 6 9-6M3 8v10a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9-4 9 4"/></svg>
                             </div>
-                            iulemirandaimoveis@gmail.com
+                            <span style={{ wordBreak: 'break-all' }}>iulemirandaimoveis@gmail.com</span>
                         </a>
                         <a href="https://wa.me/5581997230455" style={S.contactRow}>
                             <div style={S.iconBox}>

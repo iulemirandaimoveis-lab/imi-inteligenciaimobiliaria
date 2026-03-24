@@ -155,7 +155,7 @@ export default function FinanceiroPage() {
                 title="Exportar CSV do mês atual"
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '38px', padding: '0 14px', borderRadius: '12px',
+                  height: '38px', padding: '0 14px', borderRadius: '4px',
                   fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)',
                   background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
                   cursor: 'pointer', flexShrink: 0,
@@ -169,7 +169,7 @@ export default function FinanceiroPage() {
                 onClick={() => setShowForm(true)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '38px', padding: '0 18px', borderRadius: '12px',
+                  height: '38px', padding: '0 18px', borderRadius: '4px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
                   background: 'var(--btn-primary-bg)',
                   boxShadow: '0 4px 14px color-mix(in srgb, var(--accent-400) 28%, transparent)',
@@ -224,7 +224,7 @@ export default function FinanceiroPage() {
               onClick={() => setShowForm(true)}
               style={{
                 marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
-                height: '38px', padding: '0 18px', borderRadius: '12px',
+                height: '38px', padding: '0 18px', borderRadius: '4px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
                 background: 'var(--btn-primary-bg)',
                 border: 'none', cursor: 'pointer',
@@ -272,7 +272,7 @@ export default function FinanceiroPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                    <p style={{ fontSize: '13px', fontWeight: 700, color: t.type === 'receita' ? 'var(--success)' : 'var(--error)' }}>
+                    <p style={{ fontSize: '13px', fontWeight: 700, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", fontVariantNumeric: 'tabular-nums', color: t.type === 'receita' ? 'var(--success)' : 'var(--error)' }}>
                       {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
                     </p>
                     {t.status === 'pendente' && (
@@ -331,7 +331,7 @@ export default function FinanceiroPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{ width: '100%', maxWidth: '480px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+            style={{ width: '100%', maxWidth: '480px', background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)', borderRadius: '10px', boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Novo Lançamento</h3>
@@ -395,11 +395,11 @@ export default function FinanceiroPage() {
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => setShowForm(false)}
-                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-default)' }}>
+                style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-default)' }}>
                 Cancelar
               </button>
               <button onClick={handleSubmit} disabled={saving}
-                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--btn-primary-bg)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
+                style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--btn-primary-bg)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
                 {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={16} />}
                 {saving ? 'Salvando...' : 'Salvar'}
               </button>

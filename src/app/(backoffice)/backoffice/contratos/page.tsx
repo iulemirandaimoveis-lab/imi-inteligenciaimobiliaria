@@ -104,7 +104,7 @@ export default function ContratosPage() {
                         <motion.button
                             whileTap={{ scale: 0.96 }}
                             onClick={() => router.push('/backoffice/contratos/novo')}
-                            className="flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white flex-shrink-0"
+                            className="flex items-center gap-2 px-5 rounded-[4px] text-sm font-bold text-white flex-shrink-0"
                             style={{
                                 height: '44px',
                                 background: 'var(--accent-400)',
@@ -156,9 +156,12 @@ export default function ContratosPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.15 }}
               style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--r-xl, 4px)',
+                background: 'rgba(14,28,48,.52)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(200,164,74,.12)',
+                borderRadius: '10px',
+                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
                 padding: '16px 20px',
               }}
             >
@@ -203,7 +206,7 @@ export default function ContratosPage() {
                 {activeTab === 'lista' && (
                     <motion.div key="lista" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
                         {/* Filters */}
-                        <div className="rounded-lg p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-[10px] p-4 space-y-3" style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)', borderRadius: '10px', boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)' }}>
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <div className="relative flex-1">
                                     <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
@@ -228,8 +231,8 @@ export default function ContratosPage() {
                         {loading && (
                             <div className="space-y-2">
                                 {[...Array(4)].map((_, i) => (
-                                    <div key={i} className="animate-pulse rounded-lg p-4 flex items-center gap-3"
-                                        style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                    <div key={i} className="animate-pulse rounded-[10px] p-4 flex items-center gap-3"
+                                        style={{ background: 'rgba(14,28,48,.52)', border: '1px solid rgba(200,164,74,.12)', borderRadius: '10px' }}>
                                         <div className="w-10 h-10 rounded-lg flex-shrink-0" style={{ background: T.elevated }} />
                                         <div className="flex-1 space-y-2">
                                             <div style={{ height: '10px', width: '30%', borderRadius: '6px', background: T.elevated }} />
@@ -253,8 +256,8 @@ export default function ContratosPage() {
                                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: i * 0.04 }}
                                             onClick={() => router.push(`/backoffice/contratos/${c.id}`)}
-                                            className="rounded-lg cursor-pointer transition-all hover-card"
-                                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                                            className="rounded-[10px] cursor-pointer transition-all hover-card"
+                                            style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)', borderRadius: '10px', boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)' }}
 >
                                             <div className="flex items-center gap-3 p-4">
                                                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -302,8 +305,8 @@ export default function ContratosPage() {
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="rounded-lg p-12 text-center"
-                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                                className="rounded-[10px] p-12 text-center"
+                                style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)', borderRadius: '10px', boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)' }}
                             >
                                 <div className="mb-4" style={{ opacity: 0.15 }}>
                                     <FileText size={56} style={{ color: T.textMuted, margin: '0 auto' }} />
@@ -315,7 +318,7 @@ export default function ContratosPage() {
                                 {!search && (
                                     <button
                                         onClick={() => router.push('/backoffice/contratos/novo')}
-                                        className="inline-flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white"
+                                        className="inline-flex items-center gap-2 px-5 rounded-[4px] text-sm font-bold text-white"
                                         style={{
                                             height: '44px',
                                             background: 'var(--accent-400)',
@@ -344,8 +347,8 @@ export default function ContratosPage() {
                                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: i * 0.03 }}
                                                 onClick={() => router.push(`/backoffice/contratos/novo?modelo=${m.id}`)}
-                                                className="rounded-lg p-4 cursor-pointer transition-all group hover-card"
-                                                style={{ background: m.id === 'modelo-personalizado' ? 'var(--bg-hover)' : T.surface, border: `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}` }}
+                                                className="rounded-[10px] p-4 cursor-pointer transition-all group hover-card"
+                                                style={{ background: m.id === 'modelo-personalizado' ? 'rgba(200,164,74,.08)' : 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: `1px solid ${m.id === 'modelo-personalizado' ? 'rgba(200,164,74,.30)' : 'rgba(200,164,74,.12)'}`, borderRadius: '10px', boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)' }}
 >
                                                 <div className="flex items-start gap-3">
                                                     <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"

@@ -147,11 +147,11 @@ export default function Hero({ dict }: HeroProps) {
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.55 } } }}
               className="flex flex-col sm:flex-row gap-3 w-full"
             >
-              <ButtonGhost dark strong href={`/${lang}/avaliacoes#form`} size="lg" full className="w-full sm:w-auto min-w-[240px] h-14">
+              <ButtonGhost dark strong href={`/${lang}/avaliacoes#form`} size="lg" full className="w-full sm:w-auto sm:min-w-[240px] min-h-[48px] h-14">
                 {dict.cta_appraisal || 'Solicitar Avaliação'}
               </ButtonGhost>
 
-              <ButtonGhost dark onClick={handleWhatsApp} size="lg" full className="w-full sm:w-auto min-w-[240px] h-14" icon={<MessageCircle size={15} />} arrow={false}>
+              <ButtonGhost dark onClick={handleWhatsApp} size="lg" full className="w-full sm:w-auto sm:min-w-[240px] min-h-[48px] h-14" icon={<MessageCircle size={15} />} arrow={false}>
                 {dict.cta_whatsapp || 'Falar com especialista'}
               </ButtonGhost>
             </motion.div>
@@ -179,7 +179,8 @@ export default function Hero({ dict }: HeroProps) {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 6,
-                      padding: '10px 14px',
+                      padding: '12px 14px',
+                      minHeight: 44,
                       background: item.primary ? '#0A1624' : 'rgba(10,22,36,0.7)',
                       backdropFilter: item.primary ? undefined : 'blur(12px)',
                       border: item.primary

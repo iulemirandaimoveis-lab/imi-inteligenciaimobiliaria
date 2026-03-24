@@ -21,7 +21,7 @@ export function WhatsAppFAB() {
             aria-label="Conversar no WhatsApp"
             style={{
                 position: 'fixed',
-                bottom: 24,
+                bottom: 'max(24px, calc(env(safe-area-inset-bottom) + 80px))',
                 right: 24,
                 zIndex: 9998,
                 width: 56,

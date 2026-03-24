@@ -146,34 +146,35 @@
 
 /* ── IMI INTELLIGENCE CARD ─────────────────────────────────── */
 /* Light mode: clean white card with subtle shadow */
+/* ── Glass Card v3.2 ─────────────────────────────────────── */
 .intel-card {
-  background: var(--bo-card, #ffffff);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--bo-border, rgba(0,0,0,0.08));
-  border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  background: rgba(14,28,48,.52);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(200,164,74,.12);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
   overflow: hidden;
   min-width: 0;
   max-width: 100%;
 }
 .intel-card:hover {
-  border-color: rgba(184,148,58,0.25);
-  box-shadow: 0 0 0 1px rgba(184,148,58,0.08), 0 4px 16px rgba(184,148,58,0.06), 0 1px 3px rgba(0,0,0,0.06);
+  border-color: rgba(200,164,74,.30);
+  box-shadow: 0 8px 32px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(200,164,74,.10);
   transform: translateY(-1px);
 }
-/* Dark mode: deep dark card with glassmorphism */
+/* Dark mode inherits same glass — unified */
 .dark .intel-card,
 [data-theme="dark"] .intel-card {
-  background: rgba(16,24,48,0.88);
-  border-color: rgba(255,255,255,0.06);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 2px 12px rgba(0,0,0,0.18);
+  background: rgba(14,28,48,.52);
+  border-color: rgba(200,164,74,.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
 }
 .dark .intel-card:hover,
 [data-theme="dark"] .intel-card:hover {
-  border-color: rgba(184,148,58,0.28);
-  box-shadow: 0 0 0 1px rgba(184,148,58,0.10), 0 8px 32px rgba(184,148,58,0.09), 0 2px 12px rgba(0,0,0,0.22), 0 1px 0 rgba(255,255,255,0.04) inset;
+  border-color: rgba(200,164,74,.30);
+  box-shadow: 0 8px 32px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(200,164,74,.10);
 }
 
 /* ── PREMIUM CARD VARIANTS ─────────────────────────────────── */

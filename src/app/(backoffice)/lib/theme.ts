@@ -96,12 +96,18 @@ export const ctaColor = 'var(--n, #0A1624)'
 export const ctaShadow = 'none'
 
 /** Common inline styles — MASTER v2 */
+/** Glass card v3.2 */
 export const cardStyle: React.CSSProperties = {
-    background: 'var(--n, #0A1624)',
-    border: '1px solid var(--bdr, rgba(255,255,255,.05))',
-    borderRadius: 'var(--r-xl, 4px)',
-    boxShadow: 'var(--shadow-xs)',
+    background: 'rgba(14,28,48,.52)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    border: '1px solid rgba(200,164,74,.12)',
+    borderRadius: '10px',
+    boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
 }
+
+/** Glass card v3.2 hover border */
+export const cardHoverBorder = 'rgba(200,164,74,.30)'
 
 export const inputStyle: React.CSSProperties = {
     background: 'rgba(20,36,64,.4)',
