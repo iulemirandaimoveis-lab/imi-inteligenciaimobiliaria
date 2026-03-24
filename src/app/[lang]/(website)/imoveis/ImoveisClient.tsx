@@ -49,7 +49,7 @@ const formatPrice = (min: number) => {
 };
 
 const BADGE_STYLES: Record<string, { bg: string; color: string }> = {
-    launch:            { bg: GOLD,      color: '#0B1928' },
+    launch:            { bg: '#0A1624', color: '#fff' },
     ready:             { bg: '#6BB87B', color: '#0B1928' },
     under_construction:{ bg: '#F59E0B', color: '#0B1928' },
 };
@@ -478,9 +478,9 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     onClick={() => setShowMobileFilters(true)}
                     style={{
                         flexShrink: 0, height: 34, padding: '0 14px', borderRadius: 6,
-                        background: chip.active ? GOLD : 'transparent',
+                        background: chip.active ? '#0A1624' : 'transparent',
                         border: `1.5px solid ${chip.active ? GOLD : 'rgba(200,164,74,0.3)'}`,
-                        color: chip.active ? '#0B1928' : TEXT_MUTED,
+                        color: chip.active ? '#fff' : TEXT_MUTED,
                         fontSize: 13, fontWeight: chip.active ? 700 : 500, cursor: 'pointer',
                         whiteSpace: 'nowrap',
                     }}
@@ -640,9 +640,9 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                         <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: n }))}
                                             style={{
                                                 flex: 1, height: 36, borderRadius: 6,
-                                                background: filters.bedrooms === n ? GOLD : BG,
+                                                background: filters.bedrooms === n ? '#0A1624' : BG,
                                                 border: `1.5px solid ${filters.bedrooms === n ? GOLD : BORDER}`,
-                                                color: filters.bedrooms === n ? '#0B1928' : TEXT_MUTED,
+                                                color: filters.bedrooms === n ? '#fff' : TEXT_MUTED,
                                                 fontSize: 13, fontWeight: 600, cursor: 'pointer',
                                             }}>
                                             {n === null ? 'Todos' : `${n}+`}
@@ -699,8 +699,9 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     Limpar
                                 </button>
                                 <button onClick={() => setShowMobileFilters(false)}
-                                    style={{ flex: 2, height: 44, borderRadius: 6, border: 'none', background: GOLD, color: '#0B1928', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                                    style={{ flex: 2, height: 44, borderRadius: 6, border: '1px solid rgba(255,255,255,0.08)', background: '#0A1624', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
                                     Ver {filteredDevelopments.length} imóveis
+                                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                                 </button>
                             </div>
                         </motion.div>
@@ -749,8 +750,9 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         )}
                         <button
                             onClick={() => {/* already filtering live */ }}
-                            style={{ height: 36, padding: '0 18px', borderRadius: 6, background: GOLD, border: 'none', color: '#0B1928', fontSize: 13, fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}>
+                            style={{ height: 36, padding: '0 18px', borderRadius: 6, background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
                             Buscar
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                         </button>
                     </div>
                 </div>

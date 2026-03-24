@@ -22,11 +22,11 @@ const T = {
 }
 
 const STATUS_CFG: Record<string, { label: string; bg: string; color: string }> = {
-    launch:            { label: 'Lançamento',    bg: '#D4B86A',              color: '#0D1B2A' },
+    launch:            { label: 'Lançamento',    bg: 'rgba(200,164,74,0.15)', color: '#C8A44A' },
     ready:             { label: 'Pronta Entrega', bg: 'rgba(107,184,123,0.18)', color: T.success },
     under_construction:{ label: 'Em Obra',        bg: 'rgba(245,158,11,0.18)', color: '#F59E0B' },
     reserved:          { label: 'Reservado',      bg: 'rgba(167,139,250,0.18)',color: '#A78BFA' },
-    available:         { label: 'Disponível',     bg: '#C8A44A',              color: '#0D1B2A' },
+    available:         { label: 'Disponível',     bg: 'rgba(200,164,74,0.15)', color: '#C8A44A' },
 }
 
 const REGION_LABELS: Record<string, string> = {

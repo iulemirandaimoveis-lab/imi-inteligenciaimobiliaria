@@ -14,7 +14,6 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-const supabase = createClient()
 interface ConsultationFormData {
     // Cliente
     client_name: string
@@ -164,6 +163,7 @@ export default function ConsultationWizard() {
         if (!validateStep(step)) return
         setLoading(true)
         try {
+            const supabase = createClient()
             const { data, error } = await supabase
                 .from('consultations')
                 .insert({

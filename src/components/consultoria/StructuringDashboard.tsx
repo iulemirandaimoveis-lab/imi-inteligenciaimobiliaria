@@ -15,8 +15,6 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
-const supabase = createClient()
-
 interface Consultation {
     id: string
     client_name: string
@@ -160,10 +158,12 @@ export default function StructuringDashboard({ consultationId }: { consultationI
 
     useEffect(() => {
         loadConsultation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [consultationId])
 
     const loadConsultation = async () => {
         setLoading(true)
+        const supabase = createClient()
         const { data, error } = await supabase
             .from('consultations')
             .select('*')

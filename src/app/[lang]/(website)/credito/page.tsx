@@ -2,11 +2,10 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { slideUp, staggerContainer } from '@/lib/animations'
+import { slideUp } from '@/lib/animations'
 import { Building2, Banknote, TrendingUp, ShieldCheck, Clock, ChevronDown, ChevronUp, MessageCircle, Info } from 'lucide-react'
 import { ButtonPrimary } from '@/components/website/Buttons'
 import { formatCurrency } from '@/lib/utils'
-import Image from 'next/image'
 import LeadCaptureModal from '@/app/[lang]/(website)/imoveis/components/LeadCaptureModal'
 
 const creditTypes = [

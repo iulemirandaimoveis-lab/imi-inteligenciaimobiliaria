@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { BadgeCheck, Scale, FileText, TrendingUp, MessageCircle, ArrowRight, Home, Building2, Globe } from 'lucide-react'
 import { ButtonPrimary, ButtonGhost } from '@/components/website/Buttons'
@@ -55,6 +55,7 @@ const TRUST = [
 
 export default function Hero({ dict }: HeroProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
   const params = useParams()
   const lang = (params?.lang as string) || 'pt'
 
@@ -62,17 +63,26 @@ export default function Hero({ dict }: HeroProps) {
     window.open('https://wa.me/5581997230455', '_blank')
   }
 
+  const handleCanPlay = useCallback(() => setVideoReady(true), [])
+
   return (
     <section className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
       {/* Background video */}
       <div className="absolute inset-0">
+        {/* Static poster image shown immediately — prevents domcontentloaded timeout */}
+        <img
+          src="/hero-bg.jpg"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          poster="/hero-bg.jpg"
+          preload="none"
+          onCanPlay={handleCanPlay}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
         >
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>

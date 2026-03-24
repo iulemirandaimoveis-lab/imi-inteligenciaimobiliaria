@@ -140,7 +140,7 @@ export default function LoginPage() {
     const subtitleStyle: React.CSSProperties = {
         fontFamily: T.outfit,
         fontWeight: 400,
-        fontSize: '10px',
+        fontSize: '11px',
         color: T.t3,
         margin: '4px 0 0 0',
         textAlign: 'center',
@@ -150,7 +150,7 @@ export default function LoginPage() {
         display: 'block',
         fontFamily: T.outfit,
         fontWeight: 500,
-        fontSize: '7px',
+        fontSize: '11px',
         letterSpacing: '2.5px',
         textTransform: 'uppercase',
         color: T.t3,
@@ -212,7 +212,7 @@ export default function LoginPage() {
     const forgotStyle: React.CSSProperties = {
         fontFamily: T.outfit,
         fontWeight: 400,
-        fontSize: '9px',
+        fontSize: '11px',
         color: T.t3,
         textDecoration: 'none',
         transition: 'color 0.15s',
@@ -224,7 +224,7 @@ export default function LoginPage() {
     const badgeStyle: React.CSSProperties = {
         fontFamily: T.outfit,
         fontWeight: 600,
-        fontSize: '7px',
+        fontSize: '11px',
         textTransform: 'uppercase',
         letterSpacing: '1px',
         color: T.gold,
@@ -332,7 +332,7 @@ export default function LoginPage() {
                             border: '1px solid rgba(239,68,68,0.18)',
                         }}>
                             <p style={{
-                                fontSize: '10px',
+                                fontSize: '11px',
                                 fontFamily: T.outfit,
                                 color: '#F87171',
                                 fontWeight: 600,
