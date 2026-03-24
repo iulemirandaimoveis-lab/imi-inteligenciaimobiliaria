@@ -36,5 +36,5 @@ export default async function PropostaPublicaPage({ params }: Props) {
       .eq('id', proposal.id)
   }
 
-  return <PropostaPublicaClient proposal={{ ...proposal, development, status: proposal.status === 'sent' ? 'viewed' : proposal.status }} />
+  return <PropostaPublicaClient proposal={{ ...proposal, token: params.token, development, status: proposal.status === 'sent' ? 'viewed' : proposal.status }} />
 }

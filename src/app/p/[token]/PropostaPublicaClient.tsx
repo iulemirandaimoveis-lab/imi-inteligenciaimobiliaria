@@ -48,6 +48,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
   const tracked = useRef(false)
 
   const proposalId = proposal.id
+  const token = proposal.token
   const isExpired = proposal.validity_until && new Date(proposal.validity_until) < new Date()
 
   // Track open
@@ -64,6 +65,37 @@ export default function PropostaPublicaClient({ proposal }: Props) {
       trackEvent(proposalId, 'proposal_opened', { revisit: true }, seconds)
     }
   }, [proposalId])
+
+  // Track initial page view (new proposta comercial system)
+  useEffect(() => {
+    if (!token) return
+    fetch(`/api/propostas/${token}/track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event_type: 'view' }),
+    }).catch(() => {})
+  }, [token])
+
+  // Track section visibility via Intersection Observer
+  useEffect(() => {
+    if (!token) return
+    const sections = document.querySelectorAll('[data-track-section]')
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const section = (entry.target as HTMLElement).dataset.trackSection
+          fetch(`/api/propostas/${token}/track`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ event_type: 'section_view', section }),
+          }).catch(() => {})
+        }
+      })
+    }, { threshold: 0.5 })
+
+    sections.forEach(s => observer.observe(s))
+    return () => observer.disconnect()
+  }, [token])
 
   // Estimated financing installment
   const estParcel = (() => {
@@ -145,7 +177,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
       )}
 
       {/* Header */}
-      <header style={{ padding: '28px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <header data-track-section="header" style={{ padding: '28px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 600, letterSpacing: 1, color: C.white }}>
             IMI
@@ -163,6 +195,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
       <main style={{ maxWidth: 720, margin: '0 auto', padding: '0 24px 80px' }}>
         {/* Hero section */}
         <motion.div
+          data-track-section="cover"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -239,6 +272,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
 
         {/* Financial proposal card */}
         <motion.div
+          data-track-section="proposal"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.5 }}
@@ -308,6 +342,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
 
         {/* Simulator toggle */}
         <motion.div
+          data-track-section="simulator"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.5 }}
@@ -369,6 +404,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
         {/* Conditions */}
         {(proposal.conditions || proposal.validity_days) && (
           <motion.div
+            data-track-section="conditions"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -394,6 +430,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
         {/* CTAs */}
         {!accepted && !isExpired && (
           <motion.div
+            data-track-section="cta"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.5 }}
