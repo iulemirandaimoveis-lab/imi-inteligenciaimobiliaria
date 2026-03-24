@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { limiters } from '@/lib/rate-limit'
 // Source quality weights
 const SOURCE_SCORES: Record<string, number> = {
     organic: 25,
@@ -58,6 +59,8 @@ export async function POST(request: NextRequest) {
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
+        const rl = await limiters.ai(user.id)
+        if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 })
         const body = await request.json()
         const { lead_id } = body
         if (!lead_id) {

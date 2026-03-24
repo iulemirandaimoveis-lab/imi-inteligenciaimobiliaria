@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { callClaude } from '@/lib/ai/claude'
 import { createClient } from '@/lib/supabase/server'
+import { limiters } from '@/lib/rate-limit'
 export const dynamic = 'force-dynamic'
 export async function POST(req: NextRequest) {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        const rl = await limiters.ai(user.id)
+        if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 })
         const { property_id, tenant_id } = await req.json()
         if (!property_id) {
             return NextResponse.json({ error: 'property_id is required' }, { status: 400 })

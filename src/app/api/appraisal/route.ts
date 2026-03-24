@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { limiters, getClientIP } from '@/lib/rate-limit'
 export async function POST(request: NextRequest) {
     try {
+        const ip = getClientIP(request)
+        const rl = await limiters.public(ip)
+        if (!rl.success) return NextResponse.json({ error: 'Muitas requisições. Aguarde alguns segundos.' }, { status: 429 })
         const data = await request.json()
         const supabase = await createClient()
         if (!data.name || !data.phone) {

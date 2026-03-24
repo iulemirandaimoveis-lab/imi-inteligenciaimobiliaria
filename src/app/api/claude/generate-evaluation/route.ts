@@ -2,6 +2,7 @@
 // API Route para gerar laudos técnicos com Claude
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { limiters } from '@/lib/rate-limit'
 export const runtime = 'nodejs'
 interface GenerateEvaluationRequest {
     prompt: string
@@ -13,6 +14,8 @@ export async function POST(request: Request) {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        const rl = await limiters.ai(user.id)
+        if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 })
         const { prompt, evaluationId } = await request.json() as { prompt: string; evaluationId: string }
         if (!prompt) {
             return NextResponse.json(

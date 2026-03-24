@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
+import { limiters } from '@/lib/rate-limit'
 export const runtime = 'nodejs'
 export const maxDuration = 30
 const anthropic = new Anthropic({
@@ -104,6 +105,8 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+    const rl = await limiters.ai(user.id)
+    if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 })
     const { type, data } = await req.json()
     if (!type || !data) {
       return NextResponse.json({ error: 'type e data são obrigatórios' }, { status: 400 })

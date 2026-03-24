@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { qualifyLeadWithClaude } from '@/lib/ai/lead-qualifier';
+import { limiters } from '@/lib/rate-limit';
 export const runtime = 'nodejs'
 export async function POST(request: NextRequest) {
     try {
@@ -13,6 +14,8 @@ export async function POST(request: NextRequest) {
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
+        const rl = await limiters.ai(user.id);
+        if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 });
         const body = await request.json();
         const { lead_id, include_interactions = true } = body;
         if (!lead_id) {

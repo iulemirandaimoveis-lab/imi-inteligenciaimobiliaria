@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { callClaude } from '@/lib/ai/claude'
 import { createClient } from '@/lib/supabase/server'
+import { limiters } from '@/lib/rate-limit'
 export async function POST(req: NextRequest) {
     try {
         const supabase = await createClient()
@@ -8,6 +9,8 @@ export async function POST(req: NextRequest) {
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
+        const rl = await limiters.ai(user.id)
+        if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 })
         const { performance, team_totals, tenant_id } = await req.json()
         if (!performance || !Array.isArray(performance)) {
             return NextResponse.json({ error: 'performance data required' }, { status: 400 })

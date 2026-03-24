@@ -11,6 +11,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { limiters } from '@/lib/rate-limit'
 export const runtime = 'nodejs'
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 export type AIModel =
@@ -292,6 +293,8 @@ export async function POST(request: NextRequest) {
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
+        const rl = await limiters.ai(user.id)
+        if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 })
         const body: AIRouterRequest = await request.json()
         if (!body.task_type || !body.prompt) {
             return NextResponse.json({ error: 'task_type e prompt são obrigatórios' }, { status: 400 })

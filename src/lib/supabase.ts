@@ -28,13 +28,5 @@ export async function getSession() {
     return user;
 }
 
-// Admin client for bypass - Required for internal API routes
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder';
-export const supabaseAdmin = (supabaseUrl && serviceRoleKey && supabaseUrl.startsWith('http'))
-    ? createClient(supabaseUrl, serviceRoleKey, {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false
-        }
-    })
-    : null as unknown as ReturnType<typeof createClient>;
+// NOTE: For admin client (service role), import from '@/lib/supabase/admin' instead.
+// The supabaseAdmin export was removed from this file to avoid duplicates.
