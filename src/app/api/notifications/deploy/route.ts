@@ -3,6 +3,12 @@ import { sendNotification } from '@/lib/send-notification'
 
 export async function POST(req: Request) {
     try {
+        // Auth: require CRON_SECRET or a valid deploy token
+        const authHeader = req.headers.get('authorization')
+        if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
         const { message, version } = await req.json()
 
         // Broadcast to all users (user_id = null)

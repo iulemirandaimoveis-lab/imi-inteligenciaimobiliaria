@@ -80,6 +80,21 @@ const nextConfig = {
                     { key: 'X-Content-Type-Options', value: 'nosniff' },
                     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
                     { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
+                    { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+                    {
+                        key: 'Content-Security-Policy',
+                        value: [
+                            "default-src 'self'",
+                            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://api.mapbox.com",
+                            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.mapbox.com",
+                            "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://*.mapbox.com",
+                            "font-src 'self' https://fonts.gstatic.com",
+                            "connect-src 'self' https://*.supabase.co https://api.anthropic.com https://api.mapbox.com https://www.google-analytics.com https://events.mapbox.com",
+                            "frame-ancestors 'self'",
+                            "base-uri 'self'",
+                            "form-action 'self'",
+                        ].join('; '),
+                    },
                 ],
             },
         ]

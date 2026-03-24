@@ -25,28 +25,45 @@ interface BookData {
     capitulos: Chapter[]
 }
 
+/** Sanitize HTML string — strip scripts, event handlers, and dangerous URIs */
+function sanitizeHtml(html: string): string {
+    return html
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+        .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+        .replace(/<embed\b[^>]*>/gi, '')
+        .replace(/<link\b[^>]*>/gi, '')
+        .replace(/on\w+\s*=\s*"[^"]*"/gi, '')
+        .replace(/on\w+\s*=\s*'[^']*'/gi, '')
+        .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
+        .replace(/javascript\s*:/gi, 'nojavascript:')
+        .replace(/data\s*:\s*text\/html/gi, 'nodata:text/html')
+}
+
 function renderContent(content: string): string {
     if (!content) return '<p>Conteúdo não disponível.</p>'
 
-    // If it's already HTML (contains tags), return as-is
+    // If it's already HTML (contains tags), sanitize and return
     if (content.includes('<h') || content.includes('<p>') || content.includes('<div')) {
-        return content
+        return sanitizeHtml(content)
     }
 
-    // Otherwise, convert markdown-like text to HTML
+    // Otherwise, convert markdown-like text to HTML (content is text, escape HTML entities first)
+    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
     return content
         .split('\n\n')
         .map(para => {
-            if (para.startsWith('# ')) return `<h2>${para.slice(2)}</h2>`
-            if (para.startsWith('## ')) return `<h3>${para.slice(3)}</h3>`
-            if (para.startsWith('### ')) return `<h4>${para.slice(4)}</h4>`
+            if (para.startsWith('# ')) return `<h2>${esc(para.slice(2))}</h2>`
+            if (para.startsWith('## ')) return `<h3>${esc(para.slice(3))}</h3>`
+            if (para.startsWith('### ')) return `<h4>${esc(para.slice(4))}</h4>`
             if (para.startsWith('- ') || para.startsWith('* ')) {
-                const items = para.split('\n').map(l => `<li>${l.replace(/^[-*]\s/, '')}</li>`).join('')
+                const items = para.split('\n').map(l => `<li>${esc(l.replace(/^[-*]\s/, ''))}</li>`).join('')
                 return `<ul>${items}</ul>`
             }
-            if (para.startsWith('> ')) return `<blockquote>${para.slice(2)}</blockquote>`
-            if (para.startsWith('```')) return `<pre><code>${para.replace(/```\w*\n?/, '').replace(/```$/, '')}</code></pre>`
-            return `<p>${para.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')}</p>`
+            if (para.startsWith('> ')) return `<blockquote>${esc(para.slice(2))}</blockquote>`
+            if (para.startsWith('```')) return `<pre><code>${esc(para.replace(/```\w*\n?/, '').replace(/```$/, ''))}</code></pre>`
+            return `<p>${esc(para).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')}</p>`
         })
         .join('\n')
 }
