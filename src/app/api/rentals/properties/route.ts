@@ -1,7 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
 
 export const runtime = 'nodejs'
+
+const PropertyPostSchema = z.object({
+    name: z.string().min(1).max(300),
+    address: z.string().optional(),
+    property_type: z.string().optional(),
+    listing_mode: z.string().optional(),
+    daily_rate: z.number().positive().optional(),
+    monthly_rate: z.number().positive().optional(),
+    cleaning_fee: z.number().min(0).optional(),
+    max_guests: z.number().int().positive().optional(),
+    bedrooms: z.number().int().min(0).optional(),
+    bathrooms: z.number().int().min(0).optional(),
+    airbnb_listing_id: z.string().optional(),
+    booking_listing_id: z.string().optional(),
+    direct_booking_enabled: z.boolean().optional(),
+    ical_url: z.string().url().optional(),
+    status: z.string().optional(),
+    owner_id: z.string().optional(),
+    owner_name: z.string().optional(),
+    management_fee_pct: z.number().min(0).max(100).optional(),
+    photos: z.array(z.string()).optional(),
+    amenities: z.array(z.string()).optional(),
+    rules: z.string().optional(),
+    check_in_time: z.string().optional(),
+    check_out_time: z.string().optional(),
+    development_id: z.string().optional(),
+})
 
 async function getAuthenticatedSupabase() {
     const supabase = await createClient()
@@ -68,36 +96,37 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json()
-
-        if (!body.name) {
-            return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 })
+        const parsed = PropertyPostSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
+        const b = parsed.data
 
         const record = {
-            name: body.name,
-            address: body.address || null,
-            property_type: body.property_type || 'apartment',
-            listing_mode: body.listing_mode || 'short_stay',
-            daily_rate: body.daily_rate ? Number(body.daily_rate) : null,
-            monthly_rate: body.monthly_rate ? Number(body.monthly_rate) : null,
-            cleaning_fee: body.cleaning_fee ? Number(body.cleaning_fee) : 0,
-            max_guests: body.max_guests ? Number(body.max_guests) : 4,
-            bedrooms: body.bedrooms ? Number(body.bedrooms) : 1,
-            bathrooms: body.bathrooms ? Number(body.bathrooms) : 1,
-            airbnb_listing_id: body.airbnb_listing_id || null,
-            booking_listing_id: body.booking_listing_id || null,
-            direct_booking_enabled: body.direct_booking_enabled ?? true,
-            ical_url: body.ical_url || null,
-            status: body.status || 'active',
-            owner_id: body.owner_id || null,
-            owner_name: body.owner_name || null,
-            management_fee_pct: body.management_fee_pct ? Number(body.management_fee_pct) : 20,
-            photos: body.photos || [],
-            amenities: body.amenities || [],
-            rules: body.rules || null,
-            check_in_time: body.check_in_time || '15:00',
-            check_out_time: body.check_out_time || '11:00',
-            development_id: body.development_id || null,
+            name: b.name,
+            address: b.address || null,
+            property_type: b.property_type || 'apartment',
+            listing_mode: b.listing_mode || 'short_stay',
+            daily_rate: b.daily_rate ?? null,
+            monthly_rate: b.monthly_rate ?? null,
+            cleaning_fee: b.cleaning_fee ?? 0,
+            max_guests: b.max_guests ?? 4,
+            bedrooms: b.bedrooms ?? 1,
+            bathrooms: b.bathrooms ?? 1,
+            airbnb_listing_id: b.airbnb_listing_id || null,
+            booking_listing_id: b.booking_listing_id || null,
+            direct_booking_enabled: b.direct_booking_enabled ?? true,
+            ical_url: b.ical_url || null,
+            status: b.status || 'active',
+            owner_id: b.owner_id || null,
+            owner_name: b.owner_name || null,
+            management_fee_pct: b.management_fee_pct ?? 20,
+            photos: b.photos || [],
+            amenities: b.amenities || [],
+            rules: b.rules || null,
+            check_in_time: b.check_in_time || '15:00',
+            check_out_time: b.check_out_time || '11:00',
+            development_id: b.development_id || null,
             created_by: user.id,
         }
 

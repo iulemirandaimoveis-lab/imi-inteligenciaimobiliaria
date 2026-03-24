@@ -1,10 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { z } from 'zod'
 
 // ---------------------------------------------------------------------------
-// Types
+// Types & Validation
 // ---------------------------------------------------------------------------
+
+const PartnershipCreateSchema = z.object({
+    property_id: z.string().min(1),
+    property_name: z.string().min(1),
+    property_price: z.number().positive(),
+    owner_broker_id: z.string().min(1),
+    message: z.string().min(1).max(2000),
+    commission_owner_pct: z.number().min(0).max(100),
+    commission_partner_pct: z.number().min(0).max(100),
+})
 
 interface PartnershipCreateBody {
     property_id: string
@@ -85,14 +96,20 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        // Parse body
-        let body: PartnershipCreateBody
+        // Parse & validate body
+        let rawBody: unknown
         try {
-            body = await request.json()
+            rawBody = await request.json()
         } catch {
             return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
         }
 
+        const parsed = PartnershipCreateSchema.safeParse(rawBody)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+        }
+
+        const body: PartnershipCreateBody = parsed.data
         const {
             property_id,
             property_name,
@@ -102,29 +119,6 @@ export async function POST(request: NextRequest) {
             commission_owner_pct,
             commission_partner_pct,
         } = body
-
-        // Validate required fields
-        if (
-            !property_id ||
-            !property_name ||
-            !property_price ||
-            !owner_broker_id ||
-            !message ||
-            commission_owner_pct == null ||
-            commission_partner_pct == null
-        ) {
-            return NextResponse.json(
-                { error: 'Campos obrigatórios: property_id, property_name, property_price, owner_broker_id, message, commission_owner_pct, commission_partner_pct' },
-                { status: 400 },
-            )
-        }
-
-        if (commission_owner_pct < 0 || commission_partner_pct < 0) {
-            return NextResponse.json(
-                { error: 'Percentuais de comissão devem ser positivos' },
-                { status: 400 },
-            )
-        }
 
         // Look up the owner broker record — try brokers table first, fall back to profiles
         let ownerBrokerId = owner_broker_id

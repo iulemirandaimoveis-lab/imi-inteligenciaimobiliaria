@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { z } from 'zod'
+
+const CompleteSchema = z.object({
+    sale_value: z.number().positive(),
+})
 
 // ---------------------------------------------------------------------------
 // POST /api/partnerships/[id]/complete — mark partnership as completed
@@ -52,22 +57,18 @@ export async function POST(
             )
         }
 
-        // Parse body
-        let body: CompleteBody
+        // Parse & validate body
+        let rawBody: unknown
         try {
-            body = await request.json()
+            rawBody = await request.json()
         } catch {
             return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
         }
-
-        const { sale_value } = body
-
-        if (!sale_value || sale_value <= 0) {
-            return NextResponse.json(
-                { error: 'sale_value é obrigatório e deve ser maior que zero' },
-                { status: 400 },
-            )
+        const parsed = CompleteSchema.safeParse(rawBody)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
+        const { sale_value } = parsed.data
 
         // Calculate commissions
         const totalCommission = (sale_value * (partnership.commission_total_pct ?? 0)) / 100

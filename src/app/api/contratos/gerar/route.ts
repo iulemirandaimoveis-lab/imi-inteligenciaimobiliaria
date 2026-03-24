@@ -1,7 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getModeloById, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
+import { z } from 'zod'
 export const runtime = 'nodejs'
+
+const ParteSchema = z.object({
+  nome: z.string().optional(),
+  razao_social: z.string().optional(),
+  tipo: z.string().optional(),
+  cpf_cnpj: z.string().optional(),
+  representante: z.string().optional(),
+  cargo_representante: z.string().optional(),
+  estado_civil: z.string().optional(),
+  profissao: z.string().optional(),
+  nacionalidade: z.string().optional(),
+  endereco: z.string().optional(),
+  cidade: z.string().optional(),
+  estado: z.string().optional(),
+  email: z.string().email().optional(),
+  telefone: z.string().optional(),
+})
+
+const ContratoGerarSchema = z.object({
+  modelo_id: z.string().min(1),
+  idioma_primario: z.string().max(5).optional(),
+  idiomas_adicionais: z.array(z.string()).optional(),
+  contratante: ParteSchema,
+  contratado: ParteSchema,
+  dados_contrato: z.record(z.unknown()).optional(),
+  criado_por_nome: z.string().optional(),
+  notas_adicionais: z.string().max(5000).optional(),
+})
 interface Parte {
   nome?: string
   razao_social?: string
@@ -136,6 +165,11 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const rawBody = await req.json()
+    const parsed = ContratoGerarSchema.safeParse(rawBody)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+    }
     const {
       modelo_id,
       idioma_primario,
@@ -145,10 +179,7 @@ export async function POST(req: NextRequest) {
       dados_contrato,
       criado_por_nome,
       notas_adicionais,
-    } = await req.json()
-    if (!modelo_id || !contratante || !contratado) {
-      return NextResponse.json({ error: 'Dados obrigatórios ausentes' }, { status: 400 })
-    }
+    } = parsed.data
     const modelo = getModeloById(modelo_id)
     if (!modelo) {
       return NextResponse.json({ error: 'Modelo não encontrado' }, { status: 404 })

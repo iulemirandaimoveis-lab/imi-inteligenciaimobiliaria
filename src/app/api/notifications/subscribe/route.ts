@@ -1,7 +1,21 @@
 // src/app/api/notifications/subscribe/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
+
 export const dynamic = 'force-dynamic'
+
+const SubscribePostSchema = z.object({
+    endpoint: z.string().url(),
+    keys: z.object({
+        p256dh: z.string().min(1),
+        auth: z.string().min(1),
+    }),
+})
+
+const SubscribeDeleteSchema = z.object({
+    endpoint: z.string().url(),
+})
 // POST /api/notifications/subscribe
 // Body: { endpoint, keys: { p256dh, auth } }
 // Upserts the Web Push subscription for the current authenticated user
@@ -13,10 +27,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
         const body = await req.json()
-        const { endpoint, keys } = body
-        if (!endpoint || !keys?.p256dh || !keys?.auth) {
-            return NextResponse.json({ error: 'Subscription inválida: endpoint, keys.p256dh e keys.auth são obrigatórios' }, { status: 400 })
+        const parsed = SubscribePostSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
+        const { endpoint, keys } = parsed.data
         const { error: dbError } = await supabase
             .from('push_subscriptions')
             .upsert(
@@ -48,10 +63,11 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
         const body = await req.json()
-        const { endpoint } = body
-        if (!endpoint) {
-            return NextResponse.json({ error: 'endpoint é obrigatório' }, { status: 400 })
+        const parsedDel = SubscribeDeleteSchema.safeParse(body)
+        if (!parsedDel.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsedDel.error.flatten() }, { status: 400 })
         }
+        const { endpoint } = parsedDel.data
         const { error: dbError } = await supabase
             .from('push_subscriptions')
             .delete()

@@ -10,8 +10,15 @@ import {
     replyFacebookMessage,
     replyTwitterDM,
 } from '@/lib/social/publisher'
+import { z } from 'zod'
 
 export const dynamic = 'force-dynamic'
+
+const SocialReplySchema = z.object({
+    message_id: z.string().min(1),
+    content: z.string().min(1).max(5000),
+    platform: z.enum(['instagram', 'facebook', 'whatsapp', 'twitter']),
+})
 
 export async function POST(req: NextRequest) {
     const supabase = await createClient()
@@ -19,22 +26,11 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json()
-    const { message_id, content, platform } = body
-
-    if (!message_id || !content || !platform) {
-        return NextResponse.json(
-            { error: 'message_id, content e platform são obrigatórios' },
-            { status: 400 },
-        )
+    const parsed = SocialReplySchema.safeParse(body)
+    if (!parsed.success) {
+        return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
     }
-
-    const validPlatforms = ['instagram', 'facebook', 'whatsapp', 'twitter']
-    if (!validPlatforms.includes(platform)) {
-        return NextResponse.json(
-            { error: `Plataforma inválida. Use: ${validPlatforms.join(', ')}` },
-            { status: 400 },
-        )
-    }
+    const { message_id, content, platform } = parsed.data
 
     try {
         // Look up the original message

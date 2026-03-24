@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { z } from 'zod'
+
+const PartnershipPatchSchema = z.object({
+    commission_owner_pct: z.number().min(0).max(100).optional(),
+    commission_partner_pct: z.number().min(0).max(100).optional(),
+    commission_platform_pct: z.number().min(0).max(100).optional(),
+    commission_notes: z.string().max(1000).optional(),
+    lead_id: z.string().optional(),
+    lead_name: z.string().max(300).optional(),
+})
 
 // ---------------------------------------------------------------------------
 // GET /api/partnerships/[id] — single partnership with all messages
@@ -118,13 +128,18 @@ export async function PATCH(
             return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
         }
 
-        // Parse body
-        let body: PartnershipPatchBody
+        // Parse & validate body
+        let rawBody: unknown
         try {
-            body = await request.json()
+            rawBody = await request.json()
         } catch {
             return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
         }
+        const parsed = PartnershipPatchSchema.safeParse(rawBody)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+        }
+        const body: PartnershipPatchBody = parsed.data
 
         // Build update payload — only allowed fields
         const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }

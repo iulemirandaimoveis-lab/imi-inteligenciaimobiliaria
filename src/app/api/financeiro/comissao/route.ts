@@ -3,12 +3,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { z } from 'zod'
+
+const ComissaoSplitSchema = z.object({
+    user_id: z.string().optional(),
+    nome: z.string().optional(),
+    percentual: z.number().min(0).max(100),
+})
+
+const ComissaoPostSchema = z.object({
+    contrato_id: z.string().optional(),
+    valor_venda: z.number().positive(),
+    percentual_comissao: z.number().min(0).max(100).optional(),
+    splits: z.array(ComissaoSplitSchema).optional(),
+    due_date: z.string().optional(),
+    notes: z.string().max(2000).optional(),
+})
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await request.json()
+        const parsed = ComissaoPostSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+        }
         const {
             contrato_id,
             valor_venda,
@@ -16,10 +36,7 @@ export async function POST(request: NextRequest) {
             splits,                // [{ user_id, nome, percentual }] — opcional
             due_date,
             notes,
-        } = body
-        if (!valor_venda || valor_venda <= 0) {
-            return NextResponse.json({ error: 'Valor de venda inválido' }, { status: 400 })
-        }
+        } = parsed.data
         // Default: pegar percentual de comissão das settings do tenant
         let pct = percentual_comissao
         if (!pct) {

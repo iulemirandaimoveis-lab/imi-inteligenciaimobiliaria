@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { z } from 'zod'
+
+const MessagePostSchema = z.object({
+    content: z.string().min(1).max(5000),
+    message_type: z.string().max(50).optional(),
+    metadata: z.record(z.unknown()).optional(),
+})
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -144,22 +151,18 @@ export async function POST(
             )
         }
 
-        // Parse body
-        let body: MessageBody
+        // Parse & validate body
+        let rawBody: unknown
         try {
-            body = await request.json()
+            rawBody = await request.json()
         } catch {
             return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
         }
-
-        const { content, message_type, metadata } = body
-
-        if (!content || !content.trim()) {
-            return NextResponse.json(
-                { error: 'Conteúdo da mensagem é obrigatório' },
-                { status: 400 },
-            )
+        const parsed = MessagePostSchema.safeParse(rawBody)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
+        const { content, message_type, metadata } = parsed.data
 
         const senderName = isOwner ? partnership.owner_name : partnership.partner_name
         const now = new Date().toISOString()

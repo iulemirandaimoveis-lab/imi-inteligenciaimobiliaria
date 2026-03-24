@@ -2,8 +2,21 @@
 // ── Envio: Email (Resend/SMTP) + WhatsApp (Evolution/Z-API) ──
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
 export const runtime = 'nodejs'
 export const maxDuration = 30
+
+const ContratoEnviarSchema = z.object({
+    canal: z.enum(['email', 'whatsapp', 'ambos']),
+    destinatario_email: z.string().email().optional(),
+    destinatario_telefone: z.string().optional(),
+    contrato_numero: z.string().optional(),
+    contrato_tipo: z.string().optional(),
+    contrato_url: z.string().url(),
+    criado_por_nome: z.string().optional(),
+    idioma: z.string().max(5).optional(),
+    mensagem_personalizada: z.string().max(2000).optional(),
+})
 // ── Templates multiidioma ──────────────────────────────────────
 const getTpl = (idioma: string) => ({
   pt: {
@@ -75,6 +88,11 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const rawBody = await req.json()
+    const parsed = ContratoEnviarSchema.safeParse(rawBody)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+    }
     const {
       canal,
       destinatario_email,
@@ -85,10 +103,7 @@ export async function POST(req: NextRequest) {
       criado_por_nome,
       idioma = 'pt',
       mensagem_personalizada,
-    } = await req.json()
-    if (!canal || !contrato_url) {
-      return NextResponse.json({ error: 'canal e contrato_url são obrigatórios' }, { status: 400 })
-    }
+    } = parsed.data
     const tpl = getTpl(idioma)
     const results: Record<string, any> = {}
     // ── EMAIL ───────────────────────────────────────────────

@@ -10,8 +10,13 @@ import {
     getFacebookMessages,
     getTwitterDMs,
 } from '@/lib/social/publisher'
+import { z } from 'zod'
 
 export const dynamic = 'force-dynamic'
+
+const SyncMessagesSchema = z.object({
+    platform: z.enum(['instagram', 'facebook', 'twitter']),
+})
 
 interface PlatformMessage {
     id: string
@@ -28,15 +33,11 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json()
-    const { platform } = body
-
-    const validPlatforms = ['instagram', 'facebook', 'twitter']
-    if (!platform || !validPlatforms.includes(platform)) {
-        return NextResponse.json(
-            { error: `platform é obrigatório. Use: ${validPlatforms.join(', ')}` },
-            { status: 400 },
-        )
+    const parsed = SyncMessagesSchema.safeParse(body)
+    if (!parsed.success) {
+        return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
     }
+    const { platform } = parsed.data
 
     try {
         // Look up social account for the platform

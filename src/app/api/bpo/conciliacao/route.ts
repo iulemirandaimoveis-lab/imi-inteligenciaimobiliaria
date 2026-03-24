@@ -3,6 +3,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { z } from 'zod'
+
+const ConciliacaoPostSchema = z.object({
+    empresa_id: z.string().min(1).optional(),
+    action: z.enum(['update_status', 'auto_reconcile']).optional(),
+    conciliacao_id: z.string().uuid().optional(),
+    new_status: z.enum(['pendente', 'aprovado', 'rejeitado', 'auto_aprovado']).optional(),
+})
 
 export const dynamic = 'force-dynamic'
 
@@ -76,7 +84,11 @@ export async function POST(req: NextRequest) {
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
         const body = await req.json()
-        const { empresa_id, action, conciliacao_id, new_status } = body
+        const parsed = ConciliacaoPostSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+        }
+        const { empresa_id, action, conciliacao_id, new_status } = parsed.data
 
         // Manual approve/reject
         if (action === 'update_status' && conciliacao_id && new_status) {

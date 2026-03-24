@@ -3,6 +3,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
+
+const BroadcastPostSchema = z.object({
+    type: z.string().max(50).optional(),
+    title: z.string().min(1).max(500),
+    message: z.string().max(2000).optional(),
+    data: z.record(z.unknown()).optional(),
+})
 
 export async function POST(req: NextRequest) {
     try {
@@ -14,11 +22,11 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json()
-        const { type = 'system', title, message, data: extraData } = body
-
-        if (!title) {
-            return NextResponse.json({ error: 'title é obrigatório' }, { status: 400 })
+        const parsed = BroadcastPostSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
+        const { type = 'system', title, message, data: extraData } = parsed.data
 
         // Get all active users from auth.users
         const { data: users, error: usersError } = await supabaseAdmin.auth.admin.listUsers({

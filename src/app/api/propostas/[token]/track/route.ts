@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { z } from 'zod'
+
+const TrackEventSchema = z.object({
+    event_type: z.enum(['view', 'scroll', 'click', 'download', 'share', 'simulate']),
+    section: z.string().max(100).optional(),
+    data: z.record(z.unknown()).optional(),
+})
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest, { params }: { params: { token: string } }) {
     try {
         const body = await req.json()
-        const { event_type, section, data } = body
+        const parsed = TrackEventSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+        }
+        const { event_type, section, data } = parsed.data
 
         // Find proposal by token
         const { data: proposta } = await supabaseAdmin

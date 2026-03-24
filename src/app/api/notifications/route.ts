@@ -1,6 +1,19 @@
 // src/app/api/notifications/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
+
+const NotificationPutSchema = z.object({
+    id: z.string().uuid().optional(),
+    read_all: z.boolean().optional(),
+})
+
+const NotificationPostSchema = z.object({
+    type: z.string().max(50).optional(),
+    title: z.string().min(1).max(500),
+    message: z.string().max(2000).optional(),
+    data: z.record(z.unknown()).optional(),
+})
 
 // GET — list notifications
 export async function GET(req: NextRequest) {
@@ -41,7 +54,11 @@ export async function PUT(req: NextRequest) {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await req.json()
-        const { id, read_all } = body
+        const parsedPut = NotificationPutSchema.safeParse(body)
+        if (!parsedPut.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsedPut.error.flatten() }, { status: 400 })
+        }
+        const { id, read_all } = parsedPut.data
 
         if (read_all) {
             const { error } = await supabase
@@ -73,8 +90,11 @@ export async function POST(req: NextRequest) {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await req.json()
-        const { type, title, message, data: extraData } = body
-        if (!title) return NextResponse.json({ error: 'title é obrigatório' }, { status: 400 })
+        const parsedPost = NotificationPostSchema.safeParse(body)
+        if (!parsedPost.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsedPost.error.flatten() }, { status: 400 })
+        }
+        const { type, title, message, data: extraData } = parsedPost.data
 
         const { data, error } = await supabase
             .from('notifications')

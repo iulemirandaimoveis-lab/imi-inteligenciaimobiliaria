@@ -1,91 +1,57 @@
-# IMI – Inteligência Imobiliária
+# IMI — Inteligencia Imobiliaria
 
-Plataforma integrada de inteligência imobiliária conectando site institucional e backoffice de gestão.
+> Plataforma proptech completa com IA multi-LLM para gestao imobiliaria, avaliacoes NBR 14653, CRM com lead scoring, e BPO financeiro.
 
-## 🎯 Visão Geral
+## Stack
 
-Este projeto é uma solução completa que combina:
-- **Portal Público (Next.js)**: Vitrine de imóveis de luxo, perfil do corretor e geração de leads.
-- **Backoffice (Admin)**: CRM completo para gestão de imóveis, leads e construtoras.
-- **Banco de Dados (Supabase)**: Persistência de dados, autenticação e armazenamento de mídia.
+- **Frontend:** Next.js 14 (App Router) + TypeScript + Tailwind CSS
+- **Backend:** 164 API routes + Supabase (PostgreSQL + Auth + Storage + Realtime)
+- **AI:** Anthropic Claude + Google Gemini (multi-LLM with cost tracking)
+- **Deploy:** Vercel + Supabase Cloud
+- **PWA:** next-pwa with offline support
 
-## 🚀 Tecnologias
+## Quick Start
 
-- **Frontend**: Next.js 14 (App Router), React, TailwindCSS, Framer Motion
-- **Backend/DB**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
-- **Data Fetching**: SWR, Server Actions
-- **Forms**: React Hook Form + Zod
-- **Charts**: Recharts
-
-## 🛠️ Instalação
-
-1. **Clone o repositório**:
 ```bash
-git clone https://github.com/iminet/dev-imi.git
-cd dev-imi
-```
-
-2. **Instale as dependências**:
-```bash
+git clone https://github.com/iulemirandaimoveis-lab/imi-inteligenciaimobiliaria.git
+cd imi-inteligenciaimobiliaria
+cp .env.example .env.local  # Fill in your keys
 npm install
-```
-
-3. **Configure as variáveis de ambiente**:
-Duplique o arquivo `.env.example` para `.env.local` e preencha com suas credenciais do Supabase.
-
-4. **Execute localmente**:
-```bash
 npm run dev
 ```
 
-## 🔐 Acesso ao Backoffice
+## Modules
 
-O sistema possui uma área administrativa protegida.
-- URL: `/backoffice`
-- Login: Requer conta criada no Supabase (tabela `auth.users`).
+| Module | Routes | Description |
+|--------|--------|-------------|
+| **Leads CRM** | 12 | Pipeline, scoring, qualification, inbox |
+| **Imoveis** | 15 | CRUD, explorer, portfolio, comparator |
+| **Avaliacoes** | 8 | Motor NBR 14653, laudos, calculadora |
+| **AI Chat** | 3 | Multi-model chat with context engine |
+| **Tracking** | 6 | QR codes, link tracking, geo analytics |
+| **BPO Financeiro** | 5 | DRE, conciliacao, categorizacao IA |
+| **Rentals** | 3 | Short stay + traditional rental management |
+| **Social** | 8 | OAuth, inbox unificada, DM read/reply |
+| **Partnerships** | 7 | Inter-broker deals, commission tracking |
+| **Biblioteca** | 3 | 27 livros, reader, knowledge base |
 
-### Funcionalidades do Backoffice
+## Database
 
-1.  **Dashboard**: KPIs em tempo real, gráficos de vendas e leads.
-2.  **Gestão de Imóveis**: 
-    - CRUD completo de empreendimentos.
-    - Upload de mídia (Galeria, Plantas, Vídeos) com Drag & Drop.
-    - Gestão de status (Lançamento, Pronto, Em Obras).
-3.  **Gestão de Leads (CRM)**:
-    - Pipeline estilo Kanban.
-    - Timelime de interações.
-    - Classificação automática (Hot/Warm/Cold).
-4.  **Construtoras**: Cadastro de parceiros e upload de logos.
+Run migrations in order:
+1. `supabase/migrations/20260317_production_unified_migration.sql` (baseline)
+2. Any files dated after 20260317
 
-## 📁 Estrutura do Projeto
+## Environment Variables
 
-```
-src/
-├── app/
-│   ├── (backoffice)/       # Área administrativa (protegida)
-│   ├── (website)/          # Site público (SEO otimizado)
-│   ├── api/                # Rotas de API
-│   └── layout.tsx          # Root Layout
-├── components/
-│   ├── backoffice/         # UI do Admin (Sidebar, Charts, Forms)
-│   ├── website/            # UI do Site Público
-│   └── ui/                 # Componentes base (Buttons, Inputs)
-├── hooks/                  # Custom Hooks (SWR/Supabase)
-├── lib/                    # Configurações (Supabase Client, utils)
-└── types/                  # Definições TS
-```
+See `.env.example` for all required variables.
 
-## 🔄 Fluxo de Dados
+## Design System
 
-1.  **Imóveis**: Criados no Backoffice -> Salvos no Supabase -> Revalidados via ISR/SSR no Site Público.
-2.  **Mídia**: Upload via Backoffice -> Supabase Storage (Buckets: `developments`, `developers`) -> URLs públicas salvas no banco.
-3.  **Leads**: Capturados no Site (Formulários) -> Salvos no Supabase -> Visíveis no Kanban do Backoffice.
+- **Brand:** Navy (#050B14) x Gold (#C8A44A)
+- **Fonts:** Playfair Display (logo only) + Outfit (UI) + JetBrains Mono (data)
+- **Components:** Glass cards, navy buttons with gold accent line
+- **Reference:** `src/app/(backoffice)/lib/theme.ts`
 
-## 📱 Mobile First
+## License
 
-O projeto foi desenhado com prioridade para dispositivos móveis:
-- **Site**: navegação otimizada para toque, imagens responsivas.
-- **Backoffice**: Gestão completa via celular (Sidebar colapsável, tagueamento fácil).
-
-## 📄 Licença
-Propriedade IMI Inteligência Imobiliária.
+Proprietary — IMI Inteligencia Imobiliaria 2026

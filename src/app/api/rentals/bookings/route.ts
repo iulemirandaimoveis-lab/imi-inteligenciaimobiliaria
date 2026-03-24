@@ -1,7 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
 
 export const runtime = 'nodejs'
+
+const BookingPostSchema = z.object({
+    property_id: z.string().min(1),
+    guest_name: z.string().min(2).max(200),
+    guest_email: z.string().email().optional(),
+    guest_phone: z.string().optional(),
+    guests_count: z.number().int().positive().optional(),
+    check_in: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    check_out: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    source: z.string().optional(),
+    status: z.string().optional(),
+    total_amount: z.number().positive(),
+    cleaning_fee: z.number().min(0).optional(),
+    platform_fee: z.number().min(0).optional(),
+    net_amount: z.number().optional(),
+    payment_status: z.string().optional(),
+    notes: z.string().optional(),
+    external_booking_id: z.string().optional(),
+})
 
 async function getAuthenticatedSupabase() {
     const supabase = await createClient()
@@ -66,31 +86,29 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json()
-
-        if (!body.property_id || !body.guest_name || !body.check_in || !body.check_out || !body.total_amount) {
-            return NextResponse.json(
-                { error: 'property_id, guest_name, check_in, check_out e total_amount são obrigatórios' },
-                { status: 400 },
-            )
+        const parsed = BookingPostSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
+        const b = parsed.data
 
         const record = {
-            property_id: body.property_id,
-            guest_name: body.guest_name,
-            guest_email: body.guest_email || null,
-            guest_phone: body.guest_phone || null,
-            guests_count: body.guests_count ? Number(body.guests_count) : 1,
-            check_in: body.check_in,
-            check_out: body.check_out,
-            source: body.source || 'direct',
-            status: body.status || 'confirmed',
-            total_amount: Number(body.total_amount),
-            cleaning_fee: body.cleaning_fee ? Number(body.cleaning_fee) : 0,
-            platform_fee: body.platform_fee ? Number(body.platform_fee) : 0,
-            net_amount: body.net_amount ? Number(body.net_amount) : null,
-            payment_status: body.payment_status || 'pending',
-            notes: body.notes || null,
-            external_booking_id: body.external_booking_id || null,
+            property_id: b.property_id,
+            guest_name: b.guest_name,
+            guest_email: b.guest_email || null,
+            guest_phone: b.guest_phone || null,
+            guests_count: b.guests_count ?? 1,
+            check_in: b.check_in,
+            check_out: b.check_out,
+            source: b.source || 'direct',
+            status: b.status || 'confirmed',
+            total_amount: b.total_amount,
+            cleaning_fee: b.cleaning_fee ?? 0,
+            platform_fee: b.platform_fee ?? 0,
+            net_amount: b.net_amount ?? null,
+            payment_status: b.payment_status || 'pending',
+            notes: b.notes || null,
+            external_booking_id: b.external_booking_id || null,
         }
 
         const { data, error } = await supabase

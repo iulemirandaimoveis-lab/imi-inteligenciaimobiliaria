@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import QRCode from 'qrcode'
+import { z } from 'zod'
+
+const PixPostSchema = z.object({
+    amount: z.number().positive(),
+    description: z.string().max(200).optional(),
+    transactionId: z.string().optional(),
+    debtorName: z.string().max(200).optional(),
+})
 // ─── Pix EMV Payload Builder (BACEN spec CVM) ───────────────────────────────
 function emvField(id: string, value: string): string {
     return `${id}${String(value.length).padStart(2, '0')}${value}`
@@ -162,10 +170,11 @@ export async function POST(req: Request) {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await req.json()
-        const { amount, description, transactionId, debtorName } = body
-        if (!amount || Number(amount) <= 0) {
-            return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
+        const parsed = PixPostSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
+        const { amount, description, transactionId, debtorName } = parsed.data
         const txid = generateTxId()
         const provider = process.env.ABACATEPAY_TOKEN
             ? 'abacatepay'

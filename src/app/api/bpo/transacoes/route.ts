@@ -3,6 +3,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { z } from 'zod'
+
+const TransacaoPostSchema = z.object({
+    empresa_id: z.string().min(1),
+    conta_id: z.string().optional(),
+    categoria_id: z.string().optional(),
+    data: z.string().min(1),
+    descricao: z.string().optional(),
+    valor: z.number(),
+    tipo: z.enum(['receita', 'despesa']),
+})
 
 export const dynamic = 'force-dynamic'
 
@@ -70,15 +81,11 @@ export async function POST(req: NextRequest) {
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
         const body = await req.json()
-        const { empresa_id, conta_id, categoria_id, data, descricao, valor, tipo } = body
-
-        if (!empresa_id || !data || !valor || !tipo) {
-            return NextResponse.json({ error: 'empresa_id, data, valor e tipo são obrigatórios' }, { status: 400 })
+        const parsed = TransacaoPostSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
-
-        if (!['receita', 'despesa'].includes(tipo)) {
-            return NextResponse.json({ error: 'tipo deve ser "receita" ou "despesa"' }, { status: 400 })
-        }
+        const { empresa_id, conta_id, categoria_id, data, descricao, valor, tipo } = parsed.data
 
         const { data: tx, error } = await supabaseAdmin
             .from('bpo_transacoes')
