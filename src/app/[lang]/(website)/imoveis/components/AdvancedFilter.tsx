@@ -33,7 +33,7 @@ const PRICE_MAX = 10_000_000;
 const PRICE_STEP = 50_000;
 
 const STATUS_OPTIONS = [
-    { label: 'Lançamento', value: 'launch', color: '#C8A44A', dot: '🟡' },
+    { label: 'Lançamento', value: 'launch', color: '#0B1928', dot: '⬛' },
     { label: 'Em Construção', value: 'under_construction', color: '#F59E0B', dot: '🟡' },
     { label: 'Pronta Entrega', value: 'ready', color: '#10B981', dot: '🟢' },
 ];
@@ -103,8 +103,8 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
         <div className="px-1">
             {/* Labels */}
             <div className="flex justify-between mb-5">
-                <span style={{ color: '#C8A44A', fontSize: 12, fontWeight: 700 }}>{fmtPrice(value[0])}</span>
-                <span style={{ color: '#C8A44A', fontSize: 12, fontWeight: 700 }}>{fmtPrice(value[1])}</span>
+                <span className="text-[#0B1928] text-xs font-bold">{fmtPrice(value[0])}</span>
+                <span className="text-[#0B1928] text-xs font-bold">{fmtPrice(value[1])}</span>
             </div>
 
             {/* Track */}
@@ -113,7 +113,7 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                 <div style={{
                     position: 'absolute', top: '50%', left: 0, right: 0,
                     height: 4, borderRadius: 6,
-                    background: 'rgba(255,255,255,0.1)',
+                    background: '#E2E0DB',
                     transform: 'translateY(-50%)',
                     pointerEvents: 'none',
                 }} />
@@ -123,7 +123,7 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                     left: `${toPercent(value[0])}%`,
                     right: `${100 - toPercent(value[1])}%`,
                     height: 4, borderRadius: 6,
-                    background: 'linear-gradient(90deg, #334E68, #C8A44A)',
+                    background: '#0B1928',
                     transform: 'translateY(-50%)',
                     pointerEvents: 'none',
                 }} />
@@ -164,14 +164,14 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                     }}
                 />
 
-                {/* Visual thumbs (pointer-events none — purely decorative) */}
+                {/* Visual thumbs */}
                 <div style={{
                     position: 'absolute', top: '50%',
                     left: `${toPercent(value[0])}%`,
                     transform: 'translate(-50%, -50%)',
                     width: 18, height: 18, borderRadius: '50%',
-                    background: 'white', border: '2.5px solid #C8A44A',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                    background: 'white', border: '2.5px solid #0B1928',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                     pointerEvents: 'none', zIndex: 6,
                 }} />
                 <div style={{
@@ -179,8 +179,8 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                     left: `${toPercent(value[1])}%`,
                     transform: 'translate(-50%, -50%)',
                     width: 18, height: 18, borderRadius: '50%',
-                    background: 'white', border: '2.5px solid #C8A44A',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                    background: 'white', border: '2.5px solid #0B1928',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                     pointerEvents: 'none', zIndex: 6,
                 }} />
             </div>
@@ -194,10 +194,10 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                             key={p.label}
                             onClick={() => onChange(p.range)}
                             className={cn(
-                                "px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all",
+                                "px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all",
                                 active
-                                    ? "bg-navy-800/20 border-navy-600/60 text-navy-300"
-                                    : "border-white/10 text-white/40 hover:bg-white/5 hover:text-white/50"
+                                    ? "bg-[#0B1928] text-white border-[#0B1928]"
+                                    : "border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2] hover:text-[#2D3748]"
                             )}
                         >
                             {p.label}
@@ -207,7 +207,7 @@ function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
                 {(value[0] > 0 || value[1] < PRICE_MAX) && (
                     <button
                         onClick={() => onChange([PRICE_MIN, PRICE_MAX])}
-                        className="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all"
+                        className="px-3 py-1.5 rounded-xl text-[11px] font-semibold text-red-500 hover:text-red-600 transition-all"
                     >
                         Limpar
                     </button>
@@ -255,7 +255,6 @@ export default function AdvancedFilter({
     const setSearch = (key: string, val: string) =>
         setDropdownSearch(prev => ({ ...prev, [key]: val }));
 
-    // Clear search on dropdown close
     const openDropdown = (key: string) => {
         setSearch(key, '');
         setActiveDropdown(activeDropdown === key ? null : key);
@@ -307,7 +306,7 @@ export default function AdvancedFilter({
         setIsMobileOpen(false);
     };
 
-    // Badge count — all active filter categories
+    // Badge count
     const activeFilterCount = [
         filters.search ? 1 : 0,
         filters.location ? 1 : 0,
@@ -323,7 +322,7 @@ export default function AdvancedFilter({
 
     return (
         <div className="sticky top-20 z-40 w-full">
-            <div className="bg-navy-950/80 backdrop-blur-xl border-b border-white/[0.05] shadow-sm py-4">
+            <div className="bg-white border-b border-[#E2E0DB] shadow-sm py-4">
                 <div className="container-custom">
                     <div className="flex items-center justify-between gap-4">
 
@@ -331,12 +330,12 @@ export default function AdvancedFilter({
                         <motion.button
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setIsMobileOpen(true)}
-                            className="lg:hidden flex items-center gap-2 bg-navy-800 text-white px-4 py-3 rounded-xl font-semibold text-sm w-full justify-center active:bg-navy-700 border border-navy-700 transition-colors"
+                            className="lg:hidden flex items-center gap-2 bg-[#0B1928] text-white px-4 py-3 rounded-xl font-semibold text-sm w-full justify-center active:bg-[#1a2d42] border border-[#0B1928] transition-colors"
                         >
-                            <SlidersHorizontal className="w-4 h-4 text-navy-200" />
+                            <SlidersHorizontal className="w-4 h-4" />
                             Filtrar Imóveis
                             {activeFilterCount > 0 && (
-                                <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-navy-600 text-white text-[10px] font-bold flex items-center justify-center">
+                                <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-white text-[#0B1928] text-[10px] font-bold flex items-center justify-center">
                                     {activeFilterCount}
                                 </span>
                             )}
@@ -347,18 +346,18 @@ export default function AdvancedFilter({
 
                             {/* Search */}
                             <div className="relative">
-                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#948F84] pointer-events-none" />
                                 <input
                                     type="text"
                                     value={filters.search}
                                     onChange={e => updateFilter('search', e.target.value)}
                                     placeholder="Buscar..."
-                                    className="w-[180px] focus:w-[260px] pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-[#6B7280] outline-none focus:border-navy-600 focus:bg-white/[0.08] transition-all duration-300"
+                                    className="w-[180px] focus:w-[260px] pl-10 pr-8 py-2.5 bg-white border border-[#B8B3A8] rounded-xl text-sm text-[#0B1928] placeholder-[#B8B3A8] outline-none focus:border-[#0B1928] transition-all duration-300"
                                 />
                                 {filters.search && (
                                     <button
                                         onClick={() => updateFilter('search', '')}
-                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-white/40 hover:text-white transition-colors"
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-[#948F84] hover:text-[#2D3748] transition-colors"
                                     >
                                         <X size={14} />
                                     </button>
@@ -465,15 +464,15 @@ export default function AdvancedFilter({
                                                         updateFilter('status', next);
                                                     }}
                                                     className={cn(
-                                                        "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-navy-700 transition-colors flex items-center justify-between mb-1",
-                                                        sel ? "bg-navy-700 font-bold text-white" : "text-white/50"
+                                                        "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#F8F6F2] transition-colors flex items-center justify-between mb-1",
+                                                        sel ? "bg-[#F0EDE8] font-bold text-[#0B1928]" : "text-[#5A6577]"
                                                     )}
                                                 >
                                                     <span className="flex items-center gap-2">
                                                         <span style={{ width: 8, height: 8, borderRadius: '50%', background: opt.color, display: 'inline-block', flexShrink: 0 }} />
                                                         {opt.label}
                                                     </span>
-                                                    {sel && <Check className="w-4 h-4 text-navy-300" />}
+                                                    {sel && <Check className="w-4 h-4 text-[#0B1928]" />}
                                                 </button>
                                             );
                                         })}
@@ -504,12 +503,12 @@ export default function AdvancedFilter({
                                                         updateFilter('type', next);
                                                     }}
                                                     className={cn(
-                                                        "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-navy-700 transition-colors flex justify-between items-center mb-1",
-                                                        sel ? "bg-navy-700 font-bold text-white" : "text-white/50"
+                                                        "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#F8F6F2] transition-colors flex justify-between items-center mb-1",
+                                                        sel ? "bg-[#F0EDE8] font-bold text-[#0B1928]" : "text-[#5A6577]"
                                                     )}
                                                 >
                                                     {opt.label}
-                                                    {sel && <Check className="w-4 h-4 text-navy-300" />}
+                                                    {sel && <Check className="w-4 h-4 text-[#0B1928]" />}
                                                 </button>
                                             );
                                         })}
@@ -596,7 +595,7 @@ export default function AdvancedFilter({
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="filter-dropdown absolute top-full left-0 mt-2 bg-navy-800 rounded-2xl shadow-2xl border border-white/[0.05] p-5 z-50"
+                                        className="filter-dropdown absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-xl border border-[#E2E0DB] p-5 z-50"
                                         style={{ width: 300 }}
                                     >
                                         <PriceRangeSlider
@@ -634,7 +633,7 @@ export default function AdvancedFilter({
                             {hasAnyFilter && (
                                 <button
                                     onClick={clearFilters}
-                                    className="text-xs font-bold text-red-400 hover:text-red-300 uppercase tracking-wider px-3 transition-colors"
+                                    className="text-xs font-bold text-red-500 hover:text-red-600 uppercase tracking-wider px-3 transition-colors"
                                 >
                                     Limpar
                                 </button>
@@ -643,7 +642,7 @@ export default function AdvancedFilter({
 
                         {/* Desktop active filter badge */}
                         {activeFilterCount > 0 && (
-                            <span className="hidden lg:flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-[#C8A44A]/20 text-[#C8A44A] border border-[#C8A44A]/30 text-[10px] font-bold flex-shrink-0">
+                            <span className="hidden lg:flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-[#F0EDE8] text-[#0B1928] border border-[#E2E0DB] text-[10px] font-bold flex-shrink-0">
                                 {activeFilterCount}
                             </span>
                         )}
@@ -658,35 +657,35 @@ export default function AdvancedFilter({
                         <motion.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             onClick={() => setIsMobileOpen(false)}
-                            className="fixed inset-0 bg-black/60 z-50 lg:hidden backdrop-blur-sm"
+                            className="fixed inset-0 bg-black/40 z-50 lg:hidden"
                         />
                         <motion.div
                             initial={{ opacity: 0, y: '100%' }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: '100%' }}
                             transition={{ type: "spring", damping: 28, stiffness: 220 }}
-                            className="fixed inset-x-0 bottom-0 top-[8vh] z-50 bg-navy-950 rounded-t-3xl flex flex-col overflow-hidden shadow-2xl lg:hidden border-t border-white/10"
+                            className="fixed inset-x-0 bottom-0 top-[8vh] z-50 bg-white rounded-t-3xl flex flex-col overflow-hidden shadow-2xl lg:hidden border-t border-[#E2E0DB]"
                         >
                             {/* Drag handle */}
                             <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-                                <div className="w-10 h-1 rounded-full bg-white/20" />
+                                <div className="w-10 h-1 rounded-full bg-[#E2E0DB]" />
                             </div>
 
                             {/* Header */}
-                            <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.05] flex-shrink-0">
+                            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#E2E0DB] flex-shrink-0">
                                 <div className="flex items-center gap-2.5">
-                                    <h2 className="font-display text-lg font-bold text-white">Filtros</h2>
+                                    <h2 className="text-lg font-bold text-[#0B1928]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Filtros</h2>
                                     {activeFilterCount > 0 && (
-                                        <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-navy-600 text-white text-[10px] font-bold flex items-center justify-center">
+                                        <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-[#0B1928] text-white text-[10px] font-bold flex items-center justify-center">
                                             {activeFilterCount}
                                         </span>
                                     )}
                                 </div>
                                 <button
                                     onClick={() => setIsMobileOpen(false)}
-                                    className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+                                    className="p-2 bg-[#F0EDE8] rounded-lg hover:bg-[#E2E0DB] transition-colors"
                                 >
-                                    <X className="w-4 h-4 text-white/50" />
+                                    <X className="w-4 h-4 text-[#5A6577]" />
                                 </button>
                             </div>
 
@@ -695,20 +694,20 @@ export default function AdvancedFilter({
 
                                 {/* Busca */}
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3">Buscar</h3>
+                                    <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-3">Buscar</h3>
                                     <div className="relative">
-                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
+                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#948F84] pointer-events-none" />
                                         <input
                                             type="text"
                                             value={mobileFilters.search}
                                             onChange={e => updateMobileFilter('search', e.target.value)}
                                             placeholder="Nome, bairro, cidade, construtora..."
-                                            className="w-full pl-11 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-[#6B7280] outline-none focus:border-navy-600 transition-colors"
+                                            className="w-full pl-11 pr-10 h-12 bg-white border border-[#B8B3A8] rounded-xl text-sm text-[#0B1928] placeholder-[#B8B3A8] outline-none focus:border-[#0B1928] transition-colors"
                                         />
                                         {mobileFilters.search && (
                                             <button
                                                 onClick={() => updateMobileFilter('search', '')}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/40 hover:text-white transition-colors"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#948F84] hover:text-[#2D3748] transition-colors"
                                             >
                                                 <X size={16} />
                                             </button>
@@ -718,7 +717,7 @@ export default function AdvancedFilter({
 
                                 {/* Localização */}
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3">Localização</h3>
+                                    <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-3">Localização</h3>
                                     <div
                                         className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1"
                                         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
@@ -741,7 +740,7 @@ export default function AdvancedFilter({
                                 {/* Bairro */}
                                 {neighborhoods.length > 0 && (
                                     <div>
-                                        <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3">Bairro</h3>
+                                        <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-3">Bairro</h3>
                                         <div
                                             className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1"
                                             style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
@@ -764,7 +763,7 @@ export default function AdvancedFilter({
 
                                 {/* Status */}
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3">Status do Empreendimento</h3>
+                                    <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-3">Status do Empreendimento</h3>
                                     <div className="grid grid-cols-1 gap-2">
                                         {STATUS_OPTIONS.map(opt => {
                                             const sel = mobileFilters.status.includes(opt.value);
@@ -780,15 +779,15 @@ export default function AdvancedFilter({
                                                     className={cn(
                                                         "px-4 py-3 rounded-xl text-[13px] font-semibold border flex items-center justify-between transition-all",
                                                         sel
-                                                            ? "bg-navy-800/10 border-navy-600/50 text-navy-300"
-                                                            : "bg-transparent border-white/10 text-white/50 hover:bg-white/5"
+                                                            ? "bg-[#F0EDE8] border-[#0B1928] text-[#0B1928]"
+                                                            : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2]"
                                                     )}
                                                 >
                                                     <span className="flex items-center gap-3">
                                                         <span style={{ width: 10, height: 10, borderRadius: '50%', background: opt.color, display: 'inline-block', flexShrink: 0 }} />
                                                         {opt.label}
                                                     </span>
-                                                    {sel && <Check className="w-4 h-4 text-navy-300" />}
+                                                    {sel && <Check className="w-4 h-4 text-[#0B1928]" />}
                                                 </button>
                                             );
                                         })}
@@ -797,7 +796,7 @@ export default function AdvancedFilter({
 
                                 {/* Tipo */}
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3">Tipo do Imóvel</h3>
+                                    <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-3">Tipo do Imóvel</h3>
                                     <div className="grid grid-cols-2 gap-2">
                                         {TYPE_OPTIONS.map(opt => {
                                             const sel = mobileFilters.type.includes(opt.value);
@@ -813,12 +812,12 @@ export default function AdvancedFilter({
                                                     className={cn(
                                                         "px-4 py-3 rounded-xl text-[13px] font-semibold border flex justify-between items-center transition-all",
                                                         sel
-                                                            ? "bg-navy-800/10 border-navy-600/50 text-navy-300"
-                                                            : "bg-transparent border-white/10 text-white/50 hover:bg-white/5"
+                                                            ? "bg-[#F0EDE8] border-[#0B1928] text-[#0B1928]"
+                                                            : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2]"
                                                     )}
                                                 >
                                                     {opt.label}
-                                                    {sel && <Check className="w-4 h-4 text-navy-300" />}
+                                                    {sel && <Check className="w-4 h-4 text-[#0B1928]" />}
                                                 </button>
                                             );
                                         })}
@@ -827,15 +826,15 @@ export default function AdvancedFilter({
 
                                 {/* Quartos */}
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3">Quartos</h3>
+                                    <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-3">Quartos</h3>
                                     <div className="grid grid-cols-5 gap-2">
                                         <button
                                             onClick={() => updateMobileFilter('bedrooms', null)}
                                             className={cn(
                                                 "py-3 rounded-xl text-[13px] font-semibold border flex justify-center items-center transition-all",
                                                 !mobileFilters.bedrooms
-                                                    ? "bg-navy-800/10 border-navy-600/50 text-navy-300"
-                                                    : "bg-transparent border-white/10 text-white/50 hover:bg-white/5"
+                                                    ? "bg-[#F0EDE8] border-[#0B1928] text-[#0B1928]"
+                                                    : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2]"
                                             )}
                                         >
                                             Todos
@@ -847,8 +846,8 @@ export default function AdvancedFilter({
                                                 className={cn(
                                                     "py-3 rounded-xl text-[13px] font-semibold border flex justify-center items-center transition-all",
                                                     mobileFilters.bedrooms === n
-                                                        ? "bg-navy-800/10 border-navy-600/50 text-navy-300"
-                                                        : "bg-transparent border-white/10 text-white/50 hover:bg-white/5"
+                                                        ? "bg-[#F0EDE8] border-[#0B1928] text-[#0B1928]"
+                                                        : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2]"
                                                 )}
                                             >
                                                 {n}+
@@ -859,20 +858,20 @@ export default function AdvancedFilter({
 
                                 {/* Área */}
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3">Área (m²)</h3>
+                                    <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-3">Área (m²)</h3>
                                     <div className="grid grid-cols-2 gap-2">
                                         <button
                                             onClick={() => updateMobileFilter('areaRange', [AREA_MIN, AREA_MAX])}
                                             className={cn(
                                                 "px-4 py-3 rounded-xl text-[13px] font-semibold border flex justify-between items-center transition-all",
                                                 mobileFilters.areaRange[0] === AREA_MIN && mobileFilters.areaRange[1] === AREA_MAX
-                                                    ? "bg-navy-800/10 border-navy-600/50 text-navy-300"
-                                                    : "bg-transparent border-white/10 text-white/50 hover:bg-white/5"
+                                                    ? "bg-[#F0EDE8] border-[#0B1928] text-[#0B1928]"
+                                                    : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2]"
                                             )}
                                         >
                                             Qualquer
                                             {mobileFilters.areaRange[0] === AREA_MIN && mobileFilters.areaRange[1] === AREA_MAX && (
-                                                <Check className="w-4 h-4 text-navy-300" />
+                                                <Check className="w-4 h-4 text-[#0B1928]" />
                                             )}
                                         </button>
                                         {AREA_PRESETS.map(p => {
@@ -884,21 +883,21 @@ export default function AdvancedFilter({
                                                     className={cn(
                                                         "px-4 py-3 rounded-xl text-[13px] font-semibold border flex justify-between items-center transition-all",
                                                         sel
-                                                            ? "bg-navy-800/10 border-navy-600/50 text-navy-300"
-                                                            : "bg-transparent border-white/10 text-white/50 hover:bg-white/5"
+                                                            ? "bg-[#F0EDE8] border-[#0B1928] text-[#0B1928]"
+                                                            : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2]"
                                                     )}
                                                 >
                                                     {p.label}
-                                                    {sel && <Check className="w-4 h-4 text-navy-300" />}
+                                                    {sel && <Check className="w-4 h-4 text-[#0B1928]" />}
                                                 </button>
                                             );
                                         })}
                                     </div>
                                 </div>
 
-                                {/* Faixa de Preço — range slider */}
+                                {/* Faixa de Preço */}
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-4">Faixa de Preço</h3>
+                                    <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-4">Faixa de Preço</h3>
                                     <PriceRangeSlider
                                         value={mobileFilters.priceRange}
                                         onChange={v => updateMobileFilter('priceRange', v)}
@@ -907,7 +906,7 @@ export default function AdvancedFilter({
 
                                 {/* Ordenação */}
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3">Ordenação</h3>
+                                    <h3 className="text-[10px] font-bold text-[#948F84] uppercase tracking-widest mb-3">Ordenação</h3>
                                     <div className="grid grid-cols-2 gap-2">
                                         {SORT_OPTIONS.map(opt => (
                                             <button
@@ -916,12 +915,12 @@ export default function AdvancedFilter({
                                                 className={cn(
                                                     "px-4 py-3 rounded-xl text-[13px] font-semibold border flex justify-between items-center transition-all",
                                                     mobileFilters.sort === opt.value
-                                                        ? "bg-navy-800/10 border-navy-600/50 text-navy-300"
-                                                        : "bg-transparent border-white/10 text-white/50 hover:bg-white/5"
+                                                        ? "bg-[#F0EDE8] border-[#0B1928] text-[#0B1928]"
+                                                        : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2]"
                                                 )}
                                             >
                                                 {opt.label}
-                                                {mobileFilters.sort === opt.value && <Check className="w-4 h-4 text-navy-300" />}
+                                                {mobileFilters.sort === opt.value && <Check className="w-4 h-4 text-[#0B1928]" />}
                                             </button>
                                         ))}
                                     </div>
@@ -929,25 +928,23 @@ export default function AdvancedFilter({
                             </div>
 
                             {/* Footer */}
-                            <div className="px-5 pt-4 pb-4 border-t border-white/[0.05] flex-shrink-0" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
+                            <div className="px-5 pt-4 pb-4 border-t border-[#E2E0DB] flex-shrink-0" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
                                 <div className="flex gap-2.5">
-                                    <Button
-                                        variant="outline"
-                                        className="flex-1 justify-center border-white/15 text-white/50 hover:bg-white/5 h-[46px] rounded-xl font-semibold text-sm"
+                                    <button
+                                        className="flex-1 h-12 rounded-xl border border-[#B8B3A8] bg-white text-[#5A6577] text-sm font-semibold cursor-pointer hover:bg-[#F8F6F2] transition-colors"
                                         onClick={clearFilters}
                                     >
                                         Limpar
-                                    </Button>
-                                    <Button
-                                        className="flex-[2] justify-center h-[46px] rounded-xl font-bold text-sm text-white shadow-[0_4px_16px_rgba(51,78,104,0.45)]"
-                                        style={{ background: 'linear-gradient(135deg, #334E68 0%, #243B53 100%)' }}
+                                    </button>
+                                    <button
+                                        className="flex-[2] h-12 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer hover:bg-[#1a2d42] transition-colors"
                                         onClick={applyMobileFilters}
                                     >
                                         {activeFilterCount > 0
                                             ? `Ver Resultados (${activeFilterCount} ${activeFilterCount === 1 ? 'filtro' : 'filtros'})`
                                             : 'Ver Resultados'
                                         }
-                                    </Button>
+                                    </button>
                                 </div>
                             </div>
                         </motion.div>
@@ -963,14 +960,14 @@ export default function AdvancedFilter({
 function SearchInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
     return (
         <div className="relative mb-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40 pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#948F84] pointer-events-none" />
             <input
                 autoFocus
                 type="text"
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder || 'Buscar...'}
-                className="w-full pl-8 pr-3 py-2 bg-white/5 border border-white/10 rounded-xl text-[13px] text-white placeholder-[#6B7280] outline-none focus:border-navy-600 transition-colors"
+                className="w-full pl-8 pr-3 py-2 bg-white border border-[#B8B3A8] rounded-xl text-[13px] text-[#0B1928] placeholder-[#B8B3A8] outline-none focus:border-[#0B1928] transition-colors"
             />
         </div>
     );
@@ -992,10 +989,10 @@ function FilterButton({ label, icon: Icon, active, hasValue, onClick }: FilterBu
             className={cn(
                 "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200 whitespace-nowrap",
                 active
-                    ? "bg-navy-700 border-navy-700 border-l-2 border-l-[#334E68] text-white"
+                    ? "bg-[#F0EDE8] border-[#0B1928] text-[#0B1928]"
                     : hasValue
-                        ? "bg-navy-800/15 border-navy-600/40 text-navy-300"
-                        : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                        ? "bg-[#F8F6F2] border-[#0B1928] text-[#0B1928]"
+                        : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2] hover:border-[#948F84] hover:text-[#2D3748]"
             )}
         >
             <Icon className="w-4 h-4 flex-shrink-0" />
@@ -1017,7 +1014,7 @@ function DropdownPanel({ children, width = 240, maxH }: DropdownPanelProps) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className="filter-dropdown absolute top-full left-0 mt-2 bg-navy-800 rounded-2xl shadow-2xl border border-white/[0.06] p-2 z-50"
+            className="filter-dropdown absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-xl border border-[#E2E0DB] p-2 z-50"
             style={{ width, ...(maxH ? { maxHeight: maxH, overflowY: 'auto' } : {}) }}
         >
             {children}
@@ -1036,12 +1033,12 @@ function DropdownItem({ label, active, onClick }: DropdownItemProps) {
         <button
             onClick={onClick}
             className={cn(
-                "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-navy-700 transition-colors flex justify-between items-center mb-0.5",
-                active ? "bg-navy-700 font-bold text-white" : "text-white/50"
+                "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#F8F6F2] transition-colors flex justify-between items-center mb-0.5",
+                active ? "bg-[#F0EDE8] font-bold text-[#0B1928]" : "text-[#5A6577]"
             )}
         >
             {label}
-            {active && <Check className="w-4 h-4 text-navy-300 flex-shrink-0" />}
+            {active && <Check className="w-4 h-4 text-[#0B1928] flex-shrink-0" />}
         </button>
     );
 }
@@ -1059,8 +1056,8 @@ function MobileChip({ label, active, onClick }: MobileChipProps) {
             className={cn(
                 "px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all whitespace-nowrap",
                 active
-                    ? "bg-navy-800/15 border-navy-600/50 text-navy-300"
-                    : "bg-transparent border-white/10 text-white/50 hover:bg-white/5"
+                    ? "bg-[#0B1928] text-white border-[#0B1928]"
+                    : "bg-white border-[#B8B3A8] text-[#5A6577] hover:bg-[#F8F6F2]"
             )}
         >
             {label}

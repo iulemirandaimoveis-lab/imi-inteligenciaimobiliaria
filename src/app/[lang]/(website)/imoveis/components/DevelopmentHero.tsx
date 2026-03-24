@@ -22,9 +22,9 @@ const formatPrice = (price: number) => {
 };
 
 const STATUS_LABELS: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    launch: { label: 'Lançamento', color: GOLD, bg: 'rgba(200,164,74,0.12)', border: 'rgba(200,164,74,0.25)' },
-    ready: { label: 'Pronta Entrega', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', border: 'rgba(107,184,123,0.25)' },
-    under_construction: { label: 'Em Construção', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.25)' },
+    launch: { label: 'Lançamento', color: '#FFFFFF', bg: '#0B1928', border: '#0B1928' },
+    ready: { label: 'Pronta Entrega', color: '#FFFFFF', bg: '#0B1928', border: '#0B1928' },
+    under_construction: { label: 'Em Construção', color: '#FFFFFF', bg: '#0B1928', border: '#0B1928' },
 };
 
 export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
@@ -176,8 +176,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                                 <motion.div variants={slideUp} className="flex items-center gap-3">
                                     <span
-                                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-[3px] text-[11px] font-bold uppercase tracking-widest"
-                                        style={{ background: statusCfg.bg, color: statusCfg.color, border: `1px solid ${statusCfg.border}`, backdropFilter: 'blur(12px)' }}
+                                        className="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest"
+                                        style={{ background: statusCfg.bg, color: statusCfg.color }}
                                     >
                                         {development.status === 'ready' && (
                                             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
@@ -186,8 +186,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                     </span>
                                     {/* Trust badge */}
                                     <span
-                                        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] text-[11px] font-bold uppercase tracking-widest"
-                                        style={{ background: 'rgba(200,164,74,0.12)', color: GOLD, border: `1px solid rgba(200,164,74,0.2)`, backdropFilter: 'blur(12px)' }}
+                                        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest"
+                                        style={{ background: '#0B1928', color: '#FFFFFF' }}
                                     >
                                         <Shield size={10} />
                                         Verificado IMI

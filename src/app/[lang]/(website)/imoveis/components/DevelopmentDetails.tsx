@@ -67,28 +67,28 @@ function FinancialSimulator({ price }: { price: number }) {
     const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
     return (
-        <section className="mt-8 p-4 sm:p-6 rounded-[10px]" style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)' }}>
+        <section className="mt-8 p-4 sm:p-6 rounded-2xl" style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
             <div className="flex items-center gap-3 mb-1">
-                <div className="w-8 h-[2px] rounded-full" style={{ background: GOLD }} />
-                <span className="text-[11px] uppercase tracking-[0.25em] font-bold" style={{ color: GOLD }}>Financiamento</span>
+                <div className="w-8 h-[2px] rounded-full" style={{ background: '#B8B3A8' }} />
+                <span className="text-[10px] uppercase tracking-[0.25em] font-bold" style={{ color: '#948F84' }}>Financiamento</span>
             </div>
-            <h2 className="text-xl font-bold mb-1 text-white" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+            <h2 className="text-xl font-bold mb-1" style={{ fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: '#0B1928' }}>
                 Simulador Financeiro
             </h2>
-            <p className="text-sm mb-6" style={{ color: '#8E99AB' }}>Simule o financiamento deste imóvel</p>
+            <p className="text-sm mb-6" style={{ color: '#948F84' }}>Simule o financiamento deste imóvel</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div>
-                    <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#8E99AB' }}>Entrada ({entrada}%)</label>
+                    <label className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#948F84' }}>Entrada ({entrada}%)</label>
                     <input type="range" min={10} max={50} step={5} value={entrada} onChange={e => setEntrada(Number(e.target.value))}
-                        className="w-full mt-2 accent-[#C8A44A]" />
-                    <p className="text-sm mt-1 text-white" style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{fmt(entradaValor)}</p>
+                        className="w-full mt-2 accent-[#0B1928]" />
+                    <p className="text-sm mt-1" style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#0B1928' }}>{fmt(entradaValor)}</p>
                 </div>
                 <div>
-                    <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#8E99AB' }}>Prazo</label>
+                    <label className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#948F84' }}>Prazo</label>
                     <select value={prazo} onChange={e => setPrazo(Number(e.target.value))}
-                        className="w-full mt-2 h-11 px-3 rounded-[4px] text-sm text-white"
-                        style={{ background: 'rgba(10,22,36,0.8)', border: '1px solid rgba(200,164,74,0.15)', outline: 'none' }}>
+                        className="w-full mt-2 h-12 px-3 rounded-xl text-sm"
+                        style={{ background: '#FFFFFF', border: '1px solid #B8B3A8', color: '#0B1928', outline: 'none' }}>
                         <option value={120}>10 anos (120x)</option>
                         <option value={240}>20 anos (240x)</option>
                         <option value={360}>30 anos (360x)</option>
@@ -96,31 +96,31 @@ function FinancialSimulator({ price }: { price: number }) {
                     </select>
                 </div>
                 <div>
-                    <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#8E99AB' }}>Taxa anual (%)</label>
+                    <label className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#948F84' }}>Taxa anual (%)</label>
                     <input type="number" min={5} max={15} step={0.1} value={taxa} onChange={e => setTaxa(Number(e.target.value))}
-                        className="w-full mt-2 h-11 px-3 rounded-[4px] text-sm text-white"
-                        style={{ background: 'rgba(10,22,36,0.8)', border: '1px solid rgba(200,164,74,0.15)', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", outline: 'none' }} />
+                        className="w-full mt-2 h-12 px-3 rounded-xl text-sm"
+                        style={{ background: '#FFFFFF', border: '1px solid #B8B3A8', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#0B1928', outline: 'none' }} />
                 </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-[10px]" style={{ background: 'rgba(10,22,36,0.6)', border: '1px solid rgba(200,164,74,0.08)' }}>
-                    <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8E99AB' }}>Tabela SAC</p>
-                    <p className="text-2xl font-bold" style={{ color: '#C8A44A', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
+                <div className="p-4 rounded-2xl" style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)' }}>
+                    <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#948F84' }}>Tabela SAC</p>
+                    <p className="text-2xl font-bold" style={{ color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
                         {fmt(primeiraParcSAC)}
                     </p>
-                    <p className="text-xs mt-1" style={{ color: '#627D98' }}>1ª parcela · última: {fmt(ultimaParcSAC)}</p>
+                    <p className="text-xs mt-1" style={{ color: '#948F84' }}>1ª parcela · última: {fmt(ultimaParcSAC)}</p>
                 </div>
-                <div className="p-4 rounded-[10px]" style={{ background: 'rgba(10,22,36,0.6)', border: '1px solid rgba(200,164,74,0.08)' }}>
-                    <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8E99AB' }}>Tabela PRICE</p>
-                    <p className="text-2xl font-bold" style={{ color: '#C8A44A', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
+                <div className="p-4 rounded-2xl" style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)' }}>
+                    <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#948F84' }}>Tabela PRICE</p>
+                    <p className="text-2xl font-bold" style={{ color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
                         {fmt(parcelaPrice)}
                     </p>
-                    <p className="text-xs mt-1" style={{ color: '#627D98' }}>Parcela fixa por {prazo} meses</p>
+                    <p className="text-xs mt-1" style={{ color: '#948F84' }}>Parcela fixa por {prazo} meses</p>
                 </div>
             </div>
 
-            <p className="text-[11px] mt-4" style={{ color: '#627D98' }}>* Simulação aproximada. Consulte um especialista para valores exatos. Taxa de referência: financiamento imobiliário convencional.</p>
+            <p className="text-[11px] mt-4" style={{ color: '#948F84' }}>* Simulação aproximada. Consulte um especialista para valores exatos. Taxa de referência: financiamento imobiliário convencional.</p>
         </section>
     )
 }
@@ -143,12 +143,12 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
             {/* Section heading — premium style */}
             <motion.div variants={slideUp} className="mb-10">
                 <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-[2px] rounded-full" style={{ background: GOLD }} />
-                    <span className="text-[11px] uppercase tracking-[0.25em] font-bold" style={{ color: GOLD, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Sobre</span>
+                    <div className="w-8 h-[2px] rounded-full" style={{ background: '#B8B3A8' }} />
+                    <span className="text-[10px] uppercase tracking-[0.25em] font-bold" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Sobre</span>
                 </div>
                 <h2
-                    className="text-2xl md:text-[32px] text-gray-900 font-bold tracking-tight leading-tight"
-                    style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
+                    className="text-2xl md:text-[32px] font-bold tracking-tight leading-tight"
+                    style={{ fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: '#0B1928' }}
                 >
                     Sobre o empreendimento
                 </h2>
@@ -158,11 +158,11 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
             {development.units && development.units.length > 0 && (
                 <motion.div variants={slideUp}>
                     <div style={{
-                        background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.15)',
-                        borderRadius: 8, padding: '10px 16px', marginBottom: 16,
+                        background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)',
+                        borderRadius: 12, padding: '10px 16px', marginBottom: 16,
                         display: 'flex', alignItems: 'center', gap: 8,
                     }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#C8A44A', letterSpacing: '0.5px' }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#0B1928', letterSpacing: '0.5px' }}>
                             {development.units.filter(u => u.status === 'available').length} unidades disponíveis
                         </span>
                     </div>
@@ -171,32 +171,30 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
 
             {/* Description */}
             <motion.div variants={slideUp} className="mb-12">
-                <p className="text-gray-500 leading-[1.9] text-[15px] md:text-base max-w-2xl"
-                   style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                <p className="leading-[1.9] text-[15px] md:text-base max-w-2xl"
+                   style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)", color: '#2D3748' }}>
                     {development.description}
                 </p>
             </motion.div>
 
-            {/* Specs Grid — glass cards */}
+            {/* Specs Grid — light cards */}
             <motion.div variants={slideUp} className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-14">
                 {specs.map((spec, idx) => (
                     <div
                         key={idx}
-                        className="rounded-[10px] p-5 md:p-7 relative overflow-hidden group transition-all duration-300 hover:translate-y-[-2px]"
+                        className="rounded-2xl p-5 md:p-7 relative overflow-hidden group transition-all duration-300 hover:translate-y-[-2px]"
                         style={{
-                            background: 'rgba(14,28,48,.52)',
-                            border: '1px solid rgba(200,164,74,0.12)',
-                            boxShadow: '0 4px 24px rgba(11,25,40,0.4)',
-                            backdropFilter: 'blur(20px)',
+                            background: '#FFFFFF',
+                            border: '1px solid rgba(184,179,168,0.3)',
+                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
                         }}
                     >
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(200,164,74,0.08) 0%, transparent 70%)' }} />
                         <div className="relative z-10">
-                            <div className="w-11 h-11 rounded-[4px] flex items-center justify-center mb-4" style={{ background: 'rgba(200,164,74,0.1)', border: '1px solid rgba(200,164,74,0.15)' }}>
-                                <spec.icon className="w-5 h-5" strokeWidth={1.5} style={{ color: GOLD }} />
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: '#F0EDE5' }}>
+                                <spec.icon className="w-5 h-5" strokeWidth={1.5} style={{ color: '#0B1928' }} />
                             </div>
-                            <p className="uppercase tracking-[0.2em] font-bold mb-2" style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>{spec.label}</p>
-                            <p className="text-white font-bold" style={{ fontSize: 22, lineHeight: 1.1, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
+                            <p className="uppercase tracking-[0.2em] font-bold mb-2" style={{ fontSize: 10, color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>{spec.label}</p>
+                            <p className="font-bold" style={{ fontSize: 22, lineHeight: 1.1, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#0B1928' }}>
                                 {spec.value}{spec.unit}
                             </p>
                         </div>
@@ -209,28 +207,24 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                 <motion.div variants={slideUp}>
                     <div className="mb-8">
                         <div className="flex items-center gap-3 mb-3">
-                            <div className="w-8 h-[2px] rounded-full" style={{ background: GOLD }} />
-                            <span className="text-[11px] uppercase tracking-[0.25em] font-bold" style={{ color: GOLD, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Infraestrutura</span>
+                            <div className="w-8 h-[2px] rounded-full" style={{ background: '#B8B3A8' }} />
+                            <span className="text-[10px] uppercase tracking-[0.25em] font-bold" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Infraestrutura</span>
                         </div>
                         <h3
-                            className="text-xl md:text-2xl text-gray-900 font-bold tracking-tight"
-                            style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
+                            className="text-xl md:text-2xl font-bold tracking-tight"
+                            style={{ fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: '#0B1928' }}
                         >
                             Diferenciais e Lazer
                         </h3>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="flex flex-wrap gap-2.5">
                         {development.features.map((feature, idx) => {
                             const FeatureIcon = getFeatureIcon(feature);
                             return (
-                                <div key={idx} className="flex items-center gap-3 group py-2.5 px-4 rounded-[10px] transition-all duration-200 hover:bg-gray-50">
-                                    <div
-                                        className="w-8 h-8 rounded-[4px] flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-105"
-                                        style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.12)' }}
-                                    >
-                                        <FeatureIcon className="w-3.5 h-3.5" style={{ color: GOLD }} />
-                                    </div>
-                                    <span className="text-gray-600 text-sm font-medium group-hover:text-gray-900 transition-colors">{feature}</span>
+                                <div key={idx} className="flex items-center gap-2 py-2 px-3.5 rounded-xl transition-all duration-200"
+                                    style={{ background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)' }}>
+                                    <FeatureIcon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#0B1928', opacity: 0.6 }} />
+                                    <span className="text-sm font-medium" style={{ color: '#0B1928' }}>{feature}</span>
                                 </div>
                             );
                         })}

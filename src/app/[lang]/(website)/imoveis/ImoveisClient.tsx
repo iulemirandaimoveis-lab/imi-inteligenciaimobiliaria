@@ -29,13 +29,16 @@ const DEFAULT_FILTERS: FilterState = {
     sort: 'relevant',
 };
 
-const GOLD = '#C8A44A';
-const SURFACE = '#0F2035';
-const BG = '#0B1928';
-const TEXT = '#EBE7E0';
-const TEXT_MUTED = '#8A9BB0';
-const BORDER = 'rgba(200,164,74,0.12)';
-const GOLD_BG = 'rgba(200,164,74,0.15)';
+/* ── Light-theme tokens ──────────────────────────────────────────── */
+const PAGE_BG = '#F8F6F2';
+const CARD_BG = '#FFFFFF';
+const NAVY = '#0B1928';
+const TEXT_PRIMARY = '#0B1928';
+const TEXT_BODY = '#2D3748';
+const TEXT_MUTED = '#948F84';
+const TEXT_SUB = '#5A6577';
+const BORDER = '#E2E0DB';
+const BORDER_INPUT = '#B8B3A8';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -49,9 +52,9 @@ const formatPrice = (min: number) => {
 };
 
 const BADGE_STYLES: Record<string, { bg: string; color: string }> = {
-    launch:            { bg: '#0A1624', color: '#fff' },
-    ready:             { bg: '#6BB87B', color: '#0B1928' },
-    under_construction:{ bg: '#F59E0B', color: '#0B1928' },
+    launch:            { bg: NAVY, color: '#fff' },
+    ready:             { bg: '#6BB87B', color: '#fff' },
+    under_construction:{ bg: '#F59E0B', color: '#fff' },
 };
 const BADGE_LABELS: Record<string, string> = {
     launch: 'Lançamento', ready: 'Pronta Entrega', under_construction: 'Em Obra',
@@ -60,7 +63,7 @@ const BADGE_LABELS: Record<string, string> = {
 const PropertyMap = dynamic(() => import('@/components/maps/PropertyMap'), {
     ssr: false,
     loading: () => (
-        <div style={{ height: '100%', minHeight: 400, background: SURFACE, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ height: '100%', minHeight: 400, background: '#F0EDE8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: TEXT_MUTED, fontSize: 14 }}>Carregando mapa...</span>
         </div>
     ),
@@ -81,114 +84,77 @@ function PropertyCard({ dev, lang }: { dev: Development; lang: string }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.4 }}
-            style={{
-                background: SURFACE,
-                border: `1px solid ${BORDER}`,
-                borderRadius: 20,
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-            }}
+            className="bg-white border border-[#E2E0DB] rounded-2xl overflow-hidden flex flex-col hover:shadow-md transition-shadow"
         >
             {/* Image */}
-            <a href={`/${lang}/imoveis/${dev.slug}`} style={{ display: 'block', position: 'relative', aspectRatio: '16/9', background: '#071422', flexShrink: 0 }}>
+            <a href={`/${lang}/imoveis/${dev.slug}`} className="block relative aspect-[16/9] bg-[#F0EDE8] flex-shrink-0 overflow-hidden">
                 {dev.images.main ? (
-                    <img src={dev.images.main} alt={dev.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    <img src={dev.images.main} alt={dev.name} className="w-full h-full object-cover block hover:scale-105 transition-transform duration-500" />
                 ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: 0.15 }}>🏢</div>
+                    <div className="w-full h-full flex items-center justify-center text-[40px] opacity-15">🏢</div>
                 )}
-                {/* Gradient overlay */}
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, rgba(11,25,40,0.65) 100%)' }} />
 
                 {/* Badge top-left */}
-                <span style={{
-                    position: 'absolute', top: 12, left: 12,
-                    background: badge.bg, color: badge.color,
-                    fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-                    padding: '3px 10px', borderRadius: 6, textTransform: 'uppercase',
-                }}>
+                <span className="absolute top-3 left-3 bg-[#0B1928] text-white text-[10px] font-bold tracking-widest uppercase rounded-lg px-3 py-1">
                     {label}
                 </span>
 
                 {/* Heart + Share top-right */}
-                <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', gap: 6 }}>
+                <div className="absolute top-2.5 right-2.5 flex gap-1.5">
                     {[Heart, Share2].map((Icon, i) => (
-                        <button key={i} style={{
-                            width: 32, height: 32, borderRadius: '50%',
-                            background: 'rgba(11,25,40,0.6)', backdropFilter: 'blur(8px)',
-                            border: '1px solid rgba(255,255,255,0.12)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            cursor: 'pointer', color: '#fff',
-                        }}>
+                        <button key={i} className="w-8 h-8 rounded-full bg-white/80 border border-[#E2E0DB] flex items-center justify-center cursor-pointer text-[#5A6577] hover:bg-white transition-colors">
                             <Icon size={14} />
                         </button>
                     ))}
                 </div>
-
-                {/* Price bottom-left */}
-                <div style={{
-                    position: 'absolute', bottom: 12, left: 12,
-                    background: 'rgba(11,25,40,0.75)', backdropFilter: 'blur(8px)',
-                    borderRadius: 6, padding: '4px 12px',
-                    border: `1px solid rgba(200,164,74,0.3)`,
-                }}>
-                    <span style={{ color: GOLD, fontSize: 15, fontWeight: 700 }}>{price}</span>
-                </div>
             </a>
 
             {/* Body */}
-            <div style={{ padding: '14px 16px 16px', display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+            <div className="px-4 pt-3.5 pb-4 flex flex-col gap-2 flex-1">
                 {/* Name + location */}
                 <div>
-                    <a href={`/${lang}/imoveis/${dev.slug}`} style={{ display: 'block', color: TEXT, fontSize: 15, fontWeight: 700, lineHeight: 1.3, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif" }}>
+                    <a href={`/${lang}/imoveis/${dev.slug}`} className="block text-[#0B1928] text-[15px] font-bold leading-tight no-underline hover:text-[#2D3748] transition-colors" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         {dev.name}
                     </a>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4, color: TEXT_MUTED, fontSize: 12 }}>
-                        <MapPin size={11} style={{ flexShrink: 0 }} />
+                    <div className="flex items-center gap-1 mt-1 text-[#5A6577] text-xs">
+                        <MapPin size={11} className="flex-shrink-0 text-[#948F84]" />
                         <span>{dev.location.neighborhood ? `${dev.location.neighborhood}, ` : ''}{dev.location.city}</span>
-                        {area && <span style={{ marginLeft: 4, color: TEXT_MUTED }}>· {area}</span>}
+                        {area && <span className="ml-1 text-[#948F84]">· {area}</span>}
                     </div>
                 </div>
 
                 {/* Specs row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: TEXT_MUTED, fontSize: 12 }}>
+                <div className="flex items-center gap-3 text-sm text-[#2D3748]">
                     {dev.specs.bedroomsRange && dev.specs.bedroomsRange !== '—' && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                            <Bed size={12} style={{ color: GOLD, flexShrink: 0 }} />
+                        <span className="flex items-center gap-1">
+                            <Bed size={12} className="text-[#948F84] flex-shrink-0" />
                             {dev.specs.bedroomsRange} qtos
                         </span>
                     )}
                     {dev.specs.bathroomsRange && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                            <Bath size={12} style={{ color: GOLD, flexShrink: 0 }} />
+                        <span className="flex items-center gap-1">
+                            <Bath size={12} className="text-[#948F84] flex-shrink-0" />
                             {dev.specs.bathroomsRange} ban
                         </span>
                     )}
                     {dev.specs.parkingRange && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                            <Car size={12} style={{ color: GOLD, flexShrink: 0 }} />
+                        <span className="flex items-center gap-1">
+                            <Car size={12} className="text-[#948F84] flex-shrink-0" />
                             {dev.specs.parkingRange} vagas
                         </span>
                     )}
                 </div>
 
-                {/* CTA */}
-                <a
-                    href={`/${lang}/imoveis/${dev.slug}`}
-                    style={{
-                        marginTop: 4,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        height: 38, borderRadius: 6,
-                        border: `1.5px solid ${GOLD}`,
-                        color: GOLD, fontSize: 12, fontWeight: 700, letterSpacing: '0.06em',
-                        textDecoration: 'none', transition: 'all 0.2s',
-                        background: 'transparent',
-                    }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = GOLD_BG; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
-                >
-                    Ver Imóvel
-                </a>
+                {/* Price row */}
+                <div className="pt-2 border-t border-[#E2E0DB] flex items-center justify-between">
+                    <span className="font-mono text-lg font-bold text-[#0B1928]" style={{ fontFamily: "'JetBrains Mono', 'DM Mono', monospace" }}>{price}</span>
+                    <a
+                        href={`/${lang}/imoveis/${dev.slug}`}
+                        className="inline-flex items-center justify-center h-10 px-5 rounded-xl bg-[#0B1928] text-white text-xs font-bold tracking-wider uppercase no-underline hover:bg-[#1a2d42] transition-colors"
+                    >
+                        Ver Imóvel
+                    </a>
+                </div>
             </div>
         </motion.article>
     );
@@ -206,41 +172,40 @@ function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; la
             animate={{ opacity: 1 }}
             data-dev-id={dev.id}
             onClick={onClick}
+            className="flex gap-3 px-3.5 py-3 cursor-pointer transition-all"
             style={{
-                display: 'flex', gap: 12, padding: '12px 14px',
-                borderBottom: `1px solid rgba(255,255,255,0.05)`,
-                borderLeft: selected ? `3px solid ${GOLD}` : '3px solid transparent',
-                background: selected ? 'rgba(200,164,74,0.07)' : 'transparent',
-                cursor: 'pointer', transition: 'all 0.15s',
+                borderBottom: `1px solid ${BORDER}`,
+                borderLeft: selected ? `3px solid ${NAVY}` : '3px solid transparent',
+                background: selected ? '#F0EDE8' : 'transparent',
             }}
         >
-            <div style={{ flexShrink: 0, width: 72, height: 60, borderRadius: 10, overflow: 'hidden', background: '#071422' }}>
+            <div className="flex-shrink-0 w-[72px] h-[60px] rounded-[10px] overflow-hidden bg-[#F0EDE8]">
                 {dev.images.main
-                    ? <img src={dev.images.main} alt={dev.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.2 }}>🏢</div>
+                    ? <img src={dev.images.main} alt={dev.name} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full flex items-center justify-center opacity-20">🏢</div>
                 }
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 3 }}>
-                    <p style={{ color: TEXT, fontSize: 12, fontWeight: 700, lineHeight: 1.3, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>
+            <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2 mb-0.5">
+                    <p className="text-[#0B1928] text-xs font-bold leading-tight m-0 overflow-hidden line-clamp-1">
                         {dev.name}
                     </p>
-                    <span style={{ flexShrink: 0, fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 6, background: badge.bg, color: badge.color, textTransform: 'uppercase' }}>
+                    <span className="flex-shrink-0 text-[9px] font-bold px-[7px] py-0.5 rounded-md uppercase" style={{ background: badge.bg, color: badge.color }}>
                         {label}
                     </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: TEXT_MUTED, fontSize: 10, marginBottom: 5 }}>
-                    <MapPin size={9} /><span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{dev.location.neighborhood || dev.location.city}</span>
+                <div className="flex items-center gap-1 text-[#5A6577] text-[10px] mb-1.5">
+                    <MapPin size={9} /><span className="overflow-hidden text-ellipsis whitespace-nowrap">{dev.location.neighborhood || dev.location.city}</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ color: GOLD, fontSize: 12, fontWeight: 700 }}>{formatPrice(dev.priceRange.min)}</span>
+                <div className="flex items-center gap-2.5">
+                    <span className="text-[#0B1928] text-xs font-bold font-mono">{formatPrice(dev.priceRange.min)}</span>
                     {dev.specs.bedroomsRange && dev.specs.bedroomsRange !== '—' && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: TEXT_MUTED, fontSize: 10 }}>
+                        <span className="flex items-center gap-1 text-[#948F84] text-[10px]">
                             <Bed size={9} />{dev.specs.bedroomsRange}
                         </span>
                     )}
                     {dev.specs.areaRange && dev.specs.areaRange !== '—' && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: TEXT_MUTED, fontSize: 10 }}>
+                        <span className="flex items-center gap-1 text-[#948F84] text-[10px]">
                             <Maximize2 size={9} />{dev.specs.areaRange}
                         </span>
                     )}
@@ -435,19 +400,19 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
     // ── Empty portfolio ───────────────────────────────────────────────────────
     if (!initialDevelopments || initialDevelopments.length === 0) {
         return (
-            <main style={{ background: BG, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
+            <main style={{ background: PAGE_BG, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                    style={{ background: SURFACE, borderRadius: 24, padding: 48, border: `1px solid ${BORDER}`, maxWidth: 480, textAlign: 'center' }}>
-                    <div style={{ fontSize: 48, marginBottom: 20 }}>🏗️</div>
-                    <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, fontWeight: 700, color: TEXT, marginBottom: 12 }}>
-                        Portfólio em <em style={{ color: GOLD }}>Curadoria</em>
+                    className="bg-white rounded-3xl p-12 border border-[#E2E0DB] max-w-[480px] text-center shadow-sm">
+                    <div className="text-5xl mb-5">🏗️</div>
+                    <h1 className="text-3xl font-bold text-[#0B1928] mb-3" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        Portfólio em <em className="text-[#5A6577]">Curadoria</em>
                     </h1>
-                    <p style={{ color: TEXT_MUTED, fontSize: 15, lineHeight: 1.7, marginBottom: 28 }}>
+                    <p className="text-[#5A6577] text-[15px] leading-relaxed mb-7">
                         Estamos selecionando os melhores ativos do mercado para este catálogo exclusivo.
                     </p>
                     <button
                         onClick={() => handleCTAClick('off-market')}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 44, padding: '0 24px', borderRadius: 6, background: GOLD_BG, border: `1.5px solid ${GOLD}`, color: GOLD, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+                        className="inline-flex items-center gap-2 h-11 px-6 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer hover:bg-[#1a2d42] transition-colors"
                     >
                         <MessageCircle size={16} /> Consultar Off-Market
                     </button>
@@ -465,7 +430,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
     // ── Shared filter chip row (used in both mobile and desktop) ──────────────
     const filterChipsMobile = (
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '0 16px 2px', scrollbarWidth: 'none' }}>
+        <div className="flex gap-2 overflow-x-auto px-4 pb-0.5" style={{ scrollbarWidth: 'none' }}>
             {[
                 { label: 'Tipo', key: 'type' as const, active: filters.type.length > 0 },
                 { label: 'Preço', key: 'priceRange' as const, active: filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000 },
@@ -476,14 +441,11 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 <button
                     key={chip.key}
                     onClick={() => setShowMobileFilters(true)}
-                    style={{
-                        flexShrink: 0, height: 34, padding: '0 14px', borderRadius: 6,
-                        background: chip.active ? '#0A1624' : 'transparent',
-                        border: `1.5px solid ${chip.active ? GOLD : 'rgba(200,164,74,0.3)'}`,
-                        color: chip.active ? '#fff' : TEXT_MUTED,
-                        fontSize: 13, fontWeight: chip.active ? 700 : 500, cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                    }}
+                    className={`flex-shrink-0 h-[34px] px-3.5 rounded-xl text-[13px] font-medium cursor-pointer whitespace-nowrap border transition-colors ${
+                        chip.active
+                            ? 'bg-[#0B1928] text-white border-[#0B1928]'
+                            : 'bg-white text-[#2D3748] border-[#B8B3A8]'
+                    }`}
                 >
                     {chip.label}
                 </button>
@@ -493,29 +455,22 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
     // ── MOBILE LAYOUT ─────────────────────────────────────────────────────────
     const mobileView = (
-        <main style={{ background: BG, minHeight: '100vh', paddingTop: 64, paddingBottom: 32 }}>
+        <main style={{ background: PAGE_BG, minHeight: '100vh', paddingTop: 64, paddingBottom: 32 }}>
 
             {/* Search bar */}
-            <div style={{ padding: '16px 16px 12px' }}>
-                <div style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    background: SURFACE, border: `1.5px solid ${BORDER}`,
-                    borderRadius: 16, padding: '0 14px', height: 48,
-                }}>
-                    <Search size={16} style={{ color: TEXT_MUTED, flexShrink: 0 }} />
+            <div className="px-4 pt-4 pb-3">
+                <div className="flex items-center gap-2.5 bg-white border border-[#B8B3A8] rounded-xl px-3.5 h-12">
+                    <Search size={16} className="text-[#948F84] flex-shrink-0" />
                     <input
                         type="text"
                         placeholder={availableLocations[0] ? `${availableLocations[0]}…` : 'Buscar imóveis…'}
                         value={filters.search}
                         onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                        style={{
-                            flex: 1, background: 'transparent', border: 'none', outline: 'none',
-                            color: TEXT, fontSize: 14,
-                        }}
+                        className="flex-1 bg-transparent border-none outline-none text-[#0B1928] text-sm placeholder-[#B8B3A8]"
                     />
                     <button
                         onClick={() => setShowMobileFilters(true)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 4, color: GOLD, fontSize: 13, fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0 }}
+                        className="flex items-center gap-1 text-[#0B1928] text-sm font-bold bg-none border-none cursor-pointer flex-shrink-0"
                     >
                         Filtros <ChevronRight size={14} />
                     </button>
@@ -526,22 +481,20 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
             {filterChipsMobile}
 
             {/* Results toolbar */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 8px' }}>
+            <div className="flex items-center justify-between px-4 pt-3 pb-2">
                 <button
                     onClick={() => setViewMode(v => v === 'map' ? 'grid' : 'map')}
-                    style={{
-                        display: 'flex', alignItems: 'center', gap: 6,
-                        height: 34, padding: '0 14px', borderRadius: 6,
-                        background: viewMode === 'map' ? GOLD_BG : 'transparent',
-                        border: `1.5px solid ${viewMode === 'map' ? GOLD : 'rgba(200,164,74,0.25)'}`,
-                        color: viewMode === 'map' ? GOLD : TEXT_MUTED, fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                    }}
+                    className={`flex items-center gap-1.5 h-[34px] px-3.5 rounded-xl text-[13px] font-semibold cursor-pointer border transition-colors ${
+                        viewMode === 'map'
+                            ? 'bg-[#0B1928] text-white border-[#0B1928]'
+                            : 'bg-white text-[#5A6577] border-[#B8B3A8]'
+                    }`}
                 >
                     <MapPin size={13} /> Mapa
                 </button>
                 <button
                     onClick={() => setFilters(f => ({ ...f, sort: f.sort === 'newest' ? 'relevant' : 'newest' }))}
-                    style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', color: TEXT_MUTED, fontSize: 12, cursor: 'pointer' }}
+                    className="flex items-center gap-1 bg-none border-none text-[#948F84] text-xs cursor-pointer"
                 >
                     Ordenar: {filters.sort === 'newest' ? 'Mais Recentes' : 'Relevantes'}
                     <ChevronDown size={13} />
@@ -549,20 +502,19 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
             </div>
 
             {/* Count */}
-            <div style={{ padding: '0 16px 12px' }}>
-                <span style={{ color: TEXT, fontSize: 14 }}>
-                    <strong style={{ color: TEXT }}>{filteredDevelopments.length}</strong> imóveis encontrados
+            <div className="px-4 pb-3">
+                <span className="text-sm text-[#948F84]">
+                    <strong className="text-[#0B1928]">{filteredDevelopments.length}</strong> imóveis encontrados
                 </span>
             </div>
 
             {/* Map view */}
             {viewMode === 'map' ? (
-                <div style={{ margin: '0 16px 20px', borderRadius: 16, overflow: 'hidden', border: `1px solid ${BORDER}`, height: 420 }}>
+                <div className="mx-4 mb-5 rounded-2xl overflow-hidden border border-[#E2E0DB]" style={{ height: 420 }}>
                     <PropertyMap
                         developments={filteredDevelopments}
                         height="420px"
                         lang={lang}
-                        darkMode
                         selectedId={selectedId ?? undefined}
                         onMarkerClick={handleMarkerClick}
                     />
@@ -570,15 +522,15 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
             ) : null}
 
             {/* Card list */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '0 16px' }}>
+            <div className="flex flex-col gap-4 px-4">
                 {visibleDevelopments.length > 0 ? visibleDevelopments.map(dev => (
                     <PropertyCard key={dev.id} dev={dev} lang={lang} />
                 )) : (
-                    <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED }}>
-                        <div style={{ fontSize: 36, marginBottom: 12, opacity: 0.3 }}>🔍</div>
-                        <p style={{ marginBottom: 16 }}>Nenhum imóvel encontrado</p>
+                    <div className="text-center py-12 text-[#948F84]">
+                        <div className="text-4xl mb-3 opacity-30">🔍</div>
+                        <p className="mb-4">Nenhum imóvel encontrado</p>
                         <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                            style={{ padding: '8px 20px', borderRadius: 6, border: `1.5px solid ${GOLD}`, background: 'transparent', color: GOLD, fontSize: 13, cursor: 'pointer' }}>
+                            className="px-5 py-2 rounded-xl border border-[#B8B3A8] bg-white text-[#2D3748] text-sm cursor-pointer hover:bg-[#F8F6F2] transition-colors">
                             Limpar filtros
                         </button>
                     </div>
@@ -595,7 +547,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 200 }}
+                        className="fixed inset-0 bg-black/40 z-[200]"
                         onClick={() => setShowMobileFilters(false)}
                     >
                         <motion.div
@@ -604,20 +556,15 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                             onClick={e => e.stopPropagation()}
-                            style={{
-                                position: 'absolute', bottom: 0, left: 0, right: 0,
-                                background: SURFACE, borderRadius: '8px 8px 0 0',
-                                padding: '20px 20px 36px',
-                                maxHeight: '80vh', overflowY: 'auto',
-                            }}
+                            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl px-5 pt-5 pb-9 max-h-[80vh] overflow-y-auto"
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                                <h3 style={{ color: TEXT, fontSize: 17, fontWeight: 700, margin: 0 }}>
-                                    <SlidersHorizontal size={16} style={{ display: 'inline', marginRight: 8, color: GOLD }} />
+                            <div className="flex items-center justify-between mb-5">
+                                <h3 className="text-[#0B1928] text-[17px] font-bold m-0">
+                                    <SlidersHorizontal size={16} className="inline mr-2 text-[#948F84]" />
                                     Filtros
                                 </h3>
                                 <button onClick={() => setShowMobileFilters(false)}
-                                    style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', border: 'none', color: TEXT_MUTED, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    className="w-8 h-8 rounded-full bg-[#F0EDE8] border-none text-[#5A6577] cursor-pointer flex items-center justify-center">
                                     <X size={16} />
                                 </button>
                             </div>
@@ -629,22 +576,20 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     placeholder="Nome, bairro, cidade…"
                                     value={filters.search}
                                     onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                                    style={{ width: '100%', background: BG, border: `1.5px solid ${BORDER}`, borderRadius: 6, padding: '10px 14px', color: TEXT, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+                                    className="w-full bg-white border border-[#B8B3A8] rounded-xl px-3.5 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
                                 />
                             </FilterSection>
 
                             {/* Quartos */}
                             <FilterSection label="Quartos">
-                                <div style={{ display: 'flex', gap: 8 }}>
+                                <div className="flex gap-2">
                                     {[null, 1, 2, 3, 4].map(n => (
                                         <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: n }))}
-                                            style={{
-                                                flex: 1, height: 36, borderRadius: 6,
-                                                background: filters.bedrooms === n ? '#0A1624' : BG,
-                                                border: `1.5px solid ${filters.bedrooms === n ? GOLD : BORDER}`,
-                                                color: filters.bedrooms === n ? '#fff' : TEXT_MUTED,
-                                                fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                                            }}>
+                                            className={`flex-1 h-9 rounded-xl text-sm font-semibold cursor-pointer border transition-colors ${
+                                                filters.bedrooms === n
+                                                    ? 'bg-[#0B1928] text-white border-[#0B1928]'
+                                                    : 'bg-white text-[#5A6577] border-[#B8B3A8]'
+                                            }`}>
                                             {n === null ? 'Todos' : `${n}+`}
                                         </button>
                                     ))}
@@ -653,19 +598,17 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
                             {/* Tipo */}
                             <FilterSection label="Tipo">
-                                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                                <div className="flex gap-2 flex-wrap">
                                     {['Apto', 'Casa', 'Flat', 'Cobertura', 'Garden'].map(t => {
                                         const val = t.toLowerCase();
                                         const active = filters.type.includes(val);
                                         return (
                                             <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
-                                                style={{
-                                                    height: 34, padding: '0 14px', borderRadius: 6,
-                                                    background: active ? GOLD_BG : BG,
-                                                    border: `1.5px solid ${active ? GOLD : BORDER}`,
-                                                    color: active ? GOLD : TEXT_MUTED,
-                                                    fontSize: 13, fontWeight: active ? 700 : 500, cursor: 'pointer',
-                                                }}>
+                                                className={`h-[34px] px-3.5 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${
+                                                    active
+                                                        ? 'bg-[#0B1928] text-white border-[#0B1928]'
+                                                        : 'bg-white text-[#5A6577] border-[#B8B3A8]'
+                                                }`}>
                                                 {t}
                                             </button>
                                         );
@@ -675,16 +618,20 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
                             {/* Localização */}
                             <FilterSection label="Localização">
-                                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                                <div className="flex gap-2 flex-wrap">
                                     <button onClick={() => setFilters(f => ({ ...f, location: null, neighborhood: null }))}
-                                        style={{ height: 34, padding: '0 14px', borderRadius: 6, background: !filters.location ? GOLD_BG : BG, border: `1.5px solid ${!filters.location ? GOLD : BORDER}`, color: !filters.location ? GOLD : TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                        className={`h-[34px] px-3.5 rounded-xl text-sm cursor-pointer border transition-colors ${
+                                            !filters.location ? 'bg-[#0B1928] text-white border-[#0B1928]' : 'bg-white text-[#5A6577] border-[#B8B3A8]'
+                                        }`}>
                                         Todas
                                     </button>
                                     {availableLocations.map(loc => {
                                         const active = filters.location === loc;
                                         return (
                                             <button key={loc} onClick={() => setFilters(f => ({ ...f, location: active ? null : loc, neighborhood: null }))}
-                                                style={{ height: 34, padding: '0 14px', borderRadius: 6, background: active ? GOLD_BG : BG, border: `1.5px solid ${active ? GOLD : BORDER}`, color: active ? GOLD : TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                                className={`h-[34px] px-3.5 rounded-xl text-sm cursor-pointer border transition-colors ${
+                                                    active ? 'bg-[#0B1928] text-white border-[#0B1928]' : 'bg-white text-[#5A6577] border-[#B8B3A8]'
+                                                }`}>
                                                 {loc}
                                             </button>
                                         );
@@ -693,15 +640,14 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             </FilterSection>
 
                             {/* Actions */}
-                            <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+                            <div className="flex gap-2.5 mt-2">
                                 <button onClick={() => { setFilters(DEFAULT_FILTERS); setShowMobileFilters(false); }}
-                                    style={{ flex: 1, height: 44, borderRadius: 6, border: `1.5px solid ${BORDER}`, background: BG, color: TEXT_MUTED, fontSize: 14, cursor: 'pointer' }}>
+                                    className="flex-1 h-12 rounded-xl border border-[#B8B3A8] bg-white text-[#5A6577] text-sm cursor-pointer hover:bg-[#F8F6F2] transition-colors">
                                     Limpar
                                 </button>
                                 <button onClick={() => setShowMobileFilters(false)}
-                                    style={{ flex: 2, height: 44, borderRadius: 6, border: '1px solid rgba(255,255,255,0.08)', background: '#0A1624', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                                    className="flex-[2] h-12 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer hover:bg-[#1a2d42] transition-colors">
                                     Ver {filteredDevelopments.length} imóveis
-                                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                                 </button>
                             </div>
                         </motion.div>
@@ -728,37 +674,36 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
     // ── DESKTOP LAYOUT ────────────────────────────────────────────────────────
     const desktopView = (
-        <main style={{ background: BG, minHeight: '100vh', paddingTop: 80, paddingBottom: 60 }}>
-            <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px' }}>
+        <main style={{ background: PAGE_BG, minHeight: '100vh', paddingTop: 80, paddingBottom: 60 }}>
+            <div className="max-w-[1400px] mx-auto px-6">
 
                 {/* Top search bar */}
-                <div style={{ marginBottom: 16 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 16, padding: '0 16px', height: 52, maxWidth: 720 }}>
-                        <Search size={18} style={{ color: TEXT_MUTED, flexShrink: 0 }} />
+                <div className="mb-4">
+                    <div className="flex items-center gap-3 bg-white border border-[#B8B3A8] rounded-xl px-4 h-12 max-w-[720px]">
+                        <Search size={18} className="text-[#948F84] flex-shrink-0" />
                         <input
                             type="text"
                             placeholder="Buscar por nome, bairro, cidade ou tipo…"
                             value={filters.search}
                             onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                            style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: TEXT, fontSize: 14 }}
+                            className="flex-1 bg-transparent border-none outline-none text-[#0B1928] text-sm placeholder-[#B8B3A8]"
                         />
                         {filters.search && (
                             <button onClick={() => setFilters(f => ({ ...f, search: '' }))}
-                                style={{ background: 'none', border: 'none', color: TEXT_MUTED, cursor: 'pointer', display: 'flex', padding: 4 }}>
+                                className="bg-none border-none text-[#948F84] cursor-pointer flex p-1 hover:text-[#5A6577] transition-colors">
                                 <X size={15} />
                             </button>
                         )}
                         <button
                             onClick={() => {/* already filtering live */ }}
-                            style={{ height: 36, padding: '0 18px', borderRadius: 6, background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                            className="h-9 px-[18px] rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer flex-shrink-0 hover:bg-[#1a2d42] transition-colors">
                             Buscar
-                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                         </button>
                     </div>
                 </div>
 
                 {/* Filter chip row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+                <div className="flex items-center gap-2 mb-5 flex-wrap">
                     {[
                         { label: 'Tipo', active: filters.type.length > 0 },
                         { label: 'Preço', active: filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000 },
@@ -768,61 +713,55 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         { label: 'Área', active: filters.areaRange[0] > 0 || filters.areaRange[1] < 500 },
                     ].map(chip => (
                         <button key={chip.label}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: 6,
-                                height: 36, padding: '0 14px', borderRadius: 6,
-                                background: chip.active ? GOLD_BG : 'transparent',
-                                border: `1.5px solid ${chip.active ? GOLD : 'rgba(200,164,74,0.3)'}`,
-                                color: chip.active ? GOLD : TEXT_MUTED,
-                                fontSize: 13, fontWeight: chip.active ? 700 : 500, cursor: 'pointer',
-                            }}>
+                            className={`flex items-center gap-1.5 h-10 px-4 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${
+                                chip.active
+                                    ? 'bg-[#0B1928] text-white border-[#0B1928]'
+                                    : 'bg-white text-[#2D3748] border-[#B8B3A8] hover:border-[#948F84]'
+                            }`}>
                             {chip.label} <ChevronDown size={13} />
                         </button>
                     ))}
                     {activeFilterCount > 0 && (
                         <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                            style={{ height: 36, padding: '0 14px', borderRadius: 6, border: 'none', background: 'none', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}>
+                            className="h-10 px-3.5 rounded-xl border-none bg-none text-[#948F84] text-sm cursor-pointer underline hover:text-[#5A6577] transition-colors">
                             Limpar filtros
                         </button>
                     )}
                 </div>
 
                 {/* Results toolbar */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <span style={{ color: TEXT, fontSize: 15 }}>
-                            <strong>{filteredDevelopments.length}</strong> imóveis encontrados
+                <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center gap-2.5">
+                        <span className="text-sm text-[#948F84]">
+                            <strong className="text-[#0B1928]">{filteredDevelopments.length}</strong> imóveis encontrados
                         </span>
                         {activeFilterCount > 0 && (
-                            <span style={{ fontSize: 12, color: GOLD, background: GOLD_BG, border: `1px solid rgba(200,164,74,0.3)`, borderRadius: 6, padding: '2px 10px' }}>
+                            <span className="text-xs text-[#5A6577] bg-[#F0EDE8] border border-[#E2E0DB] rounded-lg px-2.5 py-0.5">
                                 {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''} ativo{activeFilterCount !== 1 ? 's' : ''}
                             </span>
                         )}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="flex items-center gap-3">
                         {/* Sort */}
                         <select
                             value={filters.sort}
                             onChange={e => setFilters(f => ({ ...f, sort: e.target.value as FilterState['sort'] }))}
-                            style={{ background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 6, padding: '6px 12px', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer', outline: 'none' }}>
+                            className="bg-white border border-[#B8B3A8] rounded-xl px-3 py-1.5 text-[#2D3748] text-sm cursor-pointer outline-none">
                             <option value="relevant">Ordenar por: Relevância</option>
                             <option value="newest">Mais Recentes</option>
                             <option value="price-asc">Menor Preço</option>
                             <option value="price-desc">Maior Preço</option>
                         </select>
                         {/* View toggle */}
-                        <div style={{ display: 'flex', gap: 4, background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 6, padding: 4 }}>
+                        <div className="flex gap-1 bg-white border border-[#E2E0DB] rounded-xl p-1">
                             {([['grid', Grid3X3], ['map', Map]] as const).map(([mode, Icon]) => (
                                 <button key={mode}
                                     onClick={() => { setViewMode(mode); if (mode === 'map') setSelectedId(null); }}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: 6,
-                                        height: 32, padding: '0 12px', borderRadius: 8,
-                                        background: viewMode === mode ? GOLD_BG : 'transparent',
-                                        border: viewMode === mode ? `1.5px solid ${GOLD}` : '1.5px solid transparent',
-                                        color: viewMode === mode ? GOLD : TEXT_MUTED,
-                                        fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                                    }}>
+                                    className={`flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold cursor-pointer border transition-colors ${
+                                        viewMode === mode
+                                            ? 'bg-[#0B1928] text-white border-[#0B1928]'
+                                            : 'bg-transparent text-[#5A6577] border-transparent hover:bg-[#F0EDE8]'
+                                    }`}>
                                     <Icon size={14} />
                                 </button>
                             ))}
@@ -832,38 +771,37 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
                 {/* MAP split view */}
                 {viewMode === 'map' && (
-                    <div className="flex flex-col md:flex-row" style={{ gap: 0, height: 'clamp(500px, calc(100vh - 220px), 860px)', borderRadius: 20, overflow: 'hidden', border: `1px solid ${BORDER}` }}>
+                    <div className="flex flex-col md:flex-row rounded-2xl overflow-hidden border border-[#E2E0DB]" style={{ height: 'clamp(500px, calc(100vh - 220px), 860px)' }}>
                         {/* Map pane */}
-                        <div style={{ flex: 1, minWidth: 0, position: 'relative' }}>
+                        <div className="flex-1 min-w-0 relative">
                             {filteredDevelopments.length > 0 ? (
                                 <PropertyMap
                                     developments={filteredDevelopments}
                                     height="100%"
                                     lang={lang}
-                                    darkMode
                                     selectedId={selectedId ?? undefined}
                                     onMarkerClick={handleMarkerClick}
                                 />
                             ) : (
-                                <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, color: TEXT_MUTED }}>
-                                    <span style={{ fontSize: 40, opacity: 0.2 }}>🗺️</span>
-                                    <p style={{ margin: 0, fontSize: 14 }}>Nenhum resultado com esses filtros</p>
+                                <div className="h-full flex flex-col items-center justify-center gap-4 text-[#948F84]">
+                                    <span className="text-[40px] opacity-20">🗺️</span>
+                                    <p className="m-0 text-sm">Nenhum resultado com esses filtros</p>
                                     <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                                        style={{ padding: '8px 20px', borderRadius: 6, border: `1.5px solid ${BORDER}`, background: 'transparent', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                        className="px-5 py-2 rounded-xl border border-[#B8B3A8] bg-white text-[#5A6577] text-sm cursor-pointer hover:bg-[#F8F6F2] transition-colors">
                                         Limpar filtros
                                     </button>
                                 </div>
                             )}
                         </div>
                         {/* Sidebar */}
-                        <div ref={listRef} className="w-full md:w-[380px] flex-shrink-0 overflow-y-auto md:border-l border-t md:border-t-0" style={{ borderColor: BORDER, background: SURFACE }}>
-                            <div style={{ position: 'sticky', top: 0, background: 'rgba(15,32,53,0.96)', backdropFilter: 'blur(8px)', padding: '12px 14px', borderBottom: `1px solid ${BORDER}`, zIndex: 5 }}>
-                                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: TEXT_MUTED }}>
+                        <div ref={listRef} className="w-full md:w-[380px] flex-shrink-0 overflow-y-auto md:border-l border-t md:border-t-0 border-[#E2E0DB] bg-white">
+                            <div className="sticky top-0 bg-white/95 backdrop-blur-sm px-3.5 py-3 border-b border-[#E2E0DB] z-[5]">
+                                <p className="m-0 text-[11px] font-bold tracking-[0.1em] uppercase text-[#948F84]">
                                     {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
                                 </p>
                                 {selectedId && (
                                     <a href={`/${lang}/imoveis/${filteredDevelopments.find(d => d.id === selectedId)?.slug}`}
-                                        style={{ display: 'block', marginTop: 4, fontSize: 11, color: GOLD, textDecoration: 'none', fontWeight: 600 }}>
+                                        className="block mt-1 text-[11px] text-[#0B1928] no-underline font-semibold hover:underline">
                                         Ver detalhes →
                                     </a>
                                 )}
@@ -882,17 +820,17 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 {viewMode === 'grid' && (
                     <>
                         {filteredDevelopments.length === 0 ? (
-                            <div style={{ textAlign: 'center', padding: '80px 0', background: SURFACE, borderRadius: 20, border: `1px dashed rgba(200,164,74,0.2)` }}>
-                                <div style={{ fontSize: 40, opacity: 0.2, marginBottom: 12 }}>🔍</div>
-                                <h3 style={{ color: TEXT, fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Nenhum ativo encontrado</h3>
-                                <p style={{ color: TEXT_MUTED, marginBottom: 20 }}>Tente remover alguns filtros.</p>
+                            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-[#E2E0DB]">
+                                <div className="text-[40px] opacity-20 mb-3">🔍</div>
+                                <h3 className="text-xl font-bold text-[#0B1928] mb-2">Nenhum ativo encontrado</h3>
+                                <p className="text-[#948F84] mb-5">Tente remover alguns filtros.</p>
                                 <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                                    style={{ padding: '10px 24px', borderRadius: 6, border: `1.5px solid ${GOLD}`, background: 'transparent', color: GOLD, fontSize: 14, cursor: 'pointer' }}>
+                                    className="px-6 py-2.5 rounded-xl border border-[#B8B3A8] bg-white text-[#2D3748] text-sm cursor-pointer hover:bg-[#F8F6F2] transition-colors">
                                     Limpar filtros
                                 </button>
                             </div>
                         ) : (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {visibleDevelopments.map(dev => (
                                     <PropertyCard key={dev.id} dev={dev} lang={lang} />
                                 ))}
@@ -901,18 +839,13 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
                         {/* Load more sentinel + button */}
                         {hasMore && (
-                            <div ref={sentinelRef} style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
+                            <div ref={sentinelRef} className="flex justify-center mt-10">
                                 <button
                                     onClick={() => setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, filteredDevelopments.length))}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: 8,
-                                        height: 44, padding: '0 28px', borderRadius: 6,
-                                        border: `1.5px solid ${BORDER}`, background: 'transparent',
-                                        color: TEXT_MUTED, fontSize: 14, fontWeight: 600, cursor: 'pointer',
-                                    }}>
+                                    className="flex items-center gap-2 h-11 px-7 rounded-xl border border-[#B8B3A8] bg-white text-[#5A6577] text-sm font-semibold cursor-pointer hover:bg-[#F8F6F2] transition-colors">
                                     <ChevronDown size={16} />
                                     Carregar mais
-                                    <span style={{ fontSize: 12, opacity: 0.6 }}>({visibleCount} de {filteredDevelopments.length})</span>
+                                    <span className="text-xs opacity-60">({visibleCount} de {filteredDevelopments.length})</span>
                                 </button>
                             </div>
                         )}
@@ -920,16 +853,16 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 )}
 
                 {/* Bottom CTA */}
-                <div style={{ marginTop: 64, background: SURFACE, borderRadius: 20, border: `1px solid ${BORDER}`, padding: '40px 40px', textAlign: 'center' }}>
-                    <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, fontWeight: 700, color: TEXT, marginBottom: 10 }}>
-                        Não encontrou o <em style={{ color: GOLD }}>imóvel ideal?</em>
+                <div className="mt-16 bg-white rounded-2xl border border-[#E2E0DB] p-10 text-center">
+                    <h3 className="text-[28px] font-bold text-[#0B1928] mb-2.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        Não encontrou o <em className="text-[#5A6577]">imóvel ideal?</em>
                     </h3>
-                    <p style={{ color: TEXT_MUTED, fontSize: 15, lineHeight: 1.7, maxWidth: 520, margin: '0 auto 24px' }}>
+                    <p className="text-[#5A6577] text-[15px] leading-relaxed max-w-[520px] mx-auto mb-6">
                         Nossa curadoria vai além do catálogo. Fale com nossos especialistas para uma prospecção off-market personalizada.
                     </p>
                     <button
                         onClick={() => handleCTAClick('general')}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 46, padding: '0 28px', borderRadius: 6, background: GOLD_BG, border: `1.5px solid ${GOLD}`, color: GOLD, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                        className="inline-flex items-center gap-2 h-[46px] px-7 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer hover:bg-[#1a2d42] transition-colors">
                         <MessageCircle size={16} /> Iniciar Consultoria
                     </button>
                 </div>
@@ -959,8 +892,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
 function FilterSection({ label, children }: { label: string; children: React.ReactNode }) {
     return (
-        <div style={{ marginBottom: 20 }}>
-            <p style={{ color: TEXT_MUTED, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10, margin: '0 0 10px' }}>{label}</p>
+        <div className="mb-5">
+            <p className="text-[10px] font-bold tracking-widest uppercase text-[#948F84] mb-2.5 m-0">{label}</p>
             {children}
         </div>
     );

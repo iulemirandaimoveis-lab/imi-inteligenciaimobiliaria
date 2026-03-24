@@ -43,22 +43,21 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
         <>
             <div className="lg:sticky lg:top-28 space-y-4">
                 {/* Main CTA Card */}
-                <div className="rounded-[10px] overflow-hidden shadow-xl" style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)' }}>
-                    {/* Price Header with gold gradient */}
-                    <div className="p-6 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0B1928 0%, #102A43 100%)' }}>
-                        <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl" style={{ background: 'rgba(200,164,74,0.08)' }} />
-                        <p className="text-[11px] uppercase tracking-[0.2em] font-bold mb-1.5" style={{ color: GOLD, opacity: 0.7, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
+                <div className="rounded-2xl overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+                    {/* Price Header */}
+                    <div className="p-6 relative overflow-hidden" style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
+                        <p className="text-[10px] uppercase tracking-widest font-bold mb-1.5" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
                         <p
-                            className="text-[28px] font-bold tracking-tight relative z-10"
-                            style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: GOLD }}
+                            className="text-[32px] font-bold tracking-tight relative z-10"
+                            style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#0B1928' }}
                         >
-                            <span className="text-sm font-normal mr-1.5" style={{ color: '#627D98', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>
+                            <span className="text-sm font-normal mr-1.5" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>
                             {formatPrice(development.priceRange.min)}
                         </p>
                     </div>
 
                     {/* Quick Info */}
-                    <div className="p-5 space-y-3.5" style={{ borderBottom: '1px solid rgba(200,164,74,0.08)' }}>
+                    <div className="p-5 space-y-3.5" style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
                         <InfoRow icon={Building2} text={development.developer} />
                         <InfoRow icon={MapPin} text={`${development.location.neighborhood}, ${development.location.city}`} />
                         {development.deliveryDate && <InfoRow icon={Calendar} text={development.deliveryDate} />}
@@ -68,22 +67,20 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                     <div className="p-5 space-y-2.5">
                         <button
                             onClick={() => handleCTAClick('info')}
-                            className="relative w-full flex items-center justify-center gap-2.5 h-12 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
-                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                            style={{ background: '#0B1928', color: '#fff', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
                             <MessageCircle className="w-4 h-4" />
                             Falar com Especialista
-                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                         </button>
 
                         <button
                             onClick={() => handleCTAClick('table')}
-                            className="relative w-full flex items-center justify-center gap-2.5 h-12 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
-                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                            style={{ background: '#FFFFFF', color: '#0B1928', border: '2px solid #0B1928', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
-                            <FileText className="w-4 h-4" style={{ color: GOLD, opacity: 0.6 }} />
+                            <FileText className="w-4 h-4" />
                             Solicitar Tabela
-                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.4 }} />
                         </button>
 
                         {development.images.brochure && (
@@ -91,25 +88,24 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                                 href={development.images.brochure}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="relative w-full flex items-center justify-center gap-2.5 h-12 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
-                                style={{ background: '#0A1624', color: '#9FB3C8', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)", textDecoration: 'none' }}
+                                className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                                style={{ background: '#FFFFFF', color: '#948F84', border: '1px solid #B8B3A8', fontFamily: "var(--fu, 'Outfit', sans-serif)", textDecoration: 'none' }}
                             >
                                 <Download className="w-4 h-4" style={{ opacity: 0.6 }} />
                                 Baixar Material
-                                <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.3 }} />
                             </a>
                         )}
                     </div>
 
                     {/* Trust indicators */}
                     <div className="px-5 pb-5 flex items-center gap-3">
-                        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#627D98' }}>
-                            <Shield size={12} style={{ color: GOLD, opacity: 0.5 }} />
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#948F84' }}>
+                            <Shield size={12} style={{ color: '#0B1928', opacity: 0.4 }} />
                             Verificado
                         </div>
-                        <div className="w-px h-3" style={{ background: 'rgba(200,164,74,0.15)' }} />
-                        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#627D98' }}>
-                            <Star size={12} style={{ color: GOLD, opacity: 0.5 }} />
+                        <div className="w-px h-3" style={{ background: '#B8B3A8' }} />
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#948F84' }}>
+                            <Star size={12} style={{ color: '#0B1928', opacity: 0.4 }} />
                             Premium
                         </div>
                     </div>
@@ -118,12 +114,11 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                 {/* Quick phone */}
                 <a
                     href="tel:+5581997230455"
-                    className="relative flex items-center justify-center gap-2 h-11 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-colors overflow-hidden"
-                    style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+                    className="flex items-center justify-center gap-2 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-colors"
+                    style={{ background: '#FFFFFF', color: '#0B1928', border: '2px solid #0B1928', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                 >
-                    <Phone className="w-3.5 h-3.5" style={{ color: GOLD, opacity: 0.7 }} />
+                    <Phone className="w-3.5 h-3.5" />
                     (81) 9 9723-0455
-                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.4 }} />
                 </a>
             </div>
 
@@ -144,8 +139,8 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
 function InfoRow({ icon: Icon, text }: { icon: React.ElementType; text: string }) {
     return (
         <div className="flex items-center gap-3 text-sm">
-            <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} style={{ color: GOLD, opacity: 0.5 }} />
-            <span style={{ color: '#9FB3C8' }} className="truncate">{text}</span>
+            <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} style={{ color: '#0B1928', opacity: 0.4 }} />
+            <span style={{ color: '#2D3748' }} className="truncate">{text}</span>
         </div>
     );
 }

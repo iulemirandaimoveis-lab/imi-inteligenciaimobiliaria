@@ -209,8 +209,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             <div className="container-custom pt-4 pb-0">
                 <div style={{
                     display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                    gap: 1, background: 'rgba(200,164,74,0.08)', borderRadius: 10,
-                    overflow: 'hidden', marginBottom: 24,
+                    gap: 12, marginBottom: 24,
                 }}>
                     {[
                         { label: 'Quartos', value: development.specs.bedroomsRange, Icon: Bed },
@@ -219,11 +218,12 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, Icon: Calendar }] : []),
                     ].map((item, i) => (
                         <div key={i} style={{
-                            background: '#0A1624', padding: '16px 12px', textAlign: 'center' as const,
+                            background: '#FFFFFF', padding: '16px 12px', textAlign: 'center' as const,
+                            border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16,
                         }}>
-                            <item.Icon size={18} style={{ color: '#C8A44A', opacity: 0.7, margin: '0 auto' }} />
-                            <p style={{ fontSize: 18, fontWeight: 700, color: '#E8E4DC', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '4px 0 0' }}>{item.value}</p>
-                            <p style={{ fontSize: 11, color: '#8E99AB', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '2px 0 0' }}>{item.label}</p>
+                            <item.Icon size={18} style={{ color: '#0B1928', opacity: 0.5, margin: '0 auto' }} />
+                            <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '4px 0 0' }}>{item.value}</p>
+                            <p style={{ fontSize: 11, color: '#948F84', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '2px 0 0' }}>{item.label}</p>
                         </div>
                     ))}
                 </div>
@@ -271,31 +271,29 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             {/* Sticky Mobile CTA — always visible */}
             <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
                 style={{
-                    background: 'rgba(5,11,20,0.95)',
-                    backdropFilter: 'blur(20px)',
-                    borderTop: '1px solid rgba(200,164,74,0.15)',
+                    background: '#FFFFFF',
+                    borderTop: '2px solid #B8B3A8',
                     padding: '12px 16px max(12px, env(safe-area-inset-bottom))',
+                    boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
                 }}>
                 <div className="flex items-center gap-3 max-w-lg mx-auto">
                     <div className="flex-1 min-w-0">
-                        <p style={{ fontSize: 11, color: '#8E99AB', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>A partir de</p>
-                        <p style={{ fontSize: 20, fontWeight: 700, color: '#E8E4DC', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
+                        <p style={{ fontSize: 10, color: '#948F84', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>A partir de</p>
+                        <p style={{ fontSize: 20, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
                             {development.priceRange.min > 0 ? `R$ ${development.priceRange.min >= 1000000 ? `${(development.priceRange.min / 1000000).toFixed(1).replace(/\.0$/, '')}M` : development.priceRange.min.toLocaleString('pt-BR')}` : 'Consulte'}
                         </p>
                     </div>
                     <a href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`} target="_blank" rel="noopener noreferrer" style={{
                         position: 'relative', overflow: 'hidden',
-                        background: '#0A1624', color: '#fff',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: 4, padding: '12px 20px',
+                        background: '#0B1928', color: '#fff',
+                        borderRadius: 12, padding: '12px 20px',
                         fontFamily: "var(--fu, 'Outfit', sans-serif)",
                         fontWeight: 600, fontSize: 11, letterSpacing: '1px',
                         textTransform: 'uppercase', textDecoration: 'none',
                         whiteSpace: 'nowrap',
-                        minHeight: 44, display: 'flex', alignItems: 'center',
+                        minHeight: 48, display: 'flex', alignItems: 'center',
                     }}>
                         Falar com Especialista
-                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                     </a>
                 </div>
             </div>
