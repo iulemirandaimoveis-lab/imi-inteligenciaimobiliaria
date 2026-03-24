@@ -93,17 +93,16 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
     }
-    const {
-      canal,
-      destinatario_email,
-      destinatario_telefone,
-      contrato_numero = '',
-      contrato_tipo = '',
-      contrato_url,
-      criado_por_nome,
-      idioma = 'pt',
-      mensagem_personalizada,
-    } = parsed.data
+    const canal = parsed.data.canal
+    const destinatario_email = parsed.data.destinatario_email ?? ''
+    const destinatario_telefone = parsed.data.destinatario_telefone ?? ''
+    const contrato_numero = parsed.data.contrato_numero ?? ''
+    const contrato_tipo = parsed.data.contrato_tipo ?? ''
+    const contrato_url = parsed.data.contrato_url ?? ''
+    const criado_por_nome = parsed.data.criado_por_nome ?? ''
+    const idioma = parsed.data.idioma ?? 'pt'
+    const mensagem_personalizada = parsed.data.mensagem_personalizada ?? ''
+    const notas_adicionais = (parsed.data as Record<string, unknown>).notas_adicionais as string ?? ''
     const tpl = getTpl(idioma)
     const results: Record<string, any> = {}
     // ── EMAIL ───────────────────────────────────────────────

@@ -192,9 +192,9 @@ export async function POST(req: NextRequest) {
       idiomaInfo,
       contratante,
       contratado,
-      dados_contrato,
+      dados_contrato || {},
       criado_por_nome || 'IMI – Inteligência Imobiliária',
-      notas_adicionais
+      notas_adicionais || ''
     )
     const conteudoAdicional: Record<string, string> = {}
     
