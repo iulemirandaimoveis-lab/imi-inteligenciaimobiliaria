@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { rateLimit, getClientIP } from '@/lib/rate-limit'
+import { withLogging } from '@/lib/api-logger'
 
-export async function POST(request: NextRequest) {
+export const POST = withLogging(async (request: Request) => {
     try {
         // Rate limit: 5 requests per minute per IP
         const ip = getClientIP(request)
@@ -49,4 +50,4 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         )
     }
-}
+})

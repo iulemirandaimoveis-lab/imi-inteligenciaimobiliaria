@@ -5,13 +5,14 @@ import { resolveUserPermissions } from '@/lib/ai-chat/permissions'
 import { buildContext } from '@/lib/ai-chat/context-engine'
 import { estimateCost } from '@/lib/ai-chat/billing'
 import { rateLimit } from '@/lib/rate-limit'
+import { withLogging } from '@/lib/api-logger'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 120 // 2 minutes for long responses
 
 const DEFAULT_SYSTEM_PROMPT = `Você é o assistente de inteligência artificial interno da IMI — Inteligência Imobiliária. Você ajuda corretores, gestores e administradores com informações sobre leads, imóveis, contratos, métricas e operações do dia a dia. Responda sempre em português brasileiro, de forma clara e profissional. Use os dados do sistema fornecidos no contexto para dar respostas precisas e atualizadas.`
 
-export async function POST(req: NextRequest) {
+export const POST = withLogging(async (req: Request) => {
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) return new Response(JSON.stringify({ error: 'Não autenticado' }), { status: 401 })
@@ -166,4 +167,4 @@ export async function POST(req: NextRequest) {
     return new Response(readable, {
         headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive' },
     })
-}
+})

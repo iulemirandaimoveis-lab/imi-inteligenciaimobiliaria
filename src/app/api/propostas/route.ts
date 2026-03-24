@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { sendNotification } from '@/lib/send-notification'
+import { withLogging } from '@/lib/api-logger'
 import { z } from 'zod'
 
 const PropostaPostSchema = z.object({
@@ -51,7 +52,7 @@ export async function GET() {
 }
 
 // POST - Create new proposal
-export async function POST(req: Request) {
+export const POST = withLogging(async (req: Request) => {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -108,4 +109,4 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true, data, url: proposalUrl, token })
     } catch { return NextResponse.json({ error: 'Erro interno' }, { status: 500 }) }
-}
+})

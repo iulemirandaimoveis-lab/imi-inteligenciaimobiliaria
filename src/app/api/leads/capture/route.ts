@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { limiters, getClientIP } from '@/lib/rate-limit'
-export async function POST(request: NextRequest) {
+import { withLogging } from '@/lib/api-logger'
+export const POST = withLogging(async (request: Request) => {
     try {
         // Rate limiting: 10 requests / 10s per IP (public endpoint)
         const ip = getClientIP(request)
@@ -172,4 +173,4 @@ export async function POST(request: NextRequest) {
     } catch (err) {
         return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
     }
-}
+})

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import Anthropic from '@anthropic-ai/sdk'
+import { withLogging } from '@/lib/api-logger'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,7 +12,7 @@ const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY || '',
 })
 
-export async function POST(req: NextRequest) {
+export const POST = withLogging(async (req: Request) => {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -162,4 +163,4 @@ Não inclua explicações, apenas o JSON.`
         console.error('[BPO Categorizar]', err)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
-}
+})
