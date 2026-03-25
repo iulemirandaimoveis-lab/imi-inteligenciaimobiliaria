@@ -133,6 +133,17 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             .single()
         brokerData = broker
     }
+    // Fallback: always show a broker (owner/admin) if none assigned
+    if (!brokerData) {
+        brokerData = {
+            id: 'default',
+            name: 'Iule Miranda',
+            email: 'iulemirandaimoveis@gmail.com',
+            phone: '+5581997230455',
+            creci: '17933',
+            avatar_url: null,
+        }
+    }
 
     // Fetch similar properties (same city, different slug, max 4)
     const { data: similarRaw } = await supabase

@@ -197,6 +197,15 @@ export async function POST(req: Request) {
             featured: normalized.featured || false,
             created_by: user.id,
         }
+        // Auto-assign broker_id if not provided — find broker record for this user
+        if (!newDev.broker_id) {
+            const { data: broker } = await supabase
+                .from('brokers')
+                .select('id')
+                .eq('user_id', user.id)
+                .maybeSingle()
+            if (broker) newDev.broker_id = broker.id
+        }
         // Remove undefined/undeclared fields that could cause Supabase errors
         for (const key of Object.keys(newDev)) {
             if (newDev[key] === undefined) delete newDev[key]
