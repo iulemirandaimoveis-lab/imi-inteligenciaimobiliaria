@@ -1,8 +1,6 @@
 // src/app/robots.ts
 import { MetadataRoute } from 'next'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
-
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
@@ -43,6 +41,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/backoffice/', '/api/'],
       },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    // Hardcoded canonical domain — NEVER use process.env here
+    sitemap: 'https://www.iulemirandaimoveis.com.br/sitemap.xml',
   }
 }

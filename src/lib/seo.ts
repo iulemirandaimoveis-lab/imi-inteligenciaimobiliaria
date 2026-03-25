@@ -2,7 +2,8 @@ import { Metadata } from 'next'
 
 const SITE_NAME = 'IMI – Inteligência Imobiliária'
 const SITE_DESCRIPTION = 'Avaliações imobiliárias técnicas NBR 14653, consultoria estratégica patrimonial e corretagem premium de alto padrão em Recife, Dubai e EUA.'
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
+// Hardcoded canonical domain — JSON-LD @id must always be the production URL
+const SITE_URL = 'https://www.iulemirandaimoveis.com.br'
 
 export function generateMetadata({
     title,
@@ -26,7 +27,7 @@ export function generateMetadata({
     const metaTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`
     const metaDescription = description || SITE_DESCRIPTION
     const url = `${SITE_URL}${path}`
-    const metaImage = image || `${SITE_URL}/og-image.svg`
+    const metaImage = image || `${SITE_URL}/hero-bg.jpg`
 
     const ogBase = {
         title: metaTitle,
@@ -79,7 +80,7 @@ export function generateOrganizationSchema() {
             width: 512,
             height: 512,
         },
-        image: `${SITE_URL}/og-image.svg`,
+        image: `${SITE_URL}/hero-bg.jpg`,
         priceRange: '$$$$',
         areaServed: [
             { '@type': 'City', name: 'Recife', '@id': 'https://www.wikidata.org/wiki/Q48547' },
@@ -202,7 +203,7 @@ export function generateArticleSchema({
         headline: title,
         description,
         url: url.startsWith('http') ? url : `${SITE_URL}${url}`,
-        image: image || `${SITE_URL}/og-image.svg`,
+        image: image || `${SITE_URL}/hero-bg.jpg`,
         datePublished: publishedTime,
         dateModified: modifiedTime || publishedTime,
         author: {

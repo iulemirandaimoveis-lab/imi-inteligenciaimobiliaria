@@ -2,7 +2,8 @@
 import { MetadataRoute } from 'next'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
+// Hardcoded canonical domain — NEVER use process.env here (Vercel deploys resolve to *.vercel.app)
+const BASE_URL = 'https://www.iulemirandaimoveis.com.br'
 const LANGS = ['pt', 'en', 'es']
 
 function urls(path: string, priority: number, freq: MetadataRoute.Sitemap[0]['changeFrequency']) {

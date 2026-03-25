@@ -10,6 +10,15 @@ import { getGlobalSettings } from '@/lib/settings'
 export const metadata: Metadata = {
     title: 'IMI – Inteligência Imobiliária',
     description: 'Avaliações imobiliárias técnicas, consultoria estratégica e corretagem com curadoria.',
+    alternates: {
+        languages: {
+            'pt-BR': 'https://www.iulemirandaimoveis.com.br/pt',
+            'en': 'https://www.iulemirandaimoveis.com.br/en',
+            'es': 'https://www.iulemirandaimoveis.com.br/es',
+            'ja': 'https://www.iulemirandaimoveis.com.br/ja',
+            'ar': 'https://www.iulemirandaimoveis.com.br/ar',
+        },
+    },
 }
 
 export default async function WebsiteLayout({
@@ -43,7 +52,7 @@ export default async function WebsiteLayout({
                 />
             </Suspense>
             <Header lang={lang} settings={settings} />
-            <main className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
+            <main id="main-content" className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
             <Footer lang={lang} settings={settings} />
             <WhatsAppFAB />
         </div>

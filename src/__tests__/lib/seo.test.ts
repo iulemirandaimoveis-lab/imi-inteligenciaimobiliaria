@@ -60,7 +60,7 @@ describe('generateMetadata', () => {
     const result = generateMetadata({ title: 'Test' })
     const og = result.openGraph as Record<string, unknown>
     const images = og.images as Array<Record<string, unknown>>
-    expect(images[0].url).toBe(`${SITE_URL}/og-image.svg`)
+    expect(images[0].url).toBe(`${SITE_URL}/hero-bg.jpg`)
   })
 
   it('uses custom image when provided', () => {
@@ -254,7 +254,7 @@ describe('generateArticleSchema', () => {
   })
 
   it('uses default OG image when image is not provided', () => {
-    expect(schema.image).toBe(`${SITE_URL}/og-image.svg`)
+    expect(schema.image).toBe(`${SITE_URL}/hero-bg.jpg`)
   })
 })
 
