@@ -62,13 +62,13 @@ export function PropertyCard({
     ?? (Array.isArray(p.image_urls) ? p.image_urls[0] : undefined)
     ?? (Array.isArray(p.images) ? p.images[0] : undefined)
 
-  const statusColors: Record<string, string> = {
-    disponivel: '#5DB887',
-    lancamento: '#fb923c',
-    em_construcao: '#a78bfa',
-    reservado: '#c084fc',
-    em_negociacao: '#60a5fa',
-    vendido: '#fbbf24',
+  const statusConfig: Record<string, { color: string; bg: string }> = {
+    disponivel:    { color: '#5DB887', bg: 'rgba(93,184,135,0.15)' },
+    lancamento:    { color: '#5B9BD5', bg: 'rgba(91,155,213,0.15)' },
+    em_construcao: { color: '#D4913A', bg: 'rgba(212,145,58,0.15)' },
+    reservado:     { color: '#D4913A', bg: 'rgba(212,145,58,0.15)' },
+    em_negociacao: { color: '#5B9BD5', bg: 'rgba(91,155,213,0.15)' },
+    vendido:       { color: '#E06B6B', bg: 'rgba(224,107,107,0.15)' },
   }
   const statusLabels: Record<string, string> = {
     disponivel: 'Disponível', lancamento: 'Lançamento',
@@ -77,7 +77,7 @@ export function PropertyCard({
     published: 'Disponível', draft: 'Rascunho',
   }
   const status = p.status?.toLowerCase() ?? 'disponivel'
-  const statusColor = statusColors[status] ?? '#9ca3af'
+  const { color: statusColor, bg: statusBg } = statusConfig[status] ?? { color: '#9ca3af', bg: 'rgba(156,163,175,0.15)' }
   const statusLabel = statusLabels[status] ?? p.status
 
   const cardContent = (
@@ -151,11 +151,10 @@ export function PropertyCard({
           <div style={{ position: 'absolute', top: bulkMode ? 40 : 10, left: 10, zIndex: 2 }}>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 4,
-              padding: '3px 8px', borderRadius: 6,
-              background: `${statusColor}22`,
-              border: `1px solid ${statusColor}55`,
-              fontSize: '8.5px', fontWeight: 600,
-              letterSpacing: '1px', textTransform: 'uppercase',
+              padding: '4px 10px', borderRadius: 4,
+              background: statusBg,
+              fontSize: '10px', fontWeight: 600,
+              letterSpacing: '0.08em', textTransform: 'uppercase',
               color: statusColor,
               fontFamily: 'var(--font-outfit, sans-serif)',
               whiteSpace: 'nowrap',
@@ -484,11 +483,15 @@ export function PropertyListRow({
   const p = property
   const score = p.imi_score ?? 0
 
-  const statusColors: Record<string, string> = {
-    disponivel: '#5DB887', lancamento: '#fb923c',
-    em_construcao: '#a78bfa', reservado: '#c084fc',
-    em_negociacao: '#60a5fa', vendido: '#fbbf24',
-    published: '#5DB887', draft: '#9ca3af',
+  const statusConfig: Record<string, { color: string; bg: string }> = {
+    disponivel:    { color: '#5DB887', bg: 'rgba(93,184,135,0.15)' },
+    lancamento:    { color: '#5B9BD5', bg: 'rgba(91,155,213,0.15)' },
+    em_construcao: { color: '#D4913A', bg: 'rgba(212,145,58,0.15)' },
+    reservado:     { color: '#D4913A', bg: 'rgba(212,145,58,0.15)' },
+    em_negociacao: { color: '#5B9BD5', bg: 'rgba(91,155,213,0.15)' },
+    vendido:       { color: '#E06B6B', bg: 'rgba(224,107,107,0.15)' },
+    published:     { color: '#5DB887', bg: 'rgba(93,184,135,0.15)' },
+    draft:         { color: '#9ca3af', bg: 'rgba(156,163,175,0.15)' },
   }
   const statusLabels: Record<string, string> = {
     disponivel: 'Disponível', lancamento: 'Lançamento',
@@ -497,7 +500,7 @@ export function PropertyListRow({
     published: 'Disponível', draft: 'Rascunho',
   }
   const status = p.status?.toLowerCase() ?? 'disponivel'
-  const statusColor = statusColors[status] ?? '#9ca3af'
+  const { color: statusColor, bg: statusBg } = statusConfig[status] ?? { color: '#9ca3af', bg: 'rgba(156,163,175,0.15)' }
   const statusLabel = statusLabels[status] ?? p.status
 
   return (
@@ -566,11 +569,10 @@ export function PropertyListRow({
         <div style={{ padding: '12px 4px' }}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 4,
-            padding: '2px 6px', borderRadius: 6,
-            background: `${statusColor}18`,
-            border: `1px solid ${statusColor}44`,
-            fontSize: '8px', fontWeight: 600,
-            letterSpacing: '0.8px', textTransform: 'uppercase',
+            padding: '4px 10px', borderRadius: 4,
+            background: statusBg,
+            fontSize: '10px', fontWeight: 600,
+            letterSpacing: '0.08em', textTransform: 'uppercase',
             color: statusColor,
             fontFamily: 'var(--font-outfit, sans-serif)',
           }}>

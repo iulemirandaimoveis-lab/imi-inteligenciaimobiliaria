@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Star, Plus, X, Loader2 } from 'lucide-react'
+import { ArrowLeft, Star, Scale, Plus, X, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
 import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
@@ -108,7 +108,7 @@ function EmptyState() {
         border: '1px solid rgba(184,148,58,0.18)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        <Plus size={36} style={{ color: 'rgba(184,148,58,0.35)' }} />
+        <Scale size={36} style={{ color: 'rgba(184,148,58,0.35)' }} />
       </div>
       <div>
         <p style={{
@@ -116,15 +116,14 @@ function EmptyState() {
           fontSize: '22px', fontWeight: 600,
           color: 'var(--text-primary, #EBE7E0)', marginBottom: 8,
         }}>
-          Nenhum imóvel selecionado
+          Compare até 5 imóveis lado a lado
         </p>
         <p style={{
           fontSize: '12px', color: 'var(--text-secondary, #9FAAB8)',
           fontFamily: 'var(--font-outfit, sans-serif)',
           maxWidth: 380, lineHeight: 1.6,
         }}>
-          Para comparar imóveis, acesse a lista e marque até 5 propriedades usando o botão
-          "Comparar" em cada card.
+          Selecione imóveis na sua carteira para análise comparativa
         </p>
       </div>
       <Link href="/backoffice/imoveis">
@@ -138,8 +137,7 @@ function EmptyState() {
           textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
           cursor: 'pointer',
         }}>
-          <ArrowLeft size={13} />
-          Ver Lista de Imóveis
+          Ir para Imóveis →
           <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
         </button>
       </Link>

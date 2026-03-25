@@ -12,18 +12,18 @@ export default function NotFound() {
                     <FileQuestion className="w-8 h-8 text-[#C8A44A]" />
                 </div>
 
-                <h2 className="text-2xl font-bold mb-2 text-[#F0ECE4]">Pagina nao encontrada (404)</h2>
+                <h2 className="text-2xl font-bold mb-2 text-[#F0ECE4]">Página não encontrada (404)</h2>
                 <p className="text-[#A8B0BC] text-center mb-8">
-                    A pagina que voce esta tentando acessar nao existe ou foi removida.
+                    A página que você está tentando acessar não existe ou foi removida.
                 </p>
 
                 <div className="flex flex-col w-full gap-3">
                     <Link
-                        href="/backoffice"
+                        href="/pt"
                         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#0A1624] text-white border border-[rgba(200,164,74,0.3)] rounded-xl font-bold hover:bg-[#0E1C30] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
                         <Home className="w-4 h-4" />
-                        Ir para Backoffice
+                        Ir para Início
                     </Link>
                     <Link
                         href="/"

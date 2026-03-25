@@ -94,19 +94,24 @@ export function calcLiquidityIndex(property: IMIProperty): number {
 }
 
 export function getScoreColor(score: number): string {
-  if (score >= 80) return '#FF4D6A'   // red   — HOT
-  if (score >= 65) return '#F0B429'   // amber — QUENTE
-  if (score >= 50) return '#5B9BD5'   // steel — NEUTRO
-  if (score >= 35) return '#8899BB'   // muted — FRIO
-  return '#4A5A7A'                    // dim   — INATIVO
+  if (score >= 80) return '#5DB887'   // green  — Excelente
+  if (score >= 60) return '#5B9BD5'   // blue   — Bom
+  if (score >= 40) return '#D4913A'   // amber  — Regular
+  return '#E06B6B'                    // red    — Baixo
+}
+
+export function getScoreBadge(score: number): { bg: string; text: string; label: string } {
+  if (score >= 80) return { bg: 'rgba(93,184,135,0.15)', text: '#5DB887', label: 'Excelente' }
+  if (score >= 60) return { bg: 'rgba(91,155,213,0.15)', text: '#5B9BD5', label: 'Bom' }
+  if (score >= 40) return { bg: 'rgba(212,145,58,0.15)', text: '#D4913A', label: 'Regular' }
+  return { bg: 'rgba(224,107,107,0.15)', text: '#E06B6B', label: 'Baixo' }
 }
 
 export function getScoreLabel(score: number): string {
-  if (score >= 80) return 'HOT'
-  if (score >= 65) return 'Quente'
-  if (score >= 50) return 'Neutro'
-  if (score >= 35) return 'Frio'
-  return 'Inativo'
+  if (score >= 80) return 'Excelente'
+  if (score >= 60) return 'Bom'
+  if (score >= 40) return 'Regular'
+  return 'Baixo'
 }
 
 export function enrichProperty(p: IMIProperty): IMIProperty {

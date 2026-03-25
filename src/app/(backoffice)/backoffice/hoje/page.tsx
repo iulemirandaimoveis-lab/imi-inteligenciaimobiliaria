@@ -345,11 +345,8 @@ export default function HojePage() {
         transition={{ delay: 0.06 }}
       >
         <SectionHeader title="Ações Rápidas" />
-        <div
-          className="flex gap-1.5 overflow-x-auto -mx-4 px-4"
-          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', paddingBottom: '4px' }}
-        >
-          {QUICK_ACTIONS.map((a, i) => (
+        <div className="grid grid-cols-3 gap-3">
+          {QUICK_ACTIONS.slice(0, 6).map((a, i) => (
             <motion.button
               key={a.label}
               initial={{ opacity: 0, scale: 0.9 }}
@@ -357,18 +354,22 @@ export default function HojePage() {
               transition={{ delay: 0.08 + i * 0.04 }}
               whileTap={{ scale: 0.90 }}
               onClick={() => router.push(a.href)}
-              className="flex-shrink-0 flex flex-col items-center gap-1.5 relative"
-              style={{ minWidth: '48px', padding: '6px 4px' }}
-            >
-              {/* Icon circle */}
-              <div style={{
-                width: '40px', height: '40px', borderRadius: '12px',
+              className="flex flex-col items-center justify-center gap-1.5 relative"
+              style={{
+                minHeight: '80px', padding: '10px 4px',
                 background: 'var(--bg-surface)',
                 border: `1px solid ${('isNew' in a && a.isNew) ? 'rgba(167,139,250,0.30)' : 'var(--border-default)'}`,
+                borderRadius: '12px',
+              }}
+            >
+              {/* Icon */}
+              <div style={{
+                width: '36px', height: '36px', borderRadius: '10px',
+                background: 'rgba(255,255,255,0.04)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0, position: 'relative',
               }}>
-                <a.icon size={15} style={{ color: a.color }} />
+                <a.icon size={16} style={{ color: a.color }} />
                 {'isNew' in a && a.isNew && (
                   <span style={{
                     position: 'absolute', top: -5, right: -5,
@@ -379,7 +380,7 @@ export default function HojePage() {
                   }}>NEW</span>
                 )}
               </div>
-              <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.2, maxWidth: '44px' }}>
+              <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
                 {a.label}
               </span>
             </motion.button>
