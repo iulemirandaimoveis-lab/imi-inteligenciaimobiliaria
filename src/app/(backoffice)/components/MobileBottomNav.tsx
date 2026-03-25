@@ -279,10 +279,6 @@ export function MobileBottomNav() {
         setOpen(false)
     }, [pathname])
 
-    // Hide when imoveis module has its own module nav
-    const isImoveisModule = pathname?.startsWith('/backoffice/imoveis')
-    if (isImoveisModule) return null
-
     return (
         <>
             {/* ── Bottom Bar ─────────────────────────────────────── */}
@@ -539,7 +535,7 @@ export function MobileBottomNav() {
                                 >
                                     <div className="flex items-center gap-2">
                                         <span style={{
-                                            fontFamily: "'Libre Baskerville', Georgia, serif",
+                                            fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
                                             fontSize: 16,
                                             fontWeight: 700,
                                             color: 'var(--text-primary)',

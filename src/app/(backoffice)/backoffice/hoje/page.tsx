@@ -291,7 +291,7 @@ export default function HojePage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent-400)', fontFamily: "'Libre Baskerville', serif" }}>
+                <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent-400)', fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)" }}>
                   {userName.charAt(0).toUpperCase()}
                 </span>
               )}

@@ -56,7 +56,7 @@ export default function CookieConsent() {
                     Utilizamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa{' '}
                     <a
                         href="/pt/privacidade"
-                        style={{ color: 'var(--accent-400, #2550E8)', textDecoration: 'underline' }}
+                        style={{ color: 'var(--accent-400, #C8A44A)', textDecoration: 'underline' }}
                     >
                         Política de Privacidade
                     </a>{' '}
@@ -85,7 +85,7 @@ export default function CookieConsent() {
                             flex: 1,
                             height: 36,
                             borderRadius: 6,
-                            background: 'var(--accent-400, #2550E8)',
+                            background: 'var(--accent-400, #C8A44A)',
                             color: 'white',
                             border: 'none',
                             fontSize: 13,

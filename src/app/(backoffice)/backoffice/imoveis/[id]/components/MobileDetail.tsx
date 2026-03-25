@@ -242,7 +242,7 @@ export function MobileImovelDetail({ dev, loading, router, id, enriched, notFoun
       <div style={{ padding: '20px 16px' }} className="detail-section">
 
         {/* Name + Location */}
-        <h1 style={{ fontFamily: 'Libre Baskerville, Georgia, serif', fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.2, margin: '0 0 6px' }}>{dev.name}</h1>
+        <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)", fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.2, margin: '0 0 6px' }}>{dev.name}</h1>
         {locationStr && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 0 }}>
             <MapPin size={13} style={{ color: 'var(--text-tertiary)', flexShrink: 0 }} />

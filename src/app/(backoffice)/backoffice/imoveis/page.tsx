@@ -20,7 +20,7 @@ import {
   MobileGlobalStyles, MobileAppBar, MobileAppBarAction,
   MobileSearchBar, MobileFilterChips, MobileFiltersButton,
   MobilePropertyCard, MobilePropertyCardSkeleton,
-  MobileBottomSheet, MobileEmptyState, MobileBottomNav, MobileSortChips,
+  MobileBottomSheet, MobileEmptyState, MobileSortChips,
 } from './mobile-ui'
 type ViewMode = 'grid' | 'list'
 type SortField = 'price' | 'imi_score' | 'area' | 'created_at' | 'yield_est'
@@ -1340,8 +1340,7 @@ function MobileImoveisList(props: SharedProps) {
           filteredCount={filtered.length}
         />
       </MobileBottomSheet>
-      {/* ── BOTTOM NAVIGATION ── */}
-      <MobileBottomNav />
+      {/* Bottom nav now handled by global MobileBottomNav */}
     </div>
   )
 }

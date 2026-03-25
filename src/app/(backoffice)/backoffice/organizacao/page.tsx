@@ -56,7 +56,7 @@ const DEFAULT_FORM: OrgForm = {
   bairro: 'Bela Vista',
   cidade: 'São Paulo',
   estado: 'SP',
-  corPrimaria: '#2550E8',
+  corPrimaria: '#C8A44A',
   corSecundaria: '#0B1120',
   fonte: 'libre',
   moeda: 'BRL',

@@ -32,7 +32,7 @@ export const T = {
   navyMid:    'var(--bg-surface)',
   navyCard:   'var(--bg-elevated)',
   navyRaised: 'var(--bg-muted)',
-  gold:       '#2550E8',
+  gold:       'var(--gold, #C8A44A)',
   goldBright: '#D4B86A',
   text1:      'var(--text-primary)',
   text2:      'var(--text-secondary)',

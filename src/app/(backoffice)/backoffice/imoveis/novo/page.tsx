@@ -257,7 +257,7 @@ function DesktopNovo({ step, setStep, saving, draftSaved, next, prev, handleSave
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 32px 120px', display: 'grid', gridTemplateColumns: '1fr 280px', gap: 28, alignItems: 'start' }}>
         <div>
           <div style={{ marginBottom: 24 }}>
-            <h1 style={{ fontFamily: 'Libre Baskerville, Georgia, serif', fontSize: 26, fontWeight: 700, color: T.text, margin: '0 0 4px' }}>{STEP_META[step - 1].title}</h1>
+            <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)", fontSize: 26, fontWeight: 700, color: T.text, margin: '0 0 4px' }}>{STEP_META[step - 1].title}</h1>
             <p style={{ fontSize: 13, color: T.textSub, margin: 0, fontFamily: 'var(--font-sans)' }}>{STEP_META[step - 1].subtitle}</p>
           </div>
           <div style={{ background: T.surface, borderRadius: 6, border: `1px solid ${T.border}`, padding: 28, animation: 'slideDown 250ms ease both' }}>{renderStep(false)}</div>
