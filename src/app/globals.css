@@ -122,8 +122,8 @@
   --space-16: 64px; --space-20: 80px; --space-24: 96px;
 
   /* ── Radius ── */
-  --r-xs: 6px; --r-sm: 6px; --r-md: 4px; --r-lg: 4px;
-  --r-xl: 4px; --r-2xl: 4px; --r-full: 9999px;
+  --r-xs: 2px; --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
+  --r-xl: 16px; --r-2xl: 20px; --r-full: 9999px;
 
   /* ── Motion ── */
   --ease:        cubic-bezier(0.25, 0.46, 0.45, 0.94);
