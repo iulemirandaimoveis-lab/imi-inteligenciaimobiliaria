@@ -264,12 +264,10 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     {/* Sidebar — desktop only */}
                     <aside className="hidden lg:block lg:col-span-4 space-y-6">
                         <DevelopmentCTA development={development} />
-                        {brokerData?.name && (
-                            <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                <RealtorCard broker={brokerData as any} propertyName={development.name} />
-                            </div>
-                        )}
+                        <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            <RealtorCard broker={brokerData as any} propertyName={development.name} />
+                        </div>
                     </aside>
                 </div>
             </div>
@@ -295,14 +293,23 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </p>
                     </div>
                     <a href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`} target="_blank" rel="noopener noreferrer" style={{
-                        position: 'relative', overflow: 'hidden',
-                        background: '#0B1928', color: '#fff',
-                        borderRadius: 12, padding: '12px 20px',
-                        fontFamily: "var(--fu, 'Outfit', sans-serif)",
-                        fontWeight: 600, fontSize: 11, letterSpacing: '1px',
-                        textTransform: 'uppercase', textDecoration: 'none',
+                        background: '#0B1928',
+                        color: '#FFFFFF',
+                        borderRadius: 12,
+                        padding: '0 24px',
+                        height: 48,
+                        fontWeight: 700,
+                        fontSize: 13,
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase' as const,
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
                         whiteSpace: 'nowrap',
-                        minHeight: 48, display: 'flex', alignItems: 'center',
+                        textDecoration: 'none',
                     }}>
                         Falar com Especialista
                     </a>

@@ -147,7 +147,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                     </div>
                     <Link
                         href={`/${lang}/imoveis/${development.slug}`}
-                        className="inline-flex items-center justify-center bg-[#0B1928] text-white h-10 px-5 rounded-xl text-xs font-bold tracking-wider uppercase no-underline hover:bg-[#1a2d42] transition-colors"
+                        className="inline-flex items-center justify-center bg-[#0B1928] text-white h-12 px-5 rounded-xl text-xs font-bold tracking-wider uppercase no-underline hover:bg-[#1a2d42] transition-colors"
                     >
                         Ver Imóvel
                     </Link>

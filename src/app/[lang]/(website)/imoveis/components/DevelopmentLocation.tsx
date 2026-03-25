@@ -98,8 +98,8 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                     href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
-                    style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)", minHeight: 44 }}
+                    className="relative inline-flex items-center gap-2 px-5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
+                    style={{ background: '#0B1928', color: '#fff', border: 'none', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)", height: 48, borderRadius: 12 }}
                 >
                     <Navigation size={12} />
                     Abrir no Maps
