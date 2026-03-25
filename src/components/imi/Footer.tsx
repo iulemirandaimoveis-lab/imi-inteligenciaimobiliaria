@@ -39,7 +39,7 @@ const LANGUAGES = [
 
 /* ── Inline styles using DS tokens ── */
 const S = {
-    footer: { background: '#0B1928' } as React.CSSProperties,
+    footer: { background: '#0D1B2A' } as React.CSSProperties,
     sectionTitle: {
         fontSize: 11, fontWeight: 700, letterSpacing: '2.5px',
         textTransform: 'uppercase' as const, color: '#C8A44A',
