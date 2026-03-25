@@ -182,9 +182,9 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         '@context': 'https://schema.org',
         '@type': 'RealEstateListing',
         name: development.name,
-        description: data.description || `Empreendimento premium em ${location}.`,
+        description: data.description || development.shortDescription || `Empreendimento premium em ${location}.`,
         url: `${BASE}/${params.lang}/imoveis/${params.slug}`,
-        image: mainImage || undefined,
+        image: mainImage ? [mainImage] : [],
         ...(priceMin && {
             offers: {
                 '@type': 'Offer',
@@ -195,11 +195,18 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         }),
         address: {
             '@type': 'PostalAddress',
-            addressLocality: data.city || '',
-            addressRegion: data.state || '',
-            addressCountry: data.country === 'Brasil' ? 'BR' : data.country || 'BR',
-            streetAddress: data.neighborhood || '',
+            streetAddress: development.location?.address || data.neighborhood || '',
+            addressLocality: development.location?.city || data.city || '',
+            addressRegion: development.location?.state || data.state || '',
+            addressCountry: development.location?.country || (data.country === 'Brasil' ? 'BR' : data.country || 'BR'),
         },
+        ...(development.location?.coordinates && {
+            geo: {
+                '@type': 'GeoCoordinates',
+                latitude: development.location.coordinates.lat,
+                longitude: development.location.coordinates.lng,
+            },
+        }),
     }
 
     return (
@@ -228,11 +235,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         { label: 'Vagas', value: development.specs.parkingRange || '\u2014', Icon: Car },
                         ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, Icon: Calendar }] : []),
                     ].map((item, i) => (
-                        <div key={i} style={{
+                        <div key={i} role="group" aria-label={`${item.value} ${item.label.toLowerCase()}`} style={{
                             background: '#FFFFFF', padding: '16px 12px', textAlign: 'center' as const,
                             border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16,
                         }}>
-                            <item.Icon size={18} style={{ color: '#0B1928', opacity: 0.5, margin: '0 auto' }} />
+                            <item.Icon size={18} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.5, margin: '0 auto' }} />
                             <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '4px 0 0' }}>{item.value}</p>
                             <p style={{ fontSize: 11, color: '#948F84', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '2px 0 0' }}>{item.label}</p>
                         </div>

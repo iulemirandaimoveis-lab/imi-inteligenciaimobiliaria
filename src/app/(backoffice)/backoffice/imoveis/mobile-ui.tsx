@@ -16,7 +16,7 @@ import Link from 'next/link'
 import {
   ArrowLeft, Building2, MapPin, Bed, Bath, Car, Ruler,
   Star, Sparkles, BarChart2, Scale, LayoutGrid, Briefcase,
-  SlidersHorizontal, X, Home,
+  SlidersHorizontal, X, Home, Camera,
 } from 'lucide-react'
 import type { IMIProperty } from '@/features/properties/types'
 import { getScoreStyle } from '@/hooks/useScore'
@@ -428,11 +428,12 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
             />
           ) : (
             <div style={{
-              width: '100%', height: '100%',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-muted) 100%)',
+              width: '100%', height: '100%', minHeight: 180,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+              background: 'linear-gradient(135deg, var(--bg-surface, #0A1624), var(--bg-elevated, #0E1C30))',
             }}>
-              <Building2 size={44} style={{ color: 'rgba(184,148,58,0.15)' }} />
+              <Camera size={28} style={{ color: 'var(--text-tertiary, #4F5B6B)', opacity: 0.5 }} />
+              <span style={{ fontSize: 10, color: 'var(--text-tertiary, #4F5B6B)', opacity: 0.5, fontFamily: 'var(--font-sans)' }}>Sem foto</span>
             </div>
           )}
 

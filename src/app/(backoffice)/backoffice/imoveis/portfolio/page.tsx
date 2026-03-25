@@ -6,6 +6,7 @@ import { Building2, TrendingUp, BarChart2, Plus, Star, Eye, Edit } from 'lucide-
 import { createClient } from '@/lib/supabase/client'
 import { enrichProperty } from '@/features/properties/services/score.service'
 import { getScoreStyle } from '@/hooks/useScore'
+import { getScoreRange } from '@/lib/design-tokens'
 import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
@@ -184,7 +185,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
       `}</style>
 
       {/* ── Header ── */}
-      <div style={{ borderBottom: `1px solid ${DT.border}`, padding: '20px 40px 16px' }}>
+      <div style={{ borderBottom: `1px solid ${DT.border}`, padding: '16px 40px 12px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
             {/* Breadcrumb */}
@@ -221,35 +222,44 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
         </div>
       </div>
 
-      <div style={{ padding: '24px 40px' }}>
+      <div style={{ padding: '16px 40px' }}>
 
         {/* ── KPI Strip ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
-          {[
-            { label: 'Total Imóveis', value: loading ? '—' : String(total), icon: <Building2 size={20} color={DT.gold} /> },
-            { label: 'VGV Total', value: loading ? '—' : fmt(vgvTotal), icon: <TrendingUp size={20} color="var(--success)" /> },
-            { label: 'IMI Score Médio', value: loading ? '—' : String(avgScore), icon: <Star size={20} color={DT.gold} /> },
-            { label: 'Rendimento Est.', value: loading ? '—' : `${avgYield}% a.a.`, icon: <BarChart2 size={20} color="var(--info)" /> },
-          ].map((kpi, i) => (
-            <div key={i} className="desk-kpi" style={{ ...card, padding: '20px 22px', display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 6, background: DT.goldBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {kpi.icon}
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: DT.textDim, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
-                  {kpi.label}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+          {(() => {
+            const scoreRange = !loading && avgScore > 0 ? getScoreRange(avgScore) : null
+            const kpis = [
+              { label: 'Total Imóveis', value: loading ? '—' : String(total), icon: <Building2 size={20} color={DT.gold} />, sublabel: null, valueColor: DT.text },
+              { label: 'VGV Total', value: loading ? '—' : fmt(vgvTotal), icon: <TrendingUp size={20} color="var(--success)" />, sublabel: null, valueColor: DT.text },
+              { label: 'IMI Score Médio', value: loading ? '—' : String(avgScore), icon: <Star size={20} color={scoreRange?.color ?? DT.gold} />, sublabel: scoreRange?.label ?? null, valueColor: scoreRange?.color ?? DT.text },
+              { label: 'Rendimento Est.', value: loading ? '—' : `${avgYield}% a.a.`, icon: <BarChart2 size={20} color="var(--info)" />, sublabel: null, valueColor: DT.text },
+            ]
+            return kpis.map((kpi, i) => (
+              <div key={i} className="desk-kpi" style={{ ...card, padding: '20px 22px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 6, background: DT.goldBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {kpi.icon}
                 </div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: DT.text }}>
-                  {kpi.value}
+                <div>
+                  <div style={{ fontSize: 11, color: DT.textDim, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
+                    {kpi.label}
+                  </div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: kpi.valueColor }}>
+                    {kpi.value}
+                  </div>
+                  {kpi.sublabel && (
+                    <div style={{ fontSize: 10, color: kpi.valueColor, opacity: 0.8, marginTop: 1, fontWeight: 600, letterSpacing: '0.04em' }}>
+                      {kpi.sublabel}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          })()}
         </div>
 
         {/* ── Charts Row ── */}
         {!loading && total > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
 
             {/* Distribution by type */}
             <div style={{ ...card, padding: '24px' }}>
@@ -483,38 +493,45 @@ function MobilePortfolio({ properties, loading }: { properties: IMIProperty[]; l
 
       <div style={{ paddingTop: 64 }}>
         {/* KPI Strip — horizontal scroll */}
-        <div style={{
-          display: 'flex', gap: 10,
-          padding: '16px 16px 4px',
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-        }}>
-          <MobileKPICard
-            label="Total"
-            value={loading ? '—' : String(total)}
-            icon={<Building2 size={16} color={T.gold} />}
-            color={T.gold}
-          />
-          <MobileKPICard
-            label="VGV"
-            value={loading ? '—' : fmt(vgvTotal)}
-            icon={<TrendingUp size={16} color="var(--success)" />}
-            color="var(--success)"
-          />
-          <MobileKPICard
-            label="Score Médio"
-            value={loading ? '—' : String(avgScore)}
-            icon={<Star size={16} color={T.gold} />}
-            color={T.gold}
-          />
-          <MobileKPICard
-            label="Rendimento"
-            value={loading ? '—' : `${avgYield}%`}
-            unit="a.a."
-            icon={<BarChart2 size={16} color="var(--info)" />}
-            color="var(--info)"
-          />
-        </div>
+        {(() => {
+          const mobileScoreRange = !loading && avgScore > 0 ? getScoreRange(avgScore) : null
+          const mobileScoreColor = mobileScoreRange?.color ?? T.gold
+          return (
+            <div style={{
+              display: 'flex', gap: 10,
+              padding: '12px 16px 4px',
+              overflowX: 'auto',
+              scrollbarWidth: 'none',
+            }}>
+              <MobileKPICard
+                label="Total"
+                value={loading ? '—' : String(total)}
+                icon={<Building2 size={16} color={T.gold} />}
+                color={T.gold}
+              />
+              <MobileKPICard
+                label="VGV"
+                value={loading ? '—' : fmt(vgvTotal)}
+                icon={<TrendingUp size={16} color="var(--success)" />}
+                color="var(--success)"
+              />
+              <MobileKPICard
+                label="Score Médio"
+                value={loading ? '—' : String(avgScore)}
+                unit={mobileScoreRange?.label}
+                icon={<Star size={16} color={mobileScoreColor} />}
+                color={mobileScoreColor}
+              />
+              <MobileKPICard
+                label="Rendimento"
+                value={loading ? '—' : `${avgYield}%`}
+                unit="a.a."
+                icon={<BarChart2 size={16} color="var(--info)" />}
+                color="var(--info)"
+              />
+            </div>
+          )
+        })()}
 
         {/* Property list */}
         <MobileSection

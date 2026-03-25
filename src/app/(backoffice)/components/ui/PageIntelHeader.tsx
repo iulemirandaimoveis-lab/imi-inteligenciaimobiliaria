@@ -54,7 +54,7 @@ export function PageIntelHeader({
   return (
     <div
       className={className}
-      style={{ marginBottom: '20px' }}
+      style={{ marginBottom: '12px' }}
     >
       {/* Breadcrumbs */}
       {breadcrumbs && breadcrumbs.length > 0 && (
@@ -112,7 +112,7 @@ export function PageIntelHeader({
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-1 min-w-0 flex-1">
           {/* Module micro-label */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {/* Accent dot */}
             <span style={{
               width: 4,
@@ -162,8 +162,9 @@ export function PageIntelHeader({
           </div>
 
           {/* Title row + optional badge */}
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-3 min-w-0">
             <h1
+              className="truncate"
               style={{
                 fontSize: '20px',
                 fontFamily: "var(--font-body, 'Outfit', sans-serif)",
@@ -172,6 +173,7 @@ export function PageIntelHeader({
                 letterSpacing: '-0.02em',
                 color: 'var(--text-primary)',
                 margin: 0,
+                minWidth: 0,
               }}
             >
               {title}
@@ -203,8 +205,8 @@ export function PageIntelHeader({
           {/* Subtitle */}
           {subtitle && (
             <p
+              className="line-clamp-2 text-sm"
               style={{
-                fontSize: '10px',
                 fontFamily: 'var(--font-sans)',
                 color: 'var(--text-tertiary)',
                 lineHeight: 1.4,
@@ -228,7 +230,7 @@ export function PageIntelHeader({
       <div
         style={{
           height: '2px',
-          marginTop: '16px',
+          marginTop: '10px',
           background: 'linear-gradient(90deg, var(--accent-400), transparent)',
           borderRadius: 'var(--r-full, 9999px)',
         }}

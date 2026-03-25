@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles } from 'lucide-react'
+import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles, Camera } from 'lucide-react'
 import { IMIScoreBadge } from './IMIScoreBadge'
 import { getMainImage } from '@/utils/propertyImages'
 import type { IMIProperty } from '../types'
@@ -111,19 +111,17 @@ export function PropertyCard({
         }}
       >
         {/* Image */}
-        <div style={{ position: 'relative', aspectRatio: '16/9', background: 'var(--navy-raised, #1A3250)' }}>
+        <div style={{ position: 'relative', aspectRatio: '16/9', minHeight: 180, background: 'var(--navy-raised, #1A3250)' }}>
           {imageUrl && !imgError ? (
             <Image src={imageUrl} alt={p.name} fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 400px" onError={() => setImgError(true)} />
           ) : (
             <div style={{
               position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'linear-gradient(135deg, var(--navy-card, #142840), var(--navy-raised, #1A3250))',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+              background: 'linear-gradient(135deg, var(--bg-surface, #0A1624), var(--bg-elevated, #0E1C30))',
             }}>
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="rgba(200,164,74,0.3)" strokeWidth="1.5" fill="none" />
-                <polyline points="9 22 9 12 15 12 15 22" stroke="rgba(200,164,74,0.3)" strokeWidth="1.5" />
-              </svg>
+              <Camera size={28} style={{ color: 'var(--text-tertiary, #4F5B6B)', opacity: 0.5 }} />
+              <span style={{ fontSize: 10, color: 'var(--text-tertiary, #4F5B6B)', opacity: 0.5, fontFamily: 'var(--font-outfit, sans-serif)' }}>Sem foto</span>
             </div>
           )}
 

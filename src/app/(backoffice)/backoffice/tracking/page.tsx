@@ -134,7 +134,7 @@ export default function TrackingDashboardPage() {
 
     /* ─── Render ─── */
     return (
-        <div className="space-y-6 max-w-7xl mx-auto">
+        <div className="space-y-4 max-w-7xl mx-auto">
             {/* ── Header ── */}
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                 <PageIntelHeader

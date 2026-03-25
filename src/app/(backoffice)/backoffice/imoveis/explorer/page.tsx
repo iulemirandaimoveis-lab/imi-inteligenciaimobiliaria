@@ -7,7 +7,7 @@ import Link from 'next/link'
 import {
   Building2, TrendingUp, BarChart2, ArrowLeft, Star, ChevronUp, ChevronDown,
   Sparkles, Download, Share2, Wand2, Map, X, Filter, SlidersHorizontal,
-  Search, RefreshCw, ChevronRight, Check,
+  Search, RefreshCw, ChevronRight, Check, Info,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { enrichProperty } from '@/features/properties/services/score.service'
@@ -1701,6 +1701,82 @@ function InteligenciaTab({ properties }: { properties: IMIProperty[] }) {
 }
 
 /* ─── Desktop Explorer ───────────────────────────────────────────── */
+/* ─── IMI Score Explainer ──────────────────────────────────────── */
+const IMI_SCORE_STORAGE_KEY = 'imi-score-explainer-dismissed'
+
+function IMIScoreExplainer() {
+  const [dismissed, setDismissed] = useState(true)
+  const [collapsed, setCollapsed] = useState(false)
+
+  useEffect(() => {
+    const wasDismissed = localStorage.getItem(IMI_SCORE_STORAGE_KEY)
+    if (!wasDismissed) setDismissed(false)
+  }, [])
+
+  if (dismissed) return null
+
+  const handleDismiss = () => {
+    localStorage.setItem(IMI_SCORE_STORAGE_KEY, '1')
+    setDismissed(true)
+  }
+
+  return (
+    <div style={{
+      margin: '0 28px', padding: 0,
+      background: T.surface,
+      borderRadius: 8,
+      borderLeft: `3px solid ${T.accent}`,
+      border: `1px solid ${T.borderSubtle}`,
+      borderLeftWidth: 3,
+      borderLeftColor: T.accent,
+      overflow: 'hidden',
+    }}>
+      <button
+        onClick={() => setCollapsed(c => !c)}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+          padding: '12px 16px', background: 'none', border: 'none',
+          cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <Info size={16} style={{ color: T.accent, flexShrink: 0 }} />
+        <span style={{
+          flex: 1, fontSize: 13, fontWeight: 600,
+          color: T.text, fontFamily: T.font.ui,
+        }}>
+          O que é o IMI Score?
+        </span>
+        <ChevronDown size={14} style={{
+          color: T.textDim, transition: 'transform 0.2s',
+          transform: collapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
+        }} />
+      </button>
+      {!collapsed && (
+        <div style={{ padding: '0 16px 14px 42px' }}>
+          <p style={{
+            fontSize: 12, lineHeight: 1.6,
+            color: T.textDim, fontFamily: T.font.ui,
+            margin: 0,
+          }}>
+            Avaliação proprietária que combina localização, potencial de valorização, infraestrutura do entorno, liquidez de mercado e qualidade construtiva. Escala 0-100.
+          </p>
+          <button
+            onClick={handleDismiss}
+            style={{
+              marginTop: 10, fontSize: 11, fontWeight: 600,
+              color: T.textMuted, fontFamily: T.font.ui,
+              background: 'none', border: 'none', cursor: 'pointer',
+              textDecoration: 'underline', padding: 0,
+            }}
+          >
+            Entendi, não mostrar novamente
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function DesktopExplorer() {
   const [activeTab, setActiveTab] = useState<Tab>('oportunidades')
   const [properties, setProperties] = useState<IMIProperty[]>([])
@@ -1719,6 +1795,11 @@ function DesktopExplorer() {
         title="Explorer de Imóveis"
         subtitle="Análise inteligente do portfólio"
       />
+
+      {/* IMI Score Explainer — shown on first visit */}
+      <div style={{ paddingTop: 8, paddingBottom: 8 }}>
+        <IMIScoreExplainer />
+      </div>
 
       {/* Tabs */}
       <div style={{ padding: '0 28px', borderBottom: `1px solid ${T.borderSubtle}`, background: T.surface }}>
