@@ -5,6 +5,10 @@ import { ShieldCheck, Mail } from 'lucide-react'
 export const metadata: Metadata = {
     title: 'Política de Privacidade | IMI — Inteligência Imobiliária',
     description: 'Como a IMI coleta, usa e protege seus dados pessoais. Compromisso com transparência e segurança.',
+    robots: {
+        index: false,
+        follow: false,
+    },
     openGraph: {
         title: 'Política de Privacidade | IMI — Inteligência Imobiliária',
         description: 'Como a IMI coleta, usa e protege seus dados pessoais. Compromisso com transparência e segurança.',

@@ -5,6 +5,10 @@ import { FileText, Mail } from 'lucide-react'
 export const metadata: Metadata = {
     title: 'Termos de Uso | IMI — Inteligência Imobiliária',
     description: 'Condições de uso do site e dos serviços da IMI – Inteligência Imobiliária.',
+    robots: {
+        index: false,
+        follow: false,
+    },
     openGraph: {
         title: 'Termos de Uso | IMI — Inteligência Imobiliária',
         description: 'Condições de uso do site e dos serviços da IMI – Inteligência Imobiliária.',

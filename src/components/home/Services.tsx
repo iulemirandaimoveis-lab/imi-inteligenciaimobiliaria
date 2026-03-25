@@ -63,6 +63,7 @@ export default function Services({ dict }: ServicesProps) {
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}>Nossos Serviços</span>
                 </motion.div>
 
+                <h2 className="sr-only">Nossos Serviços</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
                     {services.map((item, i) => (
                         <motion.div
