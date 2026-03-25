@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/lib/supabase/server';
 import { AIRequest, AIProvider } from '@/types/commercial-system';
+import { getRelevantBookContext } from '@/lib/ai/books-context';
 // Configuração do cliente Claude
 const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY || '',
@@ -232,7 +233,14 @@ export async function generatePostContent(params: {
     additional_context?: string;
     requested_by?: string;
 }) {
-    const systemPrompt = await buildSystemPrompt(params.tenant_id, params.additional_context);
+    const baseSystemPrompt = await buildSystemPrompt(params.tenant_id, params.additional_context);
+
+    // Inject book context based on the topic
+    const bookContext = await getRelevantBookContext(params.topic || '')
+    const systemPrompt = bookContext
+        ? `${baseSystemPrompt}\n\nUse o seguinte conhecimento especializado dos livros IMI como base:\n${bookContext}`
+        : baseSystemPrompt;
+
     const prompt = `Crie um post sobre: "${params.topic}"
 TIPO DE CONTEÚDO: ${params.content_type}
 PLATAFORMAS: ${params.platforms.join(', ')}
