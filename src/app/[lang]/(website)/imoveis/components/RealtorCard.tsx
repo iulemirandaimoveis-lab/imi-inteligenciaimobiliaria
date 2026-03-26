@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Mail, Phone, MessageCircle, Calendar } from 'lucide-react'
+import { Mail, Phone, MessageCircle, Calendar, Clock, Award } from 'lucide-react'
 
 interface RealtorInfo {
     name: string
@@ -19,6 +19,10 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
         .join('')
         .toUpperCase()
 
+    const especialidades = broker.creci
+        ? ['Imóveis de Luxo', 'Investimentos', 'Primeira Compra']
+        : ['Consultoria Imobiliária', 'Primeira Compra']
+
     const whatsappUrl = broker.phone
         ? `https://wa.me/${broker.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá ${broker.name}! Tenho interesse no ${propertyName}. Gostaria de mais informações.`)}`
         : null
@@ -35,7 +39,7 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
             <div className="p-5">
                 {/* Avatar + Info */}
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left mb-4">
-                    <div className="relative w-[72px] h-[72px] rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)' }}>
+                    <div className="relative w-[96px] h-[96px] rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: '#F0EDE5', border: '2px solid rgba(200,164,74,0.25)' }}>
                         {broker.avatar_url ? (
                             <Image
                                 src={broker.avatar_url}
@@ -44,7 +48,7 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
                                 className="object-cover"
                             />
                         ) : (
-                            <span className="text-lg font-bold" style={{ color: '#0B1928' }}>
+                            <span className="text-xl font-bold" style={{ color: '#0B1928' }}>
                                 {initials}
                             </span>
                         )}
@@ -62,6 +66,39 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
                             Consultor Imobiliário
                         </p>
                     </div>
+                </div>
+
+                {/* Especialidades */}
+                <div className="mb-4">
+                    <div className="flex items-center gap-1.5 mb-2">
+                        <Award className="w-3.5 h-3.5" style={{ color: '#C8A44A' }} />
+                        <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                            Especialidades
+                        </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                        {especialidades.map((tag) => (
+                            <span
+                                key={tag}
+                                className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium"
+                                style={{ background: 'rgba(200,164,74,0.08)', color: '#8B7A3A', border: '1px solid rgba(200,164,74,0.18)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Tempo de resposta */}
+                <div
+                    className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg"
+                    style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.12)' }}
+                >
+                    <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#10B981' }} />
+                    <span className="text-xs font-medium" style={{ color: '#065F46', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                        Responde em ~15min
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#10B981' }} />
                 </div>
 
                 {/* Contact info */}
