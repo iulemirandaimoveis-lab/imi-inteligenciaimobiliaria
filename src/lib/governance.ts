@@ -1,16 +1,6 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
-let _supabase: SupabaseClient | null = null
-
-function getSupabase(): SupabaseClient {
-    if (!_supabase) {
-        _supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-            process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
-        )
-    }
-    return _supabase!
-}
+const getSupabase = () => supabaseAdmin
 // ── RBAC ────────────────────────────────────────────────────────
 export type UserRole = 'admin' | 'manager' | 'agent' | 'viewer'
 export type Action = 'view' | 'create' | 'edit' | 'delete'

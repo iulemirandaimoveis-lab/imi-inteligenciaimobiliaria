@@ -154,7 +154,8 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         {active && (
                                             <motion.div
                                                 layoutId="nav-indicator"
-                                                className="absolute bottom-0.5 left-3 right-3 h-[2px] bg-[#102A43] rounded-full"
+                                                className="absolute bottom-0.5 left-3 right-3 h-[2px] rounded-full"
+                                                style={{ background: 'linear-gradient(90deg, transparent 0%, #C8A44A 30%, #C8A44A 70%, transparent 100%)' }}
                                                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                                             />
                                         )}
@@ -215,10 +216,12 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 bg-[#102A43] hover:bg-[#0a1c2e] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
+                                className="relative overflow-hidden inline-flex items-center gap-2 bg-[#102A43] hover:bg-[#0a1c2e] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
                             >
                                 <MessageCircle size={15} strokeWidth={2.5} />
                                 WhatsApp
+                                <span className="absolute bottom-0 left-[12%] right-[12%] h-[2px] rounded-sm opacity-60 pointer-events-none"
+                                    style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
                             </a>
                         </div>
 

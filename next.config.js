@@ -4,6 +4,7 @@ const withPWA = require('next-pwa')({
     register: true,
     skipWaiting: true,
     disable: process.env.NODE_ENV === 'development',
+    buildExcludes: [/\.map$/, /middleware-manifest\.json$/],
     runtimeCaching: [
         {
             urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*/i,
@@ -27,10 +28,10 @@ const { withSentryConfig } = require('@sentry/nextjs')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     eslint: {
-        ignoreDuringBuilds: true,
+        ignoreDuringBuilds: false,
     },
     typescript: {
-        ignoreBuildErrors: true, // TEMPORARY: unblock deploy while fixing remaining TS errors
+        ignoreBuildErrors: false,
     },
     images: {
         remotePatterns: [

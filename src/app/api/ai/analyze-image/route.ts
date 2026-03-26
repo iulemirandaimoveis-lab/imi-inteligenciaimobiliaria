@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
-        const rl = rateLimit(`analyze-image:${user.id}`, 20, 60000)
+        const rl = await rateLimit(`analyze-image:${user.id}`, { limit: 20, windowMs: 60000 })
         if (!rl.success) return NextResponse.json({ error: 'Limite excedido' }, { status: 429 })
 
         const { image_url, development_id } = await req.json()
@@ -96,7 +96,9 @@ export async function POST(req: Request) {
                 auto_caption: caption,
                 analysis_model: 'moondream3-preview',
                 analyzed_at: new Date().toISOString(),
-            }, { onConflict: 'development_id,image_url' }).catch(() => {
+            }, { onConflict: 'development_id,image_url' }).then(() => {
+                // Success
+            }, () => {
                 // Table might not exist yet — graceful fallback
             })
         }

@@ -19,7 +19,7 @@ export default async function QRPrintPage({ params }: { params: Promise<{ id: st
 
     if (!link) notFound()
 
-    const dev = link.developments as { name: string; address?: string; neighborhood?: string; city?: string } | null
+    const dev = (Array.isArray(link.developments) ? link.developments[0] : link.developments) as { name: string; address?: string; neighborhood?: string; city?: string } | null
     const propertyName = dev?.name || link.campaign_name || 'Imóvel'
     const address = [dev?.address, dev?.neighborhood, dev?.city].filter(Boolean).join(', ')
     const shortCode = link.short_code

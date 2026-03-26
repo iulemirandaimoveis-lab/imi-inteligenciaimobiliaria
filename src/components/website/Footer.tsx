@@ -54,7 +54,7 @@ export default function Footer({ lang, settings }: FooterProps) {
     return (
         <footer className="bg-navy-950 text-white">
             {/* Gold accent line */}
-            <div className="h-px bg-gradient-to-r from-transparent via-[#334E68]/50 to-transparent" />
+            <div className="h-[2px] bg-gradient-to-r from-transparent via-[#C8A44A]/40 to-transparent" />
 
             <div className="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 lg:py-20">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
@@ -68,7 +68,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                             >
                                 IMI
                             </span>
-                            <span className="ml-2 text-[11px] font-semibold text-white/40 uppercase tracking-[0.18em]">
+                            <span className="ml-2 text-[11px] font-semibold text-[#C8A44A] uppercase tracking-[0.18em]">
                                 Inteligência Imobiliária
                             </span>
                         </Link>
