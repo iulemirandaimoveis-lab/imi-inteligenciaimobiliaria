@@ -1,6 +1,12 @@
 import type { Metadata } from 'next'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
+
+// Public anon client — uses RLS policies (anon_read on developments/developers/brokers)
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 import { Bed, Ruler, Car, Calendar } from 'lucide-react'
 import DevelopmentHero from '../components/DevelopmentHero'
