@@ -1,109 +1,206 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextResponse } from "next/server"
+import { createClient } from "@/lib/supabase/server"
+import { supabaseAdmin } from "@/lib/supabase/admin"
+import { rateLimit, getClientIP } from "@/lib/rate-limit"
+import type { WhatsAppInstance } from "@/types/crm"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
-const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL || ''
-const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY || ''
-const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE_NAME || 'imi-whatsapp'
-
-/**
- * POST /api/whatsapp/send — Send WhatsApp message via Evolution API
- */
+// ============================================================
+// POST /api/whatsapp/send — Send text message via WhatsApp
+// ============================================================
 export async function POST(request: Request) {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-        return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+  try {
+    const ip = getClientIP(request)
+    const rl = await rateLimit(ip, { limit: 30, windowMs: 60_000 })
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded", remaining: rl.remaining },
+        { status: 429 }
+      )
     }
 
-    if (!EVOLUTION_API_URL || !EVOLUTION_API_KEY) {
-        return NextResponse.json({ error: 'Evolution API não configurada' }, { status: 503 })
+    const supabase = await createClient()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const body = await request.json()
-    const { phone, message } = body
+    const { lead_id, message, instance_id } = body
 
-    if (!phone || !message) {
-        return NextResponse.json({ error: 'phone e message são obrigatórios' }, { status: 400 })
+    if (!lead_id || !message) {
+      return NextResponse.json(
+        { error: "lead_id e message sao obrigatorios" },
+        { status: 400 }
+      )
     }
 
-    // Normalize phone (remove non-digits, ensure country code)
-    let normalizedPhone = phone.replace(/\D/g, '')
-    if (normalizedPhone.startsWith('0')) normalizedPhone = '55' + normalizedPhone.slice(1)
-    if (!normalizedPhone.startsWith('55')) normalizedPhone = '55' + normalizedPhone
+    // Look up the lead
+    const { data: lead, error: leadError } = await supabaseAdmin
+      .from("leads")
+      .select("id, phone, phone_normalized, whatsapp_jid, whatsapp_instance_id, name")
+      .eq("id", lead_id)
+      .single()
 
-    try {
-        const res = await fetch(`${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE}`, {
-            method: 'POST',
+    if (leadError || !lead) {
+      return NextResponse.json(
+        { error: "Lead nao encontrado" },
+        { status: 404 }
+      )
+    }
+
+    const phone = lead.phone_normalized || lead.phone
+    if (!phone) {
+      return NextResponse.json(
+        { error: "Lead nao possui telefone cadastrado" },
+        { status: 400 }
+      )
+    }
+
+    // Normalize phone number
+    let normalizedPhone = phone.replace(/\D/g, "")
+    if (normalizedPhone.startsWith("0"))
+      normalizedPhone = "55" + normalizedPhone.slice(1)
+    if (!normalizedPhone.startsWith("55"))
+      normalizedPhone = "55" + normalizedPhone
+
+    const remoteJid = lead.whatsapp_jid || `${normalizedPhone}@s.whatsapp.net`
+
+    // Find the WhatsApp instance to use
+    const targetInstanceId = instance_id || lead.whatsapp_instance_id
+    let instance: WhatsAppInstance | null = null
+
+    if (targetInstanceId) {
+      const { data } = await supabaseAdmin
+        .from("whatsapp_instances")
+        .select("*")
+        .eq("id", targetInstanceId)
+        .single()
+      instance = data
+    }
+
+    // Fallback: use default instance
+    if (!instance) {
+      const { data } = await supabaseAdmin
+        .from("whatsapp_instances")
+        .select("*")
+        .eq("is_default", true)
+        .single()
+      instance = data
+    }
+
+    // If still no instance, fallback to any available
+    if (!instance) {
+      const { data } = await supabaseAdmin
+        .from("whatsapp_instances")
+        .select("*")
+        .eq("status", "connected")
+        .limit(1)
+        .single()
+      instance = data
+    }
+
+    // Try to send via Evolution API if we have a configured instance
+    let sendStatus: "sent" | "pending" | "failed" = "pending"
+    let externalMessageId: string | null = null
+    let sendError: string | null = null
+
+    if (instance?.evolution_api_url && instance?.evolution_api_key) {
+      try {
+        const sendRes = await fetch(
+          `${instance.evolution_api_url}/message/sendText/${instance.instance_name}`,
+          {
+            method: "POST",
             headers: {
-                apikey: EVOLUTION_API_KEY,
-                'Content-Type': 'application/json',
+              apikey: instance.evolution_api_key,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                number: normalizedPhone,
-                text: message,
+              number: normalizedPhone,
+              text: message,
             }),
-        })
+            signal: AbortSignal.timeout(15000),
+          }
+        )
 
-        if (!res.ok) {
-            const errData = await res.json().catch(() => ({}))
-            return NextResponse.json({
-                error: errData?.message ?? 'Erro ao enviar mensagem',
-            }, { status: 500 })
+        if (sendRes.ok) {
+          const sendData = await sendRes.json()
+          externalMessageId = sendData?.key?.id || null
+          sendStatus = "sent"
+        } else {
+          const errData = await sendRes.json().catch(() => ({}))
+          sendError = errData?.message || `Evolution API error: ${sendRes.status}`
+          sendStatus = "failed"
         }
-
-        const data = await res.json()
-
-        // Save to DB
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('id')
-            .eq('id', user.id)
-            .single()
-
-        if (profile) {
-            // Find or create conversation
-            let { data: conversation } = await supabase
-                .from('whatsapp_conversations')
-                .select('id')
-                .eq('phone_number', normalizedPhone)
-                .maybeSingle()
-
-            if (!conversation) {
-                const { data: newConv } = await supabase
-                    .from('whatsapp_conversations')
-                    .insert({
-                        phone_number: normalizedPhone,
-                        status: 'active',
-                        assigned_to: user.id,
-                    })
-                    .select('id')
-                    .single()
-                conversation = newConv
-            }
-
-            if (conversation) {
-                await supabase.from('whatsapp_messages').insert({
-                    conversation_id: conversation.id,
-                    direction: 'outbound',
-                    message_type: 'text',
-                    content: message,
-                    status: 'sent',
-                    external_id: data?.key?.id ?? null,
-                })
-
-                await supabase.from('whatsapp_conversations').update({
-                    last_message_at: new Date().toISOString(),
-                    last_message_preview: message.substring(0, 100),
-                }).eq('id', conversation.id)
-            }
-        }
-
-        return NextResponse.json({ success: true, messageId: data?.key?.id })
-    } catch (error: unknown) {
-        return NextResponse.json({
-            error: error instanceof Error ? error.message : 'Erro ao enviar mensagem',
-        }, { status: 500 })
+      } catch (err) {
+        sendError =
+          err instanceof Error ? err.message : "Evolution API unreachable"
+        sendStatus = "failed"
+      }
+    } else {
+      // No instance configured — save as pending for later delivery
+      sendStatus = "pending"
+      sendError = "Nenhuma instancia WhatsApp configurada — mensagem salva como pendente"
     }
+
+    // Save message to whatsapp_messages table
+    const { data: savedMessage, error: msgError } = await supabaseAdmin
+      .from("whatsapp_messages")
+      .insert({
+        lead_id,
+        instance_id: instance?.id || null,
+        remote_jid: remoteJid,
+        message_id: externalMessageId,
+        direction: "outbound",
+        content_type: "text",
+        body: message,
+        status: sendStatus,
+        is_ai_generated: false,
+        ai_entities_extracted: {},
+        context: {},
+      })
+      .select("id, status, message_id, created_at")
+      .single()
+
+    if (msgError) {
+      return NextResponse.json(
+        { error: "Mensagem enviada mas erro ao salvar no banco" },
+        { status: 500 }
+      )
+    }
+
+    // Update lead tracking fields
+    await supabaseAdmin
+      .from("leads")
+      .update({
+        last_message_at: new Date().toISOString(),
+        last_contact_at: new Date().toISOString(),
+        total_messages: (lead as any).total_messages
+          ? (lead as any).total_messages + 1
+          : 1,
+        total_outbound_messages: (lead as any).total_outbound_messages
+          ? (lead as any).total_outbound_messages + 1
+          : 1,
+        whatsapp_jid: remoteJid,
+        whatsapp_instance_id: instance?.id || lead.whatsapp_instance_id,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", lead_id)
+
+    return NextResponse.json({
+      success: sendStatus === "sent",
+      status: sendStatus,
+      message: savedMessage,
+      error: sendError,
+    })
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    )
+  }
 }
