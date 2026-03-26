@@ -1,68 +1,10 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { apiHandler, ApiContext } from '@/lib/api-helpers'
 import { logAudit, getRequestMeta } from '@/lib/governance'
-import { parseBody, leadSchema } from '@/lib/schemas'
+import { leadSchema } from '@/lib/schemas'
 import { createNotification } from '@/lib/notifications'
-export async function GET(request: Request) {
-    try {
-        const supabase = await createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            return NextResponse.json({ error: 'Unauthorized', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 401 });
-        }
-        const { searchParams } = new URL(request.url)
-        const page = parseInt(searchParams.get('page') || '1')
-        const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
-        const offset = (page - 1) * limit
-        const { data: leads, error, count } = await supabase
-            .from('leads')
-            .select('id, name, email, phone, source, origin, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, capital, utm_source, country, currency, language, tags, notes, assigned_to', { count: 'exact' })
-            .not('status', 'eq', 'archived')
-            .order('created_at', { ascending: false })
-            .range(offset, offset + limit - 1);
-        if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido', data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
-        }
-        // Map to the format the frontend expects
-        const formatted = (leads || []).map((l: Record<string, unknown>) => ({
-            id: l.id,
-            name: l.name || 'Sem nome',
-            email: l.email || '',
-            phone: l.phone || '',
-            score: l.score || l.ai_score || 50,
-            status: l.status || 'new',
-            source: l.source || l.origin || l.utm_source || 'website',
-            interest: l.interest_type || '',
-            interest_type: l.interest_type || null,
-            interest_location: l.interest_location || null,
-            city: l.interest_location || null,
-            capital: l.capital || l.budget_min || null,
-            budget_min: l.budget_min || null,
-            budget_max: l.budget_max || null,
-            budget: formatBudget((l.budget_min || l.capital) as number | null, l.budget_max as number | null),
-            country: l.country || 'BR',
-            currency: l.currency || 'BRL',
-            language: l.language || 'pt',
-            tags: Array.isArray(l.tags) ? l.tags : [],
-            notes: l.notes || null,
-            created_at: l.created_at || new Date().toISOString(),
-            updated_at: l.updated_at || l.created_at || new Date().toISOString(),
-        }));
-        return NextResponse.json({
-            data: formatted,
-            pagination: {
-                page,
-                limit,
-                total: count || 0,
-                pages: Math.ceil((count || 0) / limit),
-            },
-        }, {
-            headers: { 'Cache-Control': 'private, s-maxage=30, stale-while-revalidate=120' },
-        });
-    } catch (error) {
-        return NextResponse.json({ error: 'Internal Server Error', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 500 });
-    }
-}
+
 function mapStatus(status: string | null): string {
     if (!status) return 'warm';
     const s = status.toLowerCase();
@@ -82,157 +24,216 @@ function formatBudget(min: number | null, max: number | null): string {
     if (max) return `Até ${fmt(max)}`;
     return 'N/A';
 }
-export async function POST(request: Request) {
-    try {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        const parsed = await parseBody(request, leadSchema)
-        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
-        const body = parsed.data
-        const { data: lead, error } = await supabase
-            .from('leads')
-            .insert({
-                name: body.name,
-                email: body.email || null,
-                phone: body.phone || null,
-                source: body.source || 'website',
-                origin: body.source || 'website',
-                status: body.status || 'new',
-                score: 50,
-                ai_score: body.ai_score || 0,
-                ai_priority: body.ai_priority || 'medium',
-                development_id: body.development_id || null,
-                interest_type: body.interest_type || null,
-                interest_location: body.interest_location || null,
-                budget_min: body.budget_min ?? null,
-                budget_max: body.budget_max ?? null,
-                capital: body.budget_min ?? null,
-                notes: body.notes || null,
-                country: 'BR',
-                currency: 'BRL',
-                language: 'pt',
-                tags: [],
-            })
-            .select()
-            .single()
-        if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        }
-        // Audit log
-        const meta = getRequestMeta(request)
-        logAudit({
-            user_id: user?.id,
-            action: 'create',
-            entity_type: 'lead',
-            entity_id: lead.id,
-            new_data: { name: body.name, email: body.email, source: body.source },
-            ...meta,
+
+// ─── GET /api/leads ─────────────────────────────────────────────────────────
+export const GET = apiHandler(null, async (request: NextRequest, _body: unknown, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
+    const offset = (page - 1) * limit
+    const { data: leads, error, count } = await supabase
+        .from('leads')
+        .select('id, name, email, phone, source, origin, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, capital, utm_source, country, currency, language, tags, notes, assigned_to', { count: 'exact' })
+        .not('status', 'eq', 'archived')
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido', data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
+    }
+    // Map to the format the frontend expects
+    const formatted = (leads || []).map((l: Record<string, unknown>) => ({
+        id: l.id,
+        name: l.name || 'Sem nome',
+        email: l.email || '',
+        phone: l.phone || '',
+        score: l.score || l.ai_score || 50,
+        status: l.status || 'new',
+        source: l.source || l.origin || l.utm_source || 'website',
+        interest: l.interest_type || '',
+        interest_type: l.interest_type || null,
+        interest_location: l.interest_location || null,
+        city: l.interest_location || null,
+        capital: l.capital || l.budget_min || null,
+        budget_min: l.budget_min || null,
+        budget_max: l.budget_max || null,
+        budget: formatBudget((l.budget_min || l.capital) as number | null, l.budget_max as number | null),
+        country: l.country || 'BR',
+        currency: l.currency || 'BRL',
+        language: l.language || 'pt',
+        tags: Array.isArray(l.tags) ? l.tags : [],
+        notes: l.notes || null,
+        created_at: l.created_at || new Date().toISOString(),
+        updated_at: l.updated_at || l.created_at || new Date().toISOString(),
+    }));
+    return NextResponse.json({
+        data: formatted,
+        pagination: {
+            page,
+            limit,
+            total: count || 0,
+            pages: Math.ceil((count || 0) / limit),
+        },
+    }, {
+        headers: { 'Cache-Control': 'private, s-maxage=30, stale-while-revalidate=120' },
+    });
+}, { auth: true })
+
+// ─── POST /api/leads ────────────────────────────────────────────────────────
+export const POST = apiHandler(leadSchema, async (request: NextRequest, body: z.infer<typeof leadSchema>, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const { data: lead, error } = await supabase
+        .from('leads')
+        .insert({
+            name: body.name,
+            email: body.email || null,
+            phone: body.phone || null,
+            source: body.source || 'website',
+            origin: body.source || 'website',
+            status: body.status || 'new',
+            score: 50,
+            ai_score: body.ai_score || 0,
+            ai_priority: body.ai_priority || 'medium',
+            development_id: body.development_id || null,
+            interest_type: body.interest_type || null,
+            interest_location: body.interest_location || null,
+            budget_min: body.budget_min ?? null,
+            budget_max: body.budget_max ?? null,
+            capital: body.budget_min ?? null,
+            notes: body.notes || null,
+            country: 'BR',
+            currency: 'BRL',
+            language: 'pt',
+            tags: [],
         })
-        // Notification — fire-and-forget
-        if (user) {
-            createNotification({
-                userId: user.id,
-                type: 'lead_novo',
-                title: 'Novo Lead',
-                message: `Lead ${body.name || 'novo'} adicionado`,
-                data: { lead_id: lead.id },
-            }).catch(() => {})
-        }
-        // Non-blocking auto-score calculation
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-        fetch(`${baseUrl}/api/ai/auto-score`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ lead_id: lead.id }),
-        }).catch(() => {}) // Fire-and-forget
-        return NextResponse.json({ success: true, lead })
-    } catch (error) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        .select()
+        .single()
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
     }
-}
-export async function DELETE(request: Request) {
-    try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        const { searchParams } = new URL(request.url)
-        const id = searchParams.get('id')
-        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
-        // Soft delete — set status to archived
-        const { error } = await supabase
-            .from('leads')
-            .update({ status: 'archived', updated_at: new Date().toISOString() })
-            .eq('id', id)
-        if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        }
-        const meta = getRequestMeta(request)
-        logAudit({
-            user_id: user.id,
-            action: 'archive',
-            entity_type: 'lead',
-            entity_id: id,
-            ...meta,
-        })
-        return NextResponse.json({ success: true })
-    } catch (error) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    // Audit log
+    const meta = getRequestMeta(request)
+    logAudit({
+        user_id: user?.id,
+        action: 'create',
+        entity_type: 'lead',
+        entity_id: lead.id,
+        new_data: { name: body.name, email: body.email, source: body.source },
+        ...meta,
+    })
+    // Notification — fire-and-forget
+    if (user) {
+        createNotification({
+            userId: user.id,
+            type: 'lead_novo',
+            title: 'Novo Lead',
+            message: `Lead ${body.name || 'novo'} adicionado`,
+            data: { lead_id: lead.id },
+        }).catch(() => {})
     }
-}
-export async function PUT(request: Request) {
-    try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        const body = await request.json()
-        const { id, ...updates } = body
-        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
-        // Map form fields → DB columns
-        const payload: Record<string, any> = {
-            updated_at: new Date().toISOString(),
-        }
-        if (updates.name !== undefined)              payload.name = updates.name
-        if (updates.email !== undefined)             payload.email = updates.email || null
-        if (updates.phone !== undefined)             payload.phone = updates.phone || null
-        if (updates.cpf !== undefined)               payload.cpf = updates.cpf || null
-        if (updates.status !== undefined)            payload.status = updates.status
-        if (updates.notes !== undefined)             payload.notes = updates.notes || null
-        if (updates.origem !== undefined)            { payload.source = updates.origem; payload.origin = updates.origem }
-        if (updates.interesse !== undefined)         payload.interest_type = updates.interesse || null
-        if (updates.localizacao !== undefined)       payload.interest_location = updates.localizacao || null
-        if (updates.occupation !== undefined)        payload.occupation = updates.occupation || null
-        if (updates.company !== undefined)           payload.company = updates.company || null
-        if (updates.maritalStatus !== undefined)     payload.marital_status = updates.maritalStatus || null
-        if (updates.children !== undefined)          payload.children = updates.children ? parseInt(updates.children) : null
-        if (updates.preferredContact !== undefined)  payload.preferred_contact = updates.preferredContact || null
-        if (updates.bestTime !== undefined)          payload.best_time = updates.bestTime || null
-        // Parse orcamento range → budget_min/budget_max
-        if (updates.orcamento !== undefined) {
-            const budgetMap: Record<string, [number, number]> = {
-                'Até R$ 300k':          [0, 300000],
-                'R$ 300k - R$ 500k':    [300000, 500000],
-                'R$ 500k - R$ 800k':    [500000, 800000],
-                'R$ 800k - R$ 1.2M':    [800000, 1200000],
-                'Acima de R$ 1.2M':     [1200000, 999999999],
-            }
-            const range = budgetMap[updates.orcamento]
-            if (range) {
-                payload.budget_min = range[0]
-                payload.budget_max = range[1]
-                payload.capital = range[0]
-            }
-        }
-        const { data, error } = await supabase
-            .from('leads')
-            .update(payload)
-            .eq('id', id)
-            .select()
-            .single()
-        if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        }
-        return NextResponse.json({ success: true, lead: data })
-    } catch (error) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    // Non-blocking auto-score calculation
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    fetch(`${baseUrl}/api/ai/auto-score`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lead_id: lead.id }),
+    }).catch(() => {}) // Fire-and-forget
+    return NextResponse.json({ success: true, lead })
+}, { auth: true, auditAction: 'lead.create' })
+
+// ─── PUT /api/leads ─────────────────────────────────────────────────────────
+const leadPutSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    cpf: z.string().optional(),
+    status: z.string().optional(),
+    notes: z.string().optional(),
+    origem: z.string().optional(),
+    interesse: z.string().optional(),
+    localizacao: z.string().optional(),
+    occupation: z.string().optional(),
+    company: z.string().optional(),
+    maritalStatus: z.string().optional(),
+    children: z.string().optional(),
+    preferredContact: z.string().optional(),
+    bestTime: z.string().optional(),
+    orcamento: z.string().optional(),
+}).passthrough()
+
+export const PUT = apiHandler(leadPutSchema, async (request: NextRequest, body: z.infer<typeof leadPutSchema>, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const { id, ...updates } = body
+    if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+    // Map form fields -> DB columns
+    const payload: Record<string, any> = {
+        updated_at: new Date().toISOString(),
     }
-}
+    if (updates.name !== undefined)              payload.name = updates.name
+    if (updates.email !== undefined)             payload.email = updates.email || null
+    if (updates.phone !== undefined)             payload.phone = updates.phone || null
+    if (updates.cpf !== undefined)               payload.cpf = updates.cpf || null
+    if (updates.status !== undefined)            payload.status = updates.status
+    if (updates.notes !== undefined)             payload.notes = updates.notes || null
+    if (updates.origem !== undefined)            { payload.source = updates.origem; payload.origin = updates.origem }
+    if (updates.interesse !== undefined)         payload.interest_type = updates.interesse || null
+    if (updates.localizacao !== undefined)       payload.interest_location = updates.localizacao || null
+    if (updates.occupation !== undefined)        payload.occupation = updates.occupation || null
+    if (updates.company !== undefined)           payload.company = updates.company || null
+    if (updates.maritalStatus !== undefined)     payload.marital_status = updates.maritalStatus || null
+    if (updates.children !== undefined)          payload.children = updates.children ? parseInt(updates.children) : null
+    if (updates.preferredContact !== undefined)  payload.preferred_contact = updates.preferredContact || null
+    if (updates.bestTime !== undefined)          payload.best_time = updates.bestTime || null
+    // Parse orcamento range -> budget_min/budget_max
+    if (updates.orcamento !== undefined) {
+        const budgetMap: Record<string, [number, number]> = {
+            'Até R$ 300k':          [0, 300000],
+            'R$ 300k - R$ 500k':    [300000, 500000],
+            'R$ 500k - R$ 800k':    [500000, 800000],
+            'R$ 800k - R$ 1.2M':    [800000, 1200000],
+            'Acima de R$ 1.2M':     [1200000, 999999999],
+        }
+        const range = budgetMap[updates.orcamento]
+        if (range) {
+            payload.budget_min = range[0]
+            payload.budget_max = range[1]
+            payload.capital = range[0]
+        }
+    }
+    const { data, error } = await supabase
+        .from('leads')
+        .update(payload)
+        .eq('id', id)
+        .select()
+        .single()
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+    }
+    return NextResponse.json({ success: true, lead: data })
+}, { auth: true, auditAction: 'lead.update' })
+
+// ─── DELETE /api/leads ──────────────────────────────────────────────────────
+export const DELETE = apiHandler(null, async (request: NextRequest, _body: unknown, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+    // Soft delete — set status to archived
+    const { error } = await supabase
+        .from('leads')
+        .update({ status: 'archived', updated_at: new Date().toISOString() })
+        .eq('id', id)
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+    }
+    const meta = getRequestMeta(request)
+    logAudit({
+        user_id: user?.id,
+        action: 'archive',
+        entity_type: 'lead',
+        entity_id: id,
+        ...meta,
+    })
+    return NextResponse.json({ success: true })
+}, { auth: true, auditAction: 'lead.archive' })

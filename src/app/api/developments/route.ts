@@ -1,51 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
+import { apiHandler, ApiContext } from '@/lib/api-helpers'
 import { logAudit, getRequestMeta } from '@/lib/governance'
+
 export const runtime = 'nodejs'
-async function getAuthenticatedSupabase() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { supabase: null, user: null }
-    return { supabase, user }
-}
-export async function GET(request: NextRequest) {
-    try {
-        const { supabase, user } = await getAuthenticatedSupabase()
-        if (!supabase || !user) {
-            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        }
-        const { searchParams } = new URL(request.url)
-        const id = searchParams.get('id')
-        if (id) {
-            const { data, error } = await supabase
-                .from('developments')
-                .select('*')
-                .eq('id', id)
-                .single()
-            if (error) {
-                return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-            }
-            if (!data) {
-                return NextResponse.json({ error: 'Empreendimento não encontrado' }, { status: 404 })
-            }
-            return NextResponse.json(data, {
-                headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
-            })
-        }
-        const { data, error } = await supabase
-            .from('developments')
-            .select('*')
-            .order('created_at', { ascending: false })
-        if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        }
-        return NextResponse.json(data, {
-            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
-        })
-    } catch (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
-    }
-}
+
 /**
  * Normalize field names from camelCase (form) to snake_case (DB).
  * Handles both naming conventions so forms can send either format.
@@ -54,7 +13,7 @@ export async function GET(request: NextRequest) {
 function normalizeFields(body: Record<string, any>): Record<string, any> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: Record<string, any> = {}
-    // Direct mappings — camelCase form field → snake_case DB column
+    // Direct mappings — camelCase form field -> snake_case DB column
     const fieldMap: Record<string, string> = {
         priceMin: 'price_min',
         priceMax: 'price_max',
@@ -93,14 +52,14 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
             result[f] = null
         }
     }
-    // Sync dual price columns (price_min/price_max ↔ price_from/price_to)
+    // Sync dual price columns (price_min/price_max <-> price_from/price_to)
     if (result.price_min !== undefined) result.price_from = result.price_min
     if (result.price_max !== undefined) result.price_to = result.price_max
     // Sync area: if only area_from set (from single 'area' form field), mirror to area_to
     if (result.area_from !== undefined && result.area_from !== null && result.area_to === undefined) {
         result.area_to = result.area_from
     }
-    // Sync private_area ↔ area_from (edit form sends private_area, detail page reads area_from)
+    // Sync private_area <-> area_from (edit form sends private_area, detail page reads area_from)
     if (result.private_area !== undefined && result.private_area !== null && result.area_from === undefined) {
         result.area_from = result.private_area
     }
@@ -166,222 +125,237 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     }
     return result
 }
-export async function POST(req: Request) {
-    try {
-        const { supabase, user } = await getAuthenticatedSupabase()
-        if (!supabase || !user) {
-            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        }
-        const body = await req.json()
-        if (!body.name || !body.type) {
-            return NextResponse.json({ error: 'Nome e tipo são obrigatórios' }, { status: 400 })
-        }
-        // Auto-generate slug
-        const slug = body.slug || body.name.toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '')
-        const normalized = normalizeFields(body)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const newDev: Record<string, any> = {
-            ...normalized,
-            slug,
-            city: normalized.city || 'Recife',
-            state: normalized.state || 'PE',
-            country: normalized.country || 'Brasil',
-            status: normalized.status || 'disponivel',
-            // Ensure status columns have valid defaults (respecting check constraints)
-            status_comercial: normalized.status_comercial || 'rascunho',
-            status_commercial: normalized.status_commercial || 'draft',
-            is_highlighted: normalized.is_highlighted || false,
-            featured: normalized.featured || false,
-            created_by: user.id,
-        }
-        // Auto-assign broker_id if not provided — find broker record for this user
-        if (!newDev.broker_id) {
-            const { data: broker } = await supabase
-                .from('brokers')
-                .select('id')
-                .eq('user_id', user.id)
-                .maybeSingle()
-            if (broker) newDev.broker_id = broker.id
-        }
-        // Remove undefined/undeclared fields that could cause Supabase errors
-        for (const key of Object.keys(newDev)) {
-            if (newDev[key] === undefined) delete newDev[key]
-        }
+
+// ─── Zod schemas ────────────────────────────────────────────────────────────
+const developmentPostSchema = z.object({
+    name: z.string().min(1, 'Nome é obrigatório'),
+    type: z.string().min(1, 'Tipo é obrigatório'),
+}).passthrough()
+
+const developmentPutSchema = z.object({
+    id: z.string().uuid('ID inválido'),
+}).passthrough()
+
+const developmentPatchSchema = z.object({
+    id: z.string().uuid('ID inválido'),
+    status: z.string().min(1, 'Status é obrigatório'),
+})
+
+// ─── GET /api/developments ──────────────────────────────────────────────────
+export const GET = apiHandler(null, async (request: NextRequest, _body: unknown, ctx: ApiContext) => {
+    const { supabase } = ctx
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    if (id) {
         const { data, error } = await supabase
             .from('developments')
-            .insert(newDev)
-            .select()
-            .single()
-        if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        }
-        const meta = getRequestMeta(req)
-        logAudit({
-            action: 'create',
-            entity_type: 'development',
-            entity_id: data.id,
-            new_data: { name: body.name, type: body.type, city: newDev.city },
-            ...meta,
-        })
-        return NextResponse.json(data)
-    } catch (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
-    }
-}
-export async function PUT(request: Request) {
-    try {
-        const { supabase, user } = await getAuthenticatedSupabase()
-        if (!supabase || !user) {
-            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        }
-        const body = await request.json()
-        const { id } = body
-        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
-        const normalized = normalizeFields(body)
-        // Ensure type fields stay in sync (only if normalizeFields didn't already handle it)
-        // normalizeFields maps capitalized form values (e.g. 'Apartamento') to all three columns
-        // This block handles cases where lowercase values come in (e.g. from edit form)
-        if (normalized.type && !normalized.tipo) {
-            // EN type provided without PT — look up reverse mapping
-            const enToPt: Record<string, string> = {
-                apartment: 'apartamento', house: 'casa', penthouse: 'apartamento',
-                studio: 'apartamento', land: 'lote', commercial: 'comercial',
-                resort: 'resort', flat: 'flat',
-            }
-            const enToPropType: Record<string, string> = {
-                apartment: 'apartment', house: 'house', penthouse: 'apartment',
-                studio: 'apartment', land: 'land', commercial: 'commercial',
-                resort: 'mixed', flat: 'apartment',
-            }
-            normalized.tipo = enToPt[normalized.type] || normalized.type
-            normalized.property_type = enToPropType[normalized.type] || normalized.type
-        } else if (normalized.tipo && !normalized.type) {
-            // PT tipo provided without EN — look up forward mapping
-            const ptToEn: Record<string, string> = {
-                apartamento: 'apartment', casa: 'house', flat: 'apartment',
-                lote: 'land', comercial: 'commercial', resort: 'resort',
-            }
-            normalized.type = ptToEn[normalized.tipo] || normalized.tipo
-            normalized.property_type = ptToEn[normalized.tipo] || 'mixed'
-        }
-        normalized.updated_at = new Date().toISOString()
-        normalized.updated_by = user.id
-        // Remove undefined fields
-        for (const key of Object.keys(normalized)) {
-            if (normalized[key] === undefined) delete normalized[key]
-        }
-        const { data, error } = await supabase
-            .from('developments')
-            .update(normalized)
+            .select('*')
             .eq('id', id)
-            .select()
             .single()
         if (error) {
             return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
-        const meta = getRequestMeta(request)
-        logAudit({
-            action: 'update',
-            entity_type: 'development',
-            entity_id: id,
-            new_data: normalized,
-            ...meta,
+        if (!data) {
+            return NextResponse.json({ error: 'Empreendimento não encontrado' }, { status: 404 })
+        }
+        return NextResponse.json(data, {
+            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
         })
-        return NextResponse.json(data)
-    } catch (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
-}
-export async function PATCH(request: Request) {
-    try {
-        const { supabase, user } = await getAuthenticatedSupabase()
-        if (!supabase || !user) {
-            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+    const { data, error } = await supabase
+        .from('developments')
+        .select('*')
+        .order('created_at', { ascending: false })
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+    }
+    return NextResponse.json(data, {
+        headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+    })
+}, { auth: true })
+
+// ─── POST /api/developments ─────────────────────────────────────────────────
+export const POST = apiHandler(developmentPostSchema, async (req: NextRequest, body: z.infer<typeof developmentPostSchema>, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    // Auto-generate slug
+    const slug = (body as any).slug || body.name.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+    const normalized = normalizeFields(body)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const newDev: Record<string, any> = {
+        ...normalized,
+        slug,
+        city: normalized.city || 'Recife',
+        state: normalized.state || 'PE',
+        country: normalized.country || 'Brasil',
+        status: normalized.status || 'disponivel',
+        // Ensure status columns have valid defaults (respecting check constraints)
+        status_comercial: normalized.status_comercial || 'rascunho',
+        status_commercial: normalized.status_commercial || 'draft',
+        is_highlighted: normalized.is_highlighted || false,
+        featured: normalized.featured || false,
+        created_by: user!.id,
+    }
+    // Auto-assign broker_id if not provided — find broker record for this user
+    if (!newDev.broker_id) {
+        const { data: broker } = await supabase
+            .from('brokers')
+            .select('id')
+            .eq('user_id', user!.id)
+            .maybeSingle()
+        if (broker) newDev.broker_id = broker.id
+    }
+    // Remove undefined/undeclared fields that could cause Supabase errors
+    for (const key of Object.keys(newDev)) {
+        if (newDev[key] === undefined) delete newDev[key]
+    }
+    const { data, error } = await supabase
+        .from('developments')
+        .insert(newDev)
+        .select()
+        .single()
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+    }
+    const meta = getRequestMeta(req)
+    logAudit({
+        action: 'create',
+        entity_type: 'development',
+        entity_id: data.id,
+        new_data: { name: body.name, type: body.type, city: newDev.city },
+        ...meta,
+    })
+    return NextResponse.json(data)
+}, { auth: true, auditAction: 'development.create' })
+
+// ─── PUT /api/developments ──────────────────────────────────────────────────
+export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest, body: z.infer<typeof developmentPutSchema>, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const { id } = body
+    if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+    const normalized = normalizeFields(body)
+    // Ensure type fields stay in sync (only if normalizeFields didn't already handle it)
+    if (normalized.type && !normalized.tipo) {
+        const enToPt: Record<string, string> = {
+            apartment: 'apartamento', house: 'casa', penthouse: 'apartamento',
+            studio: 'apartamento', land: 'lote', commercial: 'comercial',
+            resort: 'resort', flat: 'flat',
         }
-        const body = await request.json()
-        const { id, status } = body
-        if (!id || !status) {
-            return NextResponse.json({ error: 'ID e status obrigatórios' }, { status: 400 })
+        const enToPropType: Record<string, string> = {
+            apartment: 'apartment', house: 'house', penthouse: 'apartment',
+            studio: 'apartment', land: 'land', commercial: 'commercial',
+            resort: 'mixed', flat: 'apartment',
         }
-        // Map frontend status → dual DB columns
-        const statusMap: Record<string, { comercial: string; commercial: string; appStatus: string }> = {
-            disponivel:    { comercial: 'publicado',  commercial: 'published', appStatus: 'disponivel' },
-            vendido:       { comercial: 'privado',    commercial: 'sold',      appStatus: 'vendido' },
-            reservado:     { comercial: 'publicado',  commercial: 'published', appStatus: 'reservado' },
-            em_negociacao: { comercial: 'publicado',  commercial: 'published', appStatus: 'em_negociacao' },
-            lancamento:    { comercial: 'publicado',  commercial: 'published', appStatus: 'lancamento' },
-            arquivado:     { comercial: 'privado',    commercial: 'private',   appStatus: 'arquivado' },
+        normalized.tipo = enToPt[normalized.type] || normalized.type
+        normalized.property_type = enToPropType[normalized.type] || normalized.type
+    } else if (normalized.tipo && !normalized.type) {
+        const ptToEn: Record<string, string> = {
+            apartamento: 'apartment', casa: 'house', flat: 'apartment',
+            lote: 'land', comercial: 'commercial', resort: 'resort',
         }
-        const mapped = statusMap[status]
-        if (!mapped) {
-            return NextResponse.json({ error: `Status inválido: ${status}` }, { status: 400 })
-        }
-        const updateData = {
-            status: mapped.appStatus,
-            status_comercial: mapped.comercial,
-            status_commercial: mapped.commercial,
+        normalized.type = ptToEn[normalized.tipo] || normalized.tipo
+        normalized.property_type = ptToEn[normalized.tipo] || 'mixed'
+    }
+    normalized.updated_at = new Date().toISOString()
+    normalized.updated_by = user!.id
+    // Remove undefined fields
+    for (const key of Object.keys(normalized)) {
+        if (normalized[key] === undefined) delete normalized[key]
+    }
+    const { data, error } = await supabase
+        .from('developments')
+        .update(normalized)
+        .eq('id', id)
+        .select()
+        .single()
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+    }
+    const meta = getRequestMeta(request)
+    logAudit({
+        action: 'update',
+        entity_type: 'development',
+        entity_id: id,
+        new_data: normalized,
+        ...meta,
+    })
+    return NextResponse.json(data)
+}, { auth: true, auditAction: 'development.update' })
+
+// ─── PATCH /api/developments ────────────────────────────────────────────────
+export const PATCH = apiHandler(developmentPatchSchema, async (request: NextRequest, body: z.infer<typeof developmentPatchSchema>, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const { id, status } = body
+    // Map frontend status -> dual DB columns
+    const statusMap: Record<string, { comercial: string; commercial: string; appStatus: string }> = {
+        disponivel:    { comercial: 'publicado',  commercial: 'published', appStatus: 'disponivel' },
+        vendido:       { comercial: 'privado',    commercial: 'sold',      appStatus: 'vendido' },
+        reservado:     { comercial: 'publicado',  commercial: 'published', appStatus: 'reservado' },
+        em_negociacao: { comercial: 'publicado',  commercial: 'published', appStatus: 'em_negociacao' },
+        lancamento:    { comercial: 'publicado',  commercial: 'published', appStatus: 'lancamento' },
+        arquivado:     { comercial: 'privado',    commercial: 'private',   appStatus: 'arquivado' },
+    }
+    const mapped = statusMap[status]
+    if (!mapped) {
+        return NextResponse.json({ error: `Status inválido: ${status}` }, { status: 400 })
+    }
+    const updateData = {
+        status: mapped.appStatus,
+        status_comercial: mapped.comercial,
+        status_commercial: mapped.commercial,
+        updated_at: new Date().toISOString(),
+        updated_by: user!.id,
+    }
+    const { data, error } = await supabase
+        .from('developments')
+        .update(updateData)
+        .eq('id', id)
+        .select('id, name, status, status_comercial, status_commercial')
+        .single()
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+    }
+    const meta = getRequestMeta(request)
+    logAudit({
+        action: 'status_change',
+        entity_type: 'development',
+        entity_id: id,
+        new_data: { requested_status: status, ...updateData },
+        ...meta,
+    })
+    return NextResponse.json({ success: true, data })
+}, { auth: true, auditAction: 'development.status_change' })
+
+// ─── DELETE /api/developments ───────────────────────────────────────────────
+export const DELETE = apiHandler(null, async (request: NextRequest, _body: unknown, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+    // Soft delete: set to private (constraint-safe)
+    const { data, error } = await supabase
+        .from('developments')
+        .update({
+            status_comercial: 'privado',
+            status_commercial: 'private',
             updated_at: new Date().toISOString(),
-            updated_by: user.id,
-        }
-        const { data, error } = await supabase
-            .from('developments')
-            .update(updateData)
-            .eq('id', id)
-            .select('id, name, status, status_comercial, status_commercial')
-            .single()
-        if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        }
-        const meta = getRequestMeta(request)
-        logAudit({
-            action: 'status_change',
-            entity_type: 'development',
-            entity_id: id,
-            new_data: { requested_status: status, ...updateData },
-            ...meta,
+            updated_by: user!.id,
         })
-        return NextResponse.json({ success: true, data })
-    } catch (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
+        .eq('id', id)
+        .select()
+        .single()
+    if (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
     }
-}
-export async function DELETE(request: Request) {
-    try {
-        const { supabase, user } = await getAuthenticatedSupabase()
-        if (!supabase || !user) {
-            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        }
-        const { searchParams } = new URL(request.url)
-        const id = searchParams.get('id')
-        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
-        // Soft delete: set to private (constraint-safe)
-        const { data, error } = await supabase
-            .from('developments')
-            .update({
-                status_comercial: 'privado',
-                status_commercial: 'private',
-                updated_at: new Date().toISOString(),
-                updated_by: user.id,
-            })
-            .eq('id', id)
-            .select()
-            .single()
-        if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        }
-        const meta = getRequestMeta(request)
-        logAudit({
-            action: 'delete',
-            entity_type: 'development',
-            entity_id: id,
-            old_data: { name: data.name },
-            ...meta,
-        })
-        return NextResponse.json({ success: true, data })
-    } catch (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
-    }
-}
+    const meta = getRequestMeta(request)
+    logAudit({
+        action: 'delete',
+        entity_type: 'development',
+        entity_id: id,
+        old_data: { name: data.name },
+        ...meta,
+    })
+    return NextResponse.json({ success: true, data })
+}, { auth: true, auditAction: 'development.delete' })
