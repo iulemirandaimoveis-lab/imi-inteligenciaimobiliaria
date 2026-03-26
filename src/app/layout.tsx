@@ -94,9 +94,9 @@ export const metadata: Metadata = {
     },
 };
 
-// REMOVED: force-dynamic was killing SSG/ISR for ALL pages including public ones
-// The backoffice layout has its own force-dynamic where needed for auth cookies
-// Public pages use ISR with revalidate (e.g., imoveis page has revalidate = 60)
+// TODO: Remove when build timeout is fixed. The backoffice layout also has force-dynamic.
+// Keeping here temporarily to prevent build timeout on 148+ pages that call cookies()
+export const dynamic = 'force-dynamic'
 
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import CookieConsent from '@/components/CookieConsent';
