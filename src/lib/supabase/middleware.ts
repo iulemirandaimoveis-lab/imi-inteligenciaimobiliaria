@@ -42,20 +42,11 @@ export async function updateSession(request: NextRequest) {
             return NextResponse.redirect(redirectUrl)
         }
 
-        // Subscription enforcement: skip for /billing and /onboarding
-        const pathname = request.nextUrl.pathname
-        const isExempt = pathname.startsWith('/backoffice/billing') || pathname.startsWith('/onboarding')
-        if (!isExempt && user?.user_metadata) {
-            const meta = user.user_metadata
-            const tier = meta.subscription_tier as string | undefined
-            const trialEndsAt = meta.trial_ends_at as string | undefined
-            const trialExpired = trialEndsAt ? new Date(trialEndsAt) < new Date() : false
-
-            // Redirect to billing if trial expired and no active paid subscription
-            if (trialExpired && (!tier || tier === 'starter')) {
-                return NextResponse.redirect(new URL('/backoffice/billing', request.url))
-            }
-        }
+        // Subscription enforcement: DISABLED for launch phase
+        // TODO: Re-enable when billing/subscription system is ready
+        // const pathname = request.nextUrl.pathname
+        // const isExempt = pathname.startsWith('/backoffice/billing') || pathname.startsWith('/onboarding')
+        // if (!isExempt && user?.user_metadata) { ... }
     }
 
     // Se já estiver logado e tentar acessar /login, redireciona para /backoffice
