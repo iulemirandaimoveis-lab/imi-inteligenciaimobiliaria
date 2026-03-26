@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Instagram, Linkedin, Mail, FileText, Film, BookOpen, Clock } from 'lucide-react'
+import { timeAgo } from '@/lib/format'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,16 +33,6 @@ const CANAL_CFG: Record<string, { icon: React.ElementType; color: string }> = {
     blog:      { icon: FileText,  color: '#C8A44A' },
 }
 
-function timeAgo(dateStr: string): string {
-    const diff = Date.now() - new Date(dateStr).getTime()
-    const days = Math.floor(diff / 86400000)
-    if (days === 0) return 'hoje'
-    if (days === 1) return 'ontem'
-    if (days < 7) return `${days} dias atrás`
-    if (days < 30) return `${Math.floor(days / 7)} sem. atrás`
-    if (days < 365) return `${Math.floor(days / 30)} meses atrás`
-    return `${Math.floor(days / 365)} ano(s) atrás`
-}
 
 export default async function ConteudoPage() {
     const supabase = await createClient()

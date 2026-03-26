@@ -21,6 +21,7 @@ import {
 import type { IMIProperty } from '@/features/properties/types'
 import { getScoreStyle } from '@/hooks/useScore'
 import { usePathname } from 'next/navigation'
+import { normalizeStatus } from '@/lib/format'
 
 // ─── Design Tokens (DS3) ─────────────────────────────────────────────────────
 // NOTE: These tokens map to the global CSS variables.
@@ -58,15 +59,6 @@ export const STATUS_CONFIGS: Record<string, { label: string; color: string }> = 
   rascunho:      { label: 'Rascunho',      color: T.text3 },
 }
 
-export function normalizeStatus(s: string): string {
-  const MAP: Record<string, string> = {
-    launch: 'lancamento', available: 'disponivel', under_construction: 'em_construcao',
-    ready: 'disponivel', sold: 'vendido', reserved: 'reservado',
-    negotiating: 'em_negociacao', published: 'disponivel', draft: 'rascunho',
-    campaign: 'lancamento', private: 'arquivado',
-  }
-  return MAP[s?.toLowerCase()] ?? s?.toLowerCase() ?? 'disponivel'
-}
 
 export function fmtPrice(n?: number | null): string {
   if (!n) return '—'

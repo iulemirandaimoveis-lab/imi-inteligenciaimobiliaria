@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import QRCode from 'qrcode'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { timeAgo } from '@/lib/format'
 
 const SOURCES = [
     {
@@ -55,15 +56,6 @@ function srcInfo(val: string) {
     return SOURCES.find(s => s.value === val) ?? { color: 'var(--info)', bg: 'rgba(96,165,250,0.1)', icon: <Globe size={16} />, label: val }
 }
 
-function timeAgo(iso: string) {
-    const diff = Date.now() - new Date(iso).getTime()
-    const m = Math.floor(diff / 60000)
-    if (m < 1) return 'agora'
-    if (m < 60) return `${m}m atrás`
-    const h = Math.floor(m / 60)
-    if (h < 24) return `${h}h atrás`
-    return `${Math.floor(h / 24)}d atrás`
-}
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 

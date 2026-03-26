@@ -10,6 +10,7 @@ import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTabs'
 import { MobileLeadCard } from '@/app/(backoffice)/components/ui/MobileLeadCard'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
+import { timeAgo } from '@/lib/format'
 
 // ── Types ──────────────────────────────────────────────────────────
 interface Lead {
@@ -28,14 +29,6 @@ interface Lead {
   ai_score?: number
 }
 
-// ── Helpers ────────────────────────────────────────────────────────
-const timeAgo = (d: string) => {
-  const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
-  if (diff < 2)    return 'agora'
-  if (diff < 60)   return `${diff} min`
-  if (diff < 1440) return `${Math.floor(diff / 60)}h atrás`
-  return `${Math.floor(diff / 1440)}d atrás`
-}
 
 // ── Skeleton ──────────────────────────────────────────────────────
 function LeadsSkeleton() {

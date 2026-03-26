@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { timeAgo } from '@/lib/format'
 
 // Neon temperature colors (from Stitch design)
 const TEMP = {
@@ -63,17 +64,6 @@ function getAIReasoning(lead: Record<string, any>): string {
     return `IA em análise do perfil de ${firstName}. Entrada via ${source}. Necessita qualificação adicional — transferir para consultor especializado.`
 }
 
-function timeAgo(iso: string | null): string {
-    if (!iso) return ''
-    const diff = Date.now() - new Date(iso).getTime()
-    const d = Math.floor(diff / 86400000)
-    const h = Math.floor(diff / 3600000)
-    const m = Math.floor(diff / 60000)
-    if (d > 0) return `${d}d atrás`
-    if (h > 0) return `${h}h atrás`
-    if (m > 1) return `${m} min`
-    return 'agora'
-}
 
 type FilterKey = 'all' | 'hot' | 'warm' | 'cold'
 

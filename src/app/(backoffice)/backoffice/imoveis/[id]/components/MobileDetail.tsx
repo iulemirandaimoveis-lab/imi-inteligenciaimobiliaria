@@ -20,7 +20,8 @@ import {
 } from '@/features/properties/services/score.service'
 import { MobileGlobalStyles } from '../../mobile-ui'
 import type { DetailProps } from '../types'
-import { normalizeStatus, fmtCurrency, fmtNum, Skeleton } from '../helpers'
+import { fmtCurrency, fmtNum, Skeleton } from '../helpers'
+import { normalizeStatus } from '@/lib/format'
 
 export function MobileImovelDetail({ dev, loading, router, id, enriched, notFound, copied, handleCopyLink, handleWhatsApp }: DetailProps) {
   const [mobileGalleryIdx, setMobileGalleryIdx] = useState(0)

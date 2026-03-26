@@ -7,6 +7,7 @@ import { Bell, X, ChevronRight, ChevronLeft, Settings, LogOut, Sun, User, Camera
 import Link from 'next/link'
 import ThemeToggle from './ThemeToggle'
 import { createClient } from '@/lib/supabase/client'
+import { timeAgo } from '@/lib/format'
 
 interface Notification {
     id: string
@@ -73,13 +74,6 @@ function getPageTitle(pathname: string): string {
     return 'Backoffice'
 }
 
-function timeAgo(d: string) {
-    const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
-    if (diff < 1) return 'agora'
-    if (diff < 60) return `${diff}min`
-    if (diff < 1440) return `${Math.floor(diff / 60)}h`
-    return `${Math.floor(diff / 1440)}d`
-}
 
 // ── Avatar button — reusable ───────────────────────────────────────
 function AvatarButton({

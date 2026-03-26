@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { formatCurrency } from '@/lib/format'
 
 const TYPE_MAP: Record<string, { label: string; icon: React.ElementType }> = {
     google_ads: { label: 'Google Ads', icon: Globe },
@@ -34,12 +35,6 @@ const STATUS_MAP = Object.fromEntries(
     })
 ) as Record<string, { label: string; color: string; bg: string }>
 
-const fmtBRL = (v: number | null | undefined) => {
-    if (v == null) return '—'
-    if (v >= 1000000) return `R$ ${(v / 1000000).toFixed(1)}M`
-    if (v >= 1000) return `R$ ${(v / 1000).toFixed(1)}k`
-    return `R$ ${v.toFixed(2)}`
-}
 
 const fmtN = (v: number | null | undefined) =>
     v == null ? '—' : v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)
@@ -120,9 +115,9 @@ export default function CampanhaDetalhesPage() {
         { label: 'CTR', value: campanha.ctr != null ? `${Number(campanha.ctr).toFixed(1)}%` : '—', color: 'var(--text-secondary)' },
         { label: 'Leads', value: fmtN(campanha.leads), color: T.accent },
         { label: 'Conversões', value: fmtN(campanha.conversions), color: '#4CAF7D' },
-        { label: 'CPL', value: fmtBRL(campanha.cost_per_lead), color: 'var(--warning)' },
+        { label: 'CPL', value: formatCurrency(campanha.cost_per_lead), color: 'var(--warning)' },
         { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: 'var(--success)' },
-        { label: 'Orçamento', value: fmtBRL(campanha.budget), color: T.text },
+        { label: 'Orçamento', value: formatCurrency(campanha.budget), color: T.text },
     ]
 
     return (
@@ -169,11 +164,11 @@ export default function CampanhaDetalhesPage() {
                         <div>
                             <p className="text-sm font-semibold" style={{ color: T.text }}>Orçamento utilizado</p>
                             <p className="text-xs" style={{ color: T.textMuted }}>
-                                {fmtBRL(campanha.spent)} de {fmtBRL(campanha.budget)} ({progressPct.toFixed(0)}%)
+                                {formatCurrency(campanha.spent)} de {formatCurrency(campanha.budget)} ({progressPct.toFixed(0)}%)
                             </p>
                         </div>
                         <p className="text-sm font-bold" style={{ color: T.text }}>
-                            {fmtBRL((campanha.budget || 0) - (campanha.spent || 0))} restante
+                            {formatCurrency((campanha.budget || 0) - (campanha.spent || 0))} restante
                         </p>
                     </div>
                     <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
@@ -297,7 +292,7 @@ export default function CampanhaDetalhesPage() {
                             { label: 'Canal', value: type.label },
                             { label: 'Status', value: status.label },
                             { label: 'Objetivo', value: campanha.objective || '—' },
-                            { label: 'Orçamento diário', value: fmtBRL(campanha.daily_budget) },
+                            { label: 'Orçamento diário', value: formatCurrency(campanha.daily_budget) },
                             { label: 'Início', value: campanha.start_date ? new Date(campanha.start_date).toLocaleDateString('pt-BR') : '—' },
                             { label: 'Fim', value: campanha.end_date ? new Date(campanha.end_date).toLocaleDateString('pt-BR') : '—' },
                         ].map((item, i) => (
@@ -321,10 +316,10 @@ export default function CampanhaDetalhesPage() {
                             { label: 'CTR (Click-through rate)', value: campanha.ctr != null ? `${Number(campanha.ctr).toFixed(2)}%` : '—' },
                             { label: 'Leads gerados', value: fmtN(campanha.leads) },
                             { label: 'Conversões', value: fmtN(campanha.conversions) },
-                            { label: 'CPL (Custo por lead)', value: fmtBRL(campanha.cost_per_lead) },
+                            { label: 'CPL (Custo por lead)', value: formatCurrency(campanha.cost_per_lead) },
                             { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—' },
-                            { label: 'Total investido', value: fmtBRL(campanha.spent) },
-                            { label: 'Orçamento total', value: fmtBRL(campanha.budget) },
+                            { label: 'Total investido', value: formatCurrency(campanha.spent) },
+                            { label: 'Orçamento total', value: formatCurrency(campanha.budget) },
                             { label: 'Taxa de conversão', value: campanha.leads > 0 ? `${((campanha.conversions / campanha.leads) * 100).toFixed(1)}%` : '—' },
                         ].map((item, i) => (
                             <div key={i} className="flex items-center justify-between p-3 rounded-lg"
