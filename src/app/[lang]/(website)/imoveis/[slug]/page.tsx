@@ -19,6 +19,7 @@ import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
+import { fmt } from '@/lib/format'
 
 // Dynamic rendering — always fetch fresh data from Supabase
 export const dynamic = 'force-dynamic'
@@ -305,7 +306,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 const neighborhoodMin = Math.round(avgNeighborhood * 0.80)
                 const neighborhoodMax = Math.round(avgNeighborhood * 1.20)
 
-                const fmt = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
                 const fmtShort = (v: number) => {
                     if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
                     if (v >= 1_000) return `R$ ${(v / 1_000).toFixed(0)}mil`

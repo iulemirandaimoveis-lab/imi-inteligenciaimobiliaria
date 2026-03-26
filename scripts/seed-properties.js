@@ -22,8 +22,8 @@ const properties = [
         isExclusive: true, // "Selo Verificado"
         hasAnalysis: true,
         images: [
-            '/images/properties/house-facade.png',
-            '/images/properties/living-room.png'
+            '/images/properties/house-facade.jpg',
+            '/images/properties/living-room.jpg'
         ]
     },
     {
@@ -45,8 +45,8 @@ const properties = [
         isExclusive: true,
         hasAnalysis: true,
         images: [
-            '/images/properties/apartment-building.png',
-            '/images/properties/living-room.png'
+            '/images/properties/apartment-building.jpg',
+            '/images/properties/living-room.jpg'
         ]
     },
     {
@@ -68,7 +68,7 @@ const properties = [
         isExclusive: false,
         hasAnalysis: false,
         images: [
-            '/images/properties/living-room.png'
+            '/images/properties/living-room.jpg'
         ]
     }
 ]

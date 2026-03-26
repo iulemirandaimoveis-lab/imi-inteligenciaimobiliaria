@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { fmt } from '@/lib/format'
 
 const PerformanceChart = dynamic(
     () => import('./components/PerformanceChart'),
@@ -94,9 +95,6 @@ interface Props {
     brokers?: BrokerAvatar[]
 }
 
-
-const fmt = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
 const fmtCompact = (v: number) => {
     if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`

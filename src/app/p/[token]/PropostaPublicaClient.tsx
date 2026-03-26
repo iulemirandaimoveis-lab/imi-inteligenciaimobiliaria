@@ -7,14 +7,11 @@ import {
   Phone, MessageCircle, ChevronDown, Calculator,
   Clock, AlertCircle, Send, RefreshCw
 } from 'lucide-react'
+import { fmt } from '@/lib/format'
 
 // ── Types ────────────────────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface Props { proposal: Record<string, any> }
-
-// ── Utils ────────────────────────────────────────────────────
-const fmt = (v: number) =>
-  v ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v) : 'R$ 0'
 
 const fmtDate = (s: string) =>
   s ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(s)) : '—'

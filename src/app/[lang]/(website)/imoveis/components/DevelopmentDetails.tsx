@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Bed, Maximize, Bath, Car, Check, Sparkles, Building2, Waves, TreePine, Dumbbell, Droplets, Gamepad2, PartyPopper, Flame, Bike, Eye, Sofa, Shirt, Snowflake, Shield, CircleParking, Monitor, Sun } from 'lucide-react';
 import { Development } from '../types/development';
 import { slideUp, staggerContainer } from '@/lib/animations';
+import { fmt } from '@/lib/format';
 
 const GOLD = '#C8A44A';
 const NAVY = '#0B1928';
@@ -63,8 +64,6 @@ function FinancialSimulator({ price }: { price: number }) {
 
     // PRICE
     const parcelaPrice = financiado * (taxaMensal * Math.pow(1 + taxaMensal, prazo)) / (Math.pow(1 + taxaMensal, prazo) - 1)
-
-    const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
     return (
         <section className="mt-8 p-4 sm:p-6 rounded-2xl" style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>

@@ -13,6 +13,7 @@ import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTa
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 import { Stepper } from '@/app/(backoffice)/components/ui/Stepper'
+import { fmt } from '@/lib/format'
 import type { Step } from '@/app/(backoffice)/components/ui/Stepper'
 import { T } from '@/app/(backoffice)/lib/theme'
 const STATUS_CFG: Record<string, { label: string; statusKey: string }> = {
@@ -26,8 +27,6 @@ const HONOR_CFG: Record<string, { label: string; color: string }> = {
   parcial:  { label: 'Parcial',  color: 'var(--warning)' },
   pendente: { label: 'Pendente', color: 'var(--warning)'  },
 }
-const fmt = (v: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 const QUICK_ACTIONS = [
   { label: 'Nova Avaliação',    href: '/backoffice/avaliacoes/nova',             icon: Plus      },
   { label: 'Email + Honorários',href: '/backoffice/avaliacoes/email-honorarios', icon: Mail      },

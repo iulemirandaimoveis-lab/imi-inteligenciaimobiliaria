@@ -3,9 +3,9 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 const images = [
-    '/images/properties/house-facade.png',
-    '/images/properties/living-room.png',
-    '/images/properties/apartment-building.png'
+    '/images/properties/house-facade.jpg',
+    '/images/properties/living-room.jpg',
+    '/images/properties/apartment-building.jpg'
 ]
 
 async function main() {

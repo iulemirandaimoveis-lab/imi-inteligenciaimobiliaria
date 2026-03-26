@@ -13,6 +13,7 @@ import { motion } from 'framer-motion'
 import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
 import { getStatusConfig } from '../../lib/constants'
+import { fmt } from '@/lib/format'
 
 interface CreditApplication {
   id: string
@@ -113,7 +114,7 @@ function SimuladorCredito() {
       ? { label: 'Moderado', color: 'var(--warning)', bg: 'var(--warning-bg)', desc: 'Retorno abaixo da média — avaliar viabilidade' }
       : { label: 'Alto Risco', color: 'var(--error)', bg: 'var(--error-bg)', desc: 'Yield insuficiente — revisar parâmetros' }
 
-  const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
+
 
   const inputS: React.CSSProperties = {
     background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
@@ -288,7 +289,7 @@ export default function CreditoPage() {
   const [activeTab, setActiveTab] = useState<'operacoes' | 'simulador'>('simulador')
   const { data: operacoes, isLoading } = useCreditApplications()
 
-  const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
+
   const list = operacoes ?? []
   const totalPortfolio = list.reduce((s, o) => s + (o.financed_amount ?? 0), 0)
   const isApproved = (s: string) => s === 'approved' || s === 'aprovado'
