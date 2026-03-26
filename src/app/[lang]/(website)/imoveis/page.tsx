@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import ImoveisClient from './ImoveisClient'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 import { PAGE_METADATA } from '@/lib/page-metadata'
@@ -17,8 +17,8 @@ export default async function ImoveisPage({
     params: { lang: string }
     searchParams: { construtora?: string }
 }) {
-    const supabase = await createClient()
-    let query = supabase
+    // Use supabaseAdmin to bypass RLS — this is a public page that needs to show all published properties
+    let query = supabaseAdmin
         .from('developments')
         .select('*')
         .eq('status_commercial', 'published')
@@ -26,7 +26,7 @@ export default async function ImoveisPage({
         .order('created_at', { ascending: false })
     // Filter by construtora slug if provided
     if (searchParams.construtora) {
-        const { data: dev } = await supabase
+        const { data: dev } = await supabaseAdmin
             .from('developers')
             .select('id')
             .eq('slug', searchParams.construtora)
@@ -37,6 +37,7 @@ export default async function ImoveisPage({
     }
     const { data, error } = await query
     if (error) {
+        console.error('[ImoveisPage] Query error:', error.message)
     }
     const developments = (data || []).map(mapDbPropertyToDevelopment)
     return (

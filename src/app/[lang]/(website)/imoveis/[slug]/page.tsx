@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 import { Bed, Ruler, Car, Calendar } from 'lucide-react'
@@ -21,7 +21,7 @@ const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
 
 export async function generateMetadata({ params }: { params: { slug: string, lang: string } }): Promise<Metadata> {
-    const supabase = await createClient()
+    // Using supabaseAdmin for public page
 
     const { data } = await supabase
         .from('developments')
@@ -97,7 +97,7 @@ const ANCHOR_SECTIONS = [
 ]
 
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
-    const supabase = await createClient()
+    // Using supabaseAdmin for public page
 
     // Query development + developer (safe join via FK)
     // Broker join is separate to avoid FK errors if brokers table is missing
