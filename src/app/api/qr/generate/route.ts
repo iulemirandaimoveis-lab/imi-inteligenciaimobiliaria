@@ -86,7 +86,7 @@ export async function POST(request: Request) {
         const qrDataUrl = await QRCode.toDataURL(shortUrl, {
             width: 600,
             margin: 2,
-            color: { dark: '#1A1A2E', light: '#FFFFFF' },
+            color: { dark: '#C49D5B', light: '#FFFFFF' },
             errorCorrectionLevel: 'H'
         })
         return NextResponse.json({

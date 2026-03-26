@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
     MousePointerClick, Link2, QrCode, TrendingUp,
-    Loader2, RefreshCw, ExternalLink, BarChart3,
+    Loader2, RefreshCw, ExternalLink, BarChart3, Building2,
 } from 'lucide-react'
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -236,11 +236,11 @@ export default function TrackingDashboardPage() {
                             accent="info"
                         />
                         <KPICard
-                            label="QR Codes Gerados"
-                            sublabel="Links rastreados"
-                            value={formatNumber(data.kpis.totalTrackedLinks)}
-                            icon={<QrCode size={16} />}
-                            accent="navy"
+                            label="Imóvel Top"
+                            sublabel={data.topProperties?.[0]?.slug?.replace(/-/g, ' ') || 'Nenhum'}
+                            value={data.topProperties?.[0] ? formatNumber(data.topProperties[0].views) + ' views' : '—'}
+                            icon={<Building2 size={16} />}
+                            accent="warm"
                         />
                         <KPICard
                             label="Taxa de Conversão"
