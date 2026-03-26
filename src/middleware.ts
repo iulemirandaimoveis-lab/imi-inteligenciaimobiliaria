@@ -11,8 +11,7 @@ const ALLOWED_ORIGINS = [
     process.env.NEXT_PUBLIC_SITE_URL,
     'https://www.iulemirandaimoveis.com.br',
     'https://iulemirandaimoveis.com.br',
-    'http://localhost:3000',
-    'http://localhost:3001',
+    ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:3001'] : []),
 ].filter(Boolean) as string[]
 
 function addCorsHeaders(response: NextResponse, origin: string | null): NextResponse {

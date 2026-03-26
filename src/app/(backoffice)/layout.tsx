@@ -65,7 +65,7 @@ export default async function BackofficeLayout({
                 position="top-right"
                 richColors
                 closeButton
-                theme="dark"
+                theme="system"
                 offset={72}
                 toastOptions={{
                     duration: 4000,
