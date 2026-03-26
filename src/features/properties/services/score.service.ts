@@ -88,9 +88,11 @@ export function calcLiquidityIndex(property: IMIProperty): number {
   const neighborhood = property.neighborhood ?? ''
   const popularNeighborhoods = ['Boa Viagem', 'Miramar', 'Pina', 'Casa Forte', 'Parnamirim']
   const goodNeighborhoods = ['Graças', 'Espinheiro', 'Aflitos', 'Tamarineira', 'Derby', 'Boa Vista']
-  if (popularNeighborhoods.includes(neighborhood)) return 82 + Math.floor(Math.random() * 10)
-  if (goodNeighborhoods.includes(neighborhood)) return 60 + Math.floor(Math.random() * 15)
-  return 40 + Math.floor(Math.random() * 20)
+  const hash = (property.id || '').split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) & 0x7f, 0)
+  const micro = hash % 10
+  if (popularNeighborhoods.includes(neighborhood)) return 82 + micro
+  if (goodNeighborhoods.includes(neighborhood)) return 60 + (hash % 15)
+  return 40 + (hash % 20)
 }
 
 export function getScoreColor(score: number): string {
