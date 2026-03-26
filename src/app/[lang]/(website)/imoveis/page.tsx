@@ -14,8 +14,8 @@ export async function generateMetadata({ params }: { params: { lang: string } })
     return PAGE_METADATA.imoveis(params.lang)
 }
 
-// ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
-export const revalidate = 60
+// Dynamic rendering — always fetch fresh data from Supabase
+export const dynamic = 'force-dynamic'
 export default async function ImoveisPage({
     params,
     searchParams,
@@ -42,8 +42,9 @@ export default async function ImoveisPage({
     }
     const { data, error } = await query
     if (error) {
-        console.error('[ImoveisPage] Query error:', error.message)
+        console.error('[ImoveisPage] Query error:', error.message, error.code, error.details)
     }
+    console.log(`[ImoveisPage] Fetched ${data?.length ?? 0} developments, error: ${!!error}`)
     const developments = (data || []).map(mapDbPropertyToDevelopment)
     return (
         <ImoveisClient

@@ -20,8 +20,8 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
 
-// ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
-export const revalidate = 60
+// Dynamic rendering — always fetch fresh data from Supabase
+export const dynamic = 'force-dynamic'
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
