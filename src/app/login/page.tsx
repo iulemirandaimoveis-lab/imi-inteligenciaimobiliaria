@@ -33,8 +33,8 @@ export default function LoginPage() {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession()
-            if (session) router.push('/backoffice/dashboard')
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) router.push('/backoffice/dashboard')
         }
         checkAuth()
     // eslint-disable-next-line react-hooks/exhaustive-deps

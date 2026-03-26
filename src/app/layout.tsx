@@ -94,9 +94,9 @@ export const metadata: Metadata = {
     },
 };
 
-// Force all pages to be server-rendered (no SSG) — prevents build errors
-// from Supabase calls that need runtime env vars not available at build time
-export const dynamic = 'force-dynamic';
+// REMOVED: force-dynamic was killing SSG/ISR for ALL pages including public ones
+// The backoffice layout has its own force-dynamic where needed for auth cookies
+// Public pages use ISR with revalidate (e.g., imoveis page has revalidate = 60)
 
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import CookieConsent from '@/components/CookieConsent';

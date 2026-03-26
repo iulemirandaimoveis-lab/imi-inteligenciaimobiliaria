@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+
+// Backoffice needs force-dynamic because it uses cookies() for auth
+export const dynamic = 'force-dynamic'
 import { DesktopSidebar } from './components/DesktopSidebar'
 import DesktopHeader from './components/DesktopHeader'
 import MobileHeader from './components/MobileHeader'
