@@ -11,6 +11,8 @@ import {
     Map, Grid3X3,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-is-mobile';
+import { calcIMIScore, getScoreColor, getScoreLabel } from '@/features/properties/services/score.service';
+import type { IMIProperty } from '@/features/properties/types';
 import dynamic from 'next/dynamic';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -98,6 +100,30 @@ function PropertyCard({ dev, lang }: { dev: Development; lang: string }) {
                 <span className="absolute top-3 left-3 bg-[#0B1928] text-white text-[10px] font-bold tracking-widest uppercase rounded-lg px-3 py-1">
                     {label}
                 </span>
+
+                {/* IMI Score badge bottom-left */}
+                {(() => {
+                    const parseMin = (s?: string) => parseInt(String(s || '0').replace(/[^\d]/g, '')) || 0;
+                    const imiProp: IMIProperty = {
+                        id: dev.id, name: dev.name,
+                        price: dev.priceRange?.min || 0,
+                        area: parseMin(dev.specs?.areaRange),
+                        bedrooms: parseMin(dev.specs?.bedroomsRange),
+                        neighborhood: dev.location?.neighborhood || '',
+                        city: dev.location?.city || 'Recife',
+                        type: dev.tags.includes('casas') ? 'casa' : 'apartamento',
+                        status: dev.status,
+                    } as IMIProperty;
+                    const s = calcIMIScore(imiProp);
+                    const c = getScoreColor(s);
+                    return (
+                        <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-lg px-2.5 py-1" style={{ background: 'rgba(11,25,40,0.85)', backdropFilter: 'blur(8px)' }}>
+                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: c, flexShrink: 0 }} />
+                            <span style={{ fontSize: 11, fontWeight: 700, color: '#FFFFFF', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{s}</span>
+                            <span style={{ fontSize: 9, fontWeight: 600, color: '#C8A44A', letterSpacing: '0.1em', textTransform: 'uppercase' }}>IMI</span>
+                        </span>
+                    );
+                })()}
 
                 {/* Heart + Share top-right */}
                 <div className="absolute top-2.5 right-2.5 flex gap-1.5">

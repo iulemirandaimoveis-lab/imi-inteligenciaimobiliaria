@@ -13,6 +13,8 @@ import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
+import PropertyIntelligence from '../components/PropertyIntelligence'
+import type { IMIProperty } from '@/features/properties/types'
 import { fmt } from '@/lib/format'
 
 // Dynamic rendering — always fetch fresh data from Supabase
@@ -91,6 +93,7 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
 
 const ANCHOR_SECTIONS = [
     { id: 'detalhes', label: 'Detalhes' },
+    { id: 'inteligencia', label: 'IMI Score' },
     { id: 'galeria', label: 'Galeria' },
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
@@ -257,6 +260,21 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     <div className="lg:col-span-8 space-y-12 md:space-y-20">
                         <section id="detalhes">
                             <DevelopmentDetails development={development} />
+                        </section>
+                        <section id="inteligencia">
+                            <PropertyIntelligence property={{
+                                id: development.id,
+                                name: development.name,
+                                price: development.priceRange?.min || Number(data.price_from || data.price_min) || 0,
+                                area: Number(data.area_from) || 0,
+                                bedrooms: Number(data.bedrooms_from) || 0,
+                                parking: Number(data.parking_from) || 0,
+                                neighborhood: data.neighborhood || '',
+                                city: data.city || 'Recife',
+                                state: data.state || 'PE',
+                                type: data.type || 'apartamento',
+                                status: data.status_commercial || 'published',
+                            } as IMIProperty} />
                         </section>
                         <section id="galeria">
                             <DevelopmentGallery development={development} />
