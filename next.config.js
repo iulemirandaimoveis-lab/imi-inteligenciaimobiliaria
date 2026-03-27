@@ -28,10 +28,10 @@ const { withSentryConfig } = require('@sentry/nextjs')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     eslint: {
-        ignoreDuringBuilds: true, // TODO: fix ESLint errors then set to false
+        ignoreDuringBuilds: true,
     },
     typescript: {
-        ignoreBuildErrors: true, // TODO: fix TS errors then set to false
+        ignoreBuildErrors: false,
     },
     images: {
         remotePatterns: [
