@@ -2,24 +2,9 @@
 
 import { DollarSign } from 'lucide-react'
 
-/* ─── Design Tokens ────────────────────────────────────────────── */
-export const T = {
-  navy:     'var(--text-primary)',
-  surface:  'var(--bg-surface)',
-  elevated: 'var(--bg-elevated)',
-  raised:   'var(--bg-subtle)',
-  gold:     'var(--accent-400)',
-  goldBg:   'rgba(184,148,58,0.08)',
-  goldBgHi: 'rgba(184,148,58,0.14)',
-  border:   'var(--border-subtle)',
-  borderHi: 'var(--border-strong)',
-  text:     'var(--text-primary)',
-  textSub:  'var(--text-tertiary)',
-  textDim:  'var(--text-secondary)',
-  success:  'var(--success)',
-  error:    'var(--error)',
-  errorBg:  'var(--error-bg)',
-} as const
+/* ─── Design Tokens — imported from centralized theme ─────────── */
+import { T } from '@/app/(backoffice)/lib/theme'
+export { T }
 
 /* ─── Shared Styles ──────────────────────────────────────────────── */
 export const inputStyle: React.CSSProperties = {
