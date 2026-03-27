@@ -103,13 +103,13 @@ const ANCHOR_SECTIONS = [
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
     // Server-side admin client — bypasses RLS for public page rendering
 
-    // Query development + developer (safe join via FK)
-    // Broker join is separate to avoid FK errors if brokers table is missing
+    // Query development + developer (LEFT join — tolerates NULL developer_id)
+    // Using developers!left instead of developers!developer_id to avoid error on NULL FK
     const { data, error } = await supabaseAdmin
         .from('developments')
         .select(`
             *,
-            developers!developer_id (
+            developers (
                 name,
                 logo_url,
                 website,
@@ -121,6 +121,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         .single()
 
     if (error || !data) {
+        // Log error for debugging but still show 404 to user
+        if (error) console.error('[slug] Supabase error:', error.message, '| slug:', params.slug)
         return notFound()
     }
 
