@@ -29,7 +29,7 @@ jobs:
 
     env:
       VERCEL_ORG_ID: team_ffkeAKopLLbEJTI8tZqY9Mi6
-      VERCEL_PROJECT_ID: prj_nE6k1NpX6Q8uvL8rKcB68Pzp835T
+      VERCEL_PROJECT_ID: prj_4JmLGspnIZAwGUfgIecjPr0wk8mQ
 
     steps:
       - name: Check VERCEL_TOKEN
