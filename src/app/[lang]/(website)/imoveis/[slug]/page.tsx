@@ -103,27 +103,28 @@ const ANCHOR_SECTIONS = [
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
     // Server-side admin client — bypasses RLS for public page rendering
 
-    // Query development + developer (LEFT join — tolerates NULL developer_id)
-    // Using developers!left instead of developers!developer_id to avoid error on NULL FK
+    // Query development — no join to avoid PostgREST embed issues
     const { data, error } = await supabaseAdmin
         .from('developments')
-        .select(`
-            *,
-            developers (
-                name,
-                logo_url,
-                website,
-                phone,
-                email
-            )
-        `)
+        .select('*')
         .eq('slug', params.slug)
         .single()
 
     if (error || !data) {
-        // Log error for debugging but still show 404 to user
         if (error) console.error('[slug] Supabase error:', error.message, '| slug:', params.slug)
         return notFound()
+    }
+
+    // Fetch developer separately if developer_id exists
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let developerData: Record<string, any> | null = null
+    if (data.developer_id) {
+        const { data: dev } = await supabaseAdmin
+            .from('developers')
+            .select('name, logo_url, website, phone, email')
+            .eq('id', data.developer_id)
+            .single()
+        developerData = dev
     }
 
     const development = mapDbPropertyToDevelopment(data)
