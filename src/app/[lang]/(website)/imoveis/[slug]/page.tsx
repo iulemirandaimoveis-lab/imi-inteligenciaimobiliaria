@@ -1,12 +1,6 @@
 import type { Metadata } from 'next'
-import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
-
-// Public anon client — uses RLS policies (anon_read on developments/developers/brokers)
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 import { Bed, Ruler, Car, Calendar } from 'lucide-react'
 import DevelopmentHero from '../components/DevelopmentHero'
@@ -28,9 +22,9 @@ const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
 
 export async function generateMetadata({ params }: { params: { slug: string, lang: string } }): Promise<Metadata> {
-    // Using supabaseAdmin for public page
+    // Server-side admin client — bypasses RLS for public page rendering
 
-    const { data } = await supabase
+    const { data } = await supabaseAdmin
         .from('developments')
         .select('name, description, neighborhood, city, state, country, price_from, price_min, gallery_images, images, image')
         .eq('slug', params.slug)
@@ -104,11 +98,11 @@ const ANCHOR_SECTIONS = [
 ]
 
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
-    // Using supabaseAdmin for public page
+    // Server-side admin client — bypasses RLS for public page rendering
 
     // Query development + developer (safe join via FK)
     // Broker join is separate to avoid FK errors if brokers table is missing
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
         .from('developments')
         .select(`
             *,
@@ -133,7 +127,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let brokerData: Record<string, any> | null = null
     if (data.broker_id) {
-        const { data: broker } = await supabase
+        const { data: broker } = await supabaseAdmin
             .from('brokers')
             .select('id, name, email, phone, creci, avatar_url')
             .eq('id', data.broker_id)
@@ -153,7 +147,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
 
     // Fetch similar properties (same city, different slug, max 4)
-    const { data: similarRaw } = await supabase
+    const { data: similarRaw } = await supabaseAdmin
         .from('developments')
         .select('*')
         .eq('status_commercial', 'published')
