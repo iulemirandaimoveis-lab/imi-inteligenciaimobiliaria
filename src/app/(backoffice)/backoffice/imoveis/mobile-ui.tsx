@@ -19,6 +19,7 @@ import {
   SlidersHorizontal, X, Home, Camera,
 } from 'lucide-react'
 import type { IMIProperty } from '@/features/properties/types'
+import { getMainImage } from '@/utils/propertyImages'
 import { getScoreStyle } from '@/hooks/useScore'
 import { usePathname } from 'next/navigation'
 import { normalizeStatus } from '@/lib/format'
@@ -394,7 +395,7 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
   const statusCfg = STATUS_CONFIGS[status] ?? { label: status, color: T.text2 }
   const score = property.imi_score ?? 0
   const scoreColor = getScoreStyle(score).color
-  const imageUrl = property.cover_image_url ?? property.image_urls?.[0] ?? null
+  const imageUrl = getMainImage(property)
 
   return (
     <Link

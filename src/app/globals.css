@@ -114,8 +114,8 @@
   --space-16: 64px; --space-20: 80px; --space-24: 96px;
 
   /* ── Radius ── */
-  --r-xs: 2px; --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
-  --r-xl: 16px; --r-2xl: 20px; --r-full: 9999px;
+  --r-xs: 2px; --r-sm: 5px; --r-md: 10px; --r-lg: 14px;
+  --r-xl: 19px; --r-2xl: 24px; --r-full: 9999px;
 
   /* ── Motion ── */
   --ease:        cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -449,22 +449,22 @@
   --lead-neutral:#60A5FA;
   --lead-cold:   #4F5B6B;
 
-  /* v3.2 Radius — ANGULAR, not pill */
-  --radius-xs:   3px;
-  --radius-sm:   4px;
-  --radius-md:   6px;
-  --radius-lg:   10px;
-  --radius-xl:   14px;
+  /* v3.2 Radius — ANGULAR, not pill (+20%) */
+  --radius-xs:   4px;
+  --radius-sm:   5px;
+  --radius-md:   7px;
+  --radius-lg:   12px;
+  --radius-xl:   17px;
   --radius-full: 9999px; /* ONLY avatars & dots */
 
   /* v3.2 Touch targets */
   --touch-min: 44px;
 
-  /* v3.2 Font sizes (accessible minimums) */
-  --text-xs:    0.75rem;
+  /* v3.2 Font sizes (accessible minimums — mobile-friendly) */
+  --text-xs:    0.8125rem;
   --text-sm:    0.8125rem;
   --text-base:  0.875rem;
-  --text-label: 0.6875rem;
+  --text-label: 0.75rem;
 
   /* v3.2 Typography — D3.1 consolidated */
   --font-logo: var(--font-serif);
@@ -478,7 +478,7 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(200, 164, 74, 0.15);
-    border-radius: 16px;
+    border-radius: 19px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25);
     transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -530,7 +530,7 @@
   *:focus-visible {
     outline: 2px solid var(--imi-gold-500, #B8943A);
     outline-offset: 2px;
-    border-radius: var(--r-sm, 6px);
+    border-radius: var(--r-sm, 5px);
     box-shadow: 0 0 0 4px rgba(184,148,58,0.12);
   }
 
@@ -1079,7 +1079,7 @@
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background: var(--imi-300);
-    border-radius: 6px;
+    border-radius: 7px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
@@ -1163,7 +1163,7 @@
   .card {
     background: white;
     border: 1px solid var(--imi-100);
-    border-radius: 6px;
+    border-radius: 7px;
     box-shadow: var(--shadow-sm);
     transition: box-shadow 200ms var(--ease-out), border-color 200ms var(--ease-out), transform 200ms var(--ease-out);
   }
@@ -1239,7 +1239,7 @@
     @apply inline-flex items-center justify-center gap-2 font-medium text-center flex-wrap;
     @apply transition-all duration-150;
     @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500;
-    border-radius: 6px;
+    border-radius: 7px;
     cursor: pointer;
     user-select: none;
   }
@@ -1330,7 +1330,7 @@
     @apply w-full h-11 px-4 text-sm;
     background: white;
     border: 1px solid var(--imi-200);
-    border-radius: 6px;
+    border-radius: 7px;
     color: var(--imi-900);
     transition: border-color 150ms, box-shadow 150ms;
     outline: none;
@@ -1440,7 +1440,7 @@
     align-items: center;
     gap: 10px;
     padding: 8px 10px;
-    border-radius: 6px;
+    border-radius: 7px;
     font-size: 13.5px;
     font-weight: 500;
     color: var(--sidebar-text);
@@ -1474,7 +1474,7 @@
     width: 3px;
     height: 60%;
     background: var(--accent-500);
-    border-radius: 6px;
+    border-radius: 7px;
     transition: transform 150ms var(--ease-spring);
   }
 
@@ -1497,7 +1497,7 @@
     width: 48px;
     height: 2px;
     background: linear-gradient(90deg, var(--accent-500), transparent);
-    border-radius: 6px;
+    border-radius: 7px;
   }
 
   /* ── TABLES ────────────────────────────────────────────────  */
@@ -1570,13 +1570,13 @@
   .progress-track {
     height: 6px;
     background: var(--imi-100);
-    border-radius: 6px;
+    border-radius: 7px;
     overflow: hidden;
   }
 
   .progress-fill {
     height: 100%;
-    border-radius: 6px;
+    border-radius: 7px;
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -1689,7 +1689,7 @@
     font-size: 11px;
     font-weight: 500;
     padding: 4px 8px;
-    border-radius: 6px;
+    border-radius: 7px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -1858,7 +1858,7 @@
 }
 
 [data-sonner-toast] {
-  border-radius: 6px !important;
+  border-radius: 7px !important;
   box-shadow: var(--shadow-lg) !important;
 }
 
@@ -1874,14 +1874,14 @@
 }
 
 .recharts-default-tooltip {
-  border-radius: 6px !important;
+  border-radius: 7px !important;
   border: 1px solid var(--imi-200) !important;
   box-shadow: var(--shadow-lg) !important;
 }
 
 /* CMDK command palette */
 [cmdk-root] {
-  border-radius: 6px !important;
+  border-radius: 7px !important;
   overflow: hidden !important;
   box-shadow: var(--shadow-xl) !important;
 }
@@ -2140,7 +2140,7 @@
   gap: 5px;
   height: 28px;
   padding: 0 10px;
-  border-radius: 6px;
+  border-radius: 7px;
   font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
@@ -2169,7 +2169,7 @@
 .toolbar-input {
   height: 36px;
   padding: 0 8px 0 32px;
-  border-radius: 6px;
+  border-radius: 7px;
   font-size: 12px;
   border: 1px solid var(--bo-border);
   background: var(--bo-elevated);
@@ -2192,7 +2192,7 @@
   justify-content: center;
   height: 36px;
   min-width: 36px;
-  border-radius: 6px;
+  border-radius: 7px;
   border: 1px solid var(--bo-border);
   background: var(--bo-elevated);
   color: var(--bo-text-muted);
@@ -2230,7 +2230,7 @@
   gap: 8px;
   height: 40px;
   padding: 0 18px;
-  border-radius: var(--r-md, 4px);
+  border-radius: var(--r-md, 10px);
   font-size: 14px;
   font-weight: 500;
   font-family: var(--font-sans);
@@ -2251,9 +2251,9 @@
 .bo-btn svg { flex-shrink: 0; }
 
 /* ── Sizes — DS3 spec ────────────────────────────────────────  */
-.bo-btn-xs  { height: 28px; padding: 0 10px; font-size: 12px; border-radius: var(--r-sm, 4px); gap: 4px; }
-.bo-btn-sm  { height: 34px; padding: 0 14px; font-size: 13px; border-radius: var(--r-md, 4px); gap: 6px; }
-.bo-btn-lg  { height: 48px; padding: 0 24px; font-size: 15px; border-radius: var(--r-md, 4px); gap: 10px; }
+.bo-btn-xs  { height: 28px; padding: 0 10px; font-size: 12px; border-radius: var(--r-sm, 5px); gap: 4px; }
+.bo-btn-sm  { height: 34px; padding: 0 14px; font-size: 13px; border-radius: var(--r-md, 10px); gap: 6px; }
+.bo-btn-lg  { height: 48px; padding: 0 24px; font-size: 15px; border-radius: var(--r-md, 10px); gap: 10px; }
 .bo-btn-icon { width: 40px; padding: 0; }
 .bo-btn-icon.bo-btn-sm { width: 34px; }
 .bo-btn-icon.bo-btn-xs { width: 28px; }
@@ -2426,13 +2426,13 @@ img, video, iframe, canvas, svg {
 /* ─── IMI Design System v3 — Utility Classes ────────────────────────── */
 
 /* Border radius standardization */
-.imi-chip { border-radius: 6px !important; }
-.imi-badge { border-radius: 6px !important; }
-.imi-btn { border-radius: 6px !important; }
-.imi-input { border-radius: 6px !important; }
-.imi-card { border-radius: 8px !important; }
-.imi-modal { border-radius: 12px !important; }
-.imi-pill { border-radius: 6px !important; }
+.imi-chip { border-radius: 7px !important; }
+.imi-badge { border-radius: 7px !important; }
+.imi-btn { border-radius: 7px !important; }
+.imi-input { border-radius: 7px !important; }
+.imi-card { border-radius: 10px !important; }
+.imi-modal { border-radius: 14px !important; }
+.imi-pill { border-radius: 7px !important; }
 
 /* Shadow system */
 .imi-shadow-card { box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
@@ -2470,7 +2470,7 @@ img, video, iframe, canvas, svg {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(200,164,74,.12);
-    border-radius: 16px;
+    border-radius: 19px;
     box-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
     padding: 22px;
     position: relative;
@@ -2503,7 +2503,7 @@ img, video, iframe, canvas, svg {
     background: var(--n, #0A1624);
     color: #fff;
     border: 1px solid rgba(255,255,255,.08);
-    border-radius: 6px;
+    border-radius: 7px;
     font-family: var(--fu, 'Outfit', sans-serif);
     font-weight: 600;
     font-size: 11px;
@@ -2536,7 +2536,7 @@ img, video, iframe, canvas, svg {
     background: transparent;
     color: var(--gold, #C8A44A);
     border: 1px solid rgba(200,164,74,.14);
-    border-radius: 6px;
+    border-radius: 7px;
     font-family: var(--fu, 'Outfit', sans-serif);
     font-weight: 600;
     font-size: 11px;
@@ -2561,7 +2561,7 @@ img, video, iframe, canvas, svg {
     background: var(--n, #0A1624);
     color: #fff;
     border: 1px solid rgba(200,164,74,.20);
-    border-radius: 6px;
+    border-radius: 7px;
     font-family: var(--fu, 'Outfit', sans-serif);
     font-weight: 600;
     font-size: 11px;
@@ -2590,7 +2590,7 @@ img, video, iframe, canvas, svg {
     padding: 10px 14px;
     font-family: var(--fu);
     font-size: 11px;
-    border-radius: 8px;
+    border-radius: 10px;
     outline: none;
     width: 100%;
     transition: all .15s;
@@ -2620,6 +2620,48 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 @media (max-width: 768px) {
   input, select, textarea {
     font-size: 16px !important;
+  }
+}
+
+/* ── Mobile proportion improvements (<640px) ──────────────────────── */
+@media (max-width: 639px) {
+  /* Body text: minimum 13px for readability on phones */
+  .backoffice-root {
+    font-size: 13px;
+  }
+
+  /* Card padding: p-3 (12px) → p-4 (16px) on mobile */
+  .backoffice-root .glass-card,
+  .backoffice-root .imi-card,
+  .backoffice-root [class*="card"] {
+    padding: 16px;
+  }
+
+  /* Grid spacing: gap-3 (12px) → gap-4 (16px) on mobile */
+  .backoffice-root .grid {
+    gap: 16px;
+  }
+
+  /* Ensure single column on very small screens */
+  .backoffice-root .grid-cols-2,
+  .backoffice-root .grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Small text elements: ensure minimum 12px, bump 11px to 13px */
+  .backoffice-root .text-\[11px\],
+  .backoffice-root .text-\[10px\] {
+    font-size: 13px !important;
+  }
+
+  /* Ensure table/data text is readable */
+  .backoffice-root .text-xs {
+    font-size: 13px;
+  }
+
+  /* Bottom nav breathing room */
+  .backoffice-root .pb-32 {
+    padding-bottom: 9rem;
   }
 }
 

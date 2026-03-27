@@ -264,7 +264,7 @@ function badgeStyle(badge: string | number) {
         fontFamily: 'var(--font-mono)',
         fontWeight: 700 as const,
         padding: '2px 5px',
-        borderRadius: 6,
+        borderRadius: 7,
         letterSpacing: '0.06em',
         lineHeight: 1.2,
         whiteSpace: 'nowrap' as const,

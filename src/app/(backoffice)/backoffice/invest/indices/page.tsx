@@ -130,10 +130,11 @@ export default function IndicesPage() {
           </p>
           <button
             onClick={fetchIndices}
-            className="mt-4 px-4 py-2 rounded-lg text-sm font-medium"
-            style={{ background: T.accent, color: T.textInverse }}
+            className="relative overflow-hidden mt-4 px-4 py-2 rounded-[6px] text-xs font-semibold uppercase tracking-[1px]"
+            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
           >
             Tentar Novamente
+            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
           </button>
         </div>
       ) : (

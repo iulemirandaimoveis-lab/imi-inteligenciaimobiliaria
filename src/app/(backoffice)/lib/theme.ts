@@ -53,12 +53,12 @@ export const T = {
     infoBg: 'var(--info-bg)',
     // Radius
     radius: {
-        xs: 'var(--r-xs, 4px)',
-        sm: 'var(--r-sm, 4px)',
-        md: 'var(--r-md, 4px)',
-        lg: 'var(--r-lg, 4px)',
-        xl: 'var(--r-xl, 4px)',
-        '2xl': 'var(--r-2xl, 4px)',
+        xs: 'var(--r-xs, 2px)',
+        sm: 'var(--r-sm, 5px)',
+        md: 'var(--r-md, 10px)',
+        lg: 'var(--r-lg, 14px)',
+        xl: 'var(--r-xl, 19px)',
+        '2xl': 'var(--r-2xl, 24px)',
         full: '9999px',
     },
     // Shadow
@@ -102,7 +102,7 @@ export const cardStyle: React.CSSProperties = {
     backdropFilter: 'blur(20px)',
     WebkitBackdropFilter: 'blur(20px)',
     border: '1px solid rgba(200,164,74,.12)',
-    borderRadius: '10px',
+    borderRadius: '12px',
     boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
 }
 
@@ -115,8 +115,8 @@ export const inputStyle: React.CSSProperties = {
     color: 'var(--t1, #E8E4DC)',
     padding: '10px 14px',
     fontFamily: "var(--fu, 'Outfit', system-ui, sans-serif)",
-    fontSize: 11,
-    borderRadius: 8,
+    fontSize: 13,
+    borderRadius: 10,
     outline: 'none',
     width: '100%',
 }

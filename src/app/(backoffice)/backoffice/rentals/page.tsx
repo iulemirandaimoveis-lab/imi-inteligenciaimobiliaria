@@ -119,7 +119,8 @@ export default function RentalsPage() {
               <CalendarDays size={14} />
               Calendário
             </Link>
-            <button
+            <Link
+              href="/backoffice/rentals/novo"
               className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all"
               style={{
                 background: T.gold,
@@ -128,11 +129,10 @@ export default function RentalsPage() {
                 border: 'none',
                 fontFamily: 'var(--font-sans)',
               }}
-              onClick={() => toast.info('Formulário de novo imóvel em breve')}
             >
               <Plus size={14} />
               Novo Imóvel
-            </button>
+            </Link>
           </div>
         }
       />

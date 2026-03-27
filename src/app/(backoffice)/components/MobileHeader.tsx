@@ -275,7 +275,7 @@ export default function MobileHeader() {
                     paddingTop: 'env(safe-area-inset-top, 0px)',
                 }}
             >
-                <div className="flex items-center h-14 px-3 gap-2">
+                <div className="flex items-center h-14 px-4 gap-3">
 
                     {/* ── LEFT SLOT ─────────────────────────────────── */}
                     <div className="flex items-center flex-shrink-0">

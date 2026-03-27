@@ -109,7 +109,7 @@ export function MobileLeadCard({
     padding: '14px 16px',
     background: 'var(--bg-surface)',
     border: '1px solid var(--border-subtle)',
-    borderRadius: 'var(--r-xl, 4px)',
+    borderRadius: 'var(--r-xl, 19px)',
     position: 'relative',
     overflow: 'hidden',
     transition: 'all var(--dur-2, 200ms) var(--ease)',
@@ -144,7 +144,7 @@ export function MobileLeadCard({
           style={{
             width: '40px',
             height: '40px',
-            borderRadius: 'var(--r-lg, 4px)',
+            borderRadius: 'var(--r-lg, 14px)',
             background: avatarBg,
             display: 'flex',
             alignItems: 'center',
@@ -220,7 +220,7 @@ export function MobileLeadCard({
                 background: aiCfg.bg,
                 border: `1px solid ${aiCfg.border}`,
                 padding: '4px 8px',
-                borderRadius: 'var(--r-md, 4px)',
+                borderRadius: 'var(--r-md, 10px)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 whiteSpace: 'nowrap',
@@ -258,7 +258,7 @@ export function MobileLeadCard({
           style={{
             background: 'var(--bg-muted)',
             border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--r-lg, 4px)',
+            borderRadius: 'var(--r-lg, 14px)',
             padding: '8px 10px',
           }}
         >
@@ -293,7 +293,7 @@ export function MobileLeadCard({
               background: 'rgba(61,111,255,0.10)',
               border: '1px solid rgba(61,111,255,0.20)',
               padding: '2px 7px',
-              borderRadius: 'var(--r-sm, 4px)',
+              borderRadius: 'var(--r-sm, 5px)',
             }}
           >
             ▶ {meta.sessionDuration}

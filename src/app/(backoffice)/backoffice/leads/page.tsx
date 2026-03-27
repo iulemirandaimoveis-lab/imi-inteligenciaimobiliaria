@@ -304,12 +304,15 @@ export default function LeadsPage() {
                 <button
                   onClick={() => router.push('/backoffice/leads/novo')}
                   style={{
-                    fontSize: '12px', fontWeight: 700, color: 'var(--text-inverse)',
-                    background: 'var(--btn-primary-bg)',
-                    border: 'none', padding: '8px 18px', borderRadius: '6px', cursor: 'pointer',
+                    position: 'relative', overflow: 'hidden',
+                    fontSize: '11px', fontWeight: 600, color: '#fff', letterSpacing: '1px', textTransform: 'uppercase',
+                    background: '#0A1624',
+                    border: '1px solid rgba(255,255,255,0.08)', padding: '8px 18px', borderRadius: '6px', cursor: 'pointer',
+                    fontFamily: "var(--fu, 'Outfit', sans-serif)",
                   }}
                 >
                   + Novo Lead
+                  <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                 </button>
               )}
             </motion.div>

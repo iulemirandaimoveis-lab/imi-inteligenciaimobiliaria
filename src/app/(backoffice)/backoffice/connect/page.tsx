@@ -293,12 +293,15 @@ export default function ConnectPage() {
                 <button
                     onClick={() => setShowNewChannel(true)}
                     style={{
-                        width: 32, height: 32, borderRadius: T.radius.md,
-                        background: T.accent, color: T.textInverse, border: 'none',
+                        position: 'relative', overflow: 'hidden',
+                        width: 32, height: 32, borderRadius: 6,
+                        background: '#0A1624', color: '#fff',
+                        border: '1px solid rgba(255,255,255,0.08)',
                         cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}
                 >
                     <Plus size={16} />
+                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                 </button>
             </div>
 
