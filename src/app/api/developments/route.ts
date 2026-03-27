@@ -207,6 +207,16 @@ export const POST = apiHandler(developmentPostSchema, async (req: NextRequest, b
             .maybeSingle()
         if (broker) newDev.broker_id = broker.id
     }
+    // Sync images JSONB from flat fields (ensures slug page & getMainImage work)
+    if (newDev.gallery_images || newDev.image) {
+        const gallery = Array.isArray(newDev.gallery_images) ? newDev.gallery_images : []
+        newDev.images = {
+            main: newDev.image || gallery[0] || '',
+            gallery,
+            floorPlans: Array.isArray(newDev.floor_plans) ? newDev.floor_plans : [],
+            videos: newDev.video_url ? [newDev.video_url] : [],
+        }
+    }
     // Remove undefined/undeclared fields that could cause Supabase errors
     for (const key of Object.keys(newDev)) {
         if (newDev[key] === undefined) delete newDev[key]
@@ -260,6 +270,16 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
     }
     normalized.updated_at = new Date().toISOString()
     normalized.updated_by = user!.id
+    // Sync images JSONB from flat fields on update too
+    if (normalized.gallery_images || normalized.image) {
+        const gallery = Array.isArray(normalized.gallery_images) ? normalized.gallery_images : []
+        normalized.images = {
+            main: normalized.image || gallery[0] || '',
+            gallery,
+            floorPlans: Array.isArray(normalized.floor_plans) ? normalized.floor_plans : [],
+            videos: normalized.video_url ? [normalized.video_url] : [],
+        }
+    }
     // Remove undefined fields
     for (const key of Object.keys(normalized)) {
         if (normalized[key] === undefined) delete normalized[key]
