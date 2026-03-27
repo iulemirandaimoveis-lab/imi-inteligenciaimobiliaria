@@ -162,7 +162,7 @@ function TileBadge({ badge }: { badge: string }) {
             fontSize: isNew ? 8 : 7,
             fontWeight: 700,
             padding: isNew ? '2px 5px' : '2px 4px',
-            borderRadius: 6,
+            borderRadius: 7,
             letterSpacing: '0.05em',
             background: isNew ? '#2D8F5C' : 'rgba(148,163,184,0.20)',
             color: isNew ? '#fff' : 'var(--text-tertiary)',
@@ -185,7 +185,7 @@ function NetflixItemCard({
             <div
                 className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200"
                 style={{
-                    borderRadius: 6,
+                    borderRadius: 7,
                     background: active ? bg : 'var(--bg-elevated)',
                     border: active ? `1.5px solid ${color}50` : '1px solid var(--border-subtle)',
                     boxShadow: active ? `0 4px 14px ${color}30` : '0 1px 3px rgba(0,0,0,0.06)',
@@ -215,7 +215,7 @@ function NetflixRowLabel({ color, label }: { color: string; label: string }) {
             {/* Colored indicator */}
             <div
                 className="flex-shrink-0"
-                style={{ width: 3, height: 16, borderRadius: 6, background: color, boxShadow: `0 0 8px ${color}40` }}
+                style={{ width: 3, height: 16, borderRadius: 7, background: color, boxShadow: `0 0 8px ${color}40` }}
             />
             <span
                 className="text-[11px] font-bold tracking-[0.10em] uppercase"
@@ -289,7 +289,7 @@ export function MobileBottomNav() {
             >
                 {/* Nav container — DS3 standard radius (not pill-shaped) */}
                 <div
-                    className="mx-3 mb-3"
+                    className="mx-4 mb-3"
                     style={{
                         borderRadius: 'var(--r-xl)',
                         background: 'var(--nav-bg)',
@@ -299,7 +299,7 @@ export function MobileBottomNav() {
                         boxShadow: 'var(--shadow-lg)',
                     }}
                 >
-                    <div className="flex items-center h-16 px-1">
+                    <div className="flex items-center h-16 px-2">
 
                         {/* Hoje */}
                         {(() => {
@@ -368,7 +368,7 @@ export function MobileBottomNav() {
                                 style={{
                                     width: 44,
                                     height: 44,
-                                    borderRadius: 6,
+                                    borderRadius: 7,
                                     background: open ? 'var(--accent-400)' : 'var(--bg-elevated)',
                                     border: `1px solid ${open ? 'var(--accent-400)' : 'rgba(200,164,74,0.2)'}`,
                                     transition: 'background 0.2s, border-color 0.2s',
@@ -503,7 +503,7 @@ export function MobileBottomNav() {
                             transition={{ type: 'spring', stiffness: 420, damping: 42 }}
                             className="lg:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col"
                             style={{
-                                borderRadius: '4px 4px 0 0',
+                                borderRadius: '5px 5px 0 0',
                                 background: 'var(--bg-surface)',
                                 borderTop: '1px solid var(--border-default)',
                                 borderLeft: '1px solid var(--border-default)',
@@ -639,7 +639,7 @@ export function MobileBottomNav() {
                                 >
                                     {/* Section label */}
                                     <div className="flex items-center gap-2.5 mb-3">
-                                        <div style={{ width: 4, height: 12, borderRadius: 6, background: 'var(--accent-400)', flexShrink: 0 }} />
+                                        <div style={{ width: 4, height: 12, borderRadius: 7, background: 'var(--accent-400)', flexShrink: 0 }} />
                                         <span style={{
                                             fontSize: '11px', fontWeight: 700,
                                             color: 'var(--text-tertiary)',
@@ -652,8 +652,8 @@ export function MobileBottomNav() {
                                         <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
                                     </div>
 
-                                    {/* 2-column grid — gap-1.5 + px-2 fit Samsung S25 Ultra (412px) */}
-                                    <div className="grid grid-cols-2 gap-1.5 w-full">
+                                    {/* 2-column grid — gap-2 + px-2 fit Samsung S25 Ultra (412px) */}
+                                    <div className="grid grid-cols-2 gap-2 w-full">
                                         {QUICK_CREATE.map((item, i) => (
                                             <motion.div
                                                 key={item.href}
@@ -693,7 +693,7 @@ export function MobileBottomNav() {
                                                             className="flex-shrink-0 flex items-center justify-center"
                                                             style={{
                                                                 width: 32, height: 32,
-                                                                borderRadius: 6,
+                                                                borderRadius: 7,
                                                                 background: item.iconBg,
                                                                 border: `1px solid ${item.color}28`,
                                                             }}

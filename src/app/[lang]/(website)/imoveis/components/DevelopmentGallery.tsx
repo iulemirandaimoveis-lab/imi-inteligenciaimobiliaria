@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Building2, X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import Image from 'next/image';
 import { Development } from '../types/development';
@@ -18,6 +18,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
 
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [touchStart, setTouchStart] = useState<number | null>(null);
+    const thumbStripRef = useRef<HTMLDivElement>(null);
 
     const closeLightbox = useCallback(() => setLightboxIndex(null), []);
 
@@ -40,6 +41,19 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
     }, [lightboxIndex, closeLightbox, prevImage, nextImage]);
+
+    // Auto-scroll thumbnail strip to keep active thumbnail visible
+    useEffect(() => {
+        if (lightboxIndex === null || !thumbStripRef.current) return;
+        const container = thumbStripRef.current;
+        const activeThumb = container.children[lightboxIndex] as HTMLElement | undefined;
+        if (!activeThumb) return;
+        const thumbLeft = activeThumb.offsetLeft;
+        const thumbWidth = activeThumb.offsetWidth;
+        const containerWidth = container.clientWidth;
+        const scrollTarget = thumbLeft - containerWidth / 2 + thumbWidth / 2;
+        container.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+    }, [lightboxIndex]);
 
     // Prevent body scroll when lightbox is open
     useEffect(() => {
@@ -211,7 +225,8 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+                        className="fixed inset-0 z-[9999] flex items-center justify-center"
+                        style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
                         onClick={closeLightbox}
                     >
                         {/* Close */}
@@ -247,7 +262,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                             exit={{ opacity: 0, scale: 0.96 }}
                             transition={{ duration: 0.18 }}
                             className="relative w-full h-full"
-                            style={{ maxWidth: '90vw', maxHeight: '85vh', margin: '0 auto' }}
+                            style={{ maxWidth: '90vw', maxHeight: allImages.length > 1 ? '75vh' : '85vh', margin: '0 auto' }}
                             onClick={e => e.stopPropagation()}
                             onTouchStart={e => setTouchStart(e.touches[0].clientX)}
                             onTouchEnd={e => {
@@ -281,22 +296,41 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                             </button>
                         )}
 
-                        {/* Dot strip */}
-                        {allImages.length > 1 && allImages.length <= 12 && (
-                            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                                {allImages.map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={e => { e.stopPropagation(); setLightboxIndex(i); }}
-                                        aria-label={`Ir para imagem ${i + 1}`}
-                                        className={`h-1.5 rounded-full transition-all duration-200 ${
-                                            i === lightboxIndex
-                                                ? 'w-5'
-                                                : 'hover:bg-white/60 w-1.5'
-                                        }`}
-                                        style={{ background: i === lightboxIndex ? '#C8A44A' : 'rgba(255,255,255,0.35)' }}
-                                    />
-                                ))}
+                        {/* Thumbnail strip */}
+                        {allImages.length > 1 && (
+                            <div
+                                className="absolute bottom-0 left-0 right-0 z-10 flex justify-center"
+                                style={{ paddingBottom: 16, paddingTop: 12, background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)' }}
+                                onClick={e => e.stopPropagation()}
+                            >
+                                <div
+                                    ref={thumbStripRef}
+                                    className="flex gap-2 overflow-x-auto px-4"
+                                    style={{ maxWidth: 'min(90vw, 680px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                                >
+                                    {allImages.map((img, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => setLightboxIndex(i)}
+                                            aria-label={`Ir para imagem ${i + 1}`}
+                                            className="relative flex-shrink-0 rounded-md overflow-hidden transition-all duration-200"
+                                            style={{
+                                                width: 60,
+                                                height: 48,
+                                                border: i === lightboxIndex ? '2px solid #C8A44A' : '2px solid transparent',
+                                                opacity: i === lightboxIndex ? 1 : 0.5,
+                                            }}
+                                        >
+                                            <Image
+                                                src={img}
+                                                alt={`Miniatura ${i + 1}`}
+                                                fill
+                                                className="object-cover"
+                                                sizes="60px"
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </motion.div>

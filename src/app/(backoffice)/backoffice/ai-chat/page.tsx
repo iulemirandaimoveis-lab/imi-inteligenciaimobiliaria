@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { toast } from 'sonner'
+import { timeAgo } from '@/lib/format'
 import {
   MessageSquare,
   Send,
@@ -216,16 +217,6 @@ function formatInline(text: string): React.ReactNode {
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 1) return 'agora'
-  if (mins < 60) return `${mins}m`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h`
-  const days = Math.floor(hrs / 24)
-  return `${days}d`
-}
 
 function modelBadgeColor(model: string): string {
   if (model.includes('haiku')) return T.success

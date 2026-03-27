@@ -1,13 +1,75 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { apiHandler, ApiContext } from '@/lib/api-helpers'
 import { avaliacaoSchema, avaliacaoUpdateSchema } from '@/lib/schemas'
 import { createNotification } from '@/lib/notifications'
 
-export async function GET(request: NextRequest) {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+// ─── Zod schema for POST body (loose — accepts camelCase + snake_case) ──────
+const avaliacaoPostSchema = z.object({
+    tipo_imovel: z.string().optional(),
+    tipoImovel: z.string().optional(),
+    tipo: z.string().optional(),
+    endereco: z.string().min(1, 'Endereço é obrigatório'),
+    complemento: z.string().optional(),
+    bairro: z.string().optional(),
+    cidade: z.string().optional(),
+    estado: z.string().optional(),
+    cep: z.string().optional(),
+    area_privativa: z.any().optional(),
+    areaPrivativa: z.any().optional(),
+    area_total: z.any().optional(),
+    areaTotal: z.any().optional(),
+    quartos: z.any().optional(),
+    banheiros: z.any().optional(),
+    vagas: z.any().optional(),
+    andar: z.string().optional(),
+    ano_construcao: z.any().optional(),
+    anoConstrucao: z.any().optional(),
+    anoContrucao: z.any().optional(),
+    padrao: z.string().optional(),
+    estado_conservacao: z.string().optional(),
+    estadoConservacao: z.string().optional(),
+    caracteristicas: z.any().optional(),
+    cliente_nome: z.string().optional(),
+    clienteNome: z.string().optional(),
+    cliente_email: z.string().optional(),
+    clienteEmail: z.string().optional(),
+    cliente_telefone: z.string().optional(),
+    clienteTelefone: z.string().optional(),
+    cliente_cpf_cnpj: z.string().optional(),
+    clienteCpfCnpj: z.string().optional(),
+    clienteCPFCNPJ: z.string().optional(),
+    cliente_documento: z.string().optional(),
+    clienteDocumento: z.string().optional(),
+    cliente_tipo: z.string().optional(),
+    clienteTipo: z.string().optional(),
+    solicitante_instituicao: z.string().optional(),
+    solicitanteInstituicao: z.string().optional(),
+    finalidade: z.string().optional(),
+    metodologia: z.string().optional(),
+    grau_fundamentacao: z.string().optional(),
+    grauFundamentacao: z.string().optional(),
+    grau_precisao: z.string().optional(),
+    grauPrecisao: z.string().optional(),
+    prazo_entrega: z.any().optional(),
+    prazoEntrega: z.any().optional(),
+    observacoes: z.string().optional(),
+    honorarios: z.any().optional(),
+    valorHonorarios: z.any().optional(),
+    forma_pagamento: z.string().optional(),
+    formaPagamento: z.string().optional(),
+    status: z.string().optional(),
+    comparaveis: z.any().optional(),
+}).passthrough()
 
+// ─── Zod schema for PUT body ────────────────────────────────────────────────
+const avaliacaoPutSchema = z.object({
+    id: z.string().uuid('ID inválido'),
+}).passthrough()
+
+// ─── GET /api/avaliacoes ────────────────────────────────────────────────────
+export const GET = apiHandler(null, async (request: NextRequest, _body: unknown, ctx: ApiContext) => {
+    const { supabase } = ctx
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
     const status = searchParams.get('status')
@@ -51,14 +113,11 @@ export async function GET(request: NextRequest) {
             pages: Math.ceil((count || 0) / limit),
         },
     })
-}
+}, { auth: true })
 
-export async function POST(request: NextRequest) {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
-    const body = await request.json()
+// ─── POST /api/avaliacoes ───────────────────────────────────────────────────
+export const POST = apiHandler(avaliacaoPostSchema, async (_request: NextRequest, body: z.infer<typeof avaliacaoPostSchema>, ctx: ApiContext) => {
+    const { supabase, user } = ctx
 
     const payload: Record<string, any> = {
         tipo_imovel: body.tipo_imovel || body.tipoImovel || body.tipo,
@@ -119,23 +178,22 @@ export async function POST(request: NextRequest) {
     if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
 
     // Notification — fire-and-forget
-    createNotification({
-        userId: user.id,
-        type: 'avaliacao_nova',
-        title: 'Nova Avaliação',
-        message: `Avaliação para ${body.cliente_nome || body.clienteNome || 'cliente'} criada`,
-        data: { avaliacao_id: data.id },
-    }).catch(() => {})
+    if (user) {
+        createNotification({
+            userId: user.id,
+            type: 'avaliacao_nova',
+            title: 'Nova Avaliação',
+            message: `Avaliação para ${body.cliente_nome || body.clienteNome || 'cliente'} criada`,
+            data: { avaliacao_id: data.id },
+        }).catch(() => {})
+    }
 
     return NextResponse.json({ data }, { status: 201 })
-}
+}, { auth: true, auditAction: 'avaliacao.create' })
 
-export async function PUT(request: NextRequest) {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
-    const body = await request.json()
+// ─── PUT /api/avaliacoes ────────────────────────────────────────────────────
+export const PUT = apiHandler(avaliacaoPutSchema, async (_request: NextRequest, body: z.infer<typeof avaliacaoPutSchema>, ctx: ApiContext) => {
+    const { supabase } = ctx
     const { id, ...updates } = body
 
     if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
@@ -145,7 +203,7 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
     }
 
-    updates.updated_at = new Date().toISOString()
+    ;(updates as Record<string, any>).updated_at = new Date().toISOString()
 
     const { data, error } = await supabase
         .from('avaliacoes')
@@ -156,13 +214,11 @@ export async function PUT(request: NextRequest) {
 
     if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
     return NextResponse.json({ data })
-}
+}, { auth: true, auditAction: 'avaliacao.update' })
 
-export async function DELETE(request: NextRequest) {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-
+// ─── DELETE /api/avaliacoes ─────────────────────────────────────────────────
+export const DELETE = apiHandler(null, async (request: NextRequest, _body: unknown, ctx: ApiContext) => {
+    const { supabase } = ctx
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
@@ -181,4 +237,4 @@ export async function DELETE(request: NextRequest) {
 
     if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
     return NextResponse.json({ success: true, data })
-}
+}, { auth: true, auditAction: 'avaliacao.delete' })

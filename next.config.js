@@ -4,6 +4,7 @@ const withPWA = require('next-pwa')({
     register: true,
     skipWaiting: true,
     disable: process.env.NODE_ENV === 'development',
+    buildExcludes: [/\.map$/, /middleware-manifest\.json$/],
     runtimeCaching: [
         {
             urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*/i,
@@ -27,10 +28,10 @@ const { withSentryConfig } = require('@sentry/nextjs')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     eslint: {
-        ignoreDuringBuilds: true,
+        ignoreDuringBuilds: true, // TODO: fix ESLint errors then set to false
     },
     typescript: {
-        ignoreBuildErrors: true, // TEMPORARY: unblock deploy while fixing remaining TS errors
+        ignoreBuildErrors: true, // TODO: fix TS errors then set to false
     },
     images: {
         remotePatterns: [
@@ -85,7 +86,7 @@ const nextConfig = {
                         key: 'Content-Security-Policy',
                         value: [
                             "default-src 'self'",
-                            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://api.mapbox.com",
+                            `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''} https://www.googletagmanager.com https://www.google-analytics.com https://api.mapbox.com`.trim(),
                             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.mapbox.com",
                             "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://*.mapbox.com",
                             "font-src 'self' https://fonts.gstatic.com",

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
 import { createClient } from '@/lib/supabase/client'
+import { fmt } from '@/lib/format'
 
 // ── Types ────────────────────────────────────────────────────
 interface Proposal {
@@ -44,10 +45,6 @@ interface Event {
 }
 
 // ── Helpers ──────────────────────────────────────────────────
-const fmt = (v: number) => v
-  ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
-  : '--'
-
 const fmtDate = (s: string) => s
   ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(s))
   : '--'

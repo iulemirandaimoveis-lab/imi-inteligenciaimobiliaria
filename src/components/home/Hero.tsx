@@ -41,8 +41,6 @@ function StatCounter({ to, suffix = '' }: { to: number; suffix?: string }) {
 }
 
 const STATS = [
-  { value: 500, suffix: '+', label: 'Laudos NBR 14653' },
-  { value: 12, suffix: ' anos', label: 'de experiência' },
   { value: 3, suffix: ' mercados', label: 'Brasil · EUA · Emirados' },
   { value: 100, suffix: '%', label: 'conformidade CRECI/CNAI' },
 ]
@@ -80,7 +78,7 @@ export default function Hero({ dict }: HeroProps) {
           muted
           loop
           playsInline
-          preload="none"
+          preload="metadata"
           onCanPlay={handleCanPlay}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
         >
@@ -220,7 +218,7 @@ export default function Hero({ dict }: HeroProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="grid grid-cols-2 sm:grid-cols-4 py-4 sm:py-6 gap-0 divide-x divide-white/8"
+            className="grid grid-cols-2 py-4 sm:py-6 gap-0 divide-x divide-white/8"
           >
             {STATS.map(stat => (
               <div key={stat.label} className="flex flex-col items-center px-3 sm:px-4 py-2 sm:py-0 text-center">

@@ -9,6 +9,7 @@ import {
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { fmt } from '@/lib/format'
 
 const bancos = [
     { id: 1, name: 'Caixa Econômica Federal', rate: 9.5 },
@@ -80,7 +81,6 @@ export default function SimuladorCreditoPage() {
         setAmortization(schedule)
     }
 
-    const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(v)
     const fmtPct = (v: number) => `${v.toFixed(2)}%`
     const downPaymentPercent = (downPayment / propertyValue) * 100
 

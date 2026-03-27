@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { timeAgo } from '@/lib/format'
 
 // Neon temperature colors (from Stitch design)
 const TEMP = {
@@ -63,17 +64,6 @@ function getAIReasoning(lead: Record<string, any>): string {
     return `IA em análise do perfil de ${firstName}. Entrada via ${source}. Necessita qualificação adicional — transferir para consultor especializado.`
 }
 
-function timeAgo(iso: string | null): string {
-    if (!iso) return ''
-    const diff = Date.now() - new Date(iso).getTime()
-    const d = Math.floor(diff / 86400000)
-    const h = Math.floor(diff / 3600000)
-    const m = Math.floor(diff / 60000)
-    if (d > 0) return `${d}d atrás`
-    if (h > 0) return `${h}h atrás`
-    if (m > 1) return `${m} min`
-    return 'agora'
-}
 
 type FilterKey = 'all' | 'hot' | 'warm' | 'cold'
 
@@ -228,10 +218,11 @@ export default function LeadsInboxPage() {
                         {filter !== 'all' ? `Sem leads ${filter.toUpperCase()} no momento` : 'Inbox vazio'}
                     </p>
                     <Link href="/backoffice/leads/novo"
-                        className="mt-2 h-9 px-5 rounded-[6px] text-xs font-semibold text-white flex items-center gap-1.5"
-                        style={{ background: T.accent }}
+                        className="mt-2 h-9 px-5 rounded-[6px] text-xs font-semibold text-white flex items-center gap-1.5 relative overflow-hidden uppercase tracking-[1px]"
+                        style={{ background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                     >
                         <Plus size={13} /> Capturar Lead
+                        <span className="absolute bottom-0 left-[12%] right-[12%] h-[2px] pointer-events-none opacity-60" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
                     </Link>
                 </div>
             ) : (
@@ -367,10 +358,11 @@ export default function LeadsInboxPage() {
             {/* FAB */}
             <Link
                 href="/backoffice/leads/novo"
-                className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
-                style={{ background: 'var(--btn-primary-bg)', zIndex: 50 }}
+                className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95 overflow-hidden"
+                style={{ background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', zIndex: 50 }}
             >
                 <Plus size={22} color="white" />
+                <span className="absolute bottom-0 left-[12%] right-[12%] h-[2px] pointer-events-none opacity-60" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
             </Link>
         </div>
     )

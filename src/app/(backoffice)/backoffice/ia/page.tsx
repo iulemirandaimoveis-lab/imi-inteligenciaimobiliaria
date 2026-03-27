@@ -532,11 +532,12 @@ export default function IAHubPage() {
                         <button
                             onClick={handleTest}
                             disabled={testing || !testPrompt.trim()}
-                            className="w-full h-10 rounded-[6px] text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                            style={{ background: T.accent, color: 'white' }}
+                            className="relative overflow-hidden w-full h-10 rounded-[6px] text-xs font-semibold uppercase tracking-[1px] flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
                             {testing ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
                             {testing ? 'Gerando...' : 'Testar Modelo'}
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                         </button>
 
                         {testResult && (

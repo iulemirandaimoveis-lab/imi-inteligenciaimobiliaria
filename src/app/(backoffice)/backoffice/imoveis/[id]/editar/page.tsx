@@ -65,12 +65,12 @@ function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, on
         {/* Cover badge */}
         {isCover && (
           <div className="absolute top-2 right-2 px-2 py-0.5 rounded-[6px] text-[10px] font-bold"
-            style={{ background: T.accent, color: 'white' }}>Capa</div>
+            style={{ background: '#0A1624', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>Capa</div>
         )}
         {/* "Nova" label */}
         {label && (
           <div className="absolute bottom-0 left-0 right-0 text-center text-[10px] py-0.5 font-medium"
-            style={{ background: `${T.accent}80`, color: 'white' }}>{label}</div>
+            style={{ background: 'rgba(10,22,36,0.80)', color: 'white' }}>{label}</div>
         )}
         {/* Hover actions */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
@@ -81,9 +81,10 @@ function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, on
           </button>
           {!isCover && (
             <button type="button" onClick={onSetCover}
-              className="text-[10px] px-2 py-1 rounded-lg font-medium"
-              style={{ background: T.accent, color: 'white' }}>
+              className="relative overflow-hidden text-[10px] px-2 py-1 rounded-[6px] font-medium"
+              style={{ background: '#0A1624', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
               Capa
+              <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
             </button>
           )}
           <button type="button" onClick={onDelete}

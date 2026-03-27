@@ -11,9 +11,7 @@ import {
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
 import { SectionHeader } from '../../components/ui'
 import { createClient } from '@/lib/supabase/client'
-
-const fmt = (v: number) =>
-  v ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v) : '—'
+import { fmt } from '@/lib/format'
 
 const fmtDate = (s: string) =>
   s ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short' }).format(new Date(s)) : '—'

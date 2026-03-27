@@ -1,56 +1,15 @@
 import type { Metadata, Viewport } from 'next';
-import localFont from 'next/font/local';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
-import { Syne, Playfair_Display, JetBrains_Mono } from 'next/font/google';
+import { Playfair_Display } from 'next/font/google';
 // DEPLOY_VERSION: v6.0.0 - DS6 PRECISION DARK
 import './globals.css';
 
-// DS v6 display font (Syne) — loaded via Google Fonts
-const syne = Syne({
-    subsets: ['latin'],
-    weight: ['400', '500', '600', '700', '800'],
-    variable: '--font-syne',
-    display: 'swap',
-});
-
+// D3.1 — Reduced to 3 font families: GeistSans, GeistMono, Playfair_Display
 const playfair = Playfair_Display({
     subsets: ['latin'],
     weight: ['400', '500', '600', '700'],
     variable: '--font-playfair',
-    display: 'swap',
-});
-
-const jetbrains = JetBrains_Mono({
-    subsets: ['latin'],
-    weight: ['400', '500', '700'],
-    variable: '--font-jetbrains',
-    display: 'swap',
-});
-
-// Legacy fonts kept for compatibility (still referenced in some components)
-const cormorant = localFont({
-    src: [
-        { path: '../../public/fonts/cormorant-garamond-latin-wght-normal.woff2', style: 'normal' },
-        { path: '../../public/fonts/cormorant-garamond-latin-wght-italic.woff2', style: 'italic' },
-    ],
-    variable: '--font-cormorant',
-    display: 'swap',
-});
-
-const outfit = localFont({
-    src: '../../public/fonts/outfit-latin-wght-normal.woff2',
-    variable: '--font-outfit',
-    display: 'swap',
-});
-
-const dmMono = localFont({
-    src: [
-        { path: '../../public/fonts/dm-mono-latin-300-normal.woff2', weight: '300', style: 'normal' },
-        { path: '../../public/fonts/dm-mono-latin-400-normal.woff2', weight: '400', style: 'normal' },
-        { path: '../../public/fonts/dm-mono-latin-500-normal.woff2', weight: '500', style: 'normal' },
-    ],
-    variable: '--font-dm-mono',
     display: 'swap',
 });
 
@@ -94,9 +53,9 @@ export const metadata: Metadata = {
     },
 };
 
-// REMOVED: force-dynamic was killing SSG/ISR for ALL pages including public ones
-// The backoffice layout has its own force-dynamic where needed for auth cookies
-// Public pages use ISR with revalidate (e.g., imoveis page has revalidate = 60)
+// TODO: Remove when build timeout is fixed. The backoffice layout also has force-dynamic.
+// Keeping here temporarily to prevent build timeout on 148+ pages that call cookies()
+export const dynamic = 'force-dynamic'
 
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import CookieConsent from '@/components/CookieConsent';
@@ -109,8 +68,8 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="pt-BR" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} ${cormorant.variable} ${outfit.variable} ${dmMono.variable} ${syne.variable} ${playfair.variable} ${jetbrains.variable}`}>
-            <body className="min-h-screen bg-[var(--bg-base,#080D18)] relative" style={{ fontFamily: "var(--fu, 'Outfit', system-ui, sans-serif)" }}>
+        <html lang="pt-BR" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} ${playfair.variable}`}>
+            <body className="min-h-screen bg-[var(--bg-base,#080D18)] relative" style={{ fontFamily: "var(--font-sans)" }}>
                 <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">
                     Pular para o conteúdo
                 </a>

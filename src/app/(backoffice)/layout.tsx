@@ -48,7 +48,7 @@ export default async function BackofficeLayout({
 
                 {/* Main Content — pt-16 on mobile (extra breathing room for notch/dynamic island), lg:pt-16 for DesktopHeader */}
                 <main className="pt-[calc(56px+env(safe-area-inset-top,0px))] lg:pt-16 lg:pl-60 min-h-screen overflow-x-hidden" style={{ maxWidth: '100%' }}>
-                    <div className="p-4 pb-32 lg:p-6 lg:pb-6">
+                    <div className="p-5 pb-32 lg:p-6 lg:pb-6">
                         <ErrorBoundary>
                             <BackofficeRealtimeProvider>
                                 {children}
@@ -65,7 +65,7 @@ export default async function BackofficeLayout({
                 position="top-right"
                 richColors
                 closeButton
-                theme="dark"
+                theme="system"
                 offset={72}
                 toastOptions={{
                     duration: 4000,
@@ -75,7 +75,7 @@ export default async function BackofficeLayout({
                         color: 'var(--text-primary)',
                         fontFamily: 'var(--font-sans)',
                         fontSize: '13px',
-                        borderRadius: 'var(--r-lg, 4px)',
+                        borderRadius: 'var(--r-lg, 14px)',
                     },
                 }}
             />

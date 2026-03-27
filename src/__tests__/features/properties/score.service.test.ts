@@ -166,27 +166,22 @@ describe('calcIMIScore', () => {
 })
 
 describe('getScoreColor', () => {
-  it('returns gold for Premium (>= 90)', () => {
-    expect(getScoreColor(90)).toBe('#C8A44A')
-    expect(getScoreColor(100)).toBe('#C8A44A')
+  it('returns green for Excelente (>= 80)', () => {
+    expect(getScoreColor(80)).toBe('#5DB887')
+    expect(getScoreColor(100)).toBe('#5DB887')
   })
 
-  it('returns green for Otimo (75-89)', () => {
-    expect(getScoreColor(75)).toBe('#5DB887')
-    expect(getScoreColor(89)).toBe('#5DB887')
-  })
-
-  it('returns blue for Bom (60-74)', () => {
+  it('returns blue for Bom (60-79)', () => {
     expect(getScoreColor(60)).toBe('#5B9BD5')
-    expect(getScoreColor(74)).toBe('#5B9BD5')
+    expect(getScoreColor(79)).toBe('#5B9BD5')
   })
 
-  it('returns amber for Moderado (40-59)', () => {
+  it('returns amber for Regular (40-59)', () => {
     expect(getScoreColor(40)).toBe('#D4913A')
     expect(getScoreColor(59)).toBe('#D4913A')
   })
 
-  it('returns red for Atencao (< 40)', () => {
+  it('returns red for Baixo (< 40)', () => {
     expect(getScoreColor(39)).toBe('#E06B6B')
     expect(getScoreColor(0)).toBe('#E06B6B')
   })
@@ -194,18 +189,18 @@ describe('getScoreColor', () => {
 
 describe('getScoreLabel', () => {
   it('returns correct label for each tier', () => {
-    expect(getScoreLabel(95)).toBe('Premium')
-    expect(getScoreLabel(80)).toBe('Ótimo')
+    expect(getScoreLabel(95)).toBe('Excelente')
+    expect(getScoreLabel(80)).toBe('Excelente')
     expect(getScoreLabel(65)).toBe('Bom')
-    expect(getScoreLabel(45)).toBe('Moderado')
-    expect(getScoreLabel(20)).toBe('Atenção')
+    expect(getScoreLabel(45)).toBe('Regular')
+    expect(getScoreLabel(20)).toBe('Baixo')
   })
 
   it('returns correct labels at exact boundaries', () => {
-    expect(getScoreLabel(90)).toBe('Premium')
-    expect(getScoreLabel(75)).toBe('Ótimo')
+    expect(getScoreLabel(80)).toBe('Excelente')
     expect(getScoreLabel(60)).toBe('Bom')
-    expect(getScoreLabel(40)).toBe('Moderado')
+    expect(getScoreLabel(40)).toBe('Regular')
+    expect(getScoreLabel(39)).toBe('Baixo')
   })
 })
 

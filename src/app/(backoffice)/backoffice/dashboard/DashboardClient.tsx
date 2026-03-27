@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { fmt } from '@/lib/format'
 
 const PerformanceChart = dynamic(
     () => import('./components/PerformanceChart'),
@@ -94,9 +95,6 @@ interface Props {
     brokers?: BrokerAvatar[]
 }
 
-
-const fmt = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
 const fmtCompact = (v: number) => {
     if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
@@ -340,15 +338,10 @@ function ProximosCompromissosWidget() {
 }
 
 // ── Widget 3: Top Imóveis com Interesse ───────────────────────
-const TOP_IMOVEIS_PLACEHOLDER = [
-    { id: '1', nome: 'Edifício Atlântico',  engajamento: 92, leads: 24, tipo: 'Residencial' },
-    { id: '2', nome: 'Vila Harmonia',       engajamento: 78, leads: 18, tipo: 'Comercial'   },
-    { id: '3', nome: 'Residencial Serra',   engajamento: 61, leads: 11, tipo: 'Residencial' },
-    { id: '4', nome: 'Parque das Flores',   engajamento: 44, leads: 7,  tipo: 'Misto'       },
-]
+type TopImovel = { id: string; nome: string; engajamento: number; leads: number; tipo: string }
 
 function TopImoveisWidget() {
-    const [data, setData] = useState(TOP_IMOVEIS_PLACEHOLDER)
+    const [data, setData] = useState<TopImovel[]>([])
 
     useEffect(() => {
         fetch('/api/developers?limit=4&order=leads_count')
@@ -403,7 +396,12 @@ function TopImoveisWidget() {
                 </Link>
             </div>
             <div className="space-y-3">
-                {data.map((imovel, i) => (
+                {data.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-6 gap-2" style={{ color: 'var(--text-muted)' }}>
+                        <Building2 size={20} style={{ opacity: 0.4 }} />
+                        <span className="text-[11px]">Nenhum imóvel com interesse registrado</span>
+                    </div>
+                ) : data.map((imovel, i) => (
                     <Link key={imovel.id} href={`/backoffice/imoveis/${imovel.id}`}>
                         <div className="group cursor-pointer">
                             <div className="flex items-center justify-between mb-1">

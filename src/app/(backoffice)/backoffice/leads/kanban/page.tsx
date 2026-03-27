@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
+import { timeAgo } from '@/lib/format'
 import {
     DndContext,
     DragEndEvent,
@@ -54,17 +55,6 @@ function getInitials(name: string): string {
     return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
 }
 
-function timeAgo(iso: string | null): string {
-    if (!iso) return ''
-    const diff = Date.now() - new Date(iso).getTime()
-    const h = Math.floor(diff / 3600000)
-    const m = Math.floor(diff / 60000)
-    const d = Math.floor(diff / 86400000)
-    if (d > 0) return `${d}d atrás`
-    if (h > 0) return `${h}h atrás`
-    if (m > 0) return `${m}min`
-    return 'agora'
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function urgencyBadge(lead: Record<string, any>): { label: string; color: string; bg: string } | null {

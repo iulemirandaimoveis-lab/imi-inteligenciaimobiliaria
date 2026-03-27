@@ -1225,8 +1225,9 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
         </div>
         <p style={{ fontFamily: T.font.display, fontSize: '18px', color: T.text }}>Sem imóveis cadastrados</p>
         <Link href="/backoffice/imoveis/novo">
-          <button style={{ padding: '8px 16px', borderRadius: 6, background: T.accent, border: 'none', color: T.textInverse, fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', fontFamily: T.font.ui, cursor: 'pointer' }}>
+          <button style={{ position: 'relative', overflow: 'hidden', padding: '8px 16px', borderRadius: 6, background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', fontFamily: T.font.ui, cursor: 'pointer' }}>
             Cadastrar Imóvel
+            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
           </button>
         </Link>
       </div>

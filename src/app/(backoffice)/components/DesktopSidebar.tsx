@@ -12,7 +12,7 @@ import {
     Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot,
     Map as MapIcon, Handshake, MessageCircle, Camera, Key, Eye,
 } from 'lucide-react'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
@@ -30,6 +30,33 @@ interface NavSection {
     label: string
     alwaysOpen?: boolean
     items: NavItem[]
+}
+
+// ── Role-based section visibility ──
+type UserRole = 'admin' | 'manager' | 'agent' | 'viewer'
+
+function useUserRole(): UserRole {
+    const [role, setRole] = useState<UserRole>('admin')
+    useEffect(() => {
+        const supabase = createClient()
+        supabase.auth.getUser().then(({ data }) => {
+            const r = data.user?.user_metadata?.role
+            if (r && ['admin', 'manager', 'agent', 'viewer'].includes(r)) setRole(r as UserRole)
+            else setRole('admin') // default for existing users without role metadata
+        })
+    }, [])
+    return role
+}
+
+const SECTION_ACCESS: Record<string, UserRole[]> = {
+    'Operações Diárias': ['admin', 'manager', 'agent', 'viewer'],
+    'Captação': ['admin', 'manager', 'agent'],
+    'Conversão': ['admin', 'manager', 'agent'],
+    'Portfólio': ['admin', 'manager', 'agent'],
+    'Operação': ['admin', 'manager'],
+    'Financeiro': ['admin', 'manager'],
+    'Inteligência': ['admin', 'manager', 'agent'],
+    'Configurações': ['admin'],
 }
 
 // ── Section colors for visual differentiation ──
@@ -237,7 +264,7 @@ function badgeStyle(badge: string | number) {
         fontFamily: 'var(--font-mono)',
         fontWeight: 700 as const,
         padding: '2px 5px',
-        borderRadius: 6,
+        borderRadius: 7,
         letterSpacing: '0.06em',
         lineHeight: 1.2,
         whiteSpace: 'nowrap' as const,
@@ -445,6 +472,8 @@ function SectionComponent({ section }: { section: NavSection }) {
 
 export function DesktopSidebar() {
     const router = useRouter()
+    const userRole = useUserRole()
+    const visibleSections = SECTIONS.filter(s => SECTION_ACCESS[s.label]?.includes(userRole) ?? true)
     const handleSignOut = useCallback(async () => {
         const supabase = createClient()
         await supabase.auth.signOut()
@@ -503,7 +532,7 @@ export function DesktopSidebar() {
 
             {/* Nav — min-h-0 is critical for flex overflow-y-auto to scroll */}
             <nav className="flex-1 overflow-y-auto min-h-0 py-3 px-2.5">
-                {SECTIONS.map(section => (
+                {visibleSections.map(section => (
                     <SectionComponent key={section.label} section={section} />
                 ))}
             </nav>

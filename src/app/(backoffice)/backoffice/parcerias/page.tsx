@@ -13,14 +13,8 @@ import { ptBR } from 'date-fns/locale'
 import { usePartnerships, type Partnership } from '@/hooks/use-partnerships'
 import { PageIntelHeader, KPICard, FilterTabs, type FilterTab } from '../../components/ui'
 import { T } from '../../lib/theme'
+import { formatCurrency } from '@/lib/format'
 
-/* ─── CURRENCY ────────────────────────────────────────────────── */
-const fmtBRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
-
-function formatCurrency(v: number | null): string {
-    if (v == null) return '—'
-    return fmtBRL.format(v)
-}
 
 /* ─── STATUS CONFIG ───────────────────────────────────────────── */
 const STATUS_CFG: Record<

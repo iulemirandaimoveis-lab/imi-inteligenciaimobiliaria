@@ -16,15 +16,9 @@ import {
     type Partnership,
 } from '@/hooks/use-partnerships'
 import { T } from '../../../lib/theme'
+import { formatCurrency } from '@/lib/format'
 
 /* ─── CONSTANTS ───────────────────────────────────────────────── */
-
-const fmtBRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
-
-function formatCurrency(v: number | null): string {
-    if (v == null) return '\u2014'
-    return fmtBRL.format(v)
-}
 
 function fmtDate(d: string | null): string {
     if (!d) return '\u2014'

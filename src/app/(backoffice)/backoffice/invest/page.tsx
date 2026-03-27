@@ -34,10 +34,11 @@ export default function InvestDashboard() {
         subtitle="Painel de Inteligência de Investimentos"
         actions={
           <button
-            className="px-4 py-2 rounded-[6px] text-sm font-medium"
-            style={{ background: T.accent, color: T.textInverse }}
+            className="relative overflow-hidden px-4 py-2 rounded-[6px] text-xs font-semibold uppercase tracking-[1px]"
+            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
           >
             Nova Simulação
+            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
           </button>
         }
       />

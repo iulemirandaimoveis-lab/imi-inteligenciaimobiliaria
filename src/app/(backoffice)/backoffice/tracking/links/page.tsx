@@ -3,7 +3,8 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
     ArrowLeft, Link2, Plus, Copy, QrCode, ExternalLink,
-    Trash2, Download, Check, Loader2, Search, RefreshCw
+    Trash2, Download, Check, Loader2, Search, RefreshCw,
+    Filter, BarChart3,
 } from 'lucide-react'
 import QRCode from 'qrcode'
 import { toast } from 'sonner'
@@ -16,6 +17,8 @@ export default function TrackingLinksPage() {
     const [loading, setLoading] = useState(true)
     const [copiedId, setCopiedId] = useState<string | null>(null)
     const [search, setSearch] = useState('')
+    const [sourceFilter, setSourceFilter] = useState<string>('all')
+    const [sortBy, setSortBy] = useState<'recent' | 'clicks'>('recent')
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
     const [secondsAgo, setSecondsAgo] = useState(0)
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -100,10 +103,19 @@ export default function TrackingLinksPage() {
             toast.error('Erro ao gerar QR Code')
         }
     }
-    const filtered = links.filter(l =>
-        !search || (l.campaign_name || '').toLowerCase().includes(search.toLowerCase()) ||
-        (l.short_code || '').toLowerCase().includes(search.toLowerCase())
-    )
+    // Derive unique sources for filter dropdown
+    const sources = Array.from(new Set(links.map(l => l.utm_params?.source).filter(Boolean)))
+
+    const filtered = links
+        .filter(l =>
+            (!search || (l.campaign_name || '').toLowerCase().includes(search.toLowerCase()) ||
+            (l.short_code || '').toLowerCase().includes(search.toLowerCase()))
+            && (sourceFilter === 'all' || l.utm_params?.source === sourceFilter)
+        )
+        .sort((a, b) => {
+            if (sortBy === 'clicks') return (b.clicks || 0) - (a.clicks || 0)
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        })
     return (
         <div className="space-y-6 max-w-6xl mx-auto">
             {/* Header */}
@@ -157,6 +169,44 @@ export default function TrackingLinksPage() {
                     <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
                 </button>
             </div>
+            {/* Filters Row */}
+            {!loading && links.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                    {/* Source Filter */}
+                    <div className="flex items-center gap-1.5">
+                        <Filter size={12} style={{ color: T.textMuted }} />
+                        <select
+                            value={sourceFilter}
+                            onChange={e => setSourceFilter(e.target.value)}
+                            className="h-8 px-2 rounded text-[11px] font-medium cursor-pointer"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                        >
+                            <option value="all">Todas as fontes</option>
+                            {sources.map(s => (
+                                <option key={s} value={s}>{s}</option>
+                            ))}
+                        </select>
+                    </div>
+                    {/* Sort */}
+                    <div className="flex items-center gap-1.5">
+                        <BarChart3 size={12} style={{ color: T.textMuted }} />
+                        <select
+                            value={sortBy}
+                            onChange={e => setSortBy(e.target.value as 'recent' | 'clicks')}
+                            className="h-8 px-2 rounded text-[11px] font-medium cursor-pointer"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                        >
+                            <option value="recent">Mais recentes</option>
+                            <option value="clicks">Mais cliques</option>
+                        </select>
+                    </div>
+                    {/* Results count */}
+                    <span className="text-[10px] ml-auto" style={{ color: T.textMuted }}>
+                        {filtered.length} de {links.length} links
+                    </span>
+                </div>
+            )}
+
             {/* Links List */}
             {loading ? (
                 <div className="flex items-center justify-center h-48">
@@ -246,6 +296,14 @@ export default function TrackingLinksPage() {
                                                 <Download size={14} style={{ color: T.textMuted }} />
                                             </button>
                                         )}
+                                        <button
+                                            onClick={() => router.push(`/backoffice/tracking/${link.id}`)}
+                                            className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
+                                            style={{ background: T.hover }}
+                                            title="Ver analytics"
+                                        >
+                                            <BarChart3 size={14} style={{ color: T.accent }} />
+                                        </button>
                                         <button
                                             onClick={() => window.open(link.short_url || link.url, '_blank')}
                                             className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"

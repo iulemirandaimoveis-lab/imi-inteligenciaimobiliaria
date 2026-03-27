@@ -13,12 +13,14 @@ export function normalizeImageUrl(url: string | null | undefined): string | null
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getMainImage(property: Record<string, any>): string | null {
     const raw = (
+        property.cover_image_url ||
         property.images?.main ||
         property.images?.gallery?.[0] ||
-        property.image ||
         property.gallery_images?.[0] ||
+        property.image_urls?.[0] ||
+        property.image ||
         property.cover_image ||
-        property.cover_image_url ||
+        property.photos?.[0] ||
         null
     )
     return normalizeImageUrl(raw)

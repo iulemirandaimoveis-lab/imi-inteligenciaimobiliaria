@@ -25,8 +25,9 @@ import { YieldCalculator } from '@/app/(backoffice)/components/ui/YieldCalculato
 import { ValuationEngine } from '@/app/(backoffice)/components/ui/ValuationEngine'
 import type { DetailProps } from '../types'
 import { TABS } from '../types'
+import { normalizeStatus } from '@/lib/format'
 import {
-  normalizeStatus, fmtCurrency, fmtNum, buildComparables,
+  fmtCurrency, fmtNum, buildComparables,
   EYEBROW, CARD, BTN_PRIMARY, BTN_SECONDARY, MONO,
   Skeleton, STATUS_OPTIONS,
 } from '../helpers'

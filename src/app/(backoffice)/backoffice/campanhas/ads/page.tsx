@@ -12,6 +12,7 @@ import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, StatusBadge } from '@/app/(backoffice)/components/ui'
+import { formatCurrency } from '@/lib/format'
 
 const STATUS_MAP = Object.fromEntries(
     Object.entries({ active: 'ATIVO', paused: 'PAUSADO', ended: 'ENCERRADO', draft: 'RASCUNHO', learning: 'LEARNING' }).map(([key, label]) => {
@@ -22,12 +23,6 @@ const STATUS_MAP = Object.fromEntries(
 
 const CHANNELS = ['Todos', 'Meta Ads', 'Google Ads', 'LinkedIn', 'WhatsApp']
 
-const fmtBRL = (v: number | null) => {
-    if (!v) return '—'
-    if (v >= 1000000) return `R$ ${(v / 1000000).toFixed(1).replace('.', ',')}M`
-    if (v >= 1000) return `R$ ${(v / 1000).toFixed(1).replace('.', ',')}k`
-    return `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}`
-}
 
 function LeadsBarChart({ data }: { data: number[] }) {
     if (!data.length) return null
@@ -144,9 +139,9 @@ export default function AdsPerformancePage() {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <KPICard label="Total Gasto"  value={loading ? '—' : fmtBRL(totalSpent)}                      icon={<DollarSign size={14} />} accent="blue" size="sm" />
+                <KPICard label="Total Gasto"  value={loading ? '—' : formatCurrency(totalSpent)}                      icon={<DollarSign size={14} />} accent="blue" size="sm" />
                 <KPICard label="Total Leads"  value={loading ? '—' : totalLeads.toLocaleString('pt-BR')}      icon={<Users size={14} />}      accent="green" size="sm" />
-                <KPICard label="CPL Médio"    value={loading ? '—' : fmtBRL(avgCPL)}                          icon={<MousePointerClick size={14} />} size="sm" />
+                <KPICard label="CPL Médio"    value={loading ? '—' : formatCurrency(avgCPL)}                          icon={<MousePointerClick size={14} />} size="sm" />
             </div>
 
             {/* Leads Trend Chart — 30 dias reais */}
@@ -244,9 +239,9 @@ export default function AdsPerformancePage() {
                                     <div className="grid grid-cols-4 gap-2">
                                         {[
                                             { label: 'META', value: c.expected_leads ? String(c.expected_leads) : '—' },
-                                            { label: 'CPL', value: c.cost_per_lead ? fmtBRL(Number(c.cost_per_lead)) : '—' },
-                                            { label: 'GASTO', value: c.spent ? fmtBRL(Number(c.spent)) : '—' },
-                                            { label: 'BUDGET', value: c.budget ? fmtBRL(Number(c.budget)) : '—' },
+                                            { label: 'CPL', value: c.cost_per_lead ? formatCurrency(Number(c.cost_per_lead)) : '—' },
+                                            { label: 'GASTO', value: c.spent ? formatCurrency(Number(c.spent)) : '—' },
+                                            { label: 'BUDGET', value: c.budget ? formatCurrency(Number(c.budget)) : '—' },
                                         ].map(stat => (
                                             <div key={stat.label}>
                                                 <p className="text-[11px] font-bold uppercase tracking-wider mb-0.5" style={{ color: T.textMuted }}>{stat.label}</p>

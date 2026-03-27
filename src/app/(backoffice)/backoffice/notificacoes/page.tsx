@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { timeAgo } from '@/lib/format'
 interface Notification {
     id: string
     type: string
@@ -29,13 +30,7 @@ const TYPE_COLORS: Record<string, string> = {
     system: 'var(--accent-400)', development: 'var(--success)', evaluation: 'var(--warning)', comment: 'var(--text-secondary)',
     update: 'var(--success)',
 }
-const timeAgo = (d: string) => {
-    const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
-    if (diff < 1) return 'agora'
-    if (diff < 60) return `${diff}min`
-    if (diff < 1440) return `${Math.floor(diff / 60)}h`
-    return `${Math.floor(diff / 1440)}d atrás`
-}
+
 export default function NotificacoesPage() {
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [loading, setLoading] = useState(true)

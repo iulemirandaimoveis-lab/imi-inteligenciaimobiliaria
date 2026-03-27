@@ -156,11 +156,12 @@ export default function PerformanceDashboard() {
                     <button
                         onClick={fetchAiInsights}
                         disabled={aiLoading}
-                        className="text-[10px] font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all hover:brightness-110"
-                        style={{ background: T.accent, color: 'var(--text-inverse)' }}
+                        className="relative overflow-hidden text-[10px] font-semibold uppercase tracking-[1px] px-3 py-1.5 rounded-[6px] flex items-center gap-1.5 transition-all hover:brightness-110"
+                        style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                     >
                         {aiLoading ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
                         {aiInsights ? 'Atualizar' : 'Gerar Insights'}
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                     </button>
                 </div>
 

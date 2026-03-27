@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import QRCode from 'qrcode'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { timeAgo } from '@/lib/format'
 
 const SOURCES = [
     {
@@ -55,15 +56,6 @@ function srcInfo(val: string) {
     return SOURCES.find(s => s.value === val) ?? { color: 'var(--info)', bg: 'rgba(96,165,250,0.1)', icon: <Globe size={16} />, label: val }
 }
 
-function timeAgo(iso: string) {
-    const diff = Date.now() - new Date(iso).getTime()
-    const m = Math.floor(diff / 60000)
-    if (m < 1) return 'agora'
-    if (m < 60) return `${m}m atrás`
-    const h = Math.floor(m / 60)
-    if (h < 24) return `${h}h atrás`
-    return `${Math.floor(h / 24)}d atrás`
-}
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 
@@ -115,7 +107,7 @@ export default function QRGeneratorPage() {
     useEffect(() => {
         const supabase = createClient()
         // Load developments (all — the QR tool is internal, no status filter needed)
-        supabase.from('developments').select('id, name, slug').order('name')
+        supabase.from('developments').select('id, name, slug, image, images, gallery_images, price_from, price_min').order('name')
             .then(({ data }) => {
                 const devs = data || []
                 setDevelopments(devs)
@@ -163,7 +155,7 @@ export default function QRGeneratorPage() {
 
             const qr = await QRCode.toDataURL(url, {
                 width: 400, margin: 2,
-                color: { dark: '#1A1A2E', light: '#FFFFFF' },
+                color: { dark: '#C49D5B', light: '#FFFFFF' },
                 errorCorrectionLevel: 'H',
             })
             setQrDataUrl(qr)
@@ -192,7 +184,7 @@ export default function QRGeneratorPage() {
             type: 'svg',
             width: 600,
             margin: 2,
-            color: { dark: '#1A1A2E', light: '#FFFFFF' },
+            color: { dark: '#C49D5B', light: '#FFFFFF' },
             errorCorrectionLevel: 'H'
         })
         const blob = new Blob([svgString], { type: 'image/svg+xml' })
@@ -526,20 +518,46 @@ export default function QRGeneratorPage() {
                         </p>
                     )}
 
-                    {/* Property preview */}
-                    {qrDataUrl && selectedDev && (
-                        <div className="w-full rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                            <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(96,165,250,0.12)' }}>
-                                    <Building2 size={14} style={{ color: 'var(--info)' }} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-[9px] font-bold uppercase tracking-[0.1em]" style={{ color: 'rgba(255,255,255,0.35)' }}>Imóvel vinculado</p>
-                                    <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{selectedDev.name}</p>
+                    {/* Property preview with photo */}
+                    {qrDataUrl && selectedDev && (() => {
+                        const devImg = selectedDev.image
+                            || (Array.isArray(selectedDev.gallery_images) && selectedDev.gallery_images[0])
+                            || (Array.isArray(selectedDev.images) && selectedDev.images[0])
+                            || null
+                        const priceRaw = selectedDev.price_from || selectedDev.price_min || 0
+                        const priceLabel = priceRaw >= 1_000_000
+                            ? `R$ ${(priceRaw / 1_000_000).toFixed(1).replace('.', ',')}M`
+                            : priceRaw > 0
+                                ? `R$ ${(priceRaw / 1_000).toFixed(0)}mil`
+                                : null
+                        return (
+                            <div className="w-full rounded-lg overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                                <div className="flex items-center gap-3 p-3">
+                                    {devImg ? (
+                                        <img
+                                            src={devImg}
+                                            alt={selectedDev.name}
+                                            className="flex-shrink-0 rounded-lg object-cover"
+                                            style={{ width: 56, height: 56 }}
+                                        />
+                                    ) : (
+                                        <div className="flex-shrink-0 rounded-lg flex items-center justify-center" style={{ width: 56, height: 56, background: 'rgba(96,165,250,0.12)' }}>
+                                            <Building2 size={20} style={{ color: 'var(--info)' }} />
+                                        </div>
+                                    )}
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-[9px] font-bold uppercase tracking-[0.1em] mb-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Imóvel vinculado</p>
+                                        <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{selectedDev.name}</p>
+                                        {priceLabel && (
+                                            <p className="text-xs font-bold mt-0.5" style={{ color: T.accent }}>
+                                                {priceLabel}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )
+                    })()}
 
                     {/* Short URL */}
                     {shortUrl ? (

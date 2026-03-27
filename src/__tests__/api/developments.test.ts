@@ -166,12 +166,23 @@ describe('/api/developments', () => {
 
     it('creates development with valid data', async () => {
       const created = { id: 'new-1', name: 'New Dev', type: 'apartment', slug: 'new-dev' }
-      mockFrom.mockReturnValue({
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: created, error: null }),
+      mockFrom.mockImplementation((table: string) => {
+        if (table === 'brokers') {
+          return {
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                maybeSingle: jest.fn().mockResolvedValue({ data: { id: 'broker-1' }, error: null }),
+              }),
+            }),
+          }
+        }
+        return {
+          insert: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({ data: created, error: null }),
+            }),
           }),
-        }),
+        }
       })
 
       const res = await POST(makeJsonRequest('POST', { name: 'New Dev', type: 'Apartamento' }))

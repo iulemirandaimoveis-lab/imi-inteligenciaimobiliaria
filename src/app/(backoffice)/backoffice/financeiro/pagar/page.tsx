@@ -12,6 +12,7 @@ import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs, ActionMenu } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
+import { fmt } from '@/lib/format'
 
 // Derive STATUS_CFG from centralized constants
 const STATUS_ICONS: Record<string, any> = { pago: CheckCircle, pendente: Clock, atrasado: AlertCircle, cancelado: AlertCircle }
@@ -21,9 +22,6 @@ const STATUS_CFG = Object.fromEntries(
         return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS[key] || AlertCircle }]
     })
 ) as Record<string, { label: string; text: string; bg: string; icon: React.ElementType }>
-
-const fmt = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
 const fmtDate = (d: string | null) =>
     d ? new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—'

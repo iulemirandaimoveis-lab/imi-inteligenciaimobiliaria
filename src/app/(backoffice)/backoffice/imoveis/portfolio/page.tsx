@@ -10,6 +10,7 @@ import { getScoreRange } from '@/lib/design-tokens'
 import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
+import { normalizeStatus } from '@/lib/format'
 import {
   MobileGlobalStyles, MobileAppBar, MobileBottomNav,
   MobileKPICard, MobileSection, MobileEmptyState,
@@ -47,16 +48,6 @@ const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> =
 }
 
 /* ─── Helpers ────────────────────────────────────────────────────────────────── */
-function normalizeStatus(s?: string): string {
-  const MAP: Record<string, string> = {
-    launch: 'lancamento', available: 'disponivel', under_construction: 'em_construcao',
-    ready: 'disponivel', sold: 'vendido', reserved: 'reservado',
-    negotiating: 'em_negociacao', published: 'publicado', draft: 'rascunho',
-    campaign: 'lancamento', private: 'archived',
-  }
-  const key = s?.toLowerCase() ?? ''
-  return MAP[key] ?? key ?? 'disponivel'
-}
 
 function fmt(n?: number | null): string {
   if (!n) return '—'

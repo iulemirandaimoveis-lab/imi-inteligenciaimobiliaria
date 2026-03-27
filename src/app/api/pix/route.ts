@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import QRCode from 'qrcode'
+import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { apiHandler, ApiContext } from '@/lib/api-helpers'
+import QRCode from 'qrcode'
 
-const PixPostSchema = z.object({
+const pixPostSchema = z.object({
     amount: z.number().positive(),
     description: z.string().max(200).optional(),
     transactionId: z.string().optional(),
     debtorName: z.string().max(200).optional(),
 })
+
 // ─── Pix EMV Payload Builder (BACEN spec CVM) ───────────────────────────────
 function emvField(id: string, value: string): string {
     return `${id}${String(value.length).padStart(2, '0')}${value}`
@@ -163,138 +164,120 @@ async function asaasCreateCharge(amount: number, description: string, dueDate: s
         rawResponse: { payment, qr } as Record<string, unknown>,
     }
 }
+
 // ─── POST /api/pix — Create charge ──────────────────────────────────────────
-export async function POST(req: Request) {
-    try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        const body = await req.json()
-        const parsed = PixPostSchema.safeParse(body)
-        if (!parsed.success) {
-            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
-        }
-        const { amount, description, transactionId, debtorName } = parsed.data
-        const txid = generateTxId()
-        const provider = process.env.ABACATEPAY_TOKEN
-            ? 'abacatepay'
-            : process.env.ASAAS_API_KEY
-                ? 'asaas'
-                : 'local'
-        const pixKey = process.env.PIX_KEY || 'contato@iulemiranda.com.br'
-        const merchantName = process.env.PIX_MERCHANT_NAME || 'Iule Miranda'
-        const merchantCity = process.env.PIX_MERCHANT_CITY || 'Recife'
-        const dueDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        let pixCopyPaste: string
-        let qrCodeBase64: string
-        let externalId: string | null = null
-        let expiresAt: string | null = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        let rawResponse: Record<string, unknown> = {}
-        if (provider === 'abacatepay') {
-            const abacate = await abacateCreatePixCharge(
-                Number(amount),
-                description || 'Pagamento IMI',
-                debtorName
-            )
-            pixCopyPaste = abacate.pixCopyPaste
-            qrCodeBase64 = abacate.qrCodeBase64
-            externalId = abacate.externalId
-            expiresAt = abacate.expiresAt
-            rawResponse = abacate.rawResponse
-        } else if (provider === 'asaas') {
-            const asaas = await asaasCreateCharge(
-                Number(amount),
-                description || 'Pagamento IMI',
-                dueDate,
-                debtorName
-            )
-            pixCopyPaste = asaas.pixCopyPaste
-            qrCodeBase64 = asaas.qrCodeBase64
-            externalId = asaas.externalId
-            expiresAt = asaas.expiresAt
-            rawResponse = asaas.rawResponse
-        } else {
-            // Local EMV generation — works without any API key
-            pixCopyPaste = buildPixPayload({
-                pixKey,
-                merchantName,
-                merchantCity,
-                amount: Number(amount),
-                txid,
-                description: description?.slice(0, 72),
-            })
-            const qrDataUrl = await QRCode.toDataURL(pixCopyPaste, {
-                width: 300,
-                margin: 2,
-                color: { dark: '#000000', light: '#FFFFFF' },
-            })
-            // Strip "data:image/png;base64," prefix
-            qrCodeBase64 = qrDataUrl.split(',')[1]
-            rawResponse = { provider: 'local', pixKey, merchantName }
-        }
-        // Persist to DB
-        const { data: charge, error: dbErr } = await supabase
-            .from('pix_charges')
-            .insert({
-                user_id: user.id,
-                transaction_id: transactionId || null,
-                external_id: externalId,
-                txid,
-                amount: Number(amount),
-                description: description || null,
-                debtor_name: debtorName || null,
-                status: 'active',
-                pix_key: pixKey,
-                pix_copy_paste: pixCopyPaste,
-                qr_code_base64: qrCodeBase64,
-                provider,
-                expires_at: expiresAt,
-                raw_response: rawResponse,
-            })
-            .select('id')
-            .single()
-        if (dbErr) {
-            // Non-fatal: log but continue
-        }
-        return NextResponse.json({
-            charge: {
-                id: charge?.id ?? txid,
-                txid,
-                amount: Number(amount),
-                description,
-                pixCopyPaste,
-                qrCodeBase64,
-                provider,
-                expiresAt,
-                status: 'active',
-            },
-        })
-    } catch (err) {
-        return NextResponse.json(
-            { error: err instanceof Error ? err.message : 'Erro interno' },
-            { status: 500 }
+export const POST = apiHandler(pixPostSchema, async (_req: NextRequest, body: z.infer<typeof pixPostSchema>, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const { amount, description, transactionId, debtorName } = body
+    const txid = generateTxId()
+    const provider = process.env.ABACATEPAY_TOKEN
+        ? 'abacatepay'
+        : process.env.ASAAS_API_KEY
+            ? 'asaas'
+            : 'local'
+    const pixKey = process.env.PIX_KEY || 'contato@iulemiranda.com.br'
+    const merchantName = process.env.PIX_MERCHANT_NAME || 'Iule Miranda'
+    const merchantCity = process.env.PIX_MERCHANT_CITY || 'Recife'
+    const dueDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    let pixCopyPaste: string
+    let qrCodeBase64: string
+    let externalId: string | null = null
+    let expiresAt: string | null = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    let rawResponse: Record<string, unknown> = {}
+    if (provider === 'abacatepay') {
+        const abacate = await abacateCreatePixCharge(
+            Number(amount),
+            description || 'Pagamento IMI',
+            debtorName
         )
+        pixCopyPaste = abacate.pixCopyPaste
+        qrCodeBase64 = abacate.qrCodeBase64
+        externalId = abacate.externalId
+        expiresAt = abacate.expiresAt
+        rawResponse = abacate.rawResponse
+    } else if (provider === 'asaas') {
+        const asaas = await asaasCreateCharge(
+            Number(amount),
+            description || 'Pagamento IMI',
+            dueDate,
+            debtorName
+        )
+        pixCopyPaste = asaas.pixCopyPaste
+        qrCodeBase64 = asaas.qrCodeBase64
+        externalId = asaas.externalId
+        expiresAt = asaas.expiresAt
+        rawResponse = asaas.rawResponse
+    } else {
+        // Local EMV generation — works without any API key
+        pixCopyPaste = buildPixPayload({
+            pixKey,
+            merchantName,
+            merchantCity,
+            amount: Number(amount),
+            txid,
+            description: description?.slice(0, 72),
+        })
+        const qrDataUrl = await QRCode.toDataURL(pixCopyPaste, {
+            width: 300,
+            margin: 2,
+            color: { dark: '#000000', light: '#FFFFFF' },
+        })
+        // Strip "data:image/png;base64," prefix
+        qrCodeBase64 = qrDataUrl.split(',')[1]
+        rawResponse = { provider: 'local', pixKey, merchantName }
     }
-}
+    // Persist to DB
+    const { data: charge, error: dbErr } = await supabase
+        .from('pix_charges')
+        .insert({
+            user_id: user!.id,
+            transaction_id: transactionId || null,
+            external_id: externalId,
+            txid,
+            amount: Number(amount),
+            description: description || null,
+            debtor_name: debtorName || null,
+            status: 'active',
+            pix_key: pixKey,
+            pix_copy_paste: pixCopyPaste,
+            qr_code_base64: qrCodeBase64,
+            provider,
+            expires_at: expiresAt,
+            raw_response: rawResponse,
+        })
+        .select('id')
+        .single()
+    if (dbErr) {
+        // Non-fatal: log but continue
+    }
+    return NextResponse.json({
+        charge: {
+            id: charge?.id ?? txid,
+            txid,
+            amount: Number(amount),
+            description,
+            pixCopyPaste,
+            qrCodeBase64,
+            provider,
+            expiresAt,
+            status: 'active',
+        },
+    })
+}, { auth: true, auditAction: 'pix.create' })
+
 // ─── GET /api/pix — List charges ─────────────────────────────────────────────
-export async function GET(req: Request) {
-    try {
-        const supabase = await createClient()
-        const { data: { user }, error } = await supabase.auth.getUser()
-        if (error || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        const url = new URL(req.url)
-        const transactionId = url.searchParams.get('transaction_id')
-        const id = url.searchParams.get('id')
-        let q = supabase
-            .from('pix_charges')
-            .select('id,txid,amount,description,status,pix_copy_paste,qr_code_base64,provider,expires_at,paid_at,debtor_name,created_at')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-        if (id) q = q.eq('id', id)
-        if (transactionId) q = q.eq('transaction_id', transactionId)
-        const { data } = await q
-        return NextResponse.json({ data: data || [] })
-    } catch {
-        return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
-    }
-}
+export const GET = apiHandler(null, async (req: NextRequest, _body: unknown, ctx: ApiContext) => {
+    const { supabase, user } = ctx
+    const url = new URL(req.url)
+    const transactionId = url.searchParams.get('transaction_id')
+    const id = url.searchParams.get('id')
+    let q = supabase
+        .from('pix_charges')
+        .select('id,txid,amount,description,status,pix_copy_paste,qr_code_base64,provider,expires_at,paid_at,debtor_name,created_at')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false })
+    if (id) q = q.eq('id', id)
+    if (transactionId) q = q.eq('transaction_id', transactionId)
+    const { data } = await q
+    return NextResponse.json({ data: data || [] })
+}, { auth: true })

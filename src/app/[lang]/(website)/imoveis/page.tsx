@@ -1,15 +1,21 @@
 import type { Metadata } from 'next'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+import { createClient } from '@supabase/supabase-js'
 import ImoveisClient from './ImoveisClient'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 import { PAGE_METADATA } from '@/lib/page-metadata'
+
+// Public anon client — uses RLS policies (anon_read on developments/developers)
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
     return PAGE_METADATA.imoveis(params.lang)
 }
 
-// ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
-export const revalidate = 60
+// Dynamic rendering — always fetch fresh data from Supabase
+export const dynamic = 'force-dynamic'
 export default async function ImoveisPage({
     params,
     searchParams,
@@ -17,8 +23,7 @@ export default async function ImoveisPage({
     params: { lang: string }
     searchParams: { construtora?: string }
 }) {
-    // Use supabaseAdmin to bypass RLS — this is a public page that needs to show all published properties
-    let query = supabaseAdmin
+    let query = supabase
         .from('developments')
         .select('*')
         .eq('status_commercial', 'published')
@@ -26,7 +31,7 @@ export default async function ImoveisPage({
         .order('created_at', { ascending: false })
     // Filter by construtora slug if provided
     if (searchParams.construtora) {
-        const { data: dev } = await supabaseAdmin
+        const { data: dev } = await supabase
             .from('developers')
             .select('id')
             .eq('slug', searchParams.construtora)
@@ -37,8 +42,9 @@ export default async function ImoveisPage({
     }
     const { data, error } = await query
     if (error) {
-        console.error('[ImoveisPage] Query error:', error.message)
+        console.error('[ImoveisPage] Query error:', error.message, error.code, error.details)
     }
+    console.log(`[ImoveisPage] Fetched ${data?.length ?? 0} developments, error: ${!!error}`)
     const developments = (data || []).map(mapDbPropertyToDevelopment)
     return (
         <ImoveisClient

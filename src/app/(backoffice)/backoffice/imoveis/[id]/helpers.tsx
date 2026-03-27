@@ -1,34 +1,8 @@
 import type { IMIProperty } from '@/features/properties/types'
 import { NEIGHBORHOOD_AVG_SQM } from '@/features/properties/types'
 import type { Development } from './types'
+import { normalizeStatus } from '@/lib/format'
 
-// ─── Status normalization ─────────────────────────────────────────────────────
-
-export const DB_STATUS_TO_DISPLAY: Record<string, string> = {
-  launch: 'lancamento',
-  available: 'disponivel',
-  under_construction: 'em_construcao',
-  ready: 'disponivel',
-  sold: 'vendido',
-  reserved: 'reservado',
-  negotiating: 'em_negociacao',
-  published: 'disponivel',
-  draft: 'arquivado',
-  campaign: 'lancamento',
-  private: 'arquivado',
-  disponivel: 'disponivel',
-  em_negociacao: 'em_negociacao',
-  reservado: 'reservado',
-  vendido: 'vendido',
-  lancamento: 'lancamento',
-  em_construcao: 'em_construcao',
-  arquivado: 'arquivado',
-}
-
-export function normalizeStatus(raw?: string): string {
-  if (!raw) return 'disponivel'
-  return DB_STATUS_TO_DISPLAY[raw.toLowerCase()] ?? raw.toLowerCase()
-}
 
 // ─── Formatters ──────────────────────────────────────────────────────────────
 

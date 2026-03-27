@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
-/* ─── MASTER v2 Design Tokens ─── */
+/* Login-specific design tokens (self-contained, no theme import needed) */
 const T = {
     bg: '#050B14',
     n: '#0A1624',

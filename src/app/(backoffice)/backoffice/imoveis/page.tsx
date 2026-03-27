@@ -22,6 +22,7 @@ import {
   MobilePropertyCard, MobilePropertyCardSkeleton,
   MobileBottomSheet, MobileEmptyState, MobileSortChips,
 } from './mobile-ui'
+import { normalizeStatus } from '@/lib/format'
 type ViewMode = 'grid' | 'list'
 type SortField = 'price' | 'imi_score' | 'area' | 'created_at' | 'yield_est'
 type SortDir = 'asc' | 'desc'
@@ -32,15 +33,7 @@ function fmt(n?: number | null): string {
   if (n >= 1_000) return `R$ ${(n / 1_000).toFixed(0)}K`
   return `R$ ${n.toLocaleString('pt-BR')}`
 }
-const DB_STATUS_MAP: Record<string, string> = {
-  launch: 'lancamento', available: 'disponivel', under_construction: 'em_construcao',
-  ready: 'disponivel', sold: 'vendido', reserved: 'reservado',
-  negotiating: 'em_negociacao', published: 'disponivel', draft: 'rascunho',
-  campaign: 'lancamento', private: 'privado',
-}
-function normalizeStatus(s: string): string {
-  return DB_STATUS_MAP[s?.toLowerCase()] ?? s?.toLowerCase() ?? 'disponivel'
-}
+
 const STATUS_CONFIGS: Record<string, { label: string; color: string }> = {
   disponivel:     { label: 'Disponível',     color: 'var(--success)' },
   lancamento:     { label: 'Lançamento',     color: 'var(--info)' },

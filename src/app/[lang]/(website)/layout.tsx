@@ -41,6 +41,8 @@ export default async function WebsiteLayout({
             <link rel="preconnect" href="https://zocffccwjjyelwrgunhu.supabase.co" crossOrigin="anonymous" />
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            {/* D3.6 — Preload hero LCP image */}
+            <link rel="preload" as="image" href="/hero-bg.jpg" fetchPriority="high" />
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationSchema, webSiteSchema, localBusinessSchema]) }}
