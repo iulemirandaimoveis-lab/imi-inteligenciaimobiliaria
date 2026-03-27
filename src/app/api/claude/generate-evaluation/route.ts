@@ -38,7 +38,7 @@ export async function POST(request: Request) {
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
-                model: 'claude-3-5-sonnet-20240620',
+                model: 'claude-sonnet-4-6',
                 max_tokens: 4000,
                 temperature: 0.3, // Baixa para ser mais preciso e técnico
                 system: `Você é um avaliador técnico imobiliário certificado, especialista em laudos segundo a norma NBR 14653-2.
@@ -87,7 +87,18 @@ COMPLIANCE:
             .filter((block: { type: string }) => block.type === 'text')
             .map((block: { type: string; text: string }) => block.text)
             .join('\n\n')
-        // Auditoria
+        // Persist laudo to avaliacoes table if evaluationId provided
+        if (evaluationId) {
+            await supabase
+                .from('avaliacoes')
+                .update({
+                    laudo_content: content,
+                    laudo_generated_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                })
+                .eq('id', evaluationId)
+        }
+
         return NextResponse.json({
             content,
             tokens: data.usage,
