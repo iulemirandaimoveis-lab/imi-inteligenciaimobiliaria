@@ -6,11 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
-import { T } from '@/app/(backoffice)/lib/theme'
-
-/* Extend T with login-specific tokens */
-const L = {
-    ...T,
+/* Login-specific design tokens (self-contained, no theme import needed) */
+const T = {
     bg: '#050B14',
     n: '#0A1624',
     gold: '#C8A44A',
