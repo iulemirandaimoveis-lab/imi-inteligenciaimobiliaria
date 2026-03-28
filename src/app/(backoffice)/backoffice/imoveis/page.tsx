@@ -1429,12 +1429,23 @@ export default function ImoveisPage() {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('developments')
-        .select('*, brokers!broker_id(id, name, phone, avatar_url)')
+        .select('*, developer:developers!developer_id(id, name, logo_url), brokers:brokers!broker_id(id, name, phone, avatar_url)')
         .order('created_at', { ascending: false })
-      if (error) throw error
+      if (error) {
+        console.error('[Imoveis] Query error:', error.message)
+        // Fallback: query without joins
+        const { data: fallback } = await supabase
+          .from('developments')
+          .select('*')
+          .order('created_at', { ascending: false })
+        const normalized: IMIProperty[] = (fallback ?? []).map(mapDevToProperty)
+        setProperties(normalized.map(enrichProperty))
+        return
+      }
       const normalized: IMIProperty[] = (data ?? []).map(mapDevToProperty)
       setProperties(normalized.map(enrichProperty))
     } catch (err) {
+      console.error('[Imoveis] Fetch error:', err)
     } finally {
       setLoading(false)
     }

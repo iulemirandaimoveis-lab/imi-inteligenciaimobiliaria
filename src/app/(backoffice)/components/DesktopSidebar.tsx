@@ -10,7 +10,7 @@ import {
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
     Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot,
-    Map as MapIcon, Handshake, MessageCircle, Camera, Key, Eye,
+    Map as MapIcon, Handshake, MessageCircle, Camera, Key, Eye, Link2,
 } from 'lucide-react'
 import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -129,9 +129,10 @@ const SECTIONS: NavSection[] = [
                     { label: 'Comparar',       href: '/backoffice/imoveis/comparar',       icon: Scale },
                     { label: 'Inventário',     href: '/backoffice/imoveis/inventario',     icon: List  },
                     { label: 'Novo Imóvel',    href: '/backoffice/imoveis/novo',           icon: Building2 },
+                    { label: 'Rentals',        href: '/backoffice/rentals',                icon: Key },
                 ]
             },
-            { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building   },
+            { label: 'Fornecedores', href: '/backoffice/fornecedores', icon: Building, badge: 'NEW' },
             { label: 'Projetos',     href: '/backoffice/projetos',     icon: FolderOpen },
             {
                 label: 'Conteúdo', icon: FileText,
@@ -226,7 +227,14 @@ const SECTIONS: NavSection[] = [
             { label: 'Prompt Agent', href: '/backoffice/prompt-agent',             icon: Camera    },
             { label: 'Visão IA',     href: '/backoffice/ai/vision',                icon: Eye       },
             { label: 'Automações',   href: '/backoffice/automacoes',               icon: Zap       },
-            { label: 'Analytics',    href: '/backoffice/tracking',                  icon: BarChart2 },
+            {
+                label: 'Analytics', icon: BarChart2,
+                children: [
+                    { label: 'Dashboard',    href: '/backoffice/tracking',        icon: BarChart2 },
+                    { label: 'Links',        href: '/backoffice/tracking/links',  icon: Link2 },
+                    { label: 'QR Codes',     href: '/backoffice/tracking/qr',     icon: QrCode },
+                ]
+            },
         ]
     },
     {
@@ -365,7 +373,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             className="relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all"
             style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: 10,
+                fontSize: 13,
                 color: isActive ? 'var(--gold, #C8A44A)' : 'var(--text-secondary)',
                 background: isActive ? 'rgba(200,164,74,.10)' : 'transparent',
                 borderLeft: isActive ? '2px solid var(--gold, #C8A44A)' : '2px solid transparent',

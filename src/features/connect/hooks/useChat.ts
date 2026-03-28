@@ -121,7 +121,6 @@ export function useChat(channelId: string | null, currentUser: { id: string; nam
                 sender_id: currentUser.id,
                 content: content.trim(),
                 content_type: contentType,
-                message_type: contentType,
             })
             .select()
             .single()

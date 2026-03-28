@@ -2,23 +2,19 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Building2, BarChart2, LineChart, Scale, List, Plus, Key, MapPin } from 'lucide-react'
+import { BarChart2, Link2, QrCode } from 'lucide-react'
 
 const tabs = [
-  { href: '/backoffice/imoveis', label: 'Listagem', icon: Building2 },
-  { href: '/backoffice/imoveis/explorer', label: 'Mapa', icon: MapPin },
-  { href: '/backoffice/imoveis/portfolio', label: 'Portfolio', icon: LineChart },
-  { href: '/backoffice/imoveis/comparar', label: 'Comparar', icon: Scale },
-  { href: '/backoffice/imoveis/inventario', label: 'Inventário', icon: List },
-  { href: '/backoffice/rentals', label: 'Rentals', icon: Key },
-  { href: '/backoffice/imoveis/novo', label: 'Novo', icon: Plus },
+  { href: '/backoffice/tracking', label: 'Dashboard', icon: BarChart2 },
+  { href: '/backoffice/tracking/links', label: 'Links', icon: Link2 },
+  { href: '/backoffice/tracking/qr', label: 'QR Codes', icon: QrCode },
 ]
 
-export function ImoveisSubNav() {
+export function TrackingSubNav() {
   const pathname = usePathname()
 
   const isActive = (href: string) => {
-    if (href === '/backoffice/imoveis') return pathname === href
+    if (href === '/backoffice/tracking') return pathname === href
     return pathname.startsWith(href)
   }
 
