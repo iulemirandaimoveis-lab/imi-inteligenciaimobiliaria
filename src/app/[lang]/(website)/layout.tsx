@@ -15,9 +15,6 @@ export const metadata: Metadata = {
         languages: {
             'pt-BR': 'https://www.iulemirandaimoveis.com.br/pt',
             'en': 'https://www.iulemirandaimoveis.com.br/en',
-            'es': 'https://www.iulemirandaimoveis.com.br/es',
-            'ja': 'https://www.iulemirandaimoveis.com.br/ja',
-            'ar': 'https://www.iulemirandaimoveis.com.br/ar',
         },
     },
 }
@@ -27,7 +24,7 @@ export default async function WebsiteLayout({
     params: { lang },
 }: {
     children: React.ReactNode
-    params: { lang: 'pt' | 'en' | 'ja' | 'ar' | 'es' }
+    params: { lang: 'pt' | 'en' }
 }) {
     const isRTL = lang === 'ar'
     const organizationSchema = generateOrganizationSchema()

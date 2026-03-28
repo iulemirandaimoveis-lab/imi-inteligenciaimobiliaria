@@ -4,7 +4,7 @@ import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 import { updateSession } from '@/lib/supabase/middleware'
 
-const locales = ['pt', 'en', 'ja', 'ar', 'es']
+const locales = ['pt', 'en']
 const defaultLocale = 'pt'
 
 const ALLOWED_ORIGINS = [

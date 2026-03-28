@@ -53,8 +53,10 @@ export const metadata: Metadata = {
     },
 };
 
-// TODO: Remove when build timeout is fixed. The backoffice layout also has force-dynamic.
-// Keeping here temporarily to prevent build timeout on 148+ pages that call cookies()
+// force-dynamic needed at root level because multiple providers/libs call cookies()
+// indirectly, causing build timeouts on 170+ pages. Removing this requires auditing
+// every page's dependency tree first. Website perf is still good via Vercel edge cache.
+// TODO: Migrate to per-route dynamic config after Next.js 15 upgrade (async cookies).
 export const dynamic = 'force-dynamic'
 
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
