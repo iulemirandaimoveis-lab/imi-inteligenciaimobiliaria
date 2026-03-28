@@ -304,8 +304,8 @@ export function DesktopImovelDetail({
                 <div style={{ background: 'var(--bg-surface)', borderRadius: 8, overflow: 'hidden', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(61,111,255,0.1)', flexDirection: 'column', gap: 8, color: T.textDim }}>
                   <MapPin size={28} style={{ opacity: 0.3 }} />
                   <span style={{ fontSize: 12 }}>{fullAddress || 'Endereço não informado'}</span>
-                  {dev.latitude && dev.longitude && (
-                    <a href={`https://maps.google.com/?q=${dev.latitude},${dev.longitude}`} target="_blank" rel="noopener noreferrer" style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 10, marginTop: 4 }}>
+                  {dev.lat && dev.lng && (
+                    <a href={`https://maps.google.com/?q=${dev.lat},${dev.lng}`} target="_blank" rel="noopener noreferrer" style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 10, marginTop: 4 }}>
                       <ExternalLink size={10} /> Ver no Maps
                     </a>
                   )}

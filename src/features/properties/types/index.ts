@@ -14,6 +14,7 @@ export interface IMIProperty {
   state?: string
   address?: string
   country?: string
+  listing_type?: string
   images?: string[]
   image_urls?: string[]
   cover_image_url?: string
@@ -58,6 +59,12 @@ export const PROPERTY_TYPES = [
   { value: 'studio', label: 'Studio' },
   { value: 'flat', label: 'Flat' },
   { value: 'duplex', label: 'Duplex' },
+]
+
+export const LISTING_TYPES = [
+  { value: 'venda', label: 'Venda' },
+  { value: 'aluguel', label: 'Aluguel' },
+  { value: 'temporada', label: 'Temporada' },
 ]
 
 export const PROPERTY_STATUSES = [

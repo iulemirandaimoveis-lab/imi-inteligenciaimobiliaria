@@ -58,6 +58,7 @@ export function mapDevToProperty(d: Record<string, any>): IMIProperty {
     state: d.state,
     address: d.address,
     country: d.country ?? undefined,
+    listing_type: d.listing_type ?? 'venda',
     image_urls: gallery.length > 0 ? gallery : (cover ? [cover] : []),
     cover_image_url: cover,
     slug: d.slug,

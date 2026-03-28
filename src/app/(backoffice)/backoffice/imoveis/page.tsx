@@ -27,6 +27,7 @@ type ViewMode = 'grid' | 'list'
 type SortField = 'price' | 'imi_score' | 'area' | 'created_at' | 'yield_est'
 type SortDir = 'asc' | 'desc'
 type Market = 'BR' | 'US' | 'AE' | null
+type ListingType = 'venda' | 'aluguel' | 'temporada' | null
 
 const MARKET_MAP: Record<string, string[]> = {
   BR: ['Brasil', 'BR', 'brazil'],
@@ -73,6 +74,8 @@ interface SharedProps {
   activeFiltersCount: number
   market: Market
   setMarket: (m: Market) => void
+  listingType: ListingType
+  setListingType: (lt: ListingType) => void
 }
 // ═══════════════════════════════════════════════════════════════════════════════
 // DESKTOP SUB-COMPONENTS
@@ -168,6 +171,7 @@ function DesktopImoveisList(props: SharedProps) {
     filters, setFilters, sortField, setSortField, sortDir, setSortDir,
     compareIds, favorites, toggleCompare, clearCompare, toggleFavorite,
     fetchProperties, activeFiltersCount, market, setMarket,
+    listingType, setListingType,
   } = props
   const router = useRouter()
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
@@ -344,6 +348,32 @@ function DesktopImoveisList(props: SharedProps) {
           >
             <span style={{ fontSize: 16 }}>{m.flag}</span>
             {m.label}
+          </button>
+        ))}
+      </div>
+      {/* ── LISTING TYPE SELECTOR ──────────────────────── */}
+      <div style={{ display: 'flex', gap: 6, padding: '4px 28px 4px' }}>
+        {[
+          { id: null, label: 'Todos' },
+          { id: 'venda', label: 'Venda' },
+          { id: 'aluguel', label: 'Aluguel' },
+          { id: 'temporada', label: 'Temporada' },
+        ].map(lt => (
+          <button
+            key={lt.id ?? 'all'}
+            onClick={() => setListingType(lt.id as ListingType)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              height: 28, padding: '0 10px',
+              borderRadius: 6,
+              border: listingType === lt.id ? '1.5px solid var(--success)' : '1.5px solid var(--border-subtle)',
+              background: listingType === lt.id ? 'rgba(93,184,135,0.10)' : 'transparent',
+              color: listingType === lt.id ? 'var(--success)' : 'var(--text-secondary)',
+              fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: listingType === lt.id ? 600 : 400,
+              cursor: 'pointer', transition: 'all var(--dur-2) var(--ease)',
+            }}
+          >
+            {lt.label}
           </button>
         ))}
       </div>
@@ -1182,7 +1212,7 @@ function MobileImoveisList(props: SharedProps) {
     filtered, loading, searchInput, setSearchInput,
     filters, setFilters, favorites,
     toggleFavorite, activeFiltersCount, sortField, setSortField, sortDir, setSortDir,
-    properties, market, setMarket,
+    properties, market, setMarket, listingType, setListingType,
   } = props
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState('')
@@ -1246,6 +1276,32 @@ function MobileImoveisList(props: SharedProps) {
             >
               <span style={{ fontSize: 14 }}>{m.flag}</span>
               {m.label}
+            </button>
+          ))}
+        </div>
+        {/* Listing type chips (mobile) */}
+        <div style={{ display: 'flex', gap: 6, padding: '4px 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+          {[
+            { id: null, label: 'Todos' },
+            { id: 'venda', label: 'Venda' },
+            { id: 'aluguel', label: 'Aluguel' },
+            { id: 'temporada', label: 'Temporada' },
+          ].map(lt => (
+            <button
+              key={lt.id ?? 'all-lt'}
+              onClick={() => setListingType(lt.id as ListingType)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0,
+                height: 28, padding: '0 10px',
+                borderRadius: 6,
+                border: listingType === lt.id ? '1.5px solid var(--success)' : '1.5px solid rgba(61,111,255,0.20)',
+                background: listingType === lt.id ? 'rgba(93,184,135,0.10)' : 'var(--bg-muted)',
+                color: listingType === lt.id ? 'var(--success)' : 'var(--text-secondary)',
+                fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: listingType === lt.id ? 600 : 400,
+                cursor: 'pointer',
+              }}
+            >
+              {lt.label}
             </button>
           ))}
         </div>
@@ -1366,6 +1422,7 @@ export default function ImoveisPage() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
   const [searchInput, setSearchInput] = useState('')
   const [market, setMarket] = useState<Market>(null)
+  const [listingType, setListingType] = useState<ListingType>(null)
   const fetchProperties = useCallback(async () => {
     setLoading(true)
     try {
@@ -1392,6 +1449,10 @@ export default function ImoveisPage() {
         const country = (p.country ?? '').toLowerCase()
         return accepted.includes(country)
       })
+    }
+    // Listing type filter (venda/aluguel/temporada)
+    if (listingType) {
+      list = list.filter(p => (p.listing_type ?? 'venda') === listingType)
     }
     const q = (filters.search || searchInput).toLowerCase()
     if (q) list = list.filter(p =>
@@ -1423,7 +1484,7 @@ export default function ImoveisPage() {
       return sortDir === 'desc' ? bv - av : av - bv
     })
     return list
-  }, [properties, filters, searchInput, sortField, sortDir, market])
+  }, [properties, filters, searchInput, sortField, sortDir, market, listingType])
   const activeFiltersCount = useMemo(() => {
     let c = 0
     if (filters.status.length > 0) c++
@@ -1477,6 +1538,8 @@ export default function ImoveisPage() {
     activeFiltersCount,
     market,
     setMarket,
+    listingType,
+    setListingType,
   }
   if (isMobile) return <MobileImoveisList {...sharedProps} />
   return <DesktopImoveisList {...sharedProps} />

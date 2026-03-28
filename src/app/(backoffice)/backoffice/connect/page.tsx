@@ -6,6 +6,7 @@ import { useChannels } from '@/features/connect/hooks/useChannels'
 import { useChat } from '@/features/connect/hooks/useChat'
 import type { ChatChannel, ChatMessage } from '@/features/connect/types'
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
+import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     MessageSquare, Plus, Send, Hash, Users, Building2,
@@ -180,7 +181,13 @@ export default function ConnectPage() {
     const handleSend = async () => {
         if (!newMessage.trim() || sending) return
         setSending(true)
-        await sendMessage(newMessage)
+        const result = await sendMessage(newMessage)
+        if (result?.error) {
+            console.error('[Chat] Send failed:', result.error)
+            toast.error(`Erro ao enviar: ${result.error.message || 'Tente novamente'}`)
+            setSending(false)
+            return
+        }
         setNewMessage('')
         setSending(false)
         inputRef.current?.focus()

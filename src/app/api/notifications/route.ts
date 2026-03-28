@@ -1,6 +1,7 @@
 // src/app/api/notifications/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { z } from 'zod'
 
 const NotificationPutSchema = z.object({
@@ -26,10 +27,21 @@ export async function GET(req: NextRequest) {
         const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
         const offset = (page - 1) * limit
 
-        const { data, error, count } = await supabase
+        // Check user role — admin/owner sees ALL notifications
+        const { data: profile } = await supabaseAdmin
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+        const isAdmin = profile?.role === 'admin' || profile?.role === 'owner'
+
+        let query = supabase
             .from('notifications')
             .select('*', { count: 'exact' })
-            .or(`user_id.eq.${user.id},user_id.is.null`)
+        if (!isAdmin) {
+            query = query.or(`user_id.eq.${user.id},user_id.is.null`)
+        }
+        const { data, error, count } = await query
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1)
         if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })

@@ -18,13 +18,17 @@ export function useChat(channelId: string | null, currentUser: { id: string; nam
         if (!channelId) return
         setLoading(true)
 
-        const { data } = await supabase
+        const { data, error } = await supabase
             .from('chat_messages')
             .select('*')
             .eq('channel_id', channelId)
             .eq('is_deleted', false)
             .order('created_at', { ascending: true })
             .limit(100)
+
+        if (error) {
+            console.error('[useChat] loadMessages error:', error.message)
+        }
 
         if (data) {
             // Enrich with sender info
@@ -117,9 +121,14 @@ export function useChat(channelId: string | null, currentUser: { id: string; nam
                 sender_id: currentUser.id,
                 content: content.trim(),
                 content_type: contentType,
+                message_type: contentType,
             })
             .select()
             .single()
+
+        if (error) {
+            console.error('[useChat] sendMessage error:', error.message, error.details, error.hint)
+        }
 
         return { data, error }
     }, [channelId, currentUser.id, supabase])

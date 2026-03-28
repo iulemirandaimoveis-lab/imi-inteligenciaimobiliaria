@@ -64,24 +64,35 @@ export function useChannels(userId: string | null) {
         // Guard: for direct channels, check if one already exists with same members
         if (opts.type === 'direct' && opts.memberIds?.length === 1) {
             const otherUserId = opts.memberIds[0]
-            const { data: existing } = await supabase
-                .from('chat_channels')
-                .select('id')
-                .eq('type', 'direct')
-                .or(`name.eq.${opts.name}`)
-                .limit(1)
+            // Find all direct channels where current user is a member
+            const { data: myDirectMemberships } = await supabase
+                .from('chat_members')
+                .select('channel_id')
+                .eq('user_id', userId)
 
-            // If a matching direct channel exists, check membership
-            if (existing?.length) {
-                const { data: members } = await supabase
+            if (myDirectMemberships?.length) {
+                const myChannelIds = myDirectMemberships.map(m => m.channel_id)
+                // Check if the other user is also a member of any of these channels
+                const { data: sharedMemberships } = await supabase
                     .from('chat_members')
-                    .select('user_id')
-                    .eq('channel_id', existing[0].id)
-                const memberIds = members?.map(m => m.user_id) ?? []
-                if (memberIds.includes(userId) && memberIds.includes(otherUserId)) {
-                    // Channel already exists — return it instead of creating duplicate
-                    await loadChannels()
-                    return existing[0]
+                    .select('channel_id')
+                    .eq('user_id', otherUserId)
+                    .in('channel_id', myChannelIds)
+
+                if (sharedMemberships?.length) {
+                    // Verify it's a direct channel
+                    const { data: directChannel } = await supabase
+                        .from('chat_channels')
+                        .select('id')
+                        .eq('type', 'direct')
+                        .in('id', sharedMemberships.map(m => m.channel_id))
+                        .limit(1)
+                        .single()
+
+                    if (directChannel) {
+                        await loadChannels()
+                        return directChannel
+                    }
                 }
             }
         }
