@@ -1,6 +1,6 @@
 
 export async function generateStaticParams() {
-    return [{ lang: 'pt' }, { lang: 'en' }, { lang: 'ja' }, { lang: 'ar' }, { lang: 'es' }]
+    return [{ lang: 'pt' }, { lang: 'en' }]
 }
 
 export default function LangLayout({

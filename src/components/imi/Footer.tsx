@@ -32,9 +32,6 @@ const NAV_COLS = [
 const LANGUAGES = [
     { code: 'pt', label: 'PT' },
     { code: 'en', label: 'EN' },
-    { code: 'ja', label: 'JP' },
-    { code: 'ar', label: 'AR' },
-    { code: 'es', label: 'ES' },
 ]
 
 /* ── Inline styles using DS tokens ── */

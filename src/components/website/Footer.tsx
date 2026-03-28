@@ -43,9 +43,6 @@ const NAV_COLS = [
 const LANGS = [
     { code: 'pt', label: 'PT' },
     { code: 'en', label: 'EN' },
-    { code: 'es', label: 'ES' },
-    { code: 'ja', label: 'JP' },
-    { code: 'ar', label: 'AR' },
 ]
 
 export default function Footer({ lang, settings }: FooterProps) {
