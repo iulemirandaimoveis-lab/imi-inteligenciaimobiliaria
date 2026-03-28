@@ -4,6 +4,7 @@ import Header from '@/components/website/Header'
 import Footer from '@/components/website/Footer'
 import AnalyticsProvider from '@/components/website/AnalyticsProvider'
 import { WhatsAppFAB } from '@/components/website/WhatsAppFAB'
+import EngagementTracker from '@/components/EngagementTracker'
 import { generateOrganizationSchema, generateWebSiteSchema, generateLocalBusinessSchema } from '@/lib/seo'
 import { getGlobalSettings } from '@/lib/settings'
 
@@ -57,6 +58,7 @@ export default async function WebsiteLayout({
             <main id="main-content" className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
             <Footer lang={lang} settings={settings} />
             <WhatsAppFAB />
+            <EngagementTracker />
         </div>
     )
 }
