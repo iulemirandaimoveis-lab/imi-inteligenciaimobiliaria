@@ -18,6 +18,8 @@ export interface IMIProperty {
   cover_image_url?: string
   slug?: string
   developer?: { id: string; name: string; logo_url?: string | null }
+  broker_id?: string
+  broker_name?: string
   created_at?: string
   updated_at?: string
   // Intelligence layer (computed)

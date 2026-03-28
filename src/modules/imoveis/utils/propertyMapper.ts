@@ -77,8 +77,8 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             region: dbProp.region || 'pernambuco',
             country: dbProp.country || 'Brasil',
             coordinates: {
-                lat: dbProp.lat || -8.0476,   // Recife, PE
-                lng: dbProp.lng || -34.8770
+                lat: dbProp.lat ?? 0,
+                lng: dbProp.lng ?? 0,
             },
             address: dbProp.address || ''
         },

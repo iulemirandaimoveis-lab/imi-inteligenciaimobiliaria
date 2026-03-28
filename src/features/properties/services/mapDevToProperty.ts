@@ -49,6 +49,8 @@ export function mapDevToProperty(d: Record<string, any>): IMIProperty {
     cover_image_url: cover,
     slug: d.slug,
     developer,
+    broker_id: d.broker_id ?? undefined,
+    broker_name: d.broker?.name ?? d.broker_name ?? undefined,
     created_at: d.created_at,
     updated_at: d.updated_at,
   }

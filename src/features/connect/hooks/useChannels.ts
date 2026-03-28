@@ -52,7 +52,7 @@ export function useChannels(userId: string | null) {
         loadChannels()
     }, [loadChannels])
 
-    // Create a new channel
+    // Create a new channel (with duplicate guard for direct channels)
     const createChannel = useCallback(async (opts: {
         type: string
         name: string
@@ -60,6 +60,31 @@ export function useChannels(userId: string | null) {
         memberIds?: string[]
     }) => {
         if (!userId) return null
+
+        // Guard: for direct channels, check if one already exists with same members
+        if (opts.type === 'direct' && opts.memberIds?.length === 1) {
+            const otherUserId = opts.memberIds[0]
+            const { data: existing } = await supabase
+                .from('chat_channels')
+                .select('id')
+                .eq('type', 'direct')
+                .or(`name.eq.${opts.name}`)
+                .limit(1)
+
+            // If a matching direct channel exists, check membership
+            if (existing?.length) {
+                const { data: members } = await supabase
+                    .from('chat_members')
+                    .select('user_id')
+                    .eq('channel_id', existing[0].id)
+                const memberIds = members?.map(m => m.user_id) ?? []
+                if (memberIds.includes(userId) && memberIds.includes(otherUserId)) {
+                    // Channel already exists — return it instead of creating duplicate
+                    await loadChannels()
+                    return existing[0]
+                }
+            }
+        }
 
         const { data: channel, error } = await supabase
             .from('chat_channels')

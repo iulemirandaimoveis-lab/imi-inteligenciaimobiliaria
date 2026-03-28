@@ -1363,7 +1363,7 @@ export default function ImoveisPage() {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('developments')
-        .select('*')
+        .select('*, broker:brokers!broker_id(name)')
         .order('created_at', { ascending: false })
       if (error) throw error
       const normalized: IMIProperty[] = (data ?? []).map(mapDevToProperty)

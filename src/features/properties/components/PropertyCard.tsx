@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles, Camera } from 'lucide-react'
+import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles, Camera, User } from 'lucide-react'
 import { IMIScoreBadge } from './IMIScoreBadge'
 import { getMainImage } from '@/utils/propertyImages'
 import type { IMIProperty } from '../types'
@@ -312,6 +312,18 @@ export function PropertyCard({
                 {[p.neighborhood, p.city].filter(Boolean).join(' · ') || '—'}
               </span>
             </div>
+            {p.broker_name && (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                fontSize: '9px',
+                color: 'var(--text-tertiary, #5C6B7D)',
+                fontFamily: 'var(--font-outfit, sans-serif)',
+                marginTop: 2,
+              }}>
+                <User size={8} style={{ flexShrink: 0, opacity: 0.7 }} />
+                <span>{p.broker_name}</span>
+              </div>
+            )}
           </div>
 
           {/* Specs chips */}
@@ -530,6 +542,7 @@ export function PropertyListRow({
             fontFamily: 'var(--font-outfit, sans-serif)',
           }}>
             {[p.neighborhood, p.city].filter(Boolean).join(' · ') || '—'}
+            {p.broker_name && <span style={{ marginLeft: 6, opacity: 0.7 }}>· {p.broker_name}</span>}
           </div>
         </div>
 
