@@ -10,7 +10,7 @@ import { enrichProperty, getScoreColor } from '@/features/properties/services/sc
 import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../mobile-ui'
+import { MobileGlobalStyles, MobileAppBar } from '../mobile-ui'
 
 /* ─── Helpers ──────────────────────────────────────────────────── */
 const DB_STATUS: Record<string, string> = {
@@ -241,7 +241,6 @@ function MobileComparar() {
             </button>
           </Link>
         </div>
-        <MobileBottomNav />
       </div>
     )
   }
@@ -624,7 +623,6 @@ function MobileComparar() {
       <style suppressHydrationWarning>{`
         @keyframes mob-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
-      <MobileBottomNav />
     </div>
   )
 }

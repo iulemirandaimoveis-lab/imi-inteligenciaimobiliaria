@@ -26,6 +26,13 @@ import { normalizeStatus } from '@/lib/format'
 type ViewMode = 'grid' | 'list'
 type SortField = 'price' | 'imi_score' | 'area' | 'created_at' | 'yield_est'
 type SortDir = 'asc' | 'desc'
+type Market = 'BR' | 'US' | 'AE' | null
+
+const MARKET_MAP: Record<string, string[]> = {
+  BR: ['Brasil', 'BR', 'brazil'],
+  US: ['Estados Unidos', 'US', 'EUA', 'USA', 'united states'],
+  AE: ['Emirados Árabes Unidos', 'AE', 'UAE', 'Dubai', 'emirates'],
+}
 // ─── Shared helpers ────────────────────────────────────────────────────────────
 function fmt(n?: number | null): string {
   if (!n) return '—'
@@ -64,8 +71,8 @@ interface SharedProps {
   toggleFavorite: (id: string) => void
   fetchProperties: () => void
   activeFiltersCount: number
-  market: 'BR' | 'US' | 'AE'
-  setMarket: (m: 'BR' | 'US' | 'AE') => void
+  market: Market
+  setMarket: (m: Market) => void
 }
 // ═══════════════════════════════════════════════════════════════════════════════
 // DESKTOP SUB-COMPONENTS
@@ -316,13 +323,14 @@ function DesktopImoveisList(props: SharedProps) {
       {/* Market selector — client-side only; DB filtering pending country column */}
       <div style={{ display: 'flex', gap: 6, padding: '12px 28px 4px' }}>
         {[
+          { id: null, flag: '🌐', label: 'Todos' },
           { id: 'BR', flag: '🇧🇷', label: 'Brasil' },
           { id: 'US', flag: '🇺🇸', label: 'EUA' },
           { id: 'AE', flag: '🇦🇪', label: 'UAE' },
         ].map(m => (
           <button
-            key={m.id}
-            onClick={() => setMarket(m.id as 'BR' | 'US' | 'AE')}
+            key={m.id ?? 'all'}
+            onClick={() => setMarket(m.id as Market)}
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               height: 32, padding: '0 12px',
@@ -1217,13 +1225,14 @@ function MobileImoveisList(props: SharedProps) {
         {/* Market selector (mobile) — client-side only; DB filtering pending country column */}
         <div style={{ display: 'flex', gap: 6, padding: '4px 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
           {[
+            { id: null, flag: '🌐', label: 'Todos' },
             { id: 'BR', flag: '🇧🇷', label: 'Brasil' },
             { id: 'US', flag: '🇺🇸', label: 'EUA' },
             { id: 'AE', flag: '🇦🇪', label: 'UAE' },
           ].map(m => (
             <button
-              key={m.id}
-              onClick={() => setMarket(m.id as 'BR' | 'US' | 'AE')}
+              key={m.id ?? 'all'}
+              onClick={() => setMarket(m.id as Market)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0,
                 height: 30, padding: '0 10px',
@@ -1356,14 +1365,14 @@ export default function ImoveisPage() {
   })
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
   const [searchInput, setSearchInput] = useState('')
-  const [market, setMarket] = useState<'BR' | 'US' | 'AE'>('BR')
+  const [market, setMarket] = useState<Market>(null)
   const fetchProperties = useCallback(async () => {
     setLoading(true)
     try {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('developments')
-        .select('*, broker:brokers!broker_id(name)')
+        .select('*, brokers!broker_id(id, name, phone, avatar_url)')
         .order('created_at', { ascending: false })
       if (error) throw error
       const normalized: IMIProperty[] = (data ?? []).map(mapDevToProperty)
@@ -1376,6 +1385,14 @@ export default function ImoveisPage() {
   useEffect(() => { fetchProperties() }, [fetchProperties])
   const filtered = useMemo(() => {
     let list = [...properties]
+    // Market/country filter
+    if (market) {
+      const accepted = MARKET_MAP[market]?.map(v => v.toLowerCase()) ?? []
+      list = list.filter(p => {
+        const country = (p.country ?? '').toLowerCase()
+        return accepted.includes(country)
+      })
+    }
     const q = (filters.search || searchInput).toLowerCase()
     if (q) list = list.filter(p =>
       p.name?.toLowerCase().includes(q) ||
@@ -1406,7 +1423,7 @@ export default function ImoveisPage() {
       return sortDir === 'desc' ? bv - av : av - bv
     })
     return list
-  }, [properties, filters, searchInput, sortField, sortDir])
+  }, [properties, filters, searchInput, sortField, sortDir, market])
   const activeFiltersCount = useMemo(() => {
     let c = 0
     if (filters.status.length > 0) c++

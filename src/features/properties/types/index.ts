@@ -13,6 +13,7 @@ export interface IMIProperty {
   city?: string
   state?: string
   address?: string
+  country?: string
   images?: string[]
   image_urls?: string[]
   cover_image_url?: string
@@ -20,6 +21,7 @@ export interface IMIProperty {
   developer?: { id: string; name: string; logo_url?: string | null }
   broker_id?: string
   broker_name?: string
+  broker?: { id: string; name: string; phone?: string; avatar_url?: string | null }
   created_at?: string
   updated_at?: string
   // Intelligence layer (computed)

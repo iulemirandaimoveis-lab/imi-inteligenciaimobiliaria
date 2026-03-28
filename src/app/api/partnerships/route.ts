@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         let query = supabaseAdmin
             .from('partnerships')
             .select(
-                'id, property_id, property_name, property_price, owner_id, owner_user_id, owner_name, partner_id, partner_user_id, partner_name, status, commission_total_pct, commission_owner_pct, commission_partner_pct, last_message_preview, last_message_at, unread_owner, unread_partner, proposed_at, responded_at, updated_at, expires_at',
+                'id, property_id, property_name, property_price, owner_id, owner_user_id, owner_name, partner_id, partner_user_id, partner_name, status, commission_total_pct, commission_owner_pct, commission_partner_pct, sale_value, total_commission, total_messages, last_message_preview, last_message_at, unread_owner, unread_partner, proposed_at, responded_at, updated_at, expires_at',
                 { count: 'exact' },
             )
             .or(`owner_user_id.eq.${user.id},partner_user_id.eq.${user.id}`)

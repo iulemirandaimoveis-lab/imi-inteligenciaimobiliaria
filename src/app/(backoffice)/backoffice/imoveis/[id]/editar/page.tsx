@@ -27,7 +27,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileBottomNav } from '../../mobile-ui'
+import { MobileGlobalStyles } from '../../mobile-ui'
 
 /* ── Sortable gallery image ── */
 interface SortableGalleryItemProps {

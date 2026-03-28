@@ -15,7 +15,7 @@ import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../mobile-ui'
+import { MobileGlobalStyles, MobileAppBar } from '../mobile-ui'
 import { getScoreStyle } from '@/hooks/useScore'
 
 // Derive status config from centralized constants
@@ -549,7 +549,6 @@ function MobileInventario({
                 })}
             </div>
 
-            <MobileBottomNav />
         </div>
     )
 }

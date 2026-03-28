@@ -17,7 +17,7 @@ import type { IMIProperty } from '@/features/properties/types'
 import { NEIGHBORHOOD_AVG_SQM, NEIGHBORHOOD_YIELD } from '@/features/properties/types'
 import { MarketTrendChart } from '@/features/properties/components/MarketTrendChart'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileBottomNav } from '../mobile-ui'
+import { MobileGlobalStyles } from '../mobile-ui'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
@@ -1476,7 +1476,6 @@ function MobileExplorer() {
       </div>
 
       <style suppressHydrationWarning>{`@keyframes mob-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-      <MobileBottomNav />
     </div>
   )
 }

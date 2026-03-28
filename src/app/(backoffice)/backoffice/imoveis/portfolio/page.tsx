@@ -12,7 +12,7 @@ import type { IMIProperty } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import { normalizeStatus } from '@/lib/format'
 import {
-  MobileGlobalStyles, MobileAppBar, MobileBottomNav,
+  MobileGlobalStyles, MobileAppBar,
   MobileKPICard, MobileSection, MobileEmptyState,
   MobilePropertyCard, MobilePropertyCardSkeleton, T,
 } from '../mobile-ui'
@@ -565,7 +565,6 @@ function MobilePortfolio({ properties, loading }: { properties: IMIProperty[]; l
         </MobileSection>
       </div>
 
-      <MobileBottomNav />
     </div>
   )
 }

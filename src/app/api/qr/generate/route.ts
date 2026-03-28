@@ -79,7 +79,7 @@ export async function POST(request: Request) {
             .select()
             .single()
         if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+            return NextResponse.json({ error: error.message || 'Erro desconhecido' }, { status: 500 })
         }
         // Short URL routes through the backoffice deployment where /l/[shortCode] lives
         const shortUrl = `${trackingBaseUrl}/l/${shortCode}`
@@ -98,6 +98,8 @@ export async function POST(request: Request) {
             }
         })
     } catch (error: unknown) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        const msg = error instanceof Error ? error.message : 'Internal Server Error'
+        console.error('[qr/generate] Unexpected error:', error)
+        return NextResponse.json({ error: msg }, { status: 500 })
     }
 }

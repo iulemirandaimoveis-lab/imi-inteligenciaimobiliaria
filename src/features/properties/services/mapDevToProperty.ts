@@ -11,8 +11,10 @@ import type { IMIProperty } from '@/features/properties/types'
 export function mapDevToProperty(d: Record<string, any>): IMIProperty {
   // Images: handle JSONB `images` field or array fields
   const imagesObj = d.images as { main?: string; gallery?: string[]; videos?: string[]; floorPlans?: string[] } | null
-  const gallery = imagesObj?.gallery ?? d.gallery_images ?? d.image_urls ?? []
-  const cover = imagesObj?.main ?? d.image ?? d.cover_image_url ?? d.image_url ?? null
+  // Use || instead of ?? so empty string "" falls through to next fallback
+  const mainImage = imagesObj?.main || null
+  const gallery = (imagesObj?.gallery?.length ? imagesObj.gallery : null) ?? d.gallery_images ?? d.image_urls ?? []
+  const cover = mainImage ?? d.image ?? d.cover_image_url ?? d.image_url ?? null
 
   // Area: handle multiple naming conventions
   const area = d.area_from ?? d.area ?? null
@@ -30,6 +32,16 @@ export function mapDevToProperty(d: Record<string, any>): IMIProperty {
     developer = { id: '', name: d.developer, logo_url: d.developer_logo ?? null }
   }
 
+  // Broker: handle FK join (brokers table) or flat fields
+  let broker: IMIProperty['broker'] = undefined
+  if (d.brokers && typeof d.brokers === 'object' && !Array.isArray(d.brokers)) {
+    broker = { id: d.brokers.id, name: d.brokers.name, phone: d.brokers.phone ?? undefined, avatar_url: d.brokers.avatar_url ?? null }
+  } else if (Array.isArray(d.brokers) && d.brokers[0]) {
+    broker = { id: d.brokers[0].id, name: d.brokers[0].name, phone: d.brokers[0].phone ?? undefined, avatar_url: d.brokers[0].avatar_url ?? null }
+  } else if (d.broker_id) {
+    broker = { id: d.broker_id, name: d.broker_name ?? '', phone: d.broker_phone ?? undefined, avatar_url: null }
+  }
+
   return {
     id: d.id,
     name: d.name ?? d.title ?? '',
@@ -45,12 +57,14 @@ export function mapDevToProperty(d: Record<string, any>): IMIProperty {
     city: d.city,
     state: d.state,
     address: d.address,
+    country: d.country ?? undefined,
     image_urls: gallery.length > 0 ? gallery : (cover ? [cover] : []),
     cover_image_url: cover,
     slug: d.slug,
     developer,
+    broker,
     broker_id: d.broker_id ?? undefined,
-    broker_name: d.broker?.name ?? d.broker_name ?? undefined,
+    broker_name: broker?.name ?? d.broker?.name ?? d.broker_name ?? undefined,
     created_at: d.created_at,
     updated_at: d.updated_at,
   }
