@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { slideUp } from '@/lib/animations';
 
 const GOLD = '#C8A44A';
+const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
 interface DevelopmentLocationProps {
     development: Development;
@@ -104,7 +105,7 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                             style={{ border: '1px solid rgba(200,164,74,0.1)' }}
                         >
                             <iframe
-                                src={`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&location=${lat},${lng}&heading=210&pitch=10&fov=35`}
+                                src={`https://www.google.com/maps/embed/v1/streetview?key=${GOOGLE_MAPS_KEY}&location=${lat},${lng}&heading=210&pitch=10&fov=35`}
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}

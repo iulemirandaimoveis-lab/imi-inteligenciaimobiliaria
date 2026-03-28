@@ -541,6 +541,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         developments={filteredDevelopments}
                         height="420px"
                         lang={lang}
+                        darkMode={false}
                         selectedId={selectedId ?? undefined}
                         onMarkerClick={handleMarkerClick}
                     />
@@ -805,6 +806,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     developments={filteredDevelopments}
                                     height="100%"
                                     lang={lang}
+                                    darkMode={false}
                                     selectedId={selectedId ?? undefined}
                                     onMarkerClick={handleMarkerClick}
                                 />
