@@ -931,7 +931,7 @@ export default function DashboardClient({
                 variants={staggerContainer}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+                className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4"
                 data-tour="kpis"
             >
                 <motion.div variants={cardVariants}>

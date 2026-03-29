@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 export async function POST() {
     try {
         const supabase = await createClient()
-        await supabase.auth.signOut()
+        await supabase.auth.signOut({ scope: 'global' })
         const response = NextResponse.json({ success: true })
         // Clear legacy auth-token cookie if it exists
         response.cookies.set('auth-token', '', {

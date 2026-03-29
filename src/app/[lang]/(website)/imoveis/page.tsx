@@ -26,7 +26,7 @@ export default async function ImoveisPage({
     let query = supabase
         .from('developments')
         .select('*')
-        .eq('status_commercial', 'published')
+        .in('status_commercial', ['published', 'campaign', 'available'])
         .order('is_highlighted', { ascending: false })
         .order('created_at', { ascending: false })
     // Filter by construtora slug if provided

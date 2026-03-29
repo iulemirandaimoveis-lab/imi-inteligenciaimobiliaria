@@ -63,7 +63,7 @@ const AGENT_ACTIVITY_DEFAULT = [
 // ── Loading Skeleton ─────────────────────────────────────────────────
 function HojeSkeleton() {
   return (
-    <div className="space-y-5 max-w-2xl mx-auto">
+    <div className="space-y-5 lg:max-w-2xl lg:mx-auto">
       <div style={{ height: 60, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.5 }} />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {[0,1,2].map(i => (
@@ -202,7 +202,7 @@ export default function HojePage() {
       : 'var(--info)'
 
   return (
-    <div className="space-y-5 max-w-2xl mx-auto">
+    <div className="space-y-5 lg:max-w-2xl lg:mx-auto">
 
       {/* ── Hero: Greeting ──────────────────────────────── */}
       <motion.div
@@ -813,7 +813,7 @@ export default function HojePage() {
         transition={{ delay: 0.28 }}
       >
         <SectionHeader title="Performance da Semana" action={{ label: 'Ver relatório', href: '/backoffice/relatorios' }} />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           <div
             className="rounded-lg p-3 text-center"
             style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}

@@ -484,9 +484,18 @@ export function DesktopSidebar() {
     const visibleSections = SECTIONS.filter(s => SECTION_ACCESS[s.label]?.includes(userRole) ?? true)
     const handleSignOut = useCallback(async () => {
         const supabase = createClient()
-        await supabase.auth.signOut()
-        router.push('/login')
-    }, [router])
+        await supabase.auth.signOut({ scope: 'global' })
+        document.cookie.split(';').forEach(c => {
+            const name = c.split('=')[0].trim()
+            if (name.startsWith('sb-')) {
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`
+            }
+        })
+        Object.keys(localStorage).forEach(k => {
+            if (k.startsWith('sb-')) localStorage.removeItem(k)
+        })
+        window.location.href = '/login'
+    }, [])
 
     return (
         <aside

@@ -85,6 +85,17 @@ export async function POST(request: Request) {
                 .from('profiles')
                 .upsert({ id: newUserId, email, name, role: validRole.toLowerCase() })
                 .then(() => {})
+            // Sync to brokers table so user appears in Equipe
+            await supabaseAdmin.from('brokers').upsert({
+                user_id: newUserId,
+                name,
+                email,
+                status: 'active',
+                role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
+                permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+            }, { onConflict: 'user_id' }).then(() => {})
             // Send password reset email so user can set their own password
             await supabaseAdmin.auth.admin.generateLink({
                 type: 'recovery',

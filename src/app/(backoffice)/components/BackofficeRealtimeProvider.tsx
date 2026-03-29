@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 export function BackofficeRealtimeProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const supabase = createClient()
+        let notificationsChannel: ReturnType<typeof supabase.channel> | null = null
 
         // Subscribe to new leads — real-time toast alert
         const leadsChannel = supabase
@@ -16,7 +17,7 @@ export function BackofficeRealtimeProvider({ children }: { children: React.React
                 { event: 'INSERT', schema: 'public', table: 'leads' },
                 (payload) => {
                     const lead = payload.new as { id?: string; name?: string; source?: string }
-                    toast.info(`🎯 Novo lead: ${lead.name || 'Sem nome'}`, {
+                    toast.info(`Novo lead: ${lead.name || 'Sem nome'}`, {
                         description: lead.source ? `Via ${lead.source}` : undefined,
                         duration: 8000,
                         action: lead.id ? {
@@ -28,32 +29,42 @@ export function BackofficeRealtimeProvider({ children }: { children: React.React
             )
             .subscribe()
 
-        // Subscribe to new notifications for current user
-        const notificationsChannel = supabase
-            .channel('backoffice-notifications-realtime')
-            .on(
-                'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'notifications' },
-                (payload) => {
-                    const notif = payload.new as { title?: string; message?: string; type?: string }
-                    if (notif.title) {
-                        const toastFn =
-                            notif.type === 'error' ? toast.error :
-                            notif.type === 'success' ? toast.success :
-                            notif.type === 'warning' ? toast.warning :
-                            toast.info
-                        toastFn(notif.title, {
-                            description: notif.message,
-                            duration: 6000,
-                        })
+        // Subscribe to new notifications — filtered by current user
+        supabase.auth.getUser().then(({ data }) => {
+            const userId = data.user?.id
+            if (!userId) return
+
+            notificationsChannel = supabase
+                .channel('backoffice-notifications-realtime')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'notifications',
+                        filter: `user_id=eq.${userId}`,
+                    },
+                    (payload) => {
+                        const notif = payload.new as { title?: string; message?: string; type?: string }
+                        if (notif.title) {
+                            const toastFn =
+                                notif.type === 'error' ? toast.error :
+                                notif.type === 'success' ? toast.success :
+                                notif.type === 'warning' ? toast.warning :
+                                toast.info
+                            toastFn(notif.title, {
+                                description: notif.message,
+                                duration: 6000,
+                            })
+                        }
                     }
-                }
-            )
-            .subscribe()
+                )
+                .subscribe()
+        })
 
         return () => {
             supabase.removeChannel(leadsChannel)
-            supabase.removeChannel(notificationsChannel)
+            if (notificationsChannel) supabase.removeChannel(notificationsChannel)
         }
     }, [])
 

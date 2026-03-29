@@ -9,6 +9,7 @@ import {
   CheckSquare, Keyboard,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 import { PropertyCard, PropertyListRow } from '@/features/properties/components/PropertyCard'
 import { AdvancedFilterPanel } from '@/features/properties/components/AdvancedFilterPanel'
 import { enrichProperty } from '@/features/properties/services/score.service'
@@ -1237,7 +1238,7 @@ function MobileImoveisList(props: SharedProps) {
       />
       {/* ── STICKY SEARCH + FILTERS ── */}
       <div style={{
-        position: 'sticky', top: 56, zIndex: 90,
+        position: 'sticky', top: 56, zIndex: 20,
         background: 'var(--bg-base)',
         paddingTop: 10,
         borderBottom: '1px solid rgba(61,111,255,0.06)',
@@ -1446,6 +1447,8 @@ export default function ImoveisPage() {
       setProperties(normalized.map(enrichProperty))
     } catch (err) {
       console.error('[Imoveis] Fetch error:', err)
+      toast.error('Erro ao carregar imóveis. Verifique sua conexão.')
+      setProperties([])
     } finally {
       setLoading(false)
     }
