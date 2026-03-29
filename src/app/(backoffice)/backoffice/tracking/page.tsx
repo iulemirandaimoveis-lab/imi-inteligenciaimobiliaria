@@ -549,7 +549,7 @@ export default function TrackingDashboardPage() {
                                                 </div>
                                                 <div className="text-[10px] mt-0.5" style={{ color: T.textDim }}>
                                                     {evt.browser} · {evt.os}
-                                                    {evt.referrer ? ` · via ${new URL(evt.referrer).hostname.replace('www.', '')}` : ''}
+                                                    {evt.referrer ? ` · via ${(() => { try { return new URL(evt.referrer).hostname.replace('www.', '') } catch { return evt.referrer } })()}` : ''}
                                                 </div>
                                             </div>
                                             <span className="text-[10px] font-mono shrink-0" style={{ color: T.textMuted }}>

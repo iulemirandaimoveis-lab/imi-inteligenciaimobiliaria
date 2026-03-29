@@ -33,7 +33,6 @@ export default function NotificationCenter() {
     const [loading, setLoading] = useState(false)
     const [userRole, setUserRole] = useState<string | null>(null)
     const [userId, setUserId] = useState<string | null>(null)
-    const [initialized, setInitialized] = useState(false)
     const isAdmin = userRole === 'admin' || userRole === 'owner'
     // Step 1: Load user + notifications
     useEffect(() => {
