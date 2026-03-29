@@ -228,11 +228,12 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="relative overflow-hidden inline-flex items-center gap-2 bg-[#C8A44A] hover:bg-[#d4b35c] text-[#0B1928] text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(200,164,74,0.15)] hover:shadow-[0_0_30px_rgba(200,164,74,0.25)]"
+                                className="relative overflow-hidden inline-flex items-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-300 border border-white/[0.15] hover:border-white/[0.25]"
                             >
                                 <MessageCircle size={15} strokeWidth={2.5} />
                                 WhatsApp
-                                <span className="absolute bottom-0 left-[12%] right-[12%] h-[2px] rounded-sm opacity-60 pointer-events-none"
+                                {/* Gold accent line — bottom detail */}
+                                <span className="absolute bottom-0 left-[20%] right-[20%] h-[2px] rounded-sm pointer-events-none"
                                     style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
                             </a>
                         </div>
@@ -335,10 +336,12 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={() => setOpen(false)}
-                                        className="flex items-center justify-center gap-2 w-full bg-[#C8A44A] hover:bg-[#d4b35c] text-[#0B1928] font-bold text-[14px] h-[44px] rounded-xl transition-all duration-200 active:scale-[0.97]"
+                                        className="relative overflow-hidden flex items-center justify-center gap-2 w-full bg-white/[0.06] hover:bg-white/[0.12] text-white font-bold text-[14px] h-[44px] rounded-xl transition-all duration-200 active:scale-[0.97] border border-white/[0.15]"
                                     >
                                         <MessageCircle size={16} />
                                         WhatsApp
+                                        <span className="absolute bottom-0 left-[20%] right-[20%] h-[2px] rounded-sm pointer-events-none"
+                                            style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
                                     </a>
                                 </motion.div>
 
