@@ -9,7 +9,7 @@ import {
     Search, MapPin, Heart, Share2, Bed, Bath, Car, Maximize2,
     ChevronDown, ChevronRight, SlidersHorizontal, MessageCircle, X,
     Map, Grid3X3, Home, DollarSign, Ruler, ArrowUpRight, Sparkles,
-    Eye, TrendingUp, Building2,
+    Eye, TrendingUp, Building2, Phone, CheckCircle, Star,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-is-mobile';
 import { calcIMIScore, getScoreColor, getScoreLabel } from '@/features/properties/services/score.service';
@@ -346,6 +346,75 @@ function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; la
     );
 }
 
+// ── Broker Card — appears on all viewports per guide P0 ────────────────────────
+
+function BrokerCard({ compact = false }: { compact?: boolean }) {
+    return (
+        <div
+            className={`flex ${compact ? 'flex-row items-center gap-3' : 'flex-col gap-4'} rounded-2xl border border-[#E2E0DB]`}
+            style={{
+                background: compact ? CARD_BG : `linear-gradient(135deg, ${CARD_BG} 0%, #F8F6F2 100%)`,
+                padding: compact ? 14 : 20,
+            }}
+        >
+            {/* Avatar */}
+            <div
+                className="flex-shrink-0 flex items-center justify-center font-bold"
+                style={{
+                    width: compact ? 48 : 64, height: compact ? 48 : 64,
+                    borderRadius: compact ? 14 : 18,
+                    background: 'linear-gradient(135deg, #C8A44A 0%, #A08830 100%)',
+                    color: '#fff', fontSize: compact ? 18 : 22,
+                }}
+            >
+                IM
+            </div>
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className={`font-semibold text-[${TEXT_PRIMARY}] ${compact ? 'text-sm' : 'text-base'}`}>Iule Miranda</span>
+                    <CheckCircle size={14} className="text-[#C8A44A]" />
+                </div>
+                <div className="text-[11px] text-[#948F84]">CRECI 12345 · Consultora de investimentos</div>
+                {!compact && (
+                    <div className="flex items-center gap-1 mt-1.5">
+                        {[1, 2, 3, 4, 5].map(i => (
+                            <Star key={i} size={12} className={i <= 4 ? 'text-[#C8A44A] fill-[#C8A44A]' : 'text-[#E2E0DB]'} />
+                        ))}
+                        <span className="text-[11px] text-[#948F84] ml-1">4.8 (127)</span>
+                    </div>
+                )}
+            </div>
+            {/* Actions */}
+            {compact ? (
+                <div className="flex gap-2">
+                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
+                        className="w-[38px] h-[38px] rounded-xl flex items-center justify-center border-none cursor-pointer"
+                        style={{ background: '#25D366', color: '#fff' }}>
+                        <MessageCircle size={16} />
+                    </a>
+                    <a href="tel:+5581997230455"
+                        className="w-[38px] h-[38px] rounded-xl flex items-center justify-center cursor-pointer border border-[#E2E0DB] bg-white text-[#5A6577]">
+                        <Phone size={16} />
+                    </a>
+                </div>
+            ) : (
+                <div className="flex gap-2">
+                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
+                        className="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 text-white text-sm font-semibold no-underline cursor-pointer"
+                        style={{ background: '#25D366' }}>
+                        <MessageCircle size={15} /> WhatsApp
+                    </a>
+                    <a href="tel:+5581997230455"
+                        className="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 text-[#5A6577] text-sm font-semibold no-underline cursor-pointer border border-[#E2E0DB] bg-white">
+                        <Phone size={15} /> Ligar
+                    </a>
+                </div>
+            )}
+        </div>
+    );
+}
+
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 interface ImoveisClientProps {
@@ -639,12 +708,12 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 </span>
             </div>
 
-            {/* Map view */}
+            {/* Map view — responsive height */}
             {viewMode === 'map' ? (
-                <div className="mx-4 mb-5 rounded-2xl overflow-hidden border border-[#E2E0DB]" style={{ height: 420 }}>
+                <div className="mx-4 mb-5 rounded-2xl overflow-hidden border border-[#E2E0DB]" style={{ height: 'min(420px, 55vh)' }}>
                     <PropertyMap
                         developments={filteredDevelopments}
-                        height="420px"
+                        height="100%"
                         lang={lang}
                         darkMode={false}
                         selectedId={selectedId ?? undefined}
@@ -652,6 +721,11 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     />
                 </div>
             ) : null}
+
+            {/* Broker Card — compact horizontal (P0 from guide) */}
+            <div className="px-4 pb-3">
+                <BrokerCard compact />
+            </div>
 
             {/* Card list */}
             <div className="flex flex-col gap-4 px-4">
@@ -742,6 +816,69 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                                         : 'bg-white text-[#5A6577] border-[#B8B3A8]'
                                                 }`}>
                                                 {t}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </FilterSection>
+
+                            {/* Faixa de Preço */}
+                            <FilterSection label="Faixa de Preço">
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        placeholder="R$ mín"
+                                        value={filters.priceRange[0] > 0 ? filters.priceRange[0] : ''}
+                                        onChange={e => setFilters(f => ({ ...f, priceRange: [Number(e.target.value) || 0, f.priceRange[1]] }))}
+                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    />
+                                    <span className="text-[#948F84] text-xs">até</span>
+                                    <input
+                                        type="number"
+                                        placeholder="R$ máx"
+                                        value={filters.priceRange[1] < 10000000 ? filters.priceRange[1] : ''}
+                                        onChange={e => setFilters(f => ({ ...f, priceRange: [f.priceRange[0], Number(e.target.value) || 10000000] }))}
+                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    />
+                                </div>
+                            </FilterSection>
+
+                            {/* Área */}
+                            <FilterSection label="Área (m²)">
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        placeholder="mín"
+                                        value={filters.areaRange[0] > 0 ? filters.areaRange[0] : ''}
+                                        onChange={e => setFilters(f => ({ ...f, areaRange: [Number(e.target.value) || 0, f.areaRange[1]] }))}
+                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    />
+                                    <span className="text-[#948F84] text-xs">até</span>
+                                    <input
+                                        type="number"
+                                        placeholder="máx"
+                                        value={filters.areaRange[1] < 500 ? filters.areaRange[1] : ''}
+                                        onChange={e => setFilters(f => ({ ...f, areaRange: [f.areaRange[0], Number(e.target.value) || 500] }))}
+                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    />
+                                </div>
+                            </FilterSection>
+
+                            {/* Status */}
+                            <FilterSection label="Status">
+                                <div className="flex gap-2 flex-wrap">
+                                    {[
+                                        { val: 'launch', label: 'Lançamento' },
+                                        { val: 'ready', label: 'Pronta Entrega' },
+                                        { val: 'under_construction', label: 'Em Obra' },
+                                    ].map(s => {
+                                        const active = filters.status.includes(s.val);
+                                        return (
+                                            <button key={s.val} onClick={() => setFilters(f => ({ ...f, status: active ? f.status.filter(x => x !== s.val) : [...f.status, s.val] }))}
+                                                className={`h-[34px] px-3.5 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${
+                                                    active ? 'bg-[#0B1928] text-white border-[#0B1928]' : 'bg-white text-[#5A6577] border-[#B8B3A8]'
+                                                }`}>
+                                                {s.label}
                                             </button>
                                         );
                                     })}
@@ -847,36 +984,67 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         </button>
                     </div>
 
-                    {/* Filter chips — SVG icons, no emojis */}
+                    {/* Filter controls — inline for desktop */}
                     <div className="flex items-center gap-2 flex-wrap">
-                        {([
-                            { label: 'Tipo', Icon: Home, active: filters.type.length > 0, count: filters.type.length },
-                            { label: 'Preço', Icon: DollarSign, active: filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000, count: 0 },
-                            { label: filters.bedrooms ? `${filters.bedrooms}+ Quartos` : 'Quartos', Icon: Bed, active: !!filters.bedrooms, count: 0 },
-                            { label: 'Banheiros', Icon: Bath, active: false, count: 0 },
-                            { label: 'Vagas', Icon: Car, active: false, count: 0 },
-                            { label: 'Área', Icon: Ruler, active: filters.areaRange[0] > 0 || filters.areaRange[1] < 500, count: 0 },
-                        ] as const).map(chip => (
-                            <button key={chip.label}
-                                className={`flex items-center gap-2 h-[36px] px-4 rounded-full text-[13px] font-medium cursor-pointer border transition-all duration-300 ${
-                                    chip.active
-                                        ? 'bg-[#0B1928] text-white border-[#0B1928] shadow-sm'
-                                        : 'bg-white text-[#5A6577] border-[#E2E0DB] hover:border-[#0B1928] hover:text-[#0B1928]'
+                        {/* Tipo */}
+                        {['Apto', 'Casa', 'Flat', 'Cobertura', 'Garden'].map(t => {
+                            const val = t.toLowerCase();
+                            const active = filters.type.includes(val);
+                            return (
+                                <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
+                                    className={`flex items-center gap-1.5 h-[36px] px-4 rounded-full text-[13px] font-medium cursor-pointer border transition-all duration-300 ${
+                                        active ? 'bg-[#0B1928] text-white border-[#0B1928] shadow-sm' : 'bg-white text-[#5A6577] border-[#E2E0DB] hover:border-[#0B1928] hover:text-[#0B1928]'
+                                    }`}>
+                                    <Home size={12} className={active ? 'text-white/70' : 'text-[#948F84]'} />
+                                    {t}
+                                </button>
+                            );
+                        })}
+
+                        {/* Separator */}
+                        <div className="w-px h-6 bg-[#E2E0DB]" />
+
+                        {/* Quartos */}
+                        {[null, 1, 2, 3, 4].map(n => (
+                            <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: f.bedrooms === n ? null : n }))}
+                                className={`flex items-center gap-1.5 h-[36px] px-3.5 rounded-full text-[13px] font-medium cursor-pointer border transition-all duration-300 ${
+                                    filters.bedrooms === n ? 'bg-[#0B1928] text-white border-[#0B1928] shadow-sm' : 'bg-white text-[#5A6577] border-[#E2E0DB] hover:border-[#0B1928] hover:text-[#0B1928]'
                                 }`}>
-                                <chip.Icon size={13} className={chip.active ? 'text-white/70' : 'text-[#948F84]'} />
-                                {chip.label}
-                                {chip.count > 0 && (
-                                    <span className="min-w-[18px] h-[18px] rounded-full bg-white/20 text-[10px] font-bold flex items-center justify-center">
-                                        {chip.count}
-                                    </span>
-                                )}
-                                <ChevronDown size={11} className="opacity-40" />
+                                {n === null ? <><Bed size={12} className="text-[#948F84]" /> Quartos</> : `${n}+`}
                             </button>
                         ))}
+
+                        {/* Separator */}
+                        <div className="w-px h-6 bg-[#E2E0DB]" />
+
+                        {/* Price range inline */}
+                        <div className="flex items-center gap-1.5 h-[36px] px-3 rounded-full border border-[#E2E0DB] bg-white">
+                            <DollarSign size={12} className="text-[#948F84]" />
+                            <input type="number" placeholder="Mín" value={filters.priceRange[0] > 0 ? filters.priceRange[0] : ''}
+                                onChange={e => setFilters(f => ({ ...f, priceRange: [Number(e.target.value) || 0, f.priceRange[1]] }))}
+                                className="w-[70px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                            <span className="text-[#B8B3A8] text-[11px]">—</span>
+                            <input type="number" placeholder="Máx" value={filters.priceRange[1] < 10000000 ? filters.priceRange[1] : ''}
+                                onChange={e => setFilters(f => ({ ...f, priceRange: [f.priceRange[0], Number(e.target.value) || 10000000] }))}
+                                className="w-[70px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                        </div>
+
+                        {/* Area range inline */}
+                        <div className="flex items-center gap-1.5 h-[36px] px-3 rounded-full border border-[#E2E0DB] bg-white">
+                            <Ruler size={12} className="text-[#948F84]" />
+                            <input type="number" placeholder="m² mín" value={filters.areaRange[0] > 0 ? filters.areaRange[0] : ''}
+                                onChange={e => setFilters(f => ({ ...f, areaRange: [Number(e.target.value) || 0, f.areaRange[1]] }))}
+                                className="w-[55px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                            <span className="text-[#B8B3A8] text-[11px]">—</span>
+                            <input type="number" placeholder="máx" value={filters.areaRange[1] < 500 ? filters.areaRange[1] : ''}
+                                onChange={e => setFilters(f => ({ ...f, areaRange: [f.areaRange[0], Number(e.target.value) || 500] }))}
+                                className="w-[55px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                        </div>
+
                         {activeFilterCount > 0 && (
                             <button onClick={() => setFilters(DEFAULT_FILTERS)}
                                 className="h-[36px] px-3 rounded-full border border-red-200 bg-red-50 text-red-500 text-[12px] font-semibold cursor-pointer hover:bg-red-100 transition-all flex items-center gap-1">
-                                <X size={12} /> Limpar filtros
+                                <X size={12} /> Limpar
                             </button>
                         )}
                     </div>
