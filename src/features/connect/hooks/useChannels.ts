@@ -37,7 +37,7 @@ export function useChannels({ userId }: UseChannelsOptions) {
           .from('chat_members')
           .select(`
             *,
-            profile:profiles(id, name, email, avatar_url, role, department)
+            profile:profiles!chat_members_user_profile_fkey(id, name, email, avatar_url, role, department)
           `)
           .eq('channel_id', ch.id)
 

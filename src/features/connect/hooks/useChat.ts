@@ -27,7 +27,7 @@ export function useChat({ channelId, userId, userName }: UseChatOptions) {
       .from('chat_messages')
       .select(`
         *,
-        sender:profiles!chat_messages_sender_id_fkey(id, name, email, avatar_url, role, department)
+        sender:profiles!chat_messages_sender_profile_fkey(id, name, email, avatar_url, role, department)
       `)
       .eq('channel_id', channelId)
       .eq('is_deleted', false)
