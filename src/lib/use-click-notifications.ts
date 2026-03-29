@@ -44,8 +44,8 @@ function showBrowserNotification(payload: ClickNotificationPayload) {
 
   const notification = new Notification(title, {
     body,
-    icon: '/icon-192x192.png',
-    badge: '/icon-72x72.png',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-72.png',
     tag: `click-${payload.click_id}`,
     silent: false,
   });

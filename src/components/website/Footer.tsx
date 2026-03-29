@@ -52,7 +52,7 @@ export default function Footer({ lang, settings }: FooterProps) {
     const year = new Date().getFullYear()
 
     return (
-        <footer className="bg-navy-950 text-white">
+        <footer className="text-white" style={{ background: '#0B1928' }}>
             {/* Gold accent line — animated reveal */}
             <motion.div
                 initial={{ scaleX: 0 }}
@@ -73,15 +73,33 @@ export default function Footer({ lang, settings }: FooterProps) {
                         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                         className="lg:col-span-5 overflow-hidden"
                     >
-                        <Link href={`/${lang}`} className="inline-block group mb-8">
+                        <Link href={`/${lang}`} className="inline-flex items-center gap-2.5 sm:gap-3 group mb-8">
                             <span
-                                className="text-[28px] font-black tracking-tight text-white group-hover:text-navy-300 transition-colors duration-200"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                className="leading-none select-none transition-colors duration-300 group-hover:text-[#C8A44A]"
+                                style={{
+                                    fontFamily: "'Playfair Display', Georgia, serif",
+                                    fontSize: 26,
+                                    fontWeight: 700,
+                                    color: '#FFFFFF',
+                                    letterSpacing: '2px',
+                                }}
                             >
                                 IMI
                             </span>
-                            <span className="ml-2 text-[11px] font-semibold text-[#C8A44A] uppercase tracking-[0.18em]">
-                                Inteligência Imobiliária
+                            {/* Gold divider — same as header */}
+                            <div style={{ width: 1, height: 22, background: '#C8A44A', flexShrink: 0 }} />
+                            <span
+                                className="select-none"
+                                style={{
+                                    fontSize: '7px',
+                                    fontWeight: 600,
+                                    letterSpacing: '2.2px',
+                                    textTransform: 'uppercase' as const,
+                                    color: 'rgba(255,255,255,0.6)',
+                                    lineHeight: 1.45,
+                                }}
+                            >
+                                INTELIGÊNCIA<br />IMOBILIÁRIA
                             </span>
                         </Link>
 
@@ -91,9 +109,9 @@ export default function Footer({ lang, settings }: FooterProps) {
                         </p>
 
                         {/* Credentials card */}
-                        <div className="border-l-[3px] border-navy-600 bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-xl p-3 lg:p-4 mb-4 lg:mb-6">
+                        <div className="border-l-[3px] border-[#C8A44A]/50 bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-xl p-3 lg:p-4 mb-4 lg:mb-6">
                             <p className="font-bold text-white text-[13px] lg:text-[14px] mb-0.5">Iule Miranda</p>
-                            <p className="text-navy-300 text-[9px] font-bold uppercase tracking-[0.2em] mb-3">
+                            <p className="text-[#C8A44A]/70 text-[9px] font-bold uppercase tracking-[0.2em] mb-3">
                                 CRECI 17933 | CNAI 53290
                             </p>
 
@@ -102,7 +120,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-[28px] h-[28px] bg-navy-800 rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-navy-300 transition-colors border border-white/[0.04]">
+                                    <div className="w-[28px] h-[28px] bg-white/[0.06] rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.06]">
                                         <Mail className="w-[14px] h-[14px]" />
                                     </div>
                                     <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
@@ -114,7 +132,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-[28px] h-[28px] bg-navy-800 rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-emerald-400 transition-colors border border-white/[0.04]">
+                                    <div className="w-[28px] h-[28px] bg-white/[0.06] rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.06]">
                                         <MessageCircle className="w-[14px] h-[14px]" />
                                     </div>
                                     <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium">{settings?.companyPhone || '+55 (81) 9 9723-0455'}</span>
@@ -126,10 +144,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-[28px] h-[28px] bg-navy-800 rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.04]">
+                                    <div className="w-[28px] h-[28px] bg-white/[0.06] rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.06]">
                                         <Linkedin className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-white/50 group-hover:text-[#C8A44A] transition-colors text-[11px] font-medium">linkedin.com/in/iule-miranda</span>
+                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium">linkedin.com/in/iule-miranda</span>
                                 </a>
                             </div>
                         </div>
@@ -145,7 +163,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                     >
                         {NAV_COLS.map((col) => (
                             <div key={col.title}>
-                                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy-300 mb-5">
+                                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C8A44A] mb-5">
                                     {col.title}
                                 </h4>
                                 <ul className="space-y-3">
@@ -166,18 +184,18 @@ export default function Footer({ lang, settings }: FooterProps) {
                 </div>
 
                 {/* ── Bottom bar ── */}
-                <div className="mt-16 pt-8 border-t border-white/[0.07] flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-[11px] text-gray-600 font-medium">
+                <div className="mt-16 pt-8 border-t border-[#C8A44A]/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p className="text-[11px] text-white/30 font-medium">
                         © {year} IMI – Inteligência Imobiliária. Todos os direitos reservados.
                     </p>
 
                     <div className="flex items-center gap-3">
                         {LANGS.map((l, i) => (
                             <React.Fragment key={l.code}>
-                                {i > 0 && <span className="text-[#2D2D3A] text-[10px]">|</span>}
+                                {i > 0 && <span className="text-white/20 text-[10px]">|</span>}
                                 <Link
                                     href={`/${l.code}`}
-                                    className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-150 ${lang === l.code ? 'text-navy-300' : 'text-gray-600 hover:text-white'
+                                    className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-150 ${lang === l.code ? 'text-[#C8A44A]' : 'text-white/30 hover:text-white'
                                         }`}
                                 >
                                     {l.label}
