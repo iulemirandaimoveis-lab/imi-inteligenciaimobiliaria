@@ -141,7 +141,7 @@ export default function SmartNotifications() {
     setActionLoading('qualify')
     try {
       await fetch('/api/ai/qualify-lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
-    } catch {}
+    } catch (err) { console.error('[qualify-leads]', err) }
     setActionLoading(null)
   }
 

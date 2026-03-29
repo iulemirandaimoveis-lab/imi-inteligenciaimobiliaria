@@ -47,7 +47,6 @@ function showBrowserNotification(payload: ClickNotificationPayload) {
     icon: '/icon-192x192.png',
     badge: '/icon-72x72.png',
     tag: `click-${payload.click_id}`,
-    renotify: false,
     silent: false,
   });
 

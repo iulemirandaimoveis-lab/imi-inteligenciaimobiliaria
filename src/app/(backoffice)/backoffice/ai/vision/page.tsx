@@ -78,7 +78,6 @@ export default function AIVisionPage() {
             <PageIntelHeader
                 title="Visão IA"
                 subtitle="Análise inteligente de imagens de imóveis"
-                icon={Eye}
             />
 
             {/* Upload area */}
@@ -213,7 +212,7 @@ export default function AIVisionPage() {
                                 <Building2 size={16} style={{ color: 'var(--gold, #C8A44A)' }} />
                                 Descrição
                             </h3>
-                            <p style={{ margin: 0, fontSize: 14, color: T.textBody, lineHeight: 1.6 }}>
+                            <p style={{ margin: 0, fontSize: 14, color: T.textMuted, lineHeight: 1.6 }}>
                                 {result.description}
                             </p>
                         </div>
@@ -232,7 +231,7 @@ export default function AIVisionPage() {
                                 </h3>
                                 <ul style={{ margin: 0, padding: '0 0 0 18px', display: 'flex', flexDirection: 'column', gap: 6 }}>
                                     {result.features.map((f, i) => (
-                                        <li key={i} style={{ fontSize: 13, color: T.textBody }}>{f}</li>
+                                        <li key={i} style={{ fontSize: 13, color: T.textMuted }}>{f}</li>
                                     ))}
                                 </ul>
                             </div>
@@ -247,7 +246,7 @@ export default function AIVisionPage() {
                                 </h3>
                                 <ul style={{ margin: 0, padding: '0 0 0 18px', display: 'flex', flexDirection: 'column', gap: 6 }}>
                                     {result.suggestions.map((s, i) => (
-                                        <li key={i} style={{ fontSize: 13, color: T.textBody }}>{s}</li>
+                                        <li key={i} style={{ fontSize: 13, color: T.textMuted }}>{s}</li>
                                     ))}
                                 </ul>
                             </div>

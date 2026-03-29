@@ -140,7 +140,7 @@ export default function FornecedoresPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: T.text, margin: 0, fontFamily: T.font.heading }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: T.text, margin: 0, fontFamily: T.font.display }}>
             Fornecedores & Catalogo
           </h1>
           <p style={{ fontSize: 13, color: T.textDim, marginTop: 4 }}>

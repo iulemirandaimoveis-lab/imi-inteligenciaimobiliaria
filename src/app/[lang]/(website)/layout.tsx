@@ -26,7 +26,7 @@ export default async function WebsiteLayout({
     children: React.ReactNode
     params: { lang: 'pt' | 'en' }
 }) {
-    const isRTL = lang === 'ar'
+    const isRTL = false // Only pt/en supported
     const organizationSchema = generateOrganizationSchema()
     const webSiteSchema = generateWebSiteSchema()
     const localBusinessSchema = generateLocalBusinessSchema()

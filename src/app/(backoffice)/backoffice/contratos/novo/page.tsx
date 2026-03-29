@@ -216,7 +216,7 @@ function NovoContratoInner() {
                 body: JSON.stringify({ canal, destinatario_email: contratante.email, destinatario_telefone: contratante.telefone, contrato_numero: resultado.numero, contrato_tipo: modelo?.nome, contrato_url: resultado.pdf_url || window.location.href, criado_por_nome: 'Iule Miranda', idioma: idiomaPrim }),
             })
             setEnvioOk(true)
-        } catch { } finally { setEnviando(false) }
+        } catch (err) { console.error('[contratos/enviar]', err) } finally { setEnviando(false) }
     }
 
     return (
