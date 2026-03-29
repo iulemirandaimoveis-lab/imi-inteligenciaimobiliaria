@@ -704,67 +704,80 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         <main style={{ background: PAGE_BG, minHeight: '100vh', paddingTop: 80, paddingBottom: 60 }}>
             <div className="max-w-[1400px] mx-auto px-6">
 
-                {/* Top search bar */}
-                <div className="mb-4">
-                    <div className="flex items-center gap-3 bg-white border border-[#B8B3A8] rounded-xl px-4 h-12 max-w-[720px]">
-                        <Search size={18} className="text-[#948F84] flex-shrink-0" />
-                        <input
-                            type="text"
-                            placeholder="Buscar por nome, bairro, cidade ou tipo…"
-                            value={filters.search}
-                            onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                            className="flex-1 bg-transparent border-none outline-none text-[#0B1928] text-sm placeholder-[#B8B3A8]"
-                        />
-                        {filters.search && (
-                            <button onClick={() => setFilters(f => ({ ...f, search: '' }))}
-                                className="bg-none border-none text-[#948F84] cursor-pointer flex p-1 hover:text-[#5A6577] transition-colors">
-                                <X size={15} />
-                            </button>
-                        )}
+                {/* Search + Filters unified bar */}
+                <div className="bg-white rounded-2xl border border-[#E2E0DB] shadow-sm p-4 mb-5">
+                    {/* Search row */}
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="flex-1 flex items-center gap-3 bg-[#F8F6F2] rounded-xl px-4 h-12 border border-transparent focus-within:border-[#0B1928] focus-within:bg-white transition-all">
+                            <Search size={18} className="text-[#948F84] flex-shrink-0" />
+                            <input
+                                type="text"
+                                placeholder="Buscar por nome, bairro, cidade ou tipo…"
+                                value={filters.search}
+                                onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+                                className="flex-1 bg-transparent border-none outline-none text-[#0B1928] text-sm placeholder-[#B8B3A8]"
+                            />
+                            {filters.search && (
+                                <button onClick={() => setFilters(f => ({ ...f, search: '' }))}
+                                    className="bg-none border-none text-[#948F84] cursor-pointer flex p-1 hover:text-[#5A6577] transition-colors">
+                                    <X size={15} />
+                                </button>
+                            )}
+                        </div>
                         <button
                             onClick={() => {/* already filtering live */ }}
-                            className="h-9 px-[18px] rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer flex-shrink-0 hover:bg-[#1a2d42] transition-colors">
-                            Buscar
+                            className="h-12 px-6 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer flex-shrink-0 hover:bg-[#1a2d42] transition-colors flex items-center gap-2">
+                            <Search size={15} /> Buscar
                         </button>
                     </div>
-                </div>
 
-                {/* Filter chip row */}
-                <div className="flex items-center gap-2 mb-5 flex-wrap">
-                    {[
-                        { label: 'Tipo', active: filters.type.length > 0 },
-                        { label: 'Preço', active: filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000 },
-                        { label: filters.bedrooms ? `${filters.bedrooms}+ Quartos` : 'Quartos', active: !!filters.bedrooms },
-                        { label: 'Banheiros', active: false },
-                        { label: 'Vagas', active: false },
-                        { label: 'Área', active: filters.areaRange[0] > 0 || filters.areaRange[1] < 500 },
-                    ].map(chip => (
-                        <button key={chip.label}
-                            className={`flex items-center gap-1.5 h-10 px-4 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${
-                                chip.active
-                                    ? 'bg-[#0B1928] text-white border-[#0B1928]'
-                                    : 'bg-white text-[#2D3748] border-[#B8B3A8] hover:border-[#948F84]'
-                            }`}>
-                            {chip.label} <ChevronDown size={13} />
-                        </button>
-                    ))}
-                    {activeFilterCount > 0 && (
-                        <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                            className="h-10 px-3.5 rounded-xl border-none bg-none text-[#948F84] text-sm cursor-pointer underline hover:text-[#5A6577] transition-colors">
-                            Limpar filtros
-                        </button>
-                    )}
+                    {/* Filter chips with better visual hierarchy */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {[
+                            { label: 'Tipo', icon: '🏠', active: filters.type.length > 0, count: filters.type.length },
+                            { label: 'Preço', icon: '💰', active: filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000, count: 0 },
+                            { label: filters.bedrooms ? `${filters.bedrooms}+ Quartos` : 'Quartos', icon: '🛏️', active: !!filters.bedrooms, count: 0 },
+                            { label: 'Banheiros', icon: '🚿', active: false, count: 0 },
+                            { label: 'Vagas', icon: '🚗', active: false, count: 0 },
+                            { label: 'Área', icon: '📐', active: filters.areaRange[0] > 0 || filters.areaRange[1] < 500, count: 0 },
+                        ].map(chip => (
+                            <button key={chip.label}
+                                className={`flex items-center gap-2 h-[38px] px-4 rounded-full text-[13px] font-medium cursor-pointer border transition-all duration-200 ${
+                                    chip.active
+                                        ? 'bg-[#0B1928] text-white border-[#0B1928] shadow-sm'
+                                        : 'bg-[#F8F6F2] text-[#5A6577] border-transparent hover:bg-[#F0EDE8] hover:text-[#2D3748]'
+                                }`}>
+                                <span className="text-[12px]">{chip.icon}</span>
+                                {chip.label}
+                                {chip.count > 0 && (
+                                    <span className="min-w-[18px] h-[18px] rounded-full bg-white/20 text-[10px] font-bold flex items-center justify-center">
+                                        {chip.count}
+                                    </span>
+                                )}
+                                <ChevronDown size={12} className="opacity-50" />
+                            </button>
+                        ))}
+                        {activeFilterCount > 0 && (
+                            <button onClick={() => setFilters(DEFAULT_FILTERS)}
+                                className="h-[38px] px-3 rounded-full border-none bg-none text-red-400 text-[13px] font-medium cursor-pointer hover:text-red-500 hover:bg-red-50 transition-all flex items-center gap-1">
+                                <X size={13} /> Limpar
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Results toolbar */}
                 <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-3">
+                        <span className="text-[15px] text-[#0B1928] font-bold">
+                            {filteredDevelopments.length}
+                        </span>
                         <span className="text-sm text-[#948F84]">
-                            <strong className="text-[#0B1928]">{filteredDevelopments.length}</strong> imóveis encontrados
+                            imóveis encontrados
                         </span>
                         {activeFilterCount > 0 && (
-                            <span className="text-xs text-[#5A6577] bg-[#F0EDE8] border border-[#E2E0DB] rounded-lg px-2.5 py-0.5">
-                                {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''} ativo{activeFilterCount !== 1 ? 's' : ''}
+                            <span className="text-[11px] text-[#0B1928] font-semibold bg-[#F0EDE8] border border-[#E2E0DB] rounded-full px-3 py-1">
+                                {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''}
                             </span>
                         )}
                     </div>
@@ -773,21 +786,22 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         <select
                             value={filters.sort}
                             onChange={e => setFilters(f => ({ ...f, sort: e.target.value as FilterState['sort'] }))}
-                            className="bg-white border border-[#B8B3A8] rounded-xl px-3 py-1.5 text-[#2D3748] text-sm cursor-pointer outline-none">
+                            className="bg-[#F8F6F2] border border-[#E2E0DB] rounded-full px-4 py-2 text-[#2D3748] text-[13px] font-medium cursor-pointer outline-none hover:bg-[#F0EDE8] transition-colors appearance-none pr-8"
+                            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23948F84' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}>
                             <option value="relevant">Ordenar por: Relevância</option>
                             <option value="newest">Mais Recentes</option>
                             <option value="price-asc">Menor Preço</option>
                             <option value="price-desc">Maior Preço</option>
                         </select>
                         {/* View toggle */}
-                        <div className="flex gap-1 bg-white border border-[#E2E0DB] rounded-xl p-1">
+                        <div className="flex bg-[#F8F6F2] border border-[#E2E0DB] rounded-full p-1">
                             {([['grid', Grid3X3], ['map', Map]] as const).map(([mode, Icon]) => (
                                 <button key={mode}
                                     onClick={() => { setViewMode(mode); if (mode === 'map') setSelectedId(null); }}
-                                    className={`flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold cursor-pointer border transition-colors ${
+                                    className={`flex items-center gap-1.5 h-8 px-3.5 rounded-full text-xs font-semibold cursor-pointer transition-all duration-200 ${
                                         viewMode === mode
-                                            ? 'bg-[#0B1928] text-white border-[#0B1928]'
-                                            : 'bg-transparent text-[#5A6577] border-transparent hover:bg-[#F0EDE8]'
+                                            ? 'bg-[#0B1928] text-white shadow-sm'
+                                            : 'bg-transparent text-[#5A6577] hover:text-[#2D3748]'
                                     }`}>
                                     <Icon size={14} />
                                 </button>

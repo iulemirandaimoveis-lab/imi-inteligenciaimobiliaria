@@ -163,57 +163,76 @@ export default function PropertyMap({
 
             const el = document.createElement('div')
             el.className = 'imi-property-marker'
-            el.style.cssText = 'position:relative;cursor:pointer;transition:transform 0.2s ease;'
+            el.style.cssText = 'position:relative;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);'
 
+            // Modern pill-style price marker
             const pin = document.createElement('div')
-            pin.style.cssText = `
-                width:44px;height:44px;
-                border-radius:50% 50% 50% 4px;
-                transform:rotate(-45deg);
-                background:linear-gradient(135deg,${statusColor}dd,${statusColor});
-                border:2.5px solid rgba(255,255,255,0.4);
-                box-shadow:0 4px 20px ${statusColor}55,0 2px 6px rgba(0,0,0,0.4);
-                display:flex;align-items:center;justify-content:center;
-            `
-            const labelEl = document.createElement('div')
-            labelEl.style.cssText = `
-                transform:rotate(45deg);color:white;font-size:7px;
-                font-weight:800;text-align:center;line-height:1.3;
-                max-width:32px;text-shadow:0 1px 2px rgba(0,0,0,0.3);
-                letter-spacing:-0.01em;
-            `
             const price = dev.priceRange.min
-            labelEl.textContent =
+            const priceText =
                 price > 1_000_000
                     ? `R$${(price / 1_000_000).toFixed(1)}M`
                     : price > 0
                       ? `R$${Math.round(price / 1000)}K`
                       : '★'
+
+            const isDark = !darkMode
+            pin.style.cssText = `
+                padding:6px 12px;
+                border-radius:20px;
+                background:${isDark ? '#0B1928' : 'rgba(16,20,35,0.92)'};
+                color:white;
+                font-size:11px;font-weight:800;letter-spacing:-0.02em;
+                white-space:nowrap;
+                box-shadow:0 4px 16px rgba(0,0,0,0.25),0 1px 3px rgba(0,0,0,0.12);
+                border:2px solid white;
+                display:flex;align-items:center;gap:5px;
+                font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+            `
+            // Status dot
+            const dot = document.createElement('span')
+            dot.style.cssText = `width:6px;height:6px;border-radius:50%;background:${statusColor};flex-shrink:0;`
+            pin.appendChild(dot)
+
+            const labelEl = document.createElement('span')
+            labelEl.textContent = priceText
             pin.appendChild(labelEl)
             el.appendChild(pin)
+
+            // Pointer triangle below pill
+            const pointer = document.createElement('div')
+            pointer.style.cssText = `
+                width:0;height:0;
+                border-left:6px solid transparent;border-right:6px solid transparent;
+                border-top:6px solid ${isDark ? '#0B1928' : 'rgba(16,20,35,0.92)'};
+                margin:0 auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+            `
+            el.appendChild(pointer)
 
             // Country flag badge for international properties
             const country = dev.location.country?.toLowerCase() || ''
             if (country.includes('emirados') || country.includes('estados unidos') || country.includes('usa')) {
                 const badge = document.createElement('div')
                 badge.style.cssText = `
-                    position:absolute;top:-4px;right:-4px;
-                    width:18px;height:18px;border-radius:50%;
-                    background:#1A1E2A;border:1.5px solid rgba(255,255,255,0.3);
+                    position:absolute;top:-6px;right:-6px;
+                    width:20px;height:20px;border-radius:50%;
+                    background:white;border:1.5px solid #E2E0DB;
                     display:flex;align-items:center;justify-content:center;
-                    font-size:10px;line-height:1;z-index:2;
+                    font-size:11px;line-height:1;z-index:2;
+                    box-shadow:0 2px 6px rgba(0,0,0,0.12);
                 `
                 badge.textContent = country.includes('emirados') ? '🇦🇪' : '🇺🇸'
                 el.appendChild(badge)
             }
 
             el.addEventListener('mouseenter', () => {
-                el.style.transform = 'scale(1.15) translateY(-2px)'
-                pin.style.boxShadow = `0 8px 30px ${statusColor}88,0 4px 12px rgba(0,0,0,0.5)`
+                el.style.transform = 'scale(1.1) translateY(-3px)'
+                el.style.zIndex = '10'
+                pin.style.boxShadow = '0 8px 28px rgba(0,0,0,0.35),0 2px 6px rgba(0,0,0,0.15)'
             })
             el.addEventListener('mouseleave', () => {
                 el.style.transform = 'scale(1) translateY(0)'
-                pin.style.boxShadow = `0 4px 20px ${statusColor}55,0 2px 6px rgba(0,0,0,0.4)`
+                el.style.zIndex = '1'
+                pin.style.boxShadow = '0 4px 16px rgba(0,0,0,0.25),0 1px 3px rgba(0,0,0,0.12)'
             })
             el.addEventListener('click', () => {
                 onMarkerClickRef.current?.(dev.id)
@@ -222,47 +241,52 @@ export default function PropertyMap({
 
             const popupHTML = `
                 <div style="
-                    background:#1A1E2A;border-radius:14px;overflow:hidden;
-                    color:white;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-                    min-width:240px;max-width:280px;box-shadow:0 20px 60px rgba(0,0,0,0.6);
+                    background:white;border-radius:16px;overflow:hidden;
+                    color:#0B1928;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+                    min-width:240px;max-width:280px;
+                    box-shadow:0 20px 60px rgba(0,0,0,0.18),0 4px 16px rgba(0,0,0,0.08);
+                    border:1px solid rgba(0,0,0,0.06);
                 ">
                     ${dev.images.main
                         ? `<div style="position:relative;">
-                            <img src="${esc(dev.images.main)}" alt="${esc(dev.name)}" style="width:100%;height:130px;object-fit:cover;display:block;"/>
-                            <div style="position:absolute;top:8px;left:8px;background:${statusColor}22;color:${statusColor};font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;padding:3px 8px;border-radius:6px;border:1px solid ${statusColor}44;backdrop-filter:blur(4px);">
+                            <img src="${esc(dev.images.main)}" alt="${esc(dev.name)}" style="width:100%;height:140px;object-fit:cover;display:block;"/>
+                            <div style="position:absolute;top:10px;left:10px;background:white;color:#0B1928;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;padding:4px 10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+                                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${statusColor};margin-right:5px;vertical-align:middle;"></span>
                                 ${esc(STATUS_LABELS[dev.status] || dev.status)}
                             </div>
                         </div>`
-                        : `<div style="height:60px;background:linear-gradient(135deg,#1D4ED820,#60A5FA20);display:flex;align-items:center;justify-content:center;font-size:28px;">🏢</div>`
+                        : `<div style="height:60px;background:linear-gradient(135deg,#F8F6F2,#E2E0DB);display:flex;align-items:center;justify-content:center;font-size:28px;">🏢</div>`
                     }
-                    <div style="padding:12px 14px 14px;">
-                        <div style="font-weight:800;font-size:13px;margin-bottom:3px;line-height:1.3;color:#F9FAFB;">${esc(dev.name)}</div>
-                        <div style="font-size:11px;color:#9CA3AF;margin-bottom:10px;">
+                    <div style="padding:14px 16px 16px;">
+                        <div style="font-weight:800;font-size:14px;margin-bottom:4px;line-height:1.3;color:#0B1928;">${esc(dev.name)}</div>
+                        <div style="font-size:11px;color:#948F84;margin-bottom:10px;display:flex;align-items:center;gap:3px;">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#948F84" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             ${dev.location.neighborhood ? esc(dev.location.neighborhood) + ', ' : ''}${esc(dev.location.city)}${dev.location.country && dev.location.country !== 'Brasil' ? ' — ' + esc(dev.location.country) : ''}
                         </div>
-                        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
                             ${dev.specs.areaRange && dev.specs.areaRange !== '—'
-                                ? `<span style="background:#1D4ED815;color:#60A5FA;font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600;border:1px solid #1D4ED830;">${esc(dev.specs.areaRange)}</span>`
+                                ? `<span style="background:#F8F6F2;color:#5A6577;font-size:10px;padding:4px 10px;border-radius:8px;font-weight:600;">${esc(dev.specs.areaRange)}</span>`
                                 : ''}
                             ${dev.specs.bedroomsRange && dev.specs.bedroomsRange !== '—'
-                                ? `<span style="background:#1D4ED815;color:#60A5FA;font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600;border:1px solid #1D4ED830;">${esc(dev.specs.bedroomsRange)} qts</span>`
+                                ? `<span style="background:#F8F6F2;color:#5A6577;font-size:10px;padding:4px 10px;border-radius:8px;font-weight:600;">${esc(dev.specs.bedroomsRange)} qts</span>`
                                 : ''}
                         </div>
-                        <div style="font-size:17px;font-weight:900;color:#60A5FA;margin-bottom:12px;letter-spacing:-0.02em;">
-                            ${dev.priceRange.min > 0
-                                ? `<span style="font-size:10px;font-weight:600;color:#9CA3AF;display:block;margin-bottom:2px;">A partir de</span>${formatCurrency(dev.priceRange.min)}`
-                                : '<span style="color:#F59E0B;">Sob Consulta</span>'
-                            }
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <div>
+                                ${dev.priceRange.min > 0
+                                    ? `<div style="font-size:10px;font-weight:600;color:#948F84;margin-bottom:1px;">A partir de</div>
+                                       <div style="font-size:18px;font-weight:900;color:#0B1928;letter-spacing:-0.02em;">${formatCurrency(dev.priceRange.min)}</div>`
+                                    : '<div style="font-size:14px;font-weight:700;color:#F59E0B;">Sob Consulta</div>'
+                                }
+                            </div>
+                            <a href="/${lang}/imoveis/${esc(dev.slug)}" style="
+                                display:flex;align-items:center;justify-content:center;
+                                background:#0B1928;width:40px;height:40px;border-radius:12px;
+                                text-decoration:none;flex-shrink:0;
+                            ">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
                         </div>
-                        <a href="/${lang}/imoveis/${esc(dev.slug)}" style="
-                            display:block;text-align:center;
-                            background:linear-gradient(135deg,#1D4ED8,#60A5FA);
-                            color:white;font-size:12px;font-weight:700;
-                            padding:9px 16px;border-radius:9px;text-decoration:none;
-                            letter-spacing:0.01em;
-                        ">
-                            Ver Empreendimento →
-                        </a>
                     </div>
                 </div>
             `
@@ -460,17 +484,20 @@ export default function PropertyMap({
             {/* Loading overlay */}
             {!mapLoaded && (
                 <div style={{
-                    position: 'absolute', inset: 0, background: '#1A1E2A', zIndex: 10,
+                    position: 'absolute', inset: 0,
+                    background: darkMode ? '#1A1E2A' : '#F8F6F2',
+                    zIndex: 10,
                     display: 'flex', flexDirection: 'column', alignItems: 'center',
                     justifyContent: 'center', gap: 12,
                 }}>
                     <div style={{
                         width: 36, height: 36,
-                        border: '3px solid rgba(59,130,246,0.2)',
-                        borderTopColor: '#60A5FA', borderRadius: '50%',
+                        border: `3px solid ${darkMode ? 'rgba(59,130,246,0.2)' : 'rgba(11,25,40,0.1)'}`,
+                        borderTopColor: darkMode ? '#60A5FA' : '#0B1928',
+                        borderRadius: '50%',
                         animation: 'spin 0.8s linear infinite',
                     }} />
-                    <p style={{ color: '#9CA3AF', fontSize: 13, margin: 0 }}>Carregando mapa...</p>
+                    <p style={{ color: darkMode ? '#9CA3AF' : '#948F84', fontSize: 13, margin: 0 }}>Carregando mapa...</p>
                     <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                 </div>
             )}
@@ -478,8 +505,13 @@ export default function PropertyMap({
             {/* Region filter tabs */}
             {mapLoaded && availableRegions.length > 2 && (
                 <div style={{
-                    position: 'absolute', top: 12, left: 12, zIndex: 5,
+                    position: 'absolute', top: 14, left: 14, zIndex: 5,
                     display: 'flex', gap: 4, flexWrap: 'wrap',
+                    background: 'rgba(255,255,255,0.92)',
+                    backdropFilter: 'blur(12px)',
+                    borderRadius: 14, padding: 4,
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04)',
+                    border: '1px solid rgba(0,0,0,0.06)',
                 }}>
                     {availableRegions.map((region) => {
                         const isActive = activeRegion === region.id
@@ -491,25 +523,21 @@ export default function PropertyMap({
                                 key={region.id}
                                 onClick={() => handleRegionChange(region.id)}
                                 style={{
-                                    background: isActive
-                                        ? 'rgba(96,165,250,0.9)'
-                                        : 'rgba(10,15,30,0.85)',
-                                    backdropFilter: 'blur(8px)',
-                                    color: isActive ? 'white' : '#9CA3AF',
-                                    fontSize: 11,
+                                    background: isActive ? '#0B1928' : 'transparent',
+                                    color: isActive ? 'white' : '#5A6577',
+                                    fontSize: 12,
                                     fontWeight: isActive ? 700 : 500,
-                                    padding: '5px 10px',
-                                    borderRadius: 16,
-                                    border: isActive
-                                        ? '1px solid rgba(96,165,250,0.5)'
-                                        : '1px solid rgba(255,255,255,0.1)',
+                                    padding: '6px 12px',
+                                    borderRadius: 10,
+                                    border: 'none',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease',
-                                    letterSpacing: '0.02em',
+                                    letterSpacing: '0.01em',
                                     whiteSpace: 'nowrap',
+                                    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
                                 }}
                             >
-                                {region.flag} {region.label} <span style={{ opacity: 0.7 }}>({count})</span>
+                                {region.flag} {region.label} <span style={{ opacity: 0.6, fontSize: 11 }}>({count})</span>
                             </button>
                         )
                     })}
@@ -519,12 +547,14 @@ export default function PropertyMap({
             {/* Properties count badge — only when single region */}
             {mapLoaded && availableRegions.length <= 2 && (
                 <div style={{
-                    position: 'absolute', top: 12, left: 12, zIndex: 5,
-                    background: 'rgba(10,15,30,0.85)', backdropFilter: 'blur(8px)',
-                    color: 'white', fontSize: 11, fontWeight: 700,
-                    padding: '5px 12px', borderRadius: 20,
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    letterSpacing: '0.05em', textTransform: 'uppercase',
+                    position: 'absolute', top: 14, left: 14, zIndex: 5,
+                    background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)',
+                    color: '#0B1928', fontSize: 12, fontWeight: 700,
+                    padding: '7px 14px', borderRadius: 12,
+                    border: '1px solid rgba(0,0,0,0.06)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                    letterSpacing: '0.03em', textTransform: 'uppercase',
+                    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
                 }}>
                     {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
                 </div>
@@ -540,23 +570,25 @@ export default function PropertyMap({
                     <div style={{
                         position: 'absolute', bottom: 20, left: '50%',
                         transform: 'translateX(-50%)', zIndex: 20,
-                        width: 'min(340px, calc(100% - 32px))',
-                        background: 'rgba(16, 20, 35, 0.97)',
-                        backdropFilter: 'blur(20px)', borderRadius: 18,
+                        width: 'min(360px, calc(100% - 32px))',
+                        background: 'white',
+                        backdropFilter: 'blur(20px)', borderRadius: 20,
                         overflow: 'hidden',
-                        boxShadow: '0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)',
+                        boxShadow: '0 24px 64px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.08)',
+                        border: '1px solid rgba(0,0,0,0.06)',
                         animation: 'floatCardIn 0.22s cubic-bezier(0.16,1,0.3,1)',
                     }}>
                         <button
                             onClick={() => setSelectedProperty(null)}
                             style={{
-                                position: 'absolute', top: 10, right: 10, zIndex: 2,
-                                width: 28, height: 28, borderRadius: '50%',
-                                background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
-                                border: '1px solid rgba(255,255,255,0.15)',
-                                color: 'rgba(255,255,255,0.8)', fontSize: 18, lineHeight: '1',
+                                position: 'absolute', top: 12, right: 12, zIndex: 2,
+                                width: 30, height: 30, borderRadius: '50%',
+                                background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)',
+                                border: '1px solid rgba(0,0,0,0.08)',
+                                color: '#5A6577', fontSize: 18, lineHeight: '1',
                                 cursor: 'pointer', display: 'flex', alignItems: 'center',
-                                justifyContent: 'center', fontWeight: 300,
+                                justifyContent: 'center', fontWeight: 400,
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                             }}
                             aria-label="Fechar"
                         >
@@ -567,62 +599,80 @@ export default function PropertyMap({
                                 <img
                                     src={selectedProperty.images.main}
                                     alt={selectedProperty.name}
-                                    style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
+                                    style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }}
                                 />
                                 <div style={{
-                                    position: 'absolute', bottom: 10, left: 12,
-                                    background: sc + '22', color: sc,
+                                    position: 'absolute', bottom: 12, left: 14,
+                                    background: 'white', color: '#0B1928',
                                     fontSize: 9, fontWeight: 700,
-                                    textTransform: 'uppercase' as const, letterSpacing: '0.12em',
-                                    padding: '3px 8px', borderRadius: 6,
-                                    border: `1px solid ${sc}44`, backdropFilter: 'blur(4px)',
+                                    textTransform: 'uppercase' as const, letterSpacing: '0.1em',
+                                    padding: '4px 10px', borderRadius: 8,
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                                    display: 'flex', alignItems: 'center', gap: 5,
                                 }}>
+                                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: sc }} />
                                     {STATUS_LABELS[selectedProperty.status] || selectedProperty.status}
                                 </div>
                             </div>
                         ) : (
                             <div style={{
                                 height: 64,
-                                background: 'linear-gradient(135deg,rgba(29,78,216,0.12),rgba(59,130,246,0.12))',
+                                background: 'linear-gradient(135deg,#F8F6F2,#E8E5DF)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
                             }}>
                                 🏢
                             </div>
                         )}
-                        <div style={{ padding: '14px 16px 16px' }}>
-                            <p style={{ fontWeight: 800, fontSize: 14, color: '#F9FAFB', margin: '0 0 3px', lineHeight: 1.3 }}>
+                        <div style={{ padding: '16px 18px 18px' }}>
+                            <p style={{ fontWeight: 800, fontSize: 16, color: '#0B1928', margin: '0 0 4px', lineHeight: 1.3, fontFamily: "'Playfair Display', Georgia, serif" }}>
                                 {selectedProperty.name}
                             </p>
-                            <p style={{ fontSize: 11, color: '#9CA3AF', margin: '0 0 10px' }}>
+                            <p style={{ fontSize: 12, color: '#948F84', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#948F84" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                                 {selectedProperty.location.neighborhood ? `${selectedProperty.location.neighborhood}, ` : ''}
                                 {selectedProperty.location.city}
                                 {selectedProperty.location.country && selectedProperty.location.country !== 'Brasil'
                                     ? ` — ${selectedProperty.location.country}` : ''}
                             </p>
-                            <div style={{ marginBottom: 14 }}>
-                                {selectedProperty.priceRange.min > 0 ? (
-                                    <>
-                                        <p style={{ fontSize: 10, color: '#9CA3AF', margin: '0 0 2px', fontWeight: 600 }}>A partir de</p>
-                                        <p style={{ fontSize: 20, fontWeight: 900, color: '#60A5FA', margin: 0, letterSpacing: '-0.02em' }}>
-                                            {formatCurrency(selectedProperty.priceRange.min)}
-                                        </p>
-                                    </>
-                                ) : (
-                                    <p style={{ fontSize: 16, fontWeight: 700, color: '#F59E0B', margin: 0 }}>Sob Consulta</p>
+                            <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
+                                {selectedProperty.specs.areaRange && selectedProperty.specs.areaRange !== '—' && (
+                                    <span style={{ background: '#F8F6F2', color: '#5A6577', fontSize: 11, padding: '4px 10px', borderRadius: 8, fontWeight: 600 }}>
+                                        {selectedProperty.specs.areaRange}
+                                    </span>
+                                )}
+                                {selectedProperty.specs.bedroomsRange && selectedProperty.specs.bedroomsRange !== '—' && (
+                                    <span style={{ background: '#F8F6F2', color: '#5A6577', fontSize: 11, padding: '4px 10px', borderRadius: 8, fontWeight: 600 }}>
+                                        {selectedProperty.specs.bedroomsRange} qts
+                                    </span>
                                 )}
                             </div>
-                            <a
-                                href={`/${lang}/imoveis/${selectedProperty.slug}`}
-                                style={{
-                                    display: 'block', textAlign: 'center',
-                                    background: 'linear-gradient(135deg,#1D4ED8,#60A5FA)',
-                                    color: 'white', fontSize: 13, fontWeight: 700,
-                                    padding: '10px 16px', borderRadius: 10,
-                                    textDecoration: 'none', letterSpacing: '0.01em',
-                                }}
-                            >
-                                Ver Detalhes →
-                            </a>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div>
+                                    {selectedProperty.priceRange.min > 0 ? (
+                                        <>
+                                            <p style={{ fontSize: 10, color: '#948F84', margin: '0 0 1px', fontWeight: 600 }}>A partir de</p>
+                                            <p style={{ fontSize: 22, fontWeight: 900, color: '#0B1928', margin: 0, letterSpacing: '-0.02em' }}>
+                                                {formatCurrency(selectedProperty.priceRange.min)}
+                                            </p>
+                                        </>
+                                    ) : (
+                                        <p style={{ fontSize: 16, fontWeight: 700, color: '#F59E0B', margin: 0 }}>Sob Consulta</p>
+                                    )}
+                                </div>
+                                <a
+                                    href={`/${lang}/imoveis/${selectedProperty.slug}`}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: 6,
+                                        background: '#0B1928',
+                                        color: 'white', fontSize: 12, fontWeight: 700,
+                                        padding: '10px 18px', borderRadius: 12,
+                                        textDecoration: 'none', letterSpacing: '0.01em',
+                                        whiteSpace: 'nowrap',
+                                    }}
+                                >
+                                    Ver Detalhes →
+                                </a>
+                            </div>
                         </div>
                     </div>
                 )
