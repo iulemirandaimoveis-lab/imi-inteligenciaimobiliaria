@@ -158,6 +158,30 @@ export async function GET(request: NextRequest) {
             }))
             .sort((a, b) => b.clicks - a.clicks)
             .slice(0, 10)
+        // ── Recent Access Feed (last 20 unique clicks with geo+device) ──
+        const recentFeed = uniqueEvts.slice(0, 20).map(e => ({
+            id: e.id,
+            device_type: e.device_type || 'desktop',
+            browser: e.browser || '?',
+            os: e.os || '?',
+            location: e.location || e.metadata?.city || null,
+            city: e.metadata?.city || null,
+            region: e.metadata?.region || null,
+            country: e.metadata?.country || null,
+            referrer: e.referrer || null,
+            created_at: e.created_at,
+            tracked_link_id: e.tracked_link_id,
+        }))
+        // ── By Location (city aggregation) ──
+        const locationMap: Record<string, number> = {}
+        uniqueEvts.forEach(e => {
+            const loc = e.metadata?.city || e.location || 'Desconhecido'
+            locationMap[loc] = (locationMap[loc] || 0) + 1
+        })
+        const byLocation = Object.entries(locationMap)
+            .map(([city, clicks]) => ({ city, clicks }))
+            .sort((a, b) => b.clicks - a.clicks)
+            .slice(0, 10)
         return NextResponse.json({
             kpis: {
                 totalPageViews,
@@ -174,9 +198,11 @@ export async function GET(request: NextRequest) {
             dailyTimeline,
             bySource,
             byDevice,
+            byLocation,
             topPages,
             topProperties,
             topCampaigns,
+            recentFeed,
         })
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

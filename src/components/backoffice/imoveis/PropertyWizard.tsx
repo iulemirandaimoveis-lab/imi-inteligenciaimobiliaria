@@ -192,11 +192,11 @@ export default function PropertyWizard({ onSubmit, isSubmitting }: PropertyWizar
                     )}
 
                     {currentStep < steps.length - 1 ? (
-                        <Button type="button" onClick={handleNext} icon={<ArrowRight size={18} />} className="flex-row-reverse">
+                        <Button type="button" onClick={handleNext} icon={<ArrowRight size={18} />} className="flex-row-reverse bg-[var(--accent-400)] text-[#0B1928] hover:bg-[var(--accent-500)]">
                             Próximo
                         </Button>
                     ) : (
-                        <Button type="submit" loading={isSubmitting} icon={<Save size={18} />}>
+                        <Button type="submit" loading={isSubmitting} icon={<Save size={18} />} className="bg-[var(--accent-400)] text-[#0B1928] hover:bg-[var(--accent-500)]">
                             Finalizar Cadastro
                         </Button>
                     )}

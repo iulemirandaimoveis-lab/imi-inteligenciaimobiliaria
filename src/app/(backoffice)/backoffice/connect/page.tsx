@@ -242,6 +242,10 @@ export default function ConnectPage() {
                 return
             }
             const result = await openDM(selectedBrokerId)
+            if (result?.error) {
+                toast.error(`Erro ao iniciar conversa: ${result.error.message || 'Tente novamente'}`)
+                return
+            }
             if (result?.channelId) {
                 setActiveChannelId(result.channelId)
                 setShowNewChannel(false)
@@ -252,6 +256,10 @@ export default function ConnectPage() {
         } else {
             if (!newChannelName.trim()) return
             const result = await createChannel('team', newChannelName.trim(), [])
+            if (result?.error) {
+                toast.error(`Erro ao criar canal: ${result.error.message || 'Tente novamente'}`)
+                return
+            }
             if (result?.data) {
                 setActiveChannelId(result.data.id)
                 setShowNewChannel(false)
