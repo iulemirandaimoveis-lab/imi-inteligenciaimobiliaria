@@ -81,7 +81,10 @@ export default function IndicesPage() {
   ]
 
   const fakeHistory = (base: number) =>
-    Array.from({ length: 12 }, () => base * (0.95 + Math.random() * 0.1))
+    Array.from({ length: 12 }, (_, i) => {
+      const seed = Math.sin(base * 0.001 + i * 7.3) * 10000
+      return base * (0.95 + (seed - Math.floor(seed)) * 0.1)
+    })
 
   return (
     <div className="space-y-6">

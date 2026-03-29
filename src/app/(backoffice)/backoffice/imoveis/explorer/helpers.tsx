@@ -44,7 +44,8 @@ export function genSparkline(base: number, trend: number): number[] {
   const points: number[] = []
   let cur = base
   for (let i = 0; i < 12; i++) {
-    const noise = (Math.random() - 0.5) * base * 0.01
+    const seed = Math.sin(base * 0.001 + i * 7.3) * 10000
+    const noise = ((seed - Math.floor(seed)) - 0.5) * base * 0.01
     cur = cur + (cur * trend / 100 / 12) + noise
     points.push(Math.round(cur))
   }

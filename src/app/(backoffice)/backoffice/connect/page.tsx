@@ -87,11 +87,11 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
             flexDirection: isOwn ? 'row-reverse' : 'row',
             alignItems: 'flex-start',
         }}>
-            {!isOwn && <ChatAvatar name={msg.sender_name ?? 'U'} url={msg.sender_avatar} size={32} />}
+            {!isOwn && <ChatAvatar name={msg.sender?.name ?? msg.sender_name ?? 'U'} url={msg.sender?.avatar_url ?? msg.sender_avatar} size={32} />}
             <div style={{ maxWidth: '70%', minWidth: 0 }}>
                 {!isOwn && (
                     <div style={{ fontSize: 11, fontWeight: 600, color: T.textMuted, marginBottom: 2 }}>
-                        {msg.sender_name}
+                        {msg.sender?.name ?? msg.sender_name}
                     </div>
                 )}
                 <div style={{
@@ -154,11 +154,12 @@ export default function ConnectPage() {
         })
     }, [])
 
-    const { channels, loading: channelsLoading, totalUnread, createChannel, reload: reloadChannels } = useChannels(user?.id ?? null)
-    const { messages, loading: messagesLoading, typingUsers, sendMessage, sendTyping, markAsRead } = useChat(
-        activeChannelId,
-        user ?? { id: '', name: '' }
-    )
+    const { channels, loading: channelsLoading, totalUnread, createChannel, openDM, reload: reloadChannels } = useChannels({ userId: user?.id ?? '' })
+    const { messages, loading: messagesLoading, typingUsers, sendMessage, sendTyping, markAsRead } = useChat({
+        channelId: activeChannelId ?? '',
+        userId: user?.id ?? '',
+        userName: user?.name ?? '',
+    })
 
     const activeChannel = channels.find(c => c.id === activeChannelId)
 
@@ -240,10 +241,9 @@ export default function ConnectPage() {
                 setMobileView('chat')
                 return
             }
-            const channelName = `${user?.name ?? 'Eu'} ↔ ${broker.name}`
-            const ch = await createChannel({ type: 'direct', name: channelName, memberIds: [selectedBrokerId] })
-            if (ch) {
-                setActiveChannelId(ch.id)
+            const result = await openDM(selectedBrokerId)
+            if (result?.channelId) {
+                setActiveChannelId(result.channelId)
                 setShowNewChannel(false)
                 setSelectedBrokerId(null)
                 setBrokerSearch('')
@@ -251,9 +251,9 @@ export default function ConnectPage() {
             }
         } else {
             if (!newChannelName.trim()) return
-            const ch = await createChannel({ type: 'team', name: newChannelName.trim() })
-            if (ch) {
-                setActiveChannelId(ch.id)
+            const result = await createChannel('team', newChannelName.trim(), [])
+            if (result?.data) {
+                setActiveChannelId(result.data.id)
                 setShowNewChannel(false)
                 setNewChannelName('')
                 setMobileView('chat')
@@ -401,7 +401,7 @@ export default function ConnectPage() {
                             <div style={{ flex: 1, minWidth: 0 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span style={{
-                                        fontSize: 13, fontWeight: ch.unread_count > 0 ? 700 : 500,
+                                        fontSize: 13, fontWeight: ch.total_unread > 0 ? 700 : 500,
                                         color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                     }}>
                                         {ch.name ?? 'Canal'}
@@ -414,18 +414,18 @@ export default function ConnectPage() {
                                     <span style={{
                                         fontSize: 12, color: T.textDim,
                                         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                        fontWeight: ch.unread_count > 0 ? 600 : 400,
+                                        fontWeight: ch.total_unread > 0 ? 600 : 400,
                                     }}>
                                         {ch.last_message_preview ?? 'Sem mensagens'}
                                     </span>
-                                    {ch.unread_count > 0 && (
+                                    {ch.total_unread > 0 && (
                                         <span style={{
                                             background: T.gold, color: T.textInverse,
                                             fontSize: 11, fontWeight: 700, padding: '2px 8px',
                                             borderRadius: T.radius.full, fontFamily: T.font.mono,
                                             minWidth: 18, textAlign: 'center', flexShrink: 0,
                                         }}>
-                                            {ch.unread_count}
+                                            {ch.total_unread}
                                         </span>
                                     )}
                                 </div>

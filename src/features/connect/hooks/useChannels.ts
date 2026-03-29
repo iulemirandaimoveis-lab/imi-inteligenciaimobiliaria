@@ -2,143 +2,202 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { ChatChannel } from '../types'
+import type { ChannelWithDetails, ChannelType, ChatChannel, ChatMember, Profile } from '../types'
 
-export function useChannels(userId: string | null) {
-    const supabase = createClient()
-    const [channels, setChannels] = useState<(ChatChannel & { unread_count: number })[]>([])
-    const [loading, setLoading] = useState(true)
-    const [totalUnread, setTotalUnread] = useState(0)
-
-    const loadChannels = useCallback(async () => {
-        if (!userId) return
-        setLoading(true)
-
-        // Get channels where user is a member
-        const { data: memberships } = await supabase
-            .from('chat_members')
-            .select('channel_id, unread_count')
-            .eq('user_id', userId)
-
-        if (!memberships?.length) {
-            setChannels([])
-            setLoading(false)
-            return
-        }
-
-        const channelIds = memberships.map(m => m.channel_id)
-        const unreadMap = new Map(memberships.map(m => [m.channel_id, m.unread_count]))
-
-        const { data: channelData } = await supabase
-            .from('chat_channels')
-            .select('*')
-            .in('id', channelIds)
-            .eq('is_archived', false)
-            .order('last_message_at', { ascending: false, nullsFirst: false })
-
-        if (channelData) {
-            const enriched = channelData.map(ch => ({
-                ...ch,
-                unread_count: unreadMap.get(ch.id) ?? 0,
-            }))
-            setChannels(enriched)
-            setTotalUnread(enriched.reduce((sum, ch) => sum + ch.unread_count, 0))
-        }
-
-        setLoading(false)
-    }, [userId, supabase])
-
-    useEffect(() => {
-        loadChannels()
-    }, [loadChannels])
-
-    // Create a new channel (with duplicate guard for direct channels)
-    const createChannel = useCallback(async (opts: {
-        type: string
-        name: string
-        description?: string
-        memberIds?: string[]
-    }) => {
-        if (!userId) return null
-
-        // Guard: for direct channels, check if one already exists with same members
-        if (opts.type === 'direct' && opts.memberIds?.length === 1) {
-            const otherUserId = opts.memberIds[0]
-            // Find all direct channels where current user is a member
-            const { data: myDirectMemberships } = await supabase
-                .from('chat_members')
-                .select('channel_id')
-                .eq('user_id', userId)
-
-            if (myDirectMemberships?.length) {
-                const myChannelIds = myDirectMemberships.map(m => m.channel_id)
-                // Check if the other user is also a member of any of these channels
-                const { data: sharedMemberships } = await supabase
-                    .from('chat_members')
-                    .select('channel_id')
-                    .eq('user_id', otherUserId)
-                    .in('channel_id', myChannelIds)
-
-                if (sharedMemberships?.length) {
-                    // Verify it's a direct channel
-                    const { data: directChannel } = await supabase
-                        .from('chat_channels')
-                        .select('id')
-                        .eq('type', 'direct')
-                        .in('id', sharedMemberships.map(m => m.channel_id))
-                        .limit(1)
-                        .single()
-
-                    if (directChannel) {
-                        await loadChannels()
-                        return directChannel
-                    }
-                }
-            }
-        }
-
-        const { data: channel, error } = await supabase
-            .from('chat_channels')
-            .insert({
-                type: opts.type,
-                name: opts.name,
-                description: opts.description ?? null,
-                created_by: userId,
-            })
-            .select()
-            .single()
-
-        if (error || !channel) return null
-
-        // Add creator as admin
-        await supabase.from('chat_members').insert({
-            channel_id: channel.id,
-            user_id: userId,
-            role: 'admin',
-        })
-
-        // Add other members
-        if (opts.memberIds?.length) {
-            await supabase.from('chat_members').insert(
-                opts.memberIds.map(uid => ({
-                    channel_id: channel.id,
-                    user_id: uid,
-                    role: 'member' as const,
-                }))
-            )
-        }
-
-        // System message
-        await supabase.from('chat_messages').insert({
-            channel_id: channel.id,
-            sender_id: userId,
-            content: `Canal "${opts.name}" criado`,
-            content_type: 'system',
-        })
-
-        await loadChannels()
-        return channel
-    }, [userId, supabase, loadChannels])
-
-    return { channels, loading, totalUnread, reload: loadChannels, createChannel }
+interface UseChannelsOptions {
+  userId: string
 }
+
+export function useChannels({ userId }: UseChannelsOptions) {
+  const supabase = createClient()
+  const [channels, setChannels] = useState<ChannelWithDetails[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const loadChannels = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('chat_members')
+      .select(`
+        *,
+        channel:chat_channels(*)
+      `)
+      .eq('user_id', userId)
+      .order('joined_at', { ascending: false })
+
+    if (error) {
+      console.error('[useChannels] Load error:', error)
+      setLoading(false)
+      return
+    }
+
+    const channelsWithDetails: ChannelWithDetails[] = await Promise.all(
+      (data || []).map(async (membership) => {
+        const ch = membership.channel as ChatChannel
+
+        const { data: members } = await supabase
+          .from('chat_members')
+          .select(`
+            *,
+            profile:profiles(id, name, email, avatar_url, role, department)
+          `)
+          .eq('channel_id', ch.id)
+
+        let otherUser: Profile | undefined
+        if (ch.type === 'direct' && members) {
+          const other = members.find((m) => m.user_id !== userId)
+          otherUser = other?.profile as Profile | undefined
+        }
+
+        return {
+          ...ch,
+          members: (members as ChatMember[]) || [],
+          my_membership: membership as ChatMember,
+          other_user: otherUser,
+          total_unread: membership.unread_count || 0,
+        }
+      })
+    )
+
+    channelsWithDetails.sort((a, b) => {
+      if (a.is_pinned && !b.is_pinned) return -1
+      if (!a.is_pinned && b.is_pinned) return 1
+      const aTime = a.last_message_at || a.created_at
+      const bTime = b.last_message_at || b.created_at
+      return new Date(bTime).getTime() - new Date(aTime).getTime()
+    })
+
+    setChannels(channelsWithDetails)
+    setLoading(false)
+  }, [userId, supabase])
+
+  const createChannel = useCallback(async (
+    type: ChannelType,
+    name: string,
+    memberIds: string[],
+    options?: { description?: string; developmentId?: string; leadId?: string }
+  ) => {
+    const { data: channel, error } = await supabase
+      .from('chat_channels')
+      .insert({
+        type,
+        name,
+        description: options?.description || null,
+        development_id: options?.developmentId || null,
+        lead_id: options?.leadId || null,
+        created_by: userId,
+      })
+      .select()
+      .single()
+
+    if (error || !channel) {
+      console.error('[useChannels] Create error:', error)
+      return { error }
+    }
+
+    const allMembers = [userId, ...memberIds.filter((id) => id !== userId)]
+    await supabase.from('chat_members').insert(
+      allMembers.map((uid, i) => ({
+        channel_id: channel.id,
+        user_id: uid,
+        role: i === 0 ? 'admin' : 'member',
+      }))
+    )
+
+    await supabase.from('chat_messages').insert({
+      channel_id: channel.id,
+      sender_id: userId,
+      content: `Canal "${name}" criado`,
+      content_type: 'system',
+    })
+
+    await loadChannels()
+    return { data: channel }
+  }, [userId, supabase, loadChannels])
+
+  const openDM = useCallback(async (otherUserId: string) => {
+    const { data, error } = await supabase.rpc('get_or_create_dm', {
+      user_a: userId,
+      user_b: otherUserId,
+    })
+
+    if (error) {
+      console.error('[useChannels] DM error:', error)
+      return { error }
+    }
+
+    await loadChannels()
+    return { channelId: data as string }
+  }, [userId, supabase, loadChannels])
+
+  const joinChannel = useCallback(async (channelId: string) => {
+    const { error } = await supabase
+      .from('chat_members')
+      .insert({ channel_id: channelId, user_id: userId, role: 'member' })
+    if (!error) await loadChannels()
+    return { error }
+  }, [userId, supabase, loadChannels])
+
+  const leaveChannel = useCallback(async (channelId: string) => {
+    const { error } = await supabase
+      .from('chat_members')
+      .delete()
+      .eq('channel_id', channelId)
+      .eq('user_id', userId)
+    if (!error) setChannels((prev) => prev.filter((c) => c.id !== channelId))
+    return { error }
+  }, [userId, supabase])
+
+  const archiveChannel = useCallback(async (channelId: string) => {
+    const { error } = await supabase
+      .from('chat_channels')
+      .update({ is_archived: true })
+      .eq('id', channelId)
+    if (!error) await loadChannels()
+    return { error }
+  }, [supabase, loadChannels])
+
+  const togglePin = useCallback(async (channelId: string) => {
+    const ch = channels.find((c) => c.id === channelId)
+    if (!ch?.my_membership) return
+    const { error } = await supabase
+      .from('chat_members')
+      .update({ is_pinned: !ch.my_membership.is_pinned })
+      .eq('channel_id', channelId)
+      .eq('user_id', userId)
+    if (!error) await loadChannels()
+    return { error }
+  }, [channels, userId, supabase, loadChannels])
+
+  const totalUnread = channels.reduce((sum, c) => sum + c.total_unread, 0)
+
+  useEffect(() => {
+    if (!userId) return
+
+    loadChannels()
+
+    const channel = supabase
+      .channel('channel-updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_channels' }, () => loadChannels())
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_members', filter: `user_id=eq.${userId}` }, () => loadChannels())
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [userId]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return {
+    channels,
+    loading,
+    totalUnread,
+    createChannel,
+    openDM,
+    joinChannel,
+    leaveChannel,
+    archiveChannel,
+    togglePin,
+    reload: loadChannels,
+    teamChannels: channels.filter((c) => c.type === 'team'),
+    directMessages: channels.filter((c) => c.type === 'direct'),
+    dealRooms: channels.filter((c) => c.type === 'deal_room'),
+  }
+}
+
+export default useChannels

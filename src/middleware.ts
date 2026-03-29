@@ -39,6 +39,11 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
+    // 0b. Allow /set-password route (auth required but no locale)
+    if (pathname === '/set-password') {
+        return await updateSession(request)
+    }
+
     // 1. Handle API/Backoffice/Login with Supabase Auth (ignore locale)
     if (
         pathname.startsWith('/backoffice') ||
