@@ -38,6 +38,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/tracking': 'Tracking',
     '/backoffice/tracking/qr': 'QR Tracking',
     '/backoffice/equipe': 'Equipe',
+    '/backoffice/ranking': 'Ranking',
     '/backoffice/settings': 'Configurações',
     '/backoffice/relatorios': 'Relatórios',
     '/backoffice/notificacoes': 'Notificações',
