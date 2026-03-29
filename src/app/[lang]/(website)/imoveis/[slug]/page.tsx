@@ -290,8 +290,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </section>
                     </div>
 
-                    {/* Sidebar — desktop only */}
-                    <aside className="hidden lg:block lg:col-span-4 space-y-6">
+                    {/* Sidebar — all viewports */}
+                    <aside className="lg:col-span-4 space-y-6">
                         <DevelopmentCTA development={development} />
                         <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}

@@ -67,22 +67,9 @@ export async function GET(
         if (reqMedium) destinationUrl.searchParams.set('utm_medium', reqMedium)
         if (reqCampaign) destinationUrl.searchParams.set('utm_campaign', reqCampaign)
 
-        // Notify broker (fire-and-forget, best-effort)
-        if (!result.is_bot) {
-            void supabaseAdmin.from('notifications').insert({
-                type: 'tracking',
-                title: '📲 Link acessado',
-                message: `Novo acesso ao link "${shortCode}" de ${city || 'local desconhecido'} (${userAgent.includes('Mobile') ? 'mobile' : 'desktop'})`,
-                data: {
-                    link_id: result.link_id,
-                    click_id: result.click_id,
-                    short_code: shortCode,
-                    city,
-                    country,
-                },
-                read: false,
-            }).then(() => {}, () => {})
-        }
+        // Notification is now handled by the SQL trigger (trg_notify_link_click)
+        // which fires on link_events INSERT and resolves user_id from broker_id or admin fallback.
+        // No need for fire-and-forget insert here — the trigger guarantees delivery.
 
         // 302 redirect (not 301, so browser always goes through tracker)
         const response = NextResponse.redirect(destinationUrl.toString(), {

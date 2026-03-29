@@ -147,29 +147,58 @@ export async function resolveClick(input: ResolveClickInput): Promise<ResolveCli
     }
   }
 
-  // 5. Inserir clique
-  const { data: click, error: clickError } = await supabaseAdmin
-    .from('link_clicks')
-    .insert({
-      link_id: link.id,
-      ip_hash: ipHash,
-      user_agent: input.userAgent,
-      device_type: parsed.device_type,
-      os: parsed.os,
-      browser: parsed.browser,
-      country: input.country,
-      region: input.region,
-      city: input.city,
-      referrer: input.referrer,
-      is_bot: parsed.is_bot,
-      session_fingerprint: fingerprint,
-      is_unique: isUnique,
-    })
-    .select('id')
-    .single();
+  // 5. Inserir clique em link_clicks (legado) + link_events (para trigger de notificação)
+  const [clickResult, eventResult] = await Promise.allSettled([
+    supabaseAdmin
+      .from('link_clicks')
+      .insert({
+        link_id: link.id,
+        ip_hash: ipHash,
+        user_agent: input.userAgent,
+        device_type: parsed.device_type,
+        os: parsed.os,
+        browser: parsed.browser,
+        country: input.country,
+        region: input.region,
+        city: input.city,
+        referrer: input.referrer,
+        is_bot: parsed.is_bot,
+        session_fingerprint: fingerprint,
+        is_unique: isUnique,
+      })
+      .select('id')
+      .single(),
+    // Also insert into link_events — triggers trg_notify_link_click for notifications
+    supabaseAdmin
+      .from('link_events')
+      .insert({
+        tracked_link_id: link.id,
+        event_type: isUnique ? 'click' : 'repeat_click',
+        device_type: parsed.device_type,
+        browser: parsed.browser,
+        os: parsed.os,
+        ip_address: ipHash,
+        referrer: input.referrer,
+        location: [input.city, input.region, input.country].filter(Boolean).join(', '),
+        metadata: {
+          city: input.city,
+          region: input.region,
+          country: input.country,
+          is_bot: parsed.is_bot,
+          is_unique: isUnique,
+          fingerprint,
+        },
+      }),
+    // Only increment counter for unique clicks
+    ...(isUnique && !parsed.is_bot ? [
+      supabaseAdmin.rpc('increment_link_clicks', { link_id: link.id })
+    ] : []),
+  ]);
 
-  if (clickError) {
-    console.error('[LinkTracker] Erro ao registrar clique:', clickError);
+  const click = clickResult.status === 'fulfilled' ? clickResult.value.data : null;
+  if (clickResult.status === 'rejected' || (clickResult.status === 'fulfilled' && clickResult.value.error)) {
+    const err = clickResult.status === 'rejected' ? clickResult.reason : clickResult.value.error;
+    console.error('[LinkTracker] Erro ao registrar clique:', err);
     return {
       destination_url: destinationUrl,
       click_id: '',
@@ -179,8 +208,8 @@ export async function resolveClick(input: ResolveClickInput): Promise<ResolveCli
   }
 
   return {
-    destination_url: link.destination_url,
-    click_id: click.id,
+    destination_url: destinationUrl,
+    click_id: click?.id || '',
     is_bot: parsed.is_bot,
     link_id: link.id,
   };

@@ -722,11 +722,6 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 </div>
             ) : null}
 
-            {/* Broker Card — compact horizontal (P0 from guide) */}
-            <div className="px-4 pb-3">
-                <BrokerCard compact />
-            </div>
-
             {/* Card list */}
             <div className="flex flex-col gap-4 px-4">
                 {visibleDevelopments.length > 0 ? visibleDevelopments.map((dev, i) => (
@@ -1157,18 +1152,10 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 </button>
                             </div>
                         ) : (
-                            <div className="flex gap-6">
-                                <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {visibleDevelopments.map((dev, i) => (
-                                        <PropertyCard key={dev.id} dev={dev} lang={lang} index={i} />
-                                    ))}
-                                </div>
-                                {/* Desktop Broker Card — sticky sidebar */}
-                                <div className="hidden lg:block w-[280px] flex-shrink-0">
-                                    <div className="sticky top-[100px]">
-                                        <BrokerCard />
-                                    </div>
-                                </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {visibleDevelopments.map((dev, i) => (
+                                    <PropertyCard key={dev.id} dev={dev} lang={lang} index={i} />
+                                ))}
                             </div>
                         )}
 
