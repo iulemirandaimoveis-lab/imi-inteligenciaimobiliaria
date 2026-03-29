@@ -53,7 +53,7 @@ export function InvestmentSimulator() {
                                 <label className="text-sm font-bold text-white/50 uppercase tracking-wider flex items-center gap-2">
                                     Valor do Imóvel
                                 </label>
-                                <span className="text-xl font-bold text-white">${propertyValue.toLocaleString()}</span>
+                                <span className="text-xl font-bold text-white">${propertyValue.toLocaleString('pt-BR')}</span>
                             </div>
                             <input
                                 type="range"
@@ -83,7 +83,7 @@ export function InvestmentSimulator() {
                                 onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
                                 className="w-full h-2 bg-navy-800 rounded-lg appearance-none cursor-pointer accent-[#C8A44A]"
                             />
-                            <div className="text-xs text-white/40 font-medium">Equivalente a: ${(propertyValue * (downPaymentPercent / 100)).toLocaleString()}</div>
+                            <div className="text-xs text-white/40 font-medium">Equivalente a: ${(propertyValue * (downPaymentPercent / 100)).toLocaleString('pt-BR')}</div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-8">
@@ -140,7 +140,7 @@ export function InvestmentSimulator() {
                             </p>
                             <div className="flex items-baseline gap-2">
                                 <span className={`text-5xl font-bold font-display ${monthlyCashflow >= 0 ? 'text-white' : 'text-red-400'}`}>
-                                    ${Math.abs(monthlyCashflow).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                    ${Math.abs(monthlyCashflow).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
                                 </span>
                                 <span className="text-white/40 font-medium">/ mês</span>
                             </div>
