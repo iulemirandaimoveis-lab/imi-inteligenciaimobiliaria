@@ -98,12 +98,12 @@ export const POST = withLogging(async (request: Request) => {
             try {
                 // Get active team members
                 const { data: members } = await supabaseAdmin
-                    .from('team_members')
-                    .select('id')
+                    .from('brokers')
+                    .select('user_id')
                     .eq('status', 'active')
                 if (!members || members.length === 0) return
-                // Count leads currently assigned to each active member
-                const memberIds = members.map((m) => m.id)
+                // Count leads currently assigned to each active broker
+                const memberIds = members.map((m) => m.user_id)
                 const { data: counts } = await supabaseAdmin
                     .from('leads')
                     .select('assigned_to')
@@ -111,7 +111,7 @@ export const POST = withLogging(async (request: Request) => {
                 // Build a map of member_id -> lead count, starting at 0 for everyone
                 const countMap: Record<string, number> = {}
                 for (const m of members) {
-                    countMap[m.id] = 0
+                    countMap[m.user_id] = 0
                 }
                 if (counts) {
                     for (const row of counts) {
@@ -120,15 +120,15 @@ export const POST = withLogging(async (request: Request) => {
                         }
                     }
                 }
-                // Pick the member with the fewest leads (first by id for stable tie-breaking)
+                // Pick the broker with the fewest leads (first by id for stable tie-breaking)
                 const sorted = members
                     .slice()
-                    .sort((a, b) => countMap[a.id] - countMap[b.id] || a.id.localeCompare(b.id))
+                    .sort((a, b) => countMap[a.user_id] - countMap[b.user_id] || a.user_id.localeCompare(b.user_id))
                 const assignee = sorted[0]
-                // Assign the lead
+                // Assign the lead to the broker's auth user_id
                 await supabaseAdmin
                     .from('leads')
-                    .update({ assigned_to: assignee.id })
+                    .update({ assigned_to: assignee.user_id })
                     .eq('id', lead.id)
             } catch {
                 // Assignment failure is non-critical

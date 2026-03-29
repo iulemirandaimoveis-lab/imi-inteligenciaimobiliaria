@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
         // Fetch all active team members
         const { data: members, error: membersErr } = await supabase
-            .from('team_members')
+            .from('brokers')
             .select('id, name, email, role, status, total_leads, total_sales, total_revenue, meta_leads_mensal, meta_vendas_mensal, meta_receita_mensal')
             .eq('status', 'active')
             .order('total_revenue', { ascending: false })
