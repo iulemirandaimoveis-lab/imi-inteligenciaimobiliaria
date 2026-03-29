@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
                 .from('content_items')
                 .update({ status: 'ai_generated' })
                 .eq('id', body.content_item_id);
-        } catch { }
+        } catch (dbErr) { console.error('[ai/generate-image] status update failed:', dbErr) }
         return NextResponse.json(
             { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }

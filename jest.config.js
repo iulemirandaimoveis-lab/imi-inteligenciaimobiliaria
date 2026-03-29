@@ -7,7 +7,7 @@ const createJestConfig = nextJest({
 const customJestConfig = {
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     testEnvironment: 'jest-environment-jsdom',
-    testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/src/__tests__/__mocks__/'],
+    testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/src/__tests__/__mocks__/', '<rootDir>/e2e/'],
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
         '^@upstash/redis$': '<rootDir>/src/__tests__/__mocks__/upstash-redis.js',

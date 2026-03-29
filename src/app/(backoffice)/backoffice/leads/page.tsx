@@ -33,7 +33,7 @@ interface Lead {
 // ── Skeleton ──────────────────────────────────────────────────────
 function LeadsSkeleton() {
   return (
-    <div className="space-y-4 max-w-2xl mx-auto">
+    <div className="space-y-4 lg:max-w-2xl lg:mx-auto">
       <div style={{ height: 40, background: 'var(--bg-surface)', borderRadius: 12, opacity: 0.5, width: '60%' }} />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[0,1,2,3].map(i => (
@@ -123,7 +123,7 @@ export default function LeadsPage() {
   if (loading) return <LeadsSkeleton />
 
   return (
-    <div className="space-y-5 max-w-2xl mx-auto">
+    <div className="space-y-5 lg:max-w-2xl lg:mx-auto">
 
       {/* ── Header ────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>

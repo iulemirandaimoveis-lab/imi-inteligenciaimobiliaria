@@ -119,7 +119,7 @@ export default function LeadsInboxPage() {
     ]
 
     return (
-        <div className="max-w-2xl mx-auto pb-28">
+        <div className="lg:max-w-2xl lg:mx-auto pb-28">
 
             {/* Header */}
             <PageIntelHeader

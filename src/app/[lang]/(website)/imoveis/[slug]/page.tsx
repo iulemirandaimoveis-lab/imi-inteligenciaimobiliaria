@@ -1,12 +1,6 @@
 import type { Metadata } from 'next'
-import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
-
-// Public anon client — uses RLS policies (anon_read on developments/developers/brokers)
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 import { Bed, Ruler, Car, Calendar } from 'lucide-react'
 import DevelopmentHero from '../components/DevelopmentHero'
@@ -19,6 +13,8 @@ import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
+import PropertyIntelligence from '../components/PropertyIntelligence'
+import type { IMIProperty } from '@/features/properties/types'
 import { fmt } from '@/lib/format'
 
 // Dynamic rendering — always fetch fresh data from Supabase
@@ -28,9 +24,9 @@ const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
 
 export async function generateMetadata({ params }: { params: { slug: string, lang: string } }): Promise<Metadata> {
-    // Using supabaseAdmin for public page
+    // Server-side admin client — bypasses RLS for public page rendering
 
-    const { data } = await supabase
+    const { data } = await supabaseAdmin
         .from('developments')
         .select('name, description, neighborhood, city, state, country, price_from, price_min, gallery_images, images, image')
         .eq('slug', params.slug)
@@ -97,6 +93,7 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
 
 const ANCHOR_SECTIONS = [
     { id: 'detalhes', label: 'Detalhes' },
+    { id: 'inteligencia', label: 'IMI Score' },
     { id: 'galeria', label: 'Galeria' },
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
@@ -104,27 +101,30 @@ const ANCHOR_SECTIONS = [
 ]
 
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
-    // Using supabaseAdmin for public page
+    // Server-side admin client — bypasses RLS for public page rendering
 
-    // Query development + developer (safe join via FK)
-    // Broker join is separate to avoid FK errors if brokers table is missing
-    const { data, error } = await supabase
+    // Query development — no join to avoid PostgREST embed issues
+    const { data, error } = await supabaseAdmin
         .from('developments')
-        .select(`
-            *,
-            developers!developer_id (
-                name,
-                logo_url,
-                website,
-                phone,
-                email
-            )
-        `)
+        .select('*')
         .eq('slug', params.slug)
         .single()
 
     if (error || !data) {
+        if (error) console.error('[slug] Supabase error:', error.message, '| slug:', params.slug)
         return notFound()
+    }
+
+    // Fetch developer separately if developer_id exists
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let developerData: Record<string, any> | null = null
+    if (data.developer_id) {
+        const { data: dev } = await supabaseAdmin
+            .from('developers')
+            .select('name, logo_url, website, phone, email')
+            .eq('id', data.developer_id)
+            .single()
+        developerData = dev
     }
 
     const development = mapDbPropertyToDevelopment(data)
@@ -133,7 +133,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let brokerData: Record<string, any> | null = null
     if (data.broker_id) {
-        const { data: broker } = await supabase
+        const { data: broker } = await supabaseAdmin
             .from('brokers')
             .select('id, name, email, phone, creci, avatar_url')
             .eq('id', data.broker_id)
@@ -153,7 +153,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
 
     // Fetch similar properties (same city, different slug, max 4)
-    const { data: similarRaw } = await supabase
+    const { data: similarRaw } = await supabaseAdmin
         .from('developments')
         .select('*')
         .eq('status_commercial', 'published')
@@ -264,6 +264,21 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <section id="detalhes">
                             <DevelopmentDetails development={development} />
                         </section>
+                        <section id="inteligencia">
+                            <PropertyIntelligence property={{
+                                id: development.id,
+                                name: development.name,
+                                price: development.priceRange?.min || Number(data.price_from || data.price_min) || 0,
+                                area: Number(data.area_from) || 0,
+                                bedrooms: Number(data.bedrooms_from) || 0,
+                                parking: Number(data.parking_from) || 0,
+                                neighborhood: data.neighborhood || '',
+                                city: data.city || 'Recife',
+                                state: data.state || 'PE',
+                                type: data.type || 'apartamento',
+                                status: data.status_commercial || 'published',
+                            } as IMIProperty} />
+                        </section>
                         <section id="galeria">
                             <DevelopmentGallery development={development} />
                         </section>
@@ -275,8 +290,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </section>
                     </div>
 
-                    {/* Sidebar — desktop only */}
-                    <aside className="hidden lg:block lg:col-span-4 space-y-6">
+                    {/* Sidebar — all viewports */}
+                    <aside className="lg:col-span-4 space-y-6">
                         <DevelopmentCTA development={development} />
                         <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}

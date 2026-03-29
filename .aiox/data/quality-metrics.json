@@ -1,32 +1,32 @@
 {
   "version": "1.0",
-  "lastUpdated": "2026-03-19T19:39:28.985Z",
+  "lastUpdated": "2026-03-27T15:52:12.416Z",
   "retentionDays": 30,
   "layers": {
     "layer1": {
       "passRate": 0.8571428571428571,
       "avgTimeMs": null,
-      "totalRuns": 42,
-      "lastRun": "2026-03-19T19:39:28.983Z"
+      "totalRuns": 49,
+      "lastRun": "2026-03-27T15:52:12.413Z"
     },
     "layer2": {
       "passRate": 1,
       "avgTimeMs": 150000,
-      "totalRuns": 18,
-      "lastRun": "2026-03-19T19:39:28.927Z",
+      "totalRuns": 21,
+      "lastRun": "2026-03-27T15:52:12.327Z",
       "autoCatchRate": 0,
       "coderabbit": {
         "active": true,
-        "findingsCount": 30,
+        "findingsCount": 35,
         "severityBreakdown": {
           "critical": 0,
-          "high": 6,
-          "medium": 12,
-          "low": 12
+          "high": 7,
+          "medium": 14,
+          "low": 14
         }
       },
       "quinn": {
-        "findingsCount": 18,
+        "findingsCount": 21,
         "topCategories": [
           "test-coverage",
           "documentation"
@@ -36,8 +36,8 @@
     "layer3": {
       "passRate": 1,
       "avgTimeMs": 600000,
-      "totalRuns": 6,
-      "lastRun": "2026-03-19T19:39:28.932Z"
+      "totalRuns": 7,
+      "lastRun": "2026-03-27T15:52:12.345Z"
     }
   },
   "trends": {
@@ -45,6 +45,10 @@
     "passRates": [
       {
         "date": "2026-03-19",
+        "value": 0.9090909090909091
+      },
+      {
+        "date": "2026-03-27",
         "value": 0.9090909090909091
       }
     ]
@@ -726,6 +730,120 @@
     },
     {
       "timestamp": "2026-03-19T19:39:28.983Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 2000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.170Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 2500,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.259Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 1500,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.270Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": "not a number",
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.280Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 180000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.317Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 120000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.327Z",
+      "layer": 2,
+      "passed": true,
+      "durationMs": 150000,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "pr",
+        "prNumber": 42,
+        "branchName": "feature/test"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.345Z",
+      "layer": 3,
+      "passed": true,
+      "durationMs": 600000,
+      "findingsCount": 1,
+      "metadata": {
+        "triggeredBy": "manual"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.353Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 0,
+      "findingsCount": 0,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.360Z",
+      "layer": 1,
+      "passed": false,
+      "durationMs": 0,
+      "findingsCount": 1,
+      "metadata": {
+        "triggeredBy": "hook"
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.374Z",
+      "layer": 1,
+      "passed": true,
+      "durationMs": 0,
+      "findingsCount": 2,
+      "metadata": {
+        "triggeredBy": "hook",
+        "lintErrors": 1,
+        "typeErrors": 1
+      }
+    },
+    {
+      "timestamp": "2026-03-27T15:52:12.413Z",
       "layer": 1,
       "passed": true,
       "durationMs": 2000,

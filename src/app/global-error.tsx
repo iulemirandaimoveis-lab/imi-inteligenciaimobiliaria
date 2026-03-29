@@ -39,17 +39,15 @@ export default function GlobalError({
                         Ocorreu um erro irrecuperavel na aplicacao.
                     </p>
 
-                    <div className="p-6 rounded-xl text-left w-full max-w-3xl overflow-auto border shadow-lg mb-8 max-h-[50vh]" style={{ background: '#142840', borderColor: 'rgba(200,164,74,0.18)' }}>
-                        <p className="text-sm font-bold text-[#C8A44A] mb-2 font-mono border-b pb-2" style={{ borderColor: 'rgba(200,164,74,0.12)' }}>
-                            {error.name}: {error.message}
+                    <div className="p-6 rounded-xl text-left w-full max-w-3xl border shadow-lg mb-8" style={{ background: '#142840', borderColor: 'rgba(200,164,74,0.18)' }}>
+                        <p className="text-sm font-bold text-[#C8A44A] mb-2 font-mono">
+                            Algo deu errado. Nossa equipe já foi notificada.
                         </p>
-                        {error.stack && (
-                            <pre className="text-xs text-[#A8B0BC] font-mono whitespace-pre-wrap leading-relaxed">
-                                {error.stack}
-                            </pre>
-                        )}
+                        <p className="text-xs text-[#A8B0BC] mt-2">
+                            Se o problema persistir, entre em contato informando a referência abaixo.
+                        </p>
                         {error.digest && (
-                            <p className="mt-4 text-xs text-[#5C6B7D] font-mono">Digest: {error.digest}</p>
+                            <p className="mt-4 text-xs text-[#5C6B7D] font-mono">Referência: {error.digest}</p>
                         )}
                     </div>
 

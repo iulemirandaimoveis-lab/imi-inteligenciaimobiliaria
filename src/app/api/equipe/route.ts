@@ -6,7 +6,7 @@ export async function GET() {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const { data, error } = await supabase
-            .from('team_members')
+            .from('brokers')
             .select('*')
             .neq('status', 'inactive')
             .order('name', { ascending: true })
@@ -29,17 +29,16 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'name e email são obrigatórios' }, { status: 400 })
         }
         const { data, error } = await supabase
-            .from('team_members')
+            .from('brokers')
             .insert({
                 name: name.trim(),
                 email: email.trim().toLowerCase(),
                 phone: phone?.trim() || null,
-                role: role || 'agent',
+                role: role || 'broker',
                 status: status || 'active',
-                joined_at: new Date().toISOString(),
-                total_leads: 0,
-                total_sales: 0,
-                total_revenue: 0,
+                permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
             })
             .select()
             .single()
@@ -66,7 +65,7 @@ export async function PATCH(request: Request) {
         if (role !== undefined) updates.role = role
         if (status !== undefined) updates.status = status
         const { data, error } = await supabase
-            .from('team_members')
+            .from('brokers')
             .update(updates)
             .eq('id', id)
             .select()
@@ -88,7 +87,7 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
         }
         const { error } = await supabase
-            .from('team_members')
+            .from('brokers')
             .update({ status: 'inactive', updated_at: new Date().toISOString() })
             .eq('id', id)
         if (error) throw error

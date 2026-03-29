@@ -4,6 +4,7 @@ import Header from '@/components/website/Header'
 import Footer from '@/components/website/Footer'
 import AnalyticsProvider from '@/components/website/AnalyticsProvider'
 import { WhatsAppFAB } from '@/components/website/WhatsAppFAB'
+import EngagementTracker from '@/components/EngagementTracker'
 import { generateOrganizationSchema, generateWebSiteSchema, generateLocalBusinessSchema } from '@/lib/seo'
 import { getGlobalSettings } from '@/lib/settings'
 
@@ -14,9 +15,6 @@ export const metadata: Metadata = {
         languages: {
             'pt-BR': 'https://www.iulemirandaimoveis.com.br/pt',
             'en': 'https://www.iulemirandaimoveis.com.br/en',
-            'es': 'https://www.iulemirandaimoveis.com.br/es',
-            'ja': 'https://www.iulemirandaimoveis.com.br/ja',
-            'ar': 'https://www.iulemirandaimoveis.com.br/ar',
         },
     },
 }
@@ -26,9 +24,9 @@ export default async function WebsiteLayout({
     params: { lang },
 }: {
     children: React.ReactNode
-    params: { lang: 'pt' | 'en' | 'ja' | 'ar' | 'es' }
+    params: { lang: 'pt' | 'en' }
 }) {
-    const isRTL = lang === 'ar'
+    const isRTL = false // Only pt/en supported
     const organizationSchema = generateOrganizationSchema()
     const webSiteSchema = generateWebSiteSchema()
     const localBusinessSchema = generateLocalBusinessSchema()
@@ -57,6 +55,7 @@ export default async function WebsiteLayout({
             <main id="main-content" className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
             <Footer lang={lang} settings={settings} />
             <WhatsAppFAB />
+            <EngagementTracker />
         </div>
     )
 }

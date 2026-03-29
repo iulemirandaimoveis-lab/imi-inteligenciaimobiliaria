@@ -27,9 +27,9 @@ export async function GET(request: NextRequest) {
                 .limit(2000),
             supabase.from('tracking_sessions')
                 .select('*')
-                .gte('started_at', startISO)
+                .or(`started_at.gte.${startISO},created_at.gte.${startISO}`)
                 .eq('is_bot', false)
-                .order('started_at', { ascending: false })
+                .order('created_at', { ascending: false })
                 .limit(1000),
             supabase.from('link_events')
                 .select('*')
@@ -53,7 +53,9 @@ export async function GET(request: NextRequest) {
         // ── KPIs ──
         const totalPageViews = pvs.length
         const totalSessions = sess.length
-        const totalClicks = evts.length
+        // Filter to unique clicks only (exclude repeat_click events)
+        const uniqueEvts = evts.filter(e => e.event_type !== 'repeat_click')
+        const totalClicks = uniqueEvts.length
         const totalLeads = lds.length
         const convertedLeads = lds.filter(l => l.status === 'converted' || l.status === 'won').length
         const avgPagesPerSession = totalSessions > 0
@@ -77,8 +79,8 @@ export async function GET(request: NextRequest) {
             dayData[key] = { views: 0, sessions: 0, clicks: 0, leads: 0 }
         }
         pvs.forEach(pv => { const d = pv.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].views++ })
-        sess.forEach(s => { const d = s.started_at?.split('T')[0]; if (d && dayData[d]) dayData[d].sessions++ })
-        evts.forEach(e => { const d = e.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].clicks++ })
+        sess.forEach(s => { const d = (s.started_at || s.created_at)?.split('T')[0]; if (d && dayData[d]) dayData[d].sessions++ })
+        uniqueEvts.forEach(e => { const d = e.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].clicks++ })
         lds.forEach(l => { const d = l.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].leads++ })
         const dailyTimeline = Object.entries(dayData).map(([day, data]) => ({ day, ...data }))
         // ── By Source ──
@@ -88,7 +90,7 @@ export async function GET(request: NextRequest) {
             if (!sourceMap[src]) sourceMap[src] = { sessions: 0, clicks: 0, leads: 0 }
             sourceMap[src].sessions++
         })
-        evts.forEach(e => {
+        uniqueEvts.forEach(e => {
             const src = e.utm_params?.source || 'direct'
             if (!sourceMap[src]) sourceMap[src] = { sessions: 0, clicks: 0, leads: 0 }
             sourceMap[src].clicks++
@@ -137,7 +139,7 @@ export async function GET(request: NextRequest) {
             .slice(0, 10)
         // ── Top Campaigns ──
         const campaignMap: Record<string, { clicks: number; leads: number }> = {}
-        evts.forEach(e => {
+        uniqueEvts.forEach(e => {
             const c = e.utm_params?.campaign || 'sem_campanha'
             if (!campaignMap[c]) campaignMap[c] = { clicks: 0, leads: 0 }
             campaignMap[c].clicks++
@@ -156,6 +158,30 @@ export async function GET(request: NextRequest) {
             }))
             .sort((a, b) => b.clicks - a.clicks)
             .slice(0, 10)
+        // ── Recent Access Feed (last 20 unique clicks with geo+device) ──
+        const recentFeed = uniqueEvts.slice(0, 20).map(e => ({
+            id: e.id,
+            device_type: e.device_type || 'desktop',
+            browser: e.browser || '?',
+            os: e.os || '?',
+            location: e.location || e.metadata?.city || null,
+            city: e.metadata?.city || null,
+            region: e.metadata?.region || null,
+            country: e.metadata?.country || null,
+            referrer: e.referrer || null,
+            created_at: e.created_at,
+            tracked_link_id: e.tracked_link_id,
+        }))
+        // ── By Location (city aggregation) ──
+        const locationMap: Record<string, number> = {}
+        uniqueEvts.forEach(e => {
+            const loc = e.metadata?.city || e.location || 'Desconhecido'
+            locationMap[loc] = (locationMap[loc] || 0) + 1
+        })
+        const byLocation = Object.entries(locationMap)
+            .map(([city, clicks]) => ({ city, clicks }))
+            .sort((a, b) => b.clicks - a.clicks)
+            .slice(0, 10)
         return NextResponse.json({
             kpis: {
                 totalPageViews,
@@ -172,9 +198,11 @@ export async function GET(request: NextRequest) {
             dailyTimeline,
             bySource,
             byDevice,
+            byLocation,
             topPages,
             topProperties,
             topCampaigns,
+            recentFeed,
         })
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

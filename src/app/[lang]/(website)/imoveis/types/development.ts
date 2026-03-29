@@ -21,7 +21,7 @@ export interface DevelopmentLocation {
     state: string;                       // Ex: "PB"
     region: 'paraiba' | 'pernambuco' | 'sao-paulo' | 'internacional'; // Região para filtros
     country?: string;                    // Ex: "Brasil", "Emirados Árabes Unidos", "Estados Unidos"
-    coordinates: { lat: number; lng: number };
+    coordinates: { lat: number | null; lng: number | null };
     address?: string;                    // Endereço completo
 }
 

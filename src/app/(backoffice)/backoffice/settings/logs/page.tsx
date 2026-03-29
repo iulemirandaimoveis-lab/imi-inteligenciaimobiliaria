@@ -91,7 +91,7 @@ export default function LogsPage() {
         setLogs(json.data)
         setTotal(json.total || json.data.length)
       }
-    } catch { }
+    } catch (err) { console.error('[audit-logs]', err) }
     setLoading(false)
   }
 

@@ -1,6 +1,9 @@
+'use client'
+
 import Link from 'next/link'
 import { Mail, MessageCircle, Linkedin } from 'lucide-react'
 import React from 'react'
+import { motion } from 'framer-motion'
 
 import { GlobalSettings } from '@/lib/settings'
 
@@ -43,9 +46,6 @@ const NAV_COLS = [
 const LANGS = [
     { code: 'pt', label: 'PT' },
     { code: 'en', label: 'EN' },
-    { code: 'es', label: 'ES' },
-    { code: 'ja', label: 'JP' },
-    { code: 'ar', label: 'AR' },
 ]
 
 export default function Footer({ lang, settings }: FooterProps) {
@@ -53,14 +53,26 @@ export default function Footer({ lang, settings }: FooterProps) {
 
     return (
         <footer className="bg-navy-950 text-white">
-            {/* Gold accent line */}
-            <div className="h-[2px] bg-gradient-to-r from-transparent via-[#C8A44A]/40 to-transparent" />
+            {/* Gold accent line — animated reveal */}
+            <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="h-[2px] bg-gradient-to-r from-transparent via-[#C8A44A]/40 to-transparent origin-center"
+            />
 
             <div className="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 lg:py-20">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
                     {/* ── Brand & Credenciais ── */}
-                    <div className="lg:col-span-5 overflow-hidden">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                        className="lg:col-span-5 overflow-hidden"
+                    >
                         <Link href={`/${lang}`} className="inline-block group mb-8">
                             <span
                                 className="text-[28px] font-black tracking-tight text-white group-hover:text-navy-300 transition-colors duration-200"
@@ -121,10 +133,16 @@ export default function Footer({ lang, settings }: FooterProps) {
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* ── Nav cols ── */}
-                    <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8 lg:gap-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                        className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8 lg:gap-10"
+                    >
                         {NAV_COLS.map((col) => (
                             <div key={col.title}>
                                 <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-navy-300 mb-5">
@@ -144,7 +162,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                 </ul>
                             </div>
                         ))}
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* ── Bottom bar ── */}

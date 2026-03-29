@@ -17,7 +17,7 @@ import type { IMIProperty } from '@/features/properties/types'
 import { NEIGHBORHOOD_AVG_SQM, NEIGHBORHOOD_YIELD } from '@/features/properties/types'
 import { MarketTrendChart } from '@/features/properties/components/MarketTrendChart'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileBottomNav } from '../mobile-ui'
+import { MobileGlobalStyles } from '../mobile-ui'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
@@ -64,7 +64,8 @@ function genSparkline(base: number, trend: number): number[] {
   const points: number[] = []
   let cur = base
   for (let i = 0; i < 12; i++) {
-    const noise = (Math.random() - 0.5) * base * 0.01
+    const seed = Math.sin(base * 0.001 + i * 7.3) * 10000
+    const noise = ((seed - Math.floor(seed)) - 0.5) * base * 0.01
     cur = cur + (cur * trend / 100 / 12) + noise
     points.push(Math.round(cur))
   }
@@ -1476,7 +1477,6 @@ function MobileExplorer() {
       </div>
 
       <style suppressHydrationWarning>{`@keyframes mob-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-      <MobileBottomNav />
     </div>
   )
 }

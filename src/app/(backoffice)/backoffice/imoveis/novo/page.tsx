@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, Loader2, Check } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { uploadMultipleImages, uploadFile, type ImageUploadFileStatus } from '@/lib/supabase-storage'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../mobile-ui'
+import { MobileGlobalStyles, MobileAppBar } from '../mobile-ui'
 import UploadProgressPanel from '@/app/(backoffice)/components/ui/UploadProgressPanel'
 
 import type { Developer, FormData, StepProps, DesktopStepProps } from './types'
@@ -339,7 +339,6 @@ function MobileNovo({ step, saving, draftSaved, next, prev, handleSave, uploadFi
           </button>
         )}
       </div>
-      <MobileBottomNav />
     </div>
   )
 }

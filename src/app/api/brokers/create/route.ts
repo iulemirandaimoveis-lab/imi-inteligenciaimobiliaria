@@ -102,6 +102,15 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: brokerError.message }, { status: 500 })
         }
 
+        // Sync to profiles table
+        await supabaseAdmin.from('profiles').upsert({
+            id: userId,
+            email,
+            name,
+            role: role === 'broker_manager' ? 'admin' : 'corretor',
+            created_at: new Date().toISOString(),
+        }, { onConflict: 'id' }).then(() => {})
+
         // Return broker + temp password (admin sees it once to share with user)
         return NextResponse.json({
             ...broker,

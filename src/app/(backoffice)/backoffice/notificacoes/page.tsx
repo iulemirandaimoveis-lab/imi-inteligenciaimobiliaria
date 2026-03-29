@@ -67,7 +67,7 @@ export default function NotificacoesPage() {
     const unreadCount = notifications.filter(n => !n.read).length
     if (loading) {
         return (
-            <div className="space-y-5 max-w-3xl mx-auto">
+            <div className="space-y-5 lg:max-w-3xl lg:mx-auto">
                 <div className="animate-pulse" style={{ height: '72px', borderRadius: '6px', background: T.surface, border: `1px solid ${T.border}` }} />
                 <div className="flex gap-2">
                     <div className="animate-pulse h-9 w-28 rounded-lg" style={{ background: T.elevated }} />
@@ -90,7 +90,7 @@ export default function NotificacoesPage() {
         )
     }
     return (
-        <div className="space-y-5 max-w-3xl mx-auto">
+        <div className="space-y-5 lg:max-w-3xl lg:mx-auto">
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
                 <PageIntelHeader

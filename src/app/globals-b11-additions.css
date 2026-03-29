@@ -314,9 +314,9 @@
     padding-right: 12px;
   }
 
-  /* Force truncation on long strings */
+  /* Force truncation on long inline code strings only */
   .backoffice-root code,
-  .backoffice-root .font-mono {
+  .backoffice-root pre .font-mono {
     word-break: break-all;
     font-size: 11px;
   }

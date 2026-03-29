@@ -6,7 +6,7 @@
     "framework": "nextjs",
     "git": {
         "deploymentEnabled": {
-            "youthful-fermi": false
+            "youthful-fermi": true
         }
     },
     "github": {

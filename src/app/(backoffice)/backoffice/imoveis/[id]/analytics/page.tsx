@@ -8,7 +8,7 @@ import {
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-ui'
+import { MobileGlobalStyles, MobileAppBar } from '../../mobile-ui'
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, PieChart, Pie, Cell,
@@ -497,7 +497,6 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                 {/* Bottom spacer */}
                 <div style={{ height: 16 }} />
             </div>
-            <MobileBottomNav />
         </div>
     )
 }

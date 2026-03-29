@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 
 // Hardcoded canonical domain — NEVER use process.env here (Vercel deploys resolve to *.vercel.app)
 const BASE_URL = 'https://www.iulemirandaimoveis.com.br'
-const LANGS = ['pt', 'en', 'es']
+const LANGS = ['pt', 'en']
 
 function urls(path: string, priority: number, freq: MetadataRoute.Sitemap[0]['changeFrequency']) {
   return LANGS.map(lang => ({

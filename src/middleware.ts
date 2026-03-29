@@ -4,7 +4,7 @@ import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 import { updateSession } from '@/lib/supabase/middleware'
 
-const locales = ['pt', 'en', 'ja', 'ar', 'es']
+const locales = ['pt', 'en']
 const defaultLocale = 'pt'
 
 const ALLOWED_ORIGINS = [
@@ -37,6 +37,11 @@ export async function middleware(request: NextRequest) {
     // 0. Short-link redirects: /l/:shortCode and /r/:code — public, no locale, no auth
     if (pathname.startsWith('/l/') || pathname.startsWith('/r/')) {
         return NextResponse.next()
+    }
+
+    // 0b. Allow /set-password route (auth required but no locale)
+    if (pathname === '/set-password') {
+        return await updateSession(request)
     }
 
     // 1. Handle API/Backoffice/Login with Supabase Auth (ignore locale)

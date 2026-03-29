@@ -14,7 +14,7 @@ import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-ui'
+import { MobileGlobalStyles, MobileAppBar } from '../../mobile-ui'
 
 // ─── Shared Config ────────────────────────────────────────────────────────────
 
@@ -513,7 +513,6 @@ function MobileUnidades({
                 Nova Unidade
             </button>
 
-            <MobileBottomNav />
         </div>
     )
 }

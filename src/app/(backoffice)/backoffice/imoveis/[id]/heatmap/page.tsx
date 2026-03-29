@@ -13,7 +13,7 @@ import { motion } from 'framer-motion'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-ui'
+import { MobileGlobalStyles, MobileAppBar } from '../../mobile-ui'
 
 // Section heatmap segments — in real production these would come from page_views/tracking
 const SECTIONS_DEFAULT = [
@@ -234,7 +234,6 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                 </div>
             </div>
 
-            <MobileBottomNav />
         </div>
     )
 }

@@ -83,8 +83,8 @@ function mapDatabaseToDevelopment(raw: Record<string, unknown>): Development {
             region: dbDev.region as Development['region'],
             address: dbDev.address,
             coordinates: {
-                lat: dbDev.lat || 0,
-                lng: dbDev.lng || 0
+                lat: dbDev.lat ?? null,
+                lng: dbDev.lng ?? null
             }
         },
         deliveryDate: dbDev.delivery_date,

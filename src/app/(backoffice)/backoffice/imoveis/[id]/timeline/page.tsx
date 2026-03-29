@@ -24,7 +24,7 @@ import { ptBR } from 'date-fns/locale'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-ui'
+import { MobileGlobalStyles, MobileAppBar } from '../../mobile-ui'
 
 const supabase = createClient()
 
@@ -336,7 +336,6 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                 + Evento
             </button>
 
-            <MobileBottomNav />
         </div>
     )
 }

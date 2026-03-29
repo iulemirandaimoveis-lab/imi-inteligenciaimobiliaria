@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import {
     MousePointerClick, Link2, QrCode, TrendingUp,
     Loader2, RefreshCw, ExternalLink, BarChart3, Building2,
+    MapPin, Monitor, Smartphone, Tablet, Globe, Clock,
 } from 'lucide-react'
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -31,9 +32,15 @@ interface Analytics {
     dailyTimeline: Array<{ day: string; views: number; sessions: number; clicks: number; leads: number }>
     bySource: Array<{ name: string; sessions: number; clicks: number; leads: number; total: number }>
     byDevice: Array<{ name: string; value: number; percentage: number }>
+    byLocation: Array<{ city: string; clicks: number }>
     topPages: Array<{ page: string; views: number; avgDuration: number }>
     topProperties: Array<{ slug: string; views: number }>
     topCampaigns: Array<{ campaign: string; clicks: number; leads: number; conversionRate: number }>
+    recentFeed: Array<{
+        id: string; device_type: string; browser: string; os: string
+        location: string | null; city: string | null; region: string | null; country: string | null
+        referrer: string | null; created_at: string; tracked_link_id: string
+    }>
 }
 
 type TimeRange = '7d' | '30d' | '90d'
@@ -251,6 +258,47 @@ export default function TrackingDashboardPage() {
                         />
                     </motion.div>
 
+                    {/* ── Secondary KPIs ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.07, duration: 0.35 }}
+                        className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+                    >
+                        <KPICard
+                            label="Sessões"
+                            sublabel={TIME_LABELS[timeRange]}
+                            value={formatNumber(data.kpis.totalSessions)}
+                            icon={<Globe size={16} />}
+                            accent="blue"
+                            size="sm"
+                        />
+                        <KPICard
+                            label="Page Views"
+                            value={formatNumber(data.kpis.totalPageViews)}
+                            icon={<BarChart3 size={16} />}
+                            accent="ai"
+                            size="sm"
+                        />
+                        <KPICard
+                            label="Bounce Rate"
+                            value={`${data.kpis.bounceRate}%`}
+                            icon={<TrendingUp size={16} />}
+                            accent={data.kpis.bounceRate > 70 ? 'hot' : 'warm'}
+                            size="sm"
+                        />
+                        <KPICard
+                            label="Tempo Médio"
+                            value={data.kpis.avgDurationSeconds > 60
+                                ? `${Math.floor(data.kpis.avgDurationSeconds / 60)}m ${data.kpis.avgDurationSeconds % 60}s`
+                                : `${data.kpis.avgDurationSeconds}s`
+                            }
+                            icon={<Clock size={16} />}
+                            accent="green"
+                            size="sm"
+                        />
+                    </motion.div>
+
                     {/* ── Charts Row: Area + Pie ── */}
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}
@@ -431,6 +479,144 @@ export default function TrackingDashboardPage() {
                                 <p className="text-xs" style={{ color: T.textMuted }}>Nenhuma campanha no período</p>
                             </div>
                         )}
+                    </motion.div>
+
+                    {/* ── Live Feed + Location ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.17, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-3 gap-5"
+                    >
+                        {/* Recent Access Feed */}
+                        <div
+                            className="lg:col-span-2 rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <div className="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: T.text }}>
+                                        <Clock size={14} style={{ color: T.accent }} />
+                                        Acessos Recentes
+                                    </h3>
+                                    <p className="text-[11px] mt-0.5" style={{ color: T.textDim }}>
+                                        Últimos cliques em links rastreados
+                                    </p>
+                                </div>
+                                <span
+                                    className="text-[10px] font-bold px-2 py-1 rounded-md"
+                                    style={{ background: `${T.success}15`, color: T.success }}
+                                >
+                                    LIVE
+                                </span>
+                            </div>
+
+                            <div className="space-y-1 max-h-[320px] overflow-y-auto">
+                                {data.recentFeed?.length > 0 ? data.recentFeed.map((evt) => {
+                                    const DeviceIcon = evt.device_type === 'mobile' ? Smartphone
+                                        : evt.device_type === 'tablet' ? Tablet : Monitor
+                                    const timeAgo = (() => {
+                                        const diff = Date.now() - new Date(evt.created_at).getTime()
+                                        if (diff < 60_000) return 'agora'
+                                        if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}min`
+                                        if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h`
+                                        return `${Math.floor(diff / 86_400_000)}d`
+                                    })()
+                                    return (
+                                        <div
+                                            key={evt.id}
+                                            className="flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors"
+                                            style={{ background: 'transparent' }}
+                                            onMouseEnter={e => e.currentTarget.style.background = T.hover}
+                                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                        >
+                                            <div
+                                                className="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
+                                                style={{ background: T.accentBg }}
+                                            >
+                                                <DeviceIcon size={14} style={{ color: T.accent }} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-semibold" style={{ color: T.text }}>
+                                                        {evt.city || evt.location || 'Local desconhecido'}
+                                                    </span>
+                                                    {evt.country && (
+                                                        <span className="text-[10px]" style={{ color: T.textDim }}>
+                                                            {evt.region ? `${evt.region}, ` : ''}{evt.country}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="text-[10px] mt-0.5" style={{ color: T.textDim }}>
+                                                    {evt.browser} · {evt.os}
+                                                    {evt.referrer ? ` · via ${(() => { try { return new URL(evt.referrer).hostname.replace('www.', '') } catch { return evt.referrer } })()}` : ''}
+                                                </div>
+                                            </div>
+                                            <span className="text-[10px] font-mono shrink-0" style={{ color: T.textMuted }}>
+                                                {timeAgo}
+                                            </span>
+                                        </div>
+                                    )
+                                }) : (
+                                    <div className="flex items-center justify-center h-32">
+                                        <p className="text-xs" style={{ color: T.textMuted }}>Nenhum acesso no período</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Location Breakdown */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <MapPin size={14} style={{ color: T.accent }} />
+                                Por Localização
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Cidades com mais cliques
+                            </p>
+
+                            {data.byLocation?.length > 0 ? (
+                                <div className="space-y-2.5">
+                                    {data.byLocation.map((loc, i) => {
+                                        const maxClicks = data.byLocation[0]?.clicks || 1
+                                        const pct = Math.round((loc.clicks / maxClicks) * 100)
+                                        return (
+                                            <div key={loc.city}>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <span className="text-xs font-medium truncate" style={{ color: T.text }}>
+                                                        {i === 0 && <span style={{ color: T.accent }}>★ </span>}
+                                                        {loc.city}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold shrink-0 ml-2" style={{ color: T.textMuted }}>
+                                                        {formatNumber(loc.clicks)}
+                                                    </span>
+                                                </div>
+                                                <div
+                                                    className="h-1.5 rounded-full overflow-hidden"
+                                                    style={{ background: T.elevated }}
+                                                >
+                                                    <div
+                                                        className="h-full rounded-full transition-all"
+                                                        style={{
+                                                            width: `${pct}%`,
+                                                            background: i === 0 ? T.accent : CHART_SECONDARY,
+                                                            opacity: 1 - (i * 0.08),
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center h-32">
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Sem dados de localização</p>
+                                </div>
+                            )}
+                        </div>
                     </motion.div>
 
                     {/* ── Table — Links Recentes ── */}

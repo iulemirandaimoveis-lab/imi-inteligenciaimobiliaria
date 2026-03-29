@@ -23,7 +23,7 @@ export function useProperties(filters?: PropertyFilterParams): UsePropertiesRetu
             .from('developments')
             .select(`
         *,
-        developers!developer_id (
+        developers (
           id,
           name,
           logo_url,
@@ -114,7 +114,7 @@ export function useProperty(id: string) {
             .from('developments')
             .select(`
         *,
-        developers!developer_id (
+        developers (
           id,
           name,
           logo_url,

@@ -8,9 +8,12 @@ import LeadCaptureModal from './components/LeadCaptureModal';
 import {
     Search, MapPin, Heart, Share2, Bed, Bath, Car, Maximize2,
     ChevronDown, ChevronRight, SlidersHorizontal, MessageCircle, X,
-    Map, Grid3X3,
+    Map, Grid3X3, Home, DollarSign, Ruler, ArrowUpRight, Sparkles,
+    Eye, TrendingUp, Building2, Phone, CheckCircle, Star,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-is-mobile';
+import { calcIMIScore, getScoreColor, getScoreLabel } from '@/features/properties/services/score.service';
+import type { IMIProperty } from '@/features/properties/types';
 import dynamic from 'next/dynamic';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -69,90 +72,218 @@ const PropertyMap = dynamic(() => import('@/components/maps/PropertyMap'), {
     ),
 });
 
-// ── Property Card ─────────────────────────────────────────────────────────────
+// ── Property Card — Premium Proptech Design ──────────────────────────────────
 
-function PropertyCard({ dev, lang }: { dev: Development; lang: string }) {
+function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string; index?: number }) {
     const badge = BADGE_STYLES[dev.status] || BADGE_STYLES.launch;
     const label = BADGE_LABELS[dev.status] || dev.status;
     const price = formatPrice(dev.priceRange.min);
     const typeLabel = dev.tags.includes('casas') ? 'Casa' : 'Apartamento';
     const area = dev.specs.areaRange !== '—' ? dev.specs.areaRange : null;
+    const locationStr = [dev.location.neighborhood, dev.location.city].filter(Boolean).join(', ');
+    const [isHovered, setIsHovered] = useState(false);
+
+    // IMI Score
+    const parseMin = (s?: string) => parseInt(String(s || '0').replace(/[^\d]/g, '')) || 0;
+    const imiProp: IMIProperty = {
+        id: dev.id, name: dev.name,
+        price: dev.priceRange?.min || 0,
+        area: parseMin(dev.specs?.areaRange),
+        bedrooms: parseMin(dev.specs?.bedroomsRange),
+        neighborhood: dev.location?.neighborhood || '',
+        city: dev.location?.city || 'Recife',
+        type: dev.tags.includes('casas') ? 'casa' : 'apartamento',
+        status: dev.status,
+    } as IMIProperty;
+    const imiScore = calcIMIScore(imiProp);
+    const scoreColor = getScoreColor(imiScore);
 
     return (
         <motion.article
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.4 }}
-            className="bg-white border border-[#E2E0DB] rounded-2xl overflow-hidden flex flex-col hover:shadow-md transition-shadow"
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: (index % 6) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="group relative bg-white rounded-2xl overflow-hidden flex flex-col cursor-pointer"
+            style={{
+                boxShadow: isHovered
+                    ? '0 20px 60px rgba(11,25,40,0.15), 0 8px 24px rgba(11,25,40,0.08)'
+                    : '0 1px 3px rgba(11,25,40,0.06), 0 1px 2px rgba(11,25,40,0.04)',
+                transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+                border: '1px solid rgba(226,224,219,0.6)',
+            }}
         >
-            {/* Image */}
-            <a href={`/${lang}/imoveis/${dev.slug}`} className="block relative aspect-[16/9] bg-[#F0EDE8] flex-shrink-0 overflow-hidden">
+            {/* Image Container */}
+            <a href={`/${lang}/imoveis/${dev.slug}`} className="block relative aspect-[16/10] bg-[#F0EDE8] flex-shrink-0 overflow-hidden">
                 {dev.images.main ? (
-                    <img src={dev.images.main} alt={dev.name} className="w-full h-full object-cover block hover:scale-105 transition-transform duration-500" />
+                    <img
+                        src={dev.images.main}
+                        alt={dev.name}
+                        className="w-full h-full object-cover block"
+                        style={{
+                            transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+                            transition: 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
+                        }}
+                    />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[40px] opacity-15">🏢</div>
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                        <Building2 size={32} className="text-[#B8B3A8] opacity-30" strokeWidth={1} />
+                        <span className="text-[#B8B3A8] text-[9px] font-bold tracking-[0.15em] uppercase">{dev.name}</span>
+                    </div>
                 )}
 
-                {/* Badge top-left */}
-                <span className="absolute top-3 left-3 bg-[#0B1928] text-white text-[10px] font-bold tracking-widest uppercase rounded-lg px-3 py-1">
-                    {label}
-                </span>
+                {/* Gradient overlay — always visible, stronger on hover */}
+                <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                        background: isHovered
+                            ? 'linear-gradient(180deg, rgba(11,25,40,0.1) 0%, rgba(11,25,40,0.0) 40%, rgba(11,25,40,0.5) 100%)'
+                            : 'linear-gradient(180deg, rgba(11,25,40,0.05) 0%, rgba(11,25,40,0.0) 50%, rgba(11,25,40,0.3) 100%)',
+                        transition: 'background 0.4s ease',
+                    }}
+                />
 
-                {/* Heart + Share top-right */}
-                <div className="absolute top-2.5 right-2.5 flex gap-1.5">
+                {/* Status badge — frosted glass */}
+                <div className="absolute top-3 left-3 z-[2]">
+                    <span
+                        className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.08em] uppercase rounded-full px-3 py-1.5"
+                        style={{
+                            background: badge.bg === NAVY ? 'rgba(11,25,40,0.85)' : badge.bg,
+                            color: badge.color,
+                            backdropFilter: 'blur(12px)',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                        }}
+                    >
+                        <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+                        {label}
+                    </span>
+                </div>
+
+                {/* IMI Score — frosted pill */}
+                <div className="absolute bottom-3 left-3 z-[2]">
+                    <span
+                        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1"
+                        style={{
+                            background: 'rgba(11,25,40,0.75)',
+                            backdropFilter: 'blur(12px)',
+                            border: '1px solid rgba(255,255,255,0.12)',
+                        }}
+                    >
+                        <span style={{ width: 7, height: 7, borderRadius: '50%', background: scoreColor, flexShrink: 0, boxShadow: `0 0 6px ${scoreColor}` }} />
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", letterSpacing: '-0.02em' }}>{imiScore}</span>
+                        <span style={{ fontSize: 8, fontWeight: 700, color: '#C8A44A', letterSpacing: '0.12em', textTransform: 'uppercase' as const }}>IMI</span>
+                    </span>
+                </div>
+
+                {/* Heart + Share — glass circles */}
+                <div
+                    className="absolute top-3 right-3 flex gap-1.5 z-[2]"
+                    style={{
+                        opacity: isHovered ? 1 : 0.7,
+                        transform: isHovered ? 'translateY(0)' : 'translateY(-4px)',
+                        transition: 'all 0.3s ease',
+                    }}
+                >
                     {[Heart, Share2].map((Icon, i) => (
-                        <button key={i} className="w-8 h-8 rounded-full bg-white/80 border border-[#E2E0DB] flex items-center justify-center cursor-pointer text-[#5A6577] hover:bg-white transition-colors">
-                            <Icon size={14} />
+                        <button
+                            key={i}
+                            onClick={e => e.preventDefault()}
+                            className="w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer border-none"
+                            style={{
+                                background: 'rgba(255,255,255,0.85)',
+                                backdropFilter: 'blur(8px)',
+                                color: '#5A6577',
+                                transition: 'all 0.2s ease',
+                            }}
+                            onMouseEnter={e => { (e.target as HTMLElement).style.background = '#fff'; (e.target as HTMLElement).style.transform = 'scale(1.1)'; }}
+                            onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.85)'; (e.target as HTMLElement).style.transform = 'scale(1)'; }}
+                        >
+                            <Icon size={13} />
                         </button>
                     ))}
                 </div>
+
+                {/* Property type chip — bottom right */}
+                <div
+                    className="absolute bottom-3 right-3 z-[2]"
+                    style={{
+                        opacity: isHovered ? 1 : 0,
+                        transform: isHovered ? 'translateY(0)' : 'translateY(4px)',
+                        transition: 'all 0.3s ease 0.05s',
+                    }}
+                >
+                    <span className="text-[9px] font-bold tracking-[0.1em] uppercase text-white/80 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-1 border border-white/10">
+                        {typeLabel} {area ? `· ${area}` : ''}
+                    </span>
+                </div>
             </a>
 
-            {/* Body */}
-            <div className="px-4 pt-3.5 pb-4 flex flex-col gap-2 flex-1">
-                {/* Name + location */}
-                <div>
-                    <a href={`/${lang}/imoveis/${dev.slug}`} className="block text-[#0B1928] text-[15px] font-bold leading-tight no-underline hover:text-[#2D3748] transition-colors" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            {/* Content Body */}
+            <div className="px-5 pt-4 pb-5 flex flex-col gap-1.5 flex-1">
+                {/* Name */}
+                <a href={`/${lang}/imoveis/${dev.slug}`} className="block text-[#0B1928] no-underline group-hover:text-[#1a3a5c] transition-colors">
+                    <h3 className="text-[16px] font-bold leading-snug m-0" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         {dev.name}
-                    </a>
-                    <div className="flex items-center gap-1 mt-1 text-[#5A6577] text-xs">
-                        <MapPin size={11} className="flex-shrink-0 text-[#948F84]" />
-                        <span>{dev.location.neighborhood ? `${dev.location.neighborhood}, ` : ''}{dev.location.city}</span>
-                        {area && <span className="ml-1 text-[#948F84]">· {area}</span>}
-                    </div>
+                    </h3>
+                </a>
+
+                {/* Location */}
+                <div className="flex items-center gap-1.5 text-[#5A6577] text-[12px]">
+                    <MapPin size={11} className="flex-shrink-0 text-[#948F84]" />
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">{locationStr}</span>
                 </div>
 
-                {/* Specs row */}
-                <div className="flex items-center gap-3 text-sm text-[#2D3748]">
+                {/* Specs chips */}
+                <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                     {dev.specs.bedroomsRange && dev.specs.bedroomsRange !== '—' && (
-                        <span className="flex items-center gap-1">
-                            <Bed size={12} className="text-[#948F84] flex-shrink-0" />
-                            {dev.specs.bedroomsRange} qtos
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2D3748] bg-[#F8F6F2] rounded-lg px-2 py-1">
+                            <Bed size={11} className="text-[#948F84]" />
+                            {dev.specs.bedroomsRange}
                         </span>
                     )}
                     {dev.specs.bathroomsRange && (
-                        <span className="flex items-center gap-1">
-                            <Bath size={12} className="text-[#948F84] flex-shrink-0" />
-                            {dev.specs.bathroomsRange} ban
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2D3748] bg-[#F8F6F2] rounded-lg px-2 py-1">
+                            <Bath size={11} className="text-[#948F84]" />
+                            {dev.specs.bathroomsRange}
                         </span>
                     )}
                     {dev.specs.parkingRange && (
-                        <span className="flex items-center gap-1">
-                            <Car size={12} className="text-[#948F84] flex-shrink-0" />
-                            {dev.specs.parkingRange} vagas
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2D3748] bg-[#F8F6F2] rounded-lg px-2 py-1">
+                            <Car size={11} className="text-[#948F84]" />
+                            {dev.specs.parkingRange}
+                        </span>
+                    )}
+                    {area && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2D3748] bg-[#F8F6F2] rounded-lg px-2 py-1">
+                            <Ruler size={11} className="text-[#948F84]" />
+                            {area}
                         </span>
                     )}
                 </div>
 
-                {/* Price row */}
-                <div className="pt-2 border-t border-[#E2E0DB] flex items-center justify-between">
-                    <span className="font-mono text-lg font-bold text-[#0B1928]" style={{ fontFamily: "'JetBrains Mono', 'DM Mono', monospace" }}>{price}</span>
+                {/* Price + CTA */}
+                <div className="pt-3.5 mt-auto border-t border-[#F0EDE8] flex items-center justify-between">
+                    <div>
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#948F84] m-0 mb-0.5">
+                            {dev.priceRange.min > 0 ? 'A partir de' : ''}
+                        </p>
+                        <span className="text-lg font-bold text-[#0B1928]" style={{ fontFamily: "'JetBrains Mono', 'DM Mono', monospace", letterSpacing: '-0.03em' }}>
+                            {price}
+                        </span>
+                    </div>
                     <a
                         href={`/${lang}/imoveis/${dev.slug}`}
-                        className="inline-flex items-center justify-center h-10 px-5 rounded-xl bg-[#0B1928] text-white text-xs font-bold tracking-wider uppercase no-underline hover:bg-[#1a2d42] transition-colors"
+                        className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl text-xs font-bold tracking-wider uppercase no-underline transition-all duration-300"
+                        style={{
+                            background: isHovered ? '#0B1928' : '#F8F6F2',
+                            color: isHovered ? '#fff' : '#0B1928',
+                            border: `1px solid ${isHovered ? '#0B1928' : '#E2E0DB'}`,
+                        }}
                     >
-                        Ver Imóvel
+                        Ver Imóvel <ArrowUpRight size={12} style={{ opacity: isHovered ? 1 : 0, transition: 'opacity 0.3s' }} />
                     </a>
                 </div>
             </div>
@@ -212,6 +343,75 @@ function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; la
                 </div>
             </div>
         </motion.div>
+    );
+}
+
+// ── Broker Card — appears on all viewports per guide P0 ────────────────────────
+
+function BrokerCard({ compact = false }: { compact?: boolean }) {
+    return (
+        <div
+            className={`flex ${compact ? 'flex-row items-center gap-3' : 'flex-col gap-4'} rounded-2xl border border-[#E2E0DB]`}
+            style={{
+                background: compact ? CARD_BG : `linear-gradient(135deg, ${CARD_BG} 0%, #F8F6F2 100%)`,
+                padding: compact ? 14 : 20,
+            }}
+        >
+            {/* Avatar */}
+            <div
+                className="flex-shrink-0 flex items-center justify-center font-bold"
+                style={{
+                    width: compact ? 48 : 64, height: compact ? 48 : 64,
+                    borderRadius: compact ? 14 : 18,
+                    background: 'linear-gradient(135deg, #C8A44A 0%, #A08830 100%)',
+                    color: '#fff', fontSize: compact ? 18 : 22,
+                }}
+            >
+                IM
+            </div>
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className={`font-semibold text-[${TEXT_PRIMARY}] ${compact ? 'text-sm' : 'text-base'}`}>Iule Miranda</span>
+                    <CheckCircle size={14} className="text-[#C8A44A]" />
+                </div>
+                <div className="text-[11px] text-[#948F84]">CRECI 12345 · Consultora de investimentos</div>
+                {!compact && (
+                    <div className="flex items-center gap-1 mt-1.5">
+                        {[1, 2, 3, 4, 5].map(i => (
+                            <Star key={i} size={12} className={i <= 4 ? 'text-[#C8A44A] fill-[#C8A44A]' : 'text-[#E2E0DB]'} />
+                        ))}
+                        <span className="text-[11px] text-[#948F84] ml-1">4.8 (127)</span>
+                    </div>
+                )}
+            </div>
+            {/* Actions */}
+            {compact ? (
+                <div className="flex gap-2">
+                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
+                        className="w-[38px] h-[38px] rounded-xl flex items-center justify-center border-none cursor-pointer"
+                        style={{ background: '#25D366', color: '#fff' }}>
+                        <MessageCircle size={16} />
+                    </a>
+                    <a href="tel:+5581997230455"
+                        className="w-[38px] h-[38px] rounded-xl flex items-center justify-center cursor-pointer border border-[#E2E0DB] bg-white text-[#5A6577]">
+                        <Phone size={16} />
+                    </a>
+                </div>
+            ) : (
+                <div className="flex gap-2">
+                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
+                        className="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 text-white text-sm font-semibold no-underline cursor-pointer"
+                        style={{ background: '#25D366' }}>
+                        <MessageCircle size={15} /> WhatsApp
+                    </a>
+                    <a href="tel:+5581997230455"
+                        className="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 text-[#5A6577] text-sm font-semibold no-underline cursor-pointer border border-[#E2E0DB] bg-white">
+                        <Phone size={15} /> Ligar
+                    </a>
+                </div>
+            )}
+        </div>
     );
 }
 
@@ -508,13 +708,14 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 </span>
             </div>
 
-            {/* Map view */}
+            {/* Map view — responsive height */}
             {viewMode === 'map' ? (
-                <div className="mx-4 mb-5 rounded-2xl overflow-hidden border border-[#E2E0DB]" style={{ height: 420 }}>
+                <div className="mx-4 mb-5 rounded-2xl overflow-hidden border border-[#E2E0DB]" style={{ height: 'min(420px, 55vh)' }}>
                     <PropertyMap
                         developments={filteredDevelopments}
-                        height="420px"
+                        height="100%"
                         lang={lang}
+                        darkMode={false}
                         selectedId={selectedId ?? undefined}
                         onMarkerClick={handleMarkerClick}
                     />
@@ -523,8 +724,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
             {/* Card list */}
             <div className="flex flex-col gap-4 px-4">
-                {visibleDevelopments.length > 0 ? visibleDevelopments.map(dev => (
-                    <PropertyCard key={dev.id} dev={dev} lang={lang} />
+                {visibleDevelopments.length > 0 ? visibleDevelopments.map((dev, i) => (
+                    <PropertyCard key={dev.id} dev={dev} lang={lang} index={i} />
                 )) : (
                     <div className="text-center py-12 text-[#948F84]">
                         <div className="text-4xl mb-3 opacity-30">🔍</div>
@@ -616,6 +817,69 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 </div>
                             </FilterSection>
 
+                            {/* Faixa de Preço */}
+                            <FilterSection label="Faixa de Preço">
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        placeholder="R$ mín"
+                                        value={filters.priceRange[0] > 0 ? filters.priceRange[0] : ''}
+                                        onChange={e => setFilters(f => ({ ...f, priceRange: [Number(e.target.value) || 0, f.priceRange[1]] }))}
+                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    />
+                                    <span className="text-[#948F84] text-xs">até</span>
+                                    <input
+                                        type="number"
+                                        placeholder="R$ máx"
+                                        value={filters.priceRange[1] < 10000000 ? filters.priceRange[1] : ''}
+                                        onChange={e => setFilters(f => ({ ...f, priceRange: [f.priceRange[0], Number(e.target.value) || 10000000] }))}
+                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    />
+                                </div>
+                            </FilterSection>
+
+                            {/* Área */}
+                            <FilterSection label="Área (m²)">
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        placeholder="mín"
+                                        value={filters.areaRange[0] > 0 ? filters.areaRange[0] : ''}
+                                        onChange={e => setFilters(f => ({ ...f, areaRange: [Number(e.target.value) || 0, f.areaRange[1]] }))}
+                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    />
+                                    <span className="text-[#948F84] text-xs">até</span>
+                                    <input
+                                        type="number"
+                                        placeholder="máx"
+                                        value={filters.areaRange[1] < 500 ? filters.areaRange[1] : ''}
+                                        onChange={e => setFilters(f => ({ ...f, areaRange: [f.areaRange[0], Number(e.target.value) || 500] }))}
+                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    />
+                                </div>
+                            </FilterSection>
+
+                            {/* Status */}
+                            <FilterSection label="Status">
+                                <div className="flex gap-2 flex-wrap">
+                                    {[
+                                        { val: 'launch', label: 'Lançamento' },
+                                        { val: 'ready', label: 'Pronta Entrega' },
+                                        { val: 'under_construction', label: 'Em Obra' },
+                                    ].map(s => {
+                                        const active = filters.status.includes(s.val);
+                                        return (
+                                            <button key={s.val} onClick={() => setFilters(f => ({ ...f, status: active ? f.status.filter(x => x !== s.val) : [...f.status, s.val] }))}
+                                                className={`h-[34px] px-3.5 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${
+                                                    active ? 'bg-[#0B1928] text-white border-[#0B1928]' : 'bg-white text-[#5A6577] border-[#B8B3A8]'
+                                                }`}>
+                                                {s.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </FilterSection>
+
                             {/* Localização */}
                             <FilterSection label="Localização">
                                 <div className="flex gap-2 flex-wrap">
@@ -677,92 +941,149 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         <main style={{ background: PAGE_BG, minHeight: '100vh', paddingTop: 80, paddingBottom: 60 }}>
             <div className="max-w-[1400px] mx-auto px-6">
 
-                {/* Top search bar */}
-                <div className="mb-4">
-                    <div className="flex items-center gap-3 bg-white border border-[#B8B3A8] rounded-xl px-4 h-12 max-w-[720px]">
-                        <Search size={18} className="text-[#948F84] flex-shrink-0" />
-                        <input
-                            type="text"
-                            placeholder="Buscar por nome, bairro, cidade ou tipo…"
-                            value={filters.search}
-                            onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                            className="flex-1 bg-transparent border-none outline-none text-[#0B1928] text-sm placeholder-[#B8B3A8]"
-                        />
-                        {filters.search && (
-                            <button onClick={() => setFilters(f => ({ ...f, search: '' }))}
-                                className="bg-none border-none text-[#948F84] cursor-pointer flex p-1 hover:text-[#5A6577] transition-colors">
-                                <X size={15} />
-                            </button>
-                        )}
+                {/* Search + Filters — premium unified bar */}
+                <div
+                    className="rounded-2xl p-5 mb-6"
+                    style={{
+                        background: '#FFFFFF',
+                        border: '1px solid #E2E0DB',
+                        boxShadow: '0 4px 24px rgba(11,25,40,0.06), 0 1px 3px rgba(11,25,40,0.03)',
+                    }}
+                >
+                    {/* Search row */}
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="flex-1 flex items-center gap-3 rounded-xl px-4 h-[52px] transition-all duration-300 border"
+                            style={{ background: '#F8F6F2', borderColor: 'transparent' }}
+                            onFocus={e => { e.currentTarget.style.borderColor = '#0B1928'; e.currentTarget.style.background = '#fff'; }}
+                            onBlur={e => { e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.background = '#F8F6F2'; }}
+                        >
+                            <Search size={18} className="text-[#948F84] flex-shrink-0" />
+                            <input
+                                type="text"
+                                placeholder="Buscar por nome, bairro, cidade ou tipo…"
+                                value={filters.search}
+                                onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+                                className="flex-1 bg-transparent border-none outline-none text-[#0B1928] text-[14px] placeholder-[#B8B3A8]"
+                            />
+                            {filters.search && (
+                                <button onClick={() => setFilters(f => ({ ...f, search: '' }))}
+                                    className="bg-none border-none text-[#948F84] cursor-pointer flex p-1 hover:text-[#5A6577] transition-colors rounded-full hover:bg-[#F0EDE8]">
+                                    <X size={15} />
+                                </button>
+                            )}
+                        </div>
                         <button
                             onClick={() => {/* already filtering live */ }}
-                            className="h-9 px-[18px] rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer flex-shrink-0 hover:bg-[#1a2d42] transition-colors">
-                            Buscar
+                            className="h-[52px] px-7 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer flex-shrink-0 hover:bg-[#1a2d42] transition-all duration-300 flex items-center gap-2 hover:shadow-lg hover:shadow-[#0B1928]/20">
+                            <Search size={15} /> Buscar
                         </button>
                     </div>
-                </div>
 
-                {/* Filter chip row */}
-                <div className="flex items-center gap-2 mb-5 flex-wrap">
-                    {[
-                        { label: 'Tipo', active: filters.type.length > 0 },
-                        { label: 'Preço', active: filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000 },
-                        { label: filters.bedrooms ? `${filters.bedrooms}+ Quartos` : 'Quartos', active: !!filters.bedrooms },
-                        { label: 'Banheiros', active: false },
-                        { label: 'Vagas', active: false },
-                        { label: 'Área', active: filters.areaRange[0] > 0 || filters.areaRange[1] < 500 },
-                    ].map(chip => (
-                        <button key={chip.label}
-                            className={`flex items-center gap-1.5 h-10 px-4 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${
-                                chip.active
-                                    ? 'bg-[#0B1928] text-white border-[#0B1928]'
-                                    : 'bg-white text-[#2D3748] border-[#B8B3A8] hover:border-[#948F84]'
-                            }`}>
-                            {chip.label} <ChevronDown size={13} />
-                        </button>
-                    ))}
-                    {activeFilterCount > 0 && (
-                        <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                            className="h-10 px-3.5 rounded-xl border-none bg-none text-[#948F84] text-sm cursor-pointer underline hover:text-[#5A6577] transition-colors">
-                            Limpar filtros
-                        </button>
-                    )}
+                    {/* Filter controls — inline for desktop */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {/* Tipo */}
+                        {['Apto', 'Casa', 'Flat', 'Cobertura', 'Garden'].map(t => {
+                            const val = t.toLowerCase();
+                            const active = filters.type.includes(val);
+                            return (
+                                <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
+                                    className={`flex items-center gap-1.5 h-[36px] px-4 rounded-full text-[13px] font-medium cursor-pointer border transition-all duration-300 ${
+                                        active ? 'bg-[#0B1928] text-white border-[#0B1928] shadow-sm' : 'bg-white text-[#5A6577] border-[#E2E0DB] hover:border-[#0B1928] hover:text-[#0B1928]'
+                                    }`}>
+                                    <Home size={12} className={active ? 'text-white/70' : 'text-[#948F84]'} />
+                                    {t}
+                                </button>
+                            );
+                        })}
+
+                        {/* Separator */}
+                        <div className="w-px h-6 bg-[#E2E0DB]" />
+
+                        {/* Quartos */}
+                        {[null, 1, 2, 3, 4].map(n => (
+                            <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: f.bedrooms === n ? null : n }))}
+                                className={`flex items-center gap-1.5 h-[36px] px-3.5 rounded-full text-[13px] font-medium cursor-pointer border transition-all duration-300 ${
+                                    filters.bedrooms === n ? 'bg-[#0B1928] text-white border-[#0B1928] shadow-sm' : 'bg-white text-[#5A6577] border-[#E2E0DB] hover:border-[#0B1928] hover:text-[#0B1928]'
+                                }`}>
+                                {n === null ? <><Bed size={12} className="text-[#948F84]" /> Quartos</> : `${n}+`}
+                            </button>
+                        ))}
+
+                        {/* Separator */}
+                        <div className="w-px h-6 bg-[#E2E0DB]" />
+
+                        {/* Price range inline */}
+                        <div className="flex items-center gap-1.5 h-[36px] px-3 rounded-full border border-[#E2E0DB] bg-white">
+                            <DollarSign size={12} className="text-[#948F84]" />
+                            <input type="number" placeholder="Mín" value={filters.priceRange[0] > 0 ? filters.priceRange[0] : ''}
+                                onChange={e => setFilters(f => ({ ...f, priceRange: [Number(e.target.value) || 0, f.priceRange[1]] }))}
+                                className="w-[70px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                            <span className="text-[#B8B3A8] text-[11px]">—</span>
+                            <input type="number" placeholder="Máx" value={filters.priceRange[1] < 10000000 ? filters.priceRange[1] : ''}
+                                onChange={e => setFilters(f => ({ ...f, priceRange: [f.priceRange[0], Number(e.target.value) || 10000000] }))}
+                                className="w-[70px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                        </div>
+
+                        {/* Area range inline */}
+                        <div className="flex items-center gap-1.5 h-[36px] px-3 rounded-full border border-[#E2E0DB] bg-white">
+                            <Ruler size={12} className="text-[#948F84]" />
+                            <input type="number" placeholder="m² mín" value={filters.areaRange[0] > 0 ? filters.areaRange[0] : ''}
+                                onChange={e => setFilters(f => ({ ...f, areaRange: [Number(e.target.value) || 0, f.areaRange[1]] }))}
+                                className="w-[55px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                            <span className="text-[#B8B3A8] text-[11px]">—</span>
+                            <input type="number" placeholder="máx" value={filters.areaRange[1] < 500 ? filters.areaRange[1] : ''}
+                                onChange={e => setFilters(f => ({ ...f, areaRange: [f.areaRange[0], Number(e.target.value) || 500] }))}
+                                className="w-[55px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                        </div>
+
+                        {activeFilterCount > 0 && (
+                            <button onClick={() => setFilters(DEFAULT_FILTERS)}
+                                className="h-[36px] px-3 rounded-full border border-red-200 bg-red-50 text-red-500 text-[12px] font-semibold cursor-pointer hover:bg-red-100 transition-all flex items-center gap-1">
+                                <X size={12} /> Limpar
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Results toolbar */}
-                <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-2.5">
-                        <span className="text-sm text-[#948F84]">
-                            <strong className="text-[#0B1928]">{filteredDevelopments.length}</strong> imóveis encontrados
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <span className="text-[22px] text-[#0B1928] font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                            {filteredDevelopments.length}
+                        </span>
+                        <span className="text-sm text-[#948F84] font-medium">
+                            imóveis encontrados
                         </span>
                         {activeFilterCount > 0 && (
-                            <span className="text-xs text-[#5A6577] bg-[#F0EDE8] border border-[#E2E0DB] rounded-lg px-2.5 py-0.5">
-                                {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''} ativo{activeFilterCount !== 1 ? 's' : ''}
+                            <span className="text-[10px] text-[#0B1928] font-bold bg-[#F0EDE8] border border-[#E2E0DB] rounded-full px-2.5 py-0.5">
+                                {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''}
                             </span>
                         )}
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         {/* Sort */}
                         <select
                             value={filters.sort}
                             onChange={e => setFilters(f => ({ ...f, sort: e.target.value as FilterState['sort'] }))}
-                            className="bg-white border border-[#B8B3A8] rounded-xl px-3 py-1.5 text-[#2D3748] text-sm cursor-pointer outline-none">
-                            <option value="relevant">Ordenar por: Relevância</option>
+                            className="bg-white border border-[#E2E0DB] rounded-xl px-4 py-2.5 text-[#2D3748] text-[13px] font-medium cursor-pointer outline-none hover:border-[#0B1928] transition-all duration-300 appearance-none pr-8"
+                            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23948F84' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}>
+                            <option value="relevant">Relevância</option>
                             <option value="newest">Mais Recentes</option>
                             <option value="price-asc">Menor Preço</option>
                             <option value="price-desc">Maior Preço</option>
                         </select>
                         {/* View toggle */}
-                        <div className="flex gap-1 bg-white border border-[#E2E0DB] rounded-xl p-1">
-                            {([['grid', Grid3X3], ['map', Map]] as const).map(([mode, Icon]) => (
+                        <div className="flex bg-white border border-[#E2E0DB] rounded-xl p-1">
+                            {([['grid', Grid3X3, 'Grade'], ['map', Map, 'Mapa']] as [string, typeof Grid3X3, string][]).map(([mode, Icon, lbl]) => (
                                 <button key={mode}
-                                    onClick={() => { setViewMode(mode); if (mode === 'map') setSelectedId(null); }}
-                                    className={`flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold cursor-pointer border transition-colors ${
+                                    onClick={() => { setViewMode(mode as 'grid' | 'map'); if (mode === 'map') setSelectedId(null); }}
+                                    className={`flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12px] font-semibold cursor-pointer transition-all duration-300 ${
                                         viewMode === mode
-                                            ? 'bg-[#0B1928] text-white border-[#0B1928]'
-                                            : 'bg-transparent text-[#5A6577] border-transparent hover:bg-[#F0EDE8]'
+                                            ? 'bg-[#0B1928] text-white shadow-sm'
+                                            : 'bg-transparent text-[#5A6577] hover:text-[#0B1928]'
                                     }`}>
-                                    <Icon size={14} />
+                                    <Icon size={13} />
+                                    {lbl}
                                 </button>
                             ))}
                         </div>
@@ -779,6 +1100,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     developments={filteredDevelopments}
                                     height="100%"
                                     lang={lang}
+                                    darkMode={false}
                                     selectedId={selectedId ?? undefined}
                                     onMarkerClick={handleMarkerClick}
                                 />
@@ -830,9 +1152,9 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                {visibleDevelopments.map(dev => (
-                                    <PropertyCard key={dev.id} dev={dev} lang={lang} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {visibleDevelopments.map((dev, i) => (
+                                    <PropertyCard key={dev.id} dev={dev} lang={lang} index={i} />
                                 ))}
                             </div>
                         )}
@@ -852,20 +1174,45 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     </>
                 )}
 
-                {/* Bottom CTA */}
-                <div className="mt-16 bg-white rounded-2xl border border-[#E2E0DB] p-10 text-center">
-                    <h3 className="text-[28px] font-bold text-[#0B1928] mb-2.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                        Não encontrou o <em className="text-[#5A6577]">imóvel ideal?</em>
+                {/* Bottom CTA — premium gradient */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="mt-20 rounded-2xl p-12 text-center relative overflow-hidden"
+                    style={{
+                        background: 'linear-gradient(135deg, #0B1928 0%, #1a3a5c 50%, #0B1928 100%)',
+                        boxShadow: '0 20px 60px rgba(11,25,40,0.3)',
+                    }}
+                >
+                    {/* Subtle pattern overlay */}
+                    <div className="absolute inset-0 opacity-[0.03]" style={{
+                        backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+                        backgroundSize: '24px 24px',
+                    }} />
+                    <Sparkles size={28} className="text-[#C8A44A] mx-auto mb-4" />
+                    <h3 className="text-[30px] font-bold text-white mb-3 relative" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        Não encontrou o <em className="text-[#C8A44A]" style={{ fontStyle: 'italic' }}>imóvel ideal?</em>
                     </h3>
-                    <p className="text-[#5A6577] text-[15px] leading-relaxed max-w-[520px] mx-auto mb-6">
-                        Nossa curadoria vai além do catálogo. Fale com nossos especialistas para uma prospecção off-market personalizada.
+                    <p className="text-white/60 text-[15px] leading-relaxed max-w-[480px] mx-auto mb-8 relative">
+                        Nossa curadoria vai além do catálogo. Acesse empreendimentos off-market e receba uma prospecção personalizada.
                     </p>
-                    <button
-                        onClick={() => handleCTAClick('general')}
-                        className="inline-flex items-center gap-2 h-[46px] px-7 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer hover:bg-[#1a2d42] transition-colors">
-                        <MessageCircle size={16} /> Iniciar Consultoria
-                    </button>
-                </div>
+                    <div className="flex items-center justify-center gap-3 relative">
+                        <button
+                            onClick={() => handleCTAClick('general')}
+                            className="inline-flex items-center gap-2 h-[48px] px-8 rounded-xl bg-white text-[#0B1928] text-sm font-bold cursor-pointer hover:bg-[#F8F6F2] transition-all duration-300 hover:shadow-lg"
+                        >
+                            <MessageCircle size={16} /> Iniciar Consultoria
+                        </button>
+                        <button
+                            onClick={() => handleCTAClick('off-market')}
+                            className="inline-flex items-center gap-2 h-[48px] px-8 rounded-xl bg-transparent text-white text-sm font-bold cursor-pointer border border-white/30 hover:border-white/60 hover:bg-white/10 transition-all duration-300"
+                        >
+                            <Eye size={16} /> Ver Off-Market
+                        </button>
+                    </div>
+                </motion.div>
             </div>
 
             {/* Lead modal */}

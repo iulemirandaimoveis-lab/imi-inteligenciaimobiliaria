@@ -13,11 +13,16 @@ export interface IMIProperty {
   city?: string
   state?: string
   address?: string
+  country?: string
+  listing_type?: string
   images?: string[]
   image_urls?: string[]
   cover_image_url?: string
   slug?: string
   developer?: { id: string; name: string; logo_url?: string | null }
+  broker_id?: string
+  broker_name?: string
+  broker?: { id: string; name: string; phone?: string; avatar_url?: string | null }
   created_at?: string
   updated_at?: string
   // Intelligence layer (computed)
@@ -54,6 +59,12 @@ export const PROPERTY_TYPES = [
   { value: 'studio', label: 'Studio' },
   { value: 'flat', label: 'Flat' },
   { value: 'duplex', label: 'Duplex' },
+]
+
+export const LISTING_TYPES = [
+  { value: 'venda', label: 'Venda' },
+  { value: 'aluguel', label: 'Aluguel' },
+  { value: 'temporada', label: 'Temporada' },
 ]
 
 export const PROPERTY_STATUSES = [

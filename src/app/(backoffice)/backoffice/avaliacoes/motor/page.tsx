@@ -3,24 +3,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Scale, BookOpen, Upload, Send, Trash2, Search, Sparkles, FileText, ChevronRight, RotateCcw, Brain, CheckCircle2, XCircle, Loader2, Info, Calculator, DollarSign, TrendingUp, Building2 } from 'lucide-react'
 
-// ── Design tokens ─────────────────────────────────────────────────────────────
-const T = {
-  bg:         'var(--bg-base)',
-  surface:    'var(--bg-surface)',
-  elevated:   'var(--bg-elevated)',
-  border:     'var(--border-default)',
-  borderHi:   'rgba(184,148,58,0.35)',
-  gold:       'var(--accent-400)',
-  goldBg:     'rgba(184,148,58,0.08)',
-  text:       'var(--text-primary)',
-  textSub:    'var(--text-secondary)',
-  textDim:    'var(--text-secondary)',
-  navy:       'var(--bg-void)',
-  success:    'var(--success)',
-  successBg:  'var(--success-bg)',
-  error:      'var(--error)',
-  errorBg:    'var(--error-bg)',
-}
+// ── Design tokens — imported from centralized theme ───────────────────────────
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface KBPage {

@@ -69,7 +69,7 @@ const TIMELINE_ICONS: Record<string, React.ElementType> = {
 // ── Skeleton ───────────────────────────────────────────────────────
 function LoadingSkeleton() {
   return (
-    <div className="max-w-2xl mx-auto pb-24 space-y-4 animate-pulse">
+    <div className="lg:max-w-2xl lg:mx-auto pb-24 space-y-4 animate-pulse">
       <div style={{ height: 36, background: 'var(--bg-surface)', borderRadius: 6, width: '40%', opacity: 0.5 }} />
       <div style={{ height: 180, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.4 }} />
       <div style={{ height: 80, background: 'var(--bg-surface)', borderRadius: 6, opacity: 0.35 }} />
@@ -118,7 +118,7 @@ export default function LeadDetailPage() {
 
   if (isError || !lead) {
     return (
-      <div className="max-w-2xl mx-auto pb-20">
+      <div className="lg:max-w-2xl lg:mx-auto pb-20">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 mb-6"
@@ -208,7 +208,7 @@ export default function LeadDetailPage() {
   }>
 
   return (
-    <div className="max-w-2xl mx-auto pb-24 space-y-4">
+    <div className="lg:max-w-2xl lg:mx-auto pb-24 space-y-4">
 
       <PageIntelHeader
         moduleLabel="LEADS"

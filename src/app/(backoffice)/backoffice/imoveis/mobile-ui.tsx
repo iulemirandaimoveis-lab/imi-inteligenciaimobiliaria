@@ -24,30 +24,9 @@ import { getScoreStyle } from '@/hooks/useScore'
 import { usePathname } from 'next/navigation'
 import { normalizeStatus } from '@/lib/format'
 
-// ─── Design Tokens (DS3) ─────────────────────────────────────────────────────
-// NOTE: These tokens map to the global CSS variables.
-// Canonical system: Token T in lib/theme.ts uses DS3 variables.
-// This local T uses --bg-* / --text-* which are aliased in globals.css.
-
-export const T = {
-  navy:       'var(--bg-base)',
-  navyMid:    'var(--bg-surface)',
-  navyCard:   'var(--bg-elevated)',
-  navyRaised: 'var(--bg-muted)',
-  gold:       'var(--gold, #C8A44A)',
-  goldBright: '#D4B86A',
-  text1:      'var(--text-primary)',
-  text2:      'var(--text-secondary)',
-  text3:      'var(--text-tertiary)',
-  textInv:    'var(--text-inverse)',
-  green:      'var(--success)',
-  red:        'var(--error)',
-  blue:       'var(--info)',
-  amber:      'var(--warning)',
-  borderSoft: 'var(--border-subtle)',
-  borderGold: 'rgba(184,148,58,0.22)',
-  glassBase:  'color-mix(in srgb, var(--bg-base) 85%, transparent)',
-} as const
+// ─── Design Tokens — imported from centralized theme ─────────────────────────
+import { T } from '@/app/(backoffice)/lib/theme'
+export { T }
 
 export const STATUS_CONFIGS: Record<string, { label: string; color: string }> = {
   disponivel:    { label: 'Disponível',    color: T.green },

@@ -266,7 +266,19 @@ export function MobileBottomNav() {
     const pathname = usePathname()
     const router = useRouter()
     const [open, setOpen] = useState(false)
+    const [keyboardOpen, setKeyboardOpen] = useState(false)
     const dragControls = useDragControls()
+
+    // Detect virtual keyboard
+    useEffect(() => {
+        if (typeof visualViewport === 'undefined') return
+        const vv = visualViewport!
+        const onResize = () => {
+            setKeyboardOpen(vv.height < window.innerHeight * 0.75)
+        }
+        vv.addEventListener('resize', onResize)
+        return () => vv.removeEventListener('resize', onResize)
+    }, [])
 
     // Lock scroll when open
     useEffect(() => {
@@ -279,12 +291,14 @@ export function MobileBottomNav() {
         setOpen(false)
     }, [pathname])
 
+    if (keyboardOpen) return null
+
     return (
         <>
             {/* ── Bottom Bar ─────────────────────────────────────── */}
             <nav
                 aria-label="Navegação principal mobile"
-                className="lg:hidden fixed bottom-0 inset-x-0 z-50"
+                className="lg:hidden fixed bottom-0 inset-x-0 z-40"
                 style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
                 {/* Nav container — DS3 standard radius (not pill-shaped) */}
@@ -501,9 +515,9 @@ export function MobileBottomNav() {
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', stiffness: 420, damping: 42 }}
-                            className="lg:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col"
+                            className="lg:hidden fixed bottom-0 inset-x-0 z-60 flex flex-col"
                             style={{
-                                borderRadius: '5px 5px 0 0',
+                                borderRadius: '16px 16px 0 0',
                                 background: 'var(--bg-surface)',
                                 borderTop: '1px solid var(--border-default)',
                                 borderLeft: '1px solid var(--border-default)',

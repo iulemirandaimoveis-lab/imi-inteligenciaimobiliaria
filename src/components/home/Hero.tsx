@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { BadgeCheck, Scale, FileText, TrendingUp, MessageCircle, ArrowRight, Home, Building2, Globe } from 'lucide-react'
@@ -56,6 +56,17 @@ export default function Hero({ dict }: HeroProps) {
   const [videoReady, setVideoReady] = useState(false)
   const params = useParams()
   const lang = (params?.lang as string) || 'pt'
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Parallax scroll effects
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -60])
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.6], [0, 0.4])
 
   const handleWhatsApp = () => {
     window.open('https://wa.me/5581997230455', '_blank')
@@ -64,42 +75,54 @@ export default function Hero({ dict }: HeroProps) {
   const handleCanPlay = useCallback(() => setVideoReady(true), [])
 
   return (
-    <section className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
-      {/* Background video */}
-      <div className="absolute inset-0">
-        {/* Static poster image shown immediately — prevents domcontentloaded timeout */}
+    <section ref={sectionRef} className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
+      {/* Background video with parallax */}
+      <motion.div className="absolute inset-0" style={{ y: bgY }}>
+        {/* Static poster image shown immediately */}
         <img
           src="/hero-bg.jpg"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover scale-110"
         />
         <video
           autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
+          poster="/hero-bg.jpg"
           onCanPlay={handleCanPlay}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 w-full h-full object-cover scale-110 transition-opacity duration-1000 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
         >
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
         {/* Dark overlay gradient — stronger on left for text, bottom for fade */}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(5,11,20,0.92) 0%, rgba(5,11,20,0.7) 40%, rgba(5,11,20,0.2) 70%, transparent 100%)' }} />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg-base) 0%, transparent 40%)' }} />
-      </div>
+      </motion.div>
 
-      {/* Gold glow orb */}
-      <div
+      {/* Scroll-darkening overlay */}
+      <motion.div
+        className="absolute inset-0 bg-[#0B1928] pointer-events-none z-[1]"
+        style={{ opacity: overlayOpacity }}
+      />
+
+      {/* Gold glow orb — subtle floating animation */}
+      <motion.div
+        animate={{
+          x: [0, 20, -10, 0],
+          y: [0, -15, 10, 0],
+        }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(26,26,46,0.12) 0%, transparent 70%)',
-          filter: 'blur(40px)',
+          background: 'radial-gradient(circle, rgba(200,164,74,0.06) 0%, transparent 70%)',
+          filter: 'blur(60px)',
         }}
       />
 
-      {/* Content */}
-      <div className="relative z-10 flex-1 flex items-end">
+      {/* Content with scroll-linked fade */}
+      <motion.div className="relative z-10 flex-1 flex items-end" style={{ opacity: contentOpacity, y: contentY }}>
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24 pt-24 sm:pt-36">
           <motion.div
             initial="hidden"
@@ -112,13 +135,20 @@ export default function Hero({ dict }: HeroProps) {
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
               className="flex flex-col gap-3 items-start mb-6"
             >
-              {TRUST.map(t => {
+              {TRUST.map((t, i) => {
                 const Icon = t.icon
                 return (
-                  <div key={t.text} className="flex items-center gap-1.5 bg-white/8 border border-white/10 px-3 py-1" style={{ borderRadius: 6 }}>
-                    <Icon size={12} className="text-white/70" />
+                  <motion.div
+                    key={t.text}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
+                    className="flex items-center gap-1.5 bg-white/8 border border-white/10 px-3 py-1"
+                    style={{ borderRadius: 6 }}
+                  >
+                    <Icon size={12} className="text-[#C8A44A]/70" />
                     <span className="text-xs text-white/70 font-medium">{t.text}</span>
-                  </div>
+                  </motion.div>
                 )
               })}
             </motion.div>
@@ -209,7 +239,7 @@ export default function Hero({ dict }: HeroProps) {
             </motion.div>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats bar */}
       <div className="relative z-10 border-t border-white/8">

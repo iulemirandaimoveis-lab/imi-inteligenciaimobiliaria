@@ -12,48 +12,14 @@ export async function POST(request: Request) {
         if (authError || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
-        // Check if caller has admin role — try both tables (users + profiles)
-        let isAdmin = false
-        if (hasServiceKey) {
-            const { data: userRow } = await supabaseAdmin
-                .from('profiles')
-                .select('role')
-                .eq('id', user.id)
-                .single()
-            if (userRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(userRow.role)) {
-                isAdmin = true
-            }
-            if (!isAdmin) {
-                const { data: profileRow } = await supabaseAdmin
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', user.id)
-                    .single()
-                if (profileRow && ['admin', 'ADMIN', 'SUPER_ADMIN'].includes(profileRow.role)) {
-                    isAdmin = true
-                }
-            }
-        } else {
-            // Without service key, check via authenticated client
-            const { data: userRow } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', user.id)
-                .single()
-            if (userRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(userRow.role)) {
-                isAdmin = true
-            }
-            if (!isAdmin) {
-                const { data: profileRow } = await supabase
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', user.id)
-                    .single()
-                if (profileRow && ['admin', 'ADMIN', 'SUPER_ADMIN'].includes(profileRow.role)) {
-                    isAdmin = true
-                }
-            }
-        }
+        // Check if caller has admin role
+        const client = hasServiceKey ? supabaseAdmin : supabase
+        const { data: callerProfile } = await client
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+        const isAdmin = callerProfile && ['ADMIN', 'admin', 'SUPER_ADMIN', 'super_admin', 'owner'].includes(callerProfile.role)
         if (!isAdmin) {
             return NextResponse.json({ error: 'Apenas administradores podem criar usuários' }, { status: 403 })
         }
@@ -69,6 +35,27 @@ export async function POST(request: Request) {
         const tempPassword = crypto.randomUUID().slice(0, 12) + 'A1!'
         const validRole = role || 'EDITOR'
         if (hasServiceKey) {
+            // Check for existing user with this email first
+            const { data: { users: existingUsers } } = await supabaseAdmin.auth.admin.listUsers()
+            const existingUser = existingUsers?.find(u => u.email === email)
+            if (existingUser) {
+                // User exists in auth — sync to profiles/brokers and return success
+                const existingId = existingUser.id
+                await supabaseAdmin.from('profiles').upsert({
+                    id: existingId, email, name, role: validRole.toLowerCase()
+                })
+                await supabaseAdmin.from('brokers').upsert({
+                    user_id: existingId, name, email, status: 'active',
+                    role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
+                    permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
+                    updated_at: new Date().toISOString(),
+                }, { onConflict: 'user_id' })
+                return NextResponse.json({
+                    success: true,
+                    user: { id: existingId, email, name, role: validRole },
+                    message: `Usuário ${email} já existia — perfil atualizado com sucesso.`
+                })
+            }
             // Admin flow: create user via admin API (bypasses email confirmation)
             const { data: authUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
                 email,
@@ -77,14 +64,34 @@ export async function POST(request: Request) {
                 user_metadata: { name, role: validRole }
             })
             if (createError) {
-                return NextResponse.json({ error: createError.message }, { status: 500 })
+                const msg = createError.message
+                if (msg.includes('already been registered') || msg.includes('already exists')) {
+                    return NextResponse.json({ error: `O email ${email} já está cadastrado no sistema.` }, { status: 409 })
+                }
+                return NextResponse.json({ error: `Erro ao criar usuário: ${msg}` }, { status: 500 })
             }
             const newUserId = authUser.user.id
             // Sync to profiles
-            await supabaseAdmin
+            const { error: profileError } = await supabaseAdmin
                 .from('profiles')
                 .upsert({ id: newUserId, email, name, role: validRole.toLowerCase() })
-                .then(() => {})
+            if (profileError) {
+                console.error('Profiles sync error:', profileError.message)
+            }
+            // Sync to brokers table so user appears in Equipe
+            const { error: brokerError } = await supabaseAdmin.from('brokers').upsert({
+                user_id: newUserId,
+                name,
+                email,
+                status: 'active',
+                role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
+                permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+            }, { onConflict: 'user_id' })
+            if (brokerError) {
+                console.error('Brokers sync error:', brokerError.message)
+            }
             // Send password reset email so user can set their own password
             await supabaseAdmin.auth.admin.generateLink({
                 type: 'recovery',

@@ -38,6 +38,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/tracking': 'Tracking',
     '/backoffice/tracking/qr': 'QR Tracking',
     '/backoffice/equipe': 'Equipe',
+    '/backoffice/ranking': 'Ranking',
     '/backoffice/settings': 'Configurações',
     '/backoffice/relatorios': 'Relatórios',
     '/backoffice/notificacoes': 'Notificações',
@@ -257,15 +258,24 @@ export default function MobileHeader() {
     const handleSignOut = async () => {
         setAccountOpen(false)
         const supabase = createClient()
-        await supabase.auth.signOut()
-        router.push('/login')
+        await supabase.auth.signOut({ scope: 'global' })
+        document.cookie.split(';').forEach(c => {
+            const name = c.split('=')[0].trim()
+            if (name.startsWith('sb-')) {
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`
+            }
+        })
+        Object.keys(localStorage).forEach(k => {
+            if (k.startsWith('sb-')) localStorage.removeItem(k)
+        })
+        window.location.href = '/login'
     }
 
     return (
         <>
             {/* ── Mobile Top Bar ── */}
             <div
-                className="lg:hidden fixed top-0 inset-x-0 z-40"
+                className="lg:hidden fixed top-0 inset-x-0 z-30"
                 style={{
                     background: 'color-mix(in srgb, var(--bg-surface) 88%, transparent)',
                     backdropFilter: 'blur(20px)',
@@ -428,7 +438,7 @@ export default function MobileHeader() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: -8, scale: 0.97 }}
                             transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                            className="lg:hidden fixed top-[60px] right-3 z-50 overflow-hidden"
+                            className="lg:hidden fixed top-[60px] right-3 z-60 overflow-hidden"
                             style={{
                                 background: 'var(--bg-elevated)',
                                 border: '1px solid var(--border-default)',
@@ -568,7 +578,7 @@ export default function MobileHeader() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: -8, scale: 0.97 }}
                             transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                            className="lg:hidden fixed top-[60px] inset-x-3 z-50 overflow-hidden"
+                            className="lg:hidden fixed top-[60px] inset-x-3 z-60 overflow-hidden"
                             style={{
                                 background: 'var(--bg-elevated)',
                                 border: '1px solid var(--border-default)',

@@ -31,33 +31,16 @@ export default function NotificationCenter() {
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [unreadCount, setUnreadCount] = useState(0)
     const [loading, setLoading] = useState(false)
+    const [userRole, setUserRole] = useState<string | null>(null)
+    const [userId, setUserId] = useState<string | null>(null)
+    const isAdmin = userRole === 'admin' || userRole === 'owner'
+    // Step 1: Load user + notifications
     useEffect(() => {
         loadNotifications()
-        const unsubscribe = subscribeToNotifications()
-        return () => {
-            if (unsubscribe) unsubscribe()
-        }
     }, [])
-    const loadNotifications = async () => {
-        setLoading(true)
-        try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-            const { data, error } = await supabase
-                .from('notifications')
-                .select('*')
-                .or(`user_id.eq.${user.id},user_id.is.null`)
-                .order('created_at', { ascending: false })
-                .limit(20)
-            if (error) throw error
-            setNotifications(data || [])
-            setUnreadCount(data?.filter((n: Notification) => !n.read).length || 0)
-        } catch (error) {
-        } finally {
-            setLoading(false)
-        }
-    }
-    const subscribeToNotifications = () => {
+    // Step 2: Subscribe AFTER user is loaded (so isAdmin/userId are correct in closure)
+    useEffect(() => {
+        if (!userId) return
         const subscription = supabase
             .channel('notifications-channel')
             .on(
@@ -67,8 +50,12 @@ export default function NotificationCenter() {
                     schema: 'public',
                     table: 'notifications'
                 },
-                (payload) => {
+                async (payload) => {
                     const newNotification = payload.new as Notification
+                    // Non-admin users should only see their own + broadcast notifications
+                    if (!isAdmin && newNotification.user_id && newNotification.user_id !== userId) {
+                        return
+                    }
                     setNotifications(prev => [newNotification, ...prev])
                     setUnreadCount(prev => prev + 1)
                     // Toast notification
@@ -92,6 +79,40 @@ export default function NotificationCenter() {
             .subscribe()
         return () => {
             subscription.unsubscribe()
+        }
+    }, [userId, isAdmin]) // eslint-disable-line react-hooks/exhaustive-deps
+    const loadNotifications = async () => {
+        setLoading(true)
+        try {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) return
+            setUserId(user.id)
+            // Check user role
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .single()
+            const role = profile?.role || null
+            setUserRole(role)
+            const isAdminUser = role === 'admin' || role === 'owner'
+            let query = supabase
+                .from('notifications')
+                .select('*')
+            // Admin/owner sees ALL notifications
+            if (!isAdminUser) {
+                query = query.or(`user_id.eq.${user.id},user_id.is.null`)
+            }
+            const { data, error } = await query
+                .order('created_at', { ascending: false })
+                .limit(30)
+            if (error) throw error
+            setNotifications(data || [])
+            setUnreadCount(data?.filter((n: Notification) => !n.read).length || 0)
+        } catch (error) {
+            console.error('[NotificationCenter] loadNotifications error:', error)
+        } finally {
+            setLoading(false)
         }
     }
     const markAsRead = async (notificationId: string) => {

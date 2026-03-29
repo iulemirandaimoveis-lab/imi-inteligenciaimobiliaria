@@ -33,8 +33,8 @@ export interface Development {
   slug?: string
   created_at?: string
   updated_at?: string
-  latitude?: number
-  longitude?: number
+  lat?: number
+  lng?: number
   developer?: { id: string; name: string; logo_url?: string | null } | null
 }
 
