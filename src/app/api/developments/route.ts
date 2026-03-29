@@ -26,6 +26,9 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         videoUrl: 'video_url',
         videoShort: 'video_short_url',
         floor: 'floor_count',
+        // state_uf from edit form maps to 'state' in DB
+        state_uf: 'state',
+        stateUf: 'state',
         // 'area' does not exist in DB — map to area_from (DB has area_from + area_to)
         area: 'area_from',
         areaFrom: 'area_from',

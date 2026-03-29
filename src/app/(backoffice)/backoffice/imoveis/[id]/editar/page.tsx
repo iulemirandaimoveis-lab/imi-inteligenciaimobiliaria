@@ -463,7 +463,7 @@ export default function EditarImovelPage() {
           location: d.neighborhood || d.region || '', address: d.address || '',
           cep: d.cep || '', street: d.street || '', streetNumber: d.street_number || '',
           complement: d.complement || '', neighborhood: d.neighborhood || d.region || '',
-          city: d.city || '', stateUf: d.state_uf || '',
+          city: d.city || '', stateUf: d.state_uf || d.state || '',
           developer: d.developer || d.developers?.name || '', developer_id: d.developer_id || '',
           description: d.description || '', area: d.private_area?.toString() || d.area_from?.toString() || '',
           bedrooms: d.bedrooms?.toString() || '', bathrooms: d.bathrooms?.toString() || '',
