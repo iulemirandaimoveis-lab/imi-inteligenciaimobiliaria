@@ -232,6 +232,8 @@ export default function Header({ lang, settings }: HeaderProps) {
                             >
                                 <MessageCircle size={15} strokeWidth={2.5} />
                                 WhatsApp
+                                <span className="absolute bottom-0 left-[12%] right-[12%] h-[2px] rounded-sm opacity-60 pointer-events-none"
+                                    style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
                             </a>
                         </div>
 

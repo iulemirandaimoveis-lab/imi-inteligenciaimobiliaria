@@ -65,14 +65,14 @@ const mockedParseBody = parseBody as jest.MockedFunction<typeof parseBody>
 function createRequest(
   url: string,
   options: { method?: string; body?: Record<string, unknown> } = {}
-) {
+): Request {
   const { method = 'GET', body } = options
   const fullUrl = url.startsWith('http') ? url : `http://localhost:3000${url}`
   return new Request(fullUrl, {
     method,
     headers: { 'Content-Type': 'application/json' },
     ...(body ? { body: JSON.stringify(body) } : {}),
-  }) as unknown as import('next/server').NextRequest
+  })
 }
 
 // ── Tests: GET /api/leads ────────────────────────────────────────────────────
