@@ -1,1016 +1,895 @@
 'use client'
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect, useCallback } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { T, inputStyle, cardStyle } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { toast } from 'sonner'
+import { useIsMobile } from '@/hooks/use-is-mobile'
 import {
-  ArrowLeft, ArrowRight, Building2, MapPin, Ruler, User, Mail, Phone,
-  FileText, Upload, Check, Save, Loader2, AlertCircle, DollarSign,
-  Calendar, Sparkles, X, Home, BarChart2, Scale, Info, Calculator,
-  Landmark, ChevronDown, ChevronRight, Car, Layers, Star, Eye,
-  Hash, Clock, CreditCard, Gavel
+  ArrowLeft, ArrowRight, Building2, MapPin, Search, Plus, Trash2,
+  FileText, Save, Loader2, DollarSign, Calculator, Eye, Check,
+  BarChart2, Download, Scale, ChevronDown
 } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
-import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
-// ============================================================
-// TIPOS E CONSTANTES NBR 14653
-// ============================================================
-type Step = 1 | 2 | 3 | 4 | 5
-interface Comparable {
-  id: string
-  endereco: string
-  tipo: string
-  area: number
-  quartos: number
-  banheiros: number
-  vagas: number
-  andar?: number
-  padrao: string
-  estado: string
-  valorVenda: number
-  fonteDado: string
-  dataColeta: string
-  distanciaKm: number
-}
-interface FormData {
-  // Step 1 - Imóvel
-  endereco: string
-  complemento: string
-  bairro: string
-  cidade: string
-  estado: string
-  cep: string
-  tipo: string
-  areaPrivativa: string
-  areaTotal: string
-  quartos: string
-  banheiros: string
-  vagas: string
-  andar: string
-  totalAndares: string
-  anoContrucao: string
-  padrao: string
-  estado_conservacao: string
-  caracteristicas: string[]
-  // Step 2 - Cliente / Solicitante
-  clienteNome: string
-  clienteEmail: string
-  clienteTelefone: string
-  clienteCPFCNPJ: string
-  clienteTipo: 'PF' | 'PJ'
-  solicitanteInstituicao: string
-  // Step 3 - Avaliação
-  finalidade: string
-  metodologia: string
-  grauFundamentacao: string
-  grauPrecisao: string
-  prazoEntrega: string
-  valorHonorarios: string
-  formaPagamento: string
-  observacoes: string
-  // Step 4 - Comparáveis
-  comparaveis: Comparable[]
-  // Step 5 - Documentos
-  documentos: File[]
-}
-const TIPOS_IMOVEL = [
-  'Apartamento', 'Casa', 'Cobertura', 'Studio', 'Flat', 'Loft',
-  'Terreno Urbano', 'Terreno Rural', 'Comercial - Sala', 'Comercial - Loja',
-  'Galpão/Armazém', 'Hotel/Pousada', 'Fazenda/Sítio'
-]
-const FINALIDADES = [
-  { value: 'compra_venda', label: 'Compra e Venda', subtitulo: 'Alienação voluntária' },
-  { value: 'financiamento', label: 'Financiamento Bancário', subtitulo: 'Garantia hipotecária / SFH' },
-  { value: 'garantia', label: 'Garantia de Empréstimo', subtitulo: 'Alienação fiduciária' },
-  { value: 'partilha', label: 'Partilha de Bens', subtitulo: 'Divórcio / Inventário' },
-  { value: 'inventario', label: 'Inventário', subtitulo: 'Arrolamento de bens' },
-  { value: 'desapropriacao', label: 'Desapropriação', subtitulo: 'Poder público / utilidade pública' },
-  { value: 'judicial', label: 'Judicial / Perícia', subtitulo: 'Processo judicial / arbitragem' },
-  { value: 'seguro', label: 'Seguro', subtitulo: 'Determinação de valor segurado' },
-  { value: 'locacao', label: 'Locação', subtitulo: 'Fixação de aluguel' },
-  { value: 'permuta', label: 'Permuta', subtitulo: 'Troca de imóveis' },
-  { value: 'fundo', label: 'Fundo de Investimento', subtitulo: 'FII / Marcação a mercado' },
-  { value: 'outro', label: 'Outra Finalidade', subtitulo: '' },
-]
-const METODOLOGIAS = [
-  {
-    value: 'comparativo',
-    label: 'Comparativo Direto de Dados de Mercado',
-    descricao: 'Indicado para imóveis com mercado ativo. Padrão NBR 14653-2.',
-    norma: 'NBR 14653-2 §8',
-    icone: BarChart2
-  },
-  {
-    value: 'involutivo',
-    label: 'Método Involutivo',
-    descricao: 'Para terrenos: obtém valor por hipotética incorporação residencial ou comercial.',
-    norma: 'NBR 14653-2 §9',
-    icone: Layers
-  },
-  {
-    value: 'evolutivo',
-    label: 'Método Evolutivo',
-    descricao: 'Composição: valor do terreno + benfeitorias (Custo de Reprodução).',
-    norma: 'NBR 14653-2 §10',
-    icone: Home
-  },
-  {
-    value: 'renda',
-    label: 'Método da Renda',
-    descricao: 'Capitalização da renda auferida pelo imóvel. Indicado para comercial e locações.',
-    norma: 'NBR 14653-2 §11',
-    icone: DollarSign
-  },
-  {
-    value: 'custo',
-    label: 'Método Comparativo de Custo de Reprodução',
-    descricao: 'Estimativa de custo de reprodução das benfeitorias, com depreciação.',
-    norma: 'NBR 14653-2 §12',
-    icone: Calculator
-  },
-]
-const PADROES = ['Baixo', 'Normal', 'Alto', 'Luxo']
-const ESTADOS_CONSERVACAO = ['Novo', 'Entre Novo e Regular', 'Regular', 'Entre Regular e Reparos Simples', 'Reparos Simples', 'Entre Reparos Simples e Importantes', 'Reparos Importantes', 'Entre Reparos Importantes e Sem Valor', 'Sem Valor']
-const GRAUS_FUNDAMENTACAO = ['I', 'II', 'III']
-const GRAUS_PRECISAO = ['III', 'II', 'I']
-const CARACTERISTICAS = [
-  'Varanda/Sacada', 'Varanda Gourmet', 'Piscina', 'Academia', 'Salão de Festas',
-  'Portaria 24h', 'Gerador', 'Playground', 'Quadra Esportiva', 'Armários Planejados',
-  'Ar-condicionado', 'Piso Porcelanato', 'Vista Mar', 'Vista para Parque',
-  'Cobertura com Terraço', 'Duplex', 'Andar Alto', 'Área de Serviço',
-]
-// ============================================================
-// CÁLCULO DE HONORÁRIOS NBR 14653 (baseado no PDF)
-// ============================================================
-function calcularHonorarios(valorEstimado: number, finalidade: string, metodologia: string): {
-  minimo: number
-  recomendado: number
-  maximo: number
-  percentual: number
-  justificativa: string
-} {
-  // Tabela base IBAPE/SP adaptada
-  let percentBase = 0.003 // 0.3% base
-  if (valorEstimado <= 200000) percentBase = 0.008
-  else if (valorEstimado <= 500000) percentBase = 0.006
-  else if (valorEstimado <= 1000000) percentBase = 0.004
-  else if (valorEstimado <= 5000000) percentBase = 0.003
-  else percentBase = 0.002
-  // Multiplicador por finalidade
-  let multiplicador = 1.0
-  if (finalidade === 'judicial') multiplicador = 1.5
-  else if (finalidade === 'desapropriacao') multiplicador = 1.4
-  else if (finalidade === 'fundo') multiplicador = 1.3
-  else if (finalidade === 'financiamento') multiplicador = 1.1
-  // Multiplicador por metodologia
-  if (metodologia === 'involutivo' || metodologia === 'renda') multiplicador *= 1.2
-  if (metodologia === 'evolutivo') multiplicador *= 1.1
-  const recomendado = Math.max(800, valorEstimado * percentBase * multiplicador)
-  const minimo = recomendado * 0.7
-  const maximo = recomendado * 1.5
-  const justificativa = `Calculado conforme IBAPE — ${(percentBase * 100).toFixed(2)}% sobre valor estimado` +
-    (multiplicador > 1 ? ` com fator de complexidade ${multiplicador.toFixed(1)}x` : '')
-  return {
-    minimo: Math.round(minimo),
-    recomendado: Math.round(recomendado),
-    maximo: Math.round(maximo),
-    percentual: percentBase * multiplicador * 100,
-    justificativa
-  }
-}
-// ============================================================
-// T-OBJECT — Dark theme tokens
-// ============================================================
-// ============================================================
-// COMPONENTES AUXILIARES
-// ============================================================
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null
-  return (
-    <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-      <AlertCircle size={13} />
-      {message}
-    </p>
-  )
-}
-function Label({ children, required }: { children: React.ReactNode; required?: boolean }) {
-  return (
-    <label className="block text-sm font-medium mb-1.5" style={{ color: T.text }}>
-      {children}
-      {required && <span className="text-red-500 ml-1">*</span>}
-    </label>
-  )
-}
-function InputField({ icon: Icon, error, ...props }: { icon?: LucideIcon; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <div className="relative">
-      {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textMuted }} />}
-      <input
-        {...props}
-        className={`w-full h-10 ${Icon ? 'pl-9' : 'px-3'} pr-3 border rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] ${error ? 'border-red-300' : ''}`}
-        style={{ background: T.elevated, border: `1px solid ${error ? '#fca5a5' : T.border}`, color: T.text }}
-      />
-    </div>
-  )
-}
-// ============================================================
-// PÁGINA PRINCIPAL
-// ============================================================
-export default function NovaAvaliacaoPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [currentStep, setCurrentStep] = useState<Step>(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [showHonorarios, setShowHonorarios] = useState(false)
-  const [valorEstimadoHonorarios, setValorEstimadoHonorarios] = useState(500000)
-  const [calcResult, setCalcResult] = useState<Record<string, unknown> | null>(null)
-  const [calcLoading, setCalcLoading] = useState(false)
-  // Pre-fill from cross-link URL params (e.g. from property detail page)
-  const prefillBairro = searchParams.get('bairro') ?? ''
-  const prefillArea = searchParams.get('area') ?? ''
-  const prefillNome = searchParams.get('nome') ?? ''
-  const prefillImovelId = searchParams.get('imovel') ?? ''
-  const prefillObs = prefillNome
-    ? `Imóvel: ${prefillNome}${prefillImovelId ? ` (ID: ${prefillImovelId})` : ''}`
-    : ''
-  const [formData, setFormData] = useState<FormData>(() => ({
-    endereco: '', complemento: '', bairro: prefillBairro, cidade: 'Recife', estado: 'PE', cep: '',
-    tipo: '', areaPrivativa: prefillArea, areaTotal: '', quartos: '', banheiros: '',
-    vagas: '', andar: '', totalAndares: '', anoContrucao: '', padrao: 'Normal',
-    estado_conservacao: 'Novo', caracteristicas: [],
-    clienteNome: '', clienteEmail: '', clienteTelefone: '', clienteCPFCNPJ: '',
-    clienteTipo: 'PF', solicitanteInstituicao: '',
-    finalidade: '', metodologia: 'comparativo', grauFundamentacao: 'II', grauPrecisao: 'II',
-    prazoEntrega: '', valorHonorarios: '', formaPagamento: 'À vista', observacoes: prefillObs,
-    comparaveis: [
-      {
-        id: '1', endereco: '', tipo: 'Apartamento', area: 0, quartos: 0, banheiros: 0,
-        vagas: 0, padrao: 'Normal', estado: 'Novo', valorVenda: 0,
-        fonteDado: 'ZAP Imóveis', dataColeta: new Date().toISOString().split('T')[0], distanciaKm: 0
-      }
-    ],
-    documentos: [],
-  }))
 
-  const handleChange = (field: keyof FormData, value: FormData[keyof FormData]) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }))
+// ============================================================
+// TYPES
+// ============================================================
+type Step = 1 | 2 | 3 | 4 | 5 | 6
+
+interface ComparableEntry {
+  id?: string
+  address: string
+  neighborhood: string
+  city: string
+  state: string
+  area_sqm: string
+  bedrooms: string
+  bathrooms: string
+  parking_spots: string
+  asking_price: string
+  source: string
+  source_url: string
+  // factors
+  offer_factor: number
+  area_factor: number
+  location_factor: number
+  age_factor: number
+  floor_factor: number
+  parking_factor: number
+  extra_factor: number
+  // computed
+  price_per_sqm?: number
+  homogenized_price_per_sqm?: number
+}
+
+interface CalcResult {
+  average_price_per_sqm: number
+  median_price_per_sqm: number
+  std_deviation: number
+  coefficient_of_variation: number
+  estimated_value: number
+  confidence_grade: 'I' | 'II' | 'III'
+  comparables: Array<{ homogenized_price_per_sqm: number }>
+}
+
+interface Development {
+  id: string
+  name: string
+  address?: string
+  location?: string
+}
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+const PURPOSES = ['Venda', 'Financiamento', 'Judicial', 'Inventário', 'Doação', 'Garantia']
+const SOURCES = ['OLX', 'ZAP Imóveis', 'Viva Real', 'Imovelweb', 'Quinto Andar', 'Imobiliária', 'Outro']
+const STEPS: { num: Step; label: string; icon: React.ReactNode }[] = [
+  { num: 1, label: 'Imóvel', icon: <Building2 size={16} /> },
+  { num: 2, label: 'Finalidade', icon: <FileText size={16} /> },
+  { num: 3, label: 'Comparandos', icon: <MapPin size={16} /> },
+  { num: 4, label: 'Fatores', icon: <Scale size={16} /> },
+  { num: 5, label: 'Revisão', icon: <BarChart2 size={16} /> },
+  { num: 6, label: 'Gerar', icon: <Download size={16} /> },
+]
+
+const emptyComparable = (): ComparableEntry => ({
+  address: '', neighborhood: '', city: '', state: '',
+  area_sqm: '', bedrooms: '', bathrooms: '', parking_spots: '',
+  asking_price: '', source: '', source_url: '',
+  offer_factor: 0.90, area_factor: 1.0, location_factor: 1.0,
+  age_factor: 1.0, floor_factor: 1.0, parking_factor: 1.0, extra_factor: 1.0,
+})
+
+// ============================================================
+// HELPERS
+// ============================================================
+const fmt = (v: number) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const fmtBRL = (v: number) => 'R$ ' + fmt(v)
+
+function computePricePerSqm(c: ComparableEntry): number {
+  const area = parseFloat(c.area_sqm) || 0
+  const price = parseFloat(c.asking_price) || 0
+  return area > 0 ? price / area : 0
+}
+
+function computeHomogenized(c: ComparableEntry): number {
+  const ppsm = computePricePerSqm(c)
+  return ppsm * c.offer_factor * c.area_factor * c.location_factor
+    * c.age_factor * c.floor_factor * c.parking_factor * c.extra_factor
+}
+
+// ============================================================
+// COMPONENT
+// ============================================================
+export default function NovaPTAMPage() {
+  const mobile = useIsMobile()
+
+  // Wizard state
+  const [step, setStep] = useState<Step>(1)
+  const [saving, setSaving] = useState(false)
+  const [calculating, setCalculating] = useState(false)
+  const [valuationId, setValuationId] = useState<string | null>(null)
+
+  // Step 1: property
+  const [developments, setDevelopments] = useState<Development[]>([])
+  const [devSearch, setDevSearch] = useState('')
+  const [selectedDev, setSelectedDev] = useState<Development | null>(null)
+  const [subjectArea, setSubjectArea] = useState('')
+  const [showDevDropdown, setShowDevDropdown] = useState(false)
+
+  // Step 2: purpose
+  const [purpose, setPurpose] = useState('Venda')
+  const [requesterName, setRequesterName] = useState('')
+
+  // Step 3: comparables
+  const [comparables, setComparables] = useState<ComparableEntry[]>([])
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [newComp, setNewComp] = useState<ComparableEntry>(emptyComparable())
+
+  // Step 5: results
+  const [calcResult, setCalcResult] = useState<CalcResult | null>(null)
+
+  // Fetch developments
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('developments').select('id, name, address, location')
+      .order('name').limit(200)
+      .then(({ data }) => {
+        if (data) setDevelopments(data as Development[])
+      })
+  }, [])
+
+  const filteredDevs = developments.filter(d =>
+    d.name.toLowerCase().includes(devSearch.toLowerCase())
+  )
+
+  // Navigation
+  const canNext = useCallback((): boolean => {
+    switch (step) {
+      case 1: return !!selectedDev && parseFloat(subjectArea) > 0
+      case 2: return !!purpose
+      case 3: return comparables.length >= 3
+      case 4: return comparables.length >= 3
+      case 5: return !!calcResult
+      default: return true
+    }
+  }, [step, selectedDev, subjectArea, purpose, comparables, calcResult])
+
+  const goNext = () => { if (step < 6) setStep((step + 1) as Step) }
+  const goPrev = () => { if (step > 1) setStep((step - 1) as Step) }
+
+  // Add comparable
+  const addComparable = () => {
+    if (!newComp.address || !newComp.area_sqm || !newComp.asking_price) {
+      toast.error('Preencha endereço, área e preço')
+      return
+    }
+    const entry = {
+      ...newComp,
+      price_per_sqm: computePricePerSqm(newComp),
+      homogenized_price_per_sqm: computeHomogenized(newComp),
+    }
+    setComparables(prev => [...prev, entry])
+    setNewComp(emptyComparable())
+    setShowAddForm(false)
+    toast.success('Comparando adicionado')
   }
-  const toggleCaracteristica = (item: string) => {
-    setFormData(prev => ({
-      ...prev,
-      caracteristicas: prev.caracteristicas.includes(item)
-        ? prev.caracteristicas.filter(c => c !== item)
-        : [...prev.caracteristicas, item]
+
+  const removeComparable = (idx: number) => {
+    setComparables(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  // Update factor on a comparable
+  const updateFactor = (idx: number, field: keyof ComparableEntry, val: number) => {
+    setComparables(prev => prev.map((c, i) => {
+      if (i !== idx) return c
+      const updated = { ...c, [field]: val }
+      updated.homogenized_price_per_sqm = computeHomogenized(updated)
+      return updated
     }))
   }
-  const addComparavel = () => {
-    const novo: Comparable = {
-      id: Date.now().toString(), endereco: '', tipo: 'Apartamento', area: 0,
-      quartos: 0, banheiros: 0, vagas: 0, padrao: 'Normal', estado: 'Novo',
-      valorVenda: 0, fonteDado: 'ZAP Imóveis', dataColeta: new Date().toISOString().split('T')[0],
-      distanciaKm: 0
-    }
-    setFormData(prev => ({ ...prev, comparaveis: [...prev.comparaveis, novo] }))
-  }
-  const updateComparavel = (id: string, field: keyof Comparable, value: Comparable[keyof Comparable]) => {
-    setFormData(prev => ({
-      ...prev,
-      comparaveis: prev.comparaveis.map(c => c.id === id ? { ...c, [field]: value } : c)
-    }))
-  }
-  const removeComparavel = (id: string) => {
-    setFormData(prev => ({
-      ...prev,
-      comparaveis: prev.comparaveis.filter(c => c.id !== id)
-    }))
-  }
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
-  const validateStep = (step: Step): boolean => {
-    const e: Record<string, string> = {}
-    if (step === 1) {
-      if (!formData.endereco.trim()) e.endereco = 'Endereço obrigatório'
-      if (!formData.tipo) e.tipo = 'Tipo obrigatório'
-      if (!formData.areaPrivativa) e.areaPrivativa = 'Área obrigatória'
-      if (!formData.bairro.trim()) e.bairro = 'Bairro obrigatório'
-    }
-    if (step === 2) {
-      if (!formData.clienteNome.trim()) e.clienteNome = 'Nome obrigatório'
-      if (!formData.clienteEmail.trim()) e.clienteEmail = 'Email obrigatório'
-    }
-    if (step === 3) {
-      if (!formData.finalidade) e.finalidade = 'Finalidade obrigatória'
-      if (!formData.metodologia) e.metodologia = 'Metodologia obrigatória'
-    }
-    setErrors(e)
-    return Object.keys(e).length === 0
-  }
-  const handleNext = () => { if (validateStep(currentStep)) setCurrentStep(prev => Math.min(5, prev + 1) as Step) }
-  const handlePrev = () => setCurrentStep(prev => Math.max(1, prev - 1) as Step)
-  const handleSubmit = async () => {
-    if (!validateStep(currentStep)) return
-    setIsSubmitting(true)
+
+  // Calculate (client-side for preview, then save via API)
+  const doCalculate = useCallback(() => {
+    const values = comparables.map(c => computeHomogenized(c))
+    if (values.length === 0) return
+    const avg = values.reduce((a, b) => a + b, 0) / values.length
+    const sorted = [...values].sort((a, b) => a - b)
+    const median = sorted.length % 2 === 0
+      ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+      : sorted[Math.floor(sorted.length / 2)]
+    const variance = values.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / (values.length - 1)
+    const std = Math.sqrt(variance)
+    const cv = (std / avg) * 100
+    let grade: 'I' | 'II' | 'III' = 'I'
+    if (comparables.length >= 5 && cv <= 30) grade = 'II'
+    if (comparables.length >= 6 && cv <= 25) grade = 'III'
+
+    const area = parseFloat(subjectArea) || 0
+    setCalcResult({
+      average_price_per_sqm: avg,
+      median_price_per_sqm: median,
+      std_deviation: std,
+      coefficient_of_variation: cv,
+      estimated_value: avg * area,
+      confidence_grade: grade,
+      comparables: values.map(v => ({ homogenized_price_per_sqm: v })),
+    })
+  }, [comparables, subjectArea])
+
+  // Trigger calc when entering step 5
+  useEffect(() => {
+    if (step === 5) doCalculate()
+  }, [step, doCalculate])
+
+  // Save everything to DB
+  const saveToDatabase = async () => {
+    setSaving(true)
     try {
-      const response = await fetch('/api/avaliacoes', {
+      // 1. Create valuation
+      const res1 = await fetch('/api/valuations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          development_id: selectedDev?.id || null,
+          purpose,
+          requester_name: requesterName,
+          method: 'comparative_direct',
+        }),
       })
-      const result = await response.json()
-      if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
-      router.push('/backoffice/avaliacoes')
-    } catch (error) {
-      setIsSubmitting(false)
+      const { data: val } = await res1.json()
+      if (!val?.id) throw new Error('Falha ao criar avaliação')
+      setValuationId(val.id)
+
+      // 2. Add comparables
+      for (const c of comparables) {
+        await fetch(`/api/valuations/${val.id}/comparables`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            address: c.address,
+            neighborhood: c.neighborhood,
+            city: c.city,
+            state: c.state,
+            area_sqm: parseFloat(c.area_sqm) || 0,
+            bedrooms: parseInt(c.bedrooms) || 0,
+            bathrooms: parseInt(c.bathrooms) || 0,
+            parking_spots: parseInt(c.parking_spots) || 0,
+            asking_price: parseFloat(c.asking_price) || 0,
+            source: c.source,
+            source_url: c.source_url,
+            offer_factor: c.offer_factor,
+            area_factor: c.area_factor,
+            location_factor: c.location_factor,
+            age_factor: c.age_factor,
+            floor_factor: c.floor_factor,
+            parking_factor: c.parking_factor,
+            extra_factor: c.extra_factor,
+          }),
+        })
+      }
+
+      // 3. Calculate
+      setCalculating(true)
+      const res3 = await fetch(`/api/valuations/${val.id}/calculate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject_area_sqm: parseFloat(subjectArea) }),
+      })
+      const { data: result } = await res3.json()
+      if (result) setCalcResult(result)
+      setCalculating(false)
+
+      toast.success('PTAM salvo com sucesso!')
+    } catch (err) {
+      console.error('[SAVE]', err)
+      toast.error('Erro ao salvar')
+    } finally {
+      setSaving(false)
     }
   }
-  const STEPS = [
-    { n: 1, label: 'Imóvel', icon: Building2 },
-    { n: 2, label: 'Cliente', icon: User },
-    { n: 3, label: 'Avaliação', icon: Scale },
-    { n: 4, label: 'Comparáveis', icon: BarChart2 },
-    { n: 5, label: 'Documentos', icon: FileText },
-  ]
-  const honorarios = calcularHonorarios(valorEstimadoHonorarios, formData.finalidade, formData.metodologia)
-  return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-20">
-      {/* Header */}
-      <PageIntelHeader
-        moduleLabel="AVALIAÇÕES · NBR 14653"
-        title="Nova Avaliação Técnica"
-        subtitle={`Etapa ${currentStep}/5 — Laudo técnico completo com inteligência de mercado`}
-        live
-        actions={
-          <div className="flex items-center gap-2">
+
+  // Preview HTML
+  const openPreview = () => {
+    const id = valuationId
+    if (id) {
+      window.open(`/api/valuations/${id}/export?format=html`, '_blank')
+    } else {
+      toast.error('Salve a avaliação primeiro')
+    }
+  }
+
+  // ============================================================
+  // STYLES
+  // ============================================================
+  const btnPrimary: React.CSSProperties = {
+    background: `linear-gradient(135deg, ${T.gold}, #D4B86A)`,
+    color: '#050B14',
+    border: 'none',
+    borderRadius: 10,
+    padding: '10px 24px',
+    fontWeight: 600,
+    fontSize: 14,
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+  }
+  const btnSecondary: React.CSSProperties = {
+    background: 'transparent',
+    color: T.text,
+    border: `1px solid ${T.border}`,
+    borderRadius: 10,
+    padding: '10px 24px',
+    fontWeight: 500,
+    fontSize: 14,
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+  }
+  const labelStyle: React.CSSProperties = {
+    fontSize: 12, color: T.textMuted, marginBottom: 4, display: 'block', fontWeight: 500,
+  }
+  const sectionCard: React.CSSProperties = {
+    ...cardStyle,
+    padding: mobile ? 16 : 24,
+    marginBottom: 16,
+  }
+
+  // ============================================================
+  // RENDER STEPS
+  // ============================================================
+
+  const renderStep1 = () => (
+    <div style={sectionCard}>
+      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
+        <Building2 size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
+        Imóvel Avaliando
+      </h3>
+
+      {/* Development search */}
+      <div style={{ position: 'relative', marginBottom: 16 }}>
+        <label style={labelStyle}>Empreendimento</label>
+        <div style={{ position: 'relative' }}>
+          <Search size={16} style={{ position: 'absolute', left: 12, top: 12, color: T.textMuted }} />
+          <input
+            style={{ ...inputStyle, paddingLeft: 36 }}
+            placeholder="Buscar empreendimento..."
+            value={selectedDev ? selectedDev.name : devSearch}
+            onChange={e => { setDevSearch(e.target.value); setSelectedDev(null); setShowDevDropdown(true) }}
+            onFocus={() => setShowDevDropdown(true)}
+          />
+          {selectedDev && (
             <button
-              onClick={() => router.back()}
-              className="w-10 h-10 rounded-[6px] flex items-center justify-center transition-all hover:opacity-80"
-              style={{ background: T.card, border: `1px solid ${T.border}` }}
+              onClick={() => { setSelectedDev(null); setDevSearch('') }}
+              style={{ position: 'absolute', right: 10, top: 10, background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer' }}
             >
-              <ArrowLeft size={18} style={{ color: T.text }} />
+              <Trash2 size={14} />
             </button>
-            <div className="flex items-center gap-2 h-9 px-3 rounded-lg"
-              style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)' }}>
-              <Sparkles size={14} style={{ color: 'var(--warning)' }} />
-              <span className="text-xs font-semibold" style={{ color: 'var(--warning)' }}>Motor IA</span>
-            </div>
-          </div>
-        }
-      />
-      {/* Steps */}
-      <div className="rounded-lg p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-        <div className="flex items-center">
-          {STEPS.map((step, i) => {
-            const Icon = step.icon
-            const done = currentStep > step.n
-            const active = currentStep === step.n
-            return (
-              <div key={step.n} className="flex items-center flex-1">
-                <div className="flex flex-col items-center flex-1">
-                  <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all"
-                    style={{
-                      background: done ? 'var(--success)' : active ? 'var(--accent-400)' : T.elevated,
-                      color: done || active ? 'white' : T.textMuted,
-                    }}
-                  >
-                    {done ? <Check size={16} /> : <Icon size={16} />}
-                  </div>
-                  <span className="text-xs mt-1 hidden sm:block font-medium"
-                    style={{ color: active ? 'var(--accent-400)' : done ? 'var(--success)' : T.textMuted }}>
-                    {step.label}
-                  </span>
-                </div>
-                {i < STEPS.length - 1 && (
-                  <div className={`h-0.5 flex-1 mx-1 rounded-full ${currentStep > step.n ? 'bg-emerald-400' : ''}`}
-                    style={currentStep <= step.n ? { background: T.border } : undefined} />
-                )}
-              </div>
-            )
-          })}
+          )}
         </div>
-      </div>
-      {/* Form */}
-      <div className="rounded-lg p-6 sm:p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-        {/* ===== STEP 1: IMÓVEL ===== */}
-        {currentStep === 1 && (
-          <div className="space-y-6">
-            <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Dados do Imóvel</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="sm:col-span-2">
-                <Label required>Endereço</Label>
-                <InputField icon={MapPin} value={formData.endereco} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('endereco', e.target.value)} placeholder="Rua, número" error={errors.endereco} />
-                <FieldError message={errors.endereco} />
-              </div>
-              <div>
-                <Label>Complemento</Label>
-                <InputField value={formData.complemento} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('complemento', e.target.value)} placeholder="Apto, bloco..." />
-              </div>
-              <div>
-                <Label required>Bairro</Label>
-                <InputField value={formData.bairro} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('bairro', e.target.value)} placeholder="Boa Viagem" error={errors.bairro} />
-                <FieldError message={errors.bairro} />
-              </div>
-              <div>
-                <Label>Cidade</Label>
-                <InputField value={formData.cidade} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('cidade', e.target.value)} placeholder="Recife" />
-              </div>
-              <div>
-                <Label>CEP</Label>
-                <InputField value={formData.cep} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('cep', e.target.value)} placeholder="50000-000" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="col-span-2">
-                <Label required>Tipo de Imóvel</Label>
-                <select value={formData.tipo} onChange={e => handleChange('tipo', e.target.value)}
-                  className={`w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]`}
-                  style={{ background: T.elevated, border: `1px solid ${errors.tipo ? '#fca5a5' : T.border}`, color: T.text }}>
-                  <option value="">Selecione...</option>
-                  {TIPOS_IMOVEL.map(t => <option key={t}>{t}</option>)}
-                </select>
-                <FieldError message={errors.tipo} />
-              </div>
-              <div>
-                <Label required>Área Privativa (m²)</Label>
-                <InputField icon={Ruler} type="number" value={formData.areaPrivativa} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('areaPrivativa', e.target.value)} placeholder="95" error={errors.areaPrivativa} />
-                <FieldError message={errors.areaPrivativa} />
-              </div>
-              <div>
-                <Label>Área Total (m²)</Label>
-                <InputField type="number" value={formData.areaTotal} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('areaTotal', e.target.value)} placeholder="110" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-              <div>
-                <Label>Quartos</Label>
-                <InputField type="number" value={formData.quartos} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('quartos', e.target.value)} placeholder="3" />
-              </div>
-              <div>
-                <Label>Banheiros</Label>
-                <InputField type="number" value={formData.banheiros} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('banheiros', e.target.value)} placeholder="2" />
-              </div>
-              <div>
-                <Label>Vagas</Label>
-                <InputField icon={Car} type="number" value={formData.vagas} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('vagas', e.target.value)} placeholder="2" />
-              </div>
-              <div>
-                <Label>Andar</Label>
-                <InputField type="number" value={formData.andar} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('andar', e.target.value)} placeholder="8" />
-              </div>
-              <div>
-                <Label>Ano Constr.</Label>
-                <InputField type="number" value={formData.anoContrucao} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('anoContrucao', e.target.value)} placeholder="2018" />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label>Padrão Construtivo</Label>
-                <select value={formData.padrao} onChange={e => handleChange('padrao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
-                  {PADROES.map(p => <option key={p}>{p}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label>Estado de Conservação</Label>
-                <select value={formData.estado_conservacao} onChange={e => handleChange('estado_conservacao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
-                  {ESTADOS_CONSERVACAO.map(e => <option key={e}>{e}</option>)}
-                </select>
-              </div>
-            </div>
-            <div>
-              <Label>Características (selecione todas que se aplicam)</Label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {CARACTERISTICAS.map(c => (
-                  <button key={c} type="button" onClick={() => toggleCaracteristica(c)}
-                    className="px-3 py-1.5 rounded-[6px] text-xs font-medium border transition-all"
-                    style={formData.caracteristicas.includes(c)
-                      ? { background: T.accent, color: 'var(--text-inverse)', borderColor: 'transparent' }
-                      : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        {/* ===== STEP 2: CLIENTE ===== */}
-        {currentStep === 2 && (
-          <div className="space-y-6">
-            <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Dados do Solicitante</h2>
-            <div className="flex gap-3">
-              {(['PF', 'PJ'] as const).map(t => (
-                <button key={t} type="button" onClick={() => handleChange('clienteTipo', t)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium border transition-all"
-                  style={formData.clienteTipo === t
-                    ? { background: T.accent, color: 'var(--text-inverse)', borderColor: 'transparent' }
-                    : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
-                  {t === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
-                </button>
-              ))}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="sm:col-span-2">
-                <Label required>{formData.clienteTipo === 'PF' ? 'Nome Completo' : 'Razão Social'}</Label>
-                <InputField icon={User} value={formData.clienteNome} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('clienteNome', e.target.value)} error={errors.clienteNome} />
-                <FieldError message={errors.clienteNome} />
-              </div>
-              <div>
-                <Label required>Email</Label>
-                <InputField icon={Mail} type="email" value={formData.clienteEmail} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('clienteEmail', e.target.value)} error={errors.clienteEmail} />
-                <FieldError message={errors.clienteEmail} />
-              </div>
-              <div>
-                <Label>Telefone</Label>
-                <InputField icon={Phone} value={formData.clienteTelefone} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('clienteTelefone', e.target.value)} placeholder="(81) 99999-9999" />
-              </div>
-              <div>
-                <Label>{formData.clienteTipo === 'PF' ? 'CPF' : 'CNPJ'}</Label>
-                <InputField icon={Hash} value={formData.clienteCPFCNPJ} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('clienteCPFCNPJ', e.target.value)} placeholder={formData.clienteTipo === 'PF' ? '000.000.000-00' : '00.000.000/0001-00'} />
-              </div>
-              <div>
-                <Label>Instituição / Banco (se financiamento)</Label>
-                <InputField icon={Landmark} value={formData.solicitanteInstituicao} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('solicitanteInstituicao', e.target.value)} placeholder="CEF, Bradesco, Particular..." />
-              </div>
-            </div>
-            {/* Info Box */}
-            <div className="flex gap-3 p-4 rounded-lg" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
-              <Info size={18} style={{ color: 'var(--accent-400)', flexShrink: 0, marginTop: 1 }} />
-              <div className="text-sm">
-                <p className="font-medium mb-1" style={{ color: T.text }}>Responsabilidade do Avaliador</p>
-                <p className="text-xs" style={{ color: T.textMuted }}>O laudo de avaliação é de responsabilidade exclusiva do profissional habilitado (CNAI/CRECI). Os dados do solicitante são arquivados para rastreabilidade conforme NBR 14653-1.</p>
-              </div>
-            </div>
-          </div>
-        )}
-        {/* ===== STEP 3: AVALIAÇÃO + HONORÁRIOS ===== */}
-        {currentStep === 3 && (
-          <div className="space-y-6">
-            <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Parâmetros da Avaliação</h2>
-            {/* Finalidade */}
-            <div>
-              <Label required>Finalidade da Avaliação</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
-                {FINALIDADES.map(f => (
-                  <button key={f.value} type="button" onClick={() => handleChange('finalidade', f.value)}
-                    className="flex items-start gap-3 p-3 rounded-lg text-left transition-all"
-                    style={formData.finalidade === f.value
-                      ? { border: '1px solid var(--accent-400)', background: 'var(--bg-active)' }
-                      : { border: `1px solid ${T.border}`, background: T.elevated }}>
-                    <div
-                      className="w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0"
-                      style={{
-                        borderColor: formData.finalidade === f.value ? 'var(--accent-400)' : T.border,
-                        background: formData.finalidade === f.value ? 'var(--accent-400)' : 'transparent',
-                      }}
-                    />
-                    <div>
-                      <p className="text-sm font-medium" style={{ color: T.text }}>{f.label}</p>
-                      {f.subtitulo && <p className="text-xs" style={{ color: T.textMuted }}>{f.subtitulo}</p>}
-                    </div>
-                  </button>
-                ))}
-              </div>
-              <FieldError message={errors.finalidade} />
-            </div>
-            {/* Metodologia */}
-            <div>
-              <Label required>Metodologia (NBR 14653)</Label>
-              <div className="space-y-2 mt-1">
-                {METODOLOGIAS.map(m => {
-                  const Icon = m.icone
-                  return (
-                    <button key={m.value} type="button" onClick={() => handleChange('metodologia', m.value)}
-                      className="w-full flex items-center gap-4 p-4 rounded-lg text-left transition-all"
-                      style={formData.metodologia === m.value
-                        ? { border: '1px solid var(--accent-400)', background: 'var(--bg-active)' }
-                        : { border: `1px solid ${T.border}`, background: T.elevated }}>
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={formData.metodologia === m.value
-                          ? { background: 'var(--btn-primary-bg)', color: 'white' }
-                          : { background: T.surface, color: T.textMuted }}>
-                        <Icon size={20} />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-semibold" style={{ color: T.text }}>{m.label}</p>
-                          <span className="text-xs font-mono" style={{ color: T.textMuted }}>{m.norma}</span>
-                        </div>
-                        <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{m.descricao}</p>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-            {/* Graus */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <Label>Grau de Fundamentação</Label>
-                <select value={formData.grauFundamentacao} onChange={e => handleChange('grauFundamentacao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
-                  {GRAUS_FUNDAMENTACAO.map(g => <option key={g}>Grau {g}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label>Grau de Precisão</Label>
-                <select value={formData.grauPrecisao} onChange={e => handleChange('grauPrecisao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
-                  {GRAUS_PRECISAO.map(g => <option key={g}>Grau {g}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label>Prazo de Entrega</Label>
-                <InputField icon={Calendar} type="date" value={formData.prazoEntrega} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('prazoEntrega', e.target.value)} />
-              </div>
-            </div>
-            {/* Calculadora de Honorários */}
-            <div className="rounded-lg overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)', background: T.card }}>
-              <button type="button" onClick={() => setShowHonorarios(!showHonorarios)}
-                className="w-full flex items-center justify-between p-4 transition-colors"
-                style={{ background: 'rgba(245,158,11,0.08)' }}>
-                <div className="flex items-center gap-3">
-                  <Calculator size={18} style={{ color: 'var(--warning)' }} />
-                  <span className="text-sm font-semibold" style={{ color: 'var(--warning)' }}>Calculadora de Honorários (IBAPE)</span>
-                </div>
-                {showHonorarios ? <ChevronDown size={18} style={{ color: 'var(--warning)' }} /> : <ChevronRight size={18} style={{ color: 'var(--warning)' }} />}
-              </button>
-              {showHonorarios && (
-                <div className="p-4 space-y-4" style={{ background: T.surface }}>
-                  <div>
-                    <Label>Valor Estimado do Imóvel (para cálculo)</Label>
-                    <InputField icon={DollarSign} type="number" value={valorEstimadoHonorarios}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValorEstimadoHonorarios(Number(e.target.value))} placeholder="500000" />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {[
-                      { label: 'Mínimo', value: honorarios.minimo, color: T.text },
-                      { label: 'Recomendado', value: honorarios.recomendado, color: T.accent, bold: true },
-                      { label: 'Máximo', value: honorarios.maximo, color: T.text },
-                    ].map(item => (
-                      <div key={item.label} className="text-center p-3 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>{item.label}</p>
-                        <p className={`text-base ${item.bold ? 'font-bold' : ''}`} style={{ color: item.color }}>{formatCurrency(item.value)}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-xs italic" style={{ color: T.textMuted }}>{honorarios.justificativa}</p>
-                  <button type="button" onClick={() => handleChange('valorHonorarios', honorarios.recomendado.toString())}
-                    className="w-full py-2 text-white rounded-[6px] text-sm font-semibold transition-all hover:opacity-80"
-                    style={{ background: 'var(--btn-primary-bg)' }}>
-                    Usar Valor Recomendado ({formatCurrency(honorarios.recomendado)})
-                  </button>
-                </div>
-              )}
-            </div>
-            {/* Honorários + Pagamento */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label>Valor dos Honorários (R$)</Label>
-                <InputField icon={DollarSign} type="number" value={formData.valorHonorarios}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => handleChange('valorHonorarios', e.target.value)} placeholder="1500" />
-              </div>
-              <div>
-                <Label>Forma de Pagamento</Label>
-                <select value={formData.formaPagamento} onChange={e => handleChange('formaPagamento', e.target.value)}
-                  className="w-full h-10 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
-                  <option>À vista</option>
-                  <option>50% entrada / 50% entrega</option>
-                  <option>Parcelado 2x</option>
-                  <option>No banco (financiamento)</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <Label>Observações</Label>
-              <textarea value={formData.observacoes} onChange={e => handleChange('observacoes', e.target.value)}
-                rows={3} placeholder="Informações adicionais sobre a avaliação..."
-                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] resize-none"
-                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
-            </div>
-          </div>
-        )}
-        {/* ===== STEP 4: COMPARÁVEIS ===== */}
-        {currentStep === 4 && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between pb-3" style={{ borderBottom: `1px solid ${T.border}` }}>
-              <div>
-                <h2 className="text-lg font-bold" style={{ color: T.text }}>Dados de Mercado — Comparáveis</h2>
-                <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>NBR 14653-2 exige mín. 3 amostras (Grau II) ou 5 amostras (Grau III)</p>
-              </div>
-              <button type="button" onClick={addComparavel}
-                className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-sm font-semibold transition-all hover:opacity-80"
-                style={{ background: 'var(--btn-primary-bg)', color: 'white' }}>
-                + Adicionar
-              </button>
-            </div>
-            {/* Status de amostras */}
-            <div
-              className="flex items-center gap-3 p-3 rounded-lg"
-              style={{
-                background: formData.comparaveis.length >= 5 ? 'rgba(107,184,123,0.10)' : formData.comparaveis.length >= 3 ? 'rgba(245,158,11,0.10)' : 'rgba(229,115,115,0.10)',
-                border: `1px solid ${formData.comparaveis.length >= 5 ? 'rgba(107,184,123,0.25)' : formData.comparaveis.length >= 3 ? 'rgba(245,158,11,0.25)' : 'rgba(229,115,115,0.25)'}`,
-              }}
-            >
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+        {showDevDropdown && !selectedDev && filteredDevs.length > 0 && (
+          <div style={{
+            position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
+            background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8,
+            maxHeight: 200, overflowY: 'auto',
+          }}>
+            {filteredDevs.slice(0, 20).map(d => (
+              <button
+                key={d.id}
+                onClick={() => { setSelectedDev(d); setShowDevDropdown(false); setDevSearch('') }}
                 style={{
-                  background: formData.comparaveis.length >= 5 ? 'var(--success)' : formData.comparaveis.length >= 3 ? 'var(--warning)' : 'var(--error)',
-                  color: 'white',
+                  display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px',
+                  background: 'transparent', border: 'none', color: T.text, cursor: 'pointer',
+                  borderBottom: `1px solid ${T.borderLight}`, fontSize: 13,
                 }}
               >
-                {formData.comparaveis.length}
-              </div>
-              <div>
-                <p className="text-sm font-medium" style={{ color: T.text }}>
-                  {formData.comparaveis.length >= 5 ? 'Grau III — Suficiente para alta precisão' :
-                    formData.comparaveis.length >= 3 ? 'Grau II — Mínimo atingido' :
-                      `Insuficiente — adicione ${3 - formData.comparaveis.length} amostra(s)`}
-                </p>
-                <p className="text-xs" style={{ color: T.textMuted }}>Amostras coletadas</p>
-              </div>
-            </div>
-            {formData.comparaveis.map((comp, idx) => (
-              <div key={comp.id} className="rounded-lg p-4 space-y-3" style={{ border: `1px solid ${T.border}`, background: T.elevated }}>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold" style={{ color: T.text }}>Amostra #{idx + 1}</span>
-                  {formData.comparaveis.length > 1 && (
-                    <button type="button" onClick={() => removeComparavel(comp.id)} className="text-red-400 hover:text-red-600 text-xs">
-                      Remover
-                    </button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="sm:col-span-2">
-                    <Label>Endereço / Referência</Label>
-                    <input value={comp.endereco} onChange={e => updateComparavel(comp.id, 'endereco', e.target.value)}
-                      placeholder="Ex: Av. Conselheiro Aguiar, 3200 - Boa Viagem"
-                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                      style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
-                  </div>
-                  <div>
-                    <Label>Área (m²)</Label>
-                    <input type="number" value={comp.area || ''} onChange={e => updateComparavel(comp.id, 'area', Number(e.target.value))}
-                      placeholder="90"
-                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                      style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
-                  </div>
-                  <div>
-                    <Label>Valor de Oferta (R$)</Label>
-                    <input type="number" value={comp.valorVenda || ''} onChange={e => updateComparavel(comp.id, 'valorVenda', Number(e.target.value))}
-                      placeholder="550000"
-                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                      style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
-                  </div>
-                  <div>
-                    <Label>Fonte do Dado</Label>
-                    <select value={comp.fonteDado} onChange={e => updateComparavel(comp.id, 'fonteDado', e.target.value)}
-                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                      style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}>
-                      <option>ZAP Imóveis</option>
-                      <option>VivaReal</option>
-                      <option>OLX</option>
-                      <option>Imobiliária</option>
-                      <option>Particular</option>
-                      <option>RI Digital</option>
-                      <option>ONR</option>
-                    </select>
-                  </div>
-                  <div>
-                    <Label>Data de Coleta</Label>
-                    <input type="date" value={comp.dataColeta} onChange={e => updateComparavel(comp.id, 'dataColeta', e.target.value)}
-                      className="w-full h-9 px-3 rounded-[6px] text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                      style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }} />
-                  </div>
-                </div>
-                {/* Valor m² calculado */}
-                {comp.area > 0 && comp.valorVenda > 0 && (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: T.surface }}>
-                    <BarChart2 size={14} style={{ color: T.accent }} />
-                    <span className="text-xs" style={{ color: T.textMuted }}>
-                      Valor unitário: <strong style={{ color: T.text }}>{formatCurrency(comp.valorVenda / comp.area)}/m²</strong>
-                    </span>
-                  </div>
-                )}
-              </div>
+                <strong>{d.name}</strong>
+                <br />
+                <span style={{ fontSize: 11, color: T.textMuted }}>{d.address || d.location || ''}</span>
+              </button>
             ))}
-            {/* Resumo estatístico */}
-            {formData.comparaveis.length >= 3 && formData.comparaveis.every(c => c.area > 0 && c.valorVenda > 0) && (
-              <div className="rounded-lg p-4" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
-                <p className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>Análise Estatística da Amostra</p>
-                {(() => {
-                  const valores = formData.comparaveis.map(c => c.valorVenda / c.area).filter(v => v > 0)
-                  const media = valores.reduce((a, b) => a + b, 0) / valores.length
-                  const min = Math.min(...valores)
-                  const max = Math.max(...valores)
-                  const cv = (Math.sqrt(valores.map(v => Math.pow(v - media, 2)).reduce((a, b) => a + b, 0) / valores.length) / media) * 100
-                  return (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                      {[
-                        { l: 'Média', v: formatCurrency(media) + '/m²' },
-                        { l: 'Mínimo', v: formatCurrency(min) + '/m²' },
-                        { l: 'Máximo', v: formatCurrency(max) + '/m²' },
-                        { l: 'CV%', v: cv.toFixed(1) + '%', ok: cv < 30 }
-                      ].map(item => (
-                        <div key={item.l}>
-                          <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{item.l}</p>
-                          <p className={`text-sm font-bold mt-0.5 ${item.ok === false ? 'text-red-400' : item.ok === true ? 'text-emerald-400' : 'text-[var(--accent-400)]'}`}>{item.v}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )
-                })()}
-              </div>
-            )}
-          </div>
-        )}
-        {/* ===== STEP 5: DOCUMENTOS ===== */}
-        {currentStep === 5 && (
-          <div className="space-y-6">
-            <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Documentação</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-lg" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
-              <p className="text-sm font-semibold col-span-2" style={{ color: T.text }}>Documentos Necessários (NBR 14653)</p>
-              {['Matrícula do imóvel (RI Digital / ONR)', 'IPTU vigente', 'Plantas / Croquis', 'Memorial descritivo', 'Fotos do imóvel (mín. 8 fotos)', 'Habite-se (edificações)'].map(d => (
-                <div key={d} className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: 'rgba(107,184,123,0.15)', border: '1px solid rgba(107,184,123,0.30)' }}>
-                    <Check size={10} style={{ color: 'var(--success)' }} />
-                  </div>
-                  <span className="text-xs" style={{ color: T.textMuted }}>{d}</span>
-                </div>
-              ))}
-            </div>
-            <label className="block cursor-pointer">
-              <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onChange={e => {
-                const files = Array.from(e.target.files || [])
-                setFormData(prev => ({ ...prev, documentos: [...prev.documentos, ...files] }))
-              }} className="hidden" />
-              <div className="border-2 border-dashed rounded-[6px] p-8 text-center transition-all hover:opacity-80" style={{ borderColor: T.border }}>
-                <Upload size={32} className="mx-auto mb-3" style={{ color: T.textMuted }} />
-                <p className="text-sm font-medium" style={{ color: T.text }}>Arraste ou clique para fazer upload</p>
-                <p className="text-xs mt-1" style={{ color: T.textMuted }}>PDF, JPG, PNG, DOC — máx. 10MB cada</p>
-              </div>
-            </label>
-            {formData.documentos.length > 0 && (
-              <div className="space-y-2">
-                {formData.documentos.map((f, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg" style={{ background: T.elevated }}>
-                    <FileText size={16} style={{ color: T.accent }} />
-                    <span className="text-sm flex-1 truncate" style={{ color: T.text }}>{f.name}</span>
-                    <span className="text-xs" style={{ color: T.textMuted }}>{(f.size / 1024).toFixed(0)} KB</span>
-                    <button type="button" onClick={() => setFormData(prev => ({ ...prev, documentos: prev.documentos.filter((_, j) => j !== i) }))}
-                      className="text-red-400 hover:text-red-600">
-                      <X size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {/* Links úteis */}
-            <div className="rounded-lg p-4 space-y-2" style={{ border: `1px solid ${T.border}` }}>
-              <p className="text-sm font-semibold mb-3" style={{ color: T.text }}>Links de Consulta</p>
-              <a href="https://ridigital.org.br/" target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <Landmark size={16} style={{ color: 'var(--accent-400)' }} />
-                <div>
-                  <p className="text-sm group-hover:underline" style={{ color: 'var(--accent-400)' }}>RI Digital — Matrícula do Imóvel</p>
-                  <p className="text-xs" style={{ color: T.textMuted }}>ridigital.org.br</p>
-                </div>
-              </a>
-              <a href="https://mapa.onr.org.br/" target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <MapPin size={16} style={{ color: 'var(--success)' }} />
-                <div>
-                  <p className="text-sm group-hover:underline" style={{ color: 'var(--success)' }}>ONR — Mapa Registral</p>
-                  <p className="text-xs" style={{ color: T.textMuted }}>mapa.onr.org.br</p>
-                </div>
-              </a>
-              <a href="https://www.fipe.org.br/pt-br/indices/fipezap/" target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <BarChart2 size={16} style={{ color: 'var(--platinum-400)' }} />
-                <div>
-                  <p className="text-sm group-hover:underline" style={{ color: 'var(--platinum-400)' }}>FIPE ZAP — Índice de Preços</p>
-                  <p className="text-xs" style={{ color: T.textMuted }}>fipe.org.br</p>
-                </div>
-              </a>
-            </div>
-            {/* Motor de Cálculo */}
-            {formData.comparaveis.length >= 1 && formData.areaPrivativa && (
-              <div className="rounded-lg p-5 space-y-3" style={{ background: "rgba(184,148,58,0.06)", border: "1px solid rgba(184,148,58,0.25)" }}>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold flex items-center gap-2" style={{ color: "var(--accent-400)" }}>
-                    <Calculator size={14} /> Motor NBR 14653
-                  </p>
-                  <button
-                    type="button"
-                    disabled={calcLoading}
-                    onClick={async () => {
-                      setCalcLoading(true)
-                      try {
-                        const res = await fetch('/api/avaliacoes/calcular', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            metodo: formData.metodologia === 'comparativo' ? 'comparativo' : 'evolutivo',
-                            property: {
-                              area: Number(formData.areaPrivativa),
-                              quartos: Number(formData.quartos) || 0,
-                              vagas: Number(formData.vagas) || 0,
-                              padrao: formData.padrao,
-                              estado_conservacao: formData.estado_conservacao,
-                              andar: Number(formData.andar) || undefined,
-                              ano_construcao: Number(formData.anoContrucao) || undefined,
-                              tipo: formData.tipo,
-                              bairro: formData.bairro,
-                              cidade: formData.cidade,
-                            },
-                            comparaveis: formData.comparaveis.filter(c => c.valorVenda > 0 && c.area > 0),
-                            valor_terreno: 200000,
-                          }),
-                        })
-                        const data = await res.json()
-                        if (data.success) setCalcResult(data.result)
-                      } catch { /* silent */ }
-                      finally { setCalcLoading(false) }
-                    }}
-                    className="flex items-center gap-2 h-8 px-4 rounded-[6px] text-xs font-semibold transition-all hover:opacity-80"
-                    style={{ background: 'var(--accent-400)', color: 'var(--text-inverse)' }}
-                  >
-                    {calcLoading ? <><Loader2 size={12} className="animate-spin" /> Calculando...</> : <><Sparkles size={12} /> Calcular Valor</>}
-                  </button>
-                </div>
-                {calcResult && (
-                  <div className="grid grid-cols-2 gap-3 mt-3">
-                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
-                      <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>Valor Estimado</p>
-                      <p className="text-lg font-bold mt-1" style={{ color: 'var(--accent-400)', fontFamily: 'var(--font-mono)' }}>
-                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number((calcResult as Record<string, unknown>).valor_total ?? 0))}
-                      </p>
-                    </div>
-                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
-                      <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>R$/m²</p>
-                      <p className="text-lg font-bold mt-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number((calcResult as Record<string, unknown>).valor_unitario ?? 0))}
-                      </p>
-                    </div>
-                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
-                      <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>Intervalo</p>
-                      <p className="text-xs font-medium mt-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number((calcResult as Record<string, unknown>).valor_minimo ?? 0))}
-                        {' — '}
-                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number((calcResult as Record<string, unknown>).valor_maximo ?? 0))}
-                      </p>
-                    </div>
-                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
-                      <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>Grau Fund. / Prec.</p>
-                      <p className="text-sm font-bold mt-1" style={{ color: 'var(--success)' }}>
-                        {String((calcResult as Record<string, unknown>).grau_fundamentacao ?? '—')} / {String((calcResult as Record<string, unknown>).grau_precisao ?? '—')}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-            {/* Resumo Final */}
-            <div className="rounded-lg p-5 space-y-3" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
-              <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Resumo da Avaliação</p>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div><span style={{ color: "var(--text-secondary)" }}>Imóvel:</span><br /><span style={{ color: "var(--text-primary)" }}>{formData.tipo || '—'} • {formData.bairro || '—'}</span></div>
-                <div><span style={{ color: "var(--text-secondary)" }}>Área:</span><br /><span style={{ color: "var(--text-primary)" }}>{formData.areaPrivativa ? formData.areaPrivativa + ' m²' : '—'}</span></div>
-                <div><span style={{ color: "var(--text-secondary)" }}>Cliente:</span><br /><span style={{ color: "var(--text-primary)" }}>{formData.clienteNome || '—'}</span></div>
-                <div><span style={{ color: "var(--text-secondary)" }}>Metodologia:</span><br /><span style={{ color: "var(--text-primary)" }}>{METODOLOGIAS.find(m => m.value === formData.metodologia)?.label?.split(' ').slice(0, 3).join(' ') || '—'}</span></div>
-                <div><span style={{ color: "var(--text-secondary)" }}>Comparáveis:</span><br /><span className={formData.comparaveis.length >= 3 ? 'text-emerald-400' : 'text-red-400'}>{formData.comparaveis.length} amostras</span></div>
-                <div><span style={{ color: "var(--text-secondary)" }}>Honorários:</span><br /><span className="text-[var(--accent-400)] font-semibold">{formData.valorHonorarios ? formatCurrency(Number(formData.valorHonorarios)) : '—'}</span></div>
-              </div>
-            </div>
           </div>
         )}
       </div>
-      {/* Navigation */}
-      <div className="flex items-center justify-between">
-        <button type="button" onClick={handlePrev} disabled={currentStep === 1}
-          className="flex items-center gap-2 h-10 px-5 rounded-[6px] text-sm font-medium transition-colors disabled:opacity-40"
-          style={{ border: `1px solid ${T.border}`, color: T.text }}>
-          <ArrowLeft size={18} /> Anterior
+
+      {selectedDev && (
+        <div style={{ padding: 12, background: T.accentBg, borderRadius: 8, marginBottom: 16, border: `1px solid ${T.border}` }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{selectedDev.name}</div>
+          <div style={{ fontSize: 12, color: T.textMuted }}>{selectedDev.address || selectedDev.location || ''}</div>
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+        <div>
+          <label style={labelStyle}>Área do Imóvel (m²) *</label>
+          <input
+            style={inputStyle}
+            type="number"
+            placeholder="Ex: 85"
+            value={subjectArea}
+            onChange={e => setSubjectArea(e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  )
+
+  const renderStep2 = () => (
+    <div style={sectionCard}>
+      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
+        <FileText size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
+        Finalidade da Avaliação
+      </h3>
+
+      <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 16 }}>
+        <div>
+          <label style={labelStyle}>Finalidade *</label>
+          <div style={{ position: 'relative' }}>
+            <select
+              value={purpose}
+              onChange={e => setPurpose(e.target.value)}
+              style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }}
+            >
+              {PURPOSES.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+            <ChevronDown size={16} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
+          </div>
+        </div>
+        <div>
+          <label style={labelStyle}>Nome do Solicitante</label>
+          <input
+            style={inputStyle}
+            placeholder="Nome do solicitante..."
+            value={requesterName}
+            onChange={e => setRequesterName(e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  )
+
+  const renderStep3 = () => (
+    <div style={sectionCard}>
+      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
+        <MapPin size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
+        Comparandos ({comparables.length})
+      </h3>
+
+      {comparables.length < 3 && (
+        <div style={{ padding: 12, background: 'rgba(200,164,74,0.08)', borderRadius: 8, marginBottom: 16, fontSize: 13, color: T.textGold }}>
+          Mínimo de 3 comparandos necessários. Atualmente: {comparables.length}
+        </div>
+      )}
+
+      {/* List existing */}
+      {comparables.map((c, i) => (
+        <div key={i} style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: 12, background: T.surfaceAlt, borderRadius: 8, marginBottom: 8,
+          border: `1px solid ${T.borderLight}`,
+        }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>
+              #{i + 1} - {c.address}{c.neighborhood ? `, ${c.neighborhood}` : ''}
+            </div>
+            <div style={{ fontSize: 12, color: T.textMuted, marginTop: 2 }}>
+              {c.area_sqm} m² | {fmtBRL(parseFloat(c.asking_price) || 0)} | {fmt(computePricePerSqm(c))} R$/m²
+              {c.source ? ` | ${c.source}` : ''}
+            </div>
+          </div>
+          <button onClick={() => removeComparable(i)} style={{ background: 'none', border: 'none', color: T.error, cursor: 'pointer', padding: 8 }}>
+            <Trash2 size={16} />
+          </button>
+        </div>
+      ))}
+
+      {/* Add form */}
+      {showAddForm ? (
+        <div style={{ padding: 16, background: T.surfaceAlt, borderRadius: 10, border: `1px solid ${T.border}`, marginTop: 12 }}>
+          <h4 style={{ color: T.textGold, fontSize: 14, marginBottom: 12 }}>Novo Comparando</h4>
+          <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 10 }}>
+            <div>
+              <label style={labelStyle}>Endereço *</label>
+              <input style={inputStyle} placeholder="Rua..." value={newComp.address} onChange={e => setNewComp({ ...newComp, address: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Bairro</label>
+              <input style={inputStyle} placeholder="Bairro..." value={newComp.neighborhood} onChange={e => setNewComp({ ...newComp, neighborhood: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Cidade</label>
+              <input style={inputStyle} placeholder="Cidade..." value={newComp.city} onChange={e => setNewComp({ ...newComp, city: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Estado</label>
+              <input style={inputStyle} placeholder="UF" maxLength={2} value={newComp.state} onChange={e => setNewComp({ ...newComp, state: e.target.value.toUpperCase() })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Área (m²) *</label>
+              <input style={inputStyle} type="number" placeholder="85" value={newComp.area_sqm} onChange={e => setNewComp({ ...newComp, area_sqm: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Preço Pedido (R$) *</label>
+              <input style={inputStyle} type="number" placeholder="450000" value={newComp.asking_price} onChange={e => setNewComp({ ...newComp, asking_price: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Quartos</label>
+              <input style={inputStyle} type="number" placeholder="2" value={newComp.bedrooms} onChange={e => setNewComp({ ...newComp, bedrooms: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Banheiros</label>
+              <input style={inputStyle} type="number" placeholder="1" value={newComp.bathrooms} onChange={e => setNewComp({ ...newComp, bathrooms: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Vagas</label>
+              <input style={inputStyle} type="number" placeholder="1" value={newComp.parking_spots} onChange={e => setNewComp({ ...newComp, parking_spots: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Fonte</label>
+              <div style={{ position: 'relative' }}>
+                <select style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }} value={newComp.source} onChange={e => setNewComp({ ...newComp, source: e.target.value })}>
+                  <option value="">Selecionar...</option>
+                  {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <ChevronDown size={16} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
+              </div>
+            </div>
+            <div style={{ gridColumn: mobile ? undefined : 'span 2' }}>
+              <label style={labelStyle}>URL da Fonte</label>
+              <input style={inputStyle} placeholder="https://..." value={newComp.source_url} onChange={e => setNewComp({ ...newComp, source_url: e.target.value })} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+            <button style={btnPrimary} onClick={addComparable}><Plus size={16} /> Adicionar</button>
+            <button style={btnSecondary} onClick={() => setShowAddForm(false)}>Cancelar</button>
+          </div>
+        </div>
+      ) : (
+        <button
+          style={{ ...btnSecondary, marginTop: 12, width: '100%', justifyContent: 'center' }}
+          onClick={() => setShowAddForm(true)}
+        >
+          <Plus size={16} /> Adicionar Comparando
         </button>
-        {currentStep < 5 ? (
-          <button type="button" onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold transition-all hover:opacity-80"
-            style={{ background: 'var(--btn-primary-bg)' }}>
-            Próximo <ArrowRight size={18} />
+      )}
+    </div>
+  )
+
+  const renderStep4 = () => (
+    <div style={sectionCard}>
+      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
+        <Scale size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
+        Fatores de Homogeneização
+      </h3>
+      <p style={{ fontSize: 12, color: T.textMuted, marginBottom: 16 }}>
+        Ajuste os fatores conforme NBR 14653-2. Valores entre 0.50 e 1.50.
+      </p>
+
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <thead>
+            <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+              <th style={{ padding: '8px 6px', textAlign: 'left', color: T.textGold, fontSize: 11 }}>#</th>
+              <th style={{ padding: '8px 6px', textAlign: 'left', color: T.textGold, fontSize: 11 }}>Endereço</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>R$/m²</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Oferta</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Área</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Local.</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Idade</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Pav.</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Vagas</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Extra</th>
+              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Hom. R$/m²</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparables.map((c, i) => {
+              const factorInput = (field: keyof ComparableEntry) => (
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.5"
+                  max="1.5"
+                  value={c[field] as number}
+                  onChange={e => updateFactor(i, field, parseFloat(e.target.value) || 1)}
+                  style={{
+                    ...inputStyle,
+                    width: 60,
+                    padding: '4px 6px',
+                    fontSize: 12,
+                    textAlign: 'center',
+                  }}
+                />
+              )
+              return (
+                <tr key={i} style={{ borderBottom: `1px solid ${T.borderLight}` }}>
+                  <td style={{ padding: '8px 6px', color: T.textMuted }}>{i + 1}</td>
+                  <td style={{ padding: '8px 6px', color: T.text, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {c.address}
+                  </td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center', color: T.text }}>{fmt(computePricePerSqm(c))}</td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('offer_factor')}</td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('area_factor')}</td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('location_factor')}</td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('age_factor')}</td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('floor_factor')}</td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('parking_factor')}</td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('extra_factor')}</td>
+                  <td style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontWeight: 600 }}>
+                    {fmt(computeHomogenized(c))}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+
+  const renderStep5 = () => {
+    if (!calcResult) return <div style={sectionCard}><p style={{ color: T.textMuted }}>Calculando...</p></div>
+
+    const cv = calcResult.coefficient_of_variation
+    const cvColor = cv <= 25 ? T.success : cv <= 30 ? T.warning : T.error
+    const gradeColor = calcResult.confidence_grade === 'III' ? T.success
+      : calcResult.confidence_grade === 'II' ? T.warning : T.error
+
+    return (
+      <div>
+        <div style={sectionCard}>
+          <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
+            <BarChart2 size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
+            Resultado da Análise
+          </h3>
+
+          {/* Stats grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr 1fr' : 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
+            {[
+              { label: 'Média R$/m²', value: fmt(calcResult.average_price_per_sqm), color: T.textGold },
+              { label: 'Mediana R$/m²', value: fmt(calcResult.median_price_per_sqm), color: T.text },
+              { label: 'Desvio Padrão', value: fmt(calcResult.std_deviation), color: T.text },
+              { label: 'CV%', value: fmt(calcResult.coefficient_of_variation) + '%', color: cvColor },
+              { label: 'Elementos', value: String(comparables.length), color: T.text },
+              { label: 'Grau', value: calcResult.confidence_grade, color: gradeColor },
+            ].map((s, i) => (
+              <div key={i} style={{ padding: 14, background: T.surfaceAlt, borderRadius: 10, textAlign: 'center', border: `1px solid ${T.borderLight}` }}>
+                <div style={{ fontSize: 22, fontWeight: 700, color: s.color, fontFamily: T.font.display }}>{s.value}</div>
+                <div style={{ fontSize: 11, color: T.textMuted, marginTop: 2 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Estimated value */}
+          <div style={{
+            padding: 24, background: 'linear-gradient(135deg, #050B14, #0d2240)',
+            borderRadius: 12, textAlign: 'center', border: `2px solid ${T.gold}`,
+          }}>
+            <div style={{ fontSize: 12, color: T.textMuted }}>Valor de Mercado Estimado</div>
+            <div style={{ fontSize: 32, fontWeight: 700, color: T.gold, fontFamily: T.font.display, margin: '8px 0' }}>
+              {fmtBRL(calcResult.estimated_value)}
+            </div>
+            <div style={{ fontSize: 12, color: T.textMuted }}>
+              {fmtBRL(calcResult.average_price_per_sqm)}/m² x {subjectArea} m²
+            </div>
+            <span style={{
+              display: 'inline-block', marginTop: 12,
+              background: T.gold, color: '#050B14',
+              padding: '4px 16px', borderRadius: 20,
+              fontWeight: 700, fontSize: 13,
+            }}>
+              Grau {calcResult.confidence_grade} - NBR 14653
+            </span>
+          </div>
+        </div>
+
+        {/* Confidence interval */}
+        <div style={sectionCard}>
+          <h4 style={{ color: T.text, fontSize: 14, marginBottom: 12 }}>Intervalo de Confiança (80%)</h4>
+          {(() => {
+            const lower = calcResult.estimated_value * 0.85
+            const upper = calcResult.estimated_value * 1.15
+            const range = upper - lower
+            const midPct = ((calcResult.estimated_value - lower) / range) * 100
+            return (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: T.textMuted, marginBottom: 4 }}>
+                  <span>{fmtBRL(lower)}</span>
+                  <span style={{ color: T.textGold, fontWeight: 600 }}>{fmtBRL(calcResult.estimated_value)}</span>
+                  <span>{fmtBRL(upper)}</span>
+                </div>
+                <div style={{ height: 8, background: T.surfaceAlt, borderRadius: 4, position: 'relative' }}>
+                  <div style={{
+                    position: 'absolute', left: 0, top: 0, bottom: 0,
+                    width: '100%', borderRadius: 4,
+                    background: `linear-gradient(90deg, ${T.error}, ${T.warning}, ${T.success}, ${T.warning}, ${T.error})`,
+                    opacity: 0.3,
+                  }} />
+                  <div style={{
+                    position: 'absolute', top: -3, width: 14, height: 14,
+                    borderRadius: '50%', background: T.gold, border: '2px solid #fff',
+                    left: `calc(${midPct}% - 7px)`,
+                  }} />
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+
+        {/* Comparables summary */}
+        <div style={sectionCard}>
+          <h4 style={{ color: T.text, fontSize: 14, marginBottom: 12 }}>Resumo dos Comparandos</h4>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+                  <th style={{ padding: 6, textAlign: 'left', color: T.textGold }}>#</th>
+                  <th style={{ padding: 6, textAlign: 'left', color: T.textGold }}>Endereço</th>
+                  <th style={{ padding: 6, textAlign: 'right', color: T.textGold }}>R$/m²</th>
+                  <th style={{ padding: 6, textAlign: 'right', color: T.textGold }}>Hom. R$/m²</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparables.map((c, i) => (
+                  <tr key={i} style={{ borderBottom: `1px solid ${T.borderLight}` }}>
+                    <td style={{ padding: 6, color: T.textMuted }}>{i + 1}</td>
+                    <td style={{ padding: 6, color: T.text }}>{c.address}</td>
+                    <td style={{ padding: 6, textAlign: 'right', color: T.text }}>{fmt(computePricePerSqm(c))}</td>
+                    <td style={{ padding: 6, textAlign: 'right', color: T.textGold, fontWeight: 600 }}>{fmt(computeHomogenized(c))}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderStep6 = () => (
+    <div style={sectionCard}>
+      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
+        <Download size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
+        Gerar PTAM
+      </h3>
+
+      {!valuationId ? (
+        <div>
+          <p style={{ color: T.textMuted, fontSize: 13, marginBottom: 16 }}>
+            Salve a avaliação no banco de dados para gerar o parecer técnico.
+          </p>
+          <button
+            style={{ ...btnPrimary, width: '100%', justifyContent: 'center', opacity: saving ? 0.6 : 1 }}
+            onClick={saveToDatabase}
+            disabled={saving}
+          >
+            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            {saving ? 'Salvando...' : 'Salvar Avaliação'}
           </button>
-        ) : (
-          <button type="button" onClick={handleSubmit} disabled={isSubmitting}
-            className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold transition-all disabled:opacity-50 hover:opacity-80"
-            style={{ background: 'var(--success)' }}>
-            {isSubmitting ? <><Loader2 size={18} className="animate-spin" /> Criando...</> : <><Save size={18} /> Criar Avaliação</>}
+        </div>
+      ) : (
+        <div>
+          <div style={{ padding: 14, background: T.accentBg, borderRadius: 8, marginBottom: 16, border: `1px solid ${T.border}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Check size={18} style={{ color: T.success }} />
+              <span style={{ color: T.text, fontSize: 13, fontWeight: 600 }}>Avaliação salva com sucesso!</span>
+            </div>
+            <div style={{ fontSize: 11, color: T.textMuted, marginTop: 4 }}>ID: {valuationId}</div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', gap: 12 }}>
+            <button style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }} onClick={openPreview}>
+              <Eye size={16} /> Visualizar PTAM
+            </button>
+            <button
+              style={{ ...btnSecondary, flex: 1, justifyContent: 'center' }}
+              onClick={() => {
+                const link = document.createElement('a')
+                link.href = `/api/valuations/${valuationId}/export?format=html`
+                link.download = `PTAM-${valuationId}.html`
+                link.click()
+              }}
+            >
+              <Download size={16} /> Download HTML
+            </button>
+          </div>
+
+          {calcResult && (
+            <div style={{ marginTop: 20, padding: 16, background: T.surfaceAlt, borderRadius: 10, textAlign: 'center', border: `1px solid ${T.borderLight}` }}>
+              <div style={{ fontSize: 12, color: T.textMuted }}>Valor Final</div>
+              <div style={{ fontSize: 28, fontWeight: 700, color: T.gold, fontFamily: T.font.display }}>{fmtBRL(calcResult.estimated_value)}</div>
+              <div style={{ fontSize: 12, color: T.textMuted }}>Grau {calcResult.confidence_grade}</div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+
+  // ============================================================
+  // MAIN RENDER
+  // ============================================================
+  return (
+    <div style={{ minHeight: '100vh', padding: mobile ? '0 12px 80px' : '0 24px 40px' }}>
+      <PageIntelHeader
+        moduleLabel="AVALIACAO"
+        title="Novo PTAM"
+        subtitle="Parecer Técnico de Avaliação Mercadológica - NBR 14653"
+        breadcrumbs={[
+          { label: 'Backoffice', href: '/backoffice' },
+          { label: 'Avaliações', href: '/backoffice/avaliacoes' },
+          { label: 'Novo PTAM' },
+        ]}
+      />
+
+      {/* Step indicator */}
+      <div style={{
+        display: 'flex', gap: mobile ? 2 : 4, marginBottom: 24,
+        overflowX: 'auto', paddingBottom: 4,
+      }}>
+        {STEPS.map(s => {
+          const active = s.num === step
+          const done = s.num < step
+          return (
+            <button
+              key={s.num}
+              onClick={() => {
+                if (s.num <= step || done) setStep(s.num)
+              }}
+              style={{
+                flex: mobile ? undefined : 1,
+                minWidth: mobile ? 48 : undefined,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                padding: mobile ? '8px 10px' : '10px 14px',
+                borderRadius: 8,
+                border: active ? `1px solid ${T.gold}` : `1px solid ${T.borderLight}`,
+                background: active ? T.accentBg : done ? 'rgba(34,197,94,0.06)' : 'transparent',
+                color: active ? T.gold : done ? T.success : T.textMuted,
+                cursor: s.num <= step ? 'pointer' : 'default',
+                fontSize: 12, fontWeight: active ? 600 : 400,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {done ? <Check size={14} /> : s.icon}
+              {!mobile && <span>{s.label}</span>}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Step content */}
+      {step === 1 && renderStep1()}
+      {step === 2 && renderStep2()}
+      {step === 3 && renderStep3()}
+      {step === 4 && renderStep4()}
+      {step === 5 && renderStep5()}
+      {step === 6 && renderStep6()}
+
+      {/* Navigation */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', marginTop: 20,
+        ...(mobile ? { position: 'fixed', bottom: 0, left: 0, right: 0, padding: '12px 16px', background: T.surface, borderTop: `1px solid ${T.border}`, zIndex: 40 } : {}),
+      }}>
+        <button
+          style={{ ...btnSecondary, opacity: step === 1 ? 0.4 : 1 }}
+          onClick={goPrev}
+          disabled={step === 1}
+        >
+          <ArrowLeft size={16} /> Voltar
+        </button>
+
+        {step < 6 ? (
+          <button
+            style={{ ...btnPrimary, opacity: canNext() ? 1 : 0.4 }}
+            onClick={goNext}
+            disabled={!canNext()}
+          >
+            Próximo <ArrowRight size={16} />
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   )

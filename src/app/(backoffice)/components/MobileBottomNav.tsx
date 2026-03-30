@@ -18,10 +18,10 @@ import {
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
 const BOTTOM_ITEMS = [
-    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,          color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
-    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,    color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
-    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,        color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))' },
-    { name: 'Agenda',  href: '/backoffice/agenda',    icon: CalendarDays, color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
+    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,            color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
+    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,      color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
+    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,          color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))' },
+    { name: 'Connect', href: '/backoffice/connect',   icon: MessageCircle,  color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
 ]
 
 // Quick-create actions (shown in mega-menu)

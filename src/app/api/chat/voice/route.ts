@@ -44,7 +44,7 @@ export async function POST(req: Request) {
                 channel_id: channelId,
                 sender_id: user.id,
                 content: '🎤 Mensagem de audio',
-                message_type: 'voice',
+                content_type: 'voice',
                 metadata: {
                     voice_url: urlData.publicUrl,
                     duration_seconds: duration,
