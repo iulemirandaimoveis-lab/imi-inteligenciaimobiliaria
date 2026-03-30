@@ -14,7 +14,7 @@ import {
     MessageSquare, Plus, Send, Hash, Users, Building2,
     Briefcase, Search, MoreVertical, Smile, Paperclip,
     ArrowLeft, Bell, BellOff, Pin, Archive, UserPlus,
-    Circle, CheckCheck, Loader2, Volume2, VolumeX,
+    Circle, CheckCheck, Loader2, Volume2, VolumeX, Handshake,
 } from 'lucide-react'
 
 // ── Channel Icon ─────────────────────────────────────────
@@ -25,6 +25,7 @@ function ChannelIcon({ type, size = 16 }: { type: string; size?: number }) {
         case 'direct': return <Circle size={size} style={{ fill: 'var(--success)', color: 'var(--success)' }} />
         case 'group': return <Users size={size} />
         case 'property': return <Building2 size={size} />
+        case 'partnership': return <Handshake size={size} />
         default: return <MessageSquare size={size} />
     }
 }

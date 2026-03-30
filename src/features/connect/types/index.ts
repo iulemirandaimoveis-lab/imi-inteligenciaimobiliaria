@@ -1,6 +1,6 @@
 // IMI Connect — Type Definitions
 
-export type ChannelType = 'deal_room' | 'team' | 'direct' | 'group' | 'property' | 'announcement'
+export type ChannelType = 'deal_room' | 'team' | 'direct' | 'group' | 'property' | 'announcement' | 'partnership'
 export type MemberRole = 'admin' | 'moderator' | 'member' | 'readonly'
 export type ContentType = 'text' | 'image' | 'file' | 'property_card' | 'lead_card' | 'proposal_card' | 'system' | 'ai_summary'
 export type NotifyMode = 'all' | 'mentions' | 'none'

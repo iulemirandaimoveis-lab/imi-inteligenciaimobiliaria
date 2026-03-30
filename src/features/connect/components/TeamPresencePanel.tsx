@@ -43,6 +43,24 @@ export function TeamPresencePanel() {
       setLoading(false)
     }
     load()
+
+    // Subscribe to realtime presence updates
+    const channel = supabase
+      .channel('presence-panel-updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, (payload) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rec = payload.new as any
+        if (rec?.user_id && rec?.status) {
+          setPresenceMap((prev) => {
+            const next = new Map(prev)
+            next.set(rec.user_id, rec.status as PresenceStatus)
+            return next
+          })
+        }
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
   }, [supabase])
 
   const getStatus = (userId: string): PresenceStatus => {

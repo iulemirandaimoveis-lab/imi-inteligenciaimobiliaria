@@ -147,33 +147,32 @@ export async function resolveClick(input: ResolveClickInput): Promise<ResolveCli
     }
   }
 
-  // 5. Inserir clique em link_clicks (legado) + link_events (para trigger de notificação)
-  const [clickResult, eventResult] = await Promise.allSettled([
-    supabaseAdmin
-      .from('link_clicks')
-      .insert({
-        link_id: link.id,
-        ip_hash: ipHash,
-        user_agent: input.userAgent,
-        device_type: parsed.device_type,
-        os: parsed.os,
-        browser: parsed.browser,
-        country: input.country,
-        region: input.region,
-        city: input.city,
-        referrer: input.referrer,
-        is_bot: parsed.is_bot,
-        session_fingerprint: fingerprint,
-        is_unique: isUnique,
-      })
-      .select('id')
-      .single(),
-    // Also insert into link_events — triggers trg_notify_link_click for notifications
-    supabaseAdmin
-      .from('link_events')
-      .insert({
+  // 5. Insert click into link_clicks
+  const clickInsert = supabaseAdmin
+    .from('link_clicks')
+    .insert({
+      link_id: link.id,
+      ip_hash: ipHash,
+      user_agent: input.userAgent,
+      device_type: parsed.device_type,
+      os: parsed.os,
+      browser: parsed.browser,
+      country: input.country,
+      region: input.region,
+      city: input.city,
+      referrer: input.referrer,
+      is_bot: parsed.is_bot,
+      session_fingerprint: fingerprint,
+      is_unique: isUnique,
+    })
+    .select('id')
+    .single();
+
+  // Only insert into link_events for unique clicks (avoid duplicating events)
+  const eventInsert = isUnique && !parsed.is_bot
+    ? supabaseAdmin.from('link_events').insert({
         tracked_link_id: link.id,
-        event_type: isUnique ? 'click' : 'repeat_click',
+        event_type: 'click',
         device_type: parsed.device_type,
         browser: parsed.browser,
         os: parsed.os,
@@ -185,14 +184,19 @@ export async function resolveClick(input: ResolveClickInput): Promise<ResolveCli
           region: input.region,
           country: input.country,
           is_bot: parsed.is_bot,
-          is_unique: isUnique,
           fingerprint,
         },
-      }),
-    // Only increment counter for unique clicks
-    ...(isUnique && !parsed.is_bot ? [
-      supabaseAdmin.rpc('increment_link_clicks', { link_id: link.id })
-    ] : []),
+      })
+    : null;
+
+  const incrementRpc = isUnique && !parsed.is_bot
+    ? supabaseAdmin.rpc('increment_link_clicks', { link_id: link.id })
+    : null;
+
+  const [clickResult] = await Promise.allSettled([
+    clickInsert,
+    ...(eventInsert ? [eventInsert] : []),
+    ...(incrementRpc ? [incrementRpc] : []),
   ]);
 
   const click = clickResult.status === 'fulfilled' ? clickResult.value.data : null;

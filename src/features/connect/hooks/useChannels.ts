@@ -224,6 +224,7 @@ export function useChannels({ userId }: UseChannelsOptions) {
     teamChannels: channels.filter((c) => c.type === 'team'),
     directMessages: channels.filter((c) => c.type === 'direct'),
     dealRooms: channels.filter((c) => c.type === 'deal_room'),
+    partnershipChannels: channels.filter((c) => c.type === 'partnership'),
   }
 }
 
