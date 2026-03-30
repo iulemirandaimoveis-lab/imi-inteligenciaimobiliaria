@@ -315,7 +315,10 @@ export default function AiChatPage() {
         }),
       })
 
-      if (!res.ok) throw new Error('request failed')
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+        throw new Error(errData.error || `Erro ${res.status}`)
+      }
 
       const reader = res.body!.getReader()
       const decoder = new TextDecoder()
@@ -350,8 +353,8 @@ export default function AiChatPage() {
       setMessages((prev) => [...prev, { role: 'assistant', content: accumulated }])
       setStreamingText('')
       fetchConversations()
-    } catch {
-      toast.error('Erro ao enviar mensagem')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao enviar mensagem')
     } finally {
       setLoading(false)
     }
