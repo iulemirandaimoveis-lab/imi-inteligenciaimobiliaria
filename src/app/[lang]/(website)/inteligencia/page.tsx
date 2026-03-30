@@ -100,7 +100,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                             <Link
                                 key={s.href}
                                 href={`/${lang}/${s.href}`}
-                                className="group block p-7 sm:p-8 md:p-10 rounded-3xl bg-[#141420] border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-300"
+                                className="group block p-7 sm:p-8 md:p-10 rounded-3xl bg-[#0B1928] border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-300"
                             >
                                 <div className="flex items-start justify-between mb-8">
                                     <div className="w-14 h-14 bg-[#1A1E2A] text-[#C8A44A] rounded-2xl flex items-center justify-center border border-white/[0.05] group-hover:scale-110 transition-transform">
@@ -143,7 +143,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                         {PILLARS.map((p, i) => (
                             <div
                                 key={i}
-                                className="p-8 rounded-3xl bg-[#141420] border border-white/[0.05] text-center"
+                                className="p-8 rounded-3xl bg-[#0B1928] border border-white/[0.05] text-center"
                             >
                                 <div className="w-14 h-14 bg-[#1A1E2A] text-[#C8A44A] rounded-2xl flex items-center justify-center mb-6 mx-auto border border-white/[0.05]">
                                     <p.icon className="w-6 h-6" strokeWidth={1.5} />
@@ -157,7 +157,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
             </section>
 
             {/* CTA */}
-            <section className="bg-[#141420] text-white py-20 md:py-28 text-center relative overflow-hidden border-t border-white/[0.05]">
+            <section className="bg-[#0B1928] text-white py-20 md:py-28 text-center relative overflow-hidden border-t border-white/[0.05]">
                 <div className="absolute inset-0 opacity-[0.05]"
                     style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">

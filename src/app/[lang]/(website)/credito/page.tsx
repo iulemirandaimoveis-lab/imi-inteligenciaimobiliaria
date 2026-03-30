@@ -86,7 +86,7 @@ export default function CreditPage() {
     return (
         <main className="bg-[#0D0F14] min-h-screen">
             {/* HERO */}
-            <section className="relative bg-[#141420] overflow-hidden">
+            <section className="relative bg-[#0B1928] overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
                 <div className="absolute top-0 right-0 w-[200px] h-[200px] sm:w-[500px] sm:h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#C8A44A]/[0.07] blur-[80px]" />
                 <div className="relative z-10 container-custom py-20 lg:py-28">
@@ -133,7 +133,7 @@ export default function CreditPage() {
                                 whileInView="visible"
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 }}
-                                className="p-10 rounded-3xl bg-[#141420] border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:border-[#C8A44A]/30 hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] transition-all duration-300"
+                                className="p-10 rounded-3xl bg-[#0B1928] border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:border-[#C8A44A]/30 hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] transition-all duration-300"
                             >
                                 <div className="w-14 h-14 bg-[#1A1E2A] border border-white/10 text-[#C8A44A] rounded-2xl flex items-center justify-center mb-8">
                                     <type.icon className="w-6 h-6" strokeWidth={1.5} />
@@ -236,7 +236,7 @@ export default function CreditPage() {
             </section>
 
             {/* SIMULADOR DE FINANCIAMENTO */}
-            <section id="simulador" className="section-padding bg-[#141420] border-t border-white/[0.05]">
+            <section id="simulador" className="section-padding bg-[#0B1928] border-t border-white/[0.05]">
                 <div className="container-custom">
                     <div className="max-w-4xl mx-auto">
                         <div className="text-center mb-16">
@@ -328,7 +328,7 @@ export default function CreditPage() {
                                 </div>
 
                                 {/* RESULTADO */}
-                                <div className="bg-[#141420] border border-white/[0.05] text-white rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
+                                <div className="bg-[#0B1928] border border-white/[0.05] text-white rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#C8A44A]/10 rounded-full blur-3xl -mr-16 -mt-16" />
                                     <div className="relative z-10">
                                         <div className="text-[#9CA3AF] text-xs font-bold uppercase tracking-widest mb-2">Parcela Mensal Estimada</div>
@@ -389,7 +389,7 @@ export default function CreditPage() {
                             }
                         ].map((item, index) => (
                             <div key={index} className="text-center group">
-                                <div className="w-20 h-20 bg-[#1A1E2A] text-[#C8A44A] border border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[#141420] group-hover:border-[#C8A44A]/30 transition-all duration-500 group-hover:-translate-y-2">
+                                <div className="w-20 h-20 bg-[#1A1E2A] text-[#C8A44A] border border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[#0B1928] group-hover:border-[#C8A44A]/30 transition-all duration-500 group-hover:-translate-y-2">
                                     <item.icon className="w-8 h-8" strokeWidth={1.5} />
                                 </div>
                                 <h3 className="text-xl font-bold text-white mb-4 font-display uppercase tracking-tight">
@@ -405,7 +405,7 @@ export default function CreditPage() {
             </section>
 
             {/* FAQ */}
-            <section className="section-padding bg-[#141420] border-t border-white/[0.05]">
+            <section className="section-padding bg-[#0B1928] border-t border-white/[0.05]">
                 <div className="container-custom">
                     <div className="max-w-3xl mx-auto">
                         <div className="text-center mb-16">
@@ -451,7 +451,7 @@ export default function CreditPage() {
             {/* CTA FINAL */}
             <section className="bg-[#0D0F14] section-padding text-center relative overflow-hidden">
                 <div className="container-custom relative z-10">
-                    <div className="max-w-4xl mx-auto bg-[#141420] text-white rounded-3xl md:rounded-[40px] p-10 md:p-16 lg:p-20 relative overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.3)] border border-[#21263A] border-b-4 border-b-[#C8A44A]">
+                    <div className="max-w-4xl mx-auto bg-[#0B1928] text-white rounded-3xl md:rounded-[40px] p-10 md:p-16 lg:p-20 relative overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.3)] border border-[#21263A] border-b-4 border-b-[#C8A44A]">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#C8A44A]/10 rounded-full blur-3xl -mr-32 -mt-32" />
                         <h2 className="font-display text-3xl md:text-5xl font-bold mb-8 relative z-10 tracking-tight leading-tight">
                             Vamos estruturar sua <br />

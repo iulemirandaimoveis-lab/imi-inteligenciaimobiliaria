@@ -28,7 +28,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
     return (
         <main className="bg-[#0D0F14] min-h-screen">
             {/* Hero */}
-            <section className="bg-[#141420] text-white pt-24 pb-20 md:pt-32 md:pb-28 relative overflow-hidden">
+            <section className="bg-[#0B1928] text-white pt-24 pb-20 md:pt-32 md:pb-28 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-[#102A43]/5 -skew-x-12 translate-x-1/2" />
                 <div className="container-custom relative z-10">
                     <motion.div
@@ -75,7 +75,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-50px" }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="group bg-[#141420] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-500 flex flex-col h-full"
+                                className="group bg-[#0B1928] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-500 flex flex-col h-full"
                             >
                                 {/* Logo Area - Fundo claro para preservar as cores originais das marcas parceiras */}
                                 <div className="relative aspect-[3/2] bg-white flex items-center justify-center p-8 border-b border-white/[0.05] shrink-0 overflow-hidden group-hover:opacity-100 opacity-90 transition-opacity duration-300">
@@ -150,7 +150,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
             </section>
 
             {/* CTA */}
-            <section className="bg-[#141420] py-16 md:py-20 border-t border-white/[0.05]">
+            <section className="bg-[#0B1928] py-16 md:py-20 border-t border-white/[0.05]">
                 <div className="container-custom text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}

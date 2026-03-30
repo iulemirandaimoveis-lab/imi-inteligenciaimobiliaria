@@ -4,6 +4,8 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useChannels } from '@/features/connect/hooks/useChannels'
 import { useChat } from '@/features/connect/hooks/useChat'
+import { useSounds } from '@/features/connect/hooks/useSounds'
+import { PresenceProvider } from '@/features/connect/components/PresenceProvider'
 import type { ChatChannel, ChatMessage } from '@/features/connect/types'
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
@@ -12,7 +14,7 @@ import {
     MessageSquare, Plus, Send, Hash, Users, Building2,
     Briefcase, Search, MoreVertical, Smile, Paperclip,
     ArrowLeft, Bell, BellOff, Pin, Archive, UserPlus,
-    Circle, CheckCheck, Loader2,
+    Circle, CheckCheck, Loader2, Volume2, VolumeX,
 } from 'lucide-react'
 
 // ── Channel Icon ─────────────────────────────────────────
@@ -118,24 +120,9 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
     )
 }
 
-// ── Main Connect Page ────────────────────────────────────
+// ── Main Connect Page (wrapper with PresenceProvider) ────
 export default function ConnectPage() {
     const [user, setUser] = useState<{ id: string; name: string; avatar_url?: string } | null>(null)
-    const [activeChannelId, setActiveChannelId] = useState<string | null>(null)
-    const [newMessage, setNewMessage] = useState('')
-    const [sending, setSending] = useState(false)
-    const [showNewChannel, setShowNewChannel] = useState(false)
-    const [newChannelName, setNewChannelName] = useState('')
-    const [searchQuery, setSearchQuery] = useState('')
-    const [newChannelMode, setNewChannelMode] = useState<'team' | 'direct'>('direct')
-    const [brokerSearch, setBrokerSearch] = useState('')
-    const [availableBrokers, setAvailableBrokers] = useState<Array<{ id: string; name: string; email: string; avatar_url: string | null }>>([])
-    const [selectedBrokerId, setSelectedBrokerId] = useState<string | null>(null)
-    const [loadingBrokers, setLoadingBrokers] = useState(false)
-    const [mobileView, setMobileView] = useState<'list' | 'chat'>('list')
-    const messagesEndRef = useRef<HTMLDivElement>(null)
-    const inputRef = useRef<HTMLInputElement>(null)
-    const typingTimeout = useRef<NodeJS.Timeout>()
 
     // Load current user
     useEffect(() => {
@@ -154,14 +141,60 @@ export default function ConnectPage() {
         })
     }, [])
 
-    const { channels, loading: channelsLoading, totalUnread, createChannel, openDM, reload: reloadChannels } = useChannels({ userId: user?.id ?? '' })
+    if (!user) {
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: T.textDim }}>
+                <Loader2 size={24} className="animate-spin" />
+            </div>
+        )
+    }
+
+    return (
+        <PresenceProvider userId={user.id} userName={user.name} avatarUrl={user.avatar_url}>
+            <ConnectInner user={user} />
+        </PresenceProvider>
+    )
+}
+
+// ── Inner Connect (has access to PresenceProvider context) ──
+function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?: string } }) {
+    const { play, enabled: soundEnabled, toggle: toggleSound } = useSounds()
+    const [activeChannelId, setActiveChannelId] = useState<string | null>(null)
+    const [newMessage, setNewMessage] = useState('')
+    const [sending, setSending] = useState(false)
+    const [showNewChannel, setShowNewChannel] = useState(false)
+    const [newChannelName, setNewChannelName] = useState('')
+    const [searchQuery, setSearchQuery] = useState('')
+    const [newChannelMode, setNewChannelMode] = useState<'team' | 'direct'>('direct')
+    const [brokerSearch, setBrokerSearch] = useState('')
+    const [availableBrokers, setAvailableBrokers] = useState<Array<{ id: string; name: string; email: string; avatar_url: string | null }>>([])
+    const [selectedBrokerId, setSelectedBrokerId] = useState<string | null>(null)
+    const [loadingBrokers, setLoadingBrokers] = useState(false)
+    const [mobileView, setMobileView] = useState<'list' | 'chat'>('list')
+    const messagesEndRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
+    const typingTimeout = useRef<NodeJS.Timeout>()
+
+    const prevMsgCount = useRef(0)
+    const { channels, loading: channelsLoading, totalUnread, createChannel, openDM, reload: reloadChannels } = useChannels({ userId: user.id })
     const { messages, loading: messagesLoading, typingUsers, sendMessage, sendTyping, markAsRead } = useChat({
         channelId: activeChannelId ?? '',
-        userId: user?.id ?? '',
-        userName: user?.name ?? '',
+        userId: user.id,
+        userName: user.name,
     })
 
     const activeChannel = channels.find(c => c.id === activeChannelId)
+
+    // Play MSN message sound on new incoming messages
+    useEffect(() => {
+        if (messages.length > prevMsgCount.current && prevMsgCount.current > 0) {
+            const lastMsg = messages[messages.length - 1]
+            if (lastMsg && lastMsg.sender_id !== user.id) {
+                play('message')
+            }
+        }
+        prevMsgCount.current = messages.length
+    }, [messages.length, user.id, play])
 
     // Scroll to bottom on new messages
     useEffect(() => {
@@ -189,6 +222,7 @@ export default function ConnectPage() {
             setSending(false)
             return
         }
+        play('message')
         setNewMessage('')
         setSending(false)
         inputRef.current?.focus()
@@ -270,14 +304,6 @@ export default function ConnectPage() {
         }
     }
 
-    if (!user) {
-        return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: T.textDim }}>
-                <Loader2 size={24} className="animate-spin" />
-            </div>
-        )
-    }
-
     // ── Channel List Sidebar ─────────────────────────────
     const channelList = (
         <div style={{
@@ -306,19 +332,35 @@ export default function ConnectPage() {
                         </span>
                     )}
                 </div>
-                <button
-                    onClick={() => setShowNewChannel(true)}
-                    style={{
-                        position: 'relative', overflow: 'hidden',
-                        width: 32, height: 32, borderRadius: 6,
-                        background: '#0A1624', color: '#fff',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}
-                >
-                    <Plus size={16} />
-                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
-                </button>
+                <div style={{ display: 'flex', gap: 6 }}>
+                    <button
+                        onClick={toggleSound}
+                        title={soundEnabled ? 'Sons MSN ativados' : 'Sons MSN desativados'}
+                        style={{
+                            width: 32, height: 32, borderRadius: 6,
+                            background: soundEnabled ? 'rgba(200,164,74,0.12)' : 'transparent',
+                            color: soundEnabled ? T.gold : T.textDim,
+                            border: `1px solid ${soundEnabled ? 'rgba(200,164,74,0.25)' : T.borderLight}`,
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            transition: `all ${T.transition.fast}`,
+                        }}
+                    >
+                        {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+                    </button>
+                    <button
+                        onClick={() => setShowNewChannel(true)}
+                        style={{
+                            position: 'relative', overflow: 'hidden',
+                            width: 32, height: 32, borderRadius: 6,
+                            background: '#0A1624', color: '#fff',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                    >
+                        <Plus size={16} />
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
+                    </button>
+                </div>
             </div>
 
             {/* Search */}

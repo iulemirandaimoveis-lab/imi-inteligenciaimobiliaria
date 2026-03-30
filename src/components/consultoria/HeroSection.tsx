@@ -98,14 +98,14 @@ export function HeroSection() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="relative hidden lg:block"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-tr from-[#141420] to-transparent z-10 hidden" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-[#0B1928] to-transparent z-10 hidden" />
                         <div className="relative aspect-[4/5] w-full max-w-lg mx-auto rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/[0.05]">
                             <img
                                 src="/images/consultoria-luxury.png"
                                 alt="Consultoria High-End"
                                 className="w-full h-full object-cover object-center"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#141420] via-transparent to-transparent opacity-80" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1928] via-transparent to-transparent opacity-80" />
                         </div>
                     </motion.div>
                 </div>

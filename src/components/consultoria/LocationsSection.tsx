@@ -58,7 +58,7 @@ export function LocationsSection() {
                                     fill
                                     className="object-cover group-hover:scale-110 transition-transform duration-700"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#141420]/80 to-transparent opacity-80" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1928]/80 to-transparent opacity-80" />
                                 <div className="absolute bottom-6 left-6">
                                     <span className="bg-navy-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
                                         Internacional

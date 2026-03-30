@@ -33,7 +33,7 @@ const PROJETOS = [
             'Certificação ambiental LEED & AQUA',
             'Target: sovereign wealth funds e family offices',
         ],
-        cor: 'from-[#141420] to-[#1e1e35]',
+        cor: 'from-[#0B1928] to-[#1e1e35]',
         acento: '#C8A44A',
         contato: true,
     },
@@ -110,7 +110,7 @@ export default async function ProjetosWebsitePage({
         <main className="bg-white">
 
             {/* ── Hero ──────────────────────────────────────── */}
-            <section className="bg-[#141420] text-white py-24 lg:py-32 relative overflow-hidden">
+            <section className="bg-[#0B1928] text-white py-24 lg:py-32 relative overflow-hidden">
                 <div
                     className="absolute inset-0 opacity-[0.03]"
                     style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '48px 48px' }}
@@ -189,7 +189,7 @@ export default async function ProjetosWebsitePage({
                                     <Link
                                         href={`/${lang}/contato`}
                                         className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all hover:opacity-90 active:scale-95"
-                                        style={{ background: destaque.acento, color: '#141420' }}
+                                        style={{ background: destaque.acento, color: '#0B1928' }}
                                     >
                                         Solicitar Briefing Exclusivo <ArrowRight size={15} />
                                     </Link>
@@ -232,7 +232,7 @@ export default async function ProjetosWebsitePage({
             <section className="py-16 lg:py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-10">
-                        <h2 className="font-bold text-2xl lg:text-3xl text-[#141420] mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        <h2 className="font-bold text-2xl lg:text-3xl text-[#0B1928] mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                             Portfólio Ativo
                         </h2>
                         <p className="text-[#6C757D] text-sm">Empreendimentos em desenvolvimento e em comercialização.</p>
@@ -293,7 +293,7 @@ export default async function ProjetosWebsitePage({
             </section>
 
             {/* ── Proposta de valor para investidores ──────── */}
-            <section className="bg-[#141420] text-white py-16 lg:py-20">
+            <section className="bg-[#0B1928] text-white py-16 lg:py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
                         <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.25em] mb-4">Para Investidores Institucionais</p>
