@@ -105,7 +105,7 @@ export default function PropertyAnalytics({ propertyId }: PropertyAnalyticsProps
                     <div className="space-y-4">
                         {[
                             { source: 'Google Organic', percent: 45, color: 'bg-blue-500' },
-                            { source: 'Instagram Ads', percent: 30, color: 'bg-purple-500' },
+                            { source: 'Instagram Ads', percent: 30, color: 'bg-navy-500' },
                             { source: 'Direct', percent: 15, color: 'bg-green-500' },
                             { source: 'Referral', percent: 10, color: 'bg-orange-500' },
                         ].map((item, idx) => (

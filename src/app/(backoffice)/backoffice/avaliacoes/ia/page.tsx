@@ -425,7 +425,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => { navigator.clipboard.writeText(aiContent); toast.success('Copiado!') }}
-                                    className="flex items-center gap-1.5 h-8 px-3 rounded-[6px] text-xs font-medium transition-all"
+                                    className="flex items-center gap-1.5 min-h-[44px] h-11 px-3 rounded-[6px] text-xs font-medium transition-all"
                                     style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.sub }}
                                 >
                                     <Copy size={13} />
@@ -433,7 +433,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                 </button>
                                 <button
                                     onClick={() => { setIsEditing(v => !v); if (!isEditing) setEditableContent(aiContent) }}
-                                    className="flex items-center gap-1.5 h-8 px-3 rounded-[6px] text-xs font-medium transition-all"
+                                    className="flex items-center gap-1.5 min-h-[44px] h-11 px-3 rounded-[6px] text-xs font-medium transition-all"
                                     style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.sub }}
                                 >
                                     <Edit3 size={13} />

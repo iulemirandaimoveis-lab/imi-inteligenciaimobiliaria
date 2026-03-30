@@ -366,7 +366,7 @@ export default function ImovelHeatmapPage() {
                             <button
                                 key={r}
                                 onClick={() => { setLoading(true); setRange(r) }}
-                                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                                className="px-3 min-h-[44px] py-2.5 rounded-lg text-xs font-bold transition-all"
                                 style={{
                                     background: range === r ? T.surface : 'transparent',
                                     color: range === r ? T.text : T.textMuted,

@@ -57,9 +57,9 @@ interface Lead {
 const STAGES = [
     { id: 'new', name: 'Novo', color: 'bg-blue-500', lightColor: 'bg-blue-50', textColor: 'text-blue-700' },
     { id: 'contacted', name: 'Contatado', color: 'bg-yellow-500', lightColor: 'bg-yellow-50', textColor: 'text-yellow-700' },
-    { id: 'qualified', name: 'Qualificado', color: 'bg-purple-500', lightColor: 'bg-purple-50', textColor: 'text-purple-700' },
+    { id: 'qualified', name: 'Qualificado', color: 'bg-navy-500', lightColor: 'bg-navy-50', textColor: 'text-navy-700' },
     { id: 'proposal', name: 'Proposta', color: 'bg-orange-500', lightColor: 'bg-orange-50', textColor: 'text-orange-700' },
-    { id: 'negotiation', name: 'Negociação', color: 'bg-pink-500', lightColor: 'bg-pink-50', textColor: 'text-pink-700' },
+    { id: 'negotiation', name: 'Negociação', color: 'bg-gold-500', lightColor: 'bg-gold-50', textColor: 'text-gold-700' },
     { id: 'won', name: 'Ganho', color: 'bg-green-500', lightColor: 'bg-green-50', textColor: 'text-green-700' },
     { id: 'lost', name: 'Perdido', color: 'bg-red-500', lightColor: 'bg-red-50', textColor: 'text-red-700' }
 ]
@@ -350,9 +350,9 @@ export default function LeadsKanbanBoard() {
                     <div className="text-3xl font-bold text-green-700 dark:text-green-400">{stats.won}</div>
                     <div className="text-sm text-green-600 dark:text-green-300 mt-1">Ganhos</div>
                 </div>
-                <div className="bg-purple-50 dark:bg-purple-900/10 rounded-2xl border border-purple-200 dark:border-purple-900/30 p-6">
-                    <div className="text-3xl font-bold text-purple-700 dark:text-purple-400">{stats.conversionRate}%</div>
-                    <div className="text-sm text-purple-600 dark:text-purple-300 mt-1">Taxa Conversão</div>
+                <div className="bg-navy-50 dark:bg-navy-900/10 rounded-2xl border border-navy-200 dark:border-navy-900/30 p-6">
+                    <div className="text-3xl font-bold text-navy-700 dark:text-navy-400">{stats.conversionRate}%</div>
+                    <div className="text-sm text-navy-600 dark:text-navy-300 mt-1">Taxa Conversão</div>
                 </div>
             </div>
             {/* Filtros */}

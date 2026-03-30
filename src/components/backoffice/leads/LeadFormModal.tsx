@@ -423,12 +423,12 @@ export default function LeadFormModal({ leadId, initialStatus, onClose, onSucces
                         />
                     </div>
                     {/* Score Preview */}
-                    <div className="bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/30 rounded-xl p-4">
+                    <div className="bg-navy-50 dark:bg-navy-900/10 border border-navy-100 dark:border-navy-900/30 rounded-xl p-4">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-purple-700 dark:text-purple-400">
+                            <span className="text-sm font-bold text-navy-700 dark:text-navy-400">
                                 Score Estimado:
                             </span>
-                            <span className="text-2xl font-black text-purple-700 dark:text-purple-400">
+                            <span className="text-2xl font-black text-navy-700 dark:text-navy-400">
                                 {calculateScore()}
                             </span>
                         </div>

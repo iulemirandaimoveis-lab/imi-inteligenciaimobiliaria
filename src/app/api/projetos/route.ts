@@ -48,7 +48,9 @@ export async function GET(req: NextRequest) {
 
         const { data, error } = await query.limit(100)
         if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        return NextResponse.json(data || [])
+        return NextResponse.json(data || [], {
+            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+        })
     } catch (err: unknown) {
         return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
     }

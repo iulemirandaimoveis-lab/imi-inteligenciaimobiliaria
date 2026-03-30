@@ -37,7 +37,9 @@ export async function GET() {
             whatsappApi: settings.whatsapp_api || '',
             aiConfig: settings.ai_config || {},
         } : {}
-        return NextResponse.json({ settings: formattedSettings })
+        return NextResponse.json({ settings: formattedSettings }, {
+            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+        })
     } catch (error) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }

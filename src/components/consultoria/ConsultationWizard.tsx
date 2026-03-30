@@ -322,7 +322,7 @@ export default function ConsultationWizard() {
                     if (type.color === 'green') bgClass = 'bg-green-100 text-green-600'
                     if (type.color === 'amber') bgClass = 'bg-amber-100 text-amber-700'
                     if (type.color === 'orange') bgClass = 'bg-orange-100 text-orange-600'
-                    if (type.color === 'pink') bgClass = 'bg-pink-100 text-pink-600'
+                    if (type.color === 'pink') bgClass = 'bg-gold-100 text-gold-600'
                     if (type.color === 'yellow') bgClass = 'bg-yellow-100 text-yellow-600'
                     if (isSelected) {
                         bgClass = 'bg-accent-500 text-white'

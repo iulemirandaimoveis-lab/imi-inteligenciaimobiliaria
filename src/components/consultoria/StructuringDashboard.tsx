@@ -300,7 +300,7 @@ export default function StructuringDashboard({ consultationId }: { consultationI
                         if (phase.color === 'amber') phaseColorClass = 'bg-amber-100 text-amber-600';
                         if (phase.color === 'green') phaseColorClass = 'bg-green-100 text-green-600';
                         if (phase.color === 'orange') phaseColorClass = 'bg-orange-100 text-orange-600';
-                        if (phase.color === 'pink') phaseColorClass = 'bg-pink-100 text-pink-600';
+                        if (phase.color === 'pink') phaseColorClass = 'bg-gold-100 text-gold-600';
 
                         if (isCurrent) phaseColorClass = 'bg-accent-500 text-white';
                         if (isCompleted) phaseColorClass = 'bg-green-500 text-white';

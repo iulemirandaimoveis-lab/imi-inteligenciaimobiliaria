@@ -447,7 +447,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                                                 {format(new Date(event.event_date), "dd MMM 'yy", { locale: ptBR })}
                                             </span>
                                             <button
-                                                className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-[6px] flex items-center justify-center transition-all"
+                                                className="opacity-0 group-hover:opacity-100 min-w-[44px] min-h-[44px] w-11 h-11 rounded-[6px] flex items-center justify-center transition-all"
                                                 style={{ color: T.textMuted, background: T.elevated }}
                                             >
                                                 <Edit3 size={13} />

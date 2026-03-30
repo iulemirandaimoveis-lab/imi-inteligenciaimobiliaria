@@ -662,7 +662,7 @@ export default function SettingsPage() {
                 }}>
                   {settings.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={settings.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 6 }} />
+                    <img src={settings.logoUrl} alt="Logo" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 6 }} />
                   ) : (
                     <Building2 size={28} style={{ color: 'var(--text-tertiary)' }} />
                   )}

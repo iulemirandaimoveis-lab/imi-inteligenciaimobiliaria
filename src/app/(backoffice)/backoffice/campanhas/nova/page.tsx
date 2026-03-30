@@ -839,7 +839,7 @@ export default function NovaCampanhaPage() {
                         <button
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 w-6 h-6 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-1 right-1 min-w-[44px] min-h-[44px] w-11 h-11 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                           style={{ background: 'var(--error)' }}
                         >
                           <X size={14} />

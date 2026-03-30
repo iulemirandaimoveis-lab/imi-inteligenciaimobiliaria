@@ -648,7 +648,7 @@ export default function IAHubPage() {
                                 <span className="text-xs" style={{ color: T.textMuted }}>Gemini processando...</span>
                             </div>
                         ) : generatedImage ? (
-                            <img src={generatedImage} alt="Generated" className="w-full h-full object-cover" />
+                            <img src={generatedImage} alt="Generated" loading="lazy" className="w-full h-full object-cover" />
                         ) : (
                             <div className="flex flex-col items-center gap-2 p-6 text-center">
                                 <ImageIcon size={28} className="opacity-20" style={{ color: T.textMuted }} />

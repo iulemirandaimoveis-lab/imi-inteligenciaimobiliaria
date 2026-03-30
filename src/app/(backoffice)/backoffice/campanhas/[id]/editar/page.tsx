@@ -58,12 +58,12 @@ interface FormData {
   utmCampaign: string
 }
 const canais = [
-  { value: 'instagram', label: 'Instagram Ads', icon: Instagram, color: 'bg-pink-500' },
+  { value: 'instagram', label: 'Instagram Ads', icon: Instagram, color: 'bg-gold-500' },
   { value: 'facebook', label: 'Facebook Ads', icon: Facebook, color: 'bg-[var(--info)]' },
   { value: 'google', label: 'Google Ads', icon: Search, color: 'bg-red-500' },
   { value: 'email', label: 'Email Marketing', icon: Mail, color: 'bg-green-500' },
   { value: 'whatsapp', label: 'WhatsApp Business', icon: MessageSquare, color: 'bg-green-600' },
-  { value: 'site', label: 'Site/Blog', icon: Globe, color: 'bg-purple-500' },
+  { value: 'site', label: 'Site/Blog', icon: Globe, color: 'bg-navy-500' },
 ]
 const objetivos = [
   'Geração de Leads',
@@ -737,7 +737,7 @@ export default function EditarCampanhaPage() {
                         <button
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-1 right-1 min-w-[44px] min-h-[44px] w-11 h-11 bg-red-600 text-white rounded-full flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <X size={14} />
                         </button>

@@ -252,7 +252,7 @@ export default function LeadBehaviorPage() {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     onClick={e => e.stopPropagation()}
-                                                    className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-[10px] font-bold transition-all hover:scale-105"
+                                                    className="flex items-center gap-1.5 min-h-[44px] h-11 px-3 rounded-lg text-[10px] font-bold transition-all hover:scale-105"
                                                     style={{ background: 'rgba(37,211,102,0.14)', border: '1px solid rgba(37,211,102,0.3)', color: '#25D366' }}
                                                 >
                                                     <Phone size={10} /> Contato

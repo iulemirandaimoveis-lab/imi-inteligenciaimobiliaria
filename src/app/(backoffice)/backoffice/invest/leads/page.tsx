@@ -55,7 +55,7 @@ export default function InvestLeadsPage() {
     new: { label: 'Novo', cls: 'bg-[rgba(96,165,250,0.1)] text-[var(--info)]' },
     contacted: { label: 'Contactado', cls: 'bg-amber-400/10 text-amber-400' },
     qualified: { label: 'Qualificado', cls: 'bg-emerald-400/10 text-emerald-400' },
-    negotiating: { label: 'Negociando', cls: 'bg-purple-400/10 text-purple-400' },
+    negotiating: { label: 'Negociando', cls: 'bg-navy-400/10 text-navy-400' },
     converted: { label: 'Convertido', cls: 'bg-gold/10 text-gold' },
   }
 

@@ -68,7 +68,7 @@ export default function NotificationsPopover() {
 
     const getIcon = (type: Notification['type']) => {
         switch (type) {
-            case 'lead': return <Heart size={16} className="text-pink-500" fill="currentColor" />
+            case 'lead': return <Heart size={16} className="text-gold-500" fill="currentColor" />
             case 'system': return <AlertCircle size={16} className="text-blue-500" />
             case 'message': return <MessageSquare size={16} className="text-green-500" />
             case 'alert': return <AlertCircle size={16} className="text-red-500" />

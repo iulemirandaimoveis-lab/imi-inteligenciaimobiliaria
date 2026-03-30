@@ -701,7 +701,7 @@ export default function InventarioPage() {
                         <button
                             key={tab.key}
                             onClick={() => setActiveView(tab.key as 'listings' | 'performance')}
-                            className="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+                            className="px-4 min-h-[44px] py-2.5 rounded-lg text-xs font-bold transition-all"
                             style={{
                                 background: activeView === tab.key ? T.surface : 'transparent',
                                 border: activeView === tab.key ? `1px solid ${T.border}` : '1px solid transparent',

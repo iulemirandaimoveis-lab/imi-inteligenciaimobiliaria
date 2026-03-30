@@ -259,7 +259,7 @@ function BrokerRow({ broker, isLast }: { broker: Broker; isLast: boolean }) {
     }}>
       <div style={{ position: 'relative', flexShrink: 0 }}>
         {broker.avatar_url ? (
-          <img src={broker.avatar_url} alt={broker.name} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+          <img src={broker.avatar_url} alt={broker.name} loading="lazy" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
         ) : (
           <div style={{ width: 40, height: 40, borderRadius: '50%', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff' }}>
             {inits}

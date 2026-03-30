@@ -18,6 +18,7 @@ import { NEIGHBORHOOD_AVG_SQM, NEIGHBORHOOD_YIELD } from '@/features/properties/
 import { MarketTrendChart } from '@/features/properties/components/MarketTrendChart'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import { MobileGlobalStyles } from '../mobile-ui'
+import Image from 'next/image'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
@@ -626,10 +627,10 @@ function PropertyCard({
             width: 48, height: 36, borderRadius: 6, flexShrink: 0,
             background: T.active,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden',
+            overflow: 'hidden', position: 'relative',
           }}>
             {property.cover_image_url
-              ? <img src={property.cover_image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ? <Image src={property.cover_image_url} alt="" fill sizes="48px" style={{ objectFit: 'cover' }} />
               : <Building2 size={18} style={{ color: T.textDim }} />
             }
           </div>
@@ -699,7 +700,7 @@ function PropertyCard({
       {/* Thumbnail */}
       <div style={{ position: 'relative', height: 140, background: T.hover, flexShrink: 0 }}>
         {property.cover_image_url
-          ? <img src={property.cover_image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? <Image src={property.cover_image_url} alt="" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} />
           : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
             <Building2 size={36} style={{ color: 'rgba(61,111,255,0.2)' }} />
           </div>
@@ -1364,8 +1365,8 @@ function MobileExplorer() {
               return (
                 <Link key={p.id} href={`/backoffice/imoveis/${p.id}`}>
                   <div style={{ background: T.elevated, border: `1px solid ${T.borderSubtle}`, borderRadius: 6, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 6, background: T.active, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                      {p.cover_image_url ? <img src={p.cover_image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Building2 size={20} style={{ color: T.textDim }} />}
+                    <div style={{ width: 44, height: 44, borderRadius: 6, background: T.active, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
+                      {p.cover_image_url ? <Image src={p.cover_image_url} alt="" fill sizes="44px" style={{ objectFit: 'cover' }} /> : <Building2 size={20} style={{ color: T.textDim }} />}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontSize: '13px', fontWeight: 500, color: T.text, fontFamily: T.font.ui, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{p.name}</p>

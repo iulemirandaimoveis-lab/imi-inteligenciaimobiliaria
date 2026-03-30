@@ -334,8 +334,8 @@ export default function DashboardKPIs() {
                     icon={Users}
                     trend={leadsTrend.trend}
                     trendValue={leadsTrend.value}
-                    color="text-purple-600"
-                    bgColor="bg-purple-50"
+                    color="text-navy-600"
+                    bgColor="bg-navy-50"
                 />
                 <KPICard
                     title="Taxa de Conversão"

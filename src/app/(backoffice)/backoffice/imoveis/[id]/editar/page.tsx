@@ -75,9 +75,9 @@ function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, on
         {/* Hover actions */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
           <button type="button" onClick={onPreview}
-            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg flex items-center justify-center"
             style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }}>
-            <Maximize size={12} color="white" />
+            <Maximize size={14} color="white" />
           </button>
           {!isCover && (
             <button type="button" onClick={onSetCover}
@@ -88,9 +88,9 @@ function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, on
             </button>
           )}
           <button type="button" onClick={onDelete}
-            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg flex items-center justify-center"
             style={{ background: '#EF444480' }}>
-            <X size={12} color="white" />
+            <X size={14} color="white" />
           </button>
         </div>
       </div>
@@ -320,16 +320,16 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
               <div key={url} className="relative group rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                 <img src={url} alt={`planta ${i}`} className="w-full h-28 object-cover" loading="lazy" />
                 <button type="button" onClick={() => set('existingFloorPlans', formData.existingFloorPlans.filter(x => x !== url))}
-                  className="absolute top-2 right-2 w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-                  style={{ background: '#EF444480' }}><X size={12} color="white" /></button>
+                  className="absolute top-1 right-1 min-w-[44px] min-h-[44px] w-11 h-11 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                  style={{ background: '#EF444480' }}><X size={14} color="white" /></button>
               </div>
             ))}
             {formData.floorPlans.map((file, i) => (
               <div key={i} className="relative group rounded-lg overflow-hidden" style={{ border: `2px dashed ${T.accent}40` }}>
                 <img src={URL.createObjectURL(file)} alt="planta nova" className="w-full h-28 object-cover" />
                 <button type="button" onClick={() => set('floorPlans', formData.floorPlans.filter((_, j) => j !== i))}
-                  className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
-                  style={{ background: '#EF444480' }}><X size={12} color="white" /></button>
+                  className="absolute top-1 right-1 min-w-[44px] min-h-[44px] w-11 h-11 rounded-full flex items-center justify-center"
+                  style={{ background: '#EF444480' }}><X size={14} color="white" /></button>
               </div>
             ))}
           </div>
@@ -832,7 +832,7 @@ export default function EditarImovelPage() {
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-xs font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>Descrição</label>
                     <button onClick={generateDescription} disabled={aiGenerating}
-                      className="flex items-center gap-1.5 h-7 px-3 rounded text-xs font-semibold transition-all disabled:opacity-60"
+                      className="flex items-center gap-1.5 min-h-[44px] h-11 px-3 rounded text-xs font-semibold transition-all disabled:opacity-60"
                       style={{ background: `${T.accent}15`, color: T.accent, border: `1px solid ${T.accent}30` }}>
                       {aiGenerating ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
                       {aiGenerating ? 'Gerando...' : 'Gerar com IA'}

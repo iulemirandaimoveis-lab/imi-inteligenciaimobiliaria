@@ -36,10 +36,10 @@ interface Interaction {
 }
 const INTERACTION_TYPES = [
     { value: 'call', label: 'Ligação', icon: Phone, color: 'text-blue-600', bg: 'bg-blue-50', borderColor: 'border-blue-200' },
-    { value: 'email', label: 'E-mail', icon: Mail, color: 'text-purple-600', bg: 'bg-purple-50', borderColor: 'border-purple-200' },
+    { value: 'email', label: 'E-mail', icon: Mail, color: 'text-navy-600', bg: 'bg-navy-50', borderColor: 'border-navy-200' },
     { value: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, color: 'text-green-600', bg: 'bg-green-50', borderColor: 'border-green-200' },
     { value: 'visit', label: 'Visita', icon: Calendar, color: 'text-orange-600', bg: 'bg-orange-50', borderColor: 'border-orange-200' },
-    { value: 'meeting', label: 'Reunião', icon: User, color: 'text-pink-600', bg: 'bg-pink-50', borderColor: 'border-pink-200' },
+    { value: 'meeting', label: 'Reunião', icon: User, color: 'text-gold-600', bg: 'bg-gold-50', borderColor: 'border-gold-200' },
     { value: 'note', label: 'Anotação', icon: FileText, color: 'text-gray-600', bg: 'bg-gray-50', borderColor: 'border-gray-200' }
 ]
 interface InteractionsTimelineProps {

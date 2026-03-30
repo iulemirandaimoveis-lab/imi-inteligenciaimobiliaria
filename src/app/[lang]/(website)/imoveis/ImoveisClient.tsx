@@ -15,6 +15,7 @@ import { useIsMobile } from '@/hooks/use-is-mobile';
 import { calcIMIScore, getScoreColor, getScoreLabel } from '@/features/properties/services/score.service';
 import type { IMIProperty } from '@/features/properties/types';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -310,9 +311,9 @@ function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; la
                 background: selected ? '#F0EDE8' : 'transparent',
             }}
         >
-            <div className="flex-shrink-0 w-[72px] h-[60px] rounded-[10px] overflow-hidden bg-[#F0EDE8]">
+            <div className="flex-shrink-0 w-[72px] h-[60px] rounded-[10px] overflow-hidden bg-[#F0EDE8] relative">
                 {dev.images.main
-                    ? <img src={dev.images.main} alt={dev.name} className="w-full h-full object-cover" />
+                    ? <Image src={dev.images.main} alt={dev.name} fill className="object-cover" sizes="72px" />
                     : <div className="w-full h-full flex items-center justify-center opacity-20">🏢</div>
                 }
             </div>

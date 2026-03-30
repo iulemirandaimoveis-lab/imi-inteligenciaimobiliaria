@@ -392,12 +392,12 @@ export default function EmailHonorariosPage() {
                 <p className="text-sm font-bold" style={{ color: T.text }}>Rascunho de Proposta</p>
                 <div className="flex gap-2">
                   <button onClick={() => setEditing(p => !p)}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs transition-colors"
+                    className="flex items-center gap-1.5 min-h-[44px] h-11 px-3 rounded-lg text-xs transition-colors"
                     style={{ border: `1px solid ${T.border}`, color: T.text }}>
                     <Edit3 size={12} /> {editing ? 'Pré-visualizar' : 'Editar'}
                   </button>
                   <button onClick={copiar}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs transition-colors"
+                    className="flex items-center gap-1.5 min-h-[44px] h-11 px-3 rounded-lg text-xs transition-colors"
                     style={{ border: `1px solid ${T.border}`, color: T.text }}>
                     {copied ? <><Check size={12} className="text-emerald-500" /> Copiado</> : <><Copy size={12} /> Copiar</>}
                   </button>

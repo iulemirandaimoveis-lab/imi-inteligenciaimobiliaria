@@ -12,6 +12,7 @@ import { getScoreColor } from '@/features/properties/services/score.service'
 import type { IMIProperty } from '@/features/properties/types'
 import { NEIGHBORHOOD_AVG_SQM, NEIGHBORHOOD_YIELD } from '@/features/properties/types'
 import { MarketTrendChart } from '@/features/properties/components/MarketTrendChart'
+import Image from 'next/image'
 import {
   fmt, STATUS_LABELS, STATUS_COLORS,
   NEIGHBORHOOD_TREND_12M, NEIGHBORHOOD_ABSORPTION,
@@ -187,8 +188,8 @@ export function PropertyCard({ property, view, onAIClick, selected, onSelect }: 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '11px 16px', borderBottom: '1px solid rgba(61,111,255,0.05)', background: selected ? 'rgba(61,111,255,0.04)' : 'transparent', transition: 'background 0.15s' }} onMouseEnter={e => { if (!selected) e.currentTarget.style.background = 'rgba(61,111,255,0.025)' }} onMouseLeave={e => { if (!selected) e.currentTarget.style.background = 'transparent' }}>
         <button onClick={() => onSelect(property.id)} style={{ width: 18, height: 18, borderRadius: 6, flexShrink: 0, background: selected ? 'var(--accent-400)' : 'rgba(255,255,255,0.06)', border: selected ? 'none' : '1px solid rgba(61,111,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>{selected && <Check size={11} color="#0B1120" />}</button>
         <Link href={`/backoffice/imoveis/${property.id}`} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-          <div style={{ width: 48, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(61,111,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-            {property.cover_image_url ? <img src={property.cover_image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Building2 size={18} style={{ color: 'rgba(61,111,255,0.3)' }} />}
+          <div style={{ width: 48, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(61,111,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
+            {property.cover_image_url ? <Image src={property.cover_image_url} alt="" fill sizes="48px" style={{ objectFit: 'cover' }} /> : <Building2 size={18} style={{ color: 'rgba(61,111,255,0.3)' }} />}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{property.name}</p>
@@ -206,7 +207,7 @@ export function PropertyCard({ property, view, onAIClick, selected, onSelect }: 
   return (
     <div style={{ background: 'var(--bg-surface, #162040)', border: selected ? '1px solid rgba(61,111,255,0.5)' : '1px solid rgba(61,111,255,0.12)', borderRadius: 6, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'border-color 0.15s, box-shadow 0.15s', boxShadow: selected ? '0 0 0 2px rgba(61,111,255,0.15)' : 'none' }}>
       <div style={{ position: 'relative', height: 140, background: 'rgba(61,111,255,0.06)', flexShrink: 0 }}>
-        {property.cover_image_url ? <img src={property.cover_image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><Building2 size={36} style={{ color: 'rgba(61,111,255,0.2)' }} /></div>}
+        {property.cover_image_url ? <Image src={property.cover_image_url} alt="" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><Building2 size={36} style={{ color: 'rgba(61,111,255,0.2)' }} /></div>}
         <button onClick={() => onSelect(property.id)} style={{ position: 'absolute', top: 8, left: 8, width: 22, height: 22, borderRadius: 6, background: selected ? 'var(--accent-400)' : 'rgba(0,0,0,0.5)', border: selected ? 'none' : '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>{selected && <Check size={12} color="#0B1120" />}</button>
         <span style={{ position: 'absolute', top: 8, right: 8, display: 'inline-flex', padding: '3px 7px', borderRadius: 6, background: `${stColor}cc`, fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: '#fff', fontFamily: 'var(--font-outfit, sans-serif)', textTransform: 'uppercase' }}>{stLabel}</span>
         <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.7)', borderRadius: 6, padding: '3px 8px', fontFamily: 'var(--font-dm-mono, monospace)', fontSize: 13, fontWeight: 700, color: scColor, backdropFilter: 'blur(4px)' }}>{sc}</div>

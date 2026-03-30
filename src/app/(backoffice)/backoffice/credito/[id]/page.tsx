@@ -230,8 +230,8 @@ export default function CreditoDetalhesPage() {
 
                 <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #A89EC4' }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-purple-500/15 flex items-center justify-center">
-                            <CreditCard size={20} className="text-purple-400" />
+                        <div className="w-10 h-10 rounded-lg bg-navy-500/15 flex items-center justify-center">
+                            <CreditCard size={20} className="text-navy-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Parcela Mensal</p>
                     </div>
@@ -350,7 +350,7 @@ export default function CreditoDetalhesPage() {
                         <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: T.text }}>
-                                    <Calculator size={20} className="text-purple-400" />
+                                    <Calculator size={20} className="text-navy-400" />
                                     Tabela de Amortização
                                 </h3>
                                 <button
@@ -489,7 +489,7 @@ export default function CreditoDetalhesPage() {
                     {timeline.length > 0 ? (
                         <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                                <Calendar size={20} className="text-purple-400" />
+                                <Calendar size={20} className="text-navy-400" />
                                 Timeline
                             </h3>
                             <div className="space-y-4">
@@ -535,7 +535,7 @@ export default function CreditoDetalhesPage() {
                         /* Timeline vazia — info básica */
                         <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                                <Calendar size={20} className="text-purple-400" />
+                                <Calendar size={20} className="text-navy-400" />
                                 Informações
                             </h3>
                             <div className="space-y-3">

@@ -179,9 +179,9 @@ export default function NotificationCenter() {
     }
     const getNotificationColor = (type: string) => {
         const colors: Record<string, string> = {
-            lead: 'bg-purple-50 text-purple-600',
+            lead: 'bg-navy-50 text-navy-600',
             development: 'bg-blue-50 text-blue-600',
-            evaluation: 'bg-pink-50 text-pink-600',
+            evaluation: 'bg-gold-50 text-gold-600',
             consultation: 'bg-orange-50 text-orange-600',
             system: 'bg-gray-50 text-gray-600',
             comment: 'bg-green-50 text-green-600'

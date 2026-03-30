@@ -26,30 +26,31 @@ export async function GET(request: NextRequest) {
                 message: 'Nenhum follow-up pendente',
             })
         }
-        let processed = 0
         const errors: string[] = []
-        for (const followUp of followUps) {
-            try {
-                // Marcar follow-up como completed
-                const { error: updateError } = await supabase
-                    .from('lead_follow_ups')
-                    .update({ status: 'completed', updated_at: now })
-                    .eq('id', followUp.id)
-                if (updateError) throw updateError
-                // Atualizar last_message_at no canal associado ao lead
-                if (followUp.lead_id) {
-                    await supabase
-                        .from('chat_channels')
-                        .update({ last_message_at: now })
-                        .eq('lead_id', followUp.lead_id)
-                }
-                processed++
-            } catch (err) {
-                errors.push(
-                    `follow_up ${followUp.id}: ${err instanceof Error ? err.message : 'Unknown error'}`
-                )
+
+        // Batch update: mark all follow-ups as completed in one query
+        const followUpIds = followUps.map(f => f.id)
+        const { error: batchUpdateError } = await supabase
+            .from('lead_follow_ups')
+            .update({ status: 'completed', updated_at: now })
+            .in('id', followUpIds)
+        if (batchUpdateError) {
+            errors.push(`batch update: ${batchUpdateError.message}`)
+        }
+
+        // Batch update: update last_message_at for all associated lead channels
+        const leadIds = followUps.map(f => f.lead_id).filter(Boolean)
+        if (leadIds.length > 0) {
+            const { error: channelError } = await supabase
+                .from('chat_channels')
+                .update({ last_message_at: now })
+                .in('lead_id', leadIds)
+            if (channelError) {
+                errors.push(`channel update: ${channelError.message}`)
             }
         }
+
+        const processed = errors.length === 0 ? followUps.length : followUps.length - errors.length
         return NextResponse.json({
             success: true,
             processed,

@@ -47,7 +47,7 @@ function ChatAvatar({ name, url, size = 36 }: { name: string; url?: string | nul
     if (url) {
         return (
             <div style={{ width: size, height: size, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-                <img src={url} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={url} alt={name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
         )
     }

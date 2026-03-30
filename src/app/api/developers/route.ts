@@ -18,7 +18,9 @@ export async function GET(request: NextRequest) {
             .single()
 
         if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-        return NextResponse.json(data)
+        return NextResponse.json(data, {
+            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+        })
     }
 
     // List all developers
@@ -28,7 +30,9 @@ export async function GET(request: NextRequest) {
         .order('name', { ascending: true })
 
     if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
-    return NextResponse.json({ data })
+    return NextResponse.json({ data }, {
+        headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+    })
 }
 
 export async function POST(request: NextRequest) {

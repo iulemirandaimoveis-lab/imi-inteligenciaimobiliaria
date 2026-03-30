@@ -112,8 +112,6 @@ export default function PropertyMap({
     const validDevelopments = useMemo(() =>
         developments.filter(
             (d) =>
-                d.location.coordinates?.lat !== 0 &&
-                d.location.coordinates?.lng !== 0 &&
                 d.location.coordinates?.lat != null &&
                 d.location.coordinates?.lng != null
         ),
@@ -159,6 +157,7 @@ export default function PropertyMap({
 
         devs.forEach((dev) => {
             const { lat, lng } = dev.location.coordinates
+            if (lat == null || lng == null) return
             const statusColor = STATUS_COLORS[dev.status] || '#60A5FA'
 
             const el = document.createElement('div')

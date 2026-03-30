@@ -104,8 +104,8 @@ export default function DashboardRecentActivity() {
                     timestamp: lead.updated_at,
                     link: `/backoffice/leads/${lead.id}`,
                     icon: isWon ? TrendingUp : ArrowRight,
-                    color: isWon ? 'text-green-600' : 'text-purple-600',
-                    bgColor: isWon ? 'bg-green-50' : 'bg-purple-50',
+                    color: isWon ? 'text-green-600' : 'text-navy-600',
+                    bgColor: isWon ? 'bg-green-50' : 'bg-navy-50',
                     priority: isWon ? 'high' : 'medium'
                 })
             })
@@ -147,8 +147,8 @@ export default function DashboardRecentActivity() {
                     timestamp: val.created_at,
                     link: `/backoffice/avaliacoes/${val.id}`,
                     icon: FileText,
-                    color: 'text-pink-600',
-                    bgColor: 'bg-pink-50',
+                    color: 'text-gold-600',
+                    bgColor: 'bg-gold-50',
                     priority: 'medium'
                 })
             })
@@ -204,8 +204,8 @@ export default function DashboardRecentActivity() {
         const configs = {
             lead: { icon: Users, color: 'text-blue-600', bgColor: 'bg-blue-50' },
             development: { icon: Building2, color: 'text-orange-600', bgColor: 'bg-orange-50' },
-            status_change: { icon: ArrowRight, color: 'text-purple-600', bgColor: 'bg-purple-50' },
-            evaluation: { icon: FileText, color: 'text-pink-600', bgColor: 'bg-pink-50' },
+            status_change: { icon: ArrowRight, color: 'text-navy-600', bgColor: 'bg-navy-50' },
+            evaluation: { icon: FileText, color: 'text-gold-600', bgColor: 'bg-gold-50' },
             consultation: { icon: MessageSquare, color: 'text-indigo-600', bgColor: 'bg-indigo-50' },
             meeting: { icon: Calendar, color: 'text-teal-600', bgColor: 'bg-teal-50' },
             high_score: { icon: Star, color: 'text-yellow-600', bgColor: 'bg-yellow-50' }
@@ -334,7 +334,7 @@ export default function DashboardRecentActivity() {
                     <div className="text-xs text-imi-500 mt-1">Fechamentos</div>
                 </div>
                 <div>
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-navy-600">
                         {activities.filter(a => a.type === 'status_change').length}
                     </div>
                     <div className="text-xs text-imi-500 mt-1">Movimentos</div>

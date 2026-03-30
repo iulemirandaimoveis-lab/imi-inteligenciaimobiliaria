@@ -106,7 +106,7 @@ export default function RecentActivityFeed() {
                         color = 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'
                     } else if (activity.type === 'interaction') {
                         Icon = MessageSquare
-                        color = 'text-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                        color = 'text-navy-600 bg-navy-50 dark:bg-navy-900/20'
                     }
 
                     return (
