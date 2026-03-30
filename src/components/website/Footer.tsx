@@ -44,8 +44,11 @@ const NAV_COLS = [
 ]
 
 const LANGS = [
-    { code: 'pt', label: 'PT' },
-    { code: 'en', label: 'EN' },
+    { code: 'pt', flag: '🇧🇷', label: 'PT' },
+    { code: 'en', flag: '🇺🇸', label: 'EN' },
+    { code: 'es', flag: '🇪🇸', label: 'ES' },
+    { code: 'ja', flag: '🇯🇵', label: 'JP' },
+    { code: 'ar', flag: '🇸🇦', label: 'AR' },
 ]
 
 export default function Footer({ lang, settings }: FooterProps) {
@@ -189,18 +192,19 @@ export default function Footer({ lang, settings }: FooterProps) {
                         © {year} IMI – Inteligência Imobiliária. Todos os direitos reservados.
                     </p>
 
-                    <div className="flex items-center gap-3">
-                        {LANGS.map((l, i) => (
-                            <React.Fragment key={l.code}>
-                                {i > 0 && <span className="text-white/20 text-[10px]">|</span>}
-                                <Link
-                                    href={`/${l.code}`}
-                                    className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-150 ${lang === l.code ? 'text-[#C8A44A]' : 'text-white/30 hover:text-white'
-                                        }`}
-                                >
-                                    {l.label}
-                                </Link>
-                            </React.Fragment>
+                    <div className="flex items-center gap-2">
+                        {LANGS.map((l) => (
+                            <Link
+                                key={l.code}
+                                href={`/${l.code}`}
+                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.1em] transition-all duration-150 ${lang === l.code
+                                    ? 'text-[#C8A44A] bg-white/[0.06] border border-[#C8A44A]/20'
+                                    : 'text-white/30 hover:text-white hover:bg-white/[0.04] border border-transparent'
+                                }`}
+                            >
+                                <span className="text-sm">{l.flag}</span>
+                                {l.label}
+                            </Link>
                         ))}
                     </div>
                 </div>

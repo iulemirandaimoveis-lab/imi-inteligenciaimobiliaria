@@ -272,32 +272,28 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
                 {/* Bottom gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0D1420] via-transparent to-transparent opacity-80" />
 
-                {/* Status badge */}
-                <div className="absolute top-3 left-3">
+                {/* Badges — stacked vertically to avoid overlap */}
+                <div className="absolute top-3 left-3 flex flex-col gap-1.5">
                     {isAvailable ? (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm w-fit"
                             style={{ color: '#34d399', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.25)' }}>
                             Disponível
                         </span>
                     ) : (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm w-fit"
                             style={{ color: '#C8A44A', background: 'rgba(200,164,74,0.12)', border: '1px solid rgba(200,164,74,0.25)' }}>
                             Em Breve
                         </span>
                     )}
-                </div>
-
-                {/* Pilar badge */}
-                {pilarLabel && pilarColor && (
-                    <div className="absolute top-3 right-3">
+                    {pilarLabel && pilarColor && (
                         <span
-                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm"
+                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm w-fit"
                             style={{ color: pilarColor.text, background: pilarColor.bg, border: `1px solid ${pilarColor.border}` }}
                         >
                             {pilarLabel}
                         </span>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             {/* Content */}
