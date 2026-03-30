@@ -81,8 +81,8 @@ export default function DashboardRecentActivity() {
                     timestamp: lead.created_at,
                     link: `/backoffice/leads/${lead.id}`,
                     icon: isHighScore ? Star : Users,
-                    color: isHighScore ? 'text-yellow-600' : 'text-blue-600',
-                    bgColor: isHighScore ? 'bg-yellow-50' : 'bg-blue-50',
+                    color: isHighScore ? 'text-yellow-600' : 'text-navy-600',
+                    bgColor: isHighScore ? 'bg-yellow-50' : 'bg-navy-50',
                     priority: isHighScore ? 'high' : 'low'
                 })
             })
@@ -202,7 +202,7 @@ export default function DashboardRecentActivity() {
     }
     const getActivityConfig = (type: Activity['type']) => {
         const configs = {
-            lead: { icon: Users, color: 'text-blue-600', bgColor: 'bg-blue-50' },
+            lead: { icon: Users, color: 'text-navy-600', bgColor: 'bg-navy-50' },
             development: { icon: Building2, color: 'text-orange-600', bgColor: 'bg-orange-50' },
             status_change: { icon: ArrowRight, color: 'text-navy-600', bgColor: 'bg-navy-50' },
             evaluation: { icon: FileText, color: 'text-gold-600', bgColor: 'bg-gold-50' },
@@ -322,7 +322,7 @@ export default function DashboardRecentActivity() {
             {/* Footer Stats */}
             <div className="mt-6 pt-6 border-t border-imi-100 grid grid-cols-3 gap-4 text-center">
                 <div>
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-2xl font-bold text-navy-600">
                         {activities.filter(a => a.type === 'lead' || a.type === 'high_score').length}
                     </div>
                     <div className="text-xs text-imi-500 mt-1">Novos Leads</div>

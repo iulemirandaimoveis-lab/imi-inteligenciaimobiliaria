@@ -330,7 +330,7 @@ export default function IndicadoresPage() {
             />
 
             {/* KPIs */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
                 <KPICard label="Total" value={loading ? '—' : String(indicators.length)} icon={<BarChart3 size={14} />} size="sm" />
                 <KPICard label="Em Alta" value={loading ? '—' : String(indicators.filter(i => i.trend === 'up').length)} icon={<TrendingUp size={14} />} accent="green" size="sm" />
                 <KPICard label="Em Queda" value={loading ? '—' : String(indicators.filter(i => i.trend === 'down').length)} icon={<TrendingDown size={14} />} accent="hot" size="sm" />

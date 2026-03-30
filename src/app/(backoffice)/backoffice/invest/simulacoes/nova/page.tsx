@@ -231,7 +231,7 @@ export default function NovaSimulacaoPage() {
               <h2 className="text-lg font-semibold" style={{ color: T.text }}>Resultado da Simulacao</h2>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 { label: 'TIR (IRR)', value: `${result.irr.toFixed(1)}%`, positive: result.irr >= 0 },
                 { label: 'ROI Total', value: `${result.totalReturn.toFixed(1)}%`, positive: result.totalReturn >= 0 },

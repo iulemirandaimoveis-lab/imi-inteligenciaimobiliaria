@@ -1137,7 +1137,7 @@ export default function ExerciciosPage() {
       />
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
           { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, bg: 'rgba(184,148,58,0.12)', color: 'var(--accent-400, #C8A44A)' },
           { label: 'Categorias', value: CATEGORIAS.length, icon: Target, bg: 'rgba(0,214,143,0.12)', color: 'var(--success)' },

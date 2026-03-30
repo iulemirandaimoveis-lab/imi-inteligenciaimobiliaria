@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { useState, useEffect, useRef, useCallback } from 'react'
@@ -79,10 +80,13 @@ export default function Hero({ dict }: HeroProps) {
       {/* Background video with parallax */}
       <motion.div className="absolute inset-0" style={{ y: bgY }}>
         {/* Static poster image shown immediately */}
-        <img
+        <Image
           src="/hero-bg.jpg"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover scale-110"
+          fill
+          priority
+          className="object-cover scale-110"
+          sizes="100vw"
         />
         <video
           autoPlay

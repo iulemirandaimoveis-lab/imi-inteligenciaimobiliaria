@@ -100,7 +100,7 @@ export default function GlobalSearch() {
                     subtitle: `${dev.city} • ${dev.status}`,
                     url: `/backoffice/imoveis/${dev.id}`,
                     icon: Building2,
-                    color: 'text-blue-600'
+                    color: 'text-navy-600'
                 })
             })
             // Buscar leads

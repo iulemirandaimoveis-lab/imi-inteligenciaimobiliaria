@@ -429,7 +429,7 @@ export default function ImovelHeatmapPage() {
                 )}
 
                 {/* Quick KPI strip */}
-                <div className="grid grid-cols-3" style={{ borderTop: `1px solid ${T.border}` }}>
+                <div className="grid grid-cols-1 sm:grid-cols-3" style={{ borderTop: `1px solid ${T.border}` }}>
                     {[
                         { label: 'Tempo Médio', value: avgDuration > 0 ? `${Math.floor(avgDuration / 60)}:${String(avgDuration % 60).padStart(2, '0')}m` : '—', icon: Clock, color: '#60A5FA' },
                         { label: 'Bounce Rate', value: '24.8%', icon: TrendingDown, color: 'var(--error)', sub: '-4%' },

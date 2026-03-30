@@ -116,7 +116,7 @@ export default function RelatoriosBackofficePage() {
             />
 
             {/* KPIs */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
                 <KPICard label="Total" value={String(reports.length)} icon={<FileText size={14} />} size="sm" />
                 <KPICard label="Publicados" value={String(published)} icon={<Eye size={14} />} accent="green" size="sm" />
                 <KPICard label="Rascunhos" value={String(drafts)} icon={<EyeOff size={14} />} size="sm" />

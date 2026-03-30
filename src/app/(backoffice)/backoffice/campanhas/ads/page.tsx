@@ -236,7 +236,7 @@ export default function AdsPerformancePage() {
                                         </span>
                                     </div>
 
-                                    <div className="grid grid-cols-4 gap-2">
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                         {[
                                             { label: 'META', value: c.expected_leads ? String(c.expected_leads) : '—' },
                                             { label: 'CPL', value: c.cost_per_lead ? formatCurrency(Number(c.cost_per_lead)) : '—' },

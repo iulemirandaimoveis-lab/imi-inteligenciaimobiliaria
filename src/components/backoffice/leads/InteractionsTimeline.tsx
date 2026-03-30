@@ -35,7 +35,7 @@ interface Interaction {
     }
 }
 const INTERACTION_TYPES = [
-    { value: 'call', label: 'Ligação', icon: Phone, color: 'text-blue-600', bg: 'bg-blue-50', borderColor: 'border-blue-200' },
+    { value: 'call', label: 'Ligação', icon: Phone, color: 'text-navy-600', bg: 'bg-navy-50', borderColor: 'border-navy-200' },
     { value: 'email', label: 'E-mail', icon: Mail, color: 'text-navy-600', bg: 'bg-navy-50', borderColor: 'border-navy-200' },
     { value: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, color: 'text-green-600', bg: 'bg-green-50', borderColor: 'border-green-200' },
     { value: 'visit', label: 'Visita', icon: Calendar, color: 'text-orange-600', bg: 'bg-orange-50', borderColor: 'border-orange-200' },
@@ -345,14 +345,14 @@ export default function InteractionsTimeline({ leadId }: InteractionsTimelinePro
                                                 </div>
                                             )}
                                             {interaction.next_action && (
-                                                <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-900/30 rounded-lg p-3">
-                                                    <div className="flex items-center gap-2 text-xs font-bold text-blue-700 dark:text-blue-400 mb-1 uppercase tracking-wide">
+                                                <div className="bg-navy-50 dark:bg-navy-900/10 border border-navy-200 dark:border-navy-900/30 rounded-lg p-3">
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-navy-700 dark:text-navy-400 mb-1 uppercase tracking-wide">
                                                         <Calendar size={14} />
                                                         Próxima Ação
                                                     </div>
-                                                    <p className="text-sm text-blue-800 dark:text-blue-300 font-medium">{interaction.next_action}</p>
+                                                    <p className="text-sm text-navy-800 dark:text-navy-300 font-medium">{interaction.next_action}</p>
                                                     {interaction.next_action_date && (
-                                                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 flex items-center gap-1">
+                                                        <p className="text-xs text-navy-600 dark:text-navy-400 mt-1 flex items-center gap-1">
                                                             <Clock size={10} />
                                                             {format(new Date(interaction.next_action_date), "dd 'de' MMM 'às' HH:mm", { locale: ptBR })}
                                                         </p>

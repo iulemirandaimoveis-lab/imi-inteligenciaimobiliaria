@@ -168,7 +168,7 @@ export default function KPIDetailPage() {
         </div>
 
         {/* Thresholds */}
-        <div className="grid grid-cols-3 gap-4 mt-4 pt-4" style={{ borderTop: `1px solid ${T.borderSubtle}` }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 pt-4" style={{ borderTop: `1px solid ${T.borderSubtle}` }}>
           <div>
             <p className="text-xs mb-1" style={{ color: T.textMuted }}>Meta</p>
             <p className="text-sm font-bold text-emerald-400" style={{ fontFamily: T.font.data }}>

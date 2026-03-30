@@ -14,7 +14,7 @@ export default function PropertyEvents({ propertyId }: PropertyEventsProps) {
     const getIcon = (type: string) => {
         switch (type) {
             case 'creation': return <CheckCircle2 className="w-5 h-5 text-green-500" />
-            case 'update': return <FileEdit className="w-5 h-5 text-blue-500" />
+            case 'update': return <FileEdit className="w-5 h-5 text-navy-500" />
             case 'lead': return <UserPlus className="w-5 h-5 text-navy-500" />
             case 'view': return <Eye className="w-5 h-5 text-gray-500" />
             case 'unit_sold': return <ShoppingCart className="w-5 h-5 text-orange-500" />

@@ -55,7 +55,7 @@ interface Lead {
     }
 }
 const STAGES = [
-    { id: 'new', name: 'Novo', color: 'bg-blue-500', lightColor: 'bg-blue-50', textColor: 'text-blue-700' },
+    { id: 'new', name: 'Novo', color: 'bg-navy-500', lightColor: 'bg-navy-50', textColor: 'text-navy-700' },
     { id: 'contacted', name: 'Contatado', color: 'bg-yellow-500', lightColor: 'bg-yellow-50', textColor: 'text-yellow-700' },
     { id: 'qualified', name: 'Qualificado', color: 'bg-navy-500', lightColor: 'bg-navy-50', textColor: 'text-navy-700' },
     { id: 'proposal', name: 'Proposta', color: 'bg-orange-500', lightColor: 'bg-orange-50', textColor: 'text-orange-700' },
@@ -342,9 +342,9 @@ export default function LeadsKanbanBoard() {
                     <div className="text-3xl font-bold text-gray-900 dark:text-white">{stats.total}</div>
                     <div className="text-sm text-gray-500 mt-1">Total de Leads</div>
                 </div>
-                <div className="bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-200 dark:border-blue-900/30 p-6">
-                    <div className="text-3xl font-bold text-blue-700 dark:text-blue-400">{stats.new}</div>
-                    <div className="text-sm text-blue-600 dark:text-blue-300 mt-1">Novos</div>
+                <div className="bg-navy-50 dark:bg-navy-900/10 rounded-2xl border border-navy-200 dark:border-navy-900/30 p-6">
+                    <div className="text-3xl font-bold text-navy-700 dark:text-navy-400">{stats.new}</div>
+                    <div className="text-sm text-navy-600 dark:text-navy-300 mt-1">Novos</div>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/10 rounded-2xl border border-green-200 dark:border-green-900/30 p-6">
                     <div className="text-3xl font-bold text-green-700 dark:text-green-400">{stats.won}</div>
