@@ -234,6 +234,7 @@ export default function RentalsPage() {
                         transition={{ delay: i * 0.03 }}
                         className="flex items-center gap-3 px-4 py-3 transition-all cursor-pointer"
                         style={{ borderBottom: `1px solid ${T.borderLight}` }}
+                        onClick={() => window.location.href = `/backoffice/rentals/${prop.id}`}
                         onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >

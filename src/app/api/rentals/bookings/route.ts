@@ -129,3 +129,93 @@ export async function POST(req: Request) {
         )
     }
 }
+
+export async function PUT(req: Request) {
+    try {
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        const body = await req.json()
+        const { id, ...rest } = body
+        if (!id) {
+            return NextResponse.json({ error: 'ID é obrigatório' }, { status: 400 })
+        }
+
+        const parsed = BookingPostSchema.partial().safeParse(rest)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+        }
+
+        const updates: Record<string, unknown> = {}
+        const b = parsed.data
+        if (b.property_id !== undefined) updates.property_id = b.property_id
+        if (b.guest_name !== undefined) updates.guest_name = b.guest_name
+        if (b.guest_email !== undefined) updates.guest_email = b.guest_email || null
+        if (b.guest_phone !== undefined) updates.guest_phone = b.guest_phone || null
+        if (b.guests_count !== undefined) updates.guests_count = b.guests_count
+        if (b.check_in !== undefined) updates.check_in = b.check_in
+        if (b.check_out !== undefined) updates.check_out = b.check_out
+        if (b.source !== undefined) updates.source = b.source
+        if (b.status !== undefined) updates.status = b.status
+        if (b.total_amount !== undefined) updates.total_amount = b.total_amount
+        if (b.cleaning_fee !== undefined) updates.cleaning_fee = b.cleaning_fee
+        if (b.platform_fee !== undefined) updates.platform_fee = b.platform_fee
+        if (b.net_amount !== undefined) updates.net_amount = b.net_amount
+        if (b.payment_status !== undefined) updates.payment_status = b.payment_status
+        if (b.notes !== undefined) updates.notes = b.notes || null
+        if (b.external_booking_id !== undefined) updates.external_booking_id = b.external_booking_id || null
+        updates.updated_at = new Date().toISOString()
+
+        const { data, error } = await supabase
+            .from('rental_bookings')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single()
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json(data)
+    } catch (error) {
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
+            { status: 500 },
+        )
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        const { searchParams } = new URL(req.url)
+        const id = searchParams.get('id')
+        if (!id) {
+            return NextResponse.json({ error: 'ID é obrigatório' }, { status: 400 })
+        }
+
+        // Cancel booking instead of hard-delete
+        const { error } = await supabase
+            .from('rental_bookings')
+            .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+            .eq('id', id)
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json({ success: true })
+    } catch (error) {
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
+            { status: 500 },
+        )
+    }
+}
