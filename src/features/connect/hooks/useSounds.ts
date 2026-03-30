@@ -60,8 +60,12 @@ const sounds: Record<SoundEvent, () => void> = {
   },
   message: () => {
     const t = getCtx().currentTime
-    tone(1046.5, t, 0.08, 0.15, 'sine')
-    tone(1318.5, t + 0.08, 0.12, 0.12, 'sine')
+    // Classic MSN "type" / incoming message — 3-note ascending chime
+    tone(783.99, t, 0.12, 0.18, 'sine')         // G5
+    tone(1046.5, t + 0.10, 0.12, 0.16, 'sine')  // C6
+    tone(1318.5, t + 0.20, 0.18, 0.14, 'sine')  // E6
+    tone(783.99, t, 0.30, 0.06, 'triangle')      // G5 harmonic undertone
+    tone(1318.5, t + 0.20, 0.14, 0.04, 'triangle') // E6 shimmer
   },
   nudge: () => {
     const t = getCtx().currentTime

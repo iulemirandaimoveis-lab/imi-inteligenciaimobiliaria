@@ -12,6 +12,11 @@ const SWIPE_PAGES = [
   '/backoffice/connect',
 ]
 
+// Pages with their own horizontal interactions — disable swipe wrapper
+const NO_SWIPE_PAGES = [
+  '/backoffice/connect',
+]
+
 const SWIPE_THRESHOLD = 80
 const VELOCITY_THRESHOLD = 300
 
@@ -22,7 +27,8 @@ export function SwipeablePageWrapper({ children }: { children: React.ReactNode }
   const isNavigating = useRef(false)
 
   const currentIndex = SWIPE_PAGES.findIndex((p) => pathname.startsWith(p))
-  const canSwipe = currentIndex !== -1
+  const isNoSwipePage = NO_SWIPE_PAGES.some((p) => pathname.startsWith(p))
+  const canSwipe = currentIndex !== -1 && !isNoSwipePage
 
   const handleDragEnd = async (_: unknown, info: PanInfo) => {
     if (!canSwipe || isNavigating.current) return
