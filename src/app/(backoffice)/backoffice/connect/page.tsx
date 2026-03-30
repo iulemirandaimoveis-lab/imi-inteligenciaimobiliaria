@@ -143,7 +143,7 @@ export default function ConnectPage() {
 
     if (!user) {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: T.textDim }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', color: T.textDim }}>
                 <Loader2 size={24} className="animate-spin" />
             </div>
         )
@@ -307,7 +307,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
     // ── Channel List Sidebar ─────────────────────────────
     const channelList = (
         <div style={{
-            width: '100%', height: '100%',
+            width: '100%', height: '100%', minHeight: 0,
             display: 'flex', flexDirection: 'column',
             borderRight: `1px solid ${T.border}`,
             background: T.base,
@@ -490,7 +490,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
 
     // ── Chat Area ────────────────────────────────────────
     const chatArea = (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', background: T.base }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, background: T.base }}>
             {activeChannel ? (
                 <>
                     {/* Chat Header */}
@@ -526,7 +526,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                     </div>
 
                     {/* Messages */}
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+                    <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '16px 20px' }}>
                         {messagesLoading ? (
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                                 <Loader2 size={24} className="animate-spin" style={{ color: T.textDim }} />
@@ -625,7 +625,13 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
     )
 
     return (
-        <div style={{ height: 'calc(100vh - 64px)', display: 'flex', overflow: 'hidden' }}>
+        <div style={{
+            display: 'flex', overflow: 'hidden',
+            borderRadius: 'var(--r-lg, 14px)',
+            border: `1px solid ${T.border}`,
+        }}
+        className="h-[calc(100dvh-164px)] sm:h-[calc(100dvh-152px)] lg:h-[calc(100dvh-112px)]"
+        >
             {/* New Channel / Direct Message Modal */}
             <AnimatePresence>
                 {showNewChannel && (
@@ -781,13 +787,13 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
             </AnimatePresence>
 
             {/* Desktop layout: sidebar + chat */}
-            <div className="hidden md:flex" style={{ width: '100%', height: '100%' }}>
-                <div style={{ width: 320, flexShrink: 0 }}>{channelList}</div>
-                {chatArea}
+            <div className="hidden md:flex" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+                <div style={{ width: 320, flexShrink: 0, height: '100%', overflow: 'hidden' }}>{channelList}</div>
+                <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>{chatArea}</div>
             </div>
 
-            {/* Mobile layout: list OR chat */}
-            <div className="flex md:hidden" style={{ width: '100%', height: '100%' }}>
+            {/* Mobile layout: list OR chat (full screen) */}
+            <div className="flex md:hidden" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
                 {mobileView === 'list' ? channelList : chatArea}
             </div>
         </div>
