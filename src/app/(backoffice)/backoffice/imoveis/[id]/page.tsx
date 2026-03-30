@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { enrichProperty } from '@/features/properties/services/score.service'
 import { createClient } from '@/lib/supabase/client'
 import { useIsMobile } from '@/hooks/use-is-mobile'
-import type { Development, TabKey, DetailProps } from './types'
+import type { Development, TabKey, DetailProps, BrokerInfo } from './types'
 import { toIMIProperty } from './helpers'
 import { MobileImovelDetail } from './components/MobileDetail'
 import { DesktopImovelDetail } from './components/DesktopDetail'
@@ -17,6 +17,7 @@ export default function ImovelDetailPage() {
   const isMobile = useIsMobile()
 
   const [dev, setDev] = useState<Development | null>(null)
+  const [broker, setBroker] = useState<BrokerInfo | null>(null)
   const [enriched, setEnriched] = useState<import('@/features/properties/types').IMIProperty | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
@@ -66,6 +67,18 @@ export default function ImovelDetailPage() {
       }
 
       setDev(rawData)
+
+      // Fetch broker info if broker_id exists
+      const brokerId = (rawData as Record<string, unknown>).broker_id as string | null
+      if (brokerId) {
+        const { data: brokerData } = await supabase
+          .from('brokers')
+          .select('id, name, avatar_url, email, phone, creci')
+          .eq('id', brokerId)
+          .single()
+        if (brokerData) setBroker(brokerData as BrokerInfo)
+      }
+
       try {
         const prop = toIMIProperty(rawData)
         const rich = enrichProperty(prop)
@@ -150,6 +163,7 @@ export default function ImovelDetailPage() {
     id,
     enriched,
     notFound,
+    broker,
     activeTab,
     setActiveTab,
     galleryIdx,
