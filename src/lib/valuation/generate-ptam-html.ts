@@ -209,10 +209,14 @@ export function generatePTAMHtml(params: {
     font-size: 10pt;
   }
   @media print {
-    body { font-size: 10pt; }
-    .header { padding: 20px; }
+    body { font-size: 10pt; background: white; color: #1a1a1a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header { padding: 20px; background: #0A1624 !important; color: white !important; }
     .content { padding: 20px; }
-    table { font-size: 8pt; }
+    table { font-size: 8pt; page-break-inside: avoid; }
+    h3 { page-break-after: avoid; }
+    .info-grid { page-break-inside: avoid; }
+    .signatures { page-break-before: always; }
+    @page { margin: 1.5cm 2cm; size: A4; }
   }
 </style>
 </head>

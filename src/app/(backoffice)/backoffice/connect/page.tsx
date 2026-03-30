@@ -229,9 +229,10 @@ export default function ConnectPage() {
             if (!selectedBrokerId) return
             const broker = availableBrokers.find(b => b.id === selectedBrokerId)
             if (!broker) return
-            // Check if direct channel already exists between these two users
+            // Check if direct channel already exists via member IDs (not name)
             const existingDirect = channels.find(ch =>
-                ch.type === 'direct' && ch.name?.includes(broker.name)
+                ch.type === 'direct' &&
+                ch.members?.some(m => m.user_id === selectedBrokerId)
             )
             if (existingDirect) {
                 setActiveChannelId(existingDirect.id)

@@ -224,6 +224,21 @@ export const POST = apiHandler(developmentPostSchema, async (req: NextRequest, b
     for (const key of Object.keys(newDev)) {
         if (newDev[key] === undefined) delete newDev[key]
     }
+    // Auto-geocode if address exists but lat/lng missing
+    if (!newDev.lat && (newDev.address || newDev.neighborhood || newDev.city)) {
+        try {
+            const parts = [newDev.address, newDev.neighborhood, newDev.city, newDev.state, newDev.country].filter(Boolean)
+            const q = encodeURIComponent(parts.join(', '))
+            const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+                headers: { 'User-Agent': 'IMI-Inteligencia-Imobiliaria/1.0' },
+            })
+            const results = await geo.json()
+            if (results?.[0]) {
+                newDev.lat = parseFloat(results[0].lat)
+                newDev.lng = parseFloat(results[0].lon)
+            }
+        } catch { /* geocoding is best-effort */ }
+    }
     const { data, error } = await supabase
         .from('developments')
         .insert(newDev)
