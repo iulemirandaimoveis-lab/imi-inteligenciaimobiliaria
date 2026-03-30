@@ -9,6 +9,7 @@ import DesktopHeader from './components/DesktopHeader'
 import MobileHeader from './components/MobileHeader'
 import { MobileBottomNav } from './components/MobileBottomNav'
 import { CommandPalette } from '@/components/backoffice/CommandPalette'
+import { SwipeablePageWrapper } from '@/components/backoffice/SwipeablePageWrapper'
 import { Toaster } from 'sonner'
 import { BackofficeRealtimeProvider } from './components/BackofficeRealtimeProvider'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -51,7 +52,9 @@ export default async function BackofficeLayout({
                     <div className="px-3 pt-3 pb-24 sm:px-4 sm:pt-4 lg:px-6 lg:pt-6 lg:pb-6">
                         <ErrorBoundary>
                             <BackofficeRealtimeProvider>
-                                {children}
+                                <SwipeablePageWrapper>
+                                    {children}
+                                </SwipeablePageWrapper>
                             </BackofficeRealtimeProvider>
                         </ErrorBoundary>
                     </div>
