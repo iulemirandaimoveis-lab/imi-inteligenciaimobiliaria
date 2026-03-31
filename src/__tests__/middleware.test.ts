@@ -140,10 +140,10 @@ describe('middleware', () => {
 
     it('sets CORS Allow-Origin for allowed origins on API responses', async () => {
       const request = createRequest('/api/leads', {
-        headers: { origin: 'http://localhost:3000' },
+        headers: { origin: 'https://www.iulemirandaimoveis.com.br' },
       })
       const response = await middleware(request)
-      expect(response.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:3000')
+      expect(response.headers.get('Access-Control-Allow-Origin')).toBe('https://www.iulemirandaimoveis.com.br')
     })
 
     it('does not set Allow-Origin for disallowed origins', async () => {

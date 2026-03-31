@@ -18,7 +18,6 @@ const mockRange = jest.fn()
 const mockInsert = jest.fn()
 const mockSelectAfterInsert = jest.fn()
 const mockSingle = jest.fn()
-const mockEq = jest.fn()
 
 jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(async () => ({
@@ -43,36 +42,46 @@ jest.mock('@/lib/governance', () => ({
   getRequestMeta: jest.fn(() => ({ ip: '127.0.0.1', user_agent: 'test' })),
 }))
 
-jest.mock('@/lib/schemas', () => ({
-  leadSchema: {},
-  parseBody: jest.fn(),
+jest.mock('@/lib/rate-limit', () => ({
+  rateLimit: jest.fn().mockResolvedValue({ success: true, remaining: 10, resetTime: Date.now() + 60000 }),
+  getClientIP: jest.fn().mockReturnValue('127.0.0.1'),
+  limiters: {
+    public: jest.fn().mockResolvedValue({ success: true, remaining: 10, resetTime: Date.now() + 60000 }),
+    auth: jest.fn().mockResolvedValue({ success: true, remaining: 60, resetTime: Date.now() + 60000 }),
+    ai: jest.fn().mockResolvedValue({ success: true, remaining: 5, resetTime: Date.now() + 60000 }),
+  },
 }))
 
 jest.mock('@/lib/notifications', () => ({
   createNotification: jest.fn().mockResolvedValue(undefined),
 }))
 
+const mockSafeParse = jest.fn()
+jest.mock('@/lib/schemas', () => ({
+  leadSchema: {
+    safeParse: (...args: unknown[]) => mockSafeParse(...args),
+  },
+}))
+
 // Suppress fetch fire-and-forget in POST handler
 global.fetch = jest.fn().mockResolvedValue({ ok: true }) as jest.Mock
 
 import { GET, POST } from '@/app/api/leads/route'
-import { parseBody } from '@/lib/schemas'
-
-const mockedParseBody = parseBody as jest.MockedFunction<typeof parseBody>
+import { NextRequest } from 'next/server'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function createRequest(
   url: string,
   options: { method?: string; body?: Record<string, unknown> } = {}
-) {
+): NextRequest {
   const { method = 'GET', body } = options
   const fullUrl = url.startsWith('http') ? url : `http://localhost:3000${url}`
-  return new Request(fullUrl, {
+  return new NextRequest(fullUrl, {
     method,
     headers: { 'Content-Type': 'application/json' },
     ...(body ? { body: JSON.stringify(body) } : {}),
-  }) as unknown as import('next/server').NextRequest
+  })
 }
 
 // ── Tests: GET /api/leads ────────────────────────────────────────────────────
@@ -244,8 +253,9 @@ describe('POST /api/leads', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
+    // apiHandler uses getUser for auth
     mockGetUser.mockResolvedValue({
-      data: { user: { id: 'user-1' } },
+      data: { user: { id: 'user-1', email: 'user@test.com' } },
     })
 
     mockSingle.mockResolvedValue({
@@ -258,11 +268,6 @@ describe('POST /api/leads', () => {
 
   it('returns 401 when user is not authenticated', async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } })
-    // parseBody is called before auth check in POST, so mock it
-    mockedParseBody.mockResolvedValue({
-      success: true,
-      data: { name: 'Test' },
-    })
 
     const request = createRequest('/api/leads', {
       method: 'POST',
@@ -270,17 +275,18 @@ describe('POST /api/leads', () => {
     })
 
     const response = await POST(request)
-    // POST handler calls parseBody first, then inserts.
-    // The auth is not an early guard in POST — it still proceeds.
-    // But the user is null so the notification is skipped, and it returns 200 with the lead.
-    // Let's just verify it doesn't crash and returns a valid response.
-    expect(response.status).toBeDefined()
+    const json = await response.json()
+
+    expect(response.status).toBe(401)
+    expect(json.error).toBe('Unauthorized')
   })
 
   it('returns 400 when name is missing (validation fails)', async () => {
-    mockedParseBody.mockResolvedValue({
+    mockSafeParse.mockReturnValue({
       success: false,
-      error: { name: ['Nome deve ter pelo menos 2 caracteres'] },
+      error: {
+        flatten: () => ({ fieldErrors: { name: ['Nome deve ter pelo menos 2 caracteres'] } }),
+      },
     })
 
     const request = createRequest('/api/leads', {
@@ -292,12 +298,12 @@ describe('POST /api/leads', () => {
     const json = await response.json()
 
     expect(response.status).toBe(400)
-    expect(json.error).toBe('Dados inválidos')
+    expect(json.error).toBe('Validation failed')
     expect(json.details).toBeDefined()
   })
 
   it('creates lead with valid data', async () => {
-    mockedParseBody.mockResolvedValue({
+    mockSafeParse.mockReturnValue({
       success: true,
       data: {
         name: 'New Lead',
@@ -322,9 +328,11 @@ describe('POST /api/leads', () => {
   })
 
   it('returns 400 with invalid email format', async () => {
-    mockedParseBody.mockResolvedValue({
+    mockSafeParse.mockReturnValue({
       success: false,
-      error: { email: ['Email inválido'] },
+      error: {
+        flatten: () => ({ fieldErrors: { email: ['Email invalido'] } }),
+      },
     })
 
     const request = createRequest('/api/leads', {
@@ -336,11 +344,11 @@ describe('POST /api/leads', () => {
     const json = await response.json()
 
     expect(response.status).toBe(400)
-    expect(json.error).toBe('Dados inválidos')
+    expect(json.error).toBe('Validation failed')
   })
 
   it('returns 500 when Supabase insert fails', async () => {
-    mockedParseBody.mockResolvedValue({
+    mockSafeParse.mockReturnValue({
       success: true,
       data: { name: 'Lead', email: 'x@test.com' },
     })
@@ -363,7 +371,7 @@ describe('POST /api/leads', () => {
 
   it('calls logAudit after successful creation', async () => {
     const { logAudit } = await import('@/lib/governance')
-    mockedParseBody.mockResolvedValue({
+    mockSafeParse.mockReturnValue({
       success: true,
       data: { name: 'Audit Lead', email: 'audit@test.com', source: 'manual' },
     })
@@ -385,7 +393,7 @@ describe('POST /api/leads', () => {
   })
 
   it('fires auto-score request after creation', async () => {
-    mockedParseBody.mockResolvedValue({
+    mockSafeParse.mockReturnValue({
       success: true,
       data: { name: 'Score Lead' },
     })
