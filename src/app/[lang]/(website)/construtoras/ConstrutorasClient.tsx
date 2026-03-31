@@ -2,10 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { staggerContainer, slideUp } from '@/lib/animations';
-import Image from 'next/image';
 import Link from 'next/link';
-import { Building2, MapPin, ExternalLink, ChevronRight, Share } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { Building2, MapPin, ExternalLink, ChevronRight } from 'lucide-react';
 
 export interface Developer {
     id: string;

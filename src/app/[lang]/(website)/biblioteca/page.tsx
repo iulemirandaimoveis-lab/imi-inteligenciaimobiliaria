@@ -85,5 +85,17 @@ export default async function BibliotecaPage() {
     }))
     const allEbooks: Ebook[] = [...(dbEbooks || []), ...seedEbooks]
 
-    return <BibliotecaClient ebooks={allEbooks} pilares={PILARES} />
+    // Load book slugs from the public/books index to know which ones have readable content
+    let bookSlugs: string[] = []
+    try {
+        const booksIndex = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/books/index.json`, { next: { revalidate: 3600 } })
+        if (booksIndex.ok) {
+            const booksData = await booksIndex.json() as Array<{ slug: string }>
+            bookSlugs = booksData.map(b => b.slug)
+        }
+    } catch {
+        // Books index not available — just show catalog without read links
+    }
+
+    return <BibliotecaClient ebooks={allEbooks} pilares={PILARES} bookSlugs={bookSlugs} />
 }

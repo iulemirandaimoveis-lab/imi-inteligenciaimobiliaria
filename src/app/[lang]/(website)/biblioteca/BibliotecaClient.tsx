@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, ArrowRight, ShoppingCart, Clock, Filter, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Ebook } from './page'
 
 interface Pilar {
@@ -14,6 +16,7 @@ interface Pilar {
 interface Props {
     ebooks: Ebook[]
     pilares: Pilar[]
+    bookSlugs?: string[]
 }
 
 const PILAR_COLORS: Record<string, { text: string; bg: string; border: string; gradient: string }> = {
@@ -34,7 +37,9 @@ const PILAR_LABELS: Record<string, string> = {
     tecnologia:    'Tecnologia',
 }
 
-export default function BibliotecaClient({ ebooks, pilares }: Props) {
+export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Props) {
+    const params = useParams()
+    const lang = (params?.lang as string) || 'pt'
     const [activeFilter, setActiveFilter] = useState('todos')
 
     const filtered = activeFilter === 'todos'
@@ -183,7 +188,7 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
                                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                             >
                                 {filtered.map((ebook, i) => (
-                                    <EbookCard key={ebook.id} ebook={ebook} index={i} />
+                                    <EbookCard key={ebook.id} ebook={ebook} index={i} lang={lang} bookSlugs={bookSlugs} />
                                 ))}
                             </motion.div>
                         )}
@@ -229,8 +234,9 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
     )
 }
 
-function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
+function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: number; lang: string; bookSlugs: string[] }) {
     const isAvailable = ebook.publication_status === 'publicado'
+    const hasBookContent = bookSlugs.includes(ebook.slug)
     const pilarColor = ebook.pilar ? PILAR_COLORS[ebook.pilar] : null
     const pilarLabel = ebook.pilar ? PILAR_LABELS[ebook.pilar] : null
 
@@ -309,8 +315,17 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
                     <p className="text-[12px] text-white/35 mb-3 line-clamp-2 leading-relaxed">{ebook.description}</p>
                 )}
 
-                <div className="mt-auto pt-2">
-                    {isAvailable && (ebook.amazon_link || ebook.amazon_url) ? (
+                <div className="mt-auto pt-2 space-y-2">
+                    {hasBookContent && (
+                        <Link
+                            href={`/${lang}/biblioteca/${ebook.slug}`}
+                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:opacity-90"
+                            style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)', color: '#0D1117' }}
+                        >
+                            <BookOpen size={13} /> Ler Agora
+                        </Link>
+                    )}
+                    {!hasBookContent && isAvailable && (ebook.amazon_link || ebook.amazon_url) ? (
                         <a
                             href={ebook.amazon_link || ebook.amazon_url || '#'}
                             target="_blank"
@@ -320,7 +335,7 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
                         >
                             <ShoppingCart size={13} /> Adquirir na Amazon
                         </a>
-                    ) : (
+                    ) : !hasBookContent ? (
                         <a
                             href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Tenho%20interesse%20no%20ebook%20da%20IMI%20sobre%20esse%20tema."
                             target="_blank"
@@ -334,7 +349,7 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
                         >
                             <MessageCircle size={13} /> Avise-me quando sair
                         </a>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </motion.div>
