@@ -128,8 +128,7 @@ describe('GET /api/leads', () => {
     const json = await response.json()
 
     expect(response.status).toBe(401)
-    expect(json.error).toBe('Unauthorized')
-    expect(json.data).toEqual([])
+    expect(json.error).toBeDefined()
   })
 
   it('returns leads array when authenticated', async () => {

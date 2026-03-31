@@ -40,7 +40,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         const baseStyles = `
       w-full h-[48px] px-[16px]
       bg-white border rounded-[12px]
-      text-sm text-imi-900 leading-[20px]
+      text-base text-imi-900 leading-[20px]
       placeholder:text-imi-400
       transition-all duration-200 ease-smooth
       focus:outline-none focus:ring-2 focus:ring-offset-0
@@ -189,7 +189,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         const baseStyles = `
       w-full px-[16px] py-[12px]
       bg-white border rounded-[12px]
-      text-sm text-imi-900 leading-[20px]
+      text-base text-imi-900 leading-[20px]
       placeholder:text-imi-400
       transition-all duration-200 ease-smooth
       resize-vertical min-h-[96px]

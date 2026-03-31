@@ -67,14 +67,11 @@ export default function Header({ lang, settings }: HeaderProps) {
     useEffect(() => {
         if (open) {
             document.body.style.overflow = 'hidden'
-            document.body.style.height = '100dvh'
         } else {
             document.body.style.overflow = ''
-            document.body.style.height = ''
         }
         return () => {
             document.body.style.overflow = ''
-            document.body.style.height = ''
         }
     }, [open])
 

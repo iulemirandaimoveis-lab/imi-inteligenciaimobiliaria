@@ -77,8 +77,8 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             region: dbProp.region || 'pernambuco',
             country: dbProp.country || 'Brasil',
             coordinates: {
-                lat: dbProp.lat ?? 0,
-                lng: dbProp.lng ?? 0,
+                lat: dbProp.lat ?? null,
+                lng: dbProp.lng ?? null,
             },
             address: dbProp.address || ''
         },
@@ -144,12 +144,15 @@ export function mapRentalToDevelopment(r: Record<string, any>): Development {
         status: 'ready',
         region: 'pernambuco',
         location: {
-            neighborhood: '',
-            city: '',
-            state: '',
+            neighborhood: r.neighborhood || '',
+            city: r.city || '',
+            state: r.state || '',
             region: 'pernambuco',
-            country: 'Brasil',
-            coordinates: { lat: 0, lng: 0 },
+            country: r.country || 'Brasil',
+            coordinates: {
+                lat: r.lat ?? r.latitude ?? null,
+                lng: r.lng ?? r.longitude ?? null,
+            },
             address: r.address || '',
         },
         description: r.rules || '',

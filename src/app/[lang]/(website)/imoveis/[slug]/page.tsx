@@ -13,6 +13,7 @@ import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
+import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
 import PropertyIntelligence from '../components/PropertyIntelligence'
 import type { IMIProperty } from '@/features/properties/types'
 import { fmt } from '@/lib/format'
@@ -287,6 +288,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </section>
                         <section id="localizacao">
                             <DevelopmentLocation development={development} />
+                        </section>
+                        <section id="inteligencia-bairro">
+                            <NeighborhoodIntel
+                                neighborhood={development.location?.neighborhood}
+                                city={development.location?.city}
+                                compact
+                            />
                         </section>
                     </div>
 

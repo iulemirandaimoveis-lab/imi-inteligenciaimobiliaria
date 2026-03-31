@@ -113,10 +113,14 @@ export default function PropertyMap({
         developments.filter(
             (d) =>
                 d.location.coordinates?.lat != null &&
-                d.location.coordinates?.lng != null
+                d.location.coordinates?.lng != null &&
+                d.location.coordinates.lat !== 0 &&
+                d.location.coordinates.lng !== 0
         ),
         [developments]
     )
+
+    const excludedCount = developments.length - validDevelopments.length
 
     // Group by region
     const regionMap = useMemo(() => {
@@ -556,6 +560,23 @@ export default function PropertyMap({
                     fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
                 }}>
                     {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
+                </div>
+            )}
+
+            {/* Excluded properties badge */}
+            {mapLoaded && excludedCount > 0 && (
+                <div style={{
+                    position: 'absolute', bottom: 14, left: 14, zIndex: 5,
+                    background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(12px)',
+                    color: '#948F84', fontSize: 11, fontWeight: 500,
+                    padding: '5px 12px', borderRadius: 10,
+                    border: '1px solid rgba(0,0,0,0.06)',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+                    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+                    display: 'flex', alignItems: 'center', gap: 5,
+                }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#948F84" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {excludedCount} {excludedCount === 1 ? 'imovel' : 'imoveis'} sem localizacao
                 </div>
             )}
 

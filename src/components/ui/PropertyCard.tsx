@@ -23,6 +23,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                         src={primaryImage.url}
                         alt={primaryImage.alt}
                         fill
+                        loading="lazy"
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
