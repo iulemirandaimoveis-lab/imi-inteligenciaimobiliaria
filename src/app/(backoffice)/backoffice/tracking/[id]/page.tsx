@@ -126,10 +126,11 @@ export default function LinkDetailPage() {
         return hashes.size || events.length
     }, [events])
 
-    const conversionRate = useMemo(() => {
-        if (events.length === 0) return '0%'
-        const rate = ((uniqueVisitors / events.length) * 100).toFixed(1)
-        return `${rate}%`
+    const engagementRate = useMemo(() => {
+        if (uniqueVisitors === 0) return '0%'
+        // Avg clicks per visitor — higher = more engaged
+        const avgClicks = (events.length / uniqueVisitors).toFixed(1)
+        return `${avgClicks}x`
     }, [events, uniqueVisitors])
 
     const dailyData = useMemo(() => {
@@ -229,7 +230,7 @@ export default function LinkDetailPage() {
                 {[
                     { label: 'Total Cliques', value: events.length, icon: <MousePointerClick size={18} />, accent: 'gold' as const },
                     { label: 'Visitantes Unicos', value: uniqueVisitors, icon: <Users size={18} />, accent: 'info' as const },
-                    { label: 'Taxa de Conversao', value: conversionRate, icon: <TrendingUp size={18} />, accent: 'success' as const },
+                    { label: 'Engajamento', value: engagementRate, icon: <TrendingUp size={18} />, accent: 'success' as const },
                     { label: 'Dispositivo Principal', value: topDevice, icon: <Smartphone size={18} />, accent: 'warning' as const },
                 ].map((kpi, i) => (
                     <motion.div

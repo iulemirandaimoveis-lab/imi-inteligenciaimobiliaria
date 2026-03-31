@@ -705,7 +705,7 @@ export default function TrackingDashboardPage() {
                                             </td>
                                             <td className="py-3 px-3 text-right">
                                                 <Link
-                                                    href={`/backoffice/tracking/${encodeURIComponent(c.campaign)}`}
+                                                    href={`/backoffice/tracking/links?campaign=${encodeURIComponent(c.campaign)}`}
                                                     className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-md transition-all hover:opacity-80"
                                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
                                                 >
