@@ -20,8 +20,9 @@ export async function POST(req: NextRequest) {
         // 1. Full-text search na KB usando a função search_kb_topics
         //    Fallback para select direto se a função ainda não existir no banco
         let topics: Array<{
-            title: string; content: string; keywords: string[];
-            category: string; source_file: string; page_title: string
+            id: string; title: string; content: string; keywords: string[];
+            category: string; source_file: string; page_title: string;
+            confidence?: number
         }> | null = null
         try {
             const { data: ftsData } = await supabaseAdmin
@@ -32,15 +33,23 @@ export async function POST(req: NextRequest) {
                 })
             topics = ftsData
         } catch {
-            // Fallback: sem full-text, busca por categoria
+            // Fallback: sem full-text, busca por categoria — prioritize by confidence
             let q = supabaseAdmin
                 .from('avaliacoes_kb_topics')
-                .select('title, content, keywords, category, source_file, page_title')
+                .select('id, title, content, keywords, category, source_file, page_title, confidence')
+                .order('confidence', { ascending: false, nullsFirst: false })
                 .order('created_at', { ascending: false })
                 .limit(10)
             if (category && category !== 'all') q = q.eq('category', category)
             const { data } = await q
             topics = data
+        }
+        // Track usage: increment usage_count for retrieved topics
+        if (topics && topics.length > 0) {
+            const topicIds = topics.map(t => t.id).filter(Boolean)
+            if (topicIds.length > 0) {
+                supabaseAdmin.rpc('increment_kb_usage', { topic_ids: topicIds }).then(() => {})
+            }
         }
         // 2. Build context from retrieved topics
         const hasContext = topics && topics.length > 0

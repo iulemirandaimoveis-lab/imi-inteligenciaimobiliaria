@@ -296,6 +296,7 @@ export default function AdvancedFilter({
             search: '', status: [], type: [], bedrooms: null,
             priceRange: [PRICE_MIN, maxPrice], areaRange: [AREA_MIN, AREA_MAX],
             location: null, neighborhood: null, sort: 'relevant',
+            listingCategory: 'all',
         };
         onFilterChange(cleared);
         setMobileFilters(cleared);

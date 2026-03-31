@@ -125,26 +125,6 @@
     ]
   },
   {
-    "slug": "livro-03-avaliacao-processos-judiciais",
-    "title": "Avaliação Imobiliária para Processos Judiciais",
-    "subtitle": "Perícia, Laudo Técnico e Defesa — O Guia Completo do Perito Avaliador",
-    "author": "Iule Miranda",
-    "category": "avaliacao",
-    "chapters": 10,
-    "chapter_titles": [
-      "O Papel do Perito",
-      "Tipos de Perícia Imobiliária",
-      "Normas Técnicas Aplicáveis",
-      "Estrutura de Laudo Pericial",
-      "Metodologias Aceitas",
-      "Coleta de Provas e Dados",
-      "Redação Técnica",
-      "Defesa do Laudo",
-      "Erros que Invalidam Perícias",
-      "Modelo IMI de Laudo"
-    ]
-  },
-  {
     "slug": "livro-04-avaliacao-de-terrenos-urbanos",
     "title": "Avaliação de Terrenos Urbanos",
     "subtitle": "Do Lote Vazio ao Potencial Construtivo — Métodos, Incorporação e Valor",
@@ -162,46 +142,6 @@
       "Pensar Como Incorporador, Calcular Como Avaliador",
       "Terrenos Que Fogem à Regra",
       "O Preço da Verdade: Comunicar Valor a Quem Não Quer Ouvir"
-    ]
-  },
-  {
-    "slug": "livro-04-avaliar-terrenos-lotes",
-    "title": "Como Avaliar Terrenos e Lotes",
-    "subtitle": "Zoneamento, Potencial Construtivo e Valor — A Avaliação que o Mercado Não Ensina",
-    "author": "Iule Miranda",
-    "category": "avaliacao",
-    "chapters": 10,
-    "chapter_titles": [
-      "Natureza do Valor de Terrenos",
-      "Zoneamento e Potencial",
-      "Índices Construtivos",
-      "Avaliação por Comparação",
-      "Avaliação por Viabilidade",
-      "Análise de Entorno",
-      "Riscos em Terrenos",
-      "Terrenos para Incorporação",
-      "Método IMI para Terrenos",
-      "Checklist de Avaliação"
-    ]
-  },
-  {
-    "slug": "livro-05-engenharia-avaliacoes-simplificada",
-    "title": "Engenharia de Avaliações Simplificada",
-    "subtitle": "Estatística, Regressão e Modelos Práticos — Sem a Complexidade que Ninguém Precisa",
-    "author": "Iule Miranda",
-    "category": "avaliacao",
-    "chapters": 10,
-    "chapter_titles": [
-      "Fundamentos da Engenharia de Avaliações",
-      "Métodos Clássicos",
-      "Estatística Aplicada",
-      "Regressão Simplificada",
-      "Ajustes de Variáveis",
-      "Interpretação de Dados",
-      "Modelos Práticos",
-      "Limitações Técnicas",
-      "Aplicação no Dia a Dia",
-      "Framework IMI"
     ]
   },
   {

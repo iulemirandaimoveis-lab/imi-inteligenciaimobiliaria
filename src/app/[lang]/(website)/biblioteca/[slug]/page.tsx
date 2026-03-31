@@ -43,7 +43,9 @@ function sanitizeHtml(html: string): string {
         .replace(/javascript\s*:/gi, 'nojavascript:')
 }
 
-function renderSection(secao: Chapter['secoes'] extends (infer T)[] ? T : never): string {
+type Section = NonNullable<Chapter['secoes']>[number]
+
+function renderSection(secao: Section): string {
     if (!secao) return ''
     let html = secao.titulo ? `<h3>${secao.titulo}</h3>` : ''
     for (const item of (secao.conteudo || [])) {
@@ -55,10 +57,10 @@ function renderSection(secao: Chapter['secoes'] extends (infer T)[] ? T : never)
                 html += `<h4>${item.texto || ''}</h4>`
                 break
             case 'lista':
-                html += '<ul>' + (item.items || []).map(i => `<li>${i}</li>`).join('') + '</ul>'
+                html += '<ul>' + (item.items || []).map((i: string) => `<li>${i}</li>`).join('') + '</ul>'
                 break
             case 'lista_ordenada':
-                html += '<ol>' + (item.items || []).map(i => `<li>${i}</li>`).join('') + '</ol>'
+                html += '<ol>' + (item.items || []).map((i: string) => `<li>${i}</li>`).join('') + '</ol>'
                 break
             case 'destaque':
             case 'nota':

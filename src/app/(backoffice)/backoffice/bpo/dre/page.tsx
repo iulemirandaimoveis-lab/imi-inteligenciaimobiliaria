@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
     Loader2, Download, ChevronDown, Sparkles, TrendingUp, TrendingDown,
-    ArrowRight, MinusCircle,
+    ArrowRight, MinusCircle, Building2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -59,7 +59,20 @@ export default function BPODREPage() {
     const [ano, setAno] = useState(now.getFullYear())
     const [dre, setDre] = useState<DREData | null>(null)
     const [loading, setLoading] = useState(false)
-    const [empresaId] = useState<string | null>(null) // TODO: empresa selector
+    const [empresaId, setEmpresaId] = useState<string | null>(null)
+    const [empresas, setEmpresas] = useState<Array<{ id: string; nome: string }>>([])
+
+    // Load empresas on mount
+    useEffect(() => {
+        fetch('/api/bpo/empresas')
+            .then(r => r.ok ? r.json() : [])
+            .then(d => {
+                const list = Array.isArray(d) ? d : d?.data ?? []
+                setEmpresas(list)
+                if (list.length > 0 && !empresaId) setEmpresaId(list[0].id)
+            })
+            .catch(() => {})
+    }, [])
 
     const fetchDRE = async () => {
         if (!empresaId) {
@@ -134,10 +147,40 @@ export default function BPODREPage() {
                 }
             />
 
-            {/* Month/Year Selector */}
+            {/* Empresa + Month/Year Selector */}
             <div style={{
-                display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap',
+                display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap', alignItems: 'center',
             }}>
+                {/* Empresa selector */}
+                <div style={{ position: 'relative' }}>
+                    <Building2 size={14} style={{
+                        position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+                        color: T.gold, pointerEvents: 'none',
+                    }} />
+                    <select
+                        value={empresaId || ''}
+                        onChange={e => setEmpresaId(e.target.value || null)}
+                        style={{
+                            appearance: 'none', padding: '10px 36px 10px 34px',
+                            borderRadius: 8, background: T.surface,
+                            border: `1px solid ${empresaId ? T.gold : T.border}`, color: T.text,
+                            fontSize: 14, fontFamily: 'var(--font-sans)',
+                            cursor: 'pointer', minWidth: 200,
+                        }}
+                    >
+                        <option value="">Selecionar empresa...</option>
+                        {empresas.map(e => (
+                            <option key={e.id} value={e.id}>{e.nome}</option>
+                        ))}
+                    </select>
+                    <ChevronDown size={14} style={{
+                        position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                        color: T.textMuted, pointerEvents: 'none',
+                    }} />
+                </div>
+
+                <div style={{ width: 1, height: 28, background: T.border }} />
+
                 <div style={{ position: 'relative' }}>
                     <select
                         value={mes}

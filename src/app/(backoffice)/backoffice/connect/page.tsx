@@ -5,8 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 import { useChannels } from '@/features/connect/hooks/useChannels'
 import { useChat } from '@/features/connect/hooks/useChat'
 import { useSounds } from '@/features/connect/hooks/useSounds'
+import { useVoiceRecorder } from '@/features/connect/hooks/useVoiceRecorder'
 import { PresenceProvider } from '@/features/connect/components/PresenceProvider'
-import type { ChatChannel, ChatMessage } from '@/features/connect/types'
+import type { ChatChannel, ChatMessage, Attachment, ContentType } from '@/features/connect/types'
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -15,6 +16,7 @@ import {
     Briefcase, Search, MoreVertical, Smile, Paperclip,
     ArrowLeft, Bell, BellOff, Pin, Archive, UserPlus,
     Circle, CheckCheck, Loader2, Volume2, VolumeX, Handshake, Vibrate,
+    Mic, MicOff, Play, Pause, X, FileText, Image as ImageIcon, Download, File,
 } from 'lucide-react'
 
 // ── Channel Icon ─────────────────────────────────────────
@@ -106,6 +108,55 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
         )
     }
 
+    const bubbleBg = isOwn ? T.accent : T.surface
+    const bubbleColor = isOwn ? T.textInverse : T.text
+    const bubbleBorder = isOwn ? 'none' : `1px solid ${T.borderLight}`
+    const attachments = (msg.attachments || []) as Attachment[]
+
+    const renderContent = () => {
+        // Voice message
+        if (msg.content_type === 'voice') {
+            const voiceUrl = attachments[0]?.url || msg.content
+            return <VoicePlayer url={voiceUrl || ''} isOwn={isOwn} />
+        }
+        // Image message
+        if (msg.content_type === 'image') {
+            const imgUrl = attachments[0]?.url || msg.content
+            return (
+                <div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imgUrl || ''} alt="Imagem" style={{ maxWidth: '100%', maxHeight: 300, borderRadius: 4, display: 'block' }} />
+                    {msg.content && msg.content !== imgUrl && <div style={{ marginTop: 6, fontSize: 14 }}>{msg.content}</div>}
+                </div>
+            )
+        }
+        // File message
+        if (msg.content_type === 'file') {
+            return (
+                <div>
+                    {attachments.map((att, i) => (
+                        <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" style={{
+                            display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0',
+                            color: isOwn ? T.textInverse : T.gold, textDecoration: 'none', fontSize: 13,
+                        }}>
+                            <File size={16} />
+                            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {att.name || 'Arquivo'}
+                            </span>
+                            <span style={{ fontSize: 11, opacity: 0.7 }}>
+                                {att.size ? `${(att.size / 1024).toFixed(0)}KB` : ''}
+                            </span>
+                            <Download size={14} />
+                        </a>
+                    ))}
+                    {msg.content && <div style={{ marginTop: 4, fontSize: 14 }}>{msg.content}</div>}
+                </div>
+            )
+        }
+        // Default text
+        return <>{msg.content}</>
+    }
+
     return (
         <div style={{
             display: 'flex', gap: 8, padding: '4px 0',
@@ -120,15 +171,33 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
                     </div>
                 )}
                 <div style={{
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    background: isOwn ? T.accent : T.surface,
-                    color: isOwn ? T.textInverse : T.text,
+                    padding: '8px 12px', borderRadius: '6px',
+                    background: bubbleBg, color: bubbleColor,
                     fontSize: 14, lineHeight: '20px',
-                    border: isOwn ? 'none' : `1px solid ${T.borderLight}`,
-                    wordBreak: 'break-word',
+                    border: bubbleBorder, wordBreak: 'break-word',
                 }}>
-                    {msg.content}
+                    {renderContent()}
+                    {/* Inline attachments for text messages with files */}
+                    {msg.content_type === 'text' && attachments.length > 0 && (
+                        <div style={{ marginTop: 8, borderTop: `1px solid ${isOwn ? 'rgba(255,255,255,0.2)' : T.borderLight}`, paddingTop: 6 }}>
+                            {attachments.map((att, i) => {
+                                if (att.type?.startsWith('image/')) {
+                                    return (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img key={i} src={att.url} alt={att.name} style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 4, display: 'block', marginBottom: 4 }} />
+                                    )
+                                }
+                                return (
+                                    <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" style={{
+                                        display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0',
+                                        color: isOwn ? T.textInverse : T.gold, textDecoration: 'none', fontSize: 12,
+                                    }}>
+                                        <FileText size={14} /> {att.name} <Download size={12} />
+                                    </a>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
                 <div style={{
                     fontSize: 11, color: T.textDim, marginTop: 2,
@@ -139,6 +208,48 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
                     {isOwn && <CheckCheck size={12} style={{ marginLeft: 4, verticalAlign: 'middle' }} />}
                 </div>
             </div>
+        </div>
+    )
+}
+
+// ── Voice Player Component ──────────────────────────────
+function VoicePlayer({ url, isOwn }: { url: string; isOwn: boolean }) {
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+    const [playing, setPlaying] = useState(false)
+    const [progress, setProgress] = useState(0)
+    const [duration, setDuration] = useState(0)
+
+    const toggle = () => {
+        if (!audioRef.current) return
+        if (playing) { audioRef.current.pause() }
+        else { audioRef.current.play() }
+        setPlaying(!playing)
+    }
+
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 180 }}>
+            <audio
+                ref={audioRef}
+                src={url}
+                onLoadedMetadata={() => { if (audioRef.current) setDuration(audioRef.current.duration) }}
+                onTimeUpdate={() => { if (audioRef.current) setProgress(audioRef.current.currentTime / (audioRef.current.duration || 1) * 100) }}
+                onEnded={() => { setPlaying(false); setProgress(0) }}
+            />
+            <button onClick={toggle} style={{
+                width: 32, height: 32, borderRadius: '50%', border: 'none', cursor: 'pointer',
+                background: isOwn ? 'rgba(255,255,255,0.2)' : T.gold,
+                color: isOwn ? '#fff' : T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+                {playing ? <Pause size={14} /> : <Play size={14} style={{ marginLeft: 2 }} />}
+            </button>
+            <div style={{ flex: 1 }}>
+                <div style={{ height: 4, borderRadius: 2, background: isOwn ? 'rgba(255,255,255,0.2)' : T.borderLight, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${progress}%`, background: isOwn ? '#fff' : T.gold, borderRadius: 2, transition: 'width 0.1s' }} />
+                </div>
+            </div>
+            <span style={{ fontSize: 11, fontFamily: T.font.mono, opacity: 0.7, minWidth: 32 }}>
+                {duration > 0 ? `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}` : '0:00'}
+            </span>
         </div>
     )
 }
@@ -275,6 +386,67 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
             setTimeout(() => setNudgeShake(false), 600)
         }
         setSending(false)
+    }
+
+    // ── Voice Recording ──
+    const voiceRecorder = useVoiceRecorder()
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const [uploadingFile, setUploadingFile] = useState(false)
+
+    const handleVoiceStart = () => { voiceRecorder.startRecording() }
+    const handleVoiceCancel = () => { voiceRecorder.cancelRecording() }
+    const handleVoiceSend = async () => {
+        if (!activeChannelId) return
+        setSending(true)
+        try {
+            const blob = await voiceRecorder.stopRecording()
+            const supabase = createClient()
+            const filename = `voice_${Date.now()}_${user.id.slice(0, 8)}.webm`
+            const { data: upload, error: uploadErr } = await supabase.storage
+                .from('media')
+                .upload(`chat/voice/${filename}`, blob, { contentType: blob.type })
+            if (uploadErr) throw uploadErr
+            const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(upload.path)
+            await sendMessage('🎤 Mensagem de voz', 'voice', {
+                attachments: [{ url: publicUrl, name: filename, size: blob.size, type: blob.type }],
+            })
+            play('message')
+        } catch (err) {
+            console.error('[Voice] Upload failed:', err)
+            toast.error('Erro ao enviar áudio')
+        }
+        setSending(false)
+    }
+
+    // ── File Upload ──
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files
+        if (!files?.length || !activeChannelId) return
+        setUploadingFile(true)
+        const supabase = createClient()
+        try {
+            const uploaded: Attachment[] = []
+            for (const file of Array.from(files)) {
+                const ext = file.name.split('.').pop()
+                const filename = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`
+                const { data: upload, error: uploadErr } = await supabase.storage
+                    .from('media')
+                    .upload(`chat/files/${filename}`, file, { contentType: file.type })
+                if (uploadErr) throw uploadErr
+                const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(upload.path)
+                uploaded.push({ url: publicUrl, name: file.name, size: file.size, type: file.type })
+            }
+            const isImage = uploaded.every(a => a.type.startsWith('image/'))
+            const contentType: ContentType = isImage ? 'image' : 'file'
+            const preview = isImage ? '📷 Imagem' : `📎 ${uploaded.map(a => a.name).join(', ')}`
+            await sendMessage(preview, contentType, { attachments: uploaded })
+            play('message')
+        } catch (err) {
+            console.error('[File] Upload failed:', err)
+            toast.error('Erro ao enviar arquivo')
+        }
+        setUploadingFile(false)
+        if (fileInputRef.current) fileInputRef.current.value = ''
     }
 
     // Typing indicator
@@ -627,62 +799,148 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                         )}
                     </AnimatePresence>
 
+                    {/* Hidden file input */}
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        accept="image/*,.pdf,.doc,.docx,.xlsx,.xls,.txt,.csv,.zip"
+                        onChange={handleFileSelect}
+                        style={{ display: 'none' }}
+                    />
+
                     {/* Composer */}
                     <div style={{
                         padding: '12px 20px', borderTop: `1px solid ${T.border}`,
                         display: 'flex', alignItems: 'center', gap: 8, background: T.surface,
                     }}>
-                        <button style={{
-                            width: 36, height: 36, borderRadius: T.radius.md,
-                            background: 'transparent', border: 'none', cursor: 'pointer',
-                            color: T.textMuted, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>
-                            <Paperclip size={18} />
-                        </button>
-                        <button
-                            onClick={handleNudge}
-                            disabled={sending}
-                            title="Chamar atenção (chacoalhão MSN)"
-                            style={{
-                                width: 36, height: 36, borderRadius: T.radius.md,
-                                background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',
-                                cursor: 'pointer', color: '#F59E0B',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                transition: `all ${T.transition.fast}`,
-                            }}
-                        >
-                            <Vibrate size={18} />
-                        </button>
-                        <input
-                            ref={inputRef}
-                            value={newMessage}
-                            onChange={e => { setNewMessage(e.target.value); handleTyping() }}
-                            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-                            placeholder="Mensagem..."
-                            style={{
-                                flex: 1, height: 40, padding: '0 16px',
-                                background: T.elevated, border: `1px solid ${T.borderLight}`,
-                                borderRadius: T.radius.full, color: T.text,
-                                fontSize: 14, fontFamily: T.font.sans, outline: 'none',
-                                transition: `all ${T.transition.fast}`,
-                            }}
-                            onFocus={e => e.currentTarget.style.borderColor = T.borderGold}
-                            onBlur={e => e.currentTarget.style.borderColor = T.borderLight}
-                        />
-                        <button
-                            onClick={handleSend}
-                            disabled={!newMessage.trim() || sending}
-                            style={{
-                                width: 40, height: 40, borderRadius: T.radius.full,
-                                background: newMessage.trim() ? T.accent : T.elevated,
-                                color: newMessage.trim() ? T.textInverse : T.textDisabled,
-                                border: 'none', cursor: newMessage.trim() ? 'pointer' : 'default',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                transition: `all ${T.transition.fast}`,
-                            }}
-                        >
-                            {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                        </button>
+                        {voiceRecorder.isRecording ? (
+                            /* ── Voice Recording UI ── */
+                            <>
+                                <button
+                                    onClick={handleVoiceCancel}
+                                    title="Cancelar gravação"
+                                    style={{
+                                        width: 36, height: 36, borderRadius: T.radius.full,
+                                        background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)',
+                                        cursor: 'pointer', color: '#EF4444',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}
+                                >
+                                    <X size={16} />
+                                </button>
+                                <div style={{
+                                    flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+                                    height: 40, padding: '0 16px',
+                                    background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)',
+                                    borderRadius: T.radius.full,
+                                }}>
+                                    <div style={{
+                                        width: 8, height: 8, borderRadius: '50%', background: '#EF4444',
+                                        animation: 'pulse 1s ease infinite',
+                                    }} />
+                                    <span style={{ fontSize: 13, color: '#EF4444', fontFamily: T.font.mono, fontWeight: 600 }}>
+                                        {Math.floor(voiceRecorder.duration / 60)}:{String(Math.floor(voiceRecorder.duration % 60)).padStart(2, '0')}
+                                    </span>
+                                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1, height: 20 }}>
+                                        {voiceRecorder.waveformData.slice(-40).map((v, i) => (
+                                            <div key={i} style={{
+                                                width: 2, borderRadius: 1,
+                                                height: Math.max(3, v * 20), background: '#EF4444', opacity: 0.6,
+                                            }} />
+                                        ))}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleVoiceSend}
+                                    disabled={sending}
+                                    style={{
+                                        width: 40, height: 40, borderRadius: T.radius.full,
+                                        background: T.accent, color: T.textInverse,
+                                        border: 'none', cursor: 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}
+                                >
+                                    {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                                </button>
+                            </>
+                        ) : (
+                            /* ── Normal Composer ── */
+                            <>
+                                <button
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={uploadingFile}
+                                    title="Enviar arquivo ou imagem"
+                                    style={{
+                                        width: 36, height: 36, borderRadius: T.radius.md,
+                                        background: 'transparent', border: 'none', cursor: 'pointer',
+                                        color: uploadingFile ? T.gold : T.textMuted,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}
+                                >
+                                    {uploadingFile ? <Loader2 size={18} className="animate-spin" /> : <Paperclip size={18} />}
+                                </button>
+                                <button
+                                    onClick={handleNudge}
+                                    disabled={sending}
+                                    title="Chamar atenção (chacoalhão MSN)"
+                                    style={{
+                                        width: 36, height: 36, borderRadius: T.radius.md,
+                                        background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',
+                                        cursor: 'pointer', color: '#F59E0B',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        transition: `all ${T.transition.fast}`,
+                                    }}
+                                >
+                                    <Vibrate size={18} />
+                                </button>
+                                <input
+                                    ref={inputRef}
+                                    value={newMessage}
+                                    onChange={e => { setNewMessage(e.target.value); handleTyping() }}
+                                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
+                                    placeholder="Mensagem..."
+                                    style={{
+                                        flex: 1, height: 40, padding: '0 16px',
+                                        background: T.elevated, border: `1px solid ${T.borderLight}`,
+                                        borderRadius: T.radius.full, color: T.text,
+                                        fontSize: 14, fontFamily: T.font.sans, outline: 'none',
+                                        transition: `all ${T.transition.fast}`,
+                                    }}
+                                    onFocus={e => e.currentTarget.style.borderColor = T.borderGold}
+                                    onBlur={e => e.currentTarget.style.borderColor = T.borderLight}
+                                />
+                                {newMessage.trim() ? (
+                                    <button
+                                        onClick={handleSend}
+                                        disabled={sending}
+                                        style={{
+                                            width: 40, height: 40, borderRadius: T.radius.full,
+                                            background: T.accent, color: T.textInverse,
+                                            border: 'none', cursor: 'pointer',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            transition: `all ${T.transition.fast}`,
+                                        }}
+                                    >
+                                        {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={handleVoiceStart}
+                                        title="Gravar mensagem de voz"
+                                        style={{
+                                            width: 40, height: 40, borderRadius: T.radius.full,
+                                            background: T.elevated, color: T.textMuted,
+                                            border: 'none', cursor: 'pointer',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            transition: `all ${T.transition.fast}`,
+                                        }}
+                                    >
+                                        <Mic size={18} />
+                                    </button>
+                                )}
+                            </>
+                        )}
                     </div>
                 </>
             ) : (

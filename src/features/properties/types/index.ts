@@ -25,6 +25,10 @@ export interface IMIProperty {
   broker?: { id: string; name: string; phone?: string; avatar_url?: string | null }
   created_at?: string
   updated_at?: string
+  floor?: number
+  age_years?: number
+  finishing?: 'basic' | 'standard' | 'premium' | 'luxury'
+  has_view?: boolean
   // Intelligence layer (computed)
   imi_score?: number
   price_per_sqm?: number

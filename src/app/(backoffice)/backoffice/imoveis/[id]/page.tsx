@@ -69,7 +69,7 @@ export default function ImovelDetailPage() {
       setDev(rawData)
 
       // Fetch broker info if broker_id exists
-      const brokerId = (rawData as Record<string, unknown>).broker_id as string | null
+      const brokerId = (rawData as unknown as Record<string, unknown>).broker_id as string | null
       if (brokerId) {
         const { data: brokerData } = await supabase
           .from('brokers')

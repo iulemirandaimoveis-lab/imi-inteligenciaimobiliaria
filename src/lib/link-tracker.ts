@@ -12,7 +12,6 @@ import type { CreateTrackedLinkInput, TrackedLink } from '@/types/link-tracker';
 // --- Constantes --------------------------------------------------------------
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br';
-const DEDUP_WINDOW_MINUTES = 30;
 
 // --- Geração de Short Code ---------------------------------------------------
 
@@ -130,47 +129,55 @@ export async function resolveClick(input: ResolveClickInput): Promise<ResolveCli
     hashIP(input.ip),
   ]);
 
-  // 4. Verificar deduplicação (mesmo fingerprint + link nos últimos 30 min)
-  let isUnique = true;
-  if (!parsed.is_bot) {
-    const windowStart = new Date(Date.now() - DEDUP_WINDOW_MINUTES * 60 * 1000).toISOString();
-    const { data: existing } = await supabaseAdmin
-      .from('link_clicks')
-      .select('id')
-      .eq('link_id', link.id)
-      .eq('session_fingerprint', fingerprint)
-      .gte('clicked_at', windowStart)
-      .limit(1);
+  // 4. Insert click with DB-level dedup (UNIQUE INDEX on link_id + session_fingerprint)
+  //    ON CONFLICT DO NOTHING prevents race conditions — no check-then-insert needed.
+  const { data: clickRow, error: clickErr } = await supabaseAdmin
+    .from('link_clicks')
+    .upsert(
+      {
+        link_id: link.id,
+        ip_hash: ipHash,
+        user_agent: input.userAgent,
+        device_type: parsed.device_type,
+        os: parsed.os,
+        browser: parsed.browser,
+        country: input.country,
+        region: input.region,
+        city: input.city,
+        referrer: input.referrer,
+        is_bot: parsed.is_bot,
+        session_fingerprint: fingerprint,
+        is_unique: true,
+      },
+      { onConflict: 'link_id,session_fingerprint', ignoreDuplicates: true }
+    )
+    .select('id')
+    .maybeSingle();
 
-    if (existing && existing.length > 0) {
-      isUnique = false;
-    }
+  // If clickRow is null, the insert was skipped (duplicate) → not unique
+  const isUnique = !!clickRow && !clickErr;
+
+  if (clickErr) {
+    console.error('[LinkTracker] Erro ao registrar clique:', clickErr);
+    return {
+      destination_url: destinationUrl,
+      click_id: '',
+      is_bot: parsed.is_bot,
+      link_id: link.id,
+    };
   }
 
-  // 5. Insert click into link_clicks
-  const clickInsert = supabaseAdmin
-    .from('link_clicks')
-    .insert({
-      link_id: link.id,
-      ip_hash: ipHash,
-      user_agent: input.userAgent,
-      device_type: parsed.device_type,
-      os: parsed.os,
-      browser: parsed.browser,
-      country: input.country,
-      region: input.region,
-      city: input.city,
-      referrer: input.referrer,
-      is_bot: parsed.is_bot,
-      session_fingerprint: fingerprint,
-      is_unique: isUnique,
-    })
-    .select('id')
-    .single();
+  // 5. Only insert event + increment counter for unique non-bot clicks
+  if (isUnique && !parsed.is_bot) {
+    // Fetch development_id for lead scoring
+    const { data: linkFull } = await supabaseAdmin
+      .from('tracked_links')
+      .select('development_id, broker_id, corretor_id')
+      .eq('id', link.id)
+      .single();
 
-  // Only insert into link_events for unique clicks (avoid duplicating events)
-  const eventInsert = isUnique && !parsed.is_bot
-    ? supabaseAdmin.from('link_events').insert({
+    await Promise.allSettled([
+      supabaseAdmin.from('link_events').insert({
         tracked_link_id: link.id,
         event_type: 'click',
         device_type: parsed.device_type,
@@ -186,34 +193,34 @@ export async function resolveClick(input: ResolveClickInput): Promise<ResolveCli
           is_bot: parsed.is_bot,
           fingerprint,
         },
-      })
-    : null;
-
-  const incrementRpc = isUnique && !parsed.is_bot
-    ? supabaseAdmin.rpc('increment_link_clicks', { link_id: link.id })
-    : null;
-
-  const [clickResult] = await Promise.allSettled([
-    clickInsert,
-    ...(eventInsert ? [eventInsert] : []),
-    ...(incrementRpc ? [incrementRpc] : []),
-  ]);
-
-  const click = clickResult.status === 'fulfilled' ? clickResult.value.data : null;
-  if (clickResult.status === 'rejected' || (clickResult.status === 'fulfilled' && clickResult.value.error)) {
-    const err = clickResult.status === 'rejected' ? clickResult.reason : clickResult.value.error;
-    console.error('[LinkTracker] Erro ao registrar clique:', err);
-    return {
-      destination_url: destinationUrl,
-      click_id: '',
-      is_bot: parsed.is_bot,
-      link_id: link.id,
-    };
+      }),
+      supabaseAdmin.rpc('increment_link_clicks', { link_id: link.id }),
+      // Upsert lead score (engagement scoring from spec)
+      linkFull?.development_id ? supabaseAdmin
+        .from('tracker_lead_scores')
+        .upsert({
+          visitor_fingerprint: fingerprint,
+          development_id: linkFull.development_id,
+          broker_id: linkFull.broker_id || linkFull.corretor_id || null,
+          current_score: 5, // Base click score — updated on page engagement
+          score_category: 'cold',
+          score_trend: 'new',
+          intent_classification: 'browsing',
+          urgency_level: 'low',
+          total_sessions: 1,
+          total_clicks: 1,
+          first_session_at: new Date().toISOString(),
+          last_session_at: new Date().toISOString(),
+        }, {
+          onConflict: 'visitor_fingerprint,development_id',
+          ignoreDuplicates: false,
+        }) : Promise.resolve(),
+    ]);
   }
 
   return {
     destination_url: destinationUrl,
-    click_id: click?.id || '',
+    click_id: clickRow?.id || '',
     is_bot: parsed.is_bot,
     link_id: link.id,
   };
@@ -246,6 +253,19 @@ export async function recordPageView(input: PageViewInput): Promise<void> {
   );
 
   if (error) console.error('[LinkTracker] Erro ao registrar page view:', error);
+
+  // Update engagement score via SQL function if click has a linked session
+  if (input.click_id) {
+    const clickedCta = input.cta_clicked || input.whatsapp_clicked || input.form_submitted;
+    await supabaseAdmin.rpc('fn_calculate_engagement_score', {
+      p_total_seconds: input.time_on_page_seconds,
+      p_scroll_depth: input.scroll_depth_percent,
+      p_page_count: 1,
+      p_clicked_cta: clickedCta,
+      p_is_return: false,
+      p_visit_number: 1,
+    }).then(() => { /* noop */ }, () => { /* noop */ });
+  }
 }
 
 // --- Buscar Links do Corretor ------------------------------------------------

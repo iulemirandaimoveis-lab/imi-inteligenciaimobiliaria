@@ -46,6 +46,7 @@
     "gsap": "^3.14.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.563.0",
+    "mammoth": "^1.12.0",
     "mapbox-gl": "^3.19.1",
     "maplibre-gl": "^5.19.0",
     "nanoid": "^5.0.4",
@@ -68,6 +69,7 @@
     "tailwind-merge": "^2.2.1",
     "ua-parser-js": "^1.0.37",
     "web-push": "^3.6.7",
+    "xlsx": "^0.18.5",
     "zod": "^3.25.76"
   },
   "devDependencies": {

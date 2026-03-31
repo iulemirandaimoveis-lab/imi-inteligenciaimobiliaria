@@ -6,83 +6,59 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
         const { searchParams } = new URL(request.url)
         const timeRange = searchParams.get('time_range') || '30d'
         const daysAgo = timeRange === '7d' ? 7 : timeRange === '90d' ? 90 : 30
         const startDate = new Date()
         startDate.setDate(startDate.getDate() - daysAgo)
         const startISO = startDate.toISOString()
-        // Fetch all data in parallel
+        // Fetch KPIs + timeline from SQL, detail data for breakdowns in parallel
         const [
-            { data: pageViews },
+            { data: kpisData },
+            { data: timelineData },
             { data: sessions },
             { data: linkEvents },
             { data: leads },
-            { data: trackedLinks },
+            { data: pageViews },
         ] = await Promise.all([
-            supabase.from('page_views')
-                .select('*')
-                .gte('created_at', startISO)
-                .order('created_at', { ascending: false })
-                .limit(2000),
+            supabase.rpc('analytics_kpis', { start_date: startISO }),
+            supabase.rpc('analytics_daily_timeline', { start_date: startISO, num_days: daysAgo }),
             supabase.from('tracking_sessions')
-                .select('*')
+                .select('utm_source, device_type')
                 .or(`started_at.gte.${startISO},created_at.gte.${startISO}`)
                 .eq('is_bot', false)
-                .order('created_at', { ascending: false })
-                .limit(1000),
+                .limit(5000),
             supabase.from('link_events')
-                .select('*')
+                .select('id, event_type, utm_params, device_type, browser, os, location, metadata, referrer, tracked_link_id, created_at')
                 .gte('created_at', startISO)
+                .neq('event_type', 'repeat_click')
                 .order('created_at', { ascending: false })
                 .limit(2000),
             supabase.from('leads')
-                .select('id, name, source, utm_source, utm_campaign, development_id, status, created_at')
+                .select('id, source, utm_source, utm_campaign, status, created_at')
                 .gte('created_at', startISO)
                 .order('created_at', { ascending: false })
                 .limit(500),
-            supabase.from('tracked_links')
-                .select('id, campaign_name, clicks, short_code, created_at')
+            supabase.from('page_views')
+                .select('page_path, duration_seconds, development_slug, created_at')
+                .gte('created_at', startISO)
                 .order('created_at', { ascending: false })
-                .limit(100),
+                .limit(2000),
         ])
-        const pvs = pageViews || []
+        const kpis = kpisData || {}
+        const dailyTimeline = timelineData || []
         const sess = sessions || []
-        const evts = linkEvents || []
+        const uniqueEvts = linkEvents || []
         const lds = leads || []
-        // ── KPIs ──
-        const totalPageViews = pvs.length
-        const totalSessions = sess.length
-        // Filter to unique clicks only (exclude repeat_click events)
-        const uniqueEvts = evts.filter(e => e.event_type !== 'repeat_click')
-        const totalClicks = uniqueEvts.length
-        const totalLeads = lds.length
-        const convertedLeads = lds.filter(l => l.status === 'converted' || l.status === 'won').length
-        const avgPagesPerSession = totalSessions > 0
-            ? Math.round((sess.reduce((s, se) => s + (se.page_count || 0), 0) / totalSessions) * 10) / 10
+        const pvs = pageViews || []
+        // Derive conversionRate from SQL KPIs
+        const conversionRate = kpis.totalSessions > 0
+            ? parseFloat(((kpis.totalLeads / kpis.totalSessions) * 100).toFixed(2))
             : 0
-        const avgDuration = totalSessions > 0
-            ? Math.round(sess.reduce((s, se) => s + (se.total_duration || 0), 0) / totalSessions)
-            : 0
-        const bounceRate = totalSessions > 0
-            ? Math.round((sess.filter(s => (s.page_count || 0) <= 1).length / totalSessions) * 100)
-            : 0
-        const conversionRate = totalSessions > 0
-            ? parseFloat(((totalLeads / totalSessions) * 100).toFixed(2))
-            : 0
-        // ── By Day ──
-        const dayData: Record<string, { views: number; sessions: number; clicks: number; leads: number }> = {}
-        for (let i = daysAgo - 1; i >= 0; i--) {
-            const d = new Date()
-            d.setDate(d.getDate() - i)
-            const key = d.toISOString().split('T')[0]
-            dayData[key] = { views: 0, sessions: 0, clicks: 0, leads: 0 }
-        }
-        pvs.forEach(pv => { const d = pv.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].views++ })
-        sess.forEach(s => { const d = (s.started_at || s.created_at)?.split('T')[0]; if (d && dayData[d]) dayData[d].sessions++ })
-        uniqueEvts.forEach(e => { const d = e.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].clicks++ })
-        lds.forEach(l => { const d = l.created_at?.split('T')[0]; if (d && dayData[d]) dayData[d].leads++ })
-        const dailyTimeline = Object.entries(dayData).map(([day, data]) => ({ day, ...data }))
         // ── By Source ──
         const sourceMap: Record<string, { sessions: number; clicks: number; leads: number }> = {}
         sess.forEach(s => {
@@ -107,10 +83,11 @@ export async function GET(request: NextRequest) {
         // ── By Device ──
         const deviceMap: Record<string, number> = {}
         sess.forEach(s => { const d = s.device_type || 'desktop'; deviceMap[d] = (deviceMap[d] || 0) + 1 })
+        const totalSess = kpis.totalSessions || 1
         const byDevice = Object.entries(deviceMap)
             .map(([name, value]) => ({
                 name, value,
-                percentage: totalSessions > 0 ? Math.round((value / totalSessions) * 100) : 0,
+                percentage: Math.round((value / totalSess) * 100),
             }))
         // ── Top Pages ──
         const pageMap: Record<string, { views: number; avgDuration: number; totalDuration: number }> = {}
@@ -184,16 +161,16 @@ export async function GET(request: NextRequest) {
             .slice(0, 10)
         return NextResponse.json({
             kpis: {
-                totalPageViews,
-                totalSessions,
-                totalClicks,
-                totalLeads,
-                convertedLeads,
-                avgPagesPerSession,
-                avgDurationSeconds: avgDuration,
-                bounceRate,
+                totalPageViews: kpis.totalPageViews || 0,
+                totalSessions: kpis.totalSessions || 0,
+                totalClicks: kpis.totalClicks || 0,
+                totalLeads: kpis.totalLeads || 0,
+                convertedLeads: kpis.convertedLeads || 0,
+                avgPagesPerSession: kpis.avgPagesPerSession || 0,
+                avgDurationSeconds: kpis.avgDurationSeconds || 0,
+                bounceRate: kpis.bounceRate || 0,
                 conversionRate,
-                totalTrackedLinks: trackedLinks?.length || 0,
+                totalTrackedLinks: kpis.totalTrackedLinks || 0,
             },
             dailyTimeline,
             bySource,

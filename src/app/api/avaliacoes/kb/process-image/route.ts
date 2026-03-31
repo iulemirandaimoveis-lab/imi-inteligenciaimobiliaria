@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { detectFormat, parseDocument } from '@/lib/document-parser'
 export const dynamic = 'force-dynamic'
+
+type SupportedMediaType = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' | 'application/pdf'
+  | 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  | 'application/msword' | 'text/plain'
+
 interface ProcessImageBody {
     imageBase64: string
-    mediaType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' | 'application/pdf'
+    mediaType: SupportedMediaType
     sourceFile: string
     pageTitle?: string
     sessionId?: string
@@ -21,8 +28,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'imageBase64 e sourceFile são obrigatórios' }, { status: 400 })
         }
         const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY || '' })
-        // 1. Extract knowledge with Claude Vision
-        const extractionPrompt = `Você é um especialista em avaliação imobiliária. Analise esta página de material técnico sobre avaliação de imóveis (ABNT NBR 14653, PTAM, metodologia de avaliação) e extraia estruturadamente:
+        // 1. Extract knowledge with Claude
+        const extractionPrompt = `Você é um especialista em avaliação imobiliária. Analise este material técnico sobre avaliação de imóveis (ABNT NBR 14653, PTAM, metodologia de avaliação) e extraia estruturadamente:
 1. TÍTULO DA PÁGINA (se visível)
 2. TÓPICOS PRINCIPAIS (cada um com título, conteúdo completo, palavras-chave, categoria)
    Categorias válidas: metodologia | norma | definicao | calculo | exemplo | formulario | checklist | jurisprudencia
@@ -42,33 +49,48 @@ Responda APENAS em JSON válido com esta estrutura:
     }
   ]
 }`
-        const fileContent = mediaType === 'application/pdf'
-            ? {
-                type: 'document' as const,
-                source: {
-                    type: 'base64' as const,
-                    media_type: 'application/pdf' as const,
-                    data: imageBase64,
-                }
-            }
-            : {
-                type: 'image' as const,
-                source: {
-                    type: 'base64' as const,
-                    media_type: mediaType as 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif',
-                    data: imageBase64,
-                }
-            }
+        // Detect if this is a document format that needs text extraction
+        const docFormat = detectFormat(sourceFile)
+        const isDocFormat = docFormat === 'docx' || docFormat === 'xlsx' || docFormat === 'txt'
+
+        let messageContent: Anthropic.MessageCreateParams['messages'][0]['content']
+        let sourceType: 'image' | 'pdf' | 'text' = 'image'
+
+        if (isDocFormat && docFormat) {
+            // Extract text from document formats, then send as text to Claude
+            const buffer = Buffer.from(imageBase64, 'base64')
+            const parsed = await parseDocument(buffer, docFormat)
+            sourceType = 'text'
+            messageContent = [
+                { type: 'text', text: `=== CONTEÚDO DO DOCUMENTO: ${sourceFile} ===\n\n${parsed.text}\n\n=== FIM DO DOCUMENTO ===\n\n${extractionPrompt}` }
+            ]
+        } else if (mediaType === 'application/pdf') {
+            sourceType = 'pdf'
+            messageContent = [
+                {
+                    type: 'document' as const,
+                    source: { type: 'base64' as const, media_type: 'application/pdf' as const, data: imageBase64 }
+                },
+                { type: 'text', text: extractionPrompt }
+            ]
+        } else {
+            messageContent = [
+                {
+                    type: 'image' as const,
+                    source: {
+                        type: 'base64' as const,
+                        media_type: mediaType as 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif',
+                        data: imageBase64,
+                    }
+                },
+                { type: 'text', text: extractionPrompt }
+            ]
+        }
+
         const response = await client.messages.create({
             model: 'claude-3-5-sonnet-20241022',
             max_tokens: 4096,
-            messages: [{
-                role: 'user',
-                content: [
-                    fileContent,
-                    { type: 'text', text: extractionPrompt }
-                ]
-            }]
+            messages: [{ role: 'user', content: messageContent }]
         })
         const text = response.content[0].type === 'text' ? response.content[0].text : ''
         // 2. Parse JSON from response
@@ -84,7 +106,7 @@ Responda APENAS em JSON válido com esta estrutura:
             .from('avaliacoes_kb_pages')
             .insert({
                 source_file: sourceFile,
-                source_type: 'image',
+                source_type: sourceType,
                 page_title: extracted.page_title || pageTitle || sourceFile,
                 normas_citadas: extracted.normas_citadas || [],
                 definicoes: extracted.definicoes || {},

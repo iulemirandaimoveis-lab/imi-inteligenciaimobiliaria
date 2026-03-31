@@ -84,6 +84,8 @@ export default function PartnershipChatPage() {
     const [msgError, setMsgError] = useState<string | null>(null)
     const [sending, setSending] = useState(false)
     const [actionLoading, setActionLoading] = useState<string | null>(null)
+    const [showCompleteModal, setShowCompleteModal] = useState(false)
+    const [saleValueInput, setSaleValueInput] = useState('')
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -110,13 +112,28 @@ export default function PartnershipChatPage() {
         fetchMessages()
     }, [fetchMessages])
 
-    // Poll every 5s
+    // Supabase Realtime subscription for instant message delivery
     useEffect(() => {
-        pollRef.current = setInterval(fetchMessages, 5000)
+        if (!id) return
+        const { createClient } = require('@/lib/supabase/client')
+        const supabase = createClient()
+        const channel = supabase
+            .channel(`partnership-msgs-${id}`)
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'partnership_messages',
+                filter: `partnership_id=eq.${id}`,
+            }, () => { fetchMessages() })
+            .subscribe()
+
+        // Fallback poll every 15s (in case realtime hiccups)
+        pollRef.current = setInterval(fetchMessages, 15000)
         return () => {
+            supabase.removeChannel(channel)
             if (pollRef.current) clearInterval(pollRef.current)
         }
-    }, [fetchMessages])
+    }, [id, fetchMessages])
 
     // Auto-scroll
     useEffect(() => {
@@ -167,12 +184,9 @@ export default function PartnershipChatPage() {
                     await cancelPartnership(id)
                     break
                 case 'complete': {
-                    const valueStr = prompt('Valor da venda (R$):')
-                    if (!valueStr) { setActionLoading(null); return }
-                    const saleValue = parseFloat(valueStr.replace(/[^\d.,]/g, '').replace(',', '.'))
-                    if (isNaN(saleValue) || saleValue <= 0) { setActionLoading(null); return }
-                    await completePartnership(id, saleValue)
-                    break
+                    setShowCompleteModal(true)
+                    setActionLoading(null)
+                    return
                 }
             }
             await mutatePartnership()
@@ -494,6 +508,84 @@ export default function PartnershipChatPage() {
                     </SidebarCard>
                 </div>
             </div>
+
+            {/* Complete Sale Modal */}
+            {showCompleteModal && (
+                <div style={{
+                    position: 'fixed', inset: 0, zIndex: 999,
+                    background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }} onClick={() => setShowCompleteModal(false)}>
+                    <div onClick={e => e.stopPropagation()} style={{
+                        background: T.bg, border: `1px solid ${T.borderGold}`,
+                        borderRadius: T.radius.xl, padding: 28, width: 400, maxWidth: '90vw',
+                        boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+                    }}>
+                        <h3 style={{ fontFamily: T.font.display, fontSize: 20, color: T.gold, marginBottom: 4 }}>
+                            Concluir Negócio
+                        </h3>
+                        <p style={{ fontSize: 13, color: T.textDim, marginBottom: 20 }}>
+                            Informe o valor final da venda para calcular as comissões automaticamente.
+                        </p>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, marginBottom: 6, display: 'block' }}>
+                            Valor da venda (R$)
+                        </label>
+                        <input
+                            type="text"
+                            value={saleValueInput}
+                            onChange={e => setSaleValueInput(e.target.value)}
+                            placeholder="Ex: 850.000,00"
+                            autoFocus
+                            style={{
+                                width: '100%', height: 44, padding: '0 14px',
+                                background: T.elevated, border: `1px solid ${T.borderLight}`,
+                                borderRadius: T.radius.md, color: T.text,
+                                fontSize: 16, fontFamily: T.font.mono, outline: 'none',
+                                marginBottom: 20,
+                            }}
+                            onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                    const val = parseFloat(saleValueInput.replace(/[^\d.,]/g, '').replace(',', '.'))
+                                    if (!isNaN(val) && val > 0) {
+                                        setShowCompleteModal(false)
+                                        setActionLoading('complete')
+                                        completePartnership(id, val).then(() => mutatePartnership()).finally(() => setActionLoading(null))
+                                    }
+                                }
+                            }}
+                        />
+                        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                            <button
+                                onClick={() => setShowCompleteModal(false)}
+                                style={{
+                                    padding: '10px 20px', borderRadius: T.radius.md,
+                                    background: 'transparent', border: `1px solid ${T.borderLight}`,
+                                    color: T.textMuted, fontSize: 13, cursor: 'pointer',
+                                }}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={() => {
+                                    const val = parseFloat(saleValueInput.replace(/[^\d.,]/g, '').replace(',', '.'))
+                                    if (isNaN(val) || val <= 0) return
+                                    setShowCompleteModal(false)
+                                    setActionLoading('complete')
+                                    completePartnership(id, val).then(() => mutatePartnership()).finally(() => setActionLoading(null))
+                                }}
+                                style={{
+                                    padding: '10px 24px', borderRadius: T.radius.md,
+                                    background: T.gold, color: T.bg, border: 'none',
+                                    fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                }}
+                            >
+                                <DollarSign size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />
+                                Confirmar Conclusão
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

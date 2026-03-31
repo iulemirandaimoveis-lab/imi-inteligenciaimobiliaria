@@ -11,8 +11,9 @@ import {
 
 interface BookedRange { check_in: string; check_out: string }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface Props {
-    property: Record<string, unknown>
+    property: Record<string, any>
     bookedDates: BookedRange[]
     lang: string
 }

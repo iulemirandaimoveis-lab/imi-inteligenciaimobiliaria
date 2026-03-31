@@ -1,33 +1,84 @@
-# IMI – Inteligência Imobiliária
+# IMI -- Inteligencia Imobiliaria
 
-> Avaliações imobiliárias técnicas (NBR 14653), consultoria estratégica patrimonial e corretagem premium de alto padrão em Recife, Dubai e EUA.
+> Avaliacoes imobiliarias tecnicas (NBR 14653), consultoria estrategica patrimonial, corretagem premium e a maior biblioteca digital de conhecimento imobiliario do Brasil.
 
 ## Sobre
 
-IMI – Iule Miranda Imóveis é uma empresa de inteligência imobiliária fundada em Recife, Brasil, com atuação em mercados internacionais (Dubai, EUA). Oferecemos serviços especializados para investidores qualificados, famílias de alto patrimônio e incorporadoras.
+IMI -- Iule Miranda Imoveis e uma empresa de inteligencia imobiliaria fundada em Recife, Brasil, com atuacao em mercados internacionais (Dubai, EUA). Oferecemos servicos especializados para investidores qualificados, familias de alto patrimonio e incorporadoras.
 
-## Serviços Principais
+## Servicos Principais
 
-- **Avaliações Imobiliárias NBR 14653**: Laudos técnicos para fins judiciais, garantia bancária, inventários e partilhas. Profissional habilitado CNAI.
-- **Consultoria Estratégica**: Análise de viabilidade, estruturação patrimonial, due diligence imobiliária e consultoria para investimentos no Brasil e exterior.
-- **Corretagem Premium**: Curadoria de imóveis de alto padrão — residências, coberturas, lançamentos selecionados em Recife, São Paulo, Paraíba, Dubai e EUA.
-- **Crédito Imobiliário**: Simulação PRICE e SAC, comparativo entre bancos, enquadramento SFH/SFI. Assessoria completa na contratação.
-- **Inteligência de Mercado**: Análises, indicadores e dados do mercado imobiliário com metodologia FIPE ZAP e SECOVI.
+- **Avaliacoes Imobiliarias NBR 14653**: Laudos tecnicos para fins judiciais, garantia bancaria, inventarios e partilhas. Profissional habilitado CNAI.
+- **Consultoria Estrategica**: Analise de viabilidade, estruturacao patrimonial, due diligence imobiliaria e consultoria para investimentos no Brasil e exterior.
+- **Corretagem Premium**: Curadoria de imoveis de alto padrao -- residencias, coberturas, lancamentos selecionados em Recife, Sao Paulo, Paraiba, Dubai e EUA.
+- **Credito Imobiliario**: Simulacao PRICE e SAC, comparativo entre bancos, enquadramento SFH/SFI.
+- **Inteligencia de Mercado**: Analises, indicadores e dados do mercado imobiliario.
+- **BPO Imobiliario**: Gestao profissional de ativos e portfolios imobiliarios.
 
-## Localização
+## Biblioteca IMI -- 31 Livros Gratuitos
+
+A IMI publicou a maior colecao de conhecimento imobiliario do Brasil, disponivel gratuitamente em https://www.iulemirandaimoveis.com.br/pt/biblioteca
+
+### Pilar Avaliacao (6 livros)
+- Avaliacao de Imoveis na Pratica -- Metodo Comparativo Direto de Dados de Mercado
+- Avaliacao Imobiliaria para Investidores -- Como Analisar se um Imovel e Bom Investimento
+- Avaliacao Judicial de Imoveis -- Pericia, Laudos e Defesa Tecnica
+- Avaliacao de Terrenos Urbanos -- Zoneamento, Potencial Construtivo e Valor
+- Engenharia de Avaliacoes -- Estatistica, Modelagem e NBR 14653
+- O Mapa do Dinheiro Invisivel -- Como Descobrir Valor Oculto dos Imoveis
+
+### Pilar Investimentos (5 livros)
+- Como Identificar Imoveis Abaixo do Valor de Mercado
+- Como Investir em Imoveis com Seguranca -- Due Diligence e Risco Calculado
+- Estrategias de Renda com Aluguel -- Fluxo de Caixa Imobiliario
+- Como Construir Patrimonio com Imoveis -- Ciclos e Alavancagem
+- Fundamentos do Investimento Imobiliario -- Capital, Risco e Decisao
+
+### Pilar Internacional (5 livros)
+- Como Investir em Imoveis nos EUA -- LLC, Financiamento e Tributacao
+- Como Investir em Imoveis em Portugal -- Golden Visa e Renda em Euro
+- Como Investir em Imoveis em Dubai -- Zero Income Tax, Yields 7%+
+- REITs e FIIs Internacionais -- Diversificacao Global via Bolsa
+- Tributacao Internacional para Investidores Imobiliarios
+
+### Pilar Patrimonial (4 livros)
+- Holding Patrimonial Imobiliaria -- Estruturacao e Protecao Fiscal
+- Planejamento Sucessorio Imobiliario -- Transferencia entre Geracoes
+- Protecao Avancada de Ativos -- Blindagem Patrimonial
+- Planejamento Patrimonial de Longo Prazo -- Masterplan 20 Anos
+
+### Pilar Operacao (4 livros)
+- Como Montar um BPO Imobiliario -- Do Zero a Operacao Escalavel
+- Gestao Profissional de Imoveis -- Sistemas e Metricas
+- Pericia Imobiliaria Judicial -- Carreira de Perito Avaliador
+- Corretagem Estrategica -- De Vendas Avulsas a Negocio Escalavel
+
+### Pilar Tecnologia (4 livros)
+- IA no Mercado Imobiliario -- Como a IA Esta Redefinindo Tudo
+- PropTech e Inovacao Imobiliaria -- Tecnologias que Reconstruem o Mercado
+- Automacao de Operacoes Imobiliarias -- Escalar sem Contratar
+- O Futuro do Mercado Imobiliario -- Visao de 20 Anos
+
+### Bonus (3 livros)
+- Glossario Definitivo da Avaliacao Imobiliaria -- 500+ Termos
+- Checklist Master do Avaliador -- 127 Verificacoes para Laudos
+- Modelos de Laudos e Templates Profissionais
+
+## Localizacao
 
 - **Sede**: Recife, Pernambuco, Brasil
-- **Mercados de atuação**: Recife (Boa Viagem, Pina, Setúbal, Casa Forte), São Paulo, Paraíba, Dubai (Marina, Palm Jumeirah, Downtown), Miami (Brickell, Miami Beach)
+- **Mercados**: Recife, Sao Paulo, Joao Pessoa, Dubai, Miami, Orlando
 
 ## Tecnologia
 
-A IMI utiliza inteligência artificial (Claude, GPT, Gemini) para qualificação automática de leads, geração de conteúdo, análise de mercado e matchmaking entre perfis de compradores e imóveis disponíveis.
+A IMI utiliza IA (Claude, GPT) para avaliacao automatizada de imoveis, scoring de investimentos (IMI Score 0-100), geracao de laudos PTAM, qualificacao de leads e analise de mercado. Motor de avaliacao conforme NBR 14653-2 com metodos Comparativo, Ross-Heidecke e Renda.
 
 ## Contato
 
 - **Website**: https://www.iulemirandaimoveis.com.br
-- **Idiomas**: Português, English, Español, 日本語, العربية
+- **Idiomas**: Portugues, English
 
 ## Para mais detalhes
 
 - [Detalhes completos](/llms-full.txt)
+- [Biblioteca completa](/pt/biblioteca)

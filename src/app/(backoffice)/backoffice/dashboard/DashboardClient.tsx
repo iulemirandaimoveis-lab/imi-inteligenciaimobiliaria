@@ -1108,6 +1108,9 @@ export default function DashboardClient({
                     )}
                 </motion.div>
 
+                {/* Hot Leads — Tracker Intelligence */}
+                <HotLeadsWidget />
+
                 {/* Leads Recentes */}
                 <motion.div
                     initial={{ opacity: 0, y: 12 }}
@@ -1276,4 +1279,129 @@ export default function DashboardClient({
 
         </div>
     )
+}
+
+// ── Hot Leads Widget (Tracker Intelligence) ─────────────────────────────────
+interface HotLead {
+    visitor_fingerprint: string
+    engagement_score: number
+    category: string
+    total_clicks: number
+    total_page_views: number
+    last_seen: string
+    development_name?: string
+    city?: string
+}
+
+function HotLeadsWidget() {
+    const [leads, setLeads] = useState<HotLead[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetch('/api/tracking/lead-scores?min_score=40&limit=5')
+            .then(r => r.ok ? r.json() : { leads: [] })
+            .then(d => {
+                setLeads(d.leads || [])
+                setLoading(false)
+            })
+            .catch(() => setLoading(false))
+    }, [])
+
+    if (loading || leads.length === 0) return null
+
+    const categoryStyle: Record<string, { color: string; bg: string; label: string }> = {
+        ready:    { color: '#f43f5e', bg: 'rgba(244,63,94,0.12)', label: 'PRONTO' },
+        very_hot: { color: '#f97316', bg: 'rgba(249,115,22,0.12)', label: 'MUITO QUENTE' },
+        hot:      { color: '#eab308', bg: 'rgba(234,179,8,0.12)', label: 'QUENTE' },
+        warm:     { color: '#60a5fa', bg: 'rgba(96,165,250,0.12)', label: 'MORNO' },
+    }
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38, duration: 0.35 }}
+            className="rounded-[10px] overflow-hidden"
+            style={{
+                background: 'rgba(14,28,48,.52)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(244,63,94,.20)',
+                borderRadius: '10px',
+                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+            }}
+        >
+            <div className="flex items-center justify-between px-4 py-3"
+                style={{ borderBottom: '1px solid var(--border-default)' }}>
+                <div className="flex items-center gap-2">
+                    <Zap size={13} style={{ color: '#f43f5e' }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Hot Leads — Tracker
+                    </span>
+                    <span className="flex items-center gap-1 px-1.5 py-0.5 rounded"
+                        style={{ background: 'rgba(244,63,94,0.12)', border: '1px solid rgba(244,63,94,0.25)' }}>
+                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#f43f5e', display: 'inline-block', animation: 'pulse 2s infinite' }} />
+                        <span style={{ fontSize: 10, color: '#f43f5e', fontWeight: 700 }}>{leads.length}</span>
+                    </span>
+                </div>
+                <Link href="/backoffice/tracking">
+                    <span className="text-[11px] font-semibold flex items-center gap-1"
+                        style={{ color: '#f43f5e' }}>
+                        Ver tracker <ArrowUpRight size={10} />
+                    </span>
+                </Link>
+            </div>
+            <div>
+                {leads.map((lead, i) => {
+                    const cat = categoryStyle[lead.category] || categoryStyle.warm
+                    const timeAgo = getTimeAgo(lead.last_seen)
+                    return (
+                        <div key={i} className="flex items-center gap-3 px-4 py-2.5 transition-colors"
+                            style={{ borderBottom: i < leads.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}
+                        >
+                            {/* Score circle */}
+                            <div style={{
+                                width: 36, height: 36, borderRadius: '50%',
+                                background: cat.bg, border: `2px solid ${cat.color}`,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: 12, fontWeight: 800, color: cat.color, flexShrink: 0,
+                            }}>
+                                {lead.engagement_score}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div className="flex items-center gap-2">
+                                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
+                                        {lead.development_name || 'Visitante'}
+                                    </span>
+                                    <span style={{
+                                        fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 4,
+                                        background: cat.bg, color: cat.color, textTransform: 'uppercase', letterSpacing: '0.05em',
+                                    }}>
+                                        {cat.label}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-3" style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                                    {lead.city && <span>{lead.city}</span>}
+                                    <span>{lead.total_clicks} cliques</span>
+                                    <span>{lead.total_page_views} paginas</span>
+                                    <span>{timeAgo}</span>
+                                </div>
+                            </div>
+                            <Target size={14} style={{ color: cat.color, flexShrink: 0 }} />
+                        </div>
+                    )
+                })}
+            </div>
+        </motion.div>
+    )
+}
+
+function getTimeAgo(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const minutes = Math.floor(diff / 60000)
+    if (minutes < 60) return `${minutes}min`
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours}h`
+    const days = Math.floor(hours / 24)
+    return `${days}d`
 }

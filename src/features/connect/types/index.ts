@@ -2,7 +2,7 @@
 
 export type ChannelType = 'deal_room' | 'team' | 'direct' | 'group' | 'property' | 'announcement' | 'partnership'
 export type MemberRole = 'admin' | 'moderator' | 'member' | 'readonly'
-export type ContentType = 'text' | 'image' | 'file' | 'property_card' | 'lead_card' | 'proposal_card' | 'system' | 'ai_summary' | 'nudge'
+export type ContentType = 'text' | 'image' | 'file' | 'voice' | 'property_card' | 'lead_card' | 'proposal_card' | 'system' | 'ai_summary' | 'nudge'
 export type NotifyMode = 'all' | 'mentions' | 'none'
 export type PresenceStatus = 'online' | 'away' | 'busy' | 'offline'
 

@@ -547,11 +547,14 @@ function TabCalculadora() {
 }
 
 // ── Tab 2: Base de Conhecimento ───────────────────────────────────────────────
+const PAGE_SIZE = 20
+
 function TabBase() {
   const [pages, setPages]     = useState<KBPage[]>([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDel]    = useState<string | null>(null)
   const [search, setSearch]   = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     fetch('/api/avaliacoes/kb/pages')
@@ -571,6 +574,13 @@ function TabBase() {
   const filtered = search.trim()
     ? pages.filter(p => (p.page_title || p.source_file).toLowerCase().includes(search.toLowerCase()) || p.normas_citadas?.some(n => n.toLowerCase().includes(search.toLowerCase())))
     : pages
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const safePage   = Math.min(currentPage, totalPages)
+  const paginated  = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+
+  // Reset page when search changes
+  useEffect(() => { setCurrentPage(1) }, [search])
 
   const totalTopics = pages.reduce((a, p) => a + (p.avaliacoes_kb_topics?.[0]?.count || 0), 0)
   const allNormas   = [...new Set(pages.flatMap(p => p.normas_citadas || []))]
@@ -616,8 +626,9 @@ function TabBase() {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {filtered.length === 0 && <p style={{ fontSize: 12, color: T.textSub, textAlign: 'center', padding: '24px 0' }}>Nenhuma página encontrada para "{search}"</p>}
-          {filtered.map(p => {
+          {filtered.length === 0 && <p style={{ fontSize: 12, color: T.textSub, textAlign: 'center', padding: '24px 0' }}>Nenhuma página encontrada para &ldquo;{search}&rdquo;</p>}
+          {filtered.length > 0 && <div style={{ fontSize: 11, color: T.textDim, marginBottom: 4 }}>{filtered.length} resultado{filtered.length !== 1 ? 's' : ''}{search && ` para "${search}"`} — página {safePage}/{totalPages}</div>}
+          {paginated.map(p => {
             const cnt = p.avaliacoes_kb_topics?.[0]?.count || 0
             return (
               <div key={p.id} style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -642,6 +653,32 @@ function TabBase() {
               </div>
             )
           })}
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 8, paddingTop: 12, borderTop: `1px solid ${T.border}` }}>
+              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={safePage <= 1}
+                style={{ padding: '6px 14px', borderRadius: 5, border: `1px solid ${T.border}`, background: safePage <= 1 ? 'transparent' : T.elevated, color: safePage <= 1 ? T.textDim : T.text, fontSize: 11, cursor: safePage <= 1 ? 'default' : 'pointer', opacity: safePage <= 1 ? 0.4 : 1 }}>
+                Anterior
+              </button>
+              {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                let pg: number
+                if (totalPages <= 7) { pg = i + 1 }
+                else if (safePage <= 4) { pg = i + 1 }
+                else if (safePage >= totalPages - 3) { pg = totalPages - 6 + i }
+                else { pg = safePage - 3 + i }
+                return (
+                  <button key={pg} onClick={() => setCurrentPage(pg)}
+                    style={{ width: 30, height: 30, borderRadius: 5, border: `1px solid ${pg === safePage ? T.gold : T.border}`, background: pg === safePage ? T.goldBg : 'transparent', color: pg === safePage ? T.gold : T.textSub, fontSize: 11, fontWeight: pg === safePage ? 700 : 400, cursor: 'pointer' }}>
+                    {pg}
+                  </button>
+                )
+              })}
+              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={safePage >= totalPages}
+                style={{ padding: '6px 14px', borderRadius: 5, border: `1px solid ${T.border}`, background: safePage >= totalPages ? 'transparent' : T.elevated, color: safePage >= totalPages ? T.textDim : T.text, fontSize: 11, cursor: safePage >= totalPages ? 'default' : 'pointer', opacity: safePage >= totalPages ? 0.4 : 1 }}>
+                Próxima
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -659,9 +696,26 @@ function TabProcessar() {
 
   function handleFiles(sel: FileList | null) {
     if (!sel) return
-    const arr = Array.from(sel).filter(f => f.type.startsWith('image/') || f.type === 'application/pdf')
+    const ALLOWED_TYPES = new Set([
+      'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',       // .xlsx
+      'application/msword',  // .doc
+      'text/plain',          // .txt
+    ])
+    const ALLOWED_EXT = /\.(docx?|xlsx?|pdf|png|jpe?g|webp|gif|txt|md)$/i
+    const arr = Array.from(sel).filter(f => ALLOWED_TYPES.has(f.type) || ALLOWED_EXT.test(f.name))
     setFiles(arr)
     setResults(arr.map(f => ({ name: f.name, status: 'pending' })))
+  }
+
+  async function checkDuplicate(fileName: string): Promise<boolean> {
+    try {
+      const resp = await fetch(`/api/avaliacoes/kb/pages?source_file=${encodeURIComponent(fileName)}`)
+      const data = await resp.json()
+      return Array.isArray(data) && data.length > 0
+    } catch { return false }
   }
 
   async function processAll() {
@@ -670,15 +724,39 @@ function TabProcessar() {
     for (let i = 0; i < files.length; i++) {
       setResults(p => p.map((r, idx) => idx === i ? { ...r, status: 'processing' } : r))
       try {
+        // Dedup check — warn if file already processed
+        const isDup = await checkDuplicate(files[i].name)
+        if (isDup && !confirm(`"${files[i].name}" já foi processado anteriormente. Reprocessar?`)) {
+          setResults(p => p.map((r, idx) => idx === i ? { ...r, status: 'done', message: 'Ignorado (duplicata)' } : r))
+          continue
+        }
+
         const b64 = await new Promise<string>((res, rej) => {
           const r = new FileReader()
           r.onload = e => res((e.target?.result as string).split(',')[1])
           r.onerror = rej
           r.readAsDataURL(files[i])
         })
+
+        // Determine effective media type (browser may return empty for docx/xlsx)
+        let mediaType = files[i].type
+        if (!mediaType || mediaType === 'application/octet-stream') {
+          const ext = files[i].name.split('.').pop()?.toLowerCase()
+          const extMap: Record<string, string> = {
+            docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            doc: 'application/msword',
+            xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            xls: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            pdf: 'application/pdf',
+            txt: 'text/plain',
+            md: 'text/plain',
+          }
+          mediaType = extMap[ext || ''] || 'image/png'
+        }
+
         const resp = await fetch('/api/avaliacoes/kb/process-image', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageBase64: b64, mediaType: files[i].type, sourceFile: files[i].name, sessionId: sessionId.current }),
+          body: JSON.stringify({ imageBase64: b64, mediaType, sourceFile: files[i].name, sessionId: sessionId.current }),
         })
         const data = await resp.json()
         if (!resp.ok || data.error) throw new Error(data.error || 'Erro')
@@ -715,8 +793,8 @@ function TabProcessar() {
         <p style={{ fontSize: 13, color: isDragOver ? T.gold : T.textSub, margin: 0, fontWeight: isDragOver ? 600 : 400 }}>
           {files.length > 0 ? `${files.length} arquivo${files.length > 1 ? 's' : ''} selecionado${files.length > 1 ? 's' : ''}` : isDragOver ? 'Solte aqui' : 'Clique ou arraste imagens de páginas'}
         </p>
-        {!files.length && !isDragOver && <p style={{ fontSize: 11, color: T.textDim, margin: '6px 0 0' }}>PDF, PNG, JPG, WEBP — múltiplas páginas simultâneas</p>}
-        <input ref={inputRef} type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,image/*" multiple style={{ display: 'none' }} onChange={e => handleFiles(e.target.files)} />
+        {!files.length && !isDragOver && <p style={{ fontSize: 11, color: T.textDim, margin: '6px 0 0' }}>PDF, DOCX, XLSX, PNG, JPG, WEBP — múltiplas páginas simultâneas</p>}
+        <input ref={inputRef} type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.docx,.xlsx,.doc,.xls,.txt,image/*" multiple style={{ display: 'none' }} onChange={e => handleFiles(e.target.files)} />
       </div>
 
       {/* Actions */}
