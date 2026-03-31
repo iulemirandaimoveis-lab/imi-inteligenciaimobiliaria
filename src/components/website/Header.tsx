@@ -154,6 +154,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                     <Link
                                         key={item.key}
                                         href={`/${lang}/${item.key}`}
+                                        prefetch={true}
                                         className={`relative px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-200 rounded-lg ${active
                                             ? 'text-white'
                                             : 'text-white/50 hover:text-white hover:bg-white/[0.04]'
@@ -203,6 +204,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                                     <Link
                                                         key={item.key}
                                                         href={`/${lang}/${item.key}`}
+                                                        prefetch={true}
                                                         onClick={() => setMoreOpen(false)}
                                                         className={`flex items-center h-[40px] px-4 text-[13px] font-medium transition-colors duration-150 ${active
                                                             ? 'text-white bg-white/[0.06] border-l-[3px] border-[#C8A44A] pl-[13px]'

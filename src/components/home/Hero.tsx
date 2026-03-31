@@ -76,7 +76,7 @@ export default function Hero({ dict }: HeroProps) {
   const handleCanPlay = useCallback(() => setVideoReady(true), [])
 
   return (
-    <section ref={sectionRef} className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
+    <section ref={sectionRef} className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)', containIntrinsicSize: '0 100dvh', contentVisibility: 'auto' }}>
       {/* Background video with parallax */}
       <motion.div className="absolute inset-0" style={{ y: bgY }}>
         {/* Static poster image shown immediately */}
@@ -85,6 +85,7 @@ export default function Hero({ dict }: HeroProps) {
           alt=""
           fill
           priority
+          fetchPriority="high"
           className="object-cover scale-110"
           sizes="100vw"
         />
@@ -245,8 +246,8 @@ export default function Hero({ dict }: HeroProps) {
         </div>
       </motion.div>
 
-      {/* Stats bar */}
-      <div className="relative z-10 border-t border-white/8">
+      {/* Stats bar — min-height prevents CLS while counters load */}
+      <div className="relative z-10 border-t border-white/8" style={{ minHeight: 72 }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

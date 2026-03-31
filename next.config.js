@@ -57,6 +57,7 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: '2mb',
         },
+        optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'sonner', 'date-fns'],
     },
     // Security headers
     async headers() {
