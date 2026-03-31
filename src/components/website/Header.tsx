@@ -17,7 +17,6 @@ interface HeaderProps {
 const NAV_MAIN = [
     { key: 'avaliacoes', label: 'Avaliações' },
     { key: 'imoveis', label: 'Imóveis' },
-    { key: 'alugueis', label: 'Aluguéis' },
     { key: 'credito', label: 'Crédito' },
     { key: 'consultoria', label: 'Consultoria' },
     { key: 'inteligencia', label: 'Inteligência' },

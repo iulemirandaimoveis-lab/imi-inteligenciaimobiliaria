@@ -31,7 +31,16 @@ const DEFAULT_FILTERS: FilterState = {
     location: null,
     neighborhood: null,
     sort: 'relevant',
+    listingCategory: 'all',
 };
+
+const CATEGORY_TABS: { value: FilterState['listingCategory']; label: string; icon: string }[] = [
+    { value: 'all', label: 'Todos', icon: '' },
+    { value: 'comprar', label: 'Comprar', icon: '' },
+    { value: 'aluguel', label: 'Alugar', icon: '' },
+    { value: 'temporada', label: 'Temporada', icon: '' },
+    { value: 'short_stay', label: 'Short Stay', icon: '' },
+];
 
 /* ── Light-theme tokens ──────────────────────────────────────────── */
 const PAGE_BG = '#F8F6F2';
@@ -64,6 +73,12 @@ const BADGE_LABELS: Record<string, string> = {
     launch: 'Lançamento', ready: 'Pronta Entrega', under_construction: 'Em Obra',
 };
 
+const CATEGORY_BADGE: Record<string, { bg: string; color: string; label: string }> = {
+    aluguel:    { bg: '#6366F1', color: '#fff', label: 'Aluguel' },
+    temporada:  { bg: '#F97316', color: '#fff', label: 'Temporada' },
+    short_stay: { bg: '#EC4899', color: '#fff', label: 'Short Stay' },
+};
+
 const PropertyMap = dynamic(() => import('@/components/maps/PropertyMap'), {
     ssr: false,
     loading: () => (
@@ -76,9 +91,19 @@ const PropertyMap = dynamic(() => import('@/components/maps/PropertyMap'), {
 // ── Property Card — Premium Proptech Design ──────────────────────────────────
 
 function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string; index?: number }) {
-    const badge = BADGE_STYLES[dev.status] || BADGE_STYLES.launch;
-    const label = BADGE_LABELS[dev.status] || dev.status;
-    const price = formatPrice(dev.priceRange.min);
+    const isRental = dev.listingCategory && dev.listingCategory !== 'comprar';
+    const catBadge = isRental ? CATEGORY_BADGE[dev.listingCategory] : null;
+    const badge = catBadge || BADGE_STYLES[dev.status] || BADGE_STYLES.launch;
+    const label = catBadge?.label || BADGE_LABELS[dev.status] || dev.status;
+    const price = isRental
+        ? (dev.dailyRate ? formatCurrency(dev.dailyRate) : dev.monthlyRate ? formatCurrency(dev.monthlyRate) : 'Consultar')
+        : formatPrice(dev.priceRange.min);
+    const priceLabel = isRental
+        ? (dev.dailyRate ? '/dia' : dev.monthlyRate ? '/mês' : '')
+        : '';
+    const detailHref = isRental
+        ? `/${lang}/imoveis/rental/${dev.rentalId}`
+        : `/${lang}/imoveis/${dev.slug}`;
     const typeLabel = dev.tags.includes('casas') ? 'Casa' : 'Apartamento';
     const area = dev.specs.areaRange !== '—' ? dev.specs.areaRange : null;
     const locationStr = [dev.location.neighborhood, dev.location.city].filter(Boolean).join(', ');
@@ -118,7 +143,7 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
             }}
         >
             {/* Image Container */}
-            <a href={`/${lang}/imoveis/${dev.slug}`} className="block relative aspect-[16/10] bg-[#F0EDE8] flex-shrink-0 overflow-hidden">
+            <a href={detailHref} className="block relative aspect-[16/10] bg-[#F0EDE8] flex-shrink-0 overflow-hidden">
                 {dev.images.main ? (
                     <img
                         src={dev.images.main}
@@ -225,7 +250,7 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
             {/* Content Body */}
             <div className="px-5 pt-4 pb-5 flex flex-col gap-1.5 flex-1">
                 {/* Name */}
-                <a href={`/${lang}/imoveis/${dev.slug}`} className="block text-[#0B1928] no-underline group-hover:text-[#1a3a5c] transition-colors">
+                <a href={detailHref} className="block text-[#0B1928] no-underline group-hover:text-[#1a3a5c] transition-colors">
                     <h3 className="text-[16px] font-bold leading-snug m-0" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         {dev.name}
                     </h3>
@@ -269,14 +294,15 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
                 <div className="pt-3.5 mt-auto border-t border-[#F0EDE8] flex items-center justify-between">
                     <div>
                         <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#948F84] m-0 mb-0.5">
-                            {dev.priceRange.min > 0 ? 'A partir de' : ''}
+                            {isRental ? '' : (dev.priceRange.min > 0 ? 'A partir de' : '')}
                         </p>
                         <span className="text-lg font-bold text-[#0B1928]" style={{ fontFamily: "'JetBrains Mono', 'DM Mono', monospace", letterSpacing: '-0.03em' }}>
                             {price}
+                            {priceLabel && <span className="text-xs font-normal text-[#948F84] ml-0.5">{priceLabel}</span>}
                         </span>
                     </div>
                     <a
-                        href={`/${lang}/imoveis/${dev.slug}`}
+                        href={detailHref}
                         className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl text-xs font-bold tracking-wider uppercase no-underline transition-all duration-300"
                         style={{
                             background: isHovered ? '#0B1928' : '#F8F6F2',
@@ -454,6 +480,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         setFilters(prev => ({
             ...prev,
             search: params.get('q') || prev.search,
+            listingCategory: (params.get('categoria') as FilterState['listingCategory']) || prev.listingCategory,
             type: params.get('type') ? params.get('type')!.split(',') : prev.type,
             bedrooms: params.get('beds') ? Number(params.get('beds')) : prev.bedrooms,
             priceRange: [
@@ -475,6 +502,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         if (typeof window === 'undefined') return;
         const params = new URLSearchParams();
         if (filters.search) params.set('q', filters.search);
+        if (filters.listingCategory !== 'all') params.set('categoria', filters.listingCategory);
         if (filters.type.length > 0) params.set('type', filters.type.join(','));
         if (filters.bedrooms) params.set('beds', String(filters.bedrooms));
         if (filters.priceRange[0] > 0) params.set('price_min', String(filters.priceRange[0]));
@@ -520,6 +548,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
     const filteredDevelopments = useMemo(() => {
         return initialDevelopments.filter(dev => {
+            // Category filter
+            if (filters.listingCategory !== 'all' && dev.listingCategory !== filters.listingCategory) return false;
             if (filters.search) {
                 const q = filters.search.toLowerCase().trim();
                 const hay = [dev.name, dev.developer, dev.location.neighborhood, dev.location.city, dev.location.state, dev.shortDescription]
@@ -654,12 +684,35 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         </div>
     );
 
+    // ── Category tabs (shared) ──────────────────────────────────────────────
+    const categoryTabs = (
+        <div className="flex gap-1 overflow-x-auto px-4 py-2" style={{ scrollbarWidth: 'none' }}>
+            {CATEGORY_TABS.map(tab => (
+                <button
+                    key={tab.value}
+                    onClick={() => setFilters(f => ({ ...f, listingCategory: tab.value }))}
+                    className="flex-shrink-0 h-9 px-4 rounded-full text-[13px] font-semibold cursor-pointer border transition-all"
+                    style={{
+                        background: filters.listingCategory === tab.value ? NAVY : '#fff',
+                        color: filters.listingCategory === tab.value ? '#fff' : TEXT_BODY,
+                        borderColor: filters.listingCategory === tab.value ? NAVY : BORDER,
+                    }}
+                >
+                    {tab.label}
+                </button>
+            ))}
+        </div>
+    );
+
     // ── MOBILE LAYOUT ─────────────────────────────────────────────────────────
     const mobileView = (
         <main style={{ background: PAGE_BG, minHeight: '100vh', paddingTop: 64, paddingBottom: 32 }}>
 
+            {/* Category tabs */}
+            {categoryTabs}
+
             {/* Search bar */}
-            <div className="px-4 pt-4 pb-3">
+            <div className="px-4 pt-2 pb-3">
                 <div className="flex items-center gap-2.5 bg-white border border-[#B8B3A8] rounded-xl px-3.5 h-12">
                     <Search size={16} className="text-[#948F84] flex-shrink-0" />
                     <input
@@ -951,6 +1004,24 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         boxShadow: '0 4px 24px rgba(11,25,40,0.06), 0 1px 3px rgba(11,25,40,0.03)',
                     }}
                 >
+                    {/* Category tabs — Zillow-style */}
+                    <div className="flex gap-1.5 mb-4 pb-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                        {CATEGORY_TABS.map(tab => (
+                            <button
+                                key={tab.value}
+                                onClick={() => setFilters(f => ({ ...f, listingCategory: tab.value }))}
+                                className="h-10 px-5 rounded-full text-[13px] font-semibold cursor-pointer border transition-all duration-200"
+                                style={{
+                                    background: filters.listingCategory === tab.value ? NAVY : 'transparent',
+                                    color: filters.listingCategory === tab.value ? '#fff' : TEXT_BODY,
+                                    borderColor: filters.listingCategory === tab.value ? NAVY : BORDER,
+                                }}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
                     {/* Search row */}
                     <div className="flex items-center gap-3 mb-4">
                         <div className="flex-1 flex items-center gap-3 rounded-xl px-4 h-[52px] transition-all duration-300 border"

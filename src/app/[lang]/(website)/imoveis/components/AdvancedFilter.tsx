@@ -17,6 +17,7 @@ export interface FilterState {
     location: string | null;
     neighborhood: string | null;
     sort: 'price-asc' | 'price-desc' | 'newest' | 'relevant';
+    listingCategory: 'all' | 'comprar' | 'aluguel' | 'temporada' | 'short_stay';
 }
 
 interface AdvancedFilterProps {

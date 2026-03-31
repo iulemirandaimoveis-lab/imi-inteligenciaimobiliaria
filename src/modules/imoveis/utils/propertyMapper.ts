@@ -111,5 +111,74 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
         isHighlighted: dbProp.is_highlighted || false,
         createdAt: dbProp.created_at || new Date().toISOString(),
         updatedAt: dbProp.updated_at || new Date().toISOString(),
+        listingCategory: 'comprar',
+    };
+}
+
+/**
+ * Maps a rental_properties row to the Development interface
+ * so it can be displayed in the same unified listing grid.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapRentalToDevelopment(r: Record<string, any>): Development {
+    const modeToCategory: Record<string, Development['listingCategory']> = {
+        short_stay: 'short_stay',
+        traditional: 'aluguel',
+        seasonal: 'temporada',
+        hybrid: 'temporada',
+    };
+    const category = modeToCategory[r.listing_mode] || 'aluguel';
+
+    const typeLabel: Record<string, string> = {
+        apartment: 'Apartamento', house: 'Casa', studio: 'Studio',
+        penthouse: 'Cobertura', room: 'Quarto', commercial: 'Comercial',
+    };
+
+    const photos: string[] = Array.isArray(r.photos) ? r.photos : [];
+
+    return {
+        id: `rental-${r.id}`,
+        slug: `rental-${r.id}`,
+        name: r.name || 'Imóvel para Locação',
+        developer: r.owner_name || 'IMI - Inteligência Imobiliária',
+        status: 'ready',
+        region: 'pernambuco',
+        location: {
+            neighborhood: '',
+            city: '',
+            state: '',
+            region: 'pernambuco',
+            country: 'Brasil',
+            coordinates: { lat: 0, lng: 0 },
+            address: r.address || '',
+        },
+        description: r.rules || '',
+        shortDescription: r.address || typeLabel[r.property_type] || '',
+        features: Array.isArray(r.amenities) ? r.amenities : [],
+        specs: {
+            bedroomsRange: r.bedrooms ? `${r.bedrooms}` : '—',
+            areaRange: '—',
+            bathroomsRange: r.bathrooms ? `${r.bathrooms}` : undefined,
+        },
+        priceRange: {
+            min: r.daily_rate || r.monthly_rate || 0,
+            max: r.monthly_rate || r.daily_rate || 0,
+        },
+        images: {
+            main: photos[0] || '',
+            gallery: photos,
+            videos: [],
+            floorPlans: [],
+        },
+        units: [],
+        tags: [r.property_type || 'apartment', r.listing_mode || 'rental'].filter(Boolean),
+        order: 999,
+        isHighlighted: false,
+        createdAt: r.created_at || new Date().toISOString(),
+        updatedAt: r.updated_at || new Date().toISOString(),
+        listingCategory: category,
+        dailyRate: r.daily_rate || undefined,
+        monthlyRate: r.monthly_rate || undefined,
+        rentalId: r.id,
     };
 }

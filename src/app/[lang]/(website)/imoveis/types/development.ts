@@ -1,4 +1,5 @@
 export type DevelopmentStatus = 'launch' | 'ready' | 'under_construction';
+export type ListingCategory = 'comprar' | 'aluguel' | 'temporada' | 'short_stay';
 export type UnitStatus = 'available' | 'reserved' | 'sold';
 
 export interface DevelopmentUnit {
@@ -78,4 +79,9 @@ export interface Development {
     isHighlighted: boolean;              // Destaque especial
     createdAt: string;
     updatedAt: string;
+    // Rental / listing category
+    listingCategory: ListingCategory;    // comprar | aluguel | temporada | short_stay
+    dailyRate?: number;                  // Diária (para short_stay / temporada)
+    monthlyRate?: number;                // Mensal (para aluguel)
+    rentalId?: string;                   // ID in rental_properties table (for rental items)
 }

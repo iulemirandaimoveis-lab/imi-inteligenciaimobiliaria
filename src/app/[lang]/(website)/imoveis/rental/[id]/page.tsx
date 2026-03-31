@@ -6,14 +6,14 @@ import RentalDetailClient from './RentalDetailClient'
 export const dynamic = 'force-dynamic'
 
 interface PageProps {
-    params: { lang: string; slug: string }
+    params: { lang: string; id: string }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { data } = await supabaseAdmin
         .from('rental_properties')
-        .select('name, address, daily_rate, photos')
-        .eq('id', params.slug)
+        .select('name, address, daily_rate, monthly_rate, photos')
+        .eq('id', params.id)
         .eq('status', 'active')
         .single()
 
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const price = data.daily_rate
         ? `R$ ${data.daily_rate}/dia`
-        : ''
+        : data.monthly_rate ? `R$ ${data.monthly_rate}/mês` : ''
 
     return {
         title: `${data.name} ${price ? `- ${price}` : ''} | IMI`,
@@ -38,13 +38,12 @@ export default async function RentalDetailPage({ params }: PageProps) {
     const { data: property } = await supabaseAdmin
         .from('rental_properties')
         .select('*')
-        .eq('id', params.slug)
+        .eq('id', params.id)
         .eq('status', 'active')
         .single()
 
     if (!property) notFound()
 
-    // Get existing bookings for availability calendar (only future confirmed bookings)
     const today = new Date().toISOString().split('T')[0]
     const { data: bookings } = await supabaseAdmin
         .from('rental_bookings')
