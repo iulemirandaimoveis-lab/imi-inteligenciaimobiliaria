@@ -24,10 +24,11 @@ interface ConstrutorasClientProps {
 
 export default function ConstrutorasClient({ developers, lang }: ConstrutorasClientProps) {
     return (
-        <main className="bg-[#0D0F14] min-h-screen">
+        <main style={{ background: '#050B14', fontFamily: "'Outfit', system-ui, sans-serif" }} className="min-h-screen">
             {/* Hero */}
-            <section className="bg-[#0B1928] text-white pt-24 pb-20 md:pt-32 md:pb-28 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-[#102A43]/5 -skew-x-12 translate-x-1/2" />
+            <section className="text-white pt-24 pb-20 md:pt-32 md:pb-28 relative overflow-hidden" style={{ background: '#0A1624' }}>
+                {/* Subtle radial glow */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] opacity-[0.06] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(200,164,74,0.5), transparent 70%)' }} />
                 <div className="container-custom relative z-10">
                     <motion.div
                         initial="hidden"
@@ -36,13 +37,13 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         className="max-w-4xl"
                     >
                         <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-px bg-[#102A43]" />
-                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.3em] text-xs">Parceiros</span>
+                            <div className="w-12 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,164,74,0.5))' }} />
+                            <span className="font-semibold uppercase tracking-[0.35em] text-[11px]" style={{ color: '#C8A44A', fontFamily: "'Outfit', system-ui, sans-serif" }}>Parceiros</span>
                         </motion.div>
-                        <motion.h1 variants={slideUp} className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight">
-                            Nossas <br /><span className="text-[#C8A44A] italic">Construtoras Parceiras</span>
+                        <motion.h1 variants={slideUp} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                            Nossas <br /><span style={{ color: '#C8A44A' }} className="italic">Construtoras Parceiras</span>
                         </motion.h1>
-                        <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl font-light leading-relaxed max-w-2xl">
+                        <motion.p variants={slideUp} className="text-lg md:text-xl font-light leading-relaxed max-w-2xl" style={{ color: '#8E99AB' }}>
                             Trabalhamos com as incorporadoras mais renomadas do mercado, garantindo qualidade construtiva e solidez nos investimentos.
                         </motion.p>
                     </motion.div>
@@ -57,26 +58,50 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         animate={{ opacity: 1 }}
                         className="mb-10 flex flex-col md:flex-row md:items-center gap-3 md:justify-between"
                     >
-                        <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-[#102A43]" />
-                            <span className="text-[#9CA3AF] font-bold uppercase tracking-widest text-xs">
-                                {developers.length} construtoras parceiras em nosso portfólio
-                            </span>
+                        <div className="flex items-center gap-12">
+                            <div className="flex items-center gap-3">
+                                <span className="w-[6px] h-[6px] rounded-full" style={{ background: '#C8A44A', boxShadow: '0 0 8px rgba(200,164,74,0.4)' }} />
+                                <span className="font-semibold uppercase tracking-[0.25em] text-[10px]" style={{ color: '#8E99AB' }}>
+                                    {developers.length} construtoras parceiras
+                                </span>
+                            </div>
                         </div>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
                         {developers.map((dev, index) => (
                             <motion.article
                                 key={dev.id}
                                 initial={{ opacity: 0, y: 24 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-50px" }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="group bg-[#0B1928] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-500 flex flex-col h-full"
+                                transition={{ duration: 0.5, delay: index * 0.08 }}
+                                className="group flex flex-col h-full relative overflow-hidden"
+                                style={{
+                                    background: 'rgba(14,28,48,0.52)',
+                                    backdropFilter: 'blur(20px)',
+                                    WebkitBackdropFilter: 'blur(20px)',
+                                    border: '1px solid rgba(200,164,74,0.12)',
+                                    borderRadius: 16,
+                                    boxShadow: '0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)',
+                                    transition: 'all 0.35s cubic-bezier(.16,1,.3,1)',
+                                }}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.borderColor = 'rgba(200,164,74,0.30)';
+                                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(200,164,74,0.04), inset 0 1px 0 rgba(255,255,255,0.04)';
+                                    e.currentTarget.style.transform = 'translateY(-3px)';
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.borderColor = 'rgba(200,164,74,0.12)';
+                                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
                             >
-                                {/* Logo Area - Fundo claro para preservar as cores originais das marcas parceiras */}
-                                <div className="relative aspect-[3/2] bg-white flex items-center justify-center p-8 border-b border-white/[0.05] shrink-0 overflow-hidden group-hover:opacity-100 opacity-90 transition-opacity duration-300">
+                                {/* Top gold line */}
+                                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)' }} />
+
+                                {/* Logo Area */}
+                                <div className="relative aspect-[3/2] bg-white flex items-center justify-center p-8 shrink-0 overflow-hidden group-hover:opacity-100 opacity-90 transition-opacity duration-300" style={{ borderBottom: '1px solid rgba(200,164,74,0.12)' }}>
                                     {dev.logo_url ? (
                                         <div className="relative w-full h-full max-w-[80%] max-h-[70%] z-10 flex items-center justify-center">
                                             <img
@@ -96,38 +121,79 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
 
                                     {/* Badge de quantidade */}
                                     {dev.development_count && dev.development_count > 0 && (
-                                        <div className="absolute top-4 right-4 bg-white/10 text-white border border-white/20 backdrop-blur-md text-xs font-bold px-3 py-1.5 rounded-full shadow-sm z-20">
+                                        <div
+                                            className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full z-20"
+                                            style={{
+                                                background: 'rgba(200,164,74,0.10)',
+                                                color: '#C8A44A',
+                                                border: '1px solid rgba(200,164,74,0.20)',
+                                            }}
+                                        >
                                             {dev.development_count} {dev.development_count === 1 ? 'imóvel' : 'imóveis'}
                                         </div>
                                     )}
                                 </div>
 
                                 {/* Conteúdo */}
-                                <div className="p-6 flex flex-col flex-1 relative z-10">
-                                    <h3 className="font-display font-bold text-xl text-white mb-2 group-hover:text-[#C8A44A] transition-colors">
+                                <div className="p-5 flex flex-col flex-1 relative z-10">
+                                    {/* Subtle corner glow */}
+                                    <div className="absolute top-0 right-0 w-20 h-20 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(200,164,74,0.06), transparent 70%)' }} />
+
+                                    <h3 className="font-medium text-lg text-white mb-2 group-hover:text-[#C8A44A] transition-colors" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                                         {dev.name}
                                     </h3>
 
                                     {(dev.city || dev.state) && (
-                                        <div className="flex items-center gap-2 text-[#9CA3AF] text-sm mb-4">
-                                            <MapPin className="w-4 h-4 text-[#C8A44A]" />
+                                        <div className="flex items-center gap-2 text-sm mb-3" style={{ color: '#8E99AB' }}>
+                                            <MapPin className="w-3.5 h-3.5" style={{ color: '#C8A44A' }} />
                                             <span>{[dev.city, dev.state].filter(Boolean).join(', ')}</span>
                                         </div>
                                     )}
 
                                     {dev.description && (
-                                        <p className="text-[#9CA3AF] text-sm leading-relaxed mb-6 line-clamp-2">
+                                        <p className="text-sm leading-relaxed mb-5 line-clamp-2" style={{ color: '#8E99AB' }}>
                                             {dev.description}
                                         </p>
                                     )}
 
-                                    <div className="flex gap-2.5 mt-auto pt-6">
-                                        <Link href={`/${lang}/imoveis?construtora=${dev.slug}`} className="flex-1 flex justify-center items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.15em] h-12 rounded-lg bg-[#1A1E2A] text-white border border-[#21263A] hover:bg-[#21263A] transition-all duration-300">
+                                    <div className="flex gap-2.5 mt-auto pt-5" style={{ borderTop: '1px solid rgba(200,164,74,0.08)' }}>
+                                        <Link
+                                            href={`/${lang}/imoveis?construtora=${dev.slug}`}
+                                            className="flex-1 flex justify-center items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] h-11 rounded-lg text-white no-underline relative overflow-hidden"
+                                            style={{
+                                                background: '#0A1624',
+                                                border: '1px solid rgba(255,255,255,0.08)',
+                                                transition: 'all 0.25s cubic-bezier(.16,1,.3,1)',
+                                            }}
+                                            onMouseEnter={e => {
+                                                e.currentTarget.style.background = '#0D1E32';
+                                                e.currentTarget.style.borderColor = 'rgba(200,164,74,0.20)';
+                                            }}
+                                            onMouseLeave={e => {
+                                                e.currentTarget.style.background = '#0A1624';
+                                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                                            }}
+                                        >
                                             Ver Imóveis
-                                            <ChevronRight className="w-4 h-4 shrink-0" />
+                                            <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                                            {/* Gold underline accent */}
+                                            <span className="absolute bottom-0 left-[12%] right-[12%] h-[2px] opacity-60" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
                                         </Link>
                                         {dev.website && (
-                                            <a href={dev.website} target="_blank" rel="noopener noreferrer" className="w-12 h-12 shrink-0 rounded-lg bg-white/5 border border-white/10 flex justify-center items-center text-[#9CA3AF] hover:text-white hover:bg-white/10 transition-all duration-300" title="Visitar site oficial">
+                                            <a
+                                                href={dev.website}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-11 h-11 shrink-0 rounded-lg flex justify-center items-center transition-all duration-300"
+                                                style={{
+                                                    background: 'rgba(255,255,255,0.02)',
+                                                    border: '1px solid rgba(255,255,255,0.05)',
+                                                    color: '#8E99AB',
+                                                }}
+                                                onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                                                onMouseLeave={e => { e.currentTarget.style.color = '#8E99AB'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; }}
+                                                title="Visitar site oficial"
+                                            >
                                                 <ExternalLink className="w-4 h-4" />
                                             </a>
                                         )}
@@ -137,10 +203,14 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         ))}
 
                         {developers.length === 0 && (
-                            <div className="col-span-full py-16 text-center border border-dashed border-white/20 rounded-3xl bg-white/5 backdrop-blur-sm">
-                                <Building2 className="w-12 h-12 text-[#9CA3AF] mx-auto mb-4" />
-                                <h3 className="text-lg font-bold text-white">Nenhuma Construtora</h3>
-                                <p className="text-[#9CA3AF] max-w-sm mx-auto mt-2">Nossas parcerias estão sendo atualizadas. Volte em breve.</p>
+                            <div className="col-span-full py-16 text-center rounded-2xl" style={{
+                                background: 'rgba(14,28,48,0.52)',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px dashed rgba(200,164,74,0.20)',
+                            }}>
+                                <Building2 className="w-12 h-12 mx-auto mb-4" style={{ color: '#8E99AB' }} />
+                                <h3 className="text-lg font-medium text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Nenhuma Construtora</h3>
+                                <p className="max-w-sm mx-auto mt-2" style={{ color: '#8E99AB' }}>Nossas parcerias estão sendo atualizadas. Volte em breve.</p>
                             </div>
                         )}
                     </div>
@@ -148,21 +218,35 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
             </section>
 
             {/* CTA */}
-            <section className="bg-[#0B1928] py-16 md:py-20 border-t border-white/[0.05]">
-                <div className="container-custom text-center">
+            <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: '#0A1624', borderTop: '1px solid rgba(200,164,74,0.08)' }}>
+                {/* Gold radial glow */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] opacity-[0.04] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(200,164,74,0.8), transparent 70%)' }} />
+                <div className="container-custom text-center relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
-                            Representa uma <span className="text-[#C8A44A] italic">construtora?</span>
+                        <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                            Representa uma <span style={{ color: '#C8A44A' }} className="italic">construtora?</span>
                         </h2>
-                        <p className="text-[#9CA3AF] text-lg mb-8 max-w-xl mx-auto">
+                        <p className="text-lg mb-8 max-w-xl mx-auto" style={{ color: '#8E99AB' }}>
                             Estamos sempre em busca de novos parceiros para ampliar nosso portfólio.
                         </p>
-                        <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 h-14 px-8 w-full sm:w-auto text-[13px] font-bold uppercase tracking-[0.15em] bg-[#1A1E2A] text-white rounded-xl border border-[#21263A] shadow-lg hover:-translate-y-1 transition-transform duration-300">
+                        <a
+                            href="https://wa.me/5581997230455"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 h-14 px-8 w-full sm:w-auto text-[11px] font-semibold uppercase tracking-[0.15em] text-white rounded-lg relative overflow-hidden hover:-translate-y-1 transition-all duration-300"
+                            style={{
+                                background: '#0A1624',
+                                border: '1px solid rgba(200,164,74,0.20)',
+                                boxShadow: '0 0 14px rgba(200,164,74,0.08)',
+                            }}
+                        >
                             Ser Parceiro
+                            {/* Gold glow underline */}
+                            <span className="absolute bottom-0 left-0 right-0 h-[2px] opacity-70" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, #D4B86A, transparent)' }} />
                         </a>
                     </motion.div>
                 </div>

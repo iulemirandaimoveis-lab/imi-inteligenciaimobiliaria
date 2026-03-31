@@ -42,16 +42,17 @@ const CATEGORY_TABS: { value: FilterState['listingCategory']; label: string; ico
     { value: 'short_stay', label: 'Short Stay', icon: '' },
 ];
 
-/* ── Light-theme tokens ──────────────────────────────────────────── */
-const PAGE_BG = '#F8F6F2';
-const CARD_BG = '#FFFFFF';
-const NAVY = '#0B1928';
-const TEXT_PRIMARY = '#0B1928';
-const TEXT_BODY = '#2D3748';
-const TEXT_MUTED = '#948F84';
-const TEXT_SUB = '#5A6577';
-const BORDER = '#E2E0DB';
-const BORDER_INPUT = '#B8B3A8';
+/* ── Brand Kit Light-theme tokens (from imi-UNIFIED-MASTER) ──────── */
+const PAGE_BG = '#F0EDE5';     // --Lr
+const CARD_BG = '#FFFFFF';     // --Lc
+const NAVY = '#0B1928';        // --La
+const TEXT_PRIMARY = '#0C1220'; // --Lt1
+const TEXT_BODY = '#2D3748';   // --Lt2
+const TEXT_MUTED = '#948F84';  // --Lb2
+const TEXT_SUB = '#5A6577';    // --Lt3
+const BORDER = '#B8B3A8';      // --Lb (2px solid)
+const BORDER_LIGHT = '#D9D5CB'; // --Lf
+const R = { btn: 6, input: 6, card: 10, panel: 14 }; // brand kit radii
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -132,14 +133,15 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
             transition={{ duration: 0.5, delay: (index % 6) * 0.08, ease: [0.22, 1, 0.36, 1] }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative bg-white rounded-2xl overflow-hidden flex flex-col cursor-pointer"
+            className="group relative bg-white overflow-hidden flex flex-col cursor-pointer"
             style={{
+                borderRadius: R.card,
                 boxShadow: isHovered
                     ? '0 20px 60px rgba(11,25,40,0.15), 0 8px 24px rgba(11,25,40,0.08)'
-                    : '0 1px 3px rgba(11,25,40,0.06), 0 1px 2px rgba(11,25,40,0.04)',
-                transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
-                transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-                border: '1px solid rgba(226,224,219,0.6)',
+                    : '0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
+                transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
+                transition: 'all 0.35s cubic-bezier(.16,1,.3,1)',
+                border: `2px solid ${isHovered ? TEXT_MUTED : BORDER}`,
             }}
         >
             {/* Image Container */}
@@ -172,15 +174,16 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
                     }}
                 />
 
-                {/* Status badge — frosted glass */}
+                {/* Status badge — brand kit Lb-navy style */}
                 <div className="absolute top-3 left-3 z-[2]">
                     <span
-                        className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.08em] uppercase rounded-full px-3 py-1.5"
+                        className="inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.05em] uppercase px-3 py-1.5"
                         style={{
+                            borderRadius: R.btn,
                             background: badge.bg === NAVY ? 'rgba(11,25,40,0.85)' : badge.bg,
                             color: badge.color,
                             backdropFilter: 'blur(12px)',
-                            border: '1px solid rgba(255,255,255,0.15)',
+                            border: '2px solid rgba(255,255,255,0.18)',
                         }}
                     >
                         <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
@@ -188,14 +191,15 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
                     </span>
                 </div>
 
-                {/* IMI Score — frosted pill */}
+                {/* IMI Score — brand kit badge */}
                 <div className="absolute bottom-3 left-3 z-[2]">
                     <span
-                        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1"
                         style={{
-                            background: 'rgba(11,25,40,0.75)',
+                            borderRadius: R.btn,
+                            background: 'rgba(11,25,40,0.80)',
                             backdropFilter: 'blur(12px)',
-                            border: '1px solid rgba(255,255,255,0.12)',
+                            border: '2px solid rgba(200,164,74,0.20)',
                         }}
                     >
                         <span style={{ width: 7, height: 7, borderRadius: '50%', background: scoreColor, flexShrink: 0, boxShadow: `0 0 6px ${scoreColor}` }} />
@@ -262,52 +266,54 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
                     <span className="overflow-hidden text-ellipsis whitespace-nowrap">{locationStr}</span>
                 </div>
 
-                {/* Specs chips */}
+                {/* Specs chips — brand kit Lb-navy style */}
                 <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                     {dev.specs.bedroomsRange && dev.specs.bedroomsRange !== '—' && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2D3748] bg-[#F8F6F2] rounded-lg px-2 py-1">
-                            <Bed size={11} className="text-[#948F84]" />
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1" style={{ color: TEXT_PRIMARY, background: PAGE_BG, borderRadius: R.btn, border: `2px solid ${BORDER_LIGHT}` }}>
+                            <Bed size={11} style={{ color: TEXT_MUTED }} />
                             {dev.specs.bedroomsRange}
                         </span>
                     )}
                     {dev.specs.bathroomsRange && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2D3748] bg-[#F8F6F2] rounded-lg px-2 py-1">
-                            <Bath size={11} className="text-[#948F84]" />
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1" style={{ color: TEXT_PRIMARY, background: PAGE_BG, borderRadius: R.btn, border: `2px solid ${BORDER_LIGHT}` }}>
+                            <Bath size={11} style={{ color: TEXT_MUTED }} />
                             {dev.specs.bathroomsRange}
                         </span>
                     )}
                     {dev.specs.parkingRange && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2D3748] bg-[#F8F6F2] rounded-lg px-2 py-1">
-                            <Car size={11} className="text-[#948F84]" />
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1" style={{ color: TEXT_PRIMARY, background: PAGE_BG, borderRadius: R.btn, border: `2px solid ${BORDER_LIGHT}` }}>
+                            <Car size={11} style={{ color: TEXT_MUTED }} />
                             {dev.specs.parkingRange}
                         </span>
                     )}
                     {area && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2D3748] bg-[#F8F6F2] rounded-lg px-2 py-1">
-                            <Ruler size={11} className="text-[#948F84]" />
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1" style={{ color: TEXT_PRIMARY, background: PAGE_BG, borderRadius: R.btn, border: `2px solid ${BORDER_LIGHT}` }}>
+                            <Ruler size={11} style={{ color: TEXT_MUTED }} />
                             {area}
                         </span>
                     )}
                 </div>
 
                 {/* Price + CTA */}
-                <div className="pt-3.5 mt-auto border-t border-[#F0EDE8] flex items-center justify-between">
+                <div className="pt-3.5 mt-auto flex items-center justify-between" style={{ borderTop: `2px solid ${BORDER_LIGHT}` }}>
                     <div>
-                        <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#948F84] m-0 mb-0.5">
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.1em] m-0 mb-0.5" style={{ color: TEXT_MUTED }}>
                             {isRental ? '' : (dev.priceRange.min > 0 ? 'A partir de' : '')}
                         </p>
-                        <span className="text-lg font-bold text-[#0B1928]" style={{ fontFamily: "'JetBrains Mono', 'DM Mono', monospace", letterSpacing: '-0.03em' }}>
+                        <span className="text-lg font-bold" style={{ color: TEXT_PRIMARY, fontFamily: "'JetBrains Mono', monospace", letterSpacing: '-0.03em' }}>
                             {price}
-                            {priceLabel && <span className="text-xs font-normal text-[#948F84] ml-0.5">{priceLabel}</span>}
+                            {priceLabel && <span className="text-xs font-normal ml-0.5" style={{ color: TEXT_MUTED }}>{priceLabel}</span>}
                         </span>
                     </div>
                     <a
                         href={detailHref}
-                        className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl text-xs font-bold tracking-wider uppercase no-underline transition-all duration-300"
+                        className="inline-flex items-center gap-1.5 h-10 px-5 text-[10px] font-bold tracking-[0.1em] uppercase no-underline transition-all duration-300"
                         style={{
-                            background: isHovered ? '#0B1928' : '#F8F6F2',
-                            color: isHovered ? '#fff' : '#0B1928',
-                            border: `1px solid ${isHovered ? '#0B1928' : '#E2E0DB'}`,
+                            borderRadius: R.btn,
+                            background: isHovered ? NAVY : CARD_BG,
+                            color: isHovered ? '#fff' : NAVY,
+                            border: `2px solid ${isHovered ? NAVY : BORDER}`,
+                            boxShadow: isHovered ? '0 2px 8px rgba(11,25,40,0.2)' : 'none',
                         }}
                     >
                         Ver Imóvel <ArrowUpRight size={12} style={{ opacity: isHovered ? 1 : 0, transition: 'opacity 0.3s' }} />
@@ -332,12 +338,12 @@ function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; la
             onClick={onClick}
             className="flex gap-3 px-3.5 py-3 cursor-pointer transition-all"
             style={{
-                borderBottom: `1px solid ${BORDER}`,
+                borderBottom: `2px solid ${BORDER_LIGHT}`,
                 borderLeft: selected ? `3px solid ${NAVY}` : '3px solid transparent',
-                background: selected ? '#F0EDE8' : 'transparent',
+                background: selected ? PAGE_BG : 'transparent',
             }}
         >
-            <div className="flex-shrink-0 w-[72px] h-[60px] rounded-[10px] overflow-hidden bg-[#F0EDE8] relative">
+            <div className="flex-shrink-0 w-[72px] h-[60px] overflow-hidden relative" style={{ borderRadius: R.btn, background: PAGE_BG }}>
                 {dev.images.main
                     ? <Image src={dev.images.main} alt={dev.name} fill className="object-cover" sizes="72px" />
                     : <div className="w-full h-full flex items-center justify-center opacity-20">🏢</div>
@@ -348,7 +354,7 @@ function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; la
                     <p className="text-[#0B1928] text-xs font-bold leading-tight m-0 overflow-hidden line-clamp-1">
                         {dev.name}
                     </p>
-                    <span className="flex-shrink-0 text-[9px] font-bold px-[7px] py-0.5 rounded-md uppercase" style={{ background: badge.bg, color: badge.color }}>
+                    <span className="flex-shrink-0 text-[9px] font-semibold px-[7px] py-0.5 uppercase" style={{ borderRadius: R.btn, background: badge.bg, color: badge.color }}>
                         {label}
                     </span>
                 </div>
@@ -378,9 +384,11 @@ function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; la
 function BrokerCard({ compact = false }: { compact?: boolean }) {
     return (
         <div
-            className={`flex ${compact ? 'flex-row items-center gap-3' : 'flex-col gap-4'} rounded-2xl border border-[#E2E0DB]`}
+            className={`flex ${compact ? 'flex-row items-center gap-3' : 'flex-col gap-4'}`}
             style={{
-                background: compact ? CARD_BG : `linear-gradient(135deg, ${CARD_BG} 0%, #F8F6F2 100%)`,
+                borderRadius: R.card,
+                border: `2px solid ${BORDER}`,
+                background: compact ? CARD_BG : `linear-gradient(135deg, ${CARD_BG} 0%, ${PAGE_BG} 100%)`,
                 padding: compact ? 14 : 20,
             }}
         >
@@ -416,24 +424,26 @@ function BrokerCard({ compact = false }: { compact?: boolean }) {
             {compact ? (
                 <div className="flex gap-2">
                     <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
-                        className="w-[38px] h-[38px] rounded-xl flex items-center justify-center border-none cursor-pointer"
-                        style={{ background: '#25D366', color: '#fff' }}>
+                        className="w-[38px] h-[38px] flex items-center justify-center border-none cursor-pointer"
+                        style={{ borderRadius: R.btn, background: '#25D366', color: '#fff' }}>
                         <MessageCircle size={16} />
                     </a>
                     <a href="tel:+5581997230455"
-                        className="w-[38px] h-[38px] rounded-xl flex items-center justify-center cursor-pointer border border-[#E2E0DB] bg-white text-[#5A6577]">
+                        className="w-[38px] h-[38px] flex items-center justify-center cursor-pointer"
+                        style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_SUB }}>
                         <Phone size={16} />
                     </a>
                 </div>
             ) : (
                 <div className="flex gap-2">
                     <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
-                        className="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 text-white text-sm font-semibold no-underline cursor-pointer"
-                        style={{ background: '#25D366' }}>
+                        className="flex-1 h-11 flex items-center justify-center gap-2 text-white text-sm font-semibold no-underline cursor-pointer"
+                        style={{ borderRadius: R.btn, background: '#25D366' }}>
                         <MessageCircle size={15} /> WhatsApp
                     </a>
                     <a href="tel:+5581997230455"
-                        className="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 text-[#5A6577] text-sm font-semibold no-underline cursor-pointer border border-[#E2E0DB] bg-white">
+                        className="flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold no-underline cursor-pointer"
+                        style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_SUB }}>
                         <Phone size={15} /> Ligar
                     </a>
                 </div>
@@ -643,7 +653,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     </p>
                     <button
                         onClick={() => handleCTAClick('off-market')}
-                        className="inline-flex items-center gap-2 h-11 px-6 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer hover:bg-[#1a2d42] transition-colors"
+                        className="inline-flex items-center gap-2 h-11 px-6 text-[11px] font-bold uppercase tracking-[0.08em] text-white cursor-pointer transition-colors"
+                        style={{ borderRadius: R.btn, background: NAVY, border: 'none', boxShadow: '0 2px 8px rgba(11,25,40,0.2)' }}
                     >
                         <MessageCircle size={16} /> Consultar Off-Market
                     </button>
@@ -672,11 +683,13 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 <button
                     key={chip.key}
                     onClick={() => setShowMobileFilters(true)}
-                    className={`flex-shrink-0 h-[34px] px-3.5 rounded-xl text-[13px] font-medium cursor-pointer whitespace-nowrap border transition-colors ${
-                        chip.active
-                            ? 'bg-[#0B1928] text-white border-[#0B1928]'
-                            : 'bg-white text-[#2D3748] border-[#B8B3A8]'
-                    }`}
+                    className="flex-shrink-0 h-[34px] px-3.5 text-[11px] font-semibold cursor-pointer whitespace-nowrap transition-colors"
+                    style={{
+                        borderRadius: R.btn,
+                        background: chip.active ? NAVY : CARD_BG,
+                        color: chip.active ? '#fff' : TEXT_BODY,
+                        border: `2px solid ${chip.active ? NAVY : BORDER}`,
+                    }}
                 >
                     {chip.label}
                 </button>
@@ -691,11 +704,12 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 <button
                     key={tab.value}
                     onClick={() => setFilters(f => ({ ...f, listingCategory: tab.value }))}
-                    className="flex-shrink-0 h-9 px-4 rounded-full text-[13px] font-semibold cursor-pointer border transition-all"
+                    className="flex-shrink-0 h-9 px-4 text-[11px] font-bold tracking-[0.05em] uppercase cursor-pointer transition-all"
                     style={{
-                        background: filters.listingCategory === tab.value ? NAVY : '#fff',
+                        borderRadius: R.btn,
+                        background: filters.listingCategory === tab.value ? NAVY : CARD_BG,
                         color: filters.listingCategory === tab.value ? '#fff' : TEXT_BODY,
-                        borderColor: filters.listingCategory === tab.value ? NAVY : BORDER,
+                        border: `2px solid ${filters.listingCategory === tab.value ? NAVY : BORDER}`,
                     }}
                 >
                     {tab.label}
@@ -711,20 +725,22 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
             {/* Category tabs */}
             {categoryTabs}
 
-            {/* Search bar */}
+            {/* Search bar — brand kit Linp */}
             <div className="px-4 pt-2 pb-3">
-                <div className="flex items-center gap-2.5 bg-white border border-[#B8B3A8] rounded-xl px-3.5 h-12">
-                    <Search size={16} className="text-[#948F84] flex-shrink-0" />
+                <div className="flex items-center gap-2.5 px-3.5 h-12" style={{ background: PAGE_BG, border: `2px solid ${BORDER}`, borderRadius: R.btn }}>
+                    <Search size={16} style={{ color: TEXT_MUTED, flexShrink: 0 }} />
                     <input
                         type="text"
                         placeholder={availableLocations[0] ? `${availableLocations[0]}…` : 'Buscar imóveis…'}
                         value={filters.search}
                         onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                        className="flex-1 bg-transparent border-none outline-none text-[#0B1928] text-sm placeholder-[#B8B3A8]"
+                        className="flex-1 bg-transparent border-none outline-none text-sm font-medium"
+                        style={{ color: TEXT_PRIMARY }}
                     />
                     <button
                         onClick={() => setShowMobileFilters(true)}
-                        className="flex items-center gap-1 text-[#0B1928] text-sm font-bold bg-none border-none cursor-pointer flex-shrink-0"
+                        className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider bg-none border-none cursor-pointer flex-shrink-0"
+                        style={{ color: NAVY }}
                     >
                         Filtros <ChevronRight size={14} />
                     </button>
@@ -738,17 +754,20 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
             <div className="flex items-center justify-between px-4 pt-3 pb-2">
                 <button
                     onClick={() => setViewMode(v => v === 'map' ? 'grid' : 'map')}
-                    className={`flex items-center gap-1.5 h-[34px] px-3.5 rounded-xl text-[13px] font-semibold cursor-pointer border transition-colors ${
-                        viewMode === 'map'
-                            ? 'bg-[#0B1928] text-white border-[#0B1928]'
-                            : 'bg-white text-[#5A6577] border-[#B8B3A8]'
-                    }`}
+                    className="flex items-center gap-1.5 h-[34px] px-3.5 text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-colors"
+                    style={{
+                        borderRadius: R.btn,
+                        background: viewMode === 'map' ? NAVY : CARD_BG,
+                        color: viewMode === 'map' ? '#fff' : TEXT_SUB,
+                        border: `2px solid ${viewMode === 'map' ? NAVY : BORDER}`,
+                    }}
                 >
                     <MapPin size={13} /> Mapa
                 </button>
                 <button
                     onClick={() => setFilters(f => ({ ...f, sort: f.sort === 'newest' ? 'relevant' : 'newest' }))}
-                    className="flex items-center gap-1 bg-none border-none text-[#948F84] text-xs cursor-pointer"
+                    className="flex items-center gap-1 bg-none border-none text-xs cursor-pointer"
+                    style={{ color: TEXT_MUTED }}
                 >
                     Ordenar: {filters.sort === 'newest' ? 'Mais Recentes' : 'Relevantes'}
                     <ChevronDown size={13} />
@@ -764,7 +783,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
             {/* Map view — responsive height */}
             {viewMode === 'map' ? (
-                <div className="mx-4 mb-5 rounded-2xl overflow-hidden border border-[#E2E0DB]" style={{ height: 'min(420px, 55vh)' }}>
+                <div className="mx-4 mb-5 overflow-hidden" style={{ height: 'min(420px, 55vh)', borderRadius: R.card, border: `2px solid ${BORDER}` }}>
                     <PropertyMap
                         developments={filteredDevelopments}
                         height="100%"
@@ -785,7 +804,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         <div className="text-4xl mb-3 opacity-30">🔍</div>
                         <p className="mb-4">Nenhum imóvel encontrado</p>
                         <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                            className="px-5 py-2 rounded-xl border border-[#B8B3A8] bg-white text-[#2D3748] text-sm cursor-pointer hover:bg-[#F8F6F2] transition-colors">
+                            className="px-5 py-2 text-[11px] font-semibold cursor-pointer transition-colors"
+                            style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_BODY }}>
                             Limpar filtros
                         </button>
                     </div>
@@ -811,7 +831,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                             onClick={e => e.stopPropagation()}
-                            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl px-5 pt-5 pb-9 max-h-[80vh] overflow-y-auto"
+                            className="absolute bottom-0 left-0 right-0 bg-white px-5 pt-5 pb-9 max-h-[80vh] overflow-y-auto"
+                            style={{ borderRadius: `${R.panel}px ${R.panel}px 0 0` }}
                         >
                             <div className="flex items-center justify-between mb-5">
                                 <h3 className="text-[#0B1928] text-[17px] font-bold m-0">
@@ -831,7 +852,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     placeholder="Nome, bairro, cidade…"
                                     value={filters.search}
                                     onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                                    className="w-full bg-white border border-[#B8B3A8] rounded-xl px-3.5 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                    className="w-full bg-white px-3.5 py-2.5 text-sm outline-none box-border transition-colors"
+                                    style={{ border: `2px solid ${BORDER}`, borderRadius: R.btn, color: TEXT_PRIMARY }}
                                 />
                             </FilterSection>
 
@@ -840,11 +862,13 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 <div className="flex gap-2">
                                     {[null, 1, 2, 3, 4].map(n => (
                                         <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: n }))}
-                                            className={`flex-1 h-9 rounded-xl text-sm font-semibold cursor-pointer border transition-colors ${
-                                                filters.bedrooms === n
-                                                    ? 'bg-[#0B1928] text-white border-[#0B1928]'
-                                                    : 'bg-white text-[#5A6577] border-[#B8B3A8]'
-                                            }`}>
+                                            className="flex-1 h-9 text-[11px] font-bold uppercase cursor-pointer transition-colors"
+                                            style={{
+                                                borderRadius: R.btn,
+                                                background: filters.bedrooms === n ? NAVY : CARD_BG,
+                                                color: filters.bedrooms === n ? '#fff' : TEXT_SUB,
+                                                border: `2px solid ${filters.bedrooms === n ? NAVY : BORDER}`,
+                                            }}>
                                             {n === null ? 'Todos' : `${n}+`}
                                         </button>
                                     ))}
@@ -859,11 +883,13 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                         const active = filters.type.includes(val);
                                         return (
                                             <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
-                                                className={`h-[34px] px-3.5 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${
-                                                    active
-                                                        ? 'bg-[#0B1928] text-white border-[#0B1928]'
-                                                        : 'bg-white text-[#5A6577] border-[#B8B3A8]'
-                                                }`}>
+                                                className="h-[34px] px-3.5 text-[11px] font-semibold cursor-pointer transition-colors"
+                                                style={{
+                                                    borderRadius: R.btn,
+                                                    background: active ? NAVY : CARD_BG,
+                                                    color: active ? '#fff' : TEXT_SUB,
+                                                    border: `2px solid ${active ? NAVY : BORDER}`,
+                                                }}>
                                                 {t}
                                             </button>
                                         );
@@ -879,7 +905,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                         placeholder="R$ mín"
                                         value={filters.priceRange[0] > 0 ? filters.priceRange[0] : ''}
                                         onChange={e => setFilters(f => ({ ...f, priceRange: [Number(e.target.value) || 0, f.priceRange[1]] }))}
-                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                        className="flex-1 min-w-0 bg-white px-3 py-2.5 text-sm outline-none box-border transition-colors"
+                                        style={{ border: `2px solid ${BORDER}`, borderRadius: R.btn, color: TEXT_PRIMARY }}
                                     />
                                     <span className="text-[#948F84] text-xs">até</span>
                                     <input
@@ -887,7 +914,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                         placeholder="R$ máx"
                                         value={filters.priceRange[1] < 10000000 ? filters.priceRange[1] : ''}
                                         onChange={e => setFilters(f => ({ ...f, priceRange: [f.priceRange[0], Number(e.target.value) || 10000000] }))}
-                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                        className="flex-1 min-w-0 bg-white px-3 py-2.5 text-sm outline-none box-border transition-colors"
+                                        style={{ border: `2px solid ${BORDER}`, borderRadius: R.btn, color: TEXT_PRIMARY }}
                                     />
                                 </div>
                             </FilterSection>
@@ -900,7 +928,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                         placeholder="mín"
                                         value={filters.areaRange[0] > 0 ? filters.areaRange[0] : ''}
                                         onChange={e => setFilters(f => ({ ...f, areaRange: [Number(e.target.value) || 0, f.areaRange[1]] }))}
-                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                        className="flex-1 min-w-0 bg-white px-3 py-2.5 text-sm outline-none box-border transition-colors"
+                                        style={{ border: `2px solid ${BORDER}`, borderRadius: R.btn, color: TEXT_PRIMARY }}
                                     />
                                     <span className="text-[#948F84] text-xs">até</span>
                                     <input
@@ -908,7 +937,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                         placeholder="máx"
                                         value={filters.areaRange[1] < 500 ? filters.areaRange[1] : ''}
                                         onChange={e => setFilters(f => ({ ...f, areaRange: [f.areaRange[0], Number(e.target.value) || 500] }))}
-                                        className="flex-1 min-w-0 bg-white border border-[#B8B3A8] rounded-xl px-3 py-2.5 text-[#0B1928] text-sm outline-none box-border focus:border-[#0B1928] transition-colors"
+                                        className="flex-1 min-w-0 bg-white px-3 py-2.5 text-sm outline-none box-border transition-colors"
+                                        style={{ border: `2px solid ${BORDER}`, borderRadius: R.btn, color: TEXT_PRIMARY }}
                                     />
                                 </div>
                             </FilterSection>
@@ -924,9 +954,13 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                         const active = filters.status.includes(s.val);
                                         return (
                                             <button key={s.val} onClick={() => setFilters(f => ({ ...f, status: active ? f.status.filter(x => x !== s.val) : [...f.status, s.val] }))}
-                                                className={`h-[34px] px-3.5 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${
-                                                    active ? 'bg-[#0B1928] text-white border-[#0B1928]' : 'bg-white text-[#5A6577] border-[#B8B3A8]'
-                                                }`}>
+                                                className="h-[34px] px-3.5 text-[11px] font-semibold cursor-pointer transition-colors"
+                                                style={{
+                                                    borderRadius: R.btn,
+                                                    background: active ? NAVY : CARD_BG,
+                                                    color: active ? '#fff' : TEXT_SUB,
+                                                    border: `2px solid ${active ? NAVY : BORDER}`,
+                                                }}>
                                                 {s.label}
                                             </button>
                                         );
@@ -938,18 +972,26 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <FilterSection label="Localização">
                                 <div className="flex gap-2 flex-wrap">
                                     <button onClick={() => setFilters(f => ({ ...f, location: null, neighborhood: null }))}
-                                        className={`h-[34px] px-3.5 rounded-xl text-sm cursor-pointer border transition-colors ${
-                                            !filters.location ? 'bg-[#0B1928] text-white border-[#0B1928]' : 'bg-white text-[#5A6577] border-[#B8B3A8]'
-                                        }`}>
+                                        className="h-[34px] px-3.5 text-[11px] font-semibold cursor-pointer transition-colors"
+                                        style={{
+                                            borderRadius: R.btn,
+                                            background: !filters.location ? NAVY : CARD_BG,
+                                            color: !filters.location ? '#fff' : TEXT_SUB,
+                                            border: `2px solid ${!filters.location ? NAVY : BORDER}`,
+                                        }}>
                                         Todas
                                     </button>
                                     {availableLocations.map(loc => {
                                         const active = filters.location === loc;
                                         return (
                                             <button key={loc} onClick={() => setFilters(f => ({ ...f, location: active ? null : loc, neighborhood: null }))}
-                                                className={`h-[34px] px-3.5 rounded-xl text-sm cursor-pointer border transition-colors ${
-                                                    active ? 'bg-[#0B1928] text-white border-[#0B1928]' : 'bg-white text-[#5A6577] border-[#B8B3A8]'
-                                                }`}>
+                                                className="h-[34px] px-3.5 text-[11px] font-semibold cursor-pointer transition-colors"
+                                                style={{
+                                                    borderRadius: R.btn,
+                                                    background: active ? NAVY : CARD_BG,
+                                                    color: active ? '#fff' : TEXT_SUB,
+                                                    border: `2px solid ${active ? NAVY : BORDER}`,
+                                                }}>
                                                 {loc}
                                             </button>
                                         );
@@ -957,14 +999,16 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 </div>
                             </FilterSection>
 
-                            {/* Actions */}
+                            {/* Actions — brand kit Lbtn */}
                             <div className="flex gap-2.5 mt-2">
                                 <button onClick={() => { setFilters(DEFAULT_FILTERS); setShowMobileFilters(false); }}
-                                    className="flex-1 h-12 rounded-xl border border-[#B8B3A8] bg-white text-[#5A6577] text-sm cursor-pointer hover:bg-[#F8F6F2] transition-colors">
+                                    className="flex-1 h-12 text-[11px] font-bold uppercase tracking-[0.08em] cursor-pointer transition-colors"
+                                    style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_SUB }}>
                                     Limpar
                                 </button>
                                 <button onClick={() => setShowMobileFilters(false)}
-                                    className="flex-[2] h-12 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer hover:bg-[#1a2d42] transition-colors">
+                                    className="flex-[2] h-12 text-[11px] font-bold uppercase tracking-[0.08em] text-white cursor-pointer transition-colors"
+                                    style={{ borderRadius: R.btn, background: NAVY, border: 'none', boxShadow: '0 2px 8px rgba(11,25,40,0.2)' }}>
                                     Ver {filteredDevelopments.length} imóveis
                                 </button>
                             </div>
@@ -995,26 +1039,29 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         <main style={{ background: PAGE_BG, minHeight: '100vh', paddingTop: 80, paddingBottom: 60 }}>
             <div className="max-w-[1400px] mx-auto px-6">
 
-                {/* Search + Filters — premium unified bar */}
+                {/* Search + Filters — brand kit panel */}
                 <div
-                    className="rounded-2xl p-5 mb-6"
+                    className="p-5 mb-6"
                     style={{
-                        background: '#FFFFFF',
-                        border: '1px solid #E2E0DB',
-                        boxShadow: '0 4px 24px rgba(11,25,40,0.06), 0 1px 3px rgba(11,25,40,0.03)',
+                        borderRadius: R.panel,
+                        background: CARD_BG,
+                        border: `2px solid ${BORDER}`,
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
                     }}
                 >
-                    {/* Category tabs — Zillow-style */}
-                    <div className="flex gap-1.5 mb-4 pb-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    {/* Category tabs — brand kit Lbtn style */}
+                    <div className="flex gap-1.5 mb-4 pb-4" style={{ borderBottom: `2px solid ${BORDER_LIGHT}` }}>
                         {CATEGORY_TABS.map(tab => (
                             <button
                                 key={tab.value}
                                 onClick={() => setFilters(f => ({ ...f, listingCategory: tab.value }))}
-                                className="h-10 px-5 rounded-full text-[13px] font-semibold cursor-pointer border transition-all duration-200"
+                                className="h-10 px-5 text-[11px] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all duration-200"
                                 style={{
+                                    borderRadius: R.btn,
                                     background: filters.listingCategory === tab.value ? NAVY : 'transparent',
                                     color: filters.listingCategory === tab.value ? '#fff' : TEXT_BODY,
-                                    borderColor: filters.listingCategory === tab.value ? NAVY : BORDER,
+                                    border: `2px solid ${filters.listingCategory === tab.value ? NAVY : BORDER}`,
+                                    boxShadow: filters.listingCategory === tab.value ? '0 2px 8px rgba(11,25,40,0.2)' : 'none',
                                 }}
                             >
                                 {tab.label}
@@ -1022,36 +1069,38 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         ))}
                     </div>
 
-                    {/* Search row */}
+                    {/* Search row — brand kit Linp style */}
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="flex-1 flex items-center gap-3 rounded-xl px-4 h-[52px] transition-all duration-300 border"
-                            style={{ background: '#F8F6F2', borderColor: 'transparent' }}
-                            onFocus={e => { e.currentTarget.style.borderColor = '#0B1928'; e.currentTarget.style.background = '#fff'; }}
-                            onBlur={e => { e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.background = '#F8F6F2'; }}
+                        <div className="flex-1 flex items-center gap-3 px-4 h-[48px] transition-all duration-300"
+                            style={{ borderRadius: R.btn, background: PAGE_BG, border: `2px solid ${BORDER}` }}
+                            onFocus={e => { e.currentTarget.style.borderColor = NAVY; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(11,25,40,0.08)'; }}
+                            onBlur={e => { e.currentTarget.style.borderColor = BORDER; e.currentTarget.style.boxShadow = 'none'; }}
                         >
-                            <Search size={18} className="text-[#948F84] flex-shrink-0" />
+                            <Search size={16} style={{ color: TEXT_MUTED, flexShrink: 0 }} />
                             <input
                                 type="text"
                                 placeholder="Buscar por nome, bairro, cidade ou tipo…"
                                 value={filters.search}
                                 onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                                className="flex-1 bg-transparent border-none outline-none text-[#0B1928] text-[14px] placeholder-[#B8B3A8]"
+                                className="flex-1 bg-transparent border-none outline-none text-sm font-medium"
+                                style={{ color: TEXT_PRIMARY, fontFamily: "'Outfit', system-ui, sans-serif" }}
                             />
                             {filters.search && (
                                 <button onClick={() => setFilters(f => ({ ...f, search: '' }))}
-                                    className="bg-none border-none text-[#948F84] cursor-pointer flex p-1 hover:text-[#5A6577] transition-colors rounded-full hover:bg-[#F0EDE8]">
+                                    className="bg-none border-none cursor-pointer flex p-1 transition-colors" style={{ color: TEXT_MUTED, borderRadius: R.btn }}>
                                     <X size={15} />
                                 </button>
                             )}
                         </div>
                         <button
                             onClick={() => {/* already filtering live */ }}
-                            className="h-[52px] px-7 rounded-xl bg-[#0B1928] text-white text-sm font-bold cursor-pointer flex-shrink-0 hover:bg-[#1a2d42] transition-all duration-300 flex items-center gap-2 hover:shadow-lg hover:shadow-[#0B1928]/20">
-                            <Search size={15} /> Buscar
+                            className="h-[48px] px-7 text-[11px] font-bold tracking-[0.1em] uppercase text-white cursor-pointer flex-shrink-0 transition-all duration-300 flex items-center gap-2"
+                            style={{ borderRadius: R.btn, background: NAVY, border: 'none', boxShadow: '0 2px 8px rgba(11,25,40,0.2)' }}>
+                            <Search size={14} /> Buscar
                         </button>
                     </div>
 
-                    {/* Filter controls — inline for desktop */}
+                    {/* Filter controls — brand kit Lbtn-sec chips */}
                     <div className="flex items-center gap-2 flex-wrap">
                         {/* Tipo */}
                         {['Apto', 'Casa', 'Flat', 'Cobertura', 'Garden'].map(t => {
@@ -1059,58 +1108,67 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             const active = filters.type.includes(val);
                             return (
                                 <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
-                                    className={`flex items-center gap-1.5 h-[36px] px-4 rounded-full text-[13px] font-medium cursor-pointer border transition-all duration-300 ${
-                                        active ? 'bg-[#0B1928] text-white border-[#0B1928] shadow-sm' : 'bg-white text-[#5A6577] border-[#E2E0DB] hover:border-[#0B1928] hover:text-[#0B1928]'
-                                    }`}>
-                                    <Home size={12} className={active ? 'text-white/70' : 'text-[#948F84]'} />
+                                    className="flex items-center gap-1.5 h-[36px] px-4 text-[11px] font-semibold cursor-pointer transition-all duration-300"
+                                    style={{
+                                        borderRadius: R.btn,
+                                        background: active ? NAVY : CARD_BG,
+                                        color: active ? '#fff' : TEXT_SUB,
+                                        border: `2px solid ${active ? NAVY : BORDER}`,
+                                    }}>
+                                    <Home size={12} style={{ color: active ? 'rgba(255,255,255,0.7)' : TEXT_MUTED }} />
                                     {t}
                                 </button>
                             );
                         })}
 
                         {/* Separator */}
-                        <div className="w-px h-6 bg-[#E2E0DB]" />
+                        <div className="w-px h-6" style={{ background: BORDER_LIGHT }} />
 
                         {/* Quartos */}
                         {[null, 1, 2, 3, 4].map(n => (
                             <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: f.bedrooms === n ? null : n }))}
-                                className={`flex items-center gap-1.5 h-[36px] px-3.5 rounded-full text-[13px] font-medium cursor-pointer border transition-all duration-300 ${
-                                    filters.bedrooms === n ? 'bg-[#0B1928] text-white border-[#0B1928] shadow-sm' : 'bg-white text-[#5A6577] border-[#E2E0DB] hover:border-[#0B1928] hover:text-[#0B1928]'
-                                }`}>
-                                {n === null ? <><Bed size={12} className="text-[#948F84]" /> Quartos</> : `${n}+`}
+                                className="flex items-center gap-1.5 h-[36px] px-3.5 text-[11px] font-semibold cursor-pointer transition-all duration-300"
+                                style={{
+                                    borderRadius: R.btn,
+                                    background: filters.bedrooms === n ? NAVY : CARD_BG,
+                                    color: filters.bedrooms === n ? '#fff' : TEXT_SUB,
+                                    border: `2px solid ${filters.bedrooms === n ? NAVY : BORDER}`,
+                                }}>
+                                {n === null ? <><Bed size={12} style={{ color: TEXT_MUTED }} /> Quartos</> : `${n}+`}
                             </button>
                         ))}
 
                         {/* Separator */}
-                        <div className="w-px h-6 bg-[#E2E0DB]" />
+                        <div className="w-px h-6" style={{ background: BORDER_LIGHT }} />
 
                         {/* Price range inline */}
-                        <div className="flex items-center gap-1.5 h-[36px] px-3 rounded-full border border-[#E2E0DB] bg-white">
-                            <DollarSign size={12} className="text-[#948F84]" />
+                        <div className="flex items-center gap-1.5 h-[36px] px-3" style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG }}>
+                            <DollarSign size={12} style={{ color: TEXT_MUTED }} />
                             <input type="number" placeholder="Mín" value={filters.priceRange[0] > 0 ? filters.priceRange[0] : ''}
                                 onChange={e => setFilters(f => ({ ...f, priceRange: [Number(e.target.value) || 0, f.priceRange[1]] }))}
-                                className="w-[70px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
-                            <span className="text-[#B8B3A8] text-[11px]">—</span>
+                                className="w-[70px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
+                            <span className="text-[11px]" style={{ color: BORDER }}>—</span>
                             <input type="number" placeholder="Máx" value={filters.priceRange[1] < 10000000 ? filters.priceRange[1] : ''}
                                 onChange={e => setFilters(f => ({ ...f, priceRange: [f.priceRange[0], Number(e.target.value) || 10000000] }))}
-                                className="w-[70px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                                className="w-[70px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
                         </div>
 
                         {/* Area range inline */}
-                        <div className="flex items-center gap-1.5 h-[36px] px-3 rounded-full border border-[#E2E0DB] bg-white">
-                            <Ruler size={12} className="text-[#948F84]" />
+                        <div className="flex items-center gap-1.5 h-[36px] px-3" style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG }}>
+                            <Ruler size={12} style={{ color: TEXT_MUTED }} />
                             <input type="number" placeholder="m² mín" value={filters.areaRange[0] > 0 ? filters.areaRange[0] : ''}
                                 onChange={e => setFilters(f => ({ ...f, areaRange: [Number(e.target.value) || 0, f.areaRange[1]] }))}
-                                className="w-[55px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
-                            <span className="text-[#B8B3A8] text-[11px]">—</span>
+                                className="w-[55px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
+                            <span className="text-[11px]" style={{ color: BORDER }}>—</span>
                             <input type="number" placeholder="máx" value={filters.areaRange[1] < 500 ? filters.areaRange[1] : ''}
                                 onChange={e => setFilters(f => ({ ...f, areaRange: [f.areaRange[0], Number(e.target.value) || 500] }))}
-                                className="w-[55px] bg-transparent border-none outline-none text-[13px] text-[#2D3748] placeholder-[#B8B3A8]" />
+                                className="w-[55px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
                         </div>
 
                         {activeFilterCount > 0 && (
                             <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                                className="h-[36px] px-3 rounded-full border border-red-200 bg-red-50 text-red-500 text-[12px] font-semibold cursor-pointer hover:bg-red-100 transition-all flex items-center gap-1">
+                                className="h-[36px] px-3 text-[11px] font-semibold cursor-pointer hover:bg-red-100 transition-all flex items-center gap-1"
+                                style={{ borderRadius: R.btn, border: '2px solid #FECACA', background: '#FEF2F2', color: '#B91C1C' }}>
                                 <X size={12} /> Limpar
                             </button>
                         )}
@@ -1133,27 +1191,37 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         )}
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* Sort */}
+                        {/* Sort — brand kit Linp */}
                         <select
                             value={filters.sort}
                             onChange={e => setFilters(f => ({ ...f, sort: e.target.value as FilterState['sort'] }))}
-                            className="bg-white border border-[#E2E0DB] rounded-xl px-4 py-2.5 text-[#2D3748] text-[13px] font-medium cursor-pointer outline-none hover:border-[#0B1928] transition-all duration-300 appearance-none pr-8"
-                            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23948F84' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}>
+                            className="px-4 py-2.5 text-[12px] font-medium cursor-pointer outline-none appearance-none pr-8 transition-all duration-300"
+                            style={{
+                                borderRadius: R.btn,
+                                background: PAGE_BG,
+                                border: `2px solid ${BORDER}`,
+                                color: TEXT_BODY,
+                                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23948F84' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+                                backgroundRepeat: 'no-repeat',
+                                backgroundPosition: 'right 12px center',
+                            }}>
                             <option value="relevant">Relevância</option>
                             <option value="newest">Mais Recentes</option>
                             <option value="price-asc">Menor Preço</option>
                             <option value="price-desc">Maior Preço</option>
                         </select>
-                        {/* View toggle */}
-                        <div className="flex bg-white border border-[#E2E0DB] rounded-xl p-1">
+                        {/* View toggle — brand kit */}
+                        <div className="flex p-1" style={{ background: CARD_BG, border: `2px solid ${BORDER}`, borderRadius: R.btn + 2 }}>
                             {([['grid', Grid3X3, 'Grade'], ['map', Map, 'Mapa']] as [string, typeof Grid3X3, string][]).map(([mode, Icon, lbl]) => (
                                 <button key={mode}
                                     onClick={() => { setViewMode(mode as 'grid' | 'map'); if (mode === 'map') setSelectedId(null); }}
-                                    className={`flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12px] font-semibold cursor-pointer transition-all duration-300 ${
-                                        viewMode === mode
-                                            ? 'bg-[#0B1928] text-white shadow-sm'
-                                            : 'bg-transparent text-[#5A6577] hover:text-[#0B1928]'
-                                    }`}>
+                                    className="flex items-center gap-1.5 h-8 px-4 text-[11px] font-bold tracking-[0.05em] uppercase cursor-pointer transition-all duration-300"
+                                    style={{
+                                        borderRadius: R.btn,
+                                        background: viewMode === mode ? NAVY : 'transparent',
+                                        color: viewMode === mode ? '#fff' : TEXT_SUB,
+                                        boxShadow: viewMode === mode ? '0 2px 8px rgba(11,25,40,0.2)' : 'none',
+                                    }}>
                                     <Icon size={13} />
                                     {lbl}
                                 </button>
@@ -1164,7 +1232,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
                 {/* MAP split view */}
                 {viewMode === 'map' && (
-                    <div className="flex flex-col md:flex-row rounded-2xl overflow-hidden border border-[#E2E0DB]" style={{ height: 'clamp(500px, calc(100vh - 220px), 860px)' }}>
+                    <div className="flex flex-col md:flex-row overflow-hidden" style={{ height: 'clamp(500px, calc(100vh - 220px), 860px)', borderRadius: R.panel, border: `2px solid ${BORDER}` }}>
                         {/* Map pane */}
                         <div className="flex-1 min-w-0 relative">
                             {filteredDevelopments.length > 0 ? (
@@ -1188,8 +1256,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             )}
                         </div>
                         {/* Sidebar */}
-                        <div ref={listRef} className="w-full md:w-[380px] flex-shrink-0 overflow-y-auto md:border-l border-t md:border-t-0 border-[#E2E0DB] bg-white">
-                            <div className="sticky top-0 bg-white/95 backdrop-blur-sm px-3.5 py-3 border-b border-[#E2E0DB] z-[5]">
+                        <div ref={listRef} className="w-full md:w-[380px] flex-shrink-0 overflow-y-auto" style={{ borderLeft: `2px solid ${BORDER}`, background: CARD_BG }}>
+                            <div className="sticky top-0 px-3.5 py-3 z-[5]" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', borderBottom: `2px solid ${BORDER_LIGHT}` }}>
                                 <p className="m-0 text-[11px] font-bold tracking-[0.1em] uppercase text-[#948F84]">
                                     {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
                                 </p>
@@ -1214,12 +1282,13 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 {viewMode === 'grid' && (
                     <>
                         {filteredDevelopments.length === 0 ? (
-                            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-[#E2E0DB]">
+                            <div className="text-center py-20 bg-white border-dashed" style={{ borderRadius: R.card, border: `2px dashed ${BORDER}` }}>
                                 <div className="text-[40px] opacity-20 mb-3">🔍</div>
                                 <h3 className="text-xl font-bold text-[#0B1928] mb-2">Nenhum ativo encontrado</h3>
                                 <p className="text-[#948F84] mb-5">Tente remover alguns filtros.</p>
                                 <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                                    className="px-6 py-2.5 rounded-xl border border-[#B8B3A8] bg-white text-[#2D3748] text-sm cursor-pointer hover:bg-[#F8F6F2] transition-colors">
+                                    className="px-6 py-2.5 text-[11px] font-semibold cursor-pointer transition-colors"
+                                    style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_BODY }}>
                                     Limpar filtros
                                 </button>
                             </div>
@@ -1236,7 +1305,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <div ref={sentinelRef} className="flex justify-center mt-10">
                                 <button
                                     onClick={() => setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, filteredDevelopments.length))}
-                                    className="flex items-center gap-2 h-11 px-7 rounded-xl border border-[#B8B3A8] bg-white text-[#5A6577] text-sm font-semibold cursor-pointer hover:bg-[#F8F6F2] transition-colors">
+                                    className="flex items-center gap-2 h-11 px-7 text-[11px] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all"
+                                    style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_SUB }}>
                                     <ChevronDown size={16} />
                                     Carregar mais
                                     <span className="text-xs opacity-60">({visibleCount} de {filteredDevelopments.length})</span>
@@ -1246,42 +1316,52 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     </>
                 )}
 
-                {/* Bottom CTA — premium gradient */}
+                {/* Bottom CTA — brand kit glass + gold accents */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                    className="mt-20 rounded-2xl p-12 text-center relative overflow-hidden"
+                    className="mt-20 p-12 text-center relative overflow-hidden"
                     style={{
-                        background: 'linear-gradient(135deg, #0B1928 0%, #1a3a5c 50%, #0B1928 100%)',
-                        boxShadow: '0 20px 60px rgba(11,25,40,0.3)',
+                        borderRadius: R.panel,
+                        background: 'linear-gradient(135deg, #050B14 0%, #0A1624 50%, #050B14 100%)',
+                        boxShadow: '0 20px 60px rgba(11,25,40,0.4)',
+                        border: '2px solid rgba(200,164,74,0.14)',
                     }}
                 >
-                    {/* Subtle pattern overlay */}
-                    <div className="absolute inset-0 opacity-[0.03]" style={{
-                        backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-                        backgroundSize: '24px 24px',
-                    }} />
-                    <Sparkles size={28} className="text-[#C8A44A] mx-auto mb-4" />
-                    <h3 className="text-[30px] font-bold text-white mb-3 relative" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                        Não encontrou o <em className="text-[#C8A44A]" style={{ fontStyle: 'italic' }}>imóvel ideal?</em>
+                    {/* Gold radial glow */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] opacity-[0.06] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(200,164,74,0.6), transparent 70%)' }} />
+                    {/* Top gold line */}
+                    <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,164,74,0.3), transparent)' }} />
+                    <Sparkles size={28} className="mx-auto mb-4 relative" style={{ color: '#C8A44A' }} />
+                    <h3 className="text-[30px] font-medium text-white mb-3 relative" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        Não encontrou o <em style={{ color: '#C8A44A', fontStyle: 'italic' }}>imóvel ideal?</em>
                     </h3>
-                    <p className="text-white/60 text-[15px] leading-relaxed max-w-[480px] mx-auto mb-8 relative">
+                    <p className="text-[15px] leading-relaxed max-w-[480px] mx-auto mb-8 relative" style={{ color: '#8E99AB' }}>
                         Nossa curadoria vai além do catálogo. Acesse empreendimentos off-market e receba uma prospecção personalizada.
                     </p>
                     <div className="flex items-center justify-center gap-3 relative">
                         <button
                             onClick={() => handleCTAClick('general')}
-                            className="inline-flex items-center gap-2 h-[48px] px-8 rounded-xl bg-white text-[#0B1928] text-sm font-bold cursor-pointer hover:bg-[#F8F6F2] transition-all duration-300 hover:shadow-lg"
+                            className="inline-flex items-center gap-2 h-[48px] px-8 text-[11px] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+                            style={{ borderRadius: R.btn, background: '#fff', color: NAVY, border: 'none' }}
                         >
                             <MessageCircle size={16} /> Iniciar Consultoria
                         </button>
                         <button
                             onClick={() => handleCTAClick('off-market')}
-                            className="inline-flex items-center gap-2 h-[48px] px-8 rounded-xl bg-transparent text-white text-sm font-bold cursor-pointer border border-white/30 hover:border-white/60 hover:bg-white/10 transition-all duration-300"
+                            className="inline-flex items-center gap-2 h-[48px] px-8 text-[11px] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all duration-300 relative overflow-hidden hover:-translate-y-0.5"
+                            style={{
+                                borderRadius: R.btn,
+                                background: 'transparent',
+                                color: '#fff',
+                                border: '2px solid rgba(200,164,74,0.20)',
+                                boxShadow: '0 0 14px rgba(200,164,74,0.06)',
+                            }}
                         >
                             <Eye size={16} /> Ver Off-Market
+                            <span className="absolute bottom-0 left-0 right-0 h-[2px] opacity-60" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
                         </button>
                     </div>
                 </motion.div>
