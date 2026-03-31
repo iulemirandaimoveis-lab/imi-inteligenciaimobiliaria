@@ -170,6 +170,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
         setConfirmDelete(null)
         setDeleting(member.id)
         try {
+            // Hard delete — removes broker, profile, and auth user
             const res = await fetch(`/api/equipe?id=${member.id}`, { method: 'DELETE' })
             if (!res.ok) {
                 const json = await res.json()
