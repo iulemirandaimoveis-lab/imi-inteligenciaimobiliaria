@@ -66,19 +66,26 @@ export default async function BackofficeLayout({
             </OnboardingWrapper>
             <Toaster
                 position="top-right"
-                richColors
                 closeButton
-                theme="system"
+                theme="dark"
                 offset={72}
                 toastOptions={{
                     duration: 4000,
                     style: {
-                        background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(61,111,255,0.20)',
-                        color: 'var(--text-primary)',
+                        background: 'var(--imi-navy-900, #0B1120)',
+                        border: '1px solid var(--imi-gold-700, #8A6820)',
+                        borderLeft: '3px solid var(--imi-gold-500, #B8943A)',
+                        color: 'var(--imi-gold-100, #F4EACC)',
                         fontFamily: 'var(--font-sans)',
                         fontSize: '13px',
                         borderRadius: 'var(--r-lg, 14px)',
+                        boxShadow: '0 10px 25px -5px rgba(11, 17, 32, 0.5), 0 0 15px -3px rgba(200, 164, 74, 0.1)',
+                    },
+                    classNames: {
+                        success: 'imi-toast-success',
+                        error: 'imi-toast-error',
+                        info: 'imi-toast-info',
+                        closeButton: 'imi-toast-close',
                     },
                 }}
             />
