@@ -14,7 +14,7 @@ import {
     MessageSquare, Plus, Send, Hash, Users, Building2,
     Briefcase, Search, MoreVertical, Smile, Paperclip,
     ArrowLeft, Bell, BellOff, Pin, Archive, UserPlus,
-    Circle, CheckCheck, Loader2, Volume2, VolumeX, Handshake,
+    Circle, CheckCheck, Loader2, Volume2, VolumeX, Handshake, Vibrate,
 } from 'lucide-react'
 
 // ── Channel Icon ─────────────────────────────────────────
@@ -81,6 +81,28 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
                     {msg.content}
                 </span>
             </div>
+        )
+    }
+
+    if (msg.content_type === 'nudge') {
+        const senderName = isOwn ? 'Você' : (msg.sender?.name ?? msg.sender_name ?? 'Alguém')
+        return (
+            <motion.div
+                initial={{ x: -8 }}
+                animate={{ x: [0, -6, 6, -4, 4, -2, 2, 0] }}
+                transition={{ duration: 0.5 }}
+                style={{ textAlign: 'center', padding: '8px 0' }}
+            >
+                <span style={{
+                    fontSize: 12, color: '#F59E0B',
+                    background: 'rgba(245,158,11,0.1)', padding: '6px 14px',
+                    borderRadius: T.radius.full, fontWeight: 600,
+                    border: '1px solid rgba(245,158,11,0.25)',
+                }}>
+                    <Vibrate size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />
+                    {senderName} enviou um chacoalhão!
+                </span>
+            </motion.div>
         )
     }
 
@@ -186,12 +208,20 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
 
     const activeChannel = channels.find(c => c.id === activeChannelId)
 
-    // Play MSN message sound on new incoming messages
+    const [nudgeShake, setNudgeShake] = useState(false)
+
+    // Play MSN sounds on new incoming messages
     useEffect(() => {
         if (messages.length > prevMsgCount.current && prevMsgCount.current > 0) {
             const lastMsg = messages[messages.length - 1]
             if (lastMsg && lastMsg.sender_id !== user.id) {
-                play('message')
+                if (lastMsg.content_type === 'nudge') {
+                    play('nudge')
+                    setNudgeShake(true)
+                    setTimeout(() => setNudgeShake(false), 600)
+                } else {
+                    play('message')
+                }
             }
         }
         prevMsgCount.current = messages.length
@@ -208,9 +238,12 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
     }, [activeChannelId, messages.length])
 
     // Filter channels
-    const filteredChannels = channels.filter(ch =>
-        !searchQuery || ch.name?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    const filteredChannels = channels.filter(ch => {
+        if (!searchQuery) return true
+        const q = searchQuery.toLowerCase()
+        const displayName = ch.type === 'direct' && ch.other_user ? ch.other_user.name : ch.name
+        return displayName?.toLowerCase().includes(q)
+    })
 
     // Send message handler
     const handleSend = async () => {
@@ -227,6 +260,21 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
         setNewMessage('')
         setSending(false)
         inputRef.current?.focus()
+    }
+
+    // Send nudge ("chamar atenção")
+    const handleNudge = async () => {
+        if (sending || !activeChannelId) return
+        setSending(true)
+        const result = await sendMessage('🫨', 'nudge')
+        if (result?.error) {
+            toast.error('Erro ao enviar chacoalhão')
+        } else {
+            play('nudge')
+            setNudgeShake(true)
+            setTimeout(() => setNudgeShake(false), 600)
+        }
+        setSending(false)
     }
 
     // Typing indicator
@@ -441,22 +489,26 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                             onMouseEnter={e => { if (ch.id !== activeChannelId) e.currentTarget.style.background = T.hover }}
                             onMouseLeave={e => { if (ch.id !== activeChannelId) e.currentTarget.style.background = 'transparent' }}
                         >
-                            <div style={{
-                                width: 40, height: 40, borderRadius: T.radius.lg,
-                                background: T.elevated, display: 'flex',
-                                alignItems: 'center', justifyContent: 'center',
-                                color: ch.id === activeChannelId ? T.gold : T.textMuted,
-                                flexShrink: 0,
-                            }}>
-                                <ChannelIcon type={ch.type} size={18} />
-                            </div>
+                            {ch.type === 'direct' && ch.other_user ? (
+                                <ChatAvatar name={ch.other_user.name ?? 'U'} url={ch.other_user.avatar_url} size={40} />
+                            ) : (
+                                <div style={{
+                                    width: 40, height: 40, borderRadius: T.radius.lg,
+                                    background: T.elevated, display: 'flex',
+                                    alignItems: 'center', justifyContent: 'center',
+                                    color: ch.id === activeChannelId ? T.gold : T.textMuted,
+                                    flexShrink: 0,
+                                }}>
+                                    <ChannelIcon type={ch.type} size={18} />
+                                </div>
+                            )}
                             <div style={{ flex: 1, minWidth: 0 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span style={{
                                         fontSize: 13, fontWeight: ch.total_unread > 0 ? 700 : 500,
                                         color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                     }}>
-                                        {ch.name ?? 'Canal'}
+                                        {ch.type === 'direct' && ch.other_user ? ch.other_user.name : (ch.name ?? 'Canal')}
                                     </span>
                                     <span style={{ fontSize: 11, color: T.textDim, fontFamily: T.font.mono, flexShrink: 0 }}>
                                         {formatTime(ch.last_message_at)}
@@ -491,7 +543,10 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
 
     // ── Chat Area ────────────────────────────────────────
     const chatArea = (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, background: T.base }}>
+        <motion.div
+            animate={nudgeShake ? { x: [0, -4, 4, -3, 3, -1, 1, 0] } : {}}
+            transition={{ duration: 0.4 }}
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, background: T.base }}>
             {activeChannel ? (
                 <>
                     {/* Chat Header */}
@@ -506,16 +561,22 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                         >
                             <ArrowLeft size={20} />
                         </button>
-                        <div style={{
-                            width: 36, height: 36, borderRadius: T.radius.lg,
-                            background: T.elevated, display: 'flex',
-                            alignItems: 'center', justifyContent: 'center', color: T.gold,
-                        }}>
-                            <ChannelIcon type={activeChannel.type} size={18} />
-                        </div>
+                        {activeChannel.type === 'direct' && activeChannel.other_user ? (
+                            <ChatAvatar name={activeChannel.other_user.name ?? 'U'} url={activeChannel.other_user.avatar_url} size={36} />
+                        ) : (
+                            <div style={{
+                                width: 36, height: 36, borderRadius: T.radius.lg,
+                                background: T.elevated, display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', color: T.gold,
+                            }}>
+                                <ChannelIcon type={activeChannel.type} size={18} />
+                            </div>
+                        )}
                         <div style={{ flex: 1 }}>
                             <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>
-                                {activeChannel.name}
+                                {activeChannel.type === 'direct' && activeChannel.other_user
+                                    ? activeChannel.other_user.name
+                                    : activeChannel.name}
                             </div>
                             <div style={{ fontSize: 11, color: T.textDim }}>
                                 {activeChannel.message_count} mensagens
@@ -578,6 +639,20 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                         }}>
                             <Paperclip size={18} />
                         </button>
+                        <button
+                            onClick={handleNudge}
+                            disabled={sending}
+                            title="Chamar atenção (chacoalhão MSN)"
+                            style={{
+                                width: 36, height: 36, borderRadius: T.radius.md,
+                                background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',
+                                cursor: 'pointer', color: '#F59E0B',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                transition: `all ${T.transition.fast}`,
+                            }}
+                        >
+                            <Vibrate size={18} />
+                        </button>
                         <input
                             ref={inputRef}
                             value={newMessage}
@@ -622,7 +697,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                     </p>
                 </div>
             )}
-        </div>
+        </motion.div>
     )
 
     return (
