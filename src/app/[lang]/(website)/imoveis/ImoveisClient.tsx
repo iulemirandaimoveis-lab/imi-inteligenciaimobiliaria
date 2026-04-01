@@ -648,7 +648,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         return (
             <main style={{ background: PAGE_BG, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-3xl p-12 border border-[#E2E0DB] max-w-[480px] text-center shadow-sm">
+                    className="bg-white rounded-3xl p-6 sm:p-12 border border-[#E2E0DB] max-w-[calc(100vw-32px)] sm:max-w-[480px] mx-4 text-center shadow-sm">
                     <div className="text-5xl mb-5">🏗️</div>
                     <h1 className="text-3xl font-bold text-[#0B1928] mb-3" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         Portfólio em <em className="text-[#5A6577]">Curadoria</em>

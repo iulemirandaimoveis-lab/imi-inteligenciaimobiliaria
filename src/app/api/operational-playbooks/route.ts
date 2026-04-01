@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
-        if (!user) return NextResponse.json([], { status: 200 })
+        if (!user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
@@ -34,10 +34,10 @@ export async function GET(request: NextRequest) {
         }
 
         const { data, error } = await query
-        if (error) return NextResponse.json([], { status: 200 })
+        if (error) return NextResponse.json({ error: 'Erro ao buscar playbooks' }, { status: 500 })
         return NextResponse.json({ data: data || [] })
     } catch {
-        return NextResponse.json([], { status: 200 })
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
 

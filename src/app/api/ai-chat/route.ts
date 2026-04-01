@@ -75,6 +75,7 @@ export const POST = withLogging(async (req: Request) => {
             ],
             messages,
         }),
+        signal: AbortSignal.timeout(60_000),
     })
 
     if (!apiRes.ok) {

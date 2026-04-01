@@ -270,7 +270,7 @@ export function useChat({ channelId, userId, userName }: UseChatOptions) {
       supabase.removeChannel(channel)
       channelRef.current = null
     }
-  }, [channelId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [channelId, userId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     messages,

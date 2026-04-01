@@ -50,7 +50,10 @@ export async function GET(request: NextRequest) {
             .select('*', { count: 'exact' })
             .order('created_at', { ascending: false })
         if (search) {
-            query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`)
+            const safe = search.replace(/[%_,.()*!]/g, '').trim()
+            if (safe) {
+                query = query.or(`name.ilike.%${safe}%,email.ilike.%${safe}%`)
+            }
         }
         if (status && status !== 'all') {
             query = query.eq('status', status)
@@ -59,7 +62,9 @@ export async function GET(request: NextRequest) {
         if (error) {
             return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
         }
-        return NextResponse.json({ data: data || [], count: count || 0 })
+        return NextResponse.json({ data: data || [], count: count || 0 }, {
+            headers: { 'Cache-Control': 'private, s-maxage=60, stale-while-revalidate=300' },
+        })
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }

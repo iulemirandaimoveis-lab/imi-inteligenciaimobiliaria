@@ -14,6 +14,7 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
 import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
+import NearbyPOIs from '@/components/intelligence/NearbyPOIs'
 import PropertyIntelligence from '../components/PropertyIntelligence'
 import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
@@ -310,6 +311,14 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 compact
                             />
                         </section>
+                        {development.location?.coordinates?.lat && development.location?.coordinates?.lng && (
+                            <section id="pois-regiao">
+                                <NearbyPOIs
+                                    lat={development.location.coordinates.lat}
+                                    lng={development.location.coordinates.lng}
+                                />
+                            </section>
+                        )}
                     </div>
 
                     {/* Sidebar — all viewports */}

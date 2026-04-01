@@ -28,8 +28,8 @@ export async function sendWebPush(userId: string, payload: { title: string; body
         const notification = JSON.stringify({
             title: payload.title,
             body: payload.body,
-            icon: '/icons/icon-192x192.png',
-            badge: '/icons/icon-72x72.png',
+            icon: '/icons/icon-192.png',
+            badge: '/icons/icon-72.png',
             url: payload.url || '/backoffice/hoje',
             timestamp: Date.now(),
         })
@@ -66,8 +66,8 @@ export async function sendWebPushToAll(payload: { title: string; body: string; u
         const notification = JSON.stringify({
             title: payload.title,
             body: payload.body,
-            icon: '/icons/icon-192x192.png',
-            badge: '/icons/icon-72x72.png',
+            icon: '/icons/icon-192.png',
+            badge: '/icons/icon-72.png',
             url: payload.url || '/backoffice/hoje',
         })
 

@@ -97,6 +97,19 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                         )}
                     </div>
 
+                    {/* Urgency / scarcity indicator */}
+                    {development.status === 'launch' && (
+                        <div className="mx-5 mb-3 flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: '#FFF8E1', border: '1px solid #F5E6A3' }}>
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: GOLD }} />
+                                <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: GOLD }} />
+                            </span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#8B7A2B' }}>
+                                Lançamento — Condições exclusivas
+                            </span>
+                        </div>
+                    )}
+
                     {/* Trust indicators */}
                     <div className="px-5 pb-5 flex items-center gap-3">
                         <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#948F84' }}>

@@ -17,30 +17,32 @@ export async function GET() {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        // Get all properties
-        const { data: properties, error: propError } = await supabase
-            .from('rental_properties')
-            .select('id, name, status, daily_rate, listing_mode, bedrooms, address')
-
-        if (propError) {
-            return NextResponse.json({ error: propError.message }, { status: 500 })
-        }
-
-        // Get current month bookings
+        // Parallel fetch: properties + bookings (Musk: eliminate sequential latency)
         const now = new Date()
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
         const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
 
-        const { data: bookings, error: bookError } = await supabase
-            .from('rental_bookings')
-            .select('*')
-            .gte('check_out', monthStart)
-            .lte('check_in', monthEnd)
-            .neq('status', 'cancelled')
+        const [propResult, bookResult] = await Promise.all([
+            supabase
+                .from('rental_properties')
+                .select('id, name, status, daily_rate, listing_mode, bedrooms, address'),
+            supabase
+                .from('rental_bookings')
+                .select('*')
+                .gte('check_out', monthStart)
+                .lte('check_in', monthEnd)
+                .neq('status', 'cancelled'),
+        ])
 
-        if (bookError) {
-            return NextResponse.json({ error: bookError.message }, { status: 500 })
+        if (propResult.error) {
+            return NextResponse.json({ error: propResult.error.message }, { status: 500 })
         }
+        if (bookResult.error) {
+            return NextResponse.json({ error: bookResult.error.message }, { status: 500 })
+        }
+
+        const properties = propResult.data
+        const bookings = bookResult.data
 
         // Calculate stats
         const totalProperties = properties?.length ?? 0

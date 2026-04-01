@@ -45,7 +45,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.45, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-white border border-[#E2E0DB] rounded-2xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow"
+            className="bg-white border border-[#E2E0DB] rounded-2xl overflow-hidden flex flex-col h-full shadow-md hover:shadow-sm hover:opacity-90 transition-all duration-200"
         >
             {/* ── Image ─────────────────────────────────────────────────────── */}
             <Link href={`/${lang}/imoveis/${development.slug}`} className="block relative aspect-[4/3] bg-[#F0EDE8] overflow-hidden flex-shrink-0">
@@ -55,7 +55,7 @@ export default function DevelopmentCard({ development, index, lang }: Props) {
                         alt={`${development.name} - Imóvel em ${development.location.city || development.location.state || 'destaque'}`}
                         fill
                         loading="lazy"
-                        className="object-cover transition-transform duration-500 hover:scale-105"
+                        className="object-cover scale-[1.03] transition-transform duration-500 hover:scale-100"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 ) : (

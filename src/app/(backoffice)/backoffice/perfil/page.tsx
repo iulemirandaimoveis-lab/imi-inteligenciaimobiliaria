@@ -53,19 +53,11 @@ export default function PerfilPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
-            // Get broker data
-            const { data: broker } = await supabase
-                .from('brokers')
-                .select('*')
-                .eq('user_id', user.id)
-                .maybeSingle()
-
-            // Get user profile
-            const { data: userProfile } = await supabase
-                .from('profiles')
-                .select('role, language')
-                .eq('id', user.id)
-                .maybeSingle()
+            // Parallel fetch: broker + profile (eliminate sequential latency)
+            const [{ data: broker }, { data: userProfile }] = await Promise.all([
+                supabase.from('brokers').select('*').eq('user_id', user.id).maybeSingle(),
+                supabase.from('profiles').select('role, language').eq('id', user.id).maybeSingle(),
+            ])
 
             setProfile({
                 name: broker?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || '',
@@ -91,22 +83,20 @@ export default function PerfilPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error('Não autenticado')
 
-            // Update broker record
-            await supabase.from('brokers').update({
-                name: profile.name,
-                phone: profile.phone,
-                creci: profile.creci,
-                bio: profile.bio,
-                avatar_url: profile.avatar_url,
-            }).eq('user_id', user.id)
-
-            // Update user metadata
-            await supabase.auth.updateUser({
-                data: { full_name: profile.name, avatar_url: profile.avatar_url }
-            })
-
-            // Update language in users table
-            await supabase.from('profiles').update({ language: profile.language }).eq('id', user.id)
+            // Parallel save: broker + auth metadata + profile language
+            await Promise.all([
+                supabase.from('brokers').update({
+                    name: profile.name,
+                    phone: profile.phone,
+                    creci: profile.creci,
+                    bio: profile.bio,
+                    avatar_url: profile.avatar_url,
+                }).eq('user_id', user.id),
+                supabase.auth.updateUser({
+                    data: { full_name: profile.name, avatar_url: profile.avatar_url }
+                }),
+                supabase.from('profiles').update({ language: profile.language }).eq('id', user.id),
+            ])
 
             toast.success('Perfil atualizado com sucesso!')
         } catch {

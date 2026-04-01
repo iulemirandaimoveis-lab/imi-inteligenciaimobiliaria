@@ -358,7 +358,7 @@ export default function LeadsInboxPage() {
             {/* FAB */}
             <Link
                 href="/backoffice/leads/novo"
-                className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95 overflow-hidden"
+                className="fixed bottom-[88px] lg:bottom-6 right-5 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95 overflow-hidden"
                 style={{ background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', zIndex: 50 }}
             >
                 <Plus size={22} color="white" />

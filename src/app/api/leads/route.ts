@@ -131,6 +131,7 @@ export const POST = apiHandler(leadSchema, async (request: NextRequest, body: z.
             title: 'Novo Lead',
             message: `Lead ${body.name || 'novo'} adicionado`,
             data: { lead_id: lead.id },
+            url: '/backoffice/leads',
         }).catch(() => {})
     }
     // Non-blocking auto-score calculation

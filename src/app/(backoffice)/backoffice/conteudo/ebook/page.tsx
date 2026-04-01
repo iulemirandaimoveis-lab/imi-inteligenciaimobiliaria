@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
+import DOMPurify from 'isomorphic-dompurify'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import {
@@ -558,14 +559,15 @@ export default function EbookPage() {
                                             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                                             className="p-6 rounded-lg prose prose-invert max-w-none text-sm leading-relaxed"
                                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, maxHeight: '60vh', overflowY: 'auto' }}
-                                            dangerouslySetInnerHTML={{ __html: conteudo
-                                                .replace(/^## (.+)$/gm, '<h2 class="text-lg font-black mt-6 mb-2">$1</h2>')
-                                                .replace(/^### (.+)$/gm, '<h3 class="text-base font-bold mt-4 mb-1">$1</h3>')
-                                                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                                                .replace(/\n\n/g, '</p><p class="mb-3">')
-                                                .replace(/^/, '<p class="mb-3">')
-                                                .replace(/$/, '</p>')
-                                            }}
+                                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
+                                                conteudo
+                                                    .replace(/^## (.+)$/gm, '<h2 class="text-lg font-black mt-6 mb-2">$1</h2>')
+                                                    .replace(/^### (.+)$/gm, '<h3 class="text-base font-bold mt-4 mb-1">$1</h3>')
+                                                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                                                    .replace(/\n\n/g, '</p><p class="mb-3">')
+                                                    .replace(/^/, '<p class="mb-3">')
+                                                    .replace(/$/, '</p>')
+                                            ) }}
                                         />
                                     ) : (
                                         <motion.textarea

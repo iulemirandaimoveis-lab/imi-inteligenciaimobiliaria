@@ -17,9 +17,9 @@ export function WhatsAppFAB() {
         <div
             style={{
                 position: 'fixed',
-                bottom: 'max(24px, env(safe-area-inset-bottom, 0px))',
-                right: 24,
-                zIndex: 50,
+                bottom: 'calc(64px + 24px + env(safe-area-inset-bottom, 0px))',
+                right: 16,
+                zIndex: 140,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'flex-end',

@@ -9,17 +9,16 @@ interface Props {
     setOpen: (value: boolean) => void
 }
 
+// Items already in MobileBottomNav (Home, Imóveis, Biblioteca, Contato) are excluded
+// to avoid duplication on mobile
 const NAV_ITEMS = [
-    { label: 'Imóveis', href: '/pt/imoveis' },
     { label: 'Construtoras', href: '/pt/construtoras' },
     { label: 'Avaliações', href: '/pt/avaliacoes' },
     { label: 'Crédito', href: '/pt/credito' },
     { label: 'Consultoria', href: '/pt/consultoria' },
     { label: 'Inteligência', href: '/pt/inteligencia' },
     { label: 'Conteúdo', href: '/pt/conteudo' },
-    { label: 'Biblioteca', href: '/pt/biblioteca' },
     { label: 'Sobre', href: '/pt/sobre' },
-    { label: 'Contato', href: '/pt/contato' },
 ]
 
 const LANGUAGES = [

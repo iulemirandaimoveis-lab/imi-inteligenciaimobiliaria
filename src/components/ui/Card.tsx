@@ -55,9 +55,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         }
 
         const hoverEffect = hover && `
-      hover:shadow-lg 
-      hover:border-imi-200 
-      hover:-translate-y-[4px] 
+      shadow-lg border-imi-200 -translate-y-[2px]
+      hover:shadow-sm hover:border-imi-100 hover:translate-y-0 hover:opacity-90
       cursor-pointer
     `
 

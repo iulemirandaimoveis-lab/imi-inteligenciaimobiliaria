@@ -7,8 +7,8 @@ self.addEventListener('push', (event) => {
     event.waitUntil(
         self.registration.showNotification(data.title || 'IMI', {
             body: data.body || '',
-            icon: data.icon || '/icons/icon-192x192.png',
-            badge: data.badge || '/icons/icon-72x72.png',
+            icon: data.icon || '/icons/icon-192.png',
+            badge: data.badge || '/icons/icon-72.png',
             data: { url: data.url || '/backoffice/hoje' },
             tag: 'imi-notification',
             renotify: true,

@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
 
+// Lazy-loaded map library singleton (maplibre-gl) — cached across renders
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mapLib: any = null
 

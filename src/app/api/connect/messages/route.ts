@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createNotification } from '@/lib/notifications'
 
 // GET /api/connect/messages?channel_id=xxx&limit=100&before=timestamp
 export async function GET(req: NextRequest) {
@@ -123,19 +124,34 @@ export async function POST(req: NextRequest) {
         })
         .eq('id', channel_id)
 
-    // Increment unread for other members
+    // Increment unread for other members + send push notifications
     const { data: otherMembers } = await supabase
         .from('chat_members')
-        .select('id, unread_count')
+        .select('id, user_id, unread_count')
         .eq('channel_id', channel_id)
         .neq('user_id', user.id)
 
     if (otherMembers?.length) {
+        const senderName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Alguém'
+        const preview = content.trim().slice(0, 80)
+
         for (const member of otherMembers) {
             await supabase
                 .from('chat_members')
                 .update({ unread_count: (member.unread_count ?? 0) + 1 })
                 .eq('id', member.id)
+
+            // Push notification — fire-and-forget
+            if (member.user_id) {
+                createNotification({
+                    userId: member.user_id,
+                    type: 'mensagem_nova',
+                    title: `${senderName} no Connect`,
+                    message: content_type === 'voice' ? '🎤 Mensagem de voz' : preview,
+                    data: { channel_id, message_id: message.id },
+                    url: '/backoffice/connect',
+                }).catch(() => {})
+            }
         }
     }
 

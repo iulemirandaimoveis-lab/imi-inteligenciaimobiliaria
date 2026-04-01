@@ -98,6 +98,8 @@ export async function GET(request: NextRequest) {
                 avgScore,
                 topPerformer,
             },
+        }, {
+            headers: { 'Cache-Control': 'private, s-maxage=30, stale-while-revalidate=120' },
         })
     } catch (err: unknown) {
         console.error('[ranking] unexpected error:', err)

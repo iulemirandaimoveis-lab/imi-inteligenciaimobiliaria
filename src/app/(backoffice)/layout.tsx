@@ -15,6 +15,7 @@ import { BackofficeRealtimeProvider } from './components/BackofficeRealtimeProvi
 import { ErrorBoundary } from './components/ErrorBoundary'
 import OnboardingWrapper from './components/OnboardingWrapper'
 import PWAManager from './components/PWAManager'
+import PresenceWrapper from './components/PresenceWrapper'
 
 export const metadata: Metadata = {
     title: {
@@ -51,11 +52,13 @@ export default async function BackofficeLayout({
                 <main className="pt-[calc(56px+env(safe-area-inset-top,0px))] lg:pt-16 lg:pl-60 min-h-screen overflow-x-hidden" style={{ maxWidth: '100%' }}>
                     <div className="px-3 pt-3 pb-24 sm:px-4 sm:pt-4 lg:px-6 lg:pt-6 lg:pb-6">
                         <ErrorBoundary>
-                            <BackofficeRealtimeProvider>
-                                <SwipeablePageWrapper>
-                                    {children}
-                                </SwipeablePageWrapper>
-                            </BackofficeRealtimeProvider>
+                            <PresenceWrapper>
+                                <BackofficeRealtimeProvider>
+                                    <SwipeablePageWrapper>
+                                        {children}
+                                    </SwipeablePageWrapper>
+                                </BackofficeRealtimeProvider>
+                            </PresenceWrapper>
                         </ErrorBoundary>
                     </div>
                 </main>

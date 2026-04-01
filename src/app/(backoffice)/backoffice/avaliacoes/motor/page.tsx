@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Scale, BookOpen, Upload, Send, Trash2, Search, Sparkles, FileText, ChevronRight, RotateCcw, Brain, CheckCircle2, XCircle, Loader2, Info, Calculator, DollarSign, TrendingUp, Building2 } from 'lucide-react'
+import DOMPurify from 'isomorphic-dompurify'
 
 // ── Design tokens — imported from centralized theme ───────────────────────────
 import { T } from '@/app/(backoffice)/lib/theme'
@@ -200,10 +201,11 @@ function TabConsultar() {
                 </div>
               ) : (
                 <div className="mb" style={{ maxWidth: '82%', padding: '10px 14px', borderRadius: '4px 4px 4px 4px', background: T.surface, color: T.text, fontSize: 12.5, lineHeight: 1.65, border: `1px solid ${T.border}`, wordBreak: 'break-word' }}
-                  dangerouslySetInnerHTML={{ __html: m.content
-                    ? renderMarkdown(m.content) + (loading && i === messages.length - 1 ? '<span class="cur"/>' : '')
-                    : loading && i === messages.length - 1 ? '<span style="opacity:.5;font-size:12px">Consultando base de conhecimento...</span>' : ''
-                  }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
+                    m.content
+                      ? renderMarkdown(m.content) + (loading && i === messages.length - 1 ? '<span class="cur"/>' : '')
+                      : loading && i === messages.length - 1 ? '<span style="opacity:.5;font-size:12px">Consultando base de conhecimento...</span>' : ''
+                  ) }}
                 />
               )}
             </div>
