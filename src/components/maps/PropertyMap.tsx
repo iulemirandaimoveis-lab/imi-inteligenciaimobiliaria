@@ -54,7 +54,7 @@ interface Region {
 }
 
 const REGIONS: Region[] = [
-    { id: 'todos', label: 'Todos', flag: '🌎', center: [-38.5, -8.5], zoom: 4 },
+    { id: 'todos', label: 'Todos', flag: '🌎', center: [-46.0, -14.0], zoom: 4 },
     { id: 'nordeste', label: 'Nordeste', flag: '🇧🇷', center: [-34.9, -7.8], zoom: 7 },
     { id: 'sao-paulo', label: 'São Paulo', flag: '🇧🇷', center: [-46.67, -23.58], zoom: 12 },
     { id: 'dubai', label: 'Dubai', flag: '🇦🇪', center: [55.18, 25.08], zoom: 11 },
@@ -62,13 +62,14 @@ const REGIONS: Region[] = [
 ]
 
 function getRegionId(dev: Development): string {
-    const country = dev.location.country?.toLowerCase() || ''
-    const state = dev.location.state?.toUpperCase() || ''
-    if (country.includes('emirados') || country.includes('uae') || dev.location.city?.toLowerCase().includes('dubai'))
+    const country = (dev.location.country ?? '').toLowerCase().trim()
+    const state = (dev.location.state ?? '').toUpperCase().trim()
+    const city = (dev.location.city ?? '').toLowerCase().trim()
+    if (country.includes('emirados') || country.includes('uae') || country.includes('united arab') || city.includes('dubai'))
         return 'dubai'
-    if (country.includes('estados unidos') || country.includes('usa') || country.includes('united states'))
+    if (country.includes('estados unidos') || country.includes('usa') || country.includes('united states') || country.includes('eua'))
         return 'eua'
-    if (state === 'SP' || dev.location.city?.toLowerCase().includes('são paulo'))
+    if (state === 'SP' || city.includes('são paulo') || city.includes('sao paulo'))
         return 'sao-paulo'
     return 'nordeste' // Default for Brazilian NE properties
 }
@@ -409,6 +410,7 @@ export default function PropertyMap({
         setSelectedProperty(null)
 
         // For specific regions, fly to their center immediately for a snappier UX
+        // For "todos", fitToDevs will be called by the useEffect when filteredDevelopments changes
         if (regionId !== 'todos' && map.current) {
             const region = REGIONS.find(r => r.id === regionId)
             if (region) {
@@ -418,8 +420,11 @@ export default function PropertyMap({
                     duration: 600,
                 })
             }
+        } else if (regionId === 'todos' && map.current) {
+            // For "todos", immediately fit to all valid developments
+            fitToDevs(validDevelopments, true)
         }
-    }, [])
+    }, [fitToDevs, validDevelopments])
 
     // ─── External selectedId sync ────────────────────────────────────────────
 

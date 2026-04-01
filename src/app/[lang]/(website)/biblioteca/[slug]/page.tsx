@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -8,6 +8,19 @@ import {
     BookOpen, ChevronLeft, ChevronRight, ArrowLeft,
     Loader2, List, Sun, Moon, Minus, Plus, Share2,
 } from 'lucide-react'
+
+// ── Reading progress helpers ─────────────────
+function saveProgress(slug: string, chapter: number) {
+    try { localStorage.setItem(`imi-reader-${slug}`, JSON.stringify({ chapter, ts: Date.now() })) } catch { /* noop */ }
+}
+function loadProgress(slug: string): number {
+    try {
+        const raw = localStorage.getItem(`imi-reader-${slug}`)
+        if (!raw) return 0
+        const { chapter } = JSON.parse(raw) as { chapter: number; ts: number }
+        return typeof chapter === 'number' ? chapter : 0
+    } catch { return 0 }
+}
 
 interface Chapter {
     numero: number
@@ -126,6 +139,10 @@ export default function EbookReaderPage() {
     const [darkMode, setDarkMode] = useState(true)
     const [fontSize, setFontSize] = useState(17)
 
+    // Touch swipe refs
+    const touchStartX = useRef(0)
+    const touchStartY = useRef(0)
+
     useEffect(() => {
         fetch(`/books/${slug}.json`)
             .then(res => {
@@ -134,6 +151,11 @@ export default function EbookReaderPage() {
             })
             .then((data: BookData) => {
                 setBook(data)
+                // Restore saved reading progress
+                const saved = loadProgress(slug)
+                if (saved > 0 && saved < data.capitulos.length) {
+                    setChapterIdx(saved)
+                }
                 setLoading(false)
             })
             .catch(err => {
@@ -145,8 +167,9 @@ export default function EbookReaderPage() {
     const goTo = useCallback((idx: number) => {
         setChapterIdx(idx)
         setShowToc(false)
+        saveProgress(slug, idx)
         window.scrollTo({ top: 0, behavior: 'smooth' })
-    }, [])
+    }, [slug])
 
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
@@ -156,6 +179,39 @@ export default function EbookReaderPage() {
         window.addEventListener('keydown', handler)
         return () => window.removeEventListener('keydown', handler)
     }, [chapterIdx, book, goTo])
+
+    // Touch swipe navigation for mobile
+    useEffect(() => {
+        const onStart = (e: TouchEvent) => {
+            touchStartX.current = e.touches[0].clientX
+            touchStartY.current = e.touches[0].clientY
+        }
+        const onEnd = (e: TouchEvent) => {
+            const dx = e.changedTouches[0].clientX - touchStartX.current
+            const dy = e.changedTouches[0].clientY - touchStartY.current
+            // Only trigger if horizontal swipe is dominant and > 80px
+            if (Math.abs(dx) > 80 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                if (dx < 0 && book && chapterIdx < book.capitulos.length - 1) goTo(chapterIdx + 1)
+                if (dx > 0 && chapterIdx > 0) goTo(chapterIdx - 1)
+            }
+        }
+        window.addEventListener('touchstart', onStart, { passive: true })
+        window.addEventListener('touchend', onEnd, { passive: true })
+        return () => {
+            window.removeEventListener('touchstart', onStart)
+            window.removeEventListener('touchend', onEnd)
+        }
+    }, [chapterIdx, book, goTo])
+
+    const handleShare = useCallback(async () => {
+        const url = window.location.href
+        const title = book?.metadata.titulo || 'Ebook IMI'
+        if (navigator.share) {
+            try { await navigator.share({ title, url }) } catch { /* cancelled */ }
+        } else {
+            await navigator.clipboard.writeText(url)
+        }
+    }, [book])
 
     if (loading) {
         return (
@@ -239,37 +295,50 @@ export default function EbookReaderPage() {
                     <div className="flex items-center gap-1">
                         <button
                             onClick={() => setFontSize(s => Math.max(13, s - 1))}
-                            className="w-7 h-7 rounded-md flex items-center justify-center"
+                            className="w-8 h-8 sm:w-7 sm:h-7 rounded-md flex items-center justify-center"
                             style={{ color: mutedColor, border: `1px solid ${borderColor}` }}
                             title="Diminuir fonte"
+                            aria-label="Diminuir tamanho da fonte"
                         >
                             <Minus size={12} />
                         </button>
                         <button
                             onClick={() => setFontSize(s => Math.min(24, s + 1))}
-                            className="w-7 h-7 rounded-md flex items-center justify-center"
+                            className="w-8 h-8 sm:w-7 sm:h-7 rounded-md flex items-center justify-center"
                             style={{ color: mutedColor, border: `1px solid ${borderColor}` }}
                             title="Aumentar fonte"
+                            aria-label="Aumentar tamanho da fonte"
                         >
                             <Plus size={12} />
                         </button>
                         <button
                             onClick={() => setDarkMode(!darkMode)}
-                            className="w-7 h-7 rounded-md flex items-center justify-center"
+                            className="w-8 h-8 sm:w-7 sm:h-7 rounded-md flex items-center justify-center"
                             style={{ color: mutedColor, border: `1px solid ${borderColor}` }}
                             title={darkMode ? 'Modo claro' : 'Modo escuro'}
+                            aria-label={darkMode ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
                         >
                             {darkMode ? <Sun size={12} /> : <Moon size={12} />}
                         </button>
                         <button
+                            onClick={handleShare}
+                            className="w-8 h-8 sm:w-7 sm:h-7 rounded-md flex items-center justify-center"
+                            style={{ color: mutedColor, border: `1px solid ${borderColor}` }}
+                            title="Compartilhar"
+                            aria-label="Compartilhar este livro"
+                        >
+                            <Share2 size={12} />
+                        </button>
+                        <button
                             onClick={() => setShowToc(!showToc)}
-                            className="w-7 h-7 rounded-md flex items-center justify-center"
+                            className="w-8 h-8 sm:w-7 sm:h-7 rounded-md flex items-center justify-center"
                             style={{
                                 color: showToc ? accentColor : mutedColor,
                                 border: `1px solid ${showToc ? accentColor : borderColor}`,
                                 background: showToc ? `${accentColor}10` : 'transparent',
                             }}
                             title="Indice"
+                            aria-label="Abrir indice de capitulos"
                         >
                             <List size={12} />
                         </button>
@@ -320,7 +389,7 @@ export default function EbookReaderPage() {
             </AnimatePresence>
 
             {/* Reader content */}
-            <main className="max-w-3xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
+            <main className="max-w-3xl mx-auto px-4 sm:px-8 py-8 sm:py-16">
                 {/* Chapter title */}
                 <div className="mb-10">
                     <p className="text-[10px] font-bold uppercase tracking-[0.25em] mb-3" style={{ color: accentColor }}>
@@ -351,10 +420,11 @@ export default function EbookReaderPage() {
                     <button
                         onClick={() => goTo(chapterIdx - 1)}
                         disabled={chapterIdx === 0}
-                        className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all disabled:opacity-20"
+                        className="flex items-center gap-2 px-4 py-3 min-h-[48px] rounded-xl text-sm font-medium transition-all disabled:opacity-20 active:scale-[0.97]"
                         style={{ color: textColor, border: `1px solid ${borderColor}` }}
+                        aria-label="Capitulo anterior"
                     >
-                        <ChevronLeft size={16} /> Anterior
+                        <ChevronLeft size={16} /> <span className="hidden sm:inline">Anterior</span>
                     </button>
                     <span className="text-xs font-mono" style={{ color: mutedColor }}>
                         {chapterIdx + 1} / {totalChapters}
@@ -362,10 +432,11 @@ export default function EbookReaderPage() {
                     <button
                         onClick={() => goTo(chapterIdx + 1)}
                         disabled={chapterIdx >= totalChapters - 1}
-                        className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-20"
+                        className="flex items-center gap-2 px-4 py-3 min-h-[48px] rounded-xl text-sm font-semibold transition-all disabled:opacity-20 active:scale-[0.97]"
                         style={{ color: '#0B1928', background: accentColor }}
+                        aria-label="Proximo capitulo"
                     >
-                        Proximo <ChevronRight size={16} />
+                        <span className="hidden sm:inline">Proximo</span> <ChevronRight size={16} />
                     </button>
                 </div>
             </main>

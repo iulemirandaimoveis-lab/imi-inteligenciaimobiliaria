@@ -112,7 +112,23 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
         )
     }
 
-    if (!neighborhoods || neighborhoods.length === 0) return null
+    if (!neighborhoods || neighborhoods.length === 0) {
+        return (
+            <section className="py-12 md:py-16" ref={containerRef}>
+                <div className="container-custom">
+                    <SectionHeader />
+                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                        <div className="w-12 h-12 rounded-full bg-[#0B1928] flex items-center justify-center mb-4">
+                            <span className="text-2xl text-[#334E68]">&#x2205;</span>
+                        </div>
+                        <p className="text-[#9CA3AF] text-sm font-light max-w-sm">
+                            Nenhum dado de precos disponivel para exibir no mapa. Selecione outra cidade ou aguarde a atualizacao dos dados.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        )
+    }
 
     const maxInventory = Math.max(
         ...neighborhoods.map(n => n.inventory_count ?? 0)
@@ -179,8 +195,8 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
                                 </div>
 
                                 {/* Name */}
-                                <div className="mt-3 text-center">
-                                    <div className="text-sm font-semibold text-white leading-tight">
+                                <div className="mt-3 text-center w-full px-2 min-w-0">
+                                    <div className="text-xs sm:text-sm font-semibold text-white leading-tight truncate">
                                         {n.neighborhood}
                                     </div>
                                     {label && (

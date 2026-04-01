@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { BarChart3, TrendingUp, TrendingDown, Shield, Footprints, DollarSign, Timer, Building2, ArrowUpRight } from 'lucide-react'
+import { BarChart3, TrendingUp, TrendingDown, Shield, Footprints, DollarSign, Timer, Building2, ArrowUpRight, RefreshCw } from 'lucide-react'
 import PriceHeatmap from '@/components/intelligence/PriceHeatmap'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -63,6 +63,7 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
     const [selectedCity, setSelectedCity] = useState(CITIES[0].key)
     const [neighborhoods, setNeighborhoods] = useState<NeighborhoodData[]>([])
     const [loading, setLoading] = useState(true)
+    const [refreshing, setRefreshing] = useState(false)
     const [expandedId, setExpandedId] = useState<string | null>(null)
 
     const fetchCity = useCallback(async (city: string) => {
@@ -82,6 +83,21 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
             setLoading(false)
         }
     }, [])
+
+    const handleRefresh = useCallback(async () => {
+        setRefreshing(true)
+        try {
+            const res = await fetch('/api/intelligence/refresh', { method: 'POST' })
+            if (res.ok) {
+                // Re-fetch current city data after refresh
+                await fetchCity(selectedCity)
+            }
+        } catch {
+            // Silently fail — data stays as-is
+        } finally {
+            setRefreshing(false)
+        }
+    }, [fetchCity, selectedCity])
 
     useEffect(() => {
         fetchCity(selectedCity)
@@ -140,22 +156,33 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
             {/* ─── CITY SELECTOR TABS ───────────────────────────────────── */}
             <section className="sticky top-0 z-30 bg-[#0D0F14]/95 backdrop-blur-md border-b border-white/[0.05]">
                 <div className="container-custom">
-                    <div className="flex overflow-x-auto gap-1 py-3 scrollbar-hide -mx-1 px-1">
-                        {CITIES.map((city) => (
-                            <button
-                                key={city.key}
-                                onClick={() => setSelectedCity(city.key)}
-                                className={`
-                                    shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200
-                                    ${selectedCity === city.key
-                                        ? 'bg-[#C8A44A] text-[#0B1928] shadow-lg shadow-[#C8A44A]/20'
-                                        : 'bg-[#0B1928] text-[#9CA3AF] hover:text-white hover:bg-[#142438] border border-white/[0.05]'
-                                    }
-                                `}
-                            >
-                                {city.name}
-                            </button>
-                        ))}
+                    <div className="flex items-center gap-2 py-3">
+                        <div className="flex overflow-x-auto gap-1 scrollbar-hide -mx-1 px-1 flex-1 min-w-0">
+                            {CITIES.map((city) => (
+                                <button
+                                    key={city.key}
+                                    onClick={() => setSelectedCity(city.key)}
+                                    className={`
+                                        shrink-0 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200
+                                        ${selectedCity === city.key
+                                            ? 'bg-[#C8A44A] text-[#0B1928] shadow-lg shadow-[#C8A44A]/20'
+                                            : 'bg-[#0B1928] text-[#9CA3AF] hover:text-white hover:bg-[#142438] border border-white/[0.05]'
+                                        }
+                                    `}
+                                >
+                                    {city.name}
+                                </button>
+                            ))}
+                        </div>
+                        <button
+                            onClick={handleRefresh}
+                            disabled={refreshing}
+                            title="Atualizar dados"
+                            className="shrink-0 flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#0B1928] text-[#9CA3AF] hover:text-white hover:bg-[#142438] border border-white/[0.05] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                            <span className="hidden sm:inline">Atualizar dados</span>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -293,11 +320,11 @@ function MetricCard({
                     <div className="h-6 w-28 rounded bg-white/[0.05] animate-pulse" />
                 ) : (
                     <>
-                        <div className="text-xl font-bold text-white leading-none tracking-tight">
+                        <div className="text-lg sm:text-xl font-bold text-white leading-none tracking-tight truncate">
                             {value}
                         </div>
                         {sublabel && (
-                            <div className="text-[11px] text-[#C8A44A] mt-0.5 truncate">{sublabel}</div>
+                            <div className="text-[11px] text-[#C8A44A] mt-0.5 truncate max-w-[160px] sm:max-w-none">{sublabel}</div>
                         )}
                     </>
                 )}
@@ -337,8 +364,8 @@ function NeighborhoodCard({
             {/* Card Header */}
             <div className="p-5 pb-4">
                 <div className="flex items-start justify-between mb-4">
-                    <div>
-                        <h3 className="text-lg font-bold text-white group-hover:text-[#C8A44A] transition-colors leading-tight">
+                    <div className="min-w-0 flex-1">
+                        <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-[#C8A44A] transition-colors leading-tight truncate">
                             {data.neighborhood}
                         </h3>
                         <span className="text-[11px] text-[#9CA3AF]">{data.city}, {data.state}</span>
@@ -352,7 +379,7 @@ function NeighborhoodCard({
                         <div className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9CA3AF] mb-1">
                             Preco/m2
                         </div>
-                        <div className="text-2xl font-bold text-white tracking-tight">
+                        <div className="text-xl sm:text-2xl font-bold text-white tracking-tight truncate">
                             {formatCurrency(price)}
                         </div>
                     </div>

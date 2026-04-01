@@ -80,6 +80,7 @@ Escreva uma resposta profissional e eficaz:`
         const reply = data.content?.[0]?.text || ''
         return NextResponse.json({ reply })
     } catch (e: unknown) {
-        return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 })
+        console.error('[AI suggest-reply] error:', e instanceof Error ? e.message : e)
+        return NextResponse.json({ error: 'Erro ao gerar sugestão de resposta. Tente novamente.' }, { status: 500 })
     }
 }

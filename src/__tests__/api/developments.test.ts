@@ -101,7 +101,9 @@ describe('/api/developments', () => {
       const mockData = [{ id: '1', name: 'Dev A' }, { id: '2', name: 'Dev B' }]
       mockFrom.mockReturnValue({
         select: jest.fn().mockReturnValue({
-          order: jest.fn().mockResolvedValue({ data: mockData, error: null }),
+          order: jest.fn().mockReturnValue({
+            range: jest.fn().mockResolvedValue({ data: mockData, error: null, count: 2 }),
+          }),
         }),
       })
 
@@ -109,7 +111,9 @@ describe('/api/developments', () => {
       const json = await res.json()
 
       expect(res.status).toBe(200)
-      expect(json).toEqual(mockData)
+      expect(json.data).toEqual(mockData)
+      expect(json.pagination).toBeDefined()
+      expect(json.pagination.total).toBe(2)
       expect(mockFrom).toHaveBeenCalledWith('developments')
     })
 
@@ -133,7 +137,9 @@ describe('/api/developments', () => {
     it('returns 500 on database error', async () => {
       mockFrom.mockReturnValue({
         select: jest.fn().mockReturnValue({
-          order: jest.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } }),
+          order: jest.fn().mockReturnValue({
+            range: jest.fn().mockResolvedValue({ data: null, error: { message: 'DB error' }, count: null }),
+          }),
         }),
       })
 

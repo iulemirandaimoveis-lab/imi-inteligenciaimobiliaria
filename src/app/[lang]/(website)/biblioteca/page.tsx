@@ -125,5 +125,44 @@ export default async function BibliotecaPage() {
     // All books have content in /public/books/*.json
     const bookSlugs = CATALOG_SEED.map(e => e.slug)
 
-    return <BibliotecaClient ebooks={allEbooks} pilares={PILARES} bookSlugs={bookSlugs} />
+    // JSON-LD CollectionPage structured data for search engines
+    const collectionLd = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Biblioteca IMI — Livros sobre Mercado Imobiliário',
+        description: 'Coleção completa de ebooks sobre avaliação de imóveis, investimentos imobiliários e inteligência patrimonial.',
+        url: 'https://www.iulemirandaimoveis.com.br/pt/biblioteca',
+        publisher: {
+            '@type': 'Organization',
+            name: 'IMI — Iule Miranda Imóveis',
+            url: 'https://www.iulemirandaimoveis.com.br',
+        },
+        mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: allEbooks.length,
+            itemListElement: allEbooks.slice(0, 20).map((book, i) => ({
+                '@type': 'ListItem',
+                position: i + 1,
+                item: {
+                    '@type': 'Book',
+                    name: book.title,
+                    description: book.subtitle || book.description || '',
+                    url: `https://www.iulemirandaimoveis.com.br/pt/biblioteca/${book.slug}`,
+                    author: { '@type': 'Person', name: 'Iule Miranda' },
+                    bookFormat: 'https://schema.org/EBook',
+                    isAccessibleForFree: true,
+                },
+            })),
+        },
+    }
+
+    return (
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionLd) }}
+            />
+            <BibliotecaClient ebooks={allEbooks} pilares={PILARES} bookSlugs={bookSlugs} />
+        </>
+    )
 }

@@ -12,7 +12,7 @@ export const GET = apiHandler(null, async (request: NextRequest, _body: unknown,
     const city = searchParams.get('city')
     const neighborhood = searchParams.get('neighborhood')
 
-    if (!city && !neighborhood) {
+    if ((!city || !city.trim()) && (!neighborhood || !neighborhood.trim())) {
         return NextResponse.json(
             { error: 'Parametro "city" ou "neighborhood" obrigatorio' },
             { status: 400 }
@@ -20,7 +20,7 @@ export const GET = apiHandler(null, async (request: NextRequest, _body: unknown,
     }
 
     // Specific neighborhood query — also return nearby neighborhoods for comparison
-    if (neighborhood && city) {
+    if (neighborhood?.trim() && city?.trim()) {
         const { data: main, error: mainErr } = await supabase
             .from('neighborhood_intelligence')
             .select('*')

@@ -23,6 +23,14 @@ const ALLOWED_ORIGINS = [
     ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:3001'] : []),
 ].filter(Boolean) as string[]
 
+function addSecurityHeaders(response: NextResponse): NextResponse {
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('X-Frame-Options', 'DENY')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)')
+    return response
+}
+
 function addCorsHeaders(response: NextResponse, origin: string | null): NextResponse {
     if (origin && ALLOWED_ORIGINS.includes(origin)) {
         response.headers.set('Access-Control-Allow-Origin', origin)
@@ -70,10 +78,12 @@ export async function middleware(request: NextRequest) {
         // Handle CORS preflight for API routes
         if (request.method === 'OPTIONS' && pathname.startsWith('/api')) {
             const preflightResponse = new NextResponse(null, { status: 204 })
+            addSecurityHeaders(preflightResponse)
             return addCorsHeaders(preflightResponse, origin)
         }
 
         const response = await updateSession(request)
+        addSecurityHeaders(response)
 
         // Add CORS headers to all API responses
         if (pathname.startsWith('/api')) {

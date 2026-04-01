@@ -17,6 +17,7 @@ import {
     ArrowLeft, Bell, BellOff, Pin, Archive, UserPlus,
     Circle, CheckCheck, Loader2, Volume2, VolumeX, Handshake, Vibrate,
     Mic, MicOff, Play, Pause, X, FileText, Image as ImageIcon, Download, File,
+    Trash2, ChevronUp, Info, Settings,
 } from 'lucide-react'
 
 // ── Channel Icon ─────────────────────────────────────────
@@ -70,8 +71,14 @@ function ChatAvatar({ name, url, size = 36 }: { name: string; url?: string | nul
     )
 }
 
+// ── Reaction Emoji Set ──────────────────────────────────
+const REACTION_EMOJIS = ['\u{1F44D}', '\u2764\uFE0F', '\u{1F602}', '\u{1F62E}', '\u{1F622}', '\u{1F525}']
+
 // ── Message Bubble ───────────────────────────────────────
-function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
+function MessageBubble({ msg, isOwn, hovered, onReaction, currentUserId }: {
+    msg: ChatMessage; isOwn: boolean; hovered?: boolean;
+    onReaction?: (messageId: string, emoji: string) => void; currentUserId?: string;
+}) {
     if (msg.content_type === 'system') {
         return (
             <div style={{ textAlign: 'center', padding: '8px 0' }}>
@@ -157,6 +164,9 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
         return <>{msg.content}</>
     }
 
+    const reactions = msg.reactions || {}
+    const reactionEntries = Object.entries(reactions).filter(([, users]) => users.length > 0)
+
     return (
         <div style={{
             display: 'flex', gap: 8, padding: '4px 0',
@@ -164,7 +174,7 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
             alignItems: 'flex-start',
         }}>
             {!isOwn && <ChatAvatar name={msg.sender?.name ?? msg.sender_name ?? 'U'} url={msg.sender?.avatar_url ?? msg.sender_avatar} size={32} />}
-            <div style={{ maxWidth: '70%', minWidth: 0 }}>
+            <div style={{ maxWidth: '70%', minWidth: 0, position: 'relative' }}>
                 {!isOwn && (
                     <div style={{ fontSize: 11, fontWeight: 600, color: T.textMuted, marginBottom: 2 }}>
                         {msg.sender?.name ?? msg.sender_name}
@@ -199,6 +209,65 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
                         </div>
                     )}
                 </div>
+                {/* Existing reactions */}
+                {reactionEntries.length > 0 && (
+                    <div style={{
+                        display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4,
+                        justifyContent: isOwn ? 'flex-end' : 'flex-start',
+                    }}>
+                        {reactionEntries.map(([emoji, users]) => {
+                            const iReacted = currentUserId ? users.includes(currentUserId) : false
+                            return (
+                                <button
+                                    key={emoji}
+                                    onClick={() => onReaction?.(msg.id, emoji)}
+                                    style={{
+                                        display: 'inline-flex', alignItems: 'center', gap: 3,
+                                        padding: '2px 6px', borderRadius: T.radius.full,
+                                        background: iReacted ? 'rgba(212,175,55,0.15)' : T.subtle,
+                                        border: iReacted ? `1px solid ${T.gold}` : `1px solid ${T.borderLight}`,
+                                        cursor: 'pointer', fontSize: 13, lineHeight: '18px',
+                                        color: T.text, transition: `all ${T.transition.fast}`,
+                                    }}
+                                    title={`${users.length} ${users.length === 1 ? 'pessoa' : 'pessoas'}`}
+                                >
+                                    <span>{emoji}</span>
+                                    <span style={{ fontSize: 11, fontWeight: 600, fontFamily: T.font.mono }}>{users.length}</span>
+                                </button>
+                            )
+                        })}
+                    </div>
+                )}
+                {/* Reaction picker on hover */}
+                {hovered && onReaction && (
+                    <div style={{
+                        position: 'absolute', top: -4,
+                        [isOwn ? 'left' : 'right']: -4,
+                        transform: isOwn ? 'translateX(-100%)' : 'translateX(100%)',
+                        display: 'flex', gap: 2, padding: '3px 6px',
+                        background: T.surface, borderRadius: T.radius.full,
+                        border: `1px solid ${T.borderLight}`,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                        zIndex: 10,
+                    }}>
+                        {REACTION_EMOJIS.map(emoji => (
+                            <button
+                                key={emoji}
+                                onClick={() => onReaction(msg.id, emoji)}
+                                style={{
+                                    width: 28, height: 28, border: 'none', borderRadius: '50%',
+                                    background: 'transparent', cursor: 'pointer', fontSize: 15,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    transition: `all ${T.transition.fast}`,
+                                }}
+                                onMouseEnter={e => { (e.target as HTMLElement).style.background = T.subtle }}
+                                onMouseLeave={e => { (e.target as HTMLElement).style.background = 'transparent' }}
+                            >
+                                {emoji}
+                            </button>
+                        ))}
+                    </div>
+                )}
                 <div style={{
                     fontSize: 11, color: T.textDim, marginTop: 2,
                     textAlign: isOwn ? 'right' : 'left',
@@ -311,7 +380,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
 
     const prevMsgCount = useRef(0)
     const { channels, loading: channelsLoading, totalUnread, createChannel, openDM, reload: reloadChannels } = useChannels({ userId: user.id })
-    const { messages, loading: messagesLoading, typingUsers, sendMessage, sendTyping, markAsRead } = useChat({
+    const { messages, loading: messagesLoading, typingUsers, hasMore, loadMore, sendMessage, deleteMessage, editMessage, toggleReaction, sendTyping, markAsRead } = useChat({
         channelId: activeChannelId ?? '',
         userId: user.id,
         userName: user.name,
@@ -320,6 +389,9 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
     const activeChannel = channels.find(c => c.id === activeChannelId)
 
     const [nudgeShake, setNudgeShake] = useState(false)
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [showChannelInfo, setShowChannelInfo] = useState(false)
+    const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null)
 
     // Play MSN sounds on new incoming messages
     useEffect(() => {
@@ -447,6 +519,23 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
         }
         setUploadingFile(false)
         if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+
+    // Load more messages
+    const handleLoadMore = async () => {
+        if (loadingMore || !hasMore) return
+        setLoadingMore(true)
+        await loadMore()
+        setLoadingMore(false)
+    }
+
+    // Delete message handler
+    const handleDeleteMessage = async (messageId: string) => {
+        const confirmed = window.confirm('Deletar esta mensagem?')
+        if (!confirmed) return
+        const { error } = await deleteMessage(messageId)
+        if (error) toast.error('Erro ao deletar mensagem')
+        else toast.success('Mensagem deletada')
     }
 
     // Typing indicator
@@ -754,8 +843,17 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                                 {activeChannel.message_count} mensagens
                             </div>
                         </div>
-                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, padding: 4 }}>
-                            <MoreVertical size={18} />
+                        <button
+                            onClick={() => setShowChannelInfo(!showChannelInfo)}
+                            style={{
+                                background: showChannelInfo ? T.activeBg : 'none',
+                                border: showChannelInfo ? `1px solid ${T.borderLight}` : 'none',
+                                cursor: 'pointer', color: showChannelInfo ? T.gold : T.textMuted,
+                                padding: 4, borderRadius: T.radius.md,
+                                transition: `all ${T.transition.fast}`,
+                            }}
+                        >
+                            <Info size={18} />
                         </button>
                     </div>
 
@@ -777,9 +875,58 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                             </div>
                         ) : (
                             <>
-                                {messages.map(msg => (
-                                    <MessageBubble key={msg.id} msg={msg} isOwn={msg.sender_id === user.id} />
-                                ))}
+                                {/* Load more button */}
+                                {hasMore && (
+                                    <div style={{ textAlign: 'center', padding: '8px 0 16px' }}>
+                                        <button
+                                            onClick={handleLoadMore}
+                                            disabled={loadingMore}
+                                            style={{
+                                                background: T.elevated, border: `1px solid ${T.borderLight}`,
+                                                borderRadius: T.radius.full, padding: '6px 16px',
+                                                fontSize: 12, fontWeight: 600, color: T.textMuted,
+                                                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6,
+                                                transition: `all ${T.transition.fast}`,
+                                            }}
+                                        >
+                                            {loadingMore ? (
+                                                <><Loader2 size={12} className="animate-spin" /> Carregando...</>
+                                            ) : (
+                                                <><ChevronUp size={12} /> Carregar mensagens anteriores</>
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+                                {messages.map(msg => {
+                                    const isOwn = msg.sender_id === user.id
+                                    return (
+                                        <div
+                                            key={msg.id}
+                                            onMouseEnter={() => setHoveredMsgId(msg.id)}
+                                            onMouseLeave={() => setHoveredMsgId(null)}
+                                            style={{ position: 'relative' }}
+                                        >
+                                            <MessageBubble msg={msg} isOwn={isOwn} hovered={hoveredMsgId === msg.id} onReaction={toggleReaction} currentUserId={user.id} />
+                                            {/* Delete button on hover (own messages only) */}
+                                            {isOwn && hoveredMsgId === msg.id && msg.content_type !== 'system' && (
+                                                <button
+                                                    onClick={() => handleDeleteMessage(msg.id)}
+                                                    title="Deletar mensagem"
+                                                    style={{
+                                                        position: 'absolute', top: 4, right: isOwn ? undefined : 4, left: isOwn ? 4 : undefined,
+                                                        width: 24, height: 24, borderRadius: T.radius.full,
+                                                        background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
+                                                        cursor: 'pointer', color: '#EF4444',
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                        transition: `all ${T.transition.fast}`,
+                                                    }}
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    )
+                                })}
                                 <div ref={messagesEndRef} />
                             </>
                         )}
@@ -1120,10 +1267,112 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                 )}
             </AnimatePresence>
 
-            {/* Desktop layout: sidebar + chat */}
+            {/* Desktop layout: sidebar + chat + info panel */}
             <div className="hidden md:flex" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
                 <div style={{ width: 320, flexShrink: 0, height: '100%', overflow: 'hidden' }}>{channelList}</div>
                 <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>{chatArea}</div>
+                {/* Channel info panel */}
+                <AnimatePresence>
+                    {showChannelInfo && activeChannel && (
+                        <motion.div
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: 280, opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            style={{
+                                height: '100%', overflow: 'hidden', flexShrink: 0,
+                                borderLeft: `1px solid ${T.border}`, background: T.base,
+                            }}
+                        >
+                            <div style={{ width: 280, height: '100%', overflowY: 'auto', padding: 20 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                                    <span style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.font.serif }}>
+                                        Detalhes do Canal
+                                    </span>
+                                    <button
+                                        onClick={() => setShowChannelInfo(false)}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, padding: 2 }}
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                                {/* Channel avatar/icon */}
+                                <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                                    {activeChannel.type === 'direct' && activeChannel.other_user ? (
+                                        <div style={{ display: 'inline-block' }}>
+                                            <ChatAvatar name={activeChannel.other_user.name ?? 'U'} url={activeChannel.other_user.avatar_url} size={64} />
+                                        </div>
+                                    ) : (
+                                        <div style={{
+                                            width: 64, height: 64, borderRadius: 18, margin: '0 auto',
+                                            background: T.elevated, display: 'flex',
+                                            alignItems: 'center', justifyContent: 'center', color: T.gold,
+                                        }}>
+                                            <ChannelIcon type={activeChannel.type} size={28} />
+                                        </div>
+                                    )}
+                                    <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginTop: 12 }}>
+                                        {activeChannel.type === 'direct' && activeChannel.other_user
+                                            ? activeChannel.other_user.name
+                                            : activeChannel.name}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: T.textDim, marginTop: 4 }}>
+                                        {activeChannel.type === 'direct' ? 'Conversa direta' : `Canal ${activeChannel.type}`}
+                                    </div>
+                                </div>
+                                {/* Stats */}
+                                <div style={{
+                                    background: T.elevated, borderRadius: T.radius.lg, padding: 14,
+                                    marginBottom: 16, border: `1px solid ${T.borderLight}`,
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                        <span style={{ fontSize: 12, color: T.textDim }}>Mensagens</span>
+                                        <span style={{ fontSize: 12, fontWeight: 700, color: T.text, fontFamily: T.font.mono }}>
+                                            {activeChannel.message_count}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                        <span style={{ fontSize: 12, color: T.textDim }}>Criado em</span>
+                                        <span style={{ fontSize: 12, fontWeight: 600, color: T.text }}>
+                                            {activeChannel.created_at ? new Date(activeChannel.created_at).toLocaleDateString('pt-BR') : '—'}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span style={{ fontSize: 12, color: T.textDim }}>Tipo</span>
+                                        <span style={{ fontSize: 12, fontWeight: 600, color: T.gold, textTransform: 'capitalize' }}>
+                                            {activeChannel.type}
+                                        </span>
+                                    </div>
+                                </div>
+                                {/* Members */}
+                                {activeChannel.members && activeChannel.members.length > 0 && (
+                                    <div>
+                                        <div style={{ fontSize: 12, fontWeight: 700, color: T.textMuted, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                            <Users size={12} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                                            Membros ({activeChannel.members.length})
+                                        </div>
+                                        {activeChannel.members.map((member: { user_id: string; role?: string }) => (
+                                            <div key={member.user_id} style={{
+                                                display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0',
+                                                borderBottom: `1px solid ${T.borderLight}`,
+                                            }}>
+                                                <ChatAvatar name={member.user_id.slice(0, 6)} size={28} />
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <div style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                        {member.user_id === user.id ? 'Você' : member.user_id.slice(0, 8)}
+                                                    </div>
+                                                    {member.role && (
+                                                        <div style={{ fontSize: 10, color: T.textDim, textTransform: 'capitalize' }}>{member.role}</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Mobile layout: list OR chat (full screen) */}

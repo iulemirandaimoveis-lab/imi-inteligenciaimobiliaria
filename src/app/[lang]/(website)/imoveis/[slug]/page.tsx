@@ -15,6 +15,7 @@ import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
 import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
 import PropertyIntelligence from '../components/PropertyIntelligence'
+import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
 import { fmt } from '@/lib/format'
 
@@ -186,12 +187,14 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         { label: development.name },
     ]
 
+    const pageUrl = `${BASE}/${params.lang}/imoveis/${params.slug}`
+
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'RealEstateListing',
         name: development.name,
         description: data.description || development.shortDescription || `Empreendimento premium em ${location}.`,
-        url: `${BASE}/${params.lang}/imoveis/${params.slug}`,
+        url: pageUrl,
         image: mainImage ? [mainImage] : [],
         ...(priceMin && {
             offers: {
@@ -217,11 +220,22 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         }),
     }
 
+    // BreadcrumbList JSON-LD for rich search results
+    const breadcrumbJsonLd = generateBreadcrumbSchema([
+        { name: 'Imóveis', url: `/${params.lang}/imoveis` },
+        ...(data.city ? [{ name: data.city, url: `/${params.lang}/imoveis?city=${encodeURIComponent(data.city)}` }] : []),
+        { name: development.name, url: pageUrl },
+    ])
+
     return (
         <main className="pb-24 lg:pb-0" style={{ background: '#F7F5F2' }}>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
 
             <DevelopmentHero development={development} />

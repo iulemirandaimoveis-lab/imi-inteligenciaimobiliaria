@@ -56,7 +56,7 @@ export default async function WebsiteLayout({
                 />
             </Suspense>
             <Header lang={lang} settings={settings} />
-            <main id="main-content" className="flex-grow pt-[60px] lg:pt-[68px] pb-[env(safe-area-inset-bottom,0px)]">{children}</main>
+            <main id="main-content" className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
             <Footer lang={lang} settings={settings} />
             <MobileBottomNav lang={lang} />
             <WhatsAppFAB />

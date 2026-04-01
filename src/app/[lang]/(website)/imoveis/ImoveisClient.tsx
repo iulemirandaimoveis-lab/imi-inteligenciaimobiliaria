@@ -147,10 +147,13 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
             {/* Image Container */}
             <a href={detailHref} className="block relative aspect-[16/10] bg-[#F0EDE8] flex-shrink-0 overflow-hidden">
                 {dev.images.main ? (
-                    <img
+                    <Image
                         src={dev.images.main}
                         alt={dev.name}
-                        className="w-full h-full object-cover block"
+                        fill
+                        loading="lazy"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
                         style={{
                             transform: isHovered ? 'scale(1.08)' : 'scale(1)',
                             transition: 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
@@ -221,17 +224,19 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
                         <button
                             key={i}
                             onClick={e => e.preventDefault()}
-                            className="w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer border-none"
+                            aria-label={i === 0 ? 'Favoritar' : 'Compartilhar'}
+                            className="w-[44px] h-[44px] sm:w-[34px] sm:h-[34px] rounded-full flex items-center justify-center cursor-pointer border-none active:scale-[0.92]"
                             style={{
                                 background: 'rgba(255,255,255,0.85)',
                                 backdropFilter: 'blur(8px)',
                                 color: '#5A6577',
                                 transition: 'all 0.2s ease',
+                                WebkitTapHighlightColor: 'transparent',
                             }}
                             onMouseEnter={e => { (e.target as HTMLElement).style.background = '#fff'; (e.target as HTMLElement).style.transform = 'scale(1.1)'; }}
                             onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.85)'; (e.target as HTMLElement).style.transform = 'scale(1)'; }}
                         >
-                            <Icon size={13} />
+                            <Icon size={15} />
                         </button>
                     ))}
                 </div>
@@ -307,7 +312,7 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
                     </div>
                     <a
                         href={detailHref}
-                        className="inline-flex items-center gap-1.5 h-10 px-5 text-[10px] font-bold tracking-[0.1em] uppercase no-underline transition-all duration-300"
+                        className="inline-flex items-center gap-1.5 h-11 px-5 text-[10px] font-bold tracking-[0.1em] uppercase no-underline transition-all duration-300 active:scale-[0.97]"
                         style={{
                             borderRadius: R.btn,
                             background: isHovered ? NAVY : CARD_BG,

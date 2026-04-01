@@ -123,8 +123,9 @@ Regras:
             cost_usd: response.cost_usd,
         })
     } catch (error: unknown) {
+        console.error('[AI property-insights] error:', error instanceof Error ? error.message : error)
         return NextResponse.json(
-            { error: error instanceof Error ? error.message : 'Internal server error' },
+            { error: 'Erro ao gerar insights do imóvel. Tente novamente.' },
             { status: 500 }
         )
     }

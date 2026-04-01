@@ -58,7 +58,8 @@ export default function MobileBottomNav({ lang }: MobileBottomNavProps) {
               <button
                 key={item.key}
                 onClick={handleMenuClick}
-                className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors duration-200"
+                className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full min-w-[44px] min-h-[44px] transition-colors duration-200 active:scale-[0.92] active:opacity-80"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 <Icon
                   size={22}
@@ -80,7 +81,9 @@ export default function MobileBottomNav({ lang }: MobileBottomNavProps) {
             <Link
               key={item.key}
               href={item.href(lang)}
-              className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors duration-200"
+              prefetch={true}
+              className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full min-w-[44px] min-h-[44px] transition-colors duration-200 active:scale-[0.92] active:opacity-80"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               <Icon
                 size={22}

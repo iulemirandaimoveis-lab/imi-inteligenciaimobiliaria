@@ -201,10 +201,50 @@ export default function TrackingDashboardPage() {
                 </button>
             </div>
 
-            {/* ── Loading ── */}
+            {/* ── Loading Skeleton ── */}
             {loading && (
-                <div className="flex items-center justify-center h-64">
-                    <Loader2 size={28} className="animate-spin" style={{ color: T.accent }} />
+                <div className="space-y-4 animate-pulse">
+                    {/* KPI skeleton row */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="h-24 rounded-lg"
+                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                            >
+                                <div className="p-4 space-y-3">
+                                    <div className="h-3 w-20 rounded" style={{ background: T.elevated }} />
+                                    <div className="h-6 w-16 rounded" style={{ background: T.elevated }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Secondary KPI skeleton */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="h-20 rounded-lg"
+                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                            >
+                                <div className="p-4 space-y-2">
+                                    <div className="h-3 w-16 rounded" style={{ background: T.elevated }} />
+                                    <div className="h-5 w-12 rounded" style={{ background: T.elevated }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Chart skeleton row */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                        <div
+                            className="lg:col-span-2 h-[300px] rounded-lg"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        />
+                        <div
+                            className="h-[300px] rounded-lg"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        />
+                    </div>
                 </div>
             )}
 

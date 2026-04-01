@@ -132,7 +132,7 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
             {/* ── Filter Tabs ───────────────────────────── */}
             <section className="sticky top-0 z-30 bg-navy-950/95 backdrop-blur-md border-b border-white/[0.05]">
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-                    <div className="flex items-center gap-1 overflow-x-auto py-3 scrollbar-hide">
+                    <div className="flex items-center gap-1.5 overflow-x-auto py-3 scrollbar-hide" role="tablist" aria-label="Filtrar por pilar">
                         {pilares.map(p => {
                             const isActive = activeFilter === p.key
                             const color = p.key !== 'todos' ? PILAR_COLORS[p.key] : null
@@ -141,7 +141,10 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
                                 <button
                                     key={p.key}
                                     onClick={() => setActiveFilter(p.key)}
-                                    className="relative flex-shrink-0 px-4 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-200"
+                                    role="tab"
+                                    aria-selected={isActive}
+                                    aria-controls="ebooks-grid"
+                                    className="relative flex-shrink-0 px-4 py-2.5 min-h-[44px] rounded-full text-[12px] font-semibold transition-all duration-200"
                                     style={{
                                         color: isActive ? (color?.text || '#ffffff') : 'rgba(255,255,255,0.45)',
                                         background: isActive ? (color?.bg || 'rgba(255,255,255,0.08)') : 'transparent',
@@ -245,10 +248,11 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.04, duration: 0.4 }}
-            className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300"
+            className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
             style={{
                 background: '#0D1420',
                 border: '1px solid rgba(255,255,255,0.06)',
+                WebkitTapHighlightColor: 'transparent',
             }}
             onMouseEnter={e => {
                 e.currentTarget.style.borderColor = pilarColor?.border || 'rgba(200,164,74,0.3)'
@@ -319,10 +323,10 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                     {hasBookContent && (
                         <Link
                             href={`/${lang}/biblioteca/${ebook.slug}`}
-                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:opacity-90"
+                            className="flex items-center justify-center gap-2 w-full py-3 min-h-[44px] rounded-xl text-[13px] font-semibold transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
                             style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)', color: '#0D1117' }}
                         >
-                            <BookOpen size={13} /> Ler Agora
+                            <BookOpen size={14} /> Ler Agora
                         </Link>
                     )}
                     {!hasBookContent && isAvailable && (ebook.amazon_link || ebook.amazon_url) ? (

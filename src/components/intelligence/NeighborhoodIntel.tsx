@@ -149,24 +149,42 @@ function StatCard({ label, value, subtext }: { label: string; value: string; sub
 
 // ─── Skeleton ───────────────────────────────────────────────────────────────
 
-function Skeleton() {
+function Skeleton({ compact = false }: { compact?: boolean }) {
     return (
         <div style={{
-            background: 'white', borderRadius: 20, padding: 24,
+            background: 'white', borderRadius: 20,
+            padding: compact ? 16 : 24,
             border: '1px solid rgba(0,0,0,0.06)',
             boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
             animation: 'pulseIntel 1.5s ease-in-out infinite',
         }}>
-            <div style={{ height: 20, width: '60%', background: '#E8E5DF', borderRadius: 8, marginBottom: 16 }} />
-            <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+            {/* Header skeleton */}
+            <div style={{
+                background: NAVY, borderRadius: '16px 16px 0 0', margin: compact ? '-16px -16px 16px' : '-24px -24px 20px',
+                padding: compact ? '14px 18px' : '18px 22px',
+            }}>
+                <div style={{ height: 10, width: '30%', background: 'rgba(255,255,255,0.1)', borderRadius: 4, marginBottom: 8 }} />
+                <div style={{ height: compact ? 16 : 20, width: '55%', background: 'rgba(255,255,255,0.08)', borderRadius: 6 }} />
+            </div>
+            <div style={{ display: 'flex', gap: 10, marginBottom: compact ? 12 : 20, flexWrap: 'wrap' as const }}>
                 {[1, 2, 3].map(i => (
-                    <div key={i} style={{ flex: 1, height: 70, background: '#F3F1ED', borderRadius: 12 }} />
+                    <div key={i} style={{ flex: '1 1 80px', height: compact ? 55 : 70, background: '#F3F1ED', borderRadius: 12 }} />
                 ))}
             </div>
             <div style={{ height: 12, width: '40%', background: '#E8E5DF', borderRadius: 6, marginBottom: 12 }} />
             <div style={{ height: 6, background: '#F3F1ED', borderRadius: 3, marginBottom: 14 }} />
             <div style={{ height: 6, background: '#F3F1ED', borderRadius: 3, marginBottom: 14 }} />
             <div style={{ height: 6, background: '#F3F1ED', borderRadius: 3 }} />
+            {!compact && (
+                <>
+                    <div style={{ height: 12, width: '35%', background: '#E8E5DF', borderRadius: 6, marginTop: 20, marginBottom: 12 }} />
+                    <div style={{ display: 'flex', gap: 10 }}>
+                        {[1, 2, 3].map(i => (
+                            <div key={i} style={{ flex: 1, height: 55, background: '#F3F1ED', borderRadius: 12 }} />
+                        ))}
+                    </div>
+                </>
+            )}
             <style>{`@keyframes pulseIntel { 0%,100% { opacity:1; } 50% { opacity:0.6; } }`}</style>
         </div>
     )
@@ -182,7 +200,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        if (!neighborhood || !city) return
+        if (!neighborhood?.trim() || !city?.trim()) return
 
         const fetchData = async () => {
             setLoading(true)
@@ -212,7 +230,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
         fetchData()
     }, [neighborhood, city])
 
-    if (loading) return <Skeleton />
+    if (loading) return <Skeleton compact={compact} />
     if (error === 'not_found' || !data) return null
     if (error) return null
 
@@ -363,7 +381,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                 )}
 
                 {/* Nearby comparison */}
-                {!compact && nearby.length > 0 && (
+                {!compact && nearby && nearby.length > 0 && (
                     <div>
                         <div style={{
                             fontSize: 11, fontWeight: 700, color: NAVY,
