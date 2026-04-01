@@ -311,14 +311,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 compact
                             />
                         </section>
-                        {development.location?.coordinates?.lat && development.location?.coordinates?.lng && (
-                            <section id="pois-regiao">
-                                <NearbyPOIs
-                                    lat={development.location.coordinates.lat}
-                                    lng={development.location.coordinates.lng}
-                                />
-                            </section>
-                        )}
+                        <section id="pois-regiao">
+                            <NearbyPOIs
+                                lat={development.location.coordinates.lat}
+                                lng={development.location.coordinates.lng}
+                                address={[development.location.address, development.location.neighborhood, development.location.city, development.location.state].filter(Boolean).join(', ')}
+                            />
+                        </section>
                     </div>
 
                     {/* Sidebar — all viewports */}

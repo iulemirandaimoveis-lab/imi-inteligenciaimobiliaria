@@ -24,8 +24,9 @@ interface POIResult {
 }
 
 interface NearbyPOIsProps {
-    lat: number
-    lng: number
+    lat?: number | null
+    lng?: number | null
+    address?: string
 }
 
 const NAVY = '#0B1928'
@@ -47,22 +48,28 @@ function formatDistance(m: number): string {
     return m >= 1000 ? `${(m / 1000).toFixed(1)}km` : `${m}m`
 }
 
-export default function NearbyPOIs({ lat, lng }: NearbyPOIsProps) {
+export default function NearbyPOIs({ lat, lng, address }: NearbyPOIsProps) {
     const [data, setData] = useState<POIResult | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        if (!lat || !lng || (lat === -8.0476 && lng === -34.877)) {
+        const hasCoords = lat && lng && !(lat === -8.0476 && lng === -34.877)
+
+        if (!hasCoords && !address) {
             setLoading(false)
             return
         }
 
-        fetch(`/api/intelligence/pois?lat=${lat}&lng=${lng}`)
+        const params = hasCoords
+            ? `lat=${lat}&lng=${lng}`
+            : `address=${encodeURIComponent(address!)}`
+
+        fetch(`/api/intelligence/pois?${params}`)
             .then(r => r.ok ? r.json() : null)
             .then(d => setData(d))
             .catch(() => {})
             .finally(() => setLoading(false))
-    }, [lat, lng])
+    }, [lat, lng, address])
 
     if (loading) {
         return (

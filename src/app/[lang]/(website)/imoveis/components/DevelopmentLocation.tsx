@@ -26,16 +26,21 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
     ].filter(Boolean);
     const fullAddress = addressParts.join(', ');
 
-    // If coordinates are still the Recife defaults, use address-based geocoding instead
+    // Prefer address-based Google Maps query — resolves Brazilian addresses more accurately than raw coords
     const isDefaultCoords = (lat === -8.0476 && lng === -34.8770);
     const hasRealCoords = lat && lng && !isDefaultCoords;
+    const hasAddress = fullAddress && fullAddress.length > 3;
 
-    const mapSrc = hasRealCoords
-        ? `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`
-        : `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress || 'Recife, PE, Brasil')}&output=embed`;
-    const mapsUrl = hasRealCoords
-        ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
-        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress || 'Recife, PE, Brasil')}`;
+    const mapSrc = hasAddress
+        ? `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=15&output=embed`
+        : hasRealCoords
+            ? `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`
+            : `https://maps.google.com/maps?q=${encodeURIComponent('Recife, PE, Brasil')}&output=embed`;
+    const mapsUrl = hasAddress
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
+        : hasRealCoords
+            ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Recife, PE, Brasil')}`;
 
     return (
         <motion.div

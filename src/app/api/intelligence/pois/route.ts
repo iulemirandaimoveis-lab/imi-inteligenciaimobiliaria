@@ -1,20 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchNearbyPOIs } from '@/lib/poi-service'
+import { geocodeAddress } from '@/lib/geocode'
 
 export const runtime = 'nodejs'
 
 // GET /api/intelligence/pois?lat=-8.05&lng=-34.87
+// GET /api/intelligence/pois?address=Rua+Jarangari,53,Piedade,PE
 // Public endpoint — returns nearby POIs (schools, hospitals, markets, etc.)
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
-    const lat = parseFloat(searchParams.get('lat') || '')
-    const lng = parseFloat(searchParams.get('lng') || '')
+    let lat = parseFloat(searchParams.get('lat') || '')
+    let lng = parseFloat(searchParams.get('lng') || '')
+    const address = searchParams.get('address') || ''
 
-    if (isNaN(lat) || isNaN(lng)) {
-        return NextResponse.json({ error: 'Parametros lat e lng obrigatorios' }, { status: 400 })
+    // If lat/lng invalid or zero, try geocoding from address
+    if ((isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) && address) {
+        const geo = await geocodeAddress(address)
+        if (geo) {
+            lat = geo.lat
+            lng = geo.lng
+        }
     }
 
-    // Reject default/zero coords
+    if (isNaN(lat) || isNaN(lng)) {
+        return NextResponse.json({ error: 'Parametros lat/lng ou address obrigatorios' }, { status: 400 })
+    }
+
     if (lat === 0 && lng === 0) {
         return NextResponse.json({ error: 'Coordenadas invalidas' }, { status: 400 })
     }

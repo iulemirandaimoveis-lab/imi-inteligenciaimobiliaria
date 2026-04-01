@@ -180,7 +180,7 @@ export default function PropertyMap({
                       ? `R$${Math.round(price / 1000)}K`
                       : '★'
 
-            const isDark = !darkMode
+            const isDark = darkMode
             pin.style.cssText = `
                 padding:6px 12px;
                 border-radius:20px;
@@ -354,8 +354,8 @@ export default function PropertyMap({
                         style: darkMode
                             ? 'mapbox://styles/mapbox/dark-v11'
                             : 'mapbox://styles/mapbox/light-v11',
-                        center: [-34.9, -8.1],
-                        zoom: 7,
+                        center: REGIONS[0].center,
+                        zoom: REGIONS[0].zoom,
                         attributionControl: false,
                     })
                 } else {
@@ -364,8 +364,8 @@ export default function PropertyMap({
                     map.current = new mapLib.Map({
                         container: mapContainer.current!,
                         style: darkMode ? CARTO_DARK : CARTO_LIGHT,
-                        center: [-34.9, -8.1],
-                        zoom: 7,
+                        center: REGIONS[0].center,
+                        zoom: REGIONS[0].zoom,
                         attributionControl: false,
                     })
                 }

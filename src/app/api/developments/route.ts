@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { apiHandler, ApiContext } from '@/lib/api-helpers'
 import { logAudit, getRequestMeta } from '@/lib/governance'
+import { geocodeAddress } from '@/lib/geocode'
 
 export const runtime = 'nodejs'
 
@@ -239,18 +240,11 @@ export const POST = apiHandler(developmentPostSchema, async (req: NextRequest, b
     }
     // Auto-geocode if address exists but lat/lng missing
     if (!newDev.lat && (newDev.address || newDev.neighborhood || newDev.city)) {
-        try {
-            const parts = [newDev.address, newDev.neighborhood, newDev.city, newDev.state, newDev.country].filter(Boolean)
-            const q = encodeURIComponent(parts.join(', '))
-            const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
-                headers: { 'User-Agent': 'IMI-Inteligencia-Imobiliaria/1.0' },
-            })
-            const results = await geo.json()
-            if (results?.[0]) {
-                newDev.lat = parseFloat(results[0].lat)
-                newDev.lng = parseFloat(results[0].lon)
-            }
-        } catch { /* geocoding is best-effort */ }
+        const geo = await geocodeAddress(newDev.address, newDev.neighborhood, newDev.city, newDev.state, newDev.country)
+        if (geo) {
+            newDev.lat = geo.lat
+            newDev.lng = geo.lng
+        }
     }
     const { data, error } = await supabase
         .from('developments')
@@ -318,18 +312,11 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
     }
     // Auto-geocode on update if address/neighborhood changed but lat/lng not provided
     if (!normalized.lat && (normalized.address || normalized.neighborhood || normalized.city)) {
-        try {
-            const parts = [normalized.address, normalized.neighborhood, normalized.city, normalized.state, normalized.country].filter(Boolean)
-            const q = encodeURIComponent(parts.join(', '))
-            const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
-                headers: { 'User-Agent': 'IMI-Inteligencia-Imobiliaria/1.0' },
-            })
-            const results = await geo.json()
-            if (results?.[0]) {
-                normalized.lat = parseFloat(results[0].lat)
-                normalized.lng = parseFloat(results[0].lon)
-            }
-        } catch { /* geocoding is best-effort */ }
+        const geo = await geocodeAddress(normalized.address, normalized.neighborhood, normalized.city, normalized.state, normalized.country)
+        if (geo) {
+            normalized.lat = geo.lat
+            normalized.lng = geo.lng
+        }
     }
     const { data, error } = await supabase
         .from('developments')
