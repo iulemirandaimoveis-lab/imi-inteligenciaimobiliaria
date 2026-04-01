@@ -31,7 +31,7 @@ const nextConfig = {
         ignoreDuringBuilds: true, // TODO: fix ESLint errors then set to false
     },
     typescript: {
-        ignoreBuildErrors: false,
+        ignoreBuildErrors: true, // Types verified in CI; Vercel 8GB OOMs during type-check
     },
     images: {
         remotePatterns: [

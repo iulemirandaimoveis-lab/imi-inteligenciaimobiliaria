@@ -229,7 +229,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     ])
 
     return (
-        <main className="pb-24 lg:pb-0" style={{ background: '#F7F5F2' }}>
+        <main className="pb-40 lg:pb-0" style={{ background: '#F7F5F2' }}>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -514,11 +514,12 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             )}
 
             {/* Sticky Mobile CTA — always visible */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
+            <div className="fixed left-0 right-0 z-[140] lg:hidden"
                 style={{
+                    bottom: 'calc(64px + env(safe-area-inset-bottom, 0px))',
                     background: '#FFFFFF',
                     borderTop: '2px solid #B8B3A8',
-                    padding: '12px 16px max(12px, env(safe-area-inset-bottom))',
+                    padding: '12px 16px',
                     boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
                 }}>
                 <div className="flex items-center gap-3 max-w-lg mx-auto">
