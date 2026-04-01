@@ -6,7 +6,7 @@ import Image from 'next/image'
 import {
   ArrowLeft, MapPin, Building2, Bed, Bath, Car, Ruler, Edit, QrCode,
   BarChart2, Layers, Zap, TrendingUp, TrendingDown, Copy, MessageSquare,
-  ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles, Scale,
+  ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles, Scale, Handshake, User,
 } from 'lucide-react'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { getMainImage, getGalleryImages } from '@/utils/propertyImages'
@@ -44,7 +44,7 @@ const CARD: React.CSSProperties = {
 /* ─── Component ───────────────────────────────────────────────────────────── */
 
 export function MobileImovelDetail({
-  dev, loading, router, id, enriched, notFound, copied,
+  dev, loading, router, id, enriched, notFound, copied, broker,
   activeTab, setActiveTab,
   handleCopyLink, handleWhatsApp, handleLinkedIn, handleInstagramCopy,
   rentInput, setRentInput, expensePct, setExpensePct, vacancyPct, setVacancyPct,
@@ -447,6 +447,42 @@ export function MobileImovelDetail({
                     <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif' }}>{dev.developer.name}</div>
                     <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif', marginTop: 2 }}>Incorporadora</div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Corretor Responsável */}
+            {broker && (
+              <div>
+                <p style={{ ...EYEBROW, marginBottom: 10 }}>Corretor Responsável</p>
+                <div style={{ ...CARD, padding: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    {broker.avatar_url ? (
+                      <div style={{ width: 48, height: 48, borderRadius: '50%', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+                        <Image src={broker.avatar_url} alt={broker.name} fill sizes="48px" style={{ objectFit: 'cover' }} />
+                      </div>
+                    ) : (
+                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(200,164,74,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <User size={20} style={{ color: 'var(--gold, #C8A44A)' }} />
+                      </div>
+                    )}
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif' }}>{broker.name}</div>
+                      {broker.creci && <div style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif', marginTop: 1 }}>CRECI {broker.creci}</div>}
+                      {broker.phone && <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif', marginTop: 2 }}>{broker.phone}</div>}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => router.push(`/backoffice/parcerias?new=1&property_id=${id}&property_name=${encodeURIComponent(dev?.name || '')}&owner_broker_id=${broker.id}`)}
+                    style={{
+                      width: '100%', marginTop: 14, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                      background: 'transparent', border: '1px solid rgba(200,164,74,0.4)', borderRadius: 10,
+                      color: 'var(--gold, #C8A44A)', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
+                      letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer',
+                    }}
+                  >
+                    <Handshake size={14} /> Propor Parceria
+                  </button>
                 </div>
               </div>
             )}

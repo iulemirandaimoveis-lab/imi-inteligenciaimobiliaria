@@ -4,6 +4,7 @@ import Header from '@/components/website/Header'
 import Footer from '@/components/website/Footer'
 import AnalyticsProvider from '@/components/website/AnalyticsProvider'
 import { WhatsAppFAB } from '@/components/website/WhatsAppFAB'
+import MobileBottomNav from '@/components/website/MobileBottomNav'
 import EngagementTracker from '@/components/EngagementTracker'
 import { generateOrganizationSchema, generateWebSiteSchema, generateLocalBusinessSchema } from '@/lib/seo'
 import { getGlobalSettings } from '@/lib/settings'
@@ -15,6 +16,9 @@ export const metadata: Metadata = {
         languages: {
             'pt-BR': 'https://www.iulemirandaimoveis.com.br/pt',
             'en': 'https://www.iulemirandaimoveis.com.br/en',
+            'es': 'https://www.iulemirandaimoveis.com.br/es',
+            'ja': 'https://www.iulemirandaimoveis.com.br/ja',
+            'ar': 'https://www.iulemirandaimoveis.com.br/ar',
         },
     },
 }
@@ -24,16 +28,16 @@ export default async function WebsiteLayout({
     params: { lang },
 }: {
     children: React.ReactNode
-    params: { lang: 'pt' | 'en' }
+    params: { lang: string }
 }) {
-    const isRTL = false // Only pt/en supported
+    const isRTL = lang === 'ar'
     const organizationSchema = generateOrganizationSchema()
     const webSiteSchema = generateWebSiteSchema()
     const localBusinessSchema = generateLocalBusinessSchema()
     const settings = await getGlobalSettings()
 
     return (
-        <div className="flex flex-col min-h-screen overflow-x-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="flex flex-col min-h-screen overflow-x-hidden pb-[calc(64px+env(safe-area-inset-bottom,0px))] md:pb-0" dir={isRTL ? 'rtl' : 'ltr'}>
             {/* Performance: DNS prefetch & preconnect for external origins */}
             <link rel="dns-prefetch" href="https://zocffccwjjyelwrgunhu.supabase.co" />
             <link rel="preconnect" href="https://zocffccwjjyelwrgunhu.supabase.co" crossOrigin="anonymous" />
@@ -54,6 +58,7 @@ export default async function WebsiteLayout({
             <Header lang={lang} settings={settings} />
             <main id="main-content" className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
             <Footer lang={lang} settings={settings} />
+            <MobileBottomNav lang={lang} />
             <WhatsAppFAB />
             <EngagementTracker />
         </div>

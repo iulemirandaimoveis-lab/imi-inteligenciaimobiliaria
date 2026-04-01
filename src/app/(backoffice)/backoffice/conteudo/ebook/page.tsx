@@ -673,7 +673,7 @@ export default function EbookPage() {
                                 <div className="relative w-full max-w-[260px] aspect-[3/4] rounded-lg overflow-hidden shadow-2xl"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                     {capaUrl ? (
-                                        <img src={capaUrl} alt="Capa" className="w-full h-full object-cover" />
+                                        <img src={capaUrl} alt="Capa" loading="lazy" className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center gap-3 p-6">
                                             {generating ? (
@@ -803,7 +803,7 @@ export default function EbookPage() {
                             <div className="flex flex-col items-center gap-4">
                                 {capaUrl && (
                                     <div className="w-full max-w-[220px] aspect-[3/4] rounded-lg overflow-hidden shadow-2xl">
-                                        <img src={capaUrl} alt="Capa" className="w-full h-full object-cover" />
+                                        <img src={capaUrl} alt="Capa" loading="lazy" className="w-full h-full object-cover" />
                                     </div>
                                 )}
                                 <div className="w-full p-4 rounded-lg text-xs leading-relaxed"

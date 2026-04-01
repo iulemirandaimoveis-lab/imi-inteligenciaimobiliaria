@@ -100,7 +100,7 @@ export default function GlobalSearch() {
                     subtitle: `${dev.city} • ${dev.status}`,
                     url: `/backoffice/imoveis/${dev.id}`,
                     icon: Building2,
-                    color: 'text-blue-600'
+                    color: 'text-navy-600'
                 })
             })
             // Buscar leads
@@ -117,7 +117,7 @@ export default function GlobalSearch() {
                     subtitle: `${lead.email} • Score: ${lead.score}`,
                     url: `/backoffice/leads/${lead.id}`,
                     icon: Users,
-                    color: 'text-purple-600'
+                    color: 'text-navy-600'
                 })
             })
             // Buscar avaliações
@@ -134,7 +134,7 @@ export default function GlobalSearch() {
                     subtitle: `${evaluationItem.client_name} • ${evaluationItem.status}`,
                     url: `/backoffice/avaliacoes/${evaluationItem.id}`,
                     icon: FileText,
-                    color: 'text-pink-600'
+                    color: 'text-gold-600'
                 })
             })
             // Buscar consultorias

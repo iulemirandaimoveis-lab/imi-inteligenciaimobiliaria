@@ -6,6 +6,7 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeade
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-is-mobile'
+import Image from 'next/image'
 import {
   Trophy, Crown, Medal, Star, TrendingUp, Users,
   Target, Zap, Award, ChevronRight, Flame,
@@ -306,8 +307,8 @@ export default function RankingPage() {
           </div>
         ) : (
           /* Desktop: table */
-          <div style={{ ...card, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: T.font.sans }}>
+          <div style={{ ...card, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: T.font.sans, minWidth: 800 }}>
               <thead>
                 <tr style={{ borderBottom: `1px solid ${T.border}` }}>
                   {['#', '', 'Nome', 'Equipe', 'N\u00edvel', 'Score', 'VGV M\u00eas', 'Deals', 'Streak', 'Badges'].map(h => (
@@ -421,13 +422,13 @@ function PodiumSlot({ broker, rank, mobile, teamMap }: {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         border: isFirst ? '3px solid #C8A44A' : `2px solid ${T.border}`,
         boxShadow: isFirst ? '0 0 24px rgba(200,164,74,.25)' : 'none',
-        overflow: 'hidden',
+        overflow: 'hidden', position: 'relative',
         fontSize: isFirst ? 22 : 16, fontWeight: 700,
         color: isFirst ? T.base : T.textMuted,
         fontFamily: T.font.sans,
       }}>
         {broker.avatar_url ? (
-          <img src={broker.avatar_url} alt={broker.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <Image src={broker.avatar_url} alt={broker.name} fill sizes={isFirst ? '72px' : '56px'} style={{ objectFit: 'cover' }} />
         ) : (
           getInitials(broker.name)
         )}
@@ -542,11 +543,11 @@ function LeaderboardRow({ broker, rank, teamMap, badgeCount }: {
           background: T.surfaceAlt,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 12, fontWeight: 600, color: T.textMuted, fontFamily: T.font.sans,
-          overflow: 'hidden',
+          overflow: 'hidden', position: 'relative',
           border: isTop3 ? `2px solid ${level.color}40` : `1px solid ${T.border}`,
         }}>
           {broker.avatar_url ? (
-            <img src={broker.avatar_url} alt={broker.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <Image src={broker.avatar_url} alt={broker.name} fill sizes="36px" style={{ objectFit: 'cover' }} />
           ) : (
             getInitials(broker.name)
           )}
@@ -672,6 +673,7 @@ function MobileRow({ broker, rank, teamMap, badgeCount }: {
       style={{
         ...card,
         padding: '14px 16px',
+        minHeight: 44,
         display: 'flex', alignItems: 'center', gap: 12,
         ...(isTop3 ? { borderColor: 'rgba(200,164,74,.20)' } : {}),
       }}
@@ -698,11 +700,11 @@ function MobileRow({ broker, rank, teamMap, badgeCount }: {
         background: T.surfaceAlt,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 12, fontWeight: 600, color: T.textMuted, fontFamily: T.font.sans,
-        overflow: 'hidden',
+        overflow: 'hidden', position: 'relative',
         border: `1px solid ${T.border}`,
       }}>
         {broker.avatar_url ? (
-          <img src={broker.avatar_url} alt={broker.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <Image src={broker.avatar_url} alt={broker.name} fill sizes="36px" style={{ objectFit: 'cover' }} />
         ) : (
           getInitials(broker.name)
         )}
@@ -777,7 +779,8 @@ function TabButton({ active, onClick, color, children }: {
       onClick={onClick}
       style={{
         display: 'flex', alignItems: 'center',
-        padding: '8px 16px',
+        padding: '10px 16px',
+        minHeight: 44,
         borderRadius: T.radius.full,
         border: active ? `1px solid ${color}` : `1px solid ${T.border}`,
         background: active ? `${color}18` : 'transparent',

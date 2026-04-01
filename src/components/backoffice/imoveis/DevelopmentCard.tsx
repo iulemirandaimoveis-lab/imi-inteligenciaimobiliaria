@@ -15,7 +15,7 @@ interface DevelopmentCardProps {
 export default function DevelopmentCard({ development, onEdit, onDelete, onSelect, isSelected }: DevelopmentCardProps) {
     const statusColors: Record<string, string> = {
         launch: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20',
-        ready: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+        ready: 'bg-navy-500/10 text-navy-600 dark:text-navy-400 border-navy-500/20',
         under_construction: 'bg-primary/10 text-primary dark:text-primary border-primary/20'
     }
 

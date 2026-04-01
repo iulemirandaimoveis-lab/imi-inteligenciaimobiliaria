@@ -324,8 +324,8 @@ export default function DashboardKPIs() {
                     value={stats.publishedDevelopments}
                     subtitle={`${stats.featuredDevelopments} em destaque`}
                     icon={Building2}
-                    color="text-blue-600"
-                    bgColor="bg-blue-50"
+                    color="text-navy-600"
+                    bgColor="bg-navy-50"
                 />
                 <KPICard
                     title="Leads Ativos"
@@ -334,8 +334,8 @@ export default function DashboardKPIs() {
                     icon={Users}
                     trend={leadsTrend.trend}
                     trendValue={leadsTrend.value}
-                    color="text-purple-600"
-                    bgColor="bg-purple-50"
+                    color="text-navy-600"
+                    bgColor="bg-navy-50"
                 />
                 <KPICard
                     title="Taxa de Conversão"

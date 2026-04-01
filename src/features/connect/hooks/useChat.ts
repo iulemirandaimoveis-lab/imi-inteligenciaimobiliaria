@@ -212,6 +212,19 @@ export function useChat({ channelId, userId, userName }: UseChatOptions) {
             .eq('id', data.sender_id)
             .single()
 
+          // Clear typing indicator for the sender (they sent a message, so they're no longer typing)
+          setTypingUsers((prev) => {
+            if (!prev.has(data.sender_id)) return prev
+            const next = new Map(prev)
+            next.delete(data.sender_id)
+            return next
+          })
+          const existingTimer = typingTimersRef.current.get(data.sender_id)
+          if (existingTimer) {
+            clearTimeout(existingTimer)
+            typingTimersRef.current.delete(data.sender_id)
+          }
+
           const enriched = { ...data, sender: profile || null }
           setMessages((prev) => {
             if (prev.some((m) => m.id === enriched.id)) return prev

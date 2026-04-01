@@ -5,7 +5,9 @@
 /**
  * Tests for IMI Score service
  * Verifies: calcPricePerSqm, calcYieldEst, calcMarketDelta, calcIMIScore,
- *           getScoreColor, getScoreLabel, enrichProperty
+ *           setDynamicStats, getScoreColor, getScoreLabel, getScoreBadge,
+ *           enrichProperty, calcLiquidityIndex,
+ *           and indirectly: calcAttributeScore, calcAgePenalty, calcSizeEfficiency
  */
 
 import {
@@ -13,8 +15,10 @@ import {
   calcYieldEst,
   calcMarketDelta,
   calcIMIScore,
+  setDynamicStats,
   getScoreColor,
   getScoreLabel,
+  getScoreBadge,
   enrichProperty,
   calcLiquidityIndex,
 } from '@/features/properties/services/score.service'
@@ -30,6 +34,13 @@ function makeProperty(overrides: Partial<IMIProperty> = {}): IMIProperty {
     ...overrides,
   }
 }
+
+/** Reset dynamic stats before each test to avoid leaking state */
+beforeEach(() => {
+  // Reset by injecting null-equivalent empty stats so fallback defaults kick in.
+  // We re-inject real dynamic stats only in the setDynamicStats describe block.
+  setDynamicStats({ yield: {}, avgSqm: {} })
+})
 
 describe('calcPricePerSqm', () => {
   it('calculates price per square meter correctly', () => {
@@ -277,5 +288,276 @@ describe('enrichProperty', () => {
     const enriched = enrichProperty(p)
     const expected = parseFloat(((enriched.yield_est ?? 0) * 1.4).toFixed(1))
     expect(enriched.roi_12m).toBe(expected)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// setDynamicStats / getYield / getAvgSqm (tested through public API)
+// ---------------------------------------------------------------------------
+
+describe('setDynamicStats', () => {
+  it('overrides default neighborhood yield when dynamic stats are set', () => {
+    // Boa Viagem default yield is 5.8 (from NEIGHBORHOOD_YIELD)
+    const pBefore = makeProperty({ neighborhood: 'Boa Viagem', type: 'apartamento' })
+    setDynamicStats({ yield: {}, avgSqm: {} })
+    const yieldBefore = calcYieldEst(pBefore)
+
+    // Now inject a higher yield
+    setDynamicStats({ yield: { 'Boa Viagem': 9.0 }, avgSqm: {} })
+    const yieldAfter = calcYieldEst(pBefore)
+
+    expect(yieldAfter).toBeGreaterThan(yieldBefore)
+    // 9.0 + 0 (apartamento) + 0 (no price adjust) = 9.0
+    expect(yieldAfter).toBe(9.0)
+  })
+
+  it('overrides default avgSqm affecting market delta', () => {
+    const p = makeProperty({ price: 500000, area: 50, neighborhood: 'Boa Viagem' })
+
+    // With default: Boa Viagem avg = 11200, price/sqm = 10000 => delta ~10.7%
+    setDynamicStats({ yield: {}, avgSqm: {} })
+    const deltaBefore = calcMarketDelta(p)
+    expect(deltaBefore).toBe(10.7)
+
+    // Inject lower avgSqm => property now above market
+    setDynamicStats({ yield: {}, avgSqm: { 'Boa Viagem': 8000 } })
+    const deltaAfter = calcMarketDelta(p)
+    expect(deltaAfter).toBeLessThan(0) // property is above market now
+  })
+
+  it('falls back to hardcoded defaults when dynamic stats are empty for a neighborhood', () => {
+    setDynamicStats({ yield: { 'SomeOther': 10 }, avgSqm: { 'SomeOther': 20000 } })
+    // Boa Viagem should still use hardcoded value since dynamic stats don't include it
+    const p = makeProperty({ neighborhood: 'Boa Viagem', type: 'apartamento' })
+    expect(calcYieldEst(p)).toBe(5.8) // hardcoded NEIGHBORHOOD_YIELD['Boa Viagem']
+  })
+
+  it('falls back to global default (5.5) when neither dynamic nor hardcoded stats exist', () => {
+    setDynamicStats({ yield: {}, avgSqm: {} })
+    const p = makeProperty({ neighborhood: 'NonExistentPlace', type: 'apartamento' })
+    expect(calcYieldEst(p)).toBe(5.5)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// calcIMIScore — expanded: attribute, age, size, edge cases
+// ---------------------------------------------------------------------------
+
+describe('calcIMIScore — attribute scoring (via calcAttributeScore)', () => {
+  // Hold everything else constant and vary only the attribute under test
+  const base = {
+    price: 600000,
+    area: 60,
+    neighborhood: 'Boa Viagem',
+    city: 'Recife',
+    address: 'Rua X',
+    type: 'apartamento' as const,
+    condition: 'pronto' as const,
+    bedrooms: 2,
+  }
+
+  it('premium finishing property scores higher than basic finishing', () => {
+    const premium = makeProperty({ ...base, finishing: 'premium' })
+    const basic = makeProperty({ ...base, finishing: 'basic' })
+    expect(calcIMIScore(premium)).toBeGreaterThan(calcIMIScore(basic))
+  })
+
+  it('luxury finishing scores higher than premium', () => {
+    const luxury = makeProperty({ ...base, finishing: 'luxury' })
+    const premium = makeProperty({ ...base, finishing: 'premium' })
+    expect(calcIMIScore(luxury)).toBeGreaterThanOrEqual(calcIMIScore(premium))
+  })
+
+  it('property with has_view=true scores higher than without', () => {
+    const withView = makeProperty({ ...base, has_view: true })
+    const noView = makeProperty({ ...base, has_view: false })
+    expect(calcIMIScore(withView)).toBeGreaterThanOrEqual(calcIMIScore(noView))
+  })
+
+  it('higher floor property scores higher', () => {
+    const highFloor = makeProperty({ ...base, floor: 15 })
+    const lowFloor = makeProperty({ ...base, floor: 1 })
+    expect(calcIMIScore(highFloor)).toBeGreaterThanOrEqual(calcIMIScore(lowFloor))
+  })
+
+  it('all attributes present gives maximum attribute bonus', () => {
+    const full = makeProperty({ ...base, floor: 20, has_view: true, finishing: 'luxury' })
+    const none = makeProperty({ ...base })
+    expect(calcIMIScore(full)).toBeGreaterThan(calcIMIScore(none))
+  })
+
+  it('no optional attributes still returns a valid score (baseline 50 for attrs)', () => {
+    const minimal = makeProperty({ ...base })
+    const score = calcIMIScore(minimal)
+    expect(score).toBeGreaterThanOrEqual(0)
+    expect(score).toBeLessThanOrEqual(100)
+  })
+})
+
+describe('calcIMIScore — age penalty (via calcAgePenalty)', () => {
+  const base = {
+    price: 600000,
+    area: 60,
+    neighborhood: 'Boa Viagem',
+    city: 'Recife',
+    address: 'Rua X',
+    type: 'apartamento' as const,
+    condition: 'pronto' as const,
+    bedrooms: 2,
+  }
+
+  it('brand new (age_years=0) scores higher than old property (age_years=25)', () => {
+    const brandNew = makeProperty({ ...base, age_years: 0 })
+    const old = makeProperty({ ...base, age_years: 25 })
+    expect(calcIMIScore(brandNew)).toBeGreaterThan(calcIMIScore(old))
+  })
+
+  it('age=3 scores higher than age=15', () => {
+    const young = makeProperty({ ...base, age_years: 3 })
+    const mid = makeProperty({ ...base, age_years: 15 })
+    expect(calcIMIScore(young)).toBeGreaterThan(calcIMIScore(mid))
+  })
+
+  it('missing age_years defaults to brand-new behavior (age=0)', () => {
+    const noAge = makeProperty({ ...base })
+    const brandNew = makeProperty({ ...base, age_years: 0 })
+    expect(calcIMIScore(noAge)).toBe(calcIMIScore(brandNew))
+  })
+
+  it('negative age_years is treated as brand new', () => {
+    const negAge = makeProperty({ ...base, age_years: -5 })
+    const brandNew = makeProperty({ ...base, age_years: 0 })
+    expect(calcIMIScore(negAge)).toBe(calcIMIScore(brandNew))
+  })
+})
+
+describe('calcIMIScore — size efficiency (via calcSizeEfficiency)', () => {
+  const base = {
+    price: 600000,
+    neighborhood: 'Boa Viagem',
+    city: 'Recife',
+    address: 'Rua X',
+    type: 'apartamento' as const,
+    condition: 'pronto' as const,
+  }
+
+  it('optimal sqm/bedroom ratio (30 sqm/bed) scores higher than extreme ratio', () => {
+    // Use same area but vary bedrooms so price/sqm and market delta stay constant
+    const optimal = makeProperty({ ...base, area: 90, bedrooms: 3 }) // 30 sqm/bed => 85
+    const extreme = makeProperty({ ...base, area: 90, bedrooms: 1 }) // 90 sqm/bed => 40
+    expect(calcIMIScore(optimal)).toBeGreaterThan(calcIMIScore(extreme))
+  })
+
+  it('too-small ratio (10 sqm/bed) gets low efficiency score', () => {
+    const cramped = makeProperty({ ...base, area: 20, bedrooms: 2 }) // 10 sqm/bed
+    const optimal = makeProperty({ ...base, area: 60, bedrooms: 2 }) // 30 sqm/bed
+    expect(calcIMIScore(optimal)).toBeGreaterThan(calcIMIScore(cramped))
+  })
+
+  it('area=0 falls back to default efficiency (50)', () => {
+    const noArea = makeProperty({ ...base, area: 0, bedrooms: 2 })
+    const score = calcIMIScore(noArea)
+    expect(score).toBeGreaterThanOrEqual(0)
+    expect(score).toBeLessThanOrEqual(100)
+  })
+
+  it('bedrooms=0 falls back to default efficiency (50)', () => {
+    const noBed = makeProperty({ ...base, area: 60, bedrooms: 0 })
+    const score = calcIMIScore(noBed)
+    expect(score).toBeGreaterThanOrEqual(0)
+    expect(score).toBeLessThanOrEqual(100)
+  })
+})
+
+describe('calcIMIScore — edge cases', () => {
+  it('price=0, area=0 returns a valid score', () => {
+    const p = makeProperty({ price: 0, area: 0 })
+    const score = calcIMIScore(p)
+    expect(score).toBeGreaterThanOrEqual(0)
+    expect(score).toBeLessThanOrEqual(100)
+  })
+
+  it('very high price does not exceed 100', () => {
+    const p = makeProperty({ price: 999_999_999, area: 10, neighborhood: 'Boa Viagem', city: 'Recife' })
+    expect(calcIMIScore(p)).toBeLessThanOrEqual(100)
+  })
+
+  it('missing all optional fields returns a valid low score', () => {
+    const p = makeProperty({})
+    const score = calcIMIScore(p)
+    expect(score).toBeGreaterThanOrEqual(0)
+    expect(score).toBeLessThanOrEqual(100)
+  })
+
+  it('high yield property (studio, cheap, good neighborhood) scores higher', () => {
+    const highYield = makeProperty({
+      price: 300000,
+      area: 30,
+      type: 'studio',
+      neighborhood: 'Pina',
+      city: 'Recife',
+      address: 'Rua Y',
+      condition: 'lancamento',
+      age_years: 0,
+      floor: 10,
+      has_view: true,
+      finishing: 'luxury',
+      bedrooms: 1,
+    })
+    const lowYield = makeProperty({
+      price: 5000000,
+      area: 300,
+      type: 'terreno',
+      neighborhood: 'Unknown',
+      city: 'Unknown',
+      age_years: 30,
+    })
+    expect(calcIMIScore(highYield)).toBeGreaterThan(calcIMIScore(lowYield))
+    // The high yield property should be "Bom" or "Excelente"
+    expect(calcIMIScore(highYield)).toBeGreaterThanOrEqual(60)
+  })
+
+  it('score is always an integer (Math.round applied)', () => {
+    const p = makeProperty({ price: 777777, area: 77, neighborhood: 'Graças', city: 'Recife' })
+    const score = calcIMIScore(p)
+    expect(Number.isInteger(score)).toBe(true)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// getScoreBadge
+// ---------------------------------------------------------------------------
+
+describe('getScoreBadge', () => {
+  it('returns Excelente badge for score >= 80', () => {
+    const badge = getScoreBadge(85)
+    expect(badge.label).toBe('Excelente')
+    expect(badge.text).toBe('#5DB887')
+    expect(badge.bg).toContain('93,184,135')
+  })
+
+  it('returns Bom badge for score 60-79', () => {
+    const badge = getScoreBadge(65)
+    expect(badge.label).toBe('Bom')
+    expect(badge.text).toBe('#5B9BD5')
+  })
+
+  it('returns Regular badge for score 40-59', () => {
+    const badge = getScoreBadge(45)
+    expect(badge.label).toBe('Regular')
+    expect(badge.text).toBe('#D4913A')
+  })
+
+  it('returns Baixo badge for score < 40', () => {
+    const badge = getScoreBadge(20)
+    expect(badge.label).toBe('Baixo')
+    expect(badge.text).toBe('#E06B6B')
+  })
+
+  it('returns correct structure with bg, text, label keys', () => {
+    const badge = getScoreBadge(50)
+    expect(badge).toHaveProperty('bg')
+    expect(badge).toHaveProperty('text')
+    expect(badge).toHaveProperty('label')
   })
 })

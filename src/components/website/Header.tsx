@@ -67,14 +67,11 @@ export default function Header({ lang, settings }: HeaderProps) {
     useEffect(() => {
         if (open) {
             document.body.style.overflow = 'hidden'
-            document.body.style.height = '100dvh'
         } else {
             document.body.style.overflow = ''
-            document.body.style.height = ''
         }
         return () => {
             document.body.style.overflow = ''
-            document.body.style.height = ''
         }
     }, [open])
 
@@ -157,6 +154,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                     <Link
                                         key={item.key}
                                         href={`/${lang}/${item.key}`}
+                                        prefetch={true}
                                         className={`relative px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-200 rounded-lg ${active
                                             ? 'text-white'
                                             : 'text-white/50 hover:text-white hover:bg-white/[0.04]'
@@ -206,6 +204,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                                     <Link
                                                         key={item.key}
                                                         href={`/${lang}/${item.key}`}
+                                                        prefetch={true}
                                                         onClick={() => setMoreOpen(false)}
                                                         className={`flex items-center h-[40px] px-4 text-[13px] font-medium transition-colors duration-150 ${active
                                                             ? 'text-white bg-white/[0.06] border-l-[3px] border-[#C8A44A] pl-[13px]'
@@ -241,8 +240,9 @@ export default function Header({ lang, settings }: HeaderProps) {
                         {/* Mobile Toggle */}
                         <button
                             onClick={() => setOpen(true)}
-                            className="lg:hidden p-2 -mr-1 rounded-xl hover:bg-white/[0.06] transition-colors text-white/80"
+                            className="lg:hidden p-2.5 -mr-1 rounded-xl hover:bg-white/[0.06] transition-colors text-white/80 active:scale-[0.92] min-w-[44px] min-h-[44px] flex items-center justify-center"
                             aria-label="Abrir menu"
+                            style={{ WebkitTapHighlightColor: 'transparent' }}
                         >
                             <Menu size={22} />
                         </button>
@@ -290,10 +290,11 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 </div>
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="p-1.5 rounded-lg hover:bg-white/[0.06] text-white/50 transition-colors"
+                                    className="p-2.5 rounded-lg hover:bg-white/[0.06] text-white/50 transition-colors active:scale-[0.92] min-w-[44px] min-h-[44px] flex items-center justify-center"
                                     aria-label="Fechar menu"
+                                    style={{ WebkitTapHighlightColor: 'transparent' }}
                                 >
-                                    <X size={18} />
+                                    <X size={20} />
                                 </button>
                             </div>
 
@@ -311,8 +312,9 @@ export default function Header({ lang, settings }: HeaderProps) {
                                             >
                                                 <Link
                                                     href={`/${lang}/${item.key}`}
+                                                    prefetch={true}
                                                     onClick={() => setOpen(false)}
-                                                    className={`flex items-center h-[46px] px-4 rounded-xl text-[14px] font-semibold transition-all duration-150 ${active
+                                                    className={`flex items-center h-[46px] px-4 rounded-xl text-[14px] font-semibold transition-all duration-150 active:scale-[0.98] ${active
                                                         ? 'bg-white/[0.06] text-white border-l-[3px] border-[#C8A44A] pl-[13px]'
                                                         : 'text-white/50 hover:bg-white/[0.04] hover:text-white'
                                                         }`}

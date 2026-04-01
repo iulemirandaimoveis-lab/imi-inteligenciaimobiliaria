@@ -26,10 +26,11 @@ const ROLE_CFG: Record<string, { label: string; icon: React.ElementType; color: 
 }
 
 /* ─── BROKER CARD ──────────────────────────────────────────────── */
-function BrokerCard({ broker, index, onToggleStatus }: {
+function BrokerCard({ broker, index, onToggleStatus, onDelete }: {
     broker: Broker
     index: number
     onToggleStatus: (id: string, current: string) => Promise<void>
+    onDelete: (broker: Broker) => void
 }) {
     const [menuOpen, setMenuOpen] = useState(false)
     const role = ROLE_CFG[broker.role] || ROLE_CFG.broker
@@ -170,6 +171,14 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                                             {isActive ? <XCircle size={11} /> : <CheckCircle size={11} />}
                                             {isActive ? 'Desativar' : 'Ativar'}
                                         </button>
+                                        <div style={{ height: '1px', background: T.border }} />
+                                        <button
+                                            onClick={() => { setMenuOpen(false); onDelete(broker) }}
+                                            className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium hover:bg-red-500/10 transition-colors"
+                                            style={{ color: '#ef4444' }}
+                                        >
+                                            <Trash2 size={11} /> Remover
+                                        </button>
                                     </motion.div>
                                 </>
                             )}
@@ -260,6 +269,8 @@ const FILTER_TABS: FilterTab[] = [
 export default function EquipePage() {
     const [search, setSearch] = useState('')
     const [tab, setTab] = useState('all')
+    const [confirmDelete, setConfirmDelete] = useState<Broker | null>(null)
+    const [deleting, setDeleting] = useState(false)
 
     const { brokers, isLoading, mutate } = useBrokers({
         search,
@@ -284,6 +295,25 @@ export default function EquipePage() {
             mutate()
         } catch {
             toast.error('Erro ao atualizar status')
+        }
+    }
+
+    const handleDelete = async () => {
+        if (!confirmDelete) return
+        setDeleting(true)
+        try {
+            const res = await fetch(`/api/equipe?id=${confirmDelete.id}`, { method: 'DELETE' })
+            if (!res.ok) {
+                const json = await res.json()
+                throw new Error(json.error || 'Erro ao remover')
+            }
+            toast.success(`${confirmDelete.name} removido da equipe`)
+            mutate()
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Erro ao remover membro')
+        } finally {
+            setDeleting(false)
+            setConfirmDelete(null)
         }
     }
 
@@ -388,6 +418,7 @@ export default function EquipePage() {
                                 broker={broker}
                                 index={i}
                                 onToggleStatus={handleToggleStatus}
+                                onDelete={(b) => setConfirmDelete(b)}
                             />
                         ))}
                     </AnimatePresence>
@@ -407,6 +438,50 @@ export default function EquipePage() {
                     </Link>
                 </div>
             )}
+
+            {/* Delete Confirmation Dialog */}
+            <AnimatePresence>
+                {confirmDelete && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+                            onClick={() => !deleting && setConfirmDelete(null)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.92 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.92 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+                        >
+                            <div className="pointer-events-auto rounded-xl p-6 w-full max-w-sm text-center"
+                                style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                                <Trash2 size={28} className="mx-auto mb-3" style={{ color: '#ef4444' }} />
+                                <h3 className="text-base font-bold mb-1" style={{ color: T.text }}>Remover membro?</h3>
+                                <p className="text-sm mb-5" style={{ color: T.textMuted }}>
+                                    <strong>{confirmDelete.name}</strong> será removido permanentemente da equipe e perderá acesso ao sistema.
+                                </p>
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setConfirmDelete(null)}
+                                        disabled={deleting}
+                                        className="flex-1 h-10 rounded-[6px] text-sm font-medium"
+                                        style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textMuted }}>
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={handleDelete}
+                                        disabled={deleting}
+                                        className="flex-1 h-10 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2"
+                                        style={{ background: '#ef4444' }}>
+                                        {deleting ? 'Removendo...' : 'Remover'}
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     )
 }

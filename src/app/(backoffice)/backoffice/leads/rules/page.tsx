@@ -348,14 +348,14 @@ export default function LeadRulesPage() {
                                 {/* Ações */}
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <button
-                                        className="w-8 h-8 flex items-center justify-center rounded-[6px] transition-all opacity-0 group-hover:opacity-100 hover:bg-white/10"
+                                        className="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-[6px] transition-all opacity-0 group-hover:opacity-100 hover:bg-white/10"
                                         title="Editar"
                                     >
                                         <Edit size={14} style={{ color: T.textMuted }} />
                                     </button>
                                     <button
                                         onClick={() => toggleRegra(regra.id)}
-                                        className="flex items-center gap-1.5 h-8 px-3 rounded-[6px] text-xs font-medium transition-colors"
+                                        className="flex items-center gap-1.5 min-h-[44px] h-11 px-3 rounded-[6px] text-xs font-medium transition-colors"
                                         title={regra.ativa ? 'Desativar' : 'Ativar'}
                                     >
                                         {regra.ativa ? (

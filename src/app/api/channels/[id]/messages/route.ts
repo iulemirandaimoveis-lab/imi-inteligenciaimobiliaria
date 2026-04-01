@@ -137,7 +137,8 @@ export async function POST(
             })
             .eq('id', channelId)
 
-        // Increment unread for other members
+        // Increment unread for other members (batch update instead of N+1 loop)
+        // Supabase doesn't support SQL increment directly, so we fetch IDs then batch update
         const { data: otherMembers } = await supabase
             .from('chat_members')
             .select('id, unread_count')
@@ -145,12 +146,14 @@ export async function POST(
             .neq('user_id', user.id)
 
         if (otherMembers?.length) {
-            for (const member of otherMembers) {
-                await supabase
-                    .from('chat_members')
-                    .update({ unread_count: (member.unread_count ?? 0) + 1 })
-                    .eq('id', member.id)
-            }
+            await Promise.all(
+                otherMembers.map(member =>
+                    supabase
+                        .from('chat_members')
+                        .update({ unread_count: (member.unread_count ?? 0) + 1 })
+                        .eq('id', member.id)
+                )
+            )
         }
 
         return NextResponse.json({ message }, { status: 201 })

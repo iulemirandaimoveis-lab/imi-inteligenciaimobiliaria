@@ -82,9 +82,9 @@ export default function UserDropdown() {
                             </button>
                             <button
                                 onClick={() => router.push('/backoffice/support')}
-                                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-blue-500 rounded-xl transition-colors group"
+                                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary rounded-xl transition-colors group"
                             >
-                                <HelpCircle size={16} className="group-hover:bounce transition-transform text-gray-400 group-hover:text-blue-500" />
+                                <HelpCircle size={16} className="group-hover:bounce transition-transform text-gray-400 group-hover:text-primary" />
                                 Suporte / Ajuda
                             </button>
                         </div>

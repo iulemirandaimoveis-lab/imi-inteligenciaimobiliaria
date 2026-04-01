@@ -104,8 +104,8 @@ export default function PropertyAnalytics({ propertyId }: PropertyAnalyticsProps
                     <h3 className="text-lg font-bold text-imi-900 tracking-tight mb-6 font-display">Fontes de Tráfego</h3>
                     <div className="space-y-4">
                         {[
-                            { source: 'Google Organic', percent: 45, color: 'bg-blue-500' },
-                            { source: 'Instagram Ads', percent: 30, color: 'bg-purple-500' },
+                            { source: 'Google Organic', percent: 45, color: 'bg-navy-500' },
+                            { source: 'Instagram Ads', percent: 30, color: 'bg-navy-500' },
                             { source: 'Direct', percent: 15, color: 'bg-green-500' },
                             { source: 'Referral', percent: 10, color: 'bg-orange-500' },
                         ].map((item, idx) => (

@@ -56,6 +56,7 @@ Regras:
             cost_usd: response.cost_usd,
         })
     } catch (error: unknown) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 })
+        console.error('[AI team-insights] error:', error instanceof Error ? error.message : error)
+        return NextResponse.json({ error: 'Erro ao gerar insights. Tente novamente.' }, { status: 500 })
     }
 }

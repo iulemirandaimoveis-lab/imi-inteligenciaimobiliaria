@@ -65,8 +65,9 @@ export async function POST(request: NextRequest) {
             cost_usd: result.cost_usd,
         });
     } catch (error: unknown) {
+        console.error('[AI qualify-lead] error:', error instanceof Error ? error.message : error)
         return NextResponse.json(
-            { error: error instanceof Error ? error.message : 'Internal Server Error' },
+            { error: 'Erro ao qualificar lead. Tente novamente.' },
             { status: 500 }
         );
     }

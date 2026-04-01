@@ -4,8 +4,17 @@ import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 import { updateSession } from '@/lib/supabase/middleware'
 
-const locales = ['pt', 'en']
+const locales = ['pt', 'en', 'es', 'ja', 'ar']
 const defaultLocale = 'pt'
+
+// Map Vercel geo country codes to supported locales
+const COUNTRY_LOCALE: Record<string, string> = {
+    BR: 'pt', PT: 'pt', AO: 'pt', MZ: 'pt', CV: 'pt',
+    US: 'en', GB: 'en', AU: 'en', CA: 'en', NZ: 'en', IE: 'en', ZA: 'en', IN: 'en',
+    ES: 'es', MX: 'es', AR: 'es', CO: 'es', CL: 'es', PE: 'es', UY: 'es', PY: 'es', EC: 'es', VE: 'es', BO: 'es', CR: 'es', PA: 'es', DO: 'es', GT: 'es', HN: 'es', SV: 'es', NI: 'es', CU: 'es',
+    JP: 'ja',
+    SA: 'ar', AE: 'ar', EG: 'ar', QA: 'ar', KW: 'ar', BH: 'ar', OM: 'ar', JO: 'ar', LB: 'ar', IQ: 'ar', MA: 'ar', DZ: 'ar', TN: 'ar', LY: 'ar',
+}
 
 const ALLOWED_ORIGINS = [
     process.env.NEXT_PUBLIC_SITE_URL,
@@ -13,6 +22,14 @@ const ALLOWED_ORIGINS = [
     'https://iulemirandaimoveis.com.br',
     ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:3001'] : []),
 ].filter(Boolean) as string[]
+
+function addSecurityHeaders(response: NextResponse): NextResponse {
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('X-Frame-Options', 'DENY')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)')
+    return response
+}
 
 function addCorsHeaders(response: NextResponse, origin: string | null): NextResponse {
     if (origin && ALLOWED_ORIGINS.includes(origin)) {
@@ -24,7 +41,14 @@ function addCorsHeaders(response: NextResponse, origin: string | null): NextResp
     return response
 }
 
-function getLocale(request: Request) {
+function getLocale(request: NextRequest) {
+    // 1. Vercel geo IP detection (x-vercel-ip-country header, auto-populated on Vercel)
+    const country = request.headers.get('x-vercel-ip-country')
+    if (country && COUNTRY_LOCALE[country]) {
+        return COUNTRY_LOCALE[country]
+    }
+
+    // 2. Fallback: Accept-Language header negotiation
     const headers = { 'accept-language': request.headers.get('accept-language') || 'pt-BR,pt;q=0.9' }
     const languages = new Negotiator({ headers }).languages()
     return match(languages, locales, defaultLocale)
@@ -54,10 +78,12 @@ export async function middleware(request: NextRequest) {
         // Handle CORS preflight for API routes
         if (request.method === 'OPTIONS' && pathname.startsWith('/api')) {
             const preflightResponse = new NextResponse(null, { status: 204 })
+            addSecurityHeaders(preflightResponse)
             return addCorsHeaders(preflightResponse, origin)
         }
 
         const response = await updateSession(request)
+        addSecurityHeaders(response)
 
         // Add CORS headers to all API responses
         if (pathname.startsWith('/api')) {

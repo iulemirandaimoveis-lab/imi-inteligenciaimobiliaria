@@ -2,15 +2,43 @@ import type { IMIProperty } from '../types'
 import { NEIGHBORHOOD_YIELD, NEIGHBORHOOD_AVG_SQM } from '../types'
 
 /**
- * IMI Score Algorithm v1.0
+ * IMI Score Algorithm v2.0
  *
  * Composite score 0–100 combining:
- *   25% — Yield potential (estimated rental income)
- *   20% — Price vs market (discount/premium)
- *   20% — Liquidity index (neighborhood demand proxy)
- *   20% — Appreciation trend (12m proxy)
- *   15% — Location quality (infrastructure proxy)
+ *   22% — Yield potential (estimated rental income)
+ *   18% — Price vs market (discount/premium)
+ *   18% — Liquidity index (neighborhood demand proxy)
+ *   15% — Appreciation trend (12m proxy via condition + age)
+ *   12% — Location quality (city + completeness)
+ *   8%  — Property attributes (floor, view, finishing)
+ *   7%  — Size efficiency (area/bedrooms ratio)
+ *
+ * v2 additions: floor bonus, age penalty, finishing quality, view premium,
+ *               size efficiency, dynamic stats injection.
  */
+
+// --- Dynamic stats (populated server-side from real DB data when available) ---
+export interface NeighborhoodStats {
+  yield: Record<string, number>
+  avgSqm: Record<string, number>
+}
+
+let _dynamicStats: NeighborhoodStats | null = null
+
+/** Call from server-side to inject real neighborhood stats before scoring */
+export function setDynamicStats(stats: NeighborhoodStats): void {
+  _dynamicStats = stats
+}
+
+function getYield(neighborhood: string): number {
+  return _dynamicStats?.yield[neighborhood] ?? NEIGHBORHOOD_YIELD[neighborhood] ?? 5.5
+}
+
+function getAvgSqm(neighborhood: string): number | null {
+  return _dynamicStats?.avgSqm[neighborhood] ?? NEIGHBORHOOD_AVG_SQM[neighborhood] ?? null
+}
+
+// --- Utilities ---------------------------------------------------------------
 
 function clamp(v: number, min = 0, max = 100): number {
   return Math.min(max, Math.max(min, v))
@@ -27,14 +55,13 @@ export function calcPricePerSqm(price?: number, area?: number): number | null {
 }
 
 export function calcYieldEst(property: IMIProperty): number {
-  const base = NEIGHBORHOOD_YIELD[property.neighborhood ?? ''] ?? 5.5
+  const base = getYield(property.neighborhood ?? '')
   const typeBonus: Record<string, number> = {
     apartamento: 0, studio: 1.2, flat: 1.5, comercial: 0.8,
     casa: -0.3, cobertura: -0.5, terreno: -2,
   }
   const type = (property.type ?? 'apartamento').toLowerCase()
   const bonus = typeBonus[type] ?? 0
-  // Price-based adjustment: lower price = higher yield potential
   const priceAdjust = property.price && property.price < 500_000 ? 0.4
     : property.price && property.price < 800_000 ? 0.1
     : property.price && property.price > 2_000_000 ? -0.5 : 0
@@ -44,43 +71,104 @@ export function calcYieldEst(property: IMIProperty): number {
 export function calcMarketDelta(property: IMIProperty): number {
   const sqm = calcPricePerSqm(property.price, property.area)
   if (!sqm) return 0
-  const avgSqm = NEIGHBORHOOD_AVG_SQM[property.neighborhood ?? '']
+  const avgSqm = getAvgSqm(property.neighborhood ?? '')
   if (!avgSqm) return 0
   return parseFloat((((avgSqm - sqm) / avgSqm) * 100).toFixed(1))
 }
+
+// --- Attribute scoring (v2) --------------------------------------------------
+
+function calcAttributeScore(property: IMIProperty): number {
+  let score = 50 // baseline
+
+  // Floor bonus: higher floors = better (up to 20 pts)
+  if (property.floor) {
+    score += Math.min(property.floor * 2, 20)
+  }
+
+  // View premium: +15 pts
+  if (property.has_view) score += 15
+
+  // Finishing quality
+  const finishingBonus: Record<string, number> = {
+    basic: -10, standard: 0, premium: 10, luxury: 20,
+  }
+  if (property.finishing) {
+    score += finishingBonus[property.finishing] ?? 0
+  }
+
+  return clamp(score)
+}
+
+function calcAgePenalty(property: IMIProperty): number {
+  // Newer = better for appreciation
+  const age = property.age_years ?? 0
+  if (age <= 0) return 80 // brand new
+  if (age <= 3) return 70
+  if (age <= 10) return 55
+  if (age <= 20) return 40
+  return 30
+}
+
+function calcSizeEfficiency(property: IMIProperty): number {
+  const area = property.area ?? 0
+  const bedrooms = property.bedrooms ?? 1
+  if (area <= 0 || bedrooms <= 0) return 50
+
+  const sqmPerBedroom = area / bedrooms
+  // Optimal range: 20-40 sqm per bedroom
+  if (sqmPerBedroom >= 25 && sqmPerBedroom <= 35) return 85
+  if (sqmPerBedroom >= 20 && sqmPerBedroom <= 40) return 70
+  if (sqmPerBedroom >= 15 && sqmPerBedroom <= 50) return 55
+  return 40
+}
+
+// --- Main Score Calculation --------------------------------------------------
 
 export function calcIMIScore(property: IMIProperty): number {
   const yieldEst = calcYieldEst(property)
   const marketDelta = calcMarketDelta(property)
   const neighborhood = property.neighborhood ?? ''
 
-  // Component 1: Yield score (3–12% range)
-  const yieldScore = normalize(yieldEst, 3, 12) * 0.25
+  // Component 1: Yield score (22%)
+  const yieldScore = normalize(yieldEst, 3, 12) * 0.22
 
-  // Component 2: Price vs market (-10% = bad, +20% discount = great)
-  const discountScore = normalize(marketDelta, -10, 20) * 0.20
+  // Component 2: Price vs market (18%)
+  const discountScore = normalize(marketDelta, -10, 20) * 0.18
 
-  // Component 3: Liquidity proxy (based on neighborhood data availability)
-  const hasNeighData = !!NEIGHBORHOOD_YIELD[neighborhood]
+  // Component 3: Liquidity proxy (18%)
+  const hasNeighData = !!(getAvgSqm(neighborhood))
   const liquidityBase = hasNeighData ? 65 : 40
-  const popularNeighborhoods = ['Boa Viagem', 'Miramar', 'Casa Forte', 'Pina', 'Parnamirim']
+  const popularNeighborhoods = ['Boa Viagem', 'Miramar', 'Casa Forte', 'Pina', 'Parnamirim',
+    'Brooklin', 'Vila Nova Conceição', 'Barra', 'Dubai Marina', 'South Beach']
   const liquidityBonus = popularNeighborhoods.includes(neighborhood) ? 20 : 0
-  const liquidityScore = clamp(liquidityBase + liquidityBonus) * 0.20
+  const liquidityScore = clamp(liquidityBase + liquidityBonus) * 0.18
 
-  // Component 4: Appreciation trend proxy (condition-based)
+  // Component 4: Appreciation trend (15%) — condition + age
   const conditionTrend: Record<string, number> = {
-    lancamento: 80, em_construcao: 70, pronto: 55, seminovo: 45, usado: 35,
+    lancamento: 80, launch: 80, em_construcao: 70, under_construction: 70,
+    pronto: 55, ready: 55, seminovo: 45, usado: 35, active: 55,
   }
   const condition = property.condition ?? property.status ?? 'pronto'
-  const trendScore = (conditionTrend[condition] ?? 50) * 0.20
+  const conditionScore = conditionTrend[condition] ?? 50
+  const ageScore = calcAgePenalty(property)
+  const trendScore = ((conditionScore + ageScore) / 2) * 0.15
 
-  // Component 5: Location quality (city + completeness)
-  const isMajorCity = ['Recife', 'São Paulo', 'Rio de Janeiro', 'Fortaleza', 'Salvador'].includes(property.city ?? '')
+  // Component 5: Location quality (12%)
+  const majorCities = ['Recife', 'São Paulo', 'Rio de Janeiro', 'Fortaleza', 'Salvador',
+    'Dubai', 'Miami', 'Orlando', 'Balneário Camboriú', 'João Pessoa', 'Natal', 'Maceió']
+  const isMajorCity = majorCities.includes(property.city ?? '')
   const hasFullAddress = !!(property.address && property.neighborhood && property.city)
   const locationScore = (isMajorCity ? 70 : 50) + (hasFullAddress ? 15 : 0) + (hasNeighData ? 15 : 0)
-  const locationComponent = clamp(locationScore) * 0.15
+  const locationComponent = clamp(locationScore) * 0.12
 
-  const total = yieldScore + discountScore + liquidityScore + trendScore + locationComponent
+  // Component 6: Property attributes (8%)
+  const attributeScore = calcAttributeScore(property) * 0.08
+
+  // Component 7: Size efficiency (7%)
+  const sizeScore = calcSizeEfficiency(property) * 0.07
+
+  const total = yieldScore + discountScore + liquidityScore + trendScore + locationComponent + attributeScore + sizeScore
   return Math.round(clamp(total))
 }
 
@@ -132,5 +220,62 @@ export function enrichProperty(p: IMIProperty): IMIProperty {
     roi_12m: roi12m,
     liquidity_index: liquidity,
     market_delta_pct: marketDelta,
+  }
+}
+
+/**
+ * Server-side: compute neighborhood stats from real development_units data.
+ * Call this once on the server before scoring properties to inject real market data.
+ * Falls back gracefully to hardcoded values when DB has no data.
+ */
+export async function loadNeighborhoodStatsFromDB(): Promise<NeighborhoodStats | null> {
+  try {
+    // Dynamic import to avoid bundling supabaseAdmin on client
+    const { supabaseAdmin } = await import('@/lib/supabase/admin')
+
+    const { data: rows } = await supabaseAdmin
+      .from('development_units')
+      .select('total_price, area, development:developments!inner(neighborhood, city)')
+      .gt('total_price', 0)
+      .gt('area', 0)
+
+    if (!rows || rows.length === 0) return null
+
+    // Aggregate by neighborhood
+    const byNeighborhood = new Map<string, { totalPrice: number; totalArea: number; count: number }>()
+    for (const row of rows) {
+      const dev = row.development as unknown as { neighborhood: string; city: string }
+      const hood = dev?.neighborhood
+      if (!hood) continue
+
+      const existing = byNeighborhood.get(hood) || { totalPrice: 0, totalArea: 0, count: 0 }
+      existing.totalPrice += row.total_price
+      existing.totalArea += row.area
+      existing.count += 1
+      byNeighborhood.set(hood, existing)
+    }
+
+    if (byNeighborhood.size === 0) return null
+
+    const avgSqm: Record<string, number> = {}
+    const yieldRates: Record<string, number> = {}
+
+    for (const [hood, data] of byNeighborhood) {
+      if (data.count >= 2) { // Need at least 2 data points
+        avgSqm[hood] = Math.round(data.totalPrice / data.totalArea)
+        // Estimate yield: lower price/sqm neighborhoods tend to have higher yields
+        const pricePerSqm = data.totalPrice / data.totalArea
+        yieldRates[hood] = pricePerSqm > 15000 ? 4.5
+          : pricePerSqm > 10000 ? 5.5
+          : pricePerSqm > 7000 ? 6.5
+          : 7.5
+      }
+    }
+
+    const stats: NeighborhoodStats = { yield: yieldRates, avgSqm }
+    setDynamicStats(stats)
+    return stats
+  } catch {
+    return null
   }
 }

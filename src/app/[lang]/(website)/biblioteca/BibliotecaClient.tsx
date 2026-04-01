@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BookOpen, ArrowRight, ShoppingCart, Clock, Filter } from 'lucide-react'
+import { BookOpen, ArrowRight, ShoppingCart, Clock, Filter, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Ebook } from './page'
 
 interface Pilar {
@@ -14,15 +16,16 @@ interface Pilar {
 interface Props {
     ebooks: Ebook[]
     pilares: Pilar[]
+    bookSlugs?: string[]
 }
 
-const PILAR_COLORS: Record<string, { text: string; bg: string; border: string }> = {
-    avaliacao:     { text: '#9FB3C8', bg: 'rgba(159,179,200,0.08)', border: 'rgba(159,179,200,0.15)' },
-    investimentos: { text: '#34d399', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.15)' },
-    internacional: { text: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.15)' },
-    patrimonial:   { text: '#c9a040', bg: 'rgba(201,160,64,0.08)', border: 'rgba(201,160,64,0.15)' },
-    operacao:      { text: '#f472b6', bg: 'rgba(244,114,182,0.08)', border: 'rgba(244,114,182,0.15)' },
-    tecnologia:    { text: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)' },
+const PILAR_COLORS: Record<string, { text: string; bg: string; border: string; gradient: string }> = {
+    avaliacao:     { text: '#9FB3C8', bg: 'rgba(159,179,200,0.08)', border: 'rgba(159,179,200,0.15)', gradient: 'linear-gradient(160deg, #0F1D30 0%, #1A2D45 50%, #0D1928 100%)' },
+    investimentos: { text: '#34d399', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.15)', gradient: 'linear-gradient(160deg, #0A1E18 0%, #102E22 50%, #081A14 100%)' },
+    internacional: { text: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.15)', gradient: 'linear-gradient(160deg, #0A1628 0%, #0F2040 50%, #0A1420 100%)' },
+    patrimonial:   { text: '#c9a040', bg: 'rgba(201,160,64,0.08)', border: 'rgba(201,160,64,0.15)', gradient: 'linear-gradient(160deg, #1A1508 0%, #2A2210 50%, #151008 100%)' },
+    operacao:      { text: '#f472b6', bg: 'rgba(244,114,182,0.08)', border: 'rgba(244,114,182,0.15)', gradient: 'linear-gradient(160deg, #1A0A14 0%, #2A1020 50%, #150810 100%)' },
+    tecnologia:    { text: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)', gradient: 'linear-gradient(160deg, #110A20 0%, #1A1030 50%, #0E0818 100%)' },
 }
 
 const PILAR_LABELS: Record<string, string> = {
@@ -34,7 +37,9 @@ const PILAR_LABELS: Record<string, string> = {
     tecnologia:    'Tecnologia',
 }
 
-export default function BibliotecaClient({ ebooks, pilares }: Props) {
+export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Props) {
+    const params = useParams()
+    const lang = (params?.lang as string) || 'pt'
     const [activeFilter, setActiveFilter] = useState('todos')
 
     const filtered = activeFilter === 'todos'
@@ -48,24 +53,22 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
         <main className="min-h-screen bg-navy-950">
             {/* ── Hero ─────────────────────────────────── */}
             <section className="relative overflow-hidden pt-28 pb-16 lg:pt-36 lg:pb-20">
-                {/* Background glow */}
                 <div
                     className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[200px] sm:w-[700px] sm:h-[400px] pointer-events-none"
                     style={{
-                        background: 'radial-gradient(ellipse at top, rgba(51,78,104,0.18) 0%, transparent 70%)',
-                        filter: 'blur(60px)',
+                        background: 'radial-gradient(ellipse at top, rgba(200,164,74,0.06) 0%, transparent 70%)',
+                        filter: 'blur(80px)',
                     }}
                 />
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8 relative z-10">
-                    {/* Eyebrow */}
                     <motion.div
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                         className="flex items-center gap-3 mb-6"
                     >
-                        <div className="w-8 h-px bg-navy-600" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-navy-300">
+                        <div className="w-8 h-px" style={{ background: '#C8A44A' }} />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: '#C8A44A' }}>
                             Inteligência Imobiliária
                         </span>
                     </motion.div>
@@ -90,30 +93,35 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
                         inteligência patrimonial — produzidas pelos especialistas da IMI.
                     </motion.p>
 
-                    {/* Stats */}
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.15 }}
                         className="flex items-center gap-6"
                     >
+                        <div className="flex items-center gap-2">
+                            <BookOpen size={14} className="text-white/40" />
+                            <span className="text-[13px] text-white/50">
+                                <span className="text-white font-semibold">{ebooks.length}</span> títulos
+                            </span>
+                        </div>
                         {publishedCount > 0 && (
                             <div className="flex items-center gap-2">
-                                <BookOpen size={14} className="text-emerald-400" />
-                                <span className="text-[13px] text-white/60">
-                                    <span className="text-white font-semibold">{publishedCount}</span> disponível{publishedCount !== 1 ? 'eis' : ''}
+                                <ShoppingCart size={14} style={{ color: '#34d399' }} />
+                                <span className="text-[13px] text-white/50">
+                                    <span className="text-white font-semibold">{publishedCount}</span> disponíve{publishedCount !== 1 ? 'is' : 'l'}
                                 </span>
                             </div>
                         )}
                         <div className="flex items-center gap-2">
-                            <Clock size={14} className="text-gold-600" />
-                            <span className="text-[13px] text-white/60">
+                            <Clock size={14} style={{ color: '#C8A44A' }} />
+                            <span className="text-[13px] text-white/50">
                                 <span className="text-white font-semibold">{soonCount}</span> em breve
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Filter size={14} className="text-navy-300" />
-                            <span className="text-[13px] text-white/60">
+                            <span className="text-[13px] text-white/50">
                                 <span className="text-white font-semibold">{pilares.length - 1}</span> pilares
                             </span>
                         </div>
@@ -124,39 +132,27 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
             {/* ── Filter Tabs ───────────────────────────── */}
             <section className="sticky top-0 z-30 bg-navy-950/95 backdrop-blur-md border-b border-white/[0.05]">
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-                    <div className="flex items-center gap-1 overflow-x-auto py-3 scrollbar-hide">
+                    <div className="flex items-center gap-1.5 overflow-x-auto py-3 scrollbar-hide" role="tablist" aria-label="Filtrar por pilar">
                         {pilares.map(p => {
                             const isActive = activeFilter === p.key
                             const color = p.key !== 'todos' ? PILAR_COLORS[p.key] : null
+                            const count = p.key === 'todos' ? ebooks.length : ebooks.filter(e => e.pilar === p.key).length
                             return (
                                 <button
                                     key={p.key}
                                     onClick={() => setActiveFilter(p.key)}
-                                    className="relative flex-shrink-0 px-4 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-200"
+                                    role="tab"
+                                    aria-selected={isActive}
+                                    aria-controls="ebooks-grid"
+                                    className="relative flex-shrink-0 px-4 py-2.5 min-h-[44px] rounded-full text-[12px] font-semibold transition-all duration-200"
                                     style={{
-                                        color: isActive
-                                            ? (color?.text || '#ffffff')
-                                            : 'rgba(255,255,255,0.45)',
-                                        background: isActive
-                                            ? (color?.bg || 'rgba(255,255,255,0.08)')
-                                            : 'transparent',
-                                        border: isActive
-                                            ? `1px solid ${color?.border || 'rgba(255,255,255,0.12)'}`
-                                            : '1px solid transparent',
+                                        color: isActive ? (color?.text || '#ffffff') : 'rgba(255,255,255,0.45)',
+                                        background: isActive ? (color?.bg || 'rgba(255,255,255,0.08)') : 'transparent',
+                                        border: isActive ? `1px solid ${color?.border || 'rgba(255,255,255,0.12)'}` : '1px solid transparent',
                                     }}
                                 >
                                     {p.label}
-                                    {isActive && (
-                                        <motion.div
-                                            layoutId="filter-pill"
-                                            className="absolute inset-0 rounded-full"
-                                            style={{
-                                                background: color?.bg || 'rgba(255,255,255,0.06)',
-                                                border: `1px solid ${color?.border || 'rgba(255,255,255,0.1)'}`,
-                                            }}
-                                            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                                        />
-                                    )}
+                                    <span className="ml-1.5 text-[10px] opacity-60">({count})</span>
                                 </button>
                             )
                         })}
@@ -165,8 +161,14 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
             </section>
 
             {/* ── Grid ────────────────────────────────── */}
-            <section className="py-12 lg:py-16">
+            <section id="ebooks-grid" className="py-12 lg:py-16">
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+                    {/* Result count */}
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-white/30 mb-6">
+                        {filtered.length} {filtered.length === 1 ? 'título' : 'títulos'}
+                        {activeFilter !== 'todos' && ` em ${PILAR_LABELS[activeFilter] || activeFilter}`}
+                    </p>
+
                     <AnimatePresence mode="wait">
                         {filtered.length === 0 ? (
                             <motion.div
@@ -186,10 +188,10 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                             >
                                 {filtered.map((ebook, i) => (
-                                    <EbookCard key={ebook.id} ebook={ebook} index={i} />
+                                    <EbookCard key={ebook.id} ebook={ebook} index={i} lang={lang} bookSlugs={bookSlugs} />
                                 ))}
                             </motion.div>
                         )}
@@ -197,35 +199,47 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
                 </div>
             </section>
 
-            {/* ── CTA strip ─────────────────────────────── */}
+            {/* ── WhatsApp CTA ─────────────────────────── */}
             <section className="py-16 border-t border-white/[0.05]">
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-navy-300 mb-3">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.25em] mb-3" style={{ color: '#C8A44A' }}>
                         Seja o primeiro a saber
                     </p>
                     <h2 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         Novos títulos toda temporada
                     </h2>
                     <p className="text-[14px] text-white/40 mb-6 max-w-md mx-auto">
-                        Siga a IMI nas redes sociais e receba notificações quando novos ebooks forem lançados.
+                        Receba notificações quando novos ebooks forem lançados e acesse conteúdo exclusivo.
                     </p>
-                    <a
-                        href="https://wa.me/5581997230455"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-navy-950 transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-                        style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)' }}
-                    >
-                        Falar com especialista <ArrowRight size={14} />
-                    </a>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a
+                            href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Gostaria%20de%20ser%20avisada(o)%20quando%20novos%20ebooks%20da%20IMI%20forem%20lan%C3%A7ados."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02]"
+                            style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)', color: '#fff' }}
+                        >
+                            <MessageCircle size={16} /> Quero ser avisado via WhatsApp
+                        </a>
+                        <a
+                            href="https://wa.me/5581997230455"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white/70 transition-all duration-200 hover:text-white hover:scale-[1.02]"
+                            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+                        >
+                            Falar com especialista <ArrowRight size={14} />
+                        </a>
+                    </div>
                 </div>
             </section>
         </main>
     )
 }
 
-function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
+function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: number; lang: string; bookSlugs: string[] }) {
     const isAvailable = ebook.publication_status === 'publicado'
+    const hasBookContent = bookSlugs.includes(ebook.slug)
     const pilarColor = ebook.pilar ? PILAR_COLORS[ebook.pilar] : null
     const pilarLabel = ebook.pilar ? PILAR_LABELS[ebook.pilar] : null
 
@@ -234,71 +248,88 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.04, duration: 0.4 }}
-            className="group relative flex flex-col rounded-2xl overflow-hidden border border-white/[0.06] transition-all duration-300 hover:border-white/[0.12]"
-            style={{ background: '#141420' }}
+            className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
+            style={{
+                background: '#0D1420',
+                border: '1px solid rgba(255,255,255,0.06)',
+                WebkitTapHighlightColor: 'transparent',
+            }}
+            onMouseEnter={e => {
+                e.currentTarget.style.borderColor = pilarColor?.border || 'rgba(200,164,74,0.3)'
+                e.currentTarget.style.transform = 'translateY(-4px)'
+                e.currentTarget.style.boxShadow = `0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px ${pilarColor?.border || 'rgba(200,164,74,0.15)'}`
+            }}
+            onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+            }}
         >
             {/* Cover */}
-            <div
-                className="relative w-full aspect-[3/4] bg-navy-950 flex items-center justify-center overflow-hidden"
-                style={{ minHeight: 220 }}
-            >
+            <div className="relative w-full aspect-[3/4] overflow-hidden" style={{ minHeight: 240 }}>
                 {ebook.cover_image ? (
                     <Image
                         src={ebook.cover_image}
                         alt={ebook.title}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                 ) : (
-                    <PlaceholderCover title={ebook.title} pilar={ebook.pilar} />
+                    <PlaceholderCover title={ebook.title} subtitle={ebook.subtitle} pilar={ebook.pilar} />
                 )}
 
-                {/* Gradient overlay on hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#141420] via-transparent to-transparent opacity-60" />
+                {/* Bottom gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D1420] via-transparent to-transparent opacity-80" />
 
-                {/* Status badge */}
-                <div className="absolute top-3 left-3">
+                {/* Badges — stacked vertically to avoid overlap */}
+                <div className="absolute top-3 left-3 flex flex-col gap-1.5">
                     {isAvailable ? (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
-                            style={{ color: '#34d399', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.2)' }}>
-                            Amazon
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm w-fit"
+                            style={{ color: '#34d399', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.25)' }}>
+                            Disponível
                         </span>
                     ) : (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
-                            style={{ color: '#c9a040', background: 'rgba(201,160,64,0.12)', border: '1px solid rgba(201,160,64,0.2)' }}>
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm w-fit"
+                            style={{ color: '#C8A44A', background: 'rgba(200,164,74,0.12)', border: '1px solid rgba(200,164,74,0.25)' }}>
                             Em Breve
                         </span>
                     )}
-                </div>
-
-                {/* Pilar badge */}
-                {pilarLabel && pilarColor && (
-                    <div className="absolute top-3 right-3">
+                    {pilarLabel && pilarColor && (
                         <span
-                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full"
+                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm w-fit"
                             style={{ color: pilarColor.text, background: pilarColor.bg, border: `1px solid ${pilarColor.border}` }}
                         >
                             {pilarLabel}
                         </span>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             {/* Content */}
             <div className="flex flex-col flex-1 p-5">
-                <h3 className="text-[14px] font-bold text-white leading-snug mb-1 group-hover:text-white/90 transition-colors">
+                <h3 className="text-[15px] font-bold text-white leading-snug mb-1.5 group-hover:text-white/90 transition-colors"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                     {ebook.title}
                 </h3>
                 {ebook.subtitle && (
-                    <p className="text-[11px] text-white/40 mb-3 leading-relaxed">{ebook.subtitle}</p>
+                    <p className="text-[12px] text-white/45 mb-3 leading-relaxed">{ebook.subtitle}</p>
                 )}
                 {!ebook.subtitle && ebook.description && (
-                    <p className="text-[11px] text-white/35 mb-3 line-clamp-2 leading-relaxed">{ebook.description}</p>
+                    <p className="text-[12px] text-white/35 mb-3 line-clamp-2 leading-relaxed">{ebook.description}</p>
                 )}
 
-                <div className="mt-auto">
-                    {isAvailable && (ebook.amazon_link || ebook.amazon_url) ? (
+                <div className="mt-auto pt-2 space-y-2">
+                    {hasBookContent && (
+                        <Link
+                            href={`/${lang}/biblioteca/${ebook.slug}`}
+                            className="flex items-center justify-center gap-2 w-full py-3 min-h-[44px] rounded-xl text-[13px] font-semibold transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
+                            style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)', color: '#0D1117' }}
+                        >
+                            <BookOpen size={14} /> Ler Agora
+                        </Link>
+                    )}
+                    {!hasBookContent && isAvailable && (ebook.amazon_link || ebook.amazon_url) ? (
                         <a
                             href={ebook.amazon_link || ebook.amazon_url || '#'}
                             target="_blank"
@@ -306,43 +337,97 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
                             className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:opacity-90"
                             style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)', color: '#0D1117' }}
                         >
-                            <ShoppingCart size={13} /> Comprar na Amazon
+                            <ShoppingCart size={13} /> Adquirir na Amazon
                         </a>
-                    ) : (
-                        <button
-                            disabled
-                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold cursor-default"
-                            style={{ color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)' }}
+                    ) : !hasBookContent ? (
+                        <a
+                            href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Tenho%20interesse%20no%20ebook%20da%20IMI%20sobre%20esse%20tema."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:brightness-110"
+                            style={{
+                                color: 'rgba(255,255,255,0.5)',
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                            }}
                         >
-                            <Clock size={13} /> Em breve
-                        </button>
-                    )}
+                            <MessageCircle size={13} /> Avise-me quando sair
+                        </a>
+                    ) : null}
                 </div>
             </div>
         </motion.div>
     )
 }
 
-function PlaceholderCover({ title, pilar }: { title: string; pilar: string | null }) {
+function PlaceholderCover({ title, subtitle, pilar }: { title: string; subtitle: string | null; pilar: string | null }) {
+    const color = pilar ? PILAR_COLORS[pilar] : null
+    const accentColor = color?.text || '#C8A44A'
+
     return (
         <div
-            className="absolute inset-0 flex flex-col justify-end overflow-hidden"
+            className="absolute inset-0 flex flex-col justify-between overflow-hidden"
             style={{
-                background: 'linear-gradient(135deg, #0A1624, #162840)',
-                padding: 24,
+                background: color?.gradient || 'linear-gradient(160deg, #0A1624 0%, #162840 50%, #0D1928 100%)',
+                padding: '24px 20px',
             }}
         >
-            {/* Gold accent line at top */}
-            <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
-            {/* Book title */}
-            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 600, color: '#E8E4DC', margin: 0 }}>{title}</p>
-            {/* "Em Breve" badge */}
-            <span style={{
-                position: 'absolute', top: 12, right: 12,
-                background: 'rgba(200,164,74,0.15)', border: '1px solid rgba(200,164,74,0.3)',
-                borderRadius: 4, padding: '3px 8px', fontSize: 9, fontWeight: 600,
-                color: '#C8A44A', letterSpacing: '0.5px', textTransform: 'uppercase',
-            }}>Em Breve</span>
+            {/* Top: IMI watermark + accent line */}
+            <div>
+                <div style={{
+                    width: 40, height: 2, borderRadius: 1,
+                    background: `linear-gradient(90deg, ${accentColor}, transparent)`,
+                    marginBottom: 12,
+                }} />
+                <p style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: accentColor,
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                    opacity: 0.6,
+                    margin: 0,
+                }}>
+                    IMI
+                </p>
+            </div>
+
+            {/* Bottom: Book title */}
+            <div>
+                <p style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: 17,
+                    fontWeight: 700,
+                    color: '#E8E4DC',
+                    lineHeight: 1.3,
+                    margin: '0 0 6px 0',
+                }}>
+                    {title}
+                </p>
+                {subtitle && (
+                    <p style={{
+                        fontSize: 11,
+                        color: 'rgba(232,228,220,0.4)',
+                        margin: 0,
+                        lineHeight: 1.4,
+                    }}>
+                        {subtitle}
+                    </p>
+                )}
+                <div style={{
+                    width: '100%', height: 1, marginTop: 12,
+                    background: `linear-gradient(90deg, ${accentColor}40, transparent)`,
+                }} />
+            </div>
+
+            {/* Subtle pattern overlay */}
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: `radial-gradient(circle at 80% 20%, ${accentColor}08 0%, transparent 50%)`,
+                }}
+            />
         </div>
     )
 }

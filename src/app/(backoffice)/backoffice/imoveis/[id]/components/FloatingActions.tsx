@@ -129,7 +129,7 @@ export function FloatingActions({ id }: { id: string }) {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <div ref={dialogRef} style={{
-            background: '#141420',
+            background: '#0B1928',
             border: '1px solid rgba(200,164,74,0.15)',
             borderRadius: 16,
             padding: 32,

@@ -7,7 +7,7 @@ import {
   ArrowLeft, MapPin, Building2, Bed, Bath, Car, Ruler, Edit, QrCode,
   BarChart2, Layers, Clock, TrendingUp, TrendingDown, Copy, MessageSquare,
   ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles,
-  Activity, CheckSquare, Zap, Scale,
+  Activity, CheckSquare, Zap, Scale, Handshake, User,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -34,7 +34,7 @@ import {
 import { FloatingActions } from './FloatingActions'
 
 export function DesktopImovelDetail({
-  dev, enriched, loading, notFound, router, id,
+  dev, enriched, loading, notFound, router, id, broker,
   activeTab, setActiveTab, galleryIdx, setGalleryIdx,
   rentInput, setRentInput, expensePct, setExpensePct,
   vacancyPct, setVacancyPct, copied, handleCopyLink, handleWhatsApp, handleLinkedIn, handleInstagramCopy,
@@ -622,6 +622,41 @@ export function DesktopImovelDetail({
                   <p style={{ fontSize: 11, color: T.textDim, margin: 0 }}>Incorporadora</p>
                 </div>
               </div>
+            </div>
+          )}
+          {/* Corretor Responsável */}
+          {broker && (
+            <div style={{ ...CARD, padding: 16 }}>
+              <p style={{ ...EYEBROW, marginBottom: 10 }}>Corretor Responsável</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {broker.avatar_url ? (
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                    <Image src={broker.avatar_url} alt={broker.name} fill sizes="36px" style={{ objectFit: 'cover' }} loading="lazy" />
+                  </div>
+                ) : (
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, background: 'rgba(200,164,74,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <User size={16} style={{ color: 'var(--gold, #C8A44A)' }} />
+                  </div>
+                )}
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: T.text, margin: 0 }}>{broker.name}</p>
+                  {broker.creci && <p style={{ fontSize: 10, color: T.textDim, margin: 0 }}>CRECI {broker.creci}</p>}
+                  {broker.phone && <p style={{ fontSize: 11, color: T.textMuted, margin: '2px 0 0' }}>{broker.phone}</p>}
+                </div>
+              </div>
+              <button
+                onClick={() => router.push(`/backoffice/parcerias?new=1&property_id=${id}&property_name=${encodeURIComponent(dev?.name || '')}&owner_broker_id=${broker.id}`)}
+                style={{
+                  ...BTN_SECONDARY,
+                  justifyContent: 'center',
+                  width: '100%',
+                  marginTop: 12,
+                  borderColor: 'rgba(200,164,74,0.4)',
+                  color: 'var(--gold, #C8A44A)',
+                }}
+              >
+                <Handshake size={13} /> Propor Parceria
+              </button>
             </div>
           )}
         </div>

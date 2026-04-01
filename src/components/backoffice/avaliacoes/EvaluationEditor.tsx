@@ -129,8 +129,8 @@ export default function EvaluationEditor({
             </div>
             {/* Generate Button */}
             {!content && !generating && (
-                <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-dashed border-purple-300 rounded-2xl p-12 text-center">
-                    <Sparkles size={64} className="text-purple-600 mx-auto mb-6" />
+                <div className="bg-gradient-to-r from-navy-50 to-blue-50 border-2 border-dashed border-navy-300 rounded-2xl p-12 text-center">
+                    <Sparkles size={64} className="text-navy-600 mx-auto mb-6" />
                     <h4 className="text-2xl font-bold text-imi-900 mb-3">
                         Geração Automática com IA
                     </h4>
@@ -141,7 +141,7 @@ export default function EvaluationEditor({
                     <button
                         onClick={generateDraft}
                         disabled={documents.length === 0}
-                        className="inline-flex items-center gap-3 h-14 px-8 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-3 h-14 px-8 bg-gradient-to-r from-navy-600 to-blue-600 text-white rounded-xl font-bold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Sparkles size={24} />
                         Gerar Laudo Automático
@@ -157,14 +157,14 @@ export default function EvaluationEditor({
             {/* Generating */}
             {generating && (
                 <div className="bg-white rounded-2xl border border-imi-100 p-12 text-center">
-                    <Loader size={64} className="text-purple-600 animate-spin mx-auto mb-6" />
+                    <Loader size={64} className="text-navy-600 animate-spin mx-auto mb-6" />
                     <h4 className="text-xl font-bold text-imi-900 mb-3">
                         Gerando Laudo Técnico...
                     </h4>
                     <p className="text-imi-600 mb-6">{generationProgress}</p>
                     <div className="max-w-md mx-auto">
                         <div className="h-2 bg-imi-200 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-purple-600 to-blue-600 animate-pulse" style={{ width: '70%' }} />
+                            <div className="h-full bg-gradient-to-r from-navy-600 to-blue-600 animate-pulse" style={{ width: '70%' }} />
                         </div>
                     </div>
                     <p className="text-xs text-imi-500 mt-4">
@@ -196,7 +196,7 @@ export default function EvaluationEditor({
                         </div>
                         <button
                             onClick={generateDraft}
-                            className="h-9 px-4 rounded-lg border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors flex items-center gap-2 text-sm font-medium"
+                            className="h-9 px-4 rounded-lg border border-navy-200 bg-navy-50 text-navy-700 hover:bg-navy-100 transition-colors flex items-center gap-2 text-sm font-medium"
                         >
                             <RefreshCw size={14} />
                             Regenerar

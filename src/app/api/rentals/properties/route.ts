@@ -148,3 +148,101 @@ export async function POST(req: Request) {
         )
     }
 }
+
+export async function PUT(req: Request) {
+    try {
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        const body = await req.json()
+        const { id, ...rest } = body
+        if (!id) {
+            return NextResponse.json({ error: 'ID é obrigatório' }, { status: 400 })
+        }
+
+        const parsed = PropertyPostSchema.partial().safeParse(rest)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+        }
+
+        const updates: Record<string, unknown> = {}
+        const b = parsed.data
+        if (b.name !== undefined) updates.name = b.name
+        if (b.address !== undefined) updates.address = b.address || null
+        if (b.property_type !== undefined) updates.property_type = b.property_type
+        if (b.listing_mode !== undefined) updates.listing_mode = b.listing_mode
+        if (b.daily_rate !== undefined) updates.daily_rate = b.daily_rate
+        if (b.monthly_rate !== undefined) updates.monthly_rate = b.monthly_rate
+        if (b.cleaning_fee !== undefined) updates.cleaning_fee = b.cleaning_fee
+        if (b.max_guests !== undefined) updates.max_guests = b.max_guests
+        if (b.bedrooms !== undefined) updates.bedrooms = b.bedrooms
+        if (b.bathrooms !== undefined) updates.bathrooms = b.bathrooms
+        if (b.airbnb_listing_id !== undefined) updates.airbnb_listing_id = b.airbnb_listing_id || null
+        if (b.booking_listing_id !== undefined) updates.booking_listing_id = b.booking_listing_id || null
+        if (b.direct_booking_enabled !== undefined) updates.direct_booking_enabled = b.direct_booking_enabled
+        if (b.ical_url !== undefined) updates.ical_url = b.ical_url || null
+        if (b.status !== undefined) updates.status = b.status
+        if (b.owner_id !== undefined) updates.owner_id = b.owner_id || null
+        if (b.owner_name !== undefined) updates.owner_name = b.owner_name || null
+        if (b.management_fee_pct !== undefined) updates.management_fee_pct = b.management_fee_pct
+        if (b.photos !== undefined) updates.photos = b.photos
+        if (b.amenities !== undefined) updates.amenities = b.amenities
+        if (b.rules !== undefined) updates.rules = b.rules || null
+        if (b.check_in_time !== undefined) updates.check_in_time = b.check_in_time
+        if (b.check_out_time !== undefined) updates.check_out_time = b.check_out_time
+        if (b.development_id !== undefined) updates.development_id = b.development_id || null
+        updates.updated_at = new Date().toISOString()
+
+        const { data, error } = await supabase
+            .from('rental_properties')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single()
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json(data)
+    } catch (error) {
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
+            { status: 500 },
+        )
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        const { searchParams } = new URL(req.url)
+        const id = searchParams.get('id')
+        if (!id) {
+            return NextResponse.json({ error: 'ID é obrigatório' }, { status: 400 })
+        }
+
+        // Soft-delete: set status to inactive
+        const { error } = await supabase
+            .from('rental_properties')
+            .update({ status: 'inactive', updated_at: new Date().toISOString() })
+            .eq('id', id)
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json({ success: true })
+    } catch (error) {
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
+            { status: 500 },
+        )
+    }
+}

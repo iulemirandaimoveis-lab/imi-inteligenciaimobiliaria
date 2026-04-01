@@ -173,7 +173,7 @@ export default function PropertyWizard({ onSubmit, isSubmitting }: PropertyWizar
 
                             <Textarea label="Diferenciais (separados por vírgula)" {...register('selling_points')} rows={3} placeholder="Vista mar, Área de lazer, Perto de escola..." />
 
-                            <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/20 text-sm text-blue-600 dark:text-blue-400">
+                            <div className="bg-navy-50 dark:bg-navy-900/10 p-4 rounded-xl border border-navy-100 dark:border-navy-900/20 text-sm text-navy-600 dark:text-navy-400">
                                 <p className="font-bold mb-1">Próximo Passo: Mídia</p>
                                 <p>Após salvar os dados iniciais, você será redirecionado para a tela de edição onde poderá fazer o upload de fotos, vídeos e plantas.</p>
                             </div>

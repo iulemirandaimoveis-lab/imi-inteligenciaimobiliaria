@@ -1,6 +1,8 @@
 // src/app/sitemap.ts
 import { MetadataRoute } from 'next'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import * as fs from 'fs'
+import * as path from 'path'
 
 // Hardcoded canonical domain — NEVER use process.env here (Vercel deploys resolve to *.vercel.app)
 const BASE_URL = 'https://www.iulemirandaimoveis.com.br'
@@ -16,7 +18,7 @@ function urls(path: string, priority: number, freq: MetadataRoute.Sitemap[0]['ch
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Fetch published development slugs for dynamic property pages
+  // ── Dynamic: Property pages from Supabase ──────────────────────────────────
   let propertyUrls: MetadataRoute.Sitemap = []
   try {
     const { data } = await supabaseAdmin
@@ -36,11 +38,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       )
     }
   } catch {
-    // Graceful degradation: sitemap still works without dynamic pages
+    // Graceful degradation
+  }
+
+  // ── Dynamic: Book/ebook pages from /public/books/index.json ────────────────
+  let bookUrls: MetadataRoute.Sitemap = []
+  try {
+    const indexPath = path.join(process.cwd(), 'public', 'books', 'index.json')
+    const indexData = JSON.parse(fs.readFileSync(indexPath, 'utf-8')) as Array<{ slug: string }>
+    bookUrls = indexData.flatMap(book =>
+      LANGS.map(lang => ({
+        url: `${BASE_URL}/${lang}/biblioteca/${book.slug}`,
+        lastModified: new Date('2026-03-22'),
+        changeFrequency: 'monthly' as const,
+        priority: 0.75,
+      }))
+    )
+  } catch {
+    // Books index not available
   }
 
   return [
-    // Homepage
+    // Homepage — highest priority
     ...urls('', 1.0, 'weekly'),
 
     // Serviços principais — alta prioridade para SEO
@@ -52,18 +71,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...urls('/imoveis', 0.85, 'daily'),
     ...urls('/projetos', 0.85, 'weekly'),
 
+    // Biblioteca — hub de conteúdo SEO
+    ...urls('/biblioteca', 0.90, 'weekly'),
+
     // Conteúdo institucional
     ...urls('/sobre', 0.75, 'monthly'),
     ...urls('/contato', 0.80, 'monthly'),
     ...urls('/inteligencia', 0.70, 'weekly'),
     ...urls('/construtoras', 0.65, 'monthly'),
-    ...urls('/biblioteca', 0.65, 'weekly'),
 
     // Legal
     ...urls('/privacidade', 0.30, 'yearly'),
     ...urls('/termos', 0.30, 'yearly'),
 
-    // Dynamic property detail pages
+    // Dynamic pages
     ...propertyUrls,
+    ...bookUrls,
   ]
 }

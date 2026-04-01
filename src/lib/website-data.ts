@@ -111,7 +111,8 @@ function mapDatabaseToDevelopment(raw: Record<string, unknown>): Development {
         order: dbDev.display_order || 99,
         isHighlighted: dbDev.is_highlighted || false,
         createdAt: dbDev.created_at || '',
-        updatedAt: dbDev.updated_at || ''
+        updatedAt: dbDev.updated_at || '',
+        listingCategory: 'comprar',
     }
 }
 export interface BlogPost {

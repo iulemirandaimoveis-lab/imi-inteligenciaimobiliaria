@@ -4,7 +4,10 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useChannels } from '@/features/connect/hooks/useChannels'
 import { useChat } from '@/features/connect/hooks/useChat'
-import type { ChatChannel, ChatMessage } from '@/features/connect/types'
+import { useSounds } from '@/features/connect/hooks/useSounds'
+import { useVoiceRecorder } from '@/features/connect/hooks/useVoiceRecorder'
+import { PresenceProvider } from '@/features/connect/components/PresenceProvider'
+import type { ChatChannel, ChatMessage, Attachment, ContentType } from '@/features/connect/types'
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -12,7 +15,9 @@ import {
     MessageSquare, Plus, Send, Hash, Users, Building2,
     Briefcase, Search, MoreVertical, Smile, Paperclip,
     ArrowLeft, Bell, BellOff, Pin, Archive, UserPlus,
-    Circle, CheckCheck, Loader2,
+    Circle, CheckCheck, Loader2, Volume2, VolumeX, Handshake, Vibrate,
+    Mic, MicOff, Play, Pause, X, FileText, Image as ImageIcon, Download, File,
+    Trash2, ChevronUp, Info, Settings,
 } from 'lucide-react'
 
 // ── Channel Icon ─────────────────────────────────────────
@@ -23,6 +28,7 @@ function ChannelIcon({ type, size = 16 }: { type: string; size?: number }) {
         case 'direct': return <Circle size={size} style={{ fill: 'var(--success)', color: 'var(--success)' }} />
         case 'group': return <Users size={size} />
         case 'property': return <Building2 size={size} />
+        case 'partnership': return <Handshake size={size} />
         default: return <MessageSquare size={size} />
     }
 }
@@ -47,7 +53,7 @@ function ChatAvatar({ name, url, size = 36 }: { name: string; url?: string | nul
     if (url) {
         return (
             <div style={{ width: size, height: size, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-                <img src={url} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={url} alt={name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
         )
     }
@@ -65,8 +71,14 @@ function ChatAvatar({ name, url, size = 36 }: { name: string; url?: string | nul
     )
 }
 
+// ── Reaction Emoji Set ──────────────────────────────────
+const REACTION_EMOJIS = ['\u{1F44D}', '\u2764\uFE0F', '\u{1F602}', '\u{1F62E}', '\u{1F622}', '\u{1F525}']
+
 // ── Message Bubble ───────────────────────────────────────
-function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
+function MessageBubble({ msg, isOwn, hovered, onReaction, currentUserId }: {
+    msg: ChatMessage; isOwn: boolean; hovered?: boolean;
+    onReaction?: (messageId: string, emoji: string) => void; currentUserId?: string;
+}) {
     if (msg.content_type === 'system') {
         return (
             <div style={{ textAlign: 'center', padding: '8px 0' }}>
@@ -81,6 +93,80 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
         )
     }
 
+    if (msg.content_type === 'nudge') {
+        const senderName = isOwn ? 'Você' : (msg.sender?.name ?? msg.sender_name ?? 'Alguém')
+        return (
+            <motion.div
+                initial={{ x: -8 }}
+                animate={{ x: [0, -6, 6, -4, 4, -2, 2, 0] }}
+                transition={{ duration: 0.5 }}
+                style={{ textAlign: 'center', padding: '8px 0' }}
+            >
+                <span style={{
+                    fontSize: 12, color: '#F59E0B',
+                    background: 'rgba(245,158,11,0.1)', padding: '6px 14px',
+                    borderRadius: T.radius.full, fontWeight: 600,
+                    border: '1px solid rgba(245,158,11,0.25)',
+                }}>
+                    <Vibrate size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />
+                    {senderName} enviou um chacoalhão!
+                </span>
+            </motion.div>
+        )
+    }
+
+    const bubbleBg = isOwn ? T.accent : T.surface
+    const bubbleColor = isOwn ? T.textInverse : T.text
+    const bubbleBorder = isOwn ? 'none' : `1px solid ${T.borderLight}`
+    const attachments = (msg.attachments || []) as Attachment[]
+
+    const renderContent = () => {
+        // Voice message
+        if (msg.content_type === 'voice') {
+            const voiceUrl = attachments[0]?.url || msg.content
+            return <VoicePlayer url={voiceUrl || ''} isOwn={isOwn} />
+        }
+        // Image message
+        if (msg.content_type === 'image') {
+            const imgUrl = attachments[0]?.url || msg.content
+            return (
+                <div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imgUrl || ''} alt="Imagem" style={{ maxWidth: '100%', maxHeight: 300, borderRadius: 4, display: 'block' }} />
+                    {msg.content && msg.content !== imgUrl && <div style={{ marginTop: 6, fontSize: 14 }}>{msg.content}</div>}
+                </div>
+            )
+        }
+        // File message
+        if (msg.content_type === 'file') {
+            return (
+                <div>
+                    {attachments.map((att, i) => (
+                        <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" style={{
+                            display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0',
+                            color: isOwn ? T.textInverse : T.gold, textDecoration: 'none', fontSize: 13,
+                        }}>
+                            <File size={16} />
+                            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {att.name || 'Arquivo'}
+                            </span>
+                            <span style={{ fontSize: 11, opacity: 0.7 }}>
+                                {att.size ? `${(att.size / 1024).toFixed(0)}KB` : ''}
+                            </span>
+                            <Download size={14} />
+                        </a>
+                    ))}
+                    {msg.content && <div style={{ marginTop: 4, fontSize: 14 }}>{msg.content}</div>}
+                </div>
+            )
+        }
+        // Default text
+        return <>{msg.content}</>
+    }
+
+    const reactions = msg.reactions || {}
+    const reactionEntries = Object.entries(reactions).filter(([, users]) => users.length > 0)
+
     return (
         <div style={{
             display: 'flex', gap: 8, padding: '4px 0',
@@ -88,23 +174,100 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
             alignItems: 'flex-start',
         }}>
             {!isOwn && <ChatAvatar name={msg.sender?.name ?? msg.sender_name ?? 'U'} url={msg.sender?.avatar_url ?? msg.sender_avatar} size={32} />}
-            <div style={{ maxWidth: '70%', minWidth: 0 }}>
+            <div style={{ maxWidth: '70%', minWidth: 0, position: 'relative' }}>
                 {!isOwn && (
                     <div style={{ fontSize: 11, fontWeight: 600, color: T.textMuted, marginBottom: 2 }}>
                         {msg.sender?.name ?? msg.sender_name}
                     </div>
                 )}
                 <div style={{
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    background: isOwn ? T.accent : T.surface,
-                    color: isOwn ? T.textInverse : T.text,
+                    padding: '8px 12px', borderRadius: '6px',
+                    background: bubbleBg, color: bubbleColor,
                     fontSize: 14, lineHeight: '20px',
-                    border: isOwn ? 'none' : `1px solid ${T.borderLight}`,
-                    wordBreak: 'break-word',
+                    border: bubbleBorder, wordBreak: 'break-word',
                 }}>
-                    {msg.content}
+                    {renderContent()}
+                    {/* Inline attachments for text messages with files */}
+                    {msg.content_type === 'text' && attachments.length > 0 && (
+                        <div style={{ marginTop: 8, borderTop: `1px solid ${isOwn ? 'rgba(255,255,255,0.2)' : T.borderLight}`, paddingTop: 6 }}>
+                            {attachments.map((att, i) => {
+                                if (att.type?.startsWith('image/')) {
+                                    return (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img key={i} src={att.url} alt={att.name} style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 4, display: 'block', marginBottom: 4 }} />
+                                    )
+                                }
+                                return (
+                                    <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" style={{
+                                        display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0',
+                                        color: isOwn ? T.textInverse : T.gold, textDecoration: 'none', fontSize: 12,
+                                    }}>
+                                        <FileText size={14} /> {att.name} <Download size={12} />
+                                    </a>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
+                {/* Existing reactions */}
+                {reactionEntries.length > 0 && (
+                    <div style={{
+                        display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4,
+                        justifyContent: isOwn ? 'flex-end' : 'flex-start',
+                    }}>
+                        {reactionEntries.map(([emoji, users]) => {
+                            const iReacted = currentUserId ? users.includes(currentUserId) : false
+                            return (
+                                <button
+                                    key={emoji}
+                                    onClick={() => onReaction?.(msg.id, emoji)}
+                                    style={{
+                                        display: 'inline-flex', alignItems: 'center', gap: 3,
+                                        padding: '2px 6px', borderRadius: T.radius.full,
+                                        background: iReacted ? 'rgba(212,175,55,0.15)' : T.subtle,
+                                        border: iReacted ? `1px solid ${T.gold}` : `1px solid ${T.borderLight}`,
+                                        cursor: 'pointer', fontSize: 13, lineHeight: '18px',
+                                        color: T.text, transition: `all ${T.transition.fast}`,
+                                    }}
+                                    title={`${users.length} ${users.length === 1 ? 'pessoa' : 'pessoas'}`}
+                                >
+                                    <span>{emoji}</span>
+                                    <span style={{ fontSize: 11, fontWeight: 600, fontFamily: T.font.mono }}>{users.length}</span>
+                                </button>
+                            )
+                        })}
+                    </div>
+                )}
+                {/* Reaction picker on hover */}
+                {hovered && onReaction && (
+                    <div style={{
+                        position: 'absolute', top: -4,
+                        [isOwn ? 'left' : 'right']: -4,
+                        transform: isOwn ? 'translateX(-100%)' : 'translateX(100%)',
+                        display: 'flex', gap: 2, padding: '3px 6px',
+                        background: T.surface, borderRadius: T.radius.full,
+                        border: `1px solid ${T.borderLight}`,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                        zIndex: 10,
+                    }}>
+                        {REACTION_EMOJIS.map(emoji => (
+                            <button
+                                key={emoji}
+                                onClick={() => onReaction(msg.id, emoji)}
+                                style={{
+                                    width: 28, height: 28, border: 'none', borderRadius: '50%',
+                                    background: 'transparent', cursor: 'pointer', fontSize: 15,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    transition: `all ${T.transition.fast}`,
+                                }}
+                                onMouseEnter={e => { (e.target as HTMLElement).style.background = T.subtle }}
+                                onMouseLeave={e => { (e.target as HTMLElement).style.background = 'transparent' }}
+                            >
+                                {emoji}
+                            </button>
+                        ))}
+                    </div>
+                )}
                 <div style={{
                     fontSize: 11, color: T.textDim, marginTop: 2,
                     textAlign: isOwn ? 'right' : 'left',
@@ -118,24 +281,51 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
     )
 }
 
-// ── Main Connect Page ────────────────────────────────────
+// ── Voice Player Component ──────────────────────────────
+function VoicePlayer({ url, isOwn }: { url: string; isOwn: boolean }) {
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+    const [playing, setPlaying] = useState(false)
+    const [progress, setProgress] = useState(0)
+    const [duration, setDuration] = useState(0)
+
+    const toggle = () => {
+        if (!audioRef.current) return
+        if (playing) { audioRef.current.pause() }
+        else { audioRef.current.play() }
+        setPlaying(!playing)
+    }
+
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 180 }}>
+            <audio
+                ref={audioRef}
+                src={url}
+                onLoadedMetadata={() => { if (audioRef.current) setDuration(audioRef.current.duration) }}
+                onTimeUpdate={() => { if (audioRef.current) setProgress(audioRef.current.currentTime / (audioRef.current.duration || 1) * 100) }}
+                onEnded={() => { setPlaying(false); setProgress(0) }}
+            />
+            <button onClick={toggle} style={{
+                width: 32, height: 32, borderRadius: '50%', border: 'none', cursor: 'pointer',
+                background: isOwn ? 'rgba(255,255,255,0.2)' : T.gold,
+                color: isOwn ? '#fff' : T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+                {playing ? <Pause size={14} /> : <Play size={14} style={{ marginLeft: 2 }} />}
+            </button>
+            <div style={{ flex: 1 }}>
+                <div style={{ height: 4, borderRadius: 2, background: isOwn ? 'rgba(255,255,255,0.2)' : T.borderLight, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${progress}%`, background: isOwn ? '#fff' : T.gold, borderRadius: 2, transition: 'width 0.1s' }} />
+                </div>
+            </div>
+            <span style={{ fontSize: 11, fontFamily: T.font.mono, opacity: 0.7, minWidth: 32 }}>
+                {duration > 0 ? `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}` : '0:00'}
+            </span>
+        </div>
+    )
+}
+
+// ── Main Connect Page (wrapper with PresenceProvider) ────
 export default function ConnectPage() {
     const [user, setUser] = useState<{ id: string; name: string; avatar_url?: string } | null>(null)
-    const [activeChannelId, setActiveChannelId] = useState<string | null>(null)
-    const [newMessage, setNewMessage] = useState('')
-    const [sending, setSending] = useState(false)
-    const [showNewChannel, setShowNewChannel] = useState(false)
-    const [newChannelName, setNewChannelName] = useState('')
-    const [searchQuery, setSearchQuery] = useState('')
-    const [newChannelMode, setNewChannelMode] = useState<'team' | 'direct'>('direct')
-    const [brokerSearch, setBrokerSearch] = useState('')
-    const [availableBrokers, setAvailableBrokers] = useState<Array<{ id: string; name: string; email: string; avatar_url: string | null }>>([])
-    const [selectedBrokerId, setSelectedBrokerId] = useState<string | null>(null)
-    const [loadingBrokers, setLoadingBrokers] = useState(false)
-    const [mobileView, setMobileView] = useState<'list' | 'chat'>('list')
-    const messagesEndRef = useRef<HTMLDivElement>(null)
-    const inputRef = useRef<HTMLInputElement>(null)
-    const typingTimeout = useRef<NodeJS.Timeout>()
 
     // Load current user
     useEffect(() => {
@@ -154,14 +344,71 @@ export default function ConnectPage() {
         })
     }, [])
 
-    const { channels, loading: channelsLoading, totalUnread, createChannel, openDM, reload: reloadChannels } = useChannels({ userId: user?.id ?? '' })
-    const { messages, loading: messagesLoading, typingUsers, sendMessage, sendTyping, markAsRead } = useChat({
+    if (!user) {
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', color: T.textDim }}>
+                <Loader2 size={24} className="animate-spin" />
+            </div>
+        )
+    }
+
+    return (
+        <PresenceProvider userId={user.id} userName={user.name} avatarUrl={user.avatar_url}>
+            <ConnectInner user={user} />
+        </PresenceProvider>
+    )
+}
+
+// ── Inner Connect (has access to PresenceProvider context) ──
+function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?: string } }) {
+    const { play, enabled: soundEnabled, toggle: toggleSound } = useSounds()
+    const [activeChannelId, setActiveChannelId] = useState<string | null>(null)
+    const [newMessage, setNewMessage] = useState('')
+    const [sending, setSending] = useState(false)
+    const [showNewChannel, setShowNewChannel] = useState(false)
+    const [newChannelName, setNewChannelName] = useState('')
+    const [searchQuery, setSearchQuery] = useState('')
+    const [newChannelMode, setNewChannelMode] = useState<'team' | 'direct'>('direct')
+    const [brokerSearch, setBrokerSearch] = useState('')
+    const [availableBrokers, setAvailableBrokers] = useState<Array<{ id: string; name: string; email: string; avatar_url: string | null }>>([])
+    const [selectedBrokerId, setSelectedBrokerId] = useState<string | null>(null)
+    const [loadingBrokers, setLoadingBrokers] = useState(false)
+    const [mobileView, setMobileView] = useState<'list' | 'chat'>('list')
+    const messagesEndRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
+    const typingTimeout = useRef<NodeJS.Timeout>()
+
+    const prevMsgCount = useRef(0)
+    const { channels, loading: channelsLoading, totalUnread, createChannel, openDM, reload: reloadChannels } = useChannels({ userId: user.id })
+    const { messages, loading: messagesLoading, typingUsers, hasMore, loadMore, sendMessage, deleteMessage, editMessage, toggleReaction, sendTyping, markAsRead } = useChat({
         channelId: activeChannelId ?? '',
-        userId: user?.id ?? '',
-        userName: user?.name ?? '',
+        userId: user.id,
+        userName: user.name,
     })
 
     const activeChannel = channels.find(c => c.id === activeChannelId)
+
+    const [nudgeShake, setNudgeShake] = useState(false)
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [showChannelInfo, setShowChannelInfo] = useState(false)
+    const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null)
+
+    // Play MSN sounds on new incoming messages
+    useEffect(() => {
+        if (messages.length > prevMsgCount.current && prevMsgCount.current > 0) {
+            const lastMsg = messages[messages.length - 1]
+            if (lastMsg && lastMsg.sender_id !== user.id) {
+                if (lastMsg.content_type === 'nudge') {
+                    play('nudge')
+                    setNudgeShake(true)
+                    setTimeout(() => setNudgeShake(false), 600)
+                } else {
+                    play('message')
+                }
+            }
+        }
+        prevMsgCount.current = messages.length
+    }, [messages.length, user.id, play])
 
     // Scroll to bottom on new messages
     useEffect(() => {
@@ -174,9 +421,12 @@ export default function ConnectPage() {
     }, [activeChannelId, messages.length])
 
     // Filter channels
-    const filteredChannels = channels.filter(ch =>
-        !searchQuery || ch.name?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    const filteredChannels = channels.filter(ch => {
+        if (!searchQuery) return true
+        const q = searchQuery.toLowerCase()
+        const displayName = ch.type === 'direct' && ch.other_user ? ch.other_user.name : ch.name
+        return displayName?.toLowerCase().includes(q)
+    })
 
     // Send message handler
     const handleSend = async () => {
@@ -189,9 +439,103 @@ export default function ConnectPage() {
             setSending(false)
             return
         }
+        play('message')
         setNewMessage('')
         setSending(false)
         inputRef.current?.focus()
+    }
+
+    // Send nudge ("chamar atenção")
+    const handleNudge = async () => {
+        if (sending || !activeChannelId) return
+        setSending(true)
+        const result = await sendMessage('🫨', 'nudge')
+        if (result?.error) {
+            toast.error('Erro ao enviar chacoalhão')
+        } else {
+            play('nudge')
+            setNudgeShake(true)
+            setTimeout(() => setNudgeShake(false), 600)
+        }
+        setSending(false)
+    }
+
+    // ── Voice Recording ──
+    const voiceRecorder = useVoiceRecorder()
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const [uploadingFile, setUploadingFile] = useState(false)
+
+    const handleVoiceStart = () => { voiceRecorder.startRecording() }
+    const handleVoiceCancel = () => { voiceRecorder.cancelRecording() }
+    const handleVoiceSend = async () => {
+        if (!activeChannelId) return
+        setSending(true)
+        try {
+            const blob = await voiceRecorder.stopRecording()
+            const supabase = createClient()
+            const filename = `voice_${Date.now()}_${user.id.slice(0, 8)}.webm`
+            const { data: upload, error: uploadErr } = await supabase.storage
+                .from('media')
+                .upload(`chat/voice/${filename}`, blob, { contentType: blob.type })
+            if (uploadErr) throw uploadErr
+            const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(upload.path)
+            await sendMessage('🎤 Mensagem de voz', 'voice', {
+                attachments: [{ url: publicUrl, name: filename, size: blob.size, type: blob.type }],
+            })
+            play('message')
+        } catch (err) {
+            console.error('[Voice] Upload failed:', err)
+            toast.error('Erro ao enviar áudio')
+        }
+        setSending(false)
+    }
+
+    // ── File Upload ──
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files
+        if (!files?.length || !activeChannelId) return
+        setUploadingFile(true)
+        const supabase = createClient()
+        try {
+            const uploaded: Attachment[] = []
+            for (const file of Array.from(files)) {
+                const ext = file.name.split('.').pop()
+                const filename = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`
+                const { data: upload, error: uploadErr } = await supabase.storage
+                    .from('media')
+                    .upload(`chat/files/${filename}`, file, { contentType: file.type })
+                if (uploadErr) throw uploadErr
+                const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(upload.path)
+                uploaded.push({ url: publicUrl, name: file.name, size: file.size, type: file.type })
+            }
+            const isImage = uploaded.every(a => a.type.startsWith('image/'))
+            const contentType: ContentType = isImage ? 'image' : 'file'
+            const preview = isImage ? '📷 Imagem' : `📎 ${uploaded.map(a => a.name).join(', ')}`
+            await sendMessage(preview, contentType, { attachments: uploaded })
+            play('message')
+        } catch (err) {
+            console.error('[File] Upload failed:', err)
+            toast.error('Erro ao enviar arquivo')
+        }
+        setUploadingFile(false)
+        if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+
+    // Load more messages
+    const handleLoadMore = async () => {
+        if (loadingMore || !hasMore) return
+        setLoadingMore(true)
+        await loadMore()
+        setLoadingMore(false)
+    }
+
+    // Delete message handler
+    const handleDeleteMessage = async (messageId: string) => {
+        const confirmed = window.confirm('Deletar esta mensagem?')
+        if (!confirmed) return
+        const { error } = await deleteMessage(messageId)
+        if (error) toast.error('Erro ao deletar mensagem')
+        else toast.success('Mensagem deletada')
     }
 
     // Typing indicator
@@ -229,9 +573,10 @@ export default function ConnectPage() {
             if (!selectedBrokerId) return
             const broker = availableBrokers.find(b => b.id === selectedBrokerId)
             if (!broker) return
-            // Check if direct channel already exists between these two users
+            // Check if direct channel already exists via member IDs (not name)
             const existingDirect = channels.find(ch =>
-                ch.type === 'direct' && ch.name?.includes(broker.name)
+                ch.type === 'direct' &&
+                ch.members?.some(m => m.user_id === selectedBrokerId)
             )
             if (existingDirect) {
                 setActiveChannelId(existingDirect.id)
@@ -269,18 +614,10 @@ export default function ConnectPage() {
         }
     }
 
-    if (!user) {
-        return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: T.textDim }}>
-                <Loader2 size={24} className="animate-spin" />
-            </div>
-        )
-    }
-
     // ── Channel List Sidebar ─────────────────────────────
     const channelList = (
         <div style={{
-            width: '100%', height: '100%',
+            width: '100%', height: '100%', minHeight: 0,
             display: 'flex', flexDirection: 'column',
             borderRight: `1px solid ${T.border}`,
             background: T.base,
@@ -305,19 +642,35 @@ export default function ConnectPage() {
                         </span>
                     )}
                 </div>
-                <button
-                    onClick={() => setShowNewChannel(true)}
-                    style={{
-                        position: 'relative', overflow: 'hidden',
-                        width: 32, height: 32, borderRadius: 6,
-                        background: '#0A1624', color: '#fff',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}
-                >
-                    <Plus size={16} />
-                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
-                </button>
+                <div style={{ display: 'flex', gap: 6 }}>
+                    <button
+                        onClick={toggleSound}
+                        title={soundEnabled ? 'Sons MSN ativados' : 'Sons MSN desativados'}
+                        style={{
+                            width: 32, height: 32, borderRadius: 6,
+                            background: soundEnabled ? 'rgba(200,164,74,0.12)' : 'transparent',
+                            color: soundEnabled ? T.gold : T.textDim,
+                            border: `1px solid ${soundEnabled ? 'rgba(200,164,74,0.25)' : T.borderLight}`,
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            transition: `all ${T.transition.fast}`,
+                        }}
+                    >
+                        {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+                    </button>
+                    <button
+                        onClick={() => setShowNewChannel(true)}
+                        style={{
+                            position: 'relative', overflow: 'hidden',
+                            width: 32, height: 32, borderRadius: 6,
+                            background: '#0A1624', color: '#fff',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                    >
+                        <Plus size={16} />
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
+                    </button>
+                </div>
             </div>
 
             {/* Search */}
@@ -397,22 +750,26 @@ export default function ConnectPage() {
                             onMouseEnter={e => { if (ch.id !== activeChannelId) e.currentTarget.style.background = T.hover }}
                             onMouseLeave={e => { if (ch.id !== activeChannelId) e.currentTarget.style.background = 'transparent' }}
                         >
-                            <div style={{
-                                width: 40, height: 40, borderRadius: T.radius.lg,
-                                background: T.elevated, display: 'flex',
-                                alignItems: 'center', justifyContent: 'center',
-                                color: ch.id === activeChannelId ? T.gold : T.textMuted,
-                                flexShrink: 0,
-                            }}>
-                                <ChannelIcon type={ch.type} size={18} />
-                            </div>
+                            {ch.type === 'direct' && ch.other_user ? (
+                                <ChatAvatar name={ch.other_user.name ?? 'U'} url={ch.other_user.avatar_url} size={40} />
+                            ) : (
+                                <div style={{
+                                    width: 40, height: 40, borderRadius: T.radius.lg,
+                                    background: T.elevated, display: 'flex',
+                                    alignItems: 'center', justifyContent: 'center',
+                                    color: ch.id === activeChannelId ? T.gold : T.textMuted,
+                                    flexShrink: 0,
+                                }}>
+                                    <ChannelIcon type={ch.type} size={18} />
+                                </div>
+                            )}
                             <div style={{ flex: 1, minWidth: 0 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span style={{
                                         fontSize: 13, fontWeight: ch.total_unread > 0 ? 700 : 500,
                                         color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                     }}>
-                                        {ch.name ?? 'Canal'}
+                                        {ch.type === 'direct' && ch.other_user ? ch.other_user.name : (ch.name ?? 'Canal')}
                                     </span>
                                     <span style={{ fontSize: 11, color: T.textDim, fontFamily: T.font.mono, flexShrink: 0 }}>
                                         {formatTime(ch.last_message_at)}
@@ -447,7 +804,10 @@ export default function ConnectPage() {
 
     // ── Chat Area ────────────────────────────────────────
     const chatArea = (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', background: T.base }}>
+        <motion.div
+            animate={nudgeShake ? { x: [0, -4, 4, -3, 3, -1, 1, 0] } : {}}
+            transition={{ duration: 0.4 }}
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, background: T.base }}>
             {activeChannel ? (
                 <>
                     {/* Chat Header */}
@@ -462,28 +822,43 @@ export default function ConnectPage() {
                         >
                             <ArrowLeft size={20} />
                         </button>
-                        <div style={{
-                            width: 36, height: 36, borderRadius: T.radius.lg,
-                            background: T.elevated, display: 'flex',
-                            alignItems: 'center', justifyContent: 'center', color: T.gold,
-                        }}>
-                            <ChannelIcon type={activeChannel.type} size={18} />
-                        </div>
+                        {activeChannel.type === 'direct' && activeChannel.other_user ? (
+                            <ChatAvatar name={activeChannel.other_user.name ?? 'U'} url={activeChannel.other_user.avatar_url} size={36} />
+                        ) : (
+                            <div style={{
+                                width: 36, height: 36, borderRadius: T.radius.lg,
+                                background: T.elevated, display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', color: T.gold,
+                            }}>
+                                <ChannelIcon type={activeChannel.type} size={18} />
+                            </div>
+                        )}
                         <div style={{ flex: 1 }}>
                             <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>
-                                {activeChannel.name}
+                                {activeChannel.type === 'direct' && activeChannel.other_user
+                                    ? activeChannel.other_user.name
+                                    : activeChannel.name}
                             </div>
                             <div style={{ fontSize: 11, color: T.textDim }}>
                                 {activeChannel.message_count} mensagens
                             </div>
                         </div>
-                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, padding: 4 }}>
-                            <MoreVertical size={18} />
+                        <button
+                            onClick={() => setShowChannelInfo(!showChannelInfo)}
+                            style={{
+                                background: showChannelInfo ? T.activeBg : 'none',
+                                border: showChannelInfo ? `1px solid ${T.borderLight}` : 'none',
+                                cursor: 'pointer', color: showChannelInfo ? T.gold : T.textMuted,
+                                padding: 4, borderRadius: T.radius.md,
+                                transition: `all ${T.transition.fast}`,
+                            }}
+                        >
+                            <Info size={18} />
                         </button>
                     </div>
 
                     {/* Messages */}
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+                    <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '16px 20px' }}>
                         {messagesLoading ? (
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                                 <Loader2 size={24} className="animate-spin" style={{ color: T.textDim }} />
@@ -500,9 +875,58 @@ export default function ConnectPage() {
                             </div>
                         ) : (
                             <>
-                                {messages.map(msg => (
-                                    <MessageBubble key={msg.id} msg={msg} isOwn={msg.sender_id === user.id} />
-                                ))}
+                                {/* Load more button */}
+                                {hasMore && (
+                                    <div style={{ textAlign: 'center', padding: '8px 0 16px' }}>
+                                        <button
+                                            onClick={handleLoadMore}
+                                            disabled={loadingMore}
+                                            style={{
+                                                background: T.elevated, border: `1px solid ${T.borderLight}`,
+                                                borderRadius: T.radius.full, padding: '6px 16px',
+                                                fontSize: 12, fontWeight: 600, color: T.textMuted,
+                                                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6,
+                                                transition: `all ${T.transition.fast}`,
+                                            }}
+                                        >
+                                            {loadingMore ? (
+                                                <><Loader2 size={12} className="animate-spin" /> Carregando...</>
+                                            ) : (
+                                                <><ChevronUp size={12} /> Carregar mensagens anteriores</>
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+                                {messages.map(msg => {
+                                    const isOwn = msg.sender_id === user.id
+                                    return (
+                                        <div
+                                            key={msg.id}
+                                            onMouseEnter={() => setHoveredMsgId(msg.id)}
+                                            onMouseLeave={() => setHoveredMsgId(null)}
+                                            style={{ position: 'relative' }}
+                                        >
+                                            <MessageBubble msg={msg} isOwn={isOwn} hovered={hoveredMsgId === msg.id} onReaction={toggleReaction} currentUserId={user.id} />
+                                            {/* Delete button on hover (own messages only) */}
+                                            {isOwn && hoveredMsgId === msg.id && msg.content_type !== 'system' && (
+                                                <button
+                                                    onClick={() => handleDeleteMessage(msg.id)}
+                                                    title="Deletar mensagem"
+                                                    style={{
+                                                        position: 'absolute', top: 4, right: isOwn ? undefined : 4, left: isOwn ? 4 : undefined,
+                                                        width: 24, height: 24, borderRadius: T.radius.full,
+                                                        background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
+                                                        cursor: 'pointer', color: '#EF4444',
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                        transition: `all ${T.transition.fast}`,
+                                                    }}
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    )
+                                })}
                                 <div ref={messagesEndRef} />
                             </>
                         )}
@@ -522,48 +946,148 @@ export default function ConnectPage() {
                         )}
                     </AnimatePresence>
 
+                    {/* Hidden file input */}
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        accept="image/*,.pdf,.doc,.docx,.xlsx,.xls,.txt,.csv,.zip"
+                        onChange={handleFileSelect}
+                        style={{ display: 'none' }}
+                    />
+
                     {/* Composer */}
                     <div style={{
                         padding: '12px 20px', borderTop: `1px solid ${T.border}`,
                         display: 'flex', alignItems: 'center', gap: 8, background: T.surface,
                     }}>
-                        <button style={{
-                            width: 36, height: 36, borderRadius: T.radius.md,
-                            background: 'transparent', border: 'none', cursor: 'pointer',
-                            color: T.textMuted, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>
-                            <Paperclip size={18} />
-                        </button>
-                        <input
-                            ref={inputRef}
-                            value={newMessage}
-                            onChange={e => { setNewMessage(e.target.value); handleTyping() }}
-                            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-                            placeholder="Mensagem..."
-                            style={{
-                                flex: 1, height: 40, padding: '0 16px',
-                                background: T.elevated, border: `1px solid ${T.borderLight}`,
-                                borderRadius: T.radius.full, color: T.text,
-                                fontSize: 14, fontFamily: T.font.sans, outline: 'none',
-                                transition: `all ${T.transition.fast}`,
-                            }}
-                            onFocus={e => e.currentTarget.style.borderColor = T.borderGold}
-                            onBlur={e => e.currentTarget.style.borderColor = T.borderLight}
-                        />
-                        <button
-                            onClick={handleSend}
-                            disabled={!newMessage.trim() || sending}
-                            style={{
-                                width: 40, height: 40, borderRadius: T.radius.full,
-                                background: newMessage.trim() ? T.accent : T.elevated,
-                                color: newMessage.trim() ? T.textInverse : T.textDisabled,
-                                border: 'none', cursor: newMessage.trim() ? 'pointer' : 'default',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                transition: `all ${T.transition.fast}`,
-                            }}
-                        >
-                            {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                        </button>
+                        {voiceRecorder.isRecording ? (
+                            /* ── Voice Recording UI ── */
+                            <>
+                                <button
+                                    onClick={handleVoiceCancel}
+                                    title="Cancelar gravação"
+                                    style={{
+                                        width: 36, height: 36, borderRadius: T.radius.full,
+                                        background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)',
+                                        cursor: 'pointer', color: '#EF4444',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}
+                                >
+                                    <X size={16} />
+                                </button>
+                                <div style={{
+                                    flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+                                    height: 40, padding: '0 16px',
+                                    background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)',
+                                    borderRadius: T.radius.full,
+                                }}>
+                                    <div style={{
+                                        width: 8, height: 8, borderRadius: '50%', background: '#EF4444',
+                                        animation: 'pulse 1s ease infinite',
+                                    }} />
+                                    <span style={{ fontSize: 13, color: '#EF4444', fontFamily: T.font.mono, fontWeight: 600 }}>
+                                        {Math.floor(voiceRecorder.duration / 60)}:{String(Math.floor(voiceRecorder.duration % 60)).padStart(2, '0')}
+                                    </span>
+                                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1, height: 20 }}>
+                                        {voiceRecorder.waveformData.slice(-40).map((v, i) => (
+                                            <div key={i} style={{
+                                                width: 2, borderRadius: 1,
+                                                height: Math.max(3, v * 20), background: '#EF4444', opacity: 0.6,
+                                            }} />
+                                        ))}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleVoiceSend}
+                                    disabled={sending}
+                                    style={{
+                                        width: 40, height: 40, borderRadius: T.radius.full,
+                                        background: T.accent, color: T.textInverse,
+                                        border: 'none', cursor: 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}
+                                >
+                                    {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                                </button>
+                            </>
+                        ) : (
+                            /* ── Normal Composer ── */
+                            <>
+                                <button
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={uploadingFile}
+                                    title="Enviar arquivo ou imagem"
+                                    style={{
+                                        width: 36, height: 36, borderRadius: T.radius.md,
+                                        background: 'transparent', border: 'none', cursor: 'pointer',
+                                        color: uploadingFile ? T.gold : T.textMuted,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}
+                                >
+                                    {uploadingFile ? <Loader2 size={18} className="animate-spin" /> : <Paperclip size={18} />}
+                                </button>
+                                <button
+                                    onClick={handleNudge}
+                                    disabled={sending}
+                                    title="Chamar atenção (chacoalhão MSN)"
+                                    style={{
+                                        width: 36, height: 36, borderRadius: T.radius.md,
+                                        background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',
+                                        cursor: 'pointer', color: '#F59E0B',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        transition: `all ${T.transition.fast}`,
+                                    }}
+                                >
+                                    <Vibrate size={18} />
+                                </button>
+                                <input
+                                    ref={inputRef}
+                                    value={newMessage}
+                                    onChange={e => { setNewMessage(e.target.value); handleTyping() }}
+                                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
+                                    placeholder="Mensagem..."
+                                    style={{
+                                        flex: 1, height: 40, padding: '0 16px',
+                                        background: T.elevated, border: `1px solid ${T.borderLight}`,
+                                        borderRadius: T.radius.full, color: T.text,
+                                        fontSize: 14, fontFamily: T.font.sans, outline: 'none',
+                                        transition: `all ${T.transition.fast}`,
+                                    }}
+                                    onFocus={e => e.currentTarget.style.borderColor = T.borderGold}
+                                    onBlur={e => e.currentTarget.style.borderColor = T.borderLight}
+                                />
+                                {newMessage.trim() ? (
+                                    <button
+                                        onClick={handleSend}
+                                        disabled={sending}
+                                        style={{
+                                            width: 40, height: 40, borderRadius: T.radius.full,
+                                            background: T.accent, color: T.textInverse,
+                                            border: 'none', cursor: 'pointer',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            transition: `all ${T.transition.fast}`,
+                                        }}
+                                    >
+                                        {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={handleVoiceStart}
+                                        title="Gravar mensagem de voz"
+                                        style={{
+                                            width: 40, height: 40, borderRadius: T.radius.full,
+                                            background: T.elevated, color: T.textMuted,
+                                            border: 'none', cursor: 'pointer',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            transition: `all ${T.transition.fast}`,
+                                        }}
+                                    >
+                                        <Mic size={18} />
+                                    </button>
+                                )}
+                            </>
+                        )}
                     </div>
                 </>
             ) : (
@@ -578,11 +1102,17 @@ export default function ConnectPage() {
                     </p>
                 </div>
             )}
-        </div>
+        </motion.div>
     )
 
     return (
-        <div style={{ height: 'calc(100vh - 64px)', display: 'flex', overflow: 'hidden' }}>
+        <div style={{
+            display: 'flex', overflow: 'hidden',
+            borderRadius: 'var(--r-lg, 14px)',
+            border: `1px solid ${T.border}`,
+        }}
+        className="h-[calc(100dvh-164px)] sm:h-[calc(100dvh-152px)] lg:h-[calc(100dvh-112px)]"
+        >
             {/* New Channel / Direct Message Modal */}
             <AnimatePresence>
                 {showNewChannel && (
@@ -737,14 +1267,116 @@ export default function ConnectPage() {
                 )}
             </AnimatePresence>
 
-            {/* Desktop layout: sidebar + chat */}
-            <div className="hidden md:flex" style={{ width: '100%', height: '100%' }}>
-                <div style={{ width: 320, flexShrink: 0 }}>{channelList}</div>
-                {chatArea}
+            {/* Desktop layout: sidebar + chat + info panel */}
+            <div className="hidden md:flex" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+                <div style={{ width: 320, flexShrink: 0, height: '100%', overflow: 'hidden' }}>{channelList}</div>
+                <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>{chatArea}</div>
+                {/* Channel info panel */}
+                <AnimatePresence>
+                    {showChannelInfo && activeChannel && (
+                        <motion.div
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: 280, opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            style={{
+                                height: '100%', overflow: 'hidden', flexShrink: 0,
+                                borderLeft: `1px solid ${T.border}`, background: T.base,
+                            }}
+                        >
+                            <div style={{ width: 280, height: '100%', overflowY: 'auto', padding: 20 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                                    <span style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.font.serif }}>
+                                        Detalhes do Canal
+                                    </span>
+                                    <button
+                                        onClick={() => setShowChannelInfo(false)}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, padding: 2 }}
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                                {/* Channel avatar/icon */}
+                                <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                                    {activeChannel.type === 'direct' && activeChannel.other_user ? (
+                                        <div style={{ display: 'inline-block' }}>
+                                            <ChatAvatar name={activeChannel.other_user.name ?? 'U'} url={activeChannel.other_user.avatar_url} size={64} />
+                                        </div>
+                                    ) : (
+                                        <div style={{
+                                            width: 64, height: 64, borderRadius: 18, margin: '0 auto',
+                                            background: T.elevated, display: 'flex',
+                                            alignItems: 'center', justifyContent: 'center', color: T.gold,
+                                        }}>
+                                            <ChannelIcon type={activeChannel.type} size={28} />
+                                        </div>
+                                    )}
+                                    <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginTop: 12 }}>
+                                        {activeChannel.type === 'direct' && activeChannel.other_user
+                                            ? activeChannel.other_user.name
+                                            : activeChannel.name}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: T.textDim, marginTop: 4 }}>
+                                        {activeChannel.type === 'direct' ? 'Conversa direta' : `Canal ${activeChannel.type}`}
+                                    </div>
+                                </div>
+                                {/* Stats */}
+                                <div style={{
+                                    background: T.elevated, borderRadius: T.radius.lg, padding: 14,
+                                    marginBottom: 16, border: `1px solid ${T.borderLight}`,
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                        <span style={{ fontSize: 12, color: T.textDim }}>Mensagens</span>
+                                        <span style={{ fontSize: 12, fontWeight: 700, color: T.text, fontFamily: T.font.mono }}>
+                                            {activeChannel.message_count}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                        <span style={{ fontSize: 12, color: T.textDim }}>Criado em</span>
+                                        <span style={{ fontSize: 12, fontWeight: 600, color: T.text }}>
+                                            {activeChannel.created_at ? new Date(activeChannel.created_at).toLocaleDateString('pt-BR') : '—'}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span style={{ fontSize: 12, color: T.textDim }}>Tipo</span>
+                                        <span style={{ fontSize: 12, fontWeight: 600, color: T.gold, textTransform: 'capitalize' }}>
+                                            {activeChannel.type}
+                                        </span>
+                                    </div>
+                                </div>
+                                {/* Members */}
+                                {activeChannel.members && activeChannel.members.length > 0 && (
+                                    <div>
+                                        <div style={{ fontSize: 12, fontWeight: 700, color: T.textMuted, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                            <Users size={12} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                                            Membros ({activeChannel.members.length})
+                                        </div>
+                                        {activeChannel.members.map((member: { user_id: string; role?: string }) => (
+                                            <div key={member.user_id} style={{
+                                                display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0',
+                                                borderBottom: `1px solid ${T.borderLight}`,
+                                            }}>
+                                                <ChatAvatar name={member.user_id.slice(0, 6)} size={28} />
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <div style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                        {member.user_id === user.id ? 'Você' : member.user_id.slice(0, 8)}
+                                                    </div>
+                                                    {member.role && (
+                                                        <div style={{ fontSize: 10, color: T.textDim, textTransform: 'capitalize' }}>{member.role}</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
-            {/* Mobile layout: list OR chat */}
-            <div className="flex md:hidden" style={{ width: '100%', height: '100%' }}>
+            {/* Mobile layout: list OR chat (full screen) */}
+            <div className="flex md:hidden" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
                 {mobileView === 'list' ? channelList : chatArea}
             </div>
         </div>

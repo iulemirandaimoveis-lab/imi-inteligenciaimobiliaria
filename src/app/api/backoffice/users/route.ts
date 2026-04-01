@@ -35,21 +35,37 @@ export async function POST(request: Request) {
         const tempPassword = crypto.randomUUID().slice(0, 12) + 'A1!'
         const validRole = role || 'EDITOR'
         if (hasServiceKey) {
-            // Check for existing user with this email first
-            const { data: { users: existingUsers } } = await supabaseAdmin.auth.admin.listUsers()
-            const existingUser = existingUsers?.find(u => u.email === email)
-            if (existingUser) {
-                // User exists in auth — sync to profiles/brokers and return success
-                const existingId = existingUser.id
+            // Check for existing user with this email (efficient — no listUsers)
+            const { data: existingProfile } = await supabaseAdmin
+                .from('profiles')
+                .select('id')
+                .eq('email', email)
+                .maybeSingle()
+
+            if (existingProfile) {
+                // User exists — sync to profiles/brokers and return success
+                const existingId = existingProfile.id
                 await supabaseAdmin.from('profiles').upsert({
                     id: existingId, email, name, role: validRole.toLowerCase()
                 })
-                await supabaseAdmin.from('brokers').upsert({
-                    user_id: existingId, name, email, status: 'active',
-                    role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
-                    permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
-                    updated_at: new Date().toISOString(),
-                }, { onConflict: 'user_id' })
+                // Upsert broker — handle both user_id and email unique constraints
+                const { data: existingBroker } = await supabaseAdmin
+                    .from('brokers').select('id').eq('email', email).maybeSingle()
+                if (existingBroker) {
+                    await supabaseAdmin.from('brokers').update({
+                        user_id: existingId, name, status: 'active',
+                        role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
+                        permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
+                        updated_at: new Date().toISOString(),
+                    }).eq('id', existingBroker.id)
+                } else {
+                    await supabaseAdmin.from('brokers').upsert({
+                        user_id: existingId, name, email, status: 'active',
+                        role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
+                        permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
+                        updated_at: new Date().toISOString(),
+                    }, { onConflict: 'user_id' })
+                }
                 return NextResponse.json({
                     success: true,
                     user: { id: existingId, email, name, role: validRole },
@@ -79,16 +95,21 @@ export async function POST(request: Request) {
                 console.error('Profiles sync error:', profileError.message)
             }
             // Sync to brokers table so user appears in Equipe
-            const { error: brokerError } = await supabaseAdmin.from('brokers').upsert({
+            // Check by email first to avoid unique constraint violation on email
+            const { data: existingBrokerByEmail } = await supabaseAdmin
+                .from('brokers').select('id').eq('email', email).maybeSingle()
+            const brokerPayload = {
                 user_id: newUserId,
                 name,
                 email,
                 status: 'active',
                 role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
                 permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
-                created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
-            }, { onConflict: 'user_id' })
+            }
+            const { error: brokerError } = existingBrokerByEmail
+                ? await supabaseAdmin.from('brokers').update(brokerPayload).eq('id', existingBrokerByEmail.id)
+                : await supabaseAdmin.from('brokers').insert({ ...brokerPayload, created_at: new Date().toISOString() })
             if (brokerError) {
                 console.error('Brokers sync error:', brokerError.message)
             }
@@ -205,6 +226,51 @@ export async function DELETE(request: Request) {
             })
         }
         return NextResponse.json({ success: true })
+    } catch (error: unknown) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
+    }
+}
+export async function PATCH(request: Request) {
+    try {
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        // Check admin
+        const client = hasServiceKey ? supabaseAdmin : supabase
+        const { data: callerRow } = await client.from('profiles').select('role').eq('id', user.id).single()
+        const isAdmin = callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN', 'super_admin', 'owner'].includes(callerRow.role)
+        if (!isAdmin) return NextResponse.json({ error: 'Apenas administradores' }, { status: 403 })
+
+        const body = await request.json()
+        const { id, action } = body
+        if (!id || action !== 'reset_password') {
+            return NextResponse.json({ error: 'Parâmetros inválidos' }, { status: 400 })
+        }
+        if (!hasServiceKey) {
+            return NextResponse.json({ error: 'Service role key não configurada' }, { status: 500 })
+        }
+
+        // Look up user email
+        const { data: profile } = await supabaseAdmin.from('profiles').select('email, name').eq('id', id).single()
+        if (!profile?.email) {
+            return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+        }
+
+        // Generate recovery link — Supabase sends the email automatically
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
+        const { error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+            type: 'recovery',
+            email: profile.email,
+            options: { redirectTo: `${siteUrl}/login?reset=true` },
+        })
+        if (linkError) {
+            return NextResponse.json({ error: `Erro ao gerar link: ${linkError.message}` }, { status: 500 })
+        }
+
+        return NextResponse.json({
+            success: true,
+            message: `Link de recuperação enviado para ${profile.email}`,
+        })
     } catch (error: unknown) {
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
     }

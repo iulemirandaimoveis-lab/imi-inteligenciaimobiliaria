@@ -122,8 +122,9 @@ export async function POST(request: NextRequest) {
             cost_usd: aiResult.cost_usd,
         });
     } catch (error: unknown) {
+        console.error('[AI generate-from-suggestion] error:', error instanceof Error ? error.message : error)
         return NextResponse.json(
-            { error: error instanceof Error ? error.message : 'Internal Server Error' },
+            { error: 'Erro ao gerar conteúdo a partir da sugestão. Tente novamente.' },
             { status: 500 }
         );
     }

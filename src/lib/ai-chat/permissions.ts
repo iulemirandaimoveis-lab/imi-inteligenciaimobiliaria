@@ -65,7 +65,7 @@ export async function resolveUserPermissions(
     const uo = userOverride as any
     const base: AIPermissions = {
         chatEnabled: rp?.chat_enabled ?? true,  // Default to enabled when no role config exists
-        allowedModels: rp?.allowed_models ?? ['claude-haiku-4-5-20251001'],
+        allowedModels: rp?.allowed_models ?? ['claude-haiku-4-5-20251001', 'claude-sonnet-4-6'],
         dailyTokenLimit: rp?.daily_token_limit ?? 50000,
         maxConversationsPerDay: rp?.max_conversations_per_day ?? 20,
         canUseToolActions: rp?.can_use_tool_actions ?? false,

@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Plus, Zap, TrendingUp, Users, Flame, Download } from 'lucide-react'
+import { Search, Plus, Zap, TrendingUp, Users, Flame, Download, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react'
 import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
@@ -56,14 +56,22 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [searchFocused, setSearchFocused] = useState(false)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [refreshing, setRefreshing] = useState(false)
+  const LIMIT = 100
 
-  useEffect(() => {
-    fetch('/api/leads')
-      .then(r => r.ok ? r.json() : [])
+  const fetchLeads = useCallback((pageNum = 1, isRefresh = false) => {
+    if (isRefresh) setRefreshing(true)
+    else setLoading(true)
+    fetch(`/api/leads?page=${pageNum}&limit=${LIMIT}`)
+      .then(r => r.ok ? r.json() : { data: [] })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((json: any) => {
-        // API returns { data: [...], pagination: {} } or [] on error
         const data = json.data || (Array.isArray(json) ? json : [])
+        if (json.pagination) {
+          setTotalPages(json.pagination.pages || 1)
+        }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setLeads(data.map((l: any) => ({
           id: l.id,
@@ -82,8 +90,10 @@ export default function LeadsPage() {
         })))
       })
       .catch(() => { toast.error('Erro ao carregar leads') })
-      .finally(() => setLoading(false))
+      .finally(() => { setLoading(false); setRefreshing(false) })
   }, [])
+
+  useEffect(() => { fetchLeads(page) }, [page, fetchLeads])
 
   // ── Stats ──────────────────────────────────────────────────────
   const stats = useMemo(() => ({
@@ -134,6 +144,21 @@ export default function LeadsPage() {
           live
           actions={
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <motion.button
+                whileTap={{ scale: 0.93 }}
+                onClick={() => fetchLeads(page, true)}
+                disabled={refreshing}
+                title="Atualizar"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  height: '36px', width: '36px', borderRadius: '10px',
+                  color: 'var(--text-secondary)',
+                  background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
+                  cursor: 'pointer',
+                }}
+              >
+                <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
+              </motion.button>
               <motion.button
                 whileTap={{ scale: 0.93 }}
                 onClick={() => {
@@ -379,6 +404,46 @@ export default function LeadsPage() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+            padding: '16px 0',
+          }}>
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                padding: '8px 12px', borderRadius: 8,
+                fontSize: 12, fontWeight: 600,
+                background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
+                color: page <= 1 ? 'var(--text-secondary)' : 'var(--text-primary)',
+                cursor: page <= 1 ? 'default' : 'pointer', opacity: page <= 1 ? 0.5 : 1,
+              }}
+            >
+              <ChevronLeft size={14} /> Anterior
+            </button>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+              {page} / {totalPages}
+            </span>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                padding: '8px 12px', borderRadius: 8,
+                fontSize: 12, fontWeight: 600,
+                background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
+                color: page >= totalPages ? 'var(--text-secondary)' : 'var(--text-primary)',
+                cursor: page >= totalPages ? 'default' : 'pointer', opacity: page >= totalPages ? 0.5 : 1,
+              }}
+            >
+              Próxima <ChevronRight size={14} />
+            </button>
+          </div>
+        )}
       </motion.div>
 
     </div>

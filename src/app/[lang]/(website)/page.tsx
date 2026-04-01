@@ -7,11 +7,15 @@ export async function generateMetadata({ params }: { params: { lang: string } })
     return PAGE_METADATA.home(params.lang)
 }
 
+import { Suspense } from 'react'
+import dynamic from 'next/dynamic'
 import Hero from '@/components/home/Hero'
-import Services from '@/components/home/Services'
 import FeaturedDevelopments from '@/components/home/FeaturedDevelopments'
-import Method from '@/components/home/Method'
-import CTA from '@/components/home/CTA'
+
+// Below-the-fold client components — lazy loaded for faster LCP
+const Services = dynamic(() => import('@/components/home/Services'))
+const Method = dynamic(() => import('@/components/home/Method'))
+const CTA = dynamic(() => import('@/components/home/CTA'))
 
 export default async function HomePage({ params }: { params: { lang: 'pt' | 'en' | 'ja' } }) {
     const dict = await getDictionary(params.lang)
@@ -20,7 +24,9 @@ export default async function HomePage({ params }: { params: { lang: 'pt' | 'en'
         <div style={{ background: 'var(--bg-void)' }}>
             <Hero dict={dict.Home} />
             <Services dict={dict.Home} />
-            <FeaturedDevelopments lang={params.lang} />
+            <Suspense fallback={<div style={{ minHeight: 400 }} />}>
+                <FeaturedDevelopments lang={params.lang} />
+            </Suspense>
             <Method dict={dict.Home} />
             <CTA dict={dict.Home} />
         </div>

@@ -43,6 +43,24 @@ export function TeamPresencePanel() {
       setLoading(false)
     }
     load()
+
+    // Subscribe to realtime presence updates
+    const channel = supabase
+      .channel('presence-panel-updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, (payload) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rec = payload.new as any
+        if (rec?.user_id && rec?.status) {
+          setPresenceMap((prev) => {
+            const next = new Map(prev)
+            next.set(rec.user_id, rec.status as PresenceStatus)
+            return next
+          })
+        }
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
   }, [supabase])
 
   const getStatus = (userId: string): PresenceStatus => {
@@ -141,7 +159,7 @@ export function TeamPresencePanel() {
                           position: 'relative', border: '1px solid var(--bdr)', flexShrink: 0,
                         }}>
                           {member.avatar_url ? (
-                            <img src={member.avatar_url} alt="" style={{ width: '100%', height: '100%', borderRadius: 8, objectFit: 'cover' }} />
+                            <img src={member.avatar_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', borderRadius: 8, objectFit: 'cover' }} />
                           ) : (
                             <span>{(member.name || '?')[0].toUpperCase()}</span>
                           )}

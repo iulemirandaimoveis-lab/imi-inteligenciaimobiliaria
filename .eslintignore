@@ -1,0 +1,12 @@
+# Dependencies
+node_modules
+
+# Next.js build output
+.next
+
+# Generated service worker files (next-pwa)
+public/sw.js
+public/workbox-*.js
+
+# Claude Code workspace
+.claude/

@@ -23,21 +23,26 @@ export default function Toast({ message, type = 'success', duration = 3000, onCl
   }, [duration, onClose])
 
   const icons = {
-    success: <CheckCircle className="w-5 h-5" />,
-    error: <AlertCircle className="w-5 h-5" />,
-    info: <Info className="w-5 h-5" />
+    success: <CheckCircle className="w-5 h-5 text-emerald-400" />,
+    error: <AlertCircle className="w-5 h-5 text-rose-400" />,
+    info: <Info className="w-5 h-5 text-gold-400" />
   }
 
-  const colors = {
-    success: 'bg-green-50 border-green-200 text-green-800',
-    error: 'bg-red-50 border-red-200 text-red-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800'
+  const borderColors = {
+    success: 'border-l-emerald-500',
+    error: 'border-l-rose-500',
+    info: 'border-l-gold-400',
   }
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg transition-all duration-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
-        } ${colors[type]}`}
+      className={`fixed top-4 right-4 z-[70] flex items-center gap-3 px-4 py-3 rounded-lg border border-gold-700/30 border-l-[3px] shadow-lg backdrop-blur-sm transition-all duration-300 font-sans
+        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}
+        ${borderColors[type]}`}
+      style={{
+        background: 'var(--imi-navy-900, #0B1120)',
+        color: 'var(--imi-gold-100, #F4EACC)',
+      }}
     >
       {icons[type]}
       <p className="text-sm font-medium">{message}</p>
@@ -46,7 +51,7 @@ export default function Toast({ message, type = 'success', duration = 3000, onCl
           setIsVisible(false)
           setTimeout(onClose, 300)
         }}
-        className="ml-2 hover:opacity-70 transition-opacity"
+        className="ml-2 text-gold-300 hover:text-gold-100 transition-opacity"
       >
         <X className="w-4 h-4" />
       </button>

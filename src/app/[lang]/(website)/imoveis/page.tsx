@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import ImoveisClient from './ImoveisClient'
-import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
+import { mapDbPropertyToDevelopment, mapRentalToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { PAGE_METADATA } from '@/lib/page-metadata'
 
 // Public anon client — uses RLS policies (anon_read on developments/developers)
@@ -40,15 +41,27 @@ export default async function ImoveisPage({
             query = query.eq('developer_id', dev.id)
         }
     }
-    const { data, error } = await query
+    const [{ data, error }, { data: rentals, error: rentalError }] = await Promise.all([
+        query,
+        supabaseAdmin
+            .from('rental_properties')
+            .select('*')
+            .eq('status', 'active')
+            .order('created_at', { ascending: false }),
+    ])
     if (error) {
         console.error('[ImoveisPage] Query error:', error.message, error.code, error.details)
     }
-    console.log(`[ImoveisPage] Fetched ${data?.length ?? 0} developments, error: ${!!error}`)
-    const developments = (data || []).map(mapDbPropertyToDevelopment)
+    if (rentalError) {
+        console.error('[ImoveisPage] Rental query error:', rentalError.message)
+    }
+    const saleDevelopments = (data || []).map(mapDbPropertyToDevelopment)
+    const rentalDevelopments = (rentals || []).map(mapRentalToDevelopment)
+    const allDevelopments = [...saleDevelopments, ...rentalDevelopments]
+    console.log(`[ImoveisPage] Fetched ${saleDevelopments.length} sales + ${rentalDevelopments.length} rentals`)
     return (
         <ImoveisClient
-            initialDevelopments={developments}
+            initialDevelopments={allDevelopments}
             lang={params.lang || 'pt'}
         />
     )

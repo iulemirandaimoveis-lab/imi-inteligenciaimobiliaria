@@ -1,19 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     Handshake, ArrowLeftRight, Search, MessageSquare,
     Building2, DollarSign, CheckCircle, Clock,
-    XCircle, TrendingUp, Users, ChevronRight,
+    XCircle, TrendingUp, Users, ChevronRight, X, Loader2, Send,
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { usePartnerships, type Partnership } from '@/hooks/use-partnerships'
 import { PageIntelHeader, KPICard, FilterTabs, type FilterTab } from '../../components/ui'
 import { T } from '../../lib/theme'
 import { formatCurrency } from '@/lib/format'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 
 /* ─── STATUS CONFIG ───────────────────────────────────────────── */
@@ -212,11 +214,183 @@ function EmptyParcerias() {
     )
 }
 
+/* ─── NEW PARTNERSHIP MODAL ───────────────────────────────────── */
+function NewPartnershipModal({
+    prefill,
+    onClose,
+    onCreated,
+}: {
+    prefill: { property_id: string; property_name: string; owner_broker_id: string }
+    onClose: () => void
+    onCreated: (id: string) => void
+}) {
+    const [message, setMessage] = useState('')
+    const [ownerPct, setOwnerPct] = useState(50)
+    const [partnerPct, setPartnerPct] = useState(50)
+    const [propertyPrice, setPropertyPrice] = useState<number>(0)
+    const [submitting, setSubmitting] = useState(false)
+    const [loadingPrice, setLoadingPrice] = useState(true)
+
+    useEffect(() => {
+        const supabase = createClient()
+        supabase.from('developments').select('price_from').eq('id', prefill.property_id).single()
+            .then(({ data }) => {
+                if (data?.price_from) setPropertyPrice(Number(data.price_from))
+                setLoadingPrice(false)
+            })
+    }, [prefill.property_id])
+
+    const handleSubmit = async () => {
+        if (!message.trim()) { toast.error('Escreva uma mensagem para o corretor'); return }
+        if (propertyPrice <= 0) { toast.error('Preço do imóvel inválido'); return }
+        setSubmitting(true)
+        try {
+            const res = await fetch('/api/partnerships', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    property_id: prefill.property_id,
+                    property_name: prefill.property_name,
+                    property_price: propertyPrice,
+                    owner_broker_id: prefill.owner_broker_id,
+                    message: message.trim(),
+                    commission_owner_pct: ownerPct,
+                    commission_partner_pct: partnerPct,
+                }),
+            })
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}))
+                throw new Error(err.error || 'Erro ao criar parceria')
+            }
+            const json = await res.json()
+            toast.success('Parceria proposta com sucesso!')
+            onCreated(json.data?.id || json.id)
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Erro ao criar parceria')
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full max-w-lg rounded-xl overflow-hidden"
+                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+            >
+                {/* Header */}
+                <div className="flex items-center justify-between p-5 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(200,164,74,0.15)' }}>
+                            <Handshake size={18} style={{ color: 'var(--gold, #C8A44A)' }} />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold" style={{ color: T.text }}>Propor Parceria</h3>
+                            <p className="text-[11px]" style={{ color: T.textMuted }}>Inicie uma colaboração comercial</p>
+                        </div>
+                    </div>
+                    <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textMuted, cursor: 'pointer' }}>
+                        <X size={14} />
+                    </button>
+                </div>
+
+                {/* Body */}
+                <div className="p-5 space-y-4">
+                    {/* Property info */}
+                    <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: T.surface, border: `1px solid ${T.borderLight}` }}>
+                        <Building2 size={16} style={{ color: 'var(--info)', flexShrink: 0 }} />
+                        <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{prefill.property_name}</p>
+                            <p className="text-[11px] font-mono" style={{ color: T.textMuted }}>
+                                {loadingPrice ? '...' : formatCurrency(propertyPrice)}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Commission split */}
+                    <div>
+                        <label className="text-[10px] font-bold uppercase tracking-widest mb-2 block" style={{ color: T.textDim }}>
+                            Comissão (Proprietário / Parceiro)
+                        </label>
+                        <div className="flex items-center gap-3">
+                            <div className="flex-1">
+                                <input
+                                    type="range" min={10} max={90} value={ownerPct}
+                                    onChange={(e) => { const v = Number(e.target.value); setOwnerPct(v); setPartnerPct(100 - v) }}
+                                    className="w-full accent-[var(--gold,#C8A44A)]"
+                                />
+                            </div>
+                            <span className="text-sm font-mono font-bold min-w-[90px] text-center" style={{ color: T.text }}>
+                                {ownerPct}% / {partnerPct}%
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Message */}
+                    <div>
+                        <label className="text-[10px] font-bold uppercase tracking-widest mb-2 block" style={{ color: T.textDim }}>
+                            Mensagem inicial
+                        </label>
+                        <textarea
+                            rows={3}
+                            placeholder="Olá, gostaria de propor uma parceria neste imóvel..."
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            className="w-full rounded-lg p-3 text-sm outline-none resize-none"
+                            style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
+                        />
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-end gap-3 p-5 pt-3" style={{ borderTop: `1px solid ${T.border}` }}>
+                    <button
+                        onClick={onClose}
+                        className="h-9 px-4 rounded-lg text-xs font-bold uppercase tracking-wider"
+                        style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textMuted, cursor: 'pointer' }}
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={submitting || !message.trim() || loadingPrice}
+                        className="h-9 px-5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 disabled:opacity-50"
+                        style={{ background: 'var(--gold, #C8A44A)', color: '#0B1928', cursor: submitting ? 'wait' : 'pointer' }}
+                    >
+                        {submitting ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
+                        Enviar Proposta
+                    </button>
+                </div>
+            </motion.div>
+        </div>
+    )
+}
+
 /* ─── MAIN PAGE ───────────────────────────────────────────────── */
 export default function ParceriasPage() {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const [search, setSearch] = useState('')
     const [tab, setTab] = useState('all')
+
+    // Handle ?new=1 query params from property detail "Propor Parceria" button
+    const [showNewModal, setShowNewModal] = useState(false)
+    const [prefill, setPrefill] = useState<{ property_id: string; property_name: string; owner_broker_id: string } | null>(null)
+
+    useEffect(() => {
+        if (searchParams.get('new') === '1') {
+            const pid = searchParams.get('property_id')
+            const pname = searchParams.get('property_name')
+            const obid = searchParams.get('owner_broker_id')
+            if (pid && pname && obid) {
+                setPrefill({ property_id: pid, property_name: pname, owner_broker_id: obid })
+                setShowNewModal(true)
+            }
+        }
+    }, [searchParams])
 
     const statusFilter = tab === 'active'
         ? 'active'
@@ -252,8 +426,31 @@ export default function ParceriasPage() {
         .filter((p) => p.status === 'completed' && p.sale_value != null)
         .reduce((sum, p) => sum + (p.sale_value ?? 0), 0)
 
+    const handleCloseModal = useCallback(() => {
+        setShowNewModal(false)
+        setPrefill(null)
+        router.replace('/backoffice/parcerias')
+    }, [router])
+
+    const handleCreated = useCallback((id: string) => {
+        setShowNewModal(false)
+        setPrefill(null)
+        router.push(`/backoffice/parcerias/${id}`)
+    }, [router])
+
     return (
         <div className="space-y-6">
+            {/* New Partnership Modal */}
+            <AnimatePresence>
+                {showNewModal && prefill && (
+                    <NewPartnershipModal
+                        prefill={prefill}
+                        onClose={handleCloseModal}
+                        onCreated={handleCreated}
+                    />
+                )}
+            </AnimatePresence>
+
             <PageIntelHeader
                 moduleLabel="PARCERIAS · COMERCIAL"
                 title="Parcerias Comerciais"

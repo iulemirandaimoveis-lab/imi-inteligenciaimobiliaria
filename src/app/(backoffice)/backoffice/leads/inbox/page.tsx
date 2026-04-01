@@ -189,7 +189,7 @@ export default function LeadsInboxPage() {
                         <button
                             key={tab.key}
                             onClick={() => setFilter(tab.key)}
-                            className="flex-shrink-0 h-8 px-4 rounded-[6px] text-[11px] font-bold transition-all"
+                            className="flex-shrink-0 min-h-[44px] h-11 px-4 rounded-[6px] text-[11px] font-bold transition-all"
                             style={{
                                 background: isActive ? (tab.tc?.bg ?? 'rgba(72,101,129,0.2)') : 'transparent',
                                 border: `1px solid ${isActive ? (tab.tc?.border ?? T.accent) : T.border}`,
@@ -330,20 +330,20 @@ export default function LeadsInboxPage() {
                                                 <a
                                                     href={`tel:${lead.phone}`}
                                                     onClick={e => e.stopPropagation()}
-                                                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:scale-110"
+                                                    className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg flex items-center justify-center transition-colors hover:scale-110"
                                                     style={{ background: 'rgba(96,165,250,0.12)', border: '1px solid rgba(96,165,250,0.25)' }}
                                                 >
-                                                    <Phone size={12} style={{ color: '#60A5FA' }} />
+                                                    <Phone size={16} style={{ color: '#60A5FA' }} />
                                                 </a>
                                                 <a
                                                     href={`https://wa.me/55${(lead.phone || '').replace(/\D/g, '')}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     onClick={e => e.stopPropagation()}
-                                                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:scale-110"
+                                                    className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg flex items-center justify-center transition-colors hover:scale-110"
                                                     style={{ background: 'rgba(37,211,102,0.12)', border: '1px solid rgba(37,211,102,0.25)' }}
                                                 >
-                                                    <MessageSquare size={12} style={{ color: '#25D366' }} />
+                                                    <MessageSquare size={16} style={{ color: '#25D366' }} />
                                                 </a>
                                             </div>
                                         </div>

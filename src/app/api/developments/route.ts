@@ -156,7 +156,7 @@ export const GET = apiHandler(null, async (request: NextRequest, _body: unknown,
             .eq('id', id)
             .single()
         if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+            return NextResponse.json({ error: 'Erro ao buscar empreendimento' }, { status: 500 })
         }
         if (!data) {
             return NextResponse.json({ error: 'Empreendimento não encontrado' }, { status: 404 })
@@ -165,14 +165,27 @@ export const GET = apiHandler(null, async (request: NextRequest, _body: unknown,
             headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
         })
     }
-    const { data, error } = await supabase
+    // Paginated list
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
+    const offset = (page - 1) * limit
+    const { data, error, count } = await supabase
         .from('developments')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1)
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+        return NextResponse.json({ error: 'Erro ao buscar empreendimentos' }, { status: 500 })
     }
-    return NextResponse.json(data, {
+    return NextResponse.json({
+        data: data || [],
+        pagination: {
+            page,
+            limit,
+            total: count || 0,
+            pages: Math.ceil((count || 0) / limit),
+        },
+    }, {
         headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
     })
 }, { auth: true })
@@ -224,13 +237,29 @@ export const POST = apiHandler(developmentPostSchema, async (req: NextRequest, b
     for (const key of Object.keys(newDev)) {
         if (newDev[key] === undefined) delete newDev[key]
     }
+    // Auto-geocode if address exists but lat/lng missing
+    if (!newDev.lat && (newDev.address || newDev.neighborhood || newDev.city)) {
+        try {
+            const parts = [newDev.address, newDev.neighborhood, newDev.city, newDev.state, newDev.country].filter(Boolean)
+            const q = encodeURIComponent(parts.join(', '))
+            const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+                headers: { 'User-Agent': 'IMI-Inteligencia-Imobiliaria/1.0' },
+            })
+            const results = await geo.json()
+            if (results?.[0]) {
+                newDev.lat = parseFloat(results[0].lat)
+                newDev.lng = parseFloat(results[0].lon)
+            }
+        } catch { /* geocoding is best-effort */ }
+    }
     const { data, error } = await supabase
         .from('developments')
         .insert(newDev)
         .select()
         .single()
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+        console.error('[API] developments.create error:', error)
+        return NextResponse.json({ error: 'Erro ao criar empreendimento' }, { status: 500 })
     }
     const meta = getRequestMeta(req)
     logAudit({
@@ -287,6 +316,21 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
     for (const key of Object.keys(normalized)) {
         if (normalized[key] === undefined) delete normalized[key]
     }
+    // Auto-geocode on update if address/neighborhood changed but lat/lng not provided
+    if (!normalized.lat && (normalized.address || normalized.neighborhood || normalized.city)) {
+        try {
+            const parts = [normalized.address, normalized.neighborhood, normalized.city, normalized.state, normalized.country].filter(Boolean)
+            const q = encodeURIComponent(parts.join(', '))
+            const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+                headers: { 'User-Agent': 'IMI-Inteligencia-Imobiliaria/1.0' },
+            })
+            const results = await geo.json()
+            if (results?.[0]) {
+                normalized.lat = parseFloat(results[0].lat)
+                normalized.lng = parseFloat(results[0].lon)
+            }
+        } catch { /* geocoding is best-effort */ }
+    }
     const { data, error } = await supabase
         .from('developments')
         .update(normalized)
@@ -294,7 +338,8 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
         .select()
         .single()
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+        console.error('[API] developments.update error:', error)
+        return NextResponse.json({ error: 'Erro ao atualizar empreendimento' }, { status: 500 })
     }
     const meta = getRequestMeta(request)
     logAudit({
@@ -338,7 +383,8 @@ export const PATCH = apiHandler(developmentPatchSchema, async (request: NextRequ
         .select('id, name, status, status_comercial, status_commercial')
         .single()
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+        console.error('[API] developments.status_change error:', error)
+        return NextResponse.json({ error: 'Erro ao alterar status' }, { status: 500 })
     }
     const meta = getRequestMeta(request)
     logAudit({
@@ -370,7 +416,8 @@ export const DELETE = apiHandler(null, async (request: NextRequest, _body: unkno
         .select()
         .single()
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+        console.error('[API] developments.delete error:', error)
+        return NextResponse.json({ error: 'Erro ao excluir empreendimento' }, { status: 500 })
     }
     const meta = getRequestMeta(request)
     logAudit({

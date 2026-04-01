@@ -89,6 +89,7 @@ Regras:
             cost_usd: response.cost_usd,
         })
     } catch (error: unknown) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 })
+        console.error('[AI daily-summary] error:', error instanceof Error ? error.message : error)
+        return NextResponse.json({ error: 'Erro ao gerar resumo diário. Tente novamente.' }, { status: 500 })
     }
 }

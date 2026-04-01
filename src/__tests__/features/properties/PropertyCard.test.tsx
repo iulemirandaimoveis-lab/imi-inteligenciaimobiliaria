@@ -248,6 +248,6 @@ describe('PropertyListRow', () => {
 
   it('shows status label', () => {
     render(<PropertyListRow property={makeProperty({ status: 'em_construcao' })} />)
-    expect(screen.getByText('Construção')).toBeInTheDocument()
+    expect(screen.getByText('Em Construção')).toBeInTheDocument()
   })
 })

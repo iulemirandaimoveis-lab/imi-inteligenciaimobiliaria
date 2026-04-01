@@ -4,15 +4,18 @@
 
 /**
  * Tests for Supabase middleware (updateSession)
- * Verifies: auth redirect logic, subscription enforcement, env var usage
+ * Verifies: auth redirect logic, env var usage
+ *
+ * Note: Subscription enforcement is DISABLED for launch phase.
+ * Billing redirect tests are skipped.
  */
 
-const mockGetSession = jest.fn()
+const mockGetUser = jest.fn()
 
 jest.mock('@supabase/ssr', () => ({
   createServerClient: jest.fn((_url: string, _key: string, _opts: unknown) => ({
     auth: {
-      getSession: mockGetSession,
+      getUser: mockGetUser,
     },
   })),
 }))
@@ -38,7 +41,7 @@ describe('updateSession', () => {
 
   it('passes createServerClient the env vars', async () => {
     const { createServerClient } = require('@supabase/ssr')
-    mockGetSession.mockResolvedValue({ data: { session: null } })
+    mockGetUser.mockResolvedValue({ data: { user: null } })
 
     await updateSession(makeRequest('/'))
 
@@ -50,7 +53,7 @@ describe('updateSession', () => {
   })
 
   it('allows public routes without auth', async () => {
-    mockGetSession.mockResolvedValue({ data: { session: null } })
+    mockGetUser.mockResolvedValue({ data: { user: null } })
     const response = await updateSession(makeRequest('/'))
 
     // Should not redirect
@@ -59,7 +62,7 @@ describe('updateSession', () => {
   })
 
   it('redirects unauthenticated users from /backoffice to /login', async () => {
-    mockGetSession.mockResolvedValue({ data: { session: null } })
+    mockGetUser.mockResolvedValue({ data: { user: null } })
     const response = await updateSession(makeRequest('/backoffice'))
 
     expect(response.status).toBe(307)
@@ -69,7 +72,7 @@ describe('updateSession', () => {
   })
 
   it('redirects unauthenticated users from /backoffice/imoveis to /login', async () => {
-    mockGetSession.mockResolvedValue({ data: { session: null } })
+    mockGetUser.mockResolvedValue({ data: { user: null } })
     const response = await updateSession(makeRequest('/backoffice/imoveis'))
 
     expect(response.status).toBe(307)
@@ -79,11 +82,9 @@ describe('updateSession', () => {
   })
 
   it('allows authenticated users to access /backoffice', async () => {
-    mockGetSession.mockResolvedValue({
+    mockGetUser.mockResolvedValue({
       data: {
-        session: {
-          user: { id: 'u1', user_metadata: { subscription_tier: 'pro' } },
-        },
+        user: { id: 'u1', user_metadata: { subscription_tier: 'pro' } },
       },
     })
     const response = await updateSession(makeRequest('/backoffice'))
@@ -93,11 +94,9 @@ describe('updateSession', () => {
   })
 
   it('redirects authenticated users from /login to /backoffice', async () => {
-    mockGetSession.mockResolvedValue({
+    mockGetUser.mockResolvedValue({
       data: {
-        session: {
-          user: { id: 'u1', user_metadata: {} },
-        },
+        user: { id: 'u1', user_metadata: {} },
       },
     })
     const response = await updateSession(makeRequest('/login'))
@@ -106,59 +105,21 @@ describe('updateSession', () => {
     expect(response.headers.get('location')).toContain('/backoffice')
   })
 
-  it('redirects to billing when trial expired and no paid subscription', async () => {
-    const pastDate = new Date(Date.now() - 86400000).toISOString() // yesterday
-    mockGetSession.mockResolvedValue({
-      data: {
-        session: {
-          user: {
-            id: 'u1',
-            user_metadata: {
-              subscription_tier: 'starter',
-              trial_ends_at: pastDate,
-            },
-          },
-        },
-      },
-    })
-    const response = await updateSession(makeRequest('/backoffice/imoveis'))
-
-    expect(response.status).toBe(307)
-    expect(response.headers.get('location')).toContain('/backoffice/billing')
+  it.skip('redirects to billing when trial expired and no paid subscription', async () => {
+    // Subscription enforcement is DISABLED for launch phase
   })
 
-  it('allows access to /backoffice/billing even with expired trial', async () => {
-    const pastDate = new Date(Date.now() - 86400000).toISOString()
-    mockGetSession.mockResolvedValue({
-      data: {
-        session: {
-          user: {
-            id: 'u1',
-            user_metadata: {
-              subscription_tier: 'starter',
-              trial_ends_at: pastDate,
-            },
-          },
-        },
-      },
-    })
-    const response = await updateSession(makeRequest('/backoffice/billing'))
-
-    // Should NOT redirect - billing is exempt
-    expect(response.status).not.toBe(307)
+  it.skip('allows access to /backoffice/billing even with expired trial', async () => {
+    // Subscription enforcement is DISABLED for launch phase
   })
 
-  it('does not redirect when trial has not expired', async () => {
-    const futureDate = new Date(Date.now() + 86400000 * 30).toISOString() // 30 days from now
-    mockGetSession.mockResolvedValue({
+  it('does not redirect when user is authenticated with any tier', async () => {
+    mockGetUser.mockResolvedValue({
       data: {
-        session: {
-          user: {
-            id: 'u1',
-            user_metadata: {
-              subscription_tier: 'starter',
-              trial_ends_at: futureDate,
-            },
+        user: {
+          id: 'u1',
+          user_metadata: {
+            subscription_tier: 'starter',
           },
         },
       },
@@ -169,23 +130,19 @@ describe('updateSession', () => {
   })
 
   it('does not redirect when user has paid tier (pro)', async () => {
-    const pastDate = new Date(Date.now() - 86400000).toISOString()
-    mockGetSession.mockResolvedValue({
+    mockGetUser.mockResolvedValue({
       data: {
-        session: {
-          user: {
-            id: 'u1',
-            user_metadata: {
-              subscription_tier: 'pro',
-              trial_ends_at: pastDate,
-            },
+        user: {
+          id: 'u1',
+          user_metadata: {
+            subscription_tier: 'pro',
           },
         },
       },
     })
     const response = await updateSession(makeRequest('/backoffice/imoveis'))
 
-    // Pro tier should not be redirected even with expired trial
+    // Pro tier should not be redirected
     expect(response.status).not.toBe(307)
   })
 })

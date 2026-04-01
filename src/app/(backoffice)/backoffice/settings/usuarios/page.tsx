@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit, MoreVertical,
-  X, Loader2, UserX,
+  X, Loader2, UserX, KeyRound,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -307,6 +307,30 @@ export default function UsuariosPage() {
                           >
                             <Edit size={13} />
                             <span className="hidden sm:inline">Editar</span>
+                          </button>
+                          {/* Resetar Senha */}
+                          <button
+                            onClick={async () => {
+                              if (!confirm(`Enviar link de redefinição de senha para ${user.email}?`)) return
+                              try {
+                                const res = await fetch('/api/backoffice/users', {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ id: user.id, action: 'reset_password' }),
+                                })
+                                const json = await res.json()
+                                if (!res.ok) throw new Error(json.error || 'Erro')
+                                toast.success(json.message || 'Link enviado com sucesso')
+                              } catch (err) {
+                                toast.error(err instanceof Error ? err.message : 'Erro ao resetar senha')
+                              }
+                            }}
+                            title="Enviar link de redefinição de senha"
+                            className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
+                            style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.25)', color: 'var(--gold, #C8A44A)' }}
+                          >
+                            <KeyRound size={13} />
+                            <span className="hidden sm:inline">Resetar Senha</span>
                           </button>
                           {/* Desativar */}
                           {user.status === 'ativo' && (

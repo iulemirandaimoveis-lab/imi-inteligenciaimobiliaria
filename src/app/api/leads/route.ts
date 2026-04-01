@@ -39,7 +39,8 @@ export const GET = apiHandler(null, async (request: NextRequest, _body: unknown,
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido', data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
+        console.error('[API] leads.list error:', error);
+        return NextResponse.json({ error: 'Erro ao buscar leads', data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
     }
     // Map to the format the frontend expects
     const formatted = (leads || []).map((l: Record<string, unknown>) => ({
@@ -109,7 +110,8 @@ export const POST = apiHandler(leadSchema, async (request: NextRequest, body: z.
         .select()
         .single()
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+        console.error('[API] leads.create error:', error)
+        return NextResponse.json({ error: 'Erro ao criar lead' }, { status: 500 })
     }
     // Audit log
     const meta = getRequestMeta(request)
@@ -208,7 +210,8 @@ export const PUT = apiHandler(leadPutSchema, async (request: NextRequest, body: 
         .select()
         .single()
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+        console.error('[API] leads.update error:', error)
+        return NextResponse.json({ error: 'Erro ao atualizar lead' }, { status: 500 })
     }
     return NextResponse.json({ success: true, lead: data })
 }, { auth: true, auditAction: 'lead.update' })
@@ -225,7 +228,8 @@ export const DELETE = apiHandler(null, async (request: NextRequest, _body: unkno
         .update({ status: 'archived', updated_at: new Date().toISOString() })
         .eq('id', id)
     if (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+        console.error('[API] leads.archive error:', error)
+        return NextResponse.json({ error: 'Erro ao arquivar lead' }, { status: 500 })
     }
     const meta = getRequestMeta(request)
     logAudit({

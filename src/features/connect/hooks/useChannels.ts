@@ -33,7 +33,9 @@ export function useChannels({ userId }: UseChannelsOptions) {
       (data || []).map(async (membership) => {
         const ch = membership.channel as ChatChannel
 
-        const { data: members } = await supabase
+        // Try FK join first, fall back to manual enrichment if it fails
+        let members: ChatMember[] = []
+        const { data: membersData, error: membersError } = await supabase
           .from('chat_members')
           .select(`
             *,
@@ -41,15 +43,40 @@ export function useChannels({ userId }: UseChannelsOptions) {
           `)
           .eq('channel_id', ch.id)
 
+        if (membersError || !membersData) {
+          console.warn('[useChannels] FK join failed, using fallback:', membersError?.message)
+          // Fallback: load members without FK join, then enrich manually
+          const { data: rawMembers } = await supabase
+            .from('chat_members')
+            .select('*')
+            .eq('channel_id', ch.id)
+
+          if (rawMembers && rawMembers.length > 0) {
+            const userIds = rawMembers.map(m => m.user_id)
+            const { data: profiles } = await supabase
+              .from('profiles')
+              .select('id, name, email, avatar_url, role, department')
+              .in('id', userIds)
+            const profileMap = new Map(profiles?.map(p => [p.id, p]) ?? [])
+
+            members = rawMembers.map(m => ({
+              ...m,
+              profile: profileMap.get(m.user_id) || null,
+            })) as ChatMember[]
+          }
+        } else {
+          members = membersData as ChatMember[]
+        }
+
         let otherUser: Profile | undefined
-        if (ch.type === 'direct' && members) {
+        if (ch.type === 'direct' && members.length > 0) {
           const other = members.find((m) => m.user_id !== userId)
           otherUser = other?.profile as Profile | undefined
         }
 
         return {
           ...ch,
-          members: (members as ChatMember[]) || [],
+          members,
           my_membership: membership as ChatMember,
           other_user: otherUser,
           total_unread: membership.unread_count || 0,
@@ -197,6 +224,7 @@ export function useChannels({ userId }: UseChannelsOptions) {
     teamChannels: channels.filter((c) => c.type === 'team'),
     directMessages: channels.filter((c) => c.type === 'direct'),
     dealRooms: channels.filter((c) => c.type === 'deal_room'),
+    partnershipChannels: channels.filter((c) => c.type === 'partnership'),
   }
 }
 

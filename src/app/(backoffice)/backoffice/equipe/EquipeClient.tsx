@@ -170,6 +170,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
         setConfirmDelete(null)
         setDeleting(member.id)
         try {
+            // Hard delete — removes broker, profile, and auth user
             const res = await fetch(`/api/equipe?id=${member.id}`, { method: 'DELETE' })
             if (!res.ok) {
                 const json = await res.json()
@@ -251,7 +252,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
             {activeView === 'team' && <>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {KPIS.map((k, i) => (
                     <motion.div key={k.label}
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}

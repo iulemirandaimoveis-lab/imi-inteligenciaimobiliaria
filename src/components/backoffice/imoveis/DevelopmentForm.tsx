@@ -276,7 +276,7 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                                         maxFiles={20}
                                     />
                                     {gallery.length > 0 && (
-                                        <div className="flex items-center gap-2 p-3 bg-blue-50 text-blue-700 text-xs rounded-lg border border-blue-100">
+                                        <div className="flex items-center gap-2 p-3 bg-navy-50 text-navy-700 text-xs rounded-lg border border-navy-100">
                                             <span className="font-bold">Nota:</span> A imagem #1 será usada como capa nos Cards do site.
                                         </div>
                                     )}

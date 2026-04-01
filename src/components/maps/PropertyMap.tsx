@@ -54,7 +54,7 @@ interface Region {
 }
 
 const REGIONS: Region[] = [
-    { id: 'todos', label: 'Todos', flag: '🌎', center: [-38.5, -8.5], zoom: 4 },
+    { id: 'todos', label: 'Todos', flag: '🌎', center: [-46.0, -14.0], zoom: 4 },
     { id: 'nordeste', label: 'Nordeste', flag: '🇧🇷', center: [-34.9, -7.8], zoom: 7 },
     { id: 'sao-paulo', label: 'São Paulo', flag: '🇧🇷', center: [-46.67, -23.58], zoom: 12 },
     { id: 'dubai', label: 'Dubai', flag: '🇦🇪', center: [55.18, 25.08], zoom: 11 },
@@ -62,13 +62,14 @@ const REGIONS: Region[] = [
 ]
 
 function getRegionId(dev: Development): string {
-    const country = dev.location.country?.toLowerCase() || ''
-    const state = dev.location.state?.toUpperCase() || ''
-    if (country.includes('emirados') || country.includes('uae') || dev.location.city?.toLowerCase().includes('dubai'))
+    const country = (dev.location.country ?? '').toLowerCase().trim()
+    const state = (dev.location.state ?? '').toUpperCase().trim()
+    const city = (dev.location.city ?? '').toLowerCase().trim()
+    if (country.includes('emirados') || country.includes('uae') || country.includes('united arab') || city.includes('dubai'))
         return 'dubai'
-    if (country.includes('estados unidos') || country.includes('usa') || country.includes('united states'))
+    if (country.includes('estados unidos') || country.includes('usa') || country.includes('united states') || country.includes('eua'))
         return 'eua'
-    if (state === 'SP' || dev.location.city?.toLowerCase().includes('são paulo'))
+    if (state === 'SP' || city.includes('são paulo') || city.includes('sao paulo'))
         return 'sao-paulo'
     return 'nordeste' // Default for Brazilian NE properties
 }
@@ -112,13 +113,15 @@ export default function PropertyMap({
     const validDevelopments = useMemo(() =>
         developments.filter(
             (d) =>
-                d.location.coordinates?.lat !== 0 &&
-                d.location.coordinates?.lng !== 0 &&
                 d.location.coordinates?.lat != null &&
-                d.location.coordinates?.lng != null
+                d.location.coordinates?.lng != null &&
+                d.location.coordinates.lat !== 0 &&
+                d.location.coordinates.lng !== 0
         ),
         [developments]
     )
+
+    const excludedCount = developments.length - validDevelopments.length
 
     // Group by region
     const regionMap = useMemo(() => {
@@ -159,6 +162,7 @@ export default function PropertyMap({
 
         devs.forEach((dev) => {
             const { lat, lng } = dev.location.coordinates
+            if (lat == null || lng == null) return
             const statusColor = STATUS_COLORS[dev.status] || '#60A5FA'
 
             const el = document.createElement('div')
@@ -406,6 +410,7 @@ export default function PropertyMap({
         setSelectedProperty(null)
 
         // For specific regions, fly to their center immediately for a snappier UX
+        // For "todos", fitToDevs will be called by the useEffect when filteredDevelopments changes
         if (regionId !== 'todos' && map.current) {
             const region = REGIONS.find(r => r.id === regionId)
             if (region) {
@@ -415,8 +420,11 @@ export default function PropertyMap({
                     duration: 600,
                 })
             }
+        } else if (regionId === 'todos' && map.current) {
+            // For "todos", immediately fit to all valid developments
+            fitToDevs(validDevelopments, true)
         }
-    }, [])
+    }, [fitToDevs, validDevelopments])
 
     // ─── External selectedId sync ────────────────────────────────────────────
 
@@ -557,6 +565,23 @@ export default function PropertyMap({
                     fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
                 }}>
                     {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
+                </div>
+            )}
+
+            {/* Excluded properties badge */}
+            {mapLoaded && excludedCount > 0 && (
+                <div style={{
+                    position: 'absolute', bottom: 14, left: 14, zIndex: 5,
+                    background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(12px)',
+                    color: '#948F84', fontSize: 11, fontWeight: 500,
+                    padding: '5px 12px', borderRadius: 10,
+                    border: '1px solid rgba(0,0,0,0.06)',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+                    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+                    display: 'flex', alignItems: 'center', gap: 5,
+                }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#948F84" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {excludedCount} {excludedCount === 1 ? 'imovel' : 'imoveis'} sem localizacao
                 </div>
             )}
 

@@ -229,7 +229,7 @@ export default function AlinhamentoPage() {
           Departamento
         </span>
         <span className="flex items-center gap-1.5">
-          <User className="w-3.5 h-3.5 text-purple-400" />
+          <User className="w-3.5 h-3.5 text-navy-400" />
           Individual
         </span>
         <span style={{ color: T.textDim }}>|</span>

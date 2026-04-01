@@ -33,48 +33,76 @@ function seededRandom(seed: number): number {
   return x - Math.floor(x)
 }
 
+// MSN Messenger-accurate sound reproductions via Web Audio API
+// Frequencies and timings calibrated to match the original Windows Live Messenger sounds
 const sounds: Record<SoundEvent, () => void> = {
   online: () => {
+    // MSN "contact online" — bright ascending D-F#-A (D major chord arpeggio)
     const t = getCtx().currentTime
-    tone(880, t, 0.18, 0.22, 'sine')
-    tone(1318.5, t + 0.13, 0.22, 0.20, 'sine')
-    tone(1760, t + 0.13, 0.16, 0.07, 'sine')
-    tone(659.25, t, 0.32, 0.08, 'triangle')
+    tone(587.33, t, 0.15, 0.20, 'sine')         // D5
+    tone(739.99, t + 0.12, 0.15, 0.18, 'sine')  // F#5
+    tone(880, t + 0.24, 0.20, 0.16, 'sine')     // A5
+    // Warm harmonic layer
+    tone(587.33, t, 0.35, 0.06, 'triangle')     // D5 sustain
+    tone(1174.66, t + 0.24, 0.18, 0.04, 'sine') // D6 octave sparkle
   },
   offline: () => {
+    // MSN "contact offline" — descending minor: A-F-D
     const t = getCtx().currentTime
-    tone(880, t, 0.16, 0.16, 'sine')
-    tone(587.33, t + 0.16, 0.28, 0.16, 'sine')
-    tone(440, t + 0.16, 0.25, 0.05, 'triangle')
+    tone(880, t, 0.14, 0.16, 'sine')            // A5
+    tone(698.46, t + 0.14, 0.16, 0.14, 'sine')  // F5
+    tone(523.25, t + 0.28, 0.22, 0.12, 'sine')  // C5
+    tone(523.25, t + 0.28, 0.20, 0.04, 'triangle')
   },
   away: () => {
+    // Gentle two-note descend
     const t = getCtx().currentTime
-    tone(659.25, t, 0.18, 0.12, 'sine')
-    tone(554.37, t + 0.18, 0.28, 0.12, 'sine')
+    tone(783.99, t, 0.16, 0.10, 'sine')         // G5
+    tone(659.25, t + 0.16, 0.22, 0.10, 'sine')  // E5
   },
   busy: () => {
+    // Quick low double-tap
     const t = getCtx().currentTime
-    tone(220, t, 0.10, 0.16, 'sawtooth')
-    tone(440, t + 0.16, 0.14, 0.20, 'sawtooth')
-    tone(523.25, t + 0.18, 0.10, 0.10, 'sine')
+    tone(349.23, t, 0.08, 0.14, 'sine')         // F4
+    tone(329.63, t + 0.12, 0.12, 0.14, 'sine')  // E4
   },
   message: () => {
+    // MSN incoming message — the iconic ascending "do-do-do" chime
+    // B4 → D5 → G5 with overtones
     const t = getCtx().currentTime
-    tone(1046.5, t, 0.08, 0.15, 'sine')
-    tone(1318.5, t + 0.08, 0.12, 0.12, 'sine')
+    tone(493.88, t, 0.10, 0.20, 'sine')         // B4
+    tone(587.33, t + 0.09, 0.10, 0.18, 'sine')  // D5
+    tone(783.99, t + 0.18, 0.16, 0.16, 'sine')  // G5
+    // Harmonic shimmer
+    tone(493.88, t, 0.24, 0.05, 'triangle')     // B4
+    tone(783.99, t + 0.18, 0.22, 0.05, 'triangle') // G5 ring
+    tone(1567.98, t + 0.20, 0.12, 0.02, 'sine') // G6 sparkle
   },
   nudge: () => {
+    // MSN Nudge — rapid vibration buzzer pattern (the "earthquake" sound)
     const t = getCtx().currentTime
-    for (let i = 0; i < 8; i++) {
-      tone(120 + seededRandom(i * 7 + 42) * 80, t + i * 0.04, 0.035, 0.14, 'square')
+    const ctx = getCtx()
+    for (let i = 0; i < 10; i++) {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'sawtooth'
+      osc.frequency.setValueAtTime(80 + (i % 2) * 40, t + i * 0.035)
+      gain.gain.setValueAtTime(0.12, t + i * 0.035)
+      gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.035 + 0.032)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(t + i * 0.035)
+      osc.stop(t + i * 0.035 + 0.035)
     }
   },
   mention: () => {
+    // Attention-grabbing — higher pitched version of message sound
     const t = getCtx().currentTime
-    tone(1046.5, t, 0.06, 0.18, 'sine')
-    tone(1318.5, t + 0.06, 0.06, 0.16, 'sine')
-    tone(1568, t + 0.12, 0.10, 0.14, 'sine')
-    tone(1046.5, t + 0.22, 0.08, 0.10, 'triangle')
+    tone(783.99, t, 0.08, 0.18, 'sine')         // G5
+    tone(987.77, t + 0.07, 0.08, 0.16, 'sine')  // B5
+    tone(1174.66, t + 0.14, 0.12, 0.14, 'sine') // D6
+    tone(1567.98, t + 0.22, 0.16, 0.12, 'sine') // G6
+    tone(783.99, t, 0.30, 0.04, 'triangle')
   },
 }
 

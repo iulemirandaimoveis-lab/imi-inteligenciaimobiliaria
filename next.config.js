@@ -31,8 +31,7 @@ const nextConfig = {
         ignoreDuringBuilds: true, // TODO: fix ESLint errors then set to false
     },
     typescript: {
-        // TODO: re-enable after fixing all TS errors (Doc 19-F)
-        ignoreBuildErrors: true,
+        ignoreBuildErrors: false,
     },
     images: {
         remotePatterns: [
@@ -58,6 +57,7 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: '2mb',
         },
+        optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'sonner', 'date-fns'],
     },
     // Security headers
     async headers() {

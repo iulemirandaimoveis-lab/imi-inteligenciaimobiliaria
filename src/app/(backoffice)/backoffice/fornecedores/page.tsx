@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
+import Image from 'next/image'
 import {
   Building2, Search, Upload, Globe, Filter, Plus,
   ChevronRight, Star, FileText, Loader2, X, ExternalLink,
@@ -265,10 +266,10 @@ export default function FornecedoresPage() {
                 <div style={{
                   width: 44, height: 44, borderRadius: 10, overflow: 'hidden',
                   background: 'var(--bg-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  border: `1px solid ${T.borderLight}`, flexShrink: 0,
+                  border: `1px solid ${T.borderLight}`, flexShrink: 0, position: 'relative',
                 }}>
                   {dev.logo_url ? (
-                    <img src={dev.logo_url} alt={dev.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <Image src={dev.logo_url} alt={dev.name} fill sizes="44px" style={{ objectFit: 'cover' }} />
                   ) : (
                     <Building2 size={20} style={{ color: T.textDim }} />
                   )}

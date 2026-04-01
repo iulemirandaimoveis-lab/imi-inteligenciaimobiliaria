@@ -310,21 +310,21 @@ export default function LinkGenerator() {
                     )}
                     {/* QR Code */}
                     {qrCodeUrl && (
-                        <div className="bg-purple-50 border border-purple-200 rounded-2xl p-6">
+                        <div className="bg-navy-50 border border-navy-200 rounded-2xl p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
-                                    <QrCode size={20} className="text-purple-600" />
-                                    <h3 className="font-bold text-purple-900">QR Code</h3>
+                                    <QrCode size={20} className="text-navy-600" />
+                                    <h3 className="font-bold text-navy-900">QR Code</h3>
                                 </div>
                                 <button
                                     onClick={downloadQRCode}
-                                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
+                                    className="flex items-center gap-2 px-4 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700 transition-colors shadow-sm"
                                 >
                                     <Download size={16} />
                                     Baixar PNG
                                 </button>
                             </div>
-                            <div className="bg-white rounded-xl p-6 border border-purple-200 flex justify-center">
+                            <div className="bg-white rounded-xl p-6 border border-navy-200 flex justify-center">
                                 <img src={qrCodeUrl} alt="QR Code" className="w-64 h-64" />
                             </div>
                         </div>

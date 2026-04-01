@@ -2,7 +2,7 @@
   "name": "IMI – Inteligência Imobiliária",
   "short_name": "IMI",
   "description": "Backoffice IMI – Gestão imobiliária inteligente",
-  "start_url": "/backoffice/hoje",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#050B14",
   "theme_color": "#050B14",

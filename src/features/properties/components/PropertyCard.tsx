@@ -423,7 +423,7 @@ if (typeof document !== 'undefined' && !document.getElementById('prop-card-style
         transform: translateY(0) !important;
       }
       .prop-action-btn {
-        width: 36px; height: 36px;
+        width: 44px; height: 44px;
       }
     }
     .imi-checkbox-overlay {

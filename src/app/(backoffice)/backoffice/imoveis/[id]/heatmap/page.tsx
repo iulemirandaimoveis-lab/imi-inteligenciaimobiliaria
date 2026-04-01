@@ -366,7 +366,7 @@ export default function ImovelHeatmapPage() {
                             <button
                                 key={r}
                                 onClick={() => { setLoading(true); setRange(r) }}
-                                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                                className="px-3 min-h-[44px] py-2.5 rounded-lg text-xs font-bold transition-all"
                                 style={{
                                     background: range === r ? T.surface : 'transparent',
                                     color: range === r ? T.text : T.textMuted,
@@ -429,7 +429,7 @@ export default function ImovelHeatmapPage() {
                 )}
 
                 {/* Quick KPI strip */}
-                <div className="grid grid-cols-3" style={{ borderTop: `1px solid ${T.border}` }}>
+                <div className="grid grid-cols-1 sm:grid-cols-3" style={{ borderTop: `1px solid ${T.border}` }}>
                     {[
                         { label: 'Tempo Médio', value: avgDuration > 0 ? `${Math.floor(avgDuration / 60)}:${String(avgDuration % 60).padStart(2, '0')}m` : '—', icon: Clock, color: '#60A5FA' },
                         { label: 'Bounce Rate', value: '24.8%', icon: TrendingDown, color: 'var(--error)', sub: '-4%' },

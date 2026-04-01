@@ -97,7 +97,7 @@ export default function ComparadorPage() {
       >
         {/* Market headers */}
         <div
-          className="grid grid-cols-4"
+          className="grid grid-cols-2 sm:grid-cols-4"
           style={{ borderBottom: `1px solid ${T.border}` }}
         >
           <div className="p-4 text-xs" style={{ color: T.textDim }}>Metrica</div>
@@ -117,7 +117,7 @@ export default function ComparadorPage() {
         {metrics.map((row, i) => (
           <div
             key={row.label}
-            className="grid grid-cols-4"
+            className="grid grid-cols-2 sm:grid-cols-4"
             style={i < metrics.length - 1 ? { borderBottom: `1px solid ${T.borderSubtle}` } : undefined}
           >
             <div className="px-4 py-3 text-xs flex items-center" style={{ color: T.textMuted }}>

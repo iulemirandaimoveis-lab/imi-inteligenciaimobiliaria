@@ -40,9 +40,20 @@ export async function POST(request: Request) {
         // Generate temporary password — user will change on first login
         const tempPassword = generateTempPassword()
 
-        // Check if auth user already exists (from a previous failed attempt)
-        const { data: { users: existingUsers } } = await supabaseAdmin.auth.admin.listUsers()
-        const existingAuth = existingUsers?.find(u => u.email === email)
+        // Check if auth user already exists — targeted lookup by email
+        let existingAuth: { id: string; email?: string; user_metadata?: Record<string, unknown> } | null = null
+        const { data: profileMatch } = await supabaseAdmin
+            .from('profiles')
+            .select('id')
+            .eq('email', email)
+            .maybeSingle()
+        if (profileMatch) {
+            const { data: { user: authUser } } = await supabaseAdmin.auth.admin.getUserById(profileMatch.id)
+            if (authUser) existingAuth = authUser
+        }
+        if (!existingAuth) {
+            // Fallback: try creating — if duplicate, the createUser call below will handle it
+        }
 
         let userId: string
 

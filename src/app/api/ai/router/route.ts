@@ -301,8 +301,9 @@ export async function POST(request: NextRequest) {
         }
         const routing = MODEL_ROUTING[body.task_type]
         const model = body.model_override || routing.primary
-        const temperature = body.temperature ?? 0.7
-        const max_tokens = body.max_tokens || 2048
+        const temperature = Math.min(Math.max(body.temperature ?? 0.7, 0), 1.5)
+        const MAX_TOKENS_CEILING = 4096
+        const max_tokens = Math.min(body.max_tokens || 2048, MAX_TOKENS_CEILING)
         const systemPrompt = buildSystemPrompt(body.task_type, body.platform)
         const fullPrompt = body.context
             ? `${body.context}\n\n---\n\n${body.prompt}`
@@ -361,10 +362,11 @@ export async function POST(request: NextRequest) {
         }
         return NextResponse.json(result)
     } catch (error: unknown) {
+        console.error('[AI Router] error:', error instanceof Error ? error.message : error)
         return NextResponse.json(
             {
                 success: false,
-                error: error instanceof Error ? error.message : 'Erro interno no AI Router',
+                error: 'Erro ao processar solicitação de IA. Tente novamente.',
                 result: '',
                 model_used: 'claude-sonnet' as AIModel,
                 task_type: 'custom' as TaskType,
@@ -374,11 +376,13 @@ export async function POST(request: NextRequest) {
     }
 }
 export async function GET() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     return NextResponse.json({
         status: 'ok',
         description: 'IMI AI Router — Multi-model orchestration',
         models_available: ['claude-sonnet', 'claude-haiku', 'gpt-4o', 'gpt-4o-mini', 'gemini-pro', 'gemini-flash', 'grok-2', 'kling'],
         task_types: Object.keys(MODEL_ROUTING),
-        routing: MODEL_ROUTING,
     })
 }

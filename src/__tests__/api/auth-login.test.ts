@@ -39,7 +39,7 @@ describe('POST /api/auth/login', () => {
         const json = await res.json()
 
         expect(res.status).toBe(400)
-        expect(json.error).toBe('Email e senha são obrigatórios')
+        expect(json.error).toBe('Dados inválidos')
     })
 
     it('returns 400 when password is missing', async () => {
@@ -48,7 +48,7 @@ describe('POST /api/auth/login', () => {
         const json = await res.json()
 
         expect(res.status).toBe(400)
-        expect(json.error).toBe('Email e senha são obrigatórios')
+        expect(json.error).toBe('Dados inválidos')
     })
 
     it('returns 400 when both email and password are missing', async () => {
@@ -57,7 +57,7 @@ describe('POST /api/auth/login', () => {
         const json = await res.json()
 
         expect(res.status).toBe(400)
-        expect(json.error).toBe('Email e senha são obrigatórios')
+        expect(json.error).toBe('Dados inválidos')
     })
 
     it('returns 401 when credentials are invalid', async () => {

@@ -521,3 +521,107 @@ export function checkFundamentacao(
     pontuacao_maxima: items.length,
   }
 }
+
+// ── Auto-populate comparables from real DB data ─────────────────
+
+/**
+ * Server-side: find comparable properties for a given subject property.
+ * Searches developments + units in the same city/neighborhood within ±30% price range.
+ * Returns up to `limit` comparables formatted for the comparative method.
+ */
+export async function findComparables(
+  subject: PropertyInput,
+  options?: { priceEstimate?: number; limit?: number }
+): Promise<Comparable[]> {
+  const { priceEstimate = 0, limit = 10 } = options ?? {}
+
+  try {
+    const { supabaseAdmin } = await import('@/lib/supabase/admin')
+
+    // Build query: same city, with units that have price and area data
+    let query = supabaseAdmin
+      .from('development_units')
+      .select('unit_name, area, total_price, bedrooms, parking_spots, development:developments!inner(name, neighborhood, city, property_type, status)')
+      .gt('total_price', 0)
+      .gt('area', 0)
+
+    // Filter by city if available
+    if (subject.cidade) {
+      query = query.eq('development.city', subject.cidade)
+    }
+
+    // Price range filter (±30%)
+    if (priceEstimate > 0) {
+      query = query
+        .gte('total_price', Math.round(priceEstimate * 0.7))
+        .lte('total_price', Math.round(priceEstimate * 1.3))
+    }
+
+    const { data: rows } = await query.limit(limit * 2) // fetch extra to filter
+
+    if (!rows || rows.length === 0) return []
+
+    const comparables: Comparable[] = []
+    const today = new Date().toISOString().split('T')[0]
+
+    for (const row of rows) {
+      const dev = row.development as unknown as {
+        name: string; neighborhood: string; city: string; property_type: string; status: string
+      }
+      if (!dev) continue
+
+      // Skip if same neighborhood requested and doesn't match
+      // But prefer same neighborhood comparables
+      const sameNeighborhood = subject.bairro
+        ? dev.neighborhood?.toLowerCase() === subject.bairro.toLowerCase()
+        : true
+
+      const padrao = inferPadrao(row.total_price, row.area)
+      const estado = inferEstado(dev.status)
+
+      comparables.push({
+        endereco: `${dev.name} — ${dev.neighborhood}, ${dev.city}`,
+        area: row.area,
+        valorVenda: row.total_price,
+        quartos: row.bedrooms ?? subject.quartos,
+        vagas: row.parking_spots ?? 1,
+        padrao,
+        estado,
+        distanciaKm: sameNeighborhood ? 0.5 : 3.0,
+        dataColeta: today,
+      })
+    }
+
+    // Sort: prefer same neighborhood, then by price proximity
+    comparables.sort((a, b) => {
+      const aDist = a.distanciaKm
+      const bDist = b.distanciaKm
+      if (aDist !== bDist) return aDist - bDist
+      if (priceEstimate > 0) {
+        return Math.abs(a.valorVenda - priceEstimate) - Math.abs(b.valorVenda - priceEstimate)
+      }
+      return 0
+    })
+
+    return comparables.slice(0, limit)
+  } catch {
+    return []
+  }
+}
+
+function inferPadrao(price: number, area: number): string {
+  const sqm = price / area
+  if (sqm > 15000) return 'Luxo'
+  if (sqm > 10000) return 'Alto'
+  if (sqm > 6000) return 'Normal'
+  return 'Baixo'
+}
+
+function inferEstado(status: string): string {
+  const map: Record<string, string> = {
+    launch: 'Novo', lancamento: 'Novo',
+    under_construction: 'Entre Novo e Regular',
+    ready: 'Regular', active: 'Regular', disponivel: 'Regular',
+  }
+  return map[status] ?? 'Regular'
+}

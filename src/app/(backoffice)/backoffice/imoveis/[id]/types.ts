@@ -36,6 +36,16 @@ export interface Development {
   lat?: number
   lng?: number
   developer?: { id: string; name: string; logo_url?: string | null } | null
+  broker_id?: string | null
+}
+
+export interface BrokerInfo {
+  id: string
+  name: string
+  avatar_url?: string | null
+  email?: string | null
+  phone?: string | null
+  creci?: string | null
 }
 
 export type TabKey = 'overview' | 'analysis' | 'analytics' | 'more'
@@ -55,6 +65,7 @@ export interface DetailProps {
   id: string
   enriched: import('@/features/properties/types').IMIProperty | null
   notFound: boolean
+  broker: BrokerInfo | null
   activeTab: TabKey
   setActiveTab: (t: TabKey) => void
   galleryIdx: number
