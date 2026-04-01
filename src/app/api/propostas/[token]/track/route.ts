@@ -54,13 +54,13 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
             updates.views = (proposta.views || 0) + 1
 
             // Notify broker on first view
-            const { sendNotification } = await import('@/lib/send-notification')
-            await sendNotification({
-                title: '👁️ Proposta Visualizada!',
+            const { createNotification } = await import('@/lib/notifications')
+            await createNotification({
+                title: 'Proposta Visualizada',
                 message: `${proposta.lead_name} abriu a proposta de ${proposta.property_name}`,
-                type: 'tracking',
+                type: 'proposta_atualizada',
                 userId: proposta.broker_id,
-            })
+            }).catch(() => {})
         } else if (event_type === 'view') {
             updates.views = (proposta.views || 0) + 1
         }

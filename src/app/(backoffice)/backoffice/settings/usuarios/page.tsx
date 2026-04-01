@@ -81,6 +81,8 @@ export default function UsuariosPage() {
         }
       }
     } catch (err) {
+      console.error('[Usuarios] Failed to load users:', err)
+      toast.error('Erro ao carregar usuários. Tente novamente.')
     }
     setLoading(false)
   }
@@ -162,8 +164,11 @@ export default function UsuariosPage() {
     return { bg: 'rgba(72,101,129,0.12)', color: 'var(--text-secondary)', border: 'rgba(72,101,129,0.2)' }
   }
   const getTimeAgo = (dateStr: string) => {
-    if (!dateStr) return '-'
-    const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000)
+    if (!dateStr) return 'Nunca'
+    const date = new Date(dateStr)
+    if (isNaN(date.getTime())) return 'Nunca'
+    const diff = Math.floor((Date.now() - date.getTime()) / 60000)
+    if (diff < 0) return 'Agora'
     if (diff < 60) return `${diff}min atrás`
     if (diff < 1440) return `${Math.floor(diff / 60)}h atrás`
     return `${Math.floor(diff / 1440)}d atrás`

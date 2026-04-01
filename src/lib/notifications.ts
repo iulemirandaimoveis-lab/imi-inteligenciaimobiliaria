@@ -7,10 +7,11 @@ export type NotificationType =
   | 'agenda_novo' | 'agenda_atualizado'
   | 'imovel_novo' | 'imovel_atualizado'
   | 'mensagem_nova'
+  | 'proposta_nova' | 'proposta_atualizada'
   | 'sistema'
 
 export interface CreateNotificationParams {
-  userId: string
+  userId: string | null  // null = broadcast to all users
   type: NotificationType
   title: string
   message: string
@@ -21,7 +22,7 @@ export interface CreateNotificationParams {
 export async function createNotification(params: CreateNotificationParams): Promise<void> {
   try {
     await supabaseAdmin.from('notifications').insert({
-      user_id: params.userId,
+      user_id: params.userId || null,
       type: params.type,
       title: params.title,
       message: params.message,
@@ -30,11 +31,19 @@ export async function createNotification(params: CreateNotificationParams): Prom
     })
 
     // Trigger real browser push notification
-    await sendWebPush(params.userId, {
+    const pushPayload = {
       title: params.title,
       body: params.message,
       url: params.url || '/backoffice/hoje',
-    }).catch(() => {}) // best-effort
+    }
+
+    if (params.userId) {
+      await sendWebPush(params.userId, pushPayload).catch(() => {})
+    } else {
+      // Broadcast — import sendWebPushToAll dynamically to keep import light
+      const { sendWebPushToAll } = await import('@/lib/web-push')
+      await sendWebPushToAll(pushPayload).catch(() => {})
+    }
   } catch (err) {
     console.error('[notifications] Failed to create notification:', err)
   }

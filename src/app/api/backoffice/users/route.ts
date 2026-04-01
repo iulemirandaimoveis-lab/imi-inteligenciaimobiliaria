@@ -93,6 +93,7 @@ export async function POST(request: Request) {
                 .upsert({ id: newUserId, email, name, role: validRole.toLowerCase() })
             if (profileError) {
                 console.error('Profiles sync error:', profileError.message)
+                // Non-critical: user was created in auth, profile sync can be retried
             }
             // Sync to brokers table so user appears in Equipe
             // Check by email first to avoid unique constraint violation on email
@@ -112,6 +113,7 @@ export async function POST(request: Request) {
                 : await supabaseAdmin.from('brokers').insert({ ...brokerPayload, created_at: new Date().toISOString() })
             if (brokerError) {
                 console.error('Brokers sync error:', brokerError.message)
+                // Non-critical: user was created, broker sync can be retried
             }
             // Send password reset email so user can set their own password
             await supabaseAdmin.auth.admin.generateLink({
@@ -169,15 +171,9 @@ export async function PUT(request: Request) {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        // Check admin
-        let isAdmin = false
         const client = hasServiceKey ? supabaseAdmin : supabase
         const { data: callerRow } = await client.from('profiles').select('role').eq('id', user.id).single()
-        if (callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(callerRow.role)) isAdmin = true
-        if (!isAdmin) {
-            const { data: callerProfile } = await client.from('profiles').select('role').eq('id', user.id).single()
-            if (callerProfile && ['admin', 'ADMIN', 'SUPER_ADMIN'].includes(callerProfile.role)) isAdmin = true
-        }
+        const isAdmin = callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN', 'super_admin', 'owner'].includes(callerRow.role)
         if (!isAdmin) return NextResponse.json({ error: 'Apenas administradores podem editar usuários' }, { status: 403 })
         const body = await request.json()
         const { id, name, role, is_active } = body
@@ -204,15 +200,9 @@ export async function DELETE(request: Request) {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        // Check admin
-        let isAdmin = false
         const client = hasServiceKey ? supabaseAdmin : supabase
         const { data: callerRow } = await client.from('profiles').select('role').eq('id', user.id).single()
-        if (callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(callerRow.role)) isAdmin = true
-        if (!isAdmin) {
-            const { data: callerProfile } = await client.from('profiles').select('role').eq('id', user.id).single()
-            if (callerProfile && ['admin', 'ADMIN', 'SUPER_ADMIN'].includes(callerProfile.role)) isAdmin = true
-        }
+        const isAdmin = callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN', 'super_admin', 'owner'].includes(callerRow.role)
         if (!isAdmin) return NextResponse.json({ error: 'Apenas administradores podem desativar usuários' }, { status: 403 })
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')

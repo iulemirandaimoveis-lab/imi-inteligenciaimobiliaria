@@ -6,7 +6,7 @@ import { useChannels } from '@/features/connect/hooks/useChannels'
 import { useChat } from '@/features/connect/hooks/useChat'
 import { useSounds } from '@/features/connect/hooks/useSounds'
 import { useVoiceRecorder } from '@/features/connect/hooks/useVoiceRecorder'
-import { PresenceProvider } from '@/features/connect/components/PresenceProvider'
+import { PresenceProvider, usePresenceContext } from '@/features/connect/components/PresenceProvider'
 import type { ChatChannel, ChatMessage, Attachment, ContentType } from '@/features/connect/types'
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
@@ -174,7 +174,7 @@ function MessageBubble({ msg, isOwn, hovered, onReaction, currentUserId }: {
             alignItems: 'flex-start',
         }}>
             {!isOwn && <ChatAvatar name={msg.sender?.name ?? msg.sender_name ?? 'U'} url={msg.sender?.avatar_url ?? msg.sender_avatar} size={32} />}
-            <div style={{ maxWidth: '70%', minWidth: 0, position: 'relative' }}>
+            <div className="max-w-[85%] md:max-w-[70%]" style={{ minWidth: 0, position: 'relative' }}>
                 {!isOwn && (
                     <div style={{ fontSize: 11, fontWeight: 600, color: T.textMuted, marginBottom: 2 }}>
                         {msg.sender?.name ?? msg.sender_name}
@@ -255,7 +255,7 @@ function MessageBubble({ msg, isOwn, hovered, onReaction, currentUserId }: {
                                 key={emoji}
                                 onClick={() => onReaction(msg.id, emoji)}
                                 style={{
-                                    width: 28, height: 28, border: 'none', borderRadius: '50%',
+                                    width: 36, height: 36, border: 'none', borderRadius: '50%',
                                     background: 'transparent', cursor: 'pointer', fontSize: 15,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     transition: `all ${T.transition.fast}`,
@@ -296,7 +296,7 @@ function VoicePlayer({ url, isOwn }: { url: string; isOwn: boolean }) {
     }
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 180 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 'min(180px, 60vw)' }}>
             <audio
                 ref={audioRef}
                 src={url}
@@ -362,6 +362,7 @@ export default function ConnectPage() {
 // ── Inner Connect (has access to PresenceProvider context) ──
 function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?: string } }) {
     const { play, enabled: soundEnabled, toggle: toggleSound } = useSounds()
+    const { isOnline, onlineUsers } = usePresenceContext()
     const [activeChannelId, setActiveChannelId] = useState<string | null>(null)
     const [newMessage, setNewMessage] = useState('')
     const [sending, setSending] = useState(false)
@@ -751,7 +752,22 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                             onMouseLeave={e => { if (ch.id !== activeChannelId) e.currentTarget.style.background = 'transparent' }}
                         >
                             {ch.type === 'direct' && ch.other_user ? (
-                                <ChatAvatar name={ch.other_user.name ?? 'U'} url={ch.other_user.avatar_url} size={40} />
+                                <div style={{ position: 'relative', flexShrink: 0 }}>
+                                    <ChatAvatar name={ch.other_user.name ?? 'U'} url={ch.other_user.avatar_url} size={40} />
+                                    {(() => {
+                                        const otherId = ch.members?.find(m => m.user_id !== user.id)?.user_id
+                                        const online = otherId ? isOnline(otherId) : false
+                                        return (
+                                            <span style={{
+                                                position: 'absolute', bottom: 0, right: 0,
+                                                width: 10, height: 10, borderRadius: '50%',
+                                                background: online ? '#4ADE80' : '#6B7280',
+                                                border: '2px solid var(--bg-base, #0F1923)',
+                                                boxShadow: online ? '0 0 6px rgba(74,222,128,0.5)' : 'none',
+                                            }} />
+                                        )
+                                    })()}
+                                </div>
                             ) : (
                                 <div style={{
                                     width: 40, height: 40, borderRadius: T.radius.lg,
@@ -823,7 +839,22 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                             <ArrowLeft size={20} />
                         </button>
                         {activeChannel.type === 'direct' && activeChannel.other_user ? (
-                            <ChatAvatar name={activeChannel.other_user.name ?? 'U'} url={activeChannel.other_user.avatar_url} size={36} />
+                            <div style={{ position: 'relative', flexShrink: 0 }}>
+                                <ChatAvatar name={activeChannel.other_user.name ?? 'U'} url={activeChannel.other_user.avatar_url} size={36} />
+                                {(() => {
+                                    const otherId = activeChannel.members?.find(m => m.user_id !== user.id)?.user_id
+                                    const online = otherId ? isOnline(otherId) : false
+                                    return (
+                                        <span style={{
+                                            position: 'absolute', bottom: -1, right: -1,
+                                            width: 10, height: 10, borderRadius: '50%',
+                                            background: online ? '#4ADE80' : '#6B7280',
+                                            border: '2px solid var(--surface, #1A2A3C)',
+                                            boxShadow: online ? '0 0 6px rgba(74,222,128,0.5)' : 'none',
+                                        }} />
+                                    )
+                                })()}
+                            </div>
                         ) : (
                             <div style={{
                                 width: 36, height: 36, borderRadius: T.radius.lg,
@@ -840,7 +871,20 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                                     : activeChannel.name}
                             </div>
                             <div style={{ fontSize: 11, color: T.textDim }}>
-                                {activeChannel.message_count} mensagens
+                                {(() => {
+                                    if (activeChannel.type === 'direct') {
+                                        const otherId = activeChannel.members?.find(m => m.user_id !== user.id)?.user_id
+                                        if (otherId && isOnline(otherId)) return 'Online'
+                                        const presence = otherId ? onlineUsers.get(otherId) : null
+                                        if (presence?.online_at) {
+                                            const ago = Date.now() - new Date(presence.online_at).getTime()
+                                            if (ago < 3600000) return `Visto há ${Math.floor(ago / 60000)}min`
+                                            return `Visto há ${Math.floor(ago / 3600000)}h`
+                                        }
+                                        return 'Offline'
+                                    }
+                                    return `${activeChannel.message_count} mensagens`
+                                })()}
                             </div>
                         </div>
                         <button
@@ -1351,22 +1395,34 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                                             <Users size={12} style={{ verticalAlign: 'middle', marginRight: 6 }} />
                                             Membros ({activeChannel.members.length})
                                         </div>
-                                        {activeChannel.members.map((member: { user_id: string; role?: string }) => (
-                                            <div key={member.user_id} style={{
-                                                display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0',
-                                                borderBottom: `1px solid ${T.borderLight}`,
-                                            }}>
-                                                <ChatAvatar name={member.user_id.slice(0, 6)} size={28} />
-                                                <div style={{ flex: 1, minWidth: 0 }}>
-                                                    <div style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                                        {member.user_id === user.id ? 'Você' : member.user_id.slice(0, 8)}
+                                        {activeChannel.members.map((member: { user_id: string; role?: string; profile?: { id?: string; name?: string; email?: string; avatar_url?: string | null } | null }) => {
+                                            const memberName = member.user_id === user.id ? 'Você' : (member.profile?.name || member.profile?.email || member.user_id.slice(0, 8))
+                                            const memberOnline = isOnline(member.user_id)
+                                            return (
+                                                <div key={member.user_id} style={{
+                                                    display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0',
+                                                    borderBottom: `1px solid ${T.borderLight}`,
+                                                }}>
+                                                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                                                        <ChatAvatar name={memberName} url={member.profile?.avatar_url} size={28} />
+                                                        <span style={{
+                                                            position: 'absolute', bottom: -1, right: -1,
+                                                            width: 8, height: 8, borderRadius: '50%',
+                                                            background: memberOnline ? '#4ADE80' : '#6B7280',
+                                                            border: '2px solid var(--bg-base, #0F1923)',
+                                                        }} />
                                                     </div>
-                                                    {member.role && (
-                                                        <div style={{ fontSize: 10, color: T.textDim, textTransform: 'capitalize' }}>{member.role}</div>
-                                                    )}
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <div style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                            {memberName}
+                                                        </div>
+                                                        {member.role && (
+                                                            <div style={{ fontSize: 10, color: T.textDim, textTransform: 'capitalize' }}>{member.role}</div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            )
+                                        })}
                                     </div>
                                 )}
                             </div>

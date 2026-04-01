@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { sendNotification } from '@/lib/send-notification'
+import { createNotification } from '@/lib/notifications'
 import { withLogging } from '@/lib/api-logger'
 import { z } from 'zod'
 
@@ -100,12 +100,13 @@ export const POST = withLogging(async (req: Request) => {
 
         const proposalUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/p/${token}`
 
-        await sendNotification({
-            title: '📋 Nova Proposta Criada',
-            message: `Proposta para ${v.lead_name} — ${v.property_name}. Link: ${proposalUrl}`,
-            type: 'info',
-            userId: user.id,
-        })
+        await createNotification({
+            title: 'Nova Proposta Criada',
+            message: `Proposta para ${v.lead_name} — ${v.property_name}`,
+            type: 'proposta_nova',
+            userId: null,
+            url: proposalUrl,
+        }).catch(() => {})
 
         return NextResponse.json({ success: true, data, url: proposalUrl, token })
     } catch { return NextResponse.json({ error: 'Erro interno' }, { status: 500 }) }

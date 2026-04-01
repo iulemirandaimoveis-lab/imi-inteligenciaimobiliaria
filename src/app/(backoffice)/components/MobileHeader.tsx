@@ -619,7 +619,7 @@ export default function MobileHeader() {
                             </div>
 
                             {/* Notification list */}
-                            <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 52px - 48px)' }}>
+                            <div className="overflow-y-auto" style={{ maxHeight: 'calc(70dvh - 52px - 48px - 64px)' }}>
                                 {notifications.length > 0 ? notifications.map(n => (
                                     <div
                                         key={n.id}

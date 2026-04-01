@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { apiHandler, ApiContext } from '@/lib/api-helpers'
 import { logAudit, getRequestMeta } from '@/lib/governance'
 import { geocodeAddress } from '@/lib/geocode'
+import { createNotification } from '@/lib/notifications'
 
 export const runtime = 'nodejs'
 
@@ -263,6 +264,13 @@ export const POST = apiHandler(developmentPostSchema, async (req: NextRequest, b
         new_data: { name: body.name, type: body.type, city: newDev.city },
         ...meta,
     })
+    createNotification({
+        userId: null,
+        type: 'imovel_novo',
+        title: 'Novo imóvel cadastrado',
+        message: `${data.name || body.name} foi adicionado ao portfólio`,
+        url: `/backoffice/imoveis/${data.id}`,
+    }).catch(() => {})
     return NextResponse.json(data)
 }, { auth: true, auditAction: 'development.create' })
 
@@ -336,6 +344,13 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
         new_data: normalized,
         ...meta,
     })
+    createNotification({
+        userId: null,
+        type: 'imovel_atualizado',
+        title: 'Imóvel atualizado',
+        message: `${data.name || normalized.name || 'Imóvel'} foi atualizado`,
+        url: `/backoffice/imoveis/${id}`,
+    }).catch(() => {})
     return NextResponse.json(data)
 }, { auth: true, auditAction: 'development.update' })
 

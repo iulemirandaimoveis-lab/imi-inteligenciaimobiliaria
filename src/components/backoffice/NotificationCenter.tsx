@@ -18,13 +18,26 @@ const supabase = createClient()
 interface Notification {
     id: string
     user_id: string
-    type: 'lead' | 'development' | 'evaluation' | 'consultation' | 'system' | 'comment'
+    type: string
     title: string
     message: string | null
     data: Record<string, unknown>
     read: boolean
     read_at: string | null
     created_at: string
+}
+
+// Maps API notification types (lead_novo, avaliacao_nova, etc.) to UI categories
+function getCategory(type: string): string {
+    if (type.startsWith('lead')) return 'lead'
+    if (type.startsWith('avaliacao')) return 'evaluation'
+    if (type.startsWith('imovel')) return 'development'
+    if (type.startsWith('agenda')) return 'consultation'
+    if (type.startsWith('mensagem')) return 'comment'
+    if (type.startsWith('proposta')) return 'lead'
+    // Legacy types pass through as-is
+    if (['lead', 'development', 'evaluation', 'consultation', 'comment'].includes(type)) return type
+    return 'system'
 }
 export default function NotificationCenter() {
     const [isOpen, setIsOpen] = useState(false)
@@ -175,7 +188,7 @@ export default function NotificationCenter() {
             system: AlertCircle,
             comment: MessageSquare
         }
-        return icons[type] || Bell
+        return icons[getCategory(type)] || Bell
     }
     const getNotificationColor = (type: string) => {
         const colors: Record<string, string> = {
@@ -186,7 +199,7 @@ export default function NotificationCenter() {
             system: 'bg-gray-50 text-gray-600',
             comment: 'bg-green-50 text-green-600'
         }
-        return colors[type] || 'bg-gray-50 text-gray-600'
+        return colors[getCategory(type)] || 'bg-gray-50 text-gray-600'
     }
     const requestNotificationPermission = async () => {
         if ('Notification' in window && Notification.permission === 'default') {

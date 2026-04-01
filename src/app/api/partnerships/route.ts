@@ -69,15 +69,20 @@ export async function GET(request: NextRequest) {
         const { data, error, count } = await query
 
         if (error) {
-            // Graceful: if table or columns don't exist yet, return empty
-            console.warn('[partnerships/GET] Query error (table may not exist yet):', error.message)
-            return NextResponse.json({ data: [], count: 0 })
+            // Table doesn't exist yet — return empty gracefully
+            if (error.code === '42P01' || error.message.includes('does not exist')) {
+                console.warn('[partnerships/GET] Table not found:', error.message)
+                return NextResponse.json({ data: [], count: 0 })
+            }
+            // Real error — surface it
+            console.error('[partnerships/GET] Query error:', error.message)
+            return NextResponse.json({ error: error.message, data: [], count: 0 }, { status: 500 })
         }
 
         return NextResponse.json({ data: data ?? [], count: count ?? 0 })
     } catch (err) {
         console.error('[partnerships/GET] Unexpected error:', err)
-        return NextResponse.json({ data: [], count: 0 })
+        return NextResponse.json({ error: 'Erro interno', data: [], count: 0 }, { status: 500 })
     }
 }
 
@@ -151,13 +156,13 @@ export async function POST(request: NextRequest) {
                 // Last resort: check profiles table
                 const { data: ownerProfile } = await supabaseAdmin
                     .from('profiles')
-                    .select('id, full_name, display_name')
+                    .select('id, name, email')
                     .eq('id', owner_broker_id)
                     .single()
 
                 if (ownerProfile) {
                     ownerUserId = ownerProfile.id
-                    ownerName = ownerProfile.display_name || ownerProfile.full_name || 'Proprietário'
+                    ownerName = ownerProfile.name || ownerProfile.email || 'Proprietário'
                 } else {
                     return NextResponse.json(
                         { error: 'Corretor proprietário não encontrado' },
@@ -186,12 +191,12 @@ export async function POST(request: NextRequest) {
             // Try profiles for a better name
             const { data: partnerProfile } = await supabaseAdmin
                 .from('profiles')
-                .select('id, full_name, display_name')
+                .select('id, name, email')
                 .eq('id', user.id)
                 .single()
 
             if (partnerProfile) {
-                partnerName = partnerProfile.display_name || partnerProfile.full_name || partnerName
+                partnerName = partnerProfile.name || partnerProfile.email || partnerName
             }
         }
 

@@ -94,15 +94,13 @@ export function PresenceProvider({ userId, userName, avatarUrl, children }: Prov
     <PresenceContext.Provider value={value}>
       {children}
       <div
+        className="fixed top-[72px] right-3 md:right-6 left-3 md:left-auto flex flex-col gap-2"
         style={{
-          position: 'fixed', top: 72, right: 24,
-          display: 'flex', flexDirection: 'column', gap: 8,
           zIndex: 9999, pointerEvents: 'none',
         }}
       >
         {toasts.map((t) => (
-          <div key={t.id} style={{
-            minWidth: 280,
+          <div key={t.id} className="md:min-w-[280px]" style={{
             background: 'var(--n700, #0F2035)',
             border: '1px solid var(--bdr, rgba(255,255,255,0.06))',
             borderRadius: 12, overflow: 'hidden',
