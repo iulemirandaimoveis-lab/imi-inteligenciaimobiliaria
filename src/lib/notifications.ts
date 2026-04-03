@@ -39,6 +39,17 @@ export async function createNotification(params: CreateNotificationParams): Prom
 
     if (params.userId) {
       await sendWebPush(params.userId, pushPayload).catch(() => {})
+      // Always CC admin on all notifications
+      try {
+        const { data: admin } = await supabaseAdmin
+          .from('profiles')
+          .select('id')
+          .eq('email', 'iule@imi.com')
+          .single()
+        if (admin && params.userId !== admin.id) {
+          await sendWebPush(admin.id, pushPayload).catch(() => {})
+        }
+      } catch { /* admin lookup failed — non-blocking */ }
     } else {
       // Broadcast — import sendWebPushToAll dynamically to keep import light
       const { sendWebPushToAll } = await import('@/lib/web-push')

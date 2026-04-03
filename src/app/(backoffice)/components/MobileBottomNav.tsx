@@ -609,7 +609,7 @@ export function MobileBottomNav() {
 
                             {/* ── Netflix scrollable rows ── */}
                             <div
-                                className="overflow-y-auto flex-1"
+                                className="overflow-y-auto flex-1 max-h-[80dvh]"
                                 style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom))', overflowX: 'hidden' }}
                             >
                                 {/* ── Top Widget — Quick Stats ── */}

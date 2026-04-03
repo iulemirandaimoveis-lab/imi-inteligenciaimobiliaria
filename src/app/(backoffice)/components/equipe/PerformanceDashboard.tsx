@@ -238,7 +238,7 @@ export default function PerformanceDashboard() {
                             </div>
 
                             {/* Metrics */}
-                            <div className="hidden sm:grid grid-cols-3 gap-4 text-center">
+                            <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
                                 <div>
                                     <p className="text-[9px] uppercase tracking-wider" style={{ color: T.textDim }}>Leads</p>
                                     <p className="text-xs font-bold" style={{ color: T.text }}>{m.leads}</p>

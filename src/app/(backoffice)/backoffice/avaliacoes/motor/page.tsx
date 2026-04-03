@@ -36,12 +36,14 @@ const CATEGORIES = [
 ]
 
 const QUICK_QUESTIONS = [
-  { q: 'Qual a estrutura mínima de um PTAM?',                     Icon: FileText  },
-  { q: 'Como fazer homogeneização de amostras?',                  Icon: Scale     },
-  { q: 'Graus de fundamentação NBR 14653-2 explicados',           Icon: BookOpen  },
-  { q: 'Como calcular o valor unitário padrão?',                  Icon: Sparkles  },
-  { q: 'Diferença entre método comparativo direto e indireto?',   Icon: Scale     },
-  { q: 'Documentos necessários para avaliação de imóvel urbano?', Icon: FileText  },
+  { q: 'Qual a estrutura mínima de um PTAM conforme Resolução COFECI 1.066/2007?', Icon: FileText },
+  { q: 'Como fazer homogeneização de amostras pelo MCDDM?',                        Icon: Scale },
+  { q: 'Graus de fundamentação e precisão NBR 14653-2 explicados',                 Icon: BookOpen },
+  { q: 'Como calcular depreciação pelo método Ross-Heidecke?',                     Icon: Calculator },
+  { q: 'Diferença entre método comparativo direto, evolutivo e involutivo?',        Icon: Scale },
+  { q: 'Como avaliar servidões usando a Fórmula de Pellegrino?',                   Icon: Building2 },
+  { q: 'Como calcular honorários avaliatórios segundo IBAPE e CRECI?',             Icon: DollarSign },
+  { q: 'Quais os requisitos para avaliação de imóveis rurais (NBR 14653-3)?',      Icon: TrendingUp },
 ]
 
 // ── Root ──────────────────────────────────────────────────────────────────────

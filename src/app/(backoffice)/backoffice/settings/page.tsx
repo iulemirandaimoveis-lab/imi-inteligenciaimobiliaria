@@ -357,8 +357,8 @@ export default function SettingsPage() {
       <div style={{
         ...card,
         padding: 6,
-        display: 'flex', gap: 4, overflowX: 'auto', scrollbarWidth: 'none',
-      }}>
+        display: 'flex', gap: 4,
+      }} className="overflow-x-auto [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">
         {TABS.map(tab => {
           const Icon = tab.icon
           const active = activeTab === tab.id
@@ -391,8 +391,8 @@ export default function SettingsPage() {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
-        style={{ ...card, padding: '28px 28px' }}
-        className="sm:p-8"
+        style={{ ...card }}
+        className="p-4 sm:p-7"
       >
 
         {/* ══ MEU PERFIL ══ */}

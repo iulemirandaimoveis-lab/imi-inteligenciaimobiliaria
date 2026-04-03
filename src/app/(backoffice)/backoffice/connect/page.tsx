@@ -9,6 +9,7 @@ import { useVoiceRecorder } from '@/features/connect/hooks/useVoiceRecorder'
 import { PresenceProvider, usePresenceContext } from '@/features/connect/components/PresenceProvider'
 import type { ChatChannel, ChatMessage, Attachment, ContentType } from '@/features/connect/types'
 import { T, cardStyle } from '@/app/(backoffice)/lib/theme'
+import { useIsMobile } from '@/hooks/use-is-mobile'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -361,6 +362,7 @@ export default function ConnectPage() {
 
 // ── Inner Connect (has access to PresenceProvider context) ──
 function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?: string } }) {
+    const isMobile = useIsMobile()
     const { play, enabled: soundEnabled, toggle: toggleSound } = useSounds()
     const { isOnline, onlineUsers } = usePresenceContext()
     const [activeChannelId, setActiveChannelId] = useState<string | null>(null)
@@ -1004,6 +1006,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                     <div style={{
                         padding: '12px 20px', borderTop: `1px solid ${T.border}`,
                         display: 'flex', alignItems: 'center', gap: 8, background: T.surface,
+                        paddingBottom: isMobile ? 76 : 12,
                     }}>
                         {voiceRecorder.isRecording ? (
                             /* ── Voice Recording UI ── */
@@ -1033,8 +1036,8 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                                     <span style={{ fontSize: 13, color: '#EF4444', fontFamily: T.font.mono, fontWeight: 600 }}>
                                         {Math.floor(voiceRecorder.duration / 60)}:{String(Math.floor(voiceRecorder.duration % 60)).padStart(2, '0')}
                                     </span>
-                                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1, height: 20 }}>
-                                        {voiceRecorder.waveformData.slice(-40).map((v, i) => (
+                                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1, height: 20, overflow: 'hidden', minWidth: 0 }}>
+                                        {voiceRecorder.waveformData.slice(isMobile ? -24 : -40).map((v, i) => (
                                             <div key={i} style={{
                                                 width: 2, borderRadius: 1,
                                                 height: Math.max(3, v * 20), background: '#EF4444', opacity: 0.6,

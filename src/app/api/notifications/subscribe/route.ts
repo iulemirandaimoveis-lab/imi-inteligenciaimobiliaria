@@ -1,6 +1,7 @@
 // src/app/api/notifications/subscribe/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { z } from 'zod'
 
 export const dynamic = 'force-dynamic'
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
         }
         const { endpoint, keys } = parsed.data
-        const { error: dbError } = await supabase
+        const { error: dbError } = await supabaseAdmin
             .from('push_subscriptions')
             .upsert(
                 {

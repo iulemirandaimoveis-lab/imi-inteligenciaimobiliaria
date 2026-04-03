@@ -67,7 +67,7 @@ export const dynamic = 'force-dynamic'
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import CookieConsent from '@/components/CookieConsent';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
-import { InstallPrompt } from '@/components/pwa/InstallPrompt';
+
 import { Toaster } from 'sonner';
 
 export default function RootLayout({
@@ -109,7 +109,6 @@ export default function RootLayout({
                     <CookieConsent />
                     <ServiceWorkerRegistration />
                 </ThemeProvider>
-                <InstallPrompt />
             </body>
         </html>
     )

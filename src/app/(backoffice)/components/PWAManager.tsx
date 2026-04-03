@@ -89,14 +89,15 @@ export default function PWAManager() {
               ).buffer as BufferSource,
             })
             if (sub) {
-              await fetch('/api/notifications/subscribe', {
+              const res = await fetch('/api/notifications/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(sub),
               })
+              if (!res.ok) console.warn('[PWA] Subscribe API failed:', res.status)
             }
-          } catch {
-            // Silent fail — don't bother user
+          } catch (err) {
+            console.warn('[PWA] Auto-subscribe failed:', err)
           }
         }
       })
@@ -181,7 +182,12 @@ export default function PWAManager() {
   useEffect(() => {
     if (isStandalone()) return
     if (!isMobileUA()) return
-    if (localStorage.getItem('imi-pwa-dismissed') === '1') return
+    const pwaD = localStorage.getItem('imi-pwa-dismissed')
+    if (pwaD) {
+      const ts = parseInt(pwaD, 10)
+      if (!isNaN(ts) && Date.now() - ts < 3 * 24 * 60 * 60 * 1000) return
+      localStorage.removeItem('imi-pwa-dismissed')
+    }
 
     function onBeforeInstallPrompt(e: Event) {
       e.preventDefault()
@@ -208,7 +214,7 @@ export default function PWAManager() {
 
   function handleDismissInstall() {
     setShowInstallBar(false)
-    localStorage.setItem('imi-pwa-dismissed', '1')
+    localStorage.setItem('imi-pwa-dismissed', Date.now().toString())
   }
 
   // -------------------------------------------------------------------------

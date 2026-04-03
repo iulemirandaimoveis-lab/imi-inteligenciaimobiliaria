@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { sendNotification } from '@/lib/send-notification'
+import { createNotification } from '@/lib/notifications'
 
 export async function POST(req: Request) {
     try {
@@ -12,10 +12,10 @@ export async function POST(req: Request) {
         const { message, version } = await req.json()
 
         // Broadcast to all users (user_id = null)
-        await sendNotification({
-            title: '\uD83D\uDE80 Nova Atualiza\u00E7\u00E3o',
+        await createNotification({
+            title: '🚀 Nova Atualização',
             message: message || `O backoffice foi atualizado${version ? ` (v${version})` : ''}. Recarregue para ver as novidades.`,
-            type: 'deploy',
+            type: 'sistema',
             userId: null, // broadcast
             data: { version, deployed_at: new Date().toISOString() },
         })
