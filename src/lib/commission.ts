@@ -40,6 +40,7 @@ export function calculateCommission(params: {
     }
 }
 
+/** @deprecated Use formatCurrency from @/lib/format instead */
 export function formatBRL(value: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
 }

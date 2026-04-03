@@ -22,7 +22,7 @@ import type { IMIProperty } from '@/features/properties/types'
 import { getMainImage } from '@/utils/propertyImages'
 import { getScoreStyle } from '@/hooks/useScore'
 import { usePathname } from 'next/navigation'
-import { normalizeStatus } from '@/lib/format'
+import { normalizeStatus, fmt as fmtPrice } from '@/lib/format'
 
 // ─── Design Tokens — imported from centralized theme ─────────────────────────
 import { T } from '@/app/(backoffice)/lib/theme'
@@ -40,12 +40,7 @@ export const STATUS_CONFIGS: Record<string, { label: string; color: string }> = 
 }
 
 
-export function fmtPrice(n?: number | null): string {
-  if (!n) return '—'
-  if (n >= 1_000_000) return `R$ ${(n / 1_000_000).toFixed(2).replace('.', ',')}M`
-  if (n >= 1_000) return `R$ ${(n / 1_000).toFixed(0)}K`
-  return `R$ ${n.toLocaleString('pt-BR')}`
-}
+// fmtPrice imported from @/lib/format (centralized)
 
 // ─── Global Animation Styles ──────────────────────────────────────────────────
 

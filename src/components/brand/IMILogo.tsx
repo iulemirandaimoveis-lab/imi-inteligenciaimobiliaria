@@ -9,12 +9,12 @@ export default function IMILogo({ size = 'md', showTagline = true, className = '
   const s = sizes[size]
   return (
     <div className={className} style={{ display: 'flex', alignItems: 'center', gap: s.gap }}>
-      <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: s.text, color: '#FFFFFF', letterSpacing: '2px', lineHeight: 1 }}>IMI</span>
+      <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: s.text, color: 'var(--text-primary)', letterSpacing: '2px', lineHeight: 1 }}>IMI</span>
       {showTagline && (
         <>
-          <div style={{ width: 1, height: s.sep, background: '#C8A44A', flexShrink: 0 }} />
-          <span style={{ fontSize: s.tag, fontWeight: 600, letterSpacing: '2.5px', textTransform: 'uppercase' as const, color: '#C8A44A', lineHeight: 1.45 }}>
-            INTELIG&Ecirc;NCIA<br />IMOBILI&Aacute;RIA
+          <div style={{ width: 1, height: s.sep, background: 'var(--text-gold, #C8A44A)', flexShrink: 0 }} />
+          <span style={{ fontSize: s.tag, fontWeight: 600, letterSpacing: '2.5px', textTransform: 'uppercase' as const, color: 'var(--text-gold, #C8A44A)', lineHeight: 1.45 }}>
+            INTELIGÊNCIA<br />IMOBILIÁRIA
           </span>
         </>
       )}

@@ -4,13 +4,21 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { z } from 'zod'
 
 const PartnershipPatchSchema = z.object({
-    commission_owner_pct: z.number().min(0).max(100).optional(),
-    commission_partner_pct: z.number().min(0).max(100).optional(),
-    commission_platform_pct: z.number().min(0).max(100).optional(),
+    commission_owner_pct: z.number().min(0).max(90).optional(),
+    commission_partner_pct: z.number().min(0).max(90).optional(),
+    // commission_platform_pct is always 10 — not user-editable
     commission_notes: z.string().max(1000).optional(),
     lead_id: z.string().optional(),
     lead_name: z.string().max(300).optional(),
-})
+}).refine(
+    (data) => {
+        if (data.commission_owner_pct != null && data.commission_partner_pct != null) {
+            return data.commission_owner_pct + data.commission_partner_pct <= 90
+        }
+        return true
+    },
+    { message: 'A soma das comissões não pode exceder 90% (10% é reservado para a IMI)' }
+)
 
 // ---------------------------------------------------------------------------
 // GET /api/partnerships/[id] — single partnership with all messages

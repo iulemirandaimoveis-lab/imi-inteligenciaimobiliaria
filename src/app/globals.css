@@ -167,6 +167,14 @@
   --info:       #1A4E8A;
   --info-bg:    #E8F0FA;
 
+  /* ── Shorthand tokens (light equivalents of .dark vars) ── */
+  --t1: var(--imi-navy-900);
+  --t2: var(--imi-stone-600);
+  --t3: var(--imi-stone-500);
+  --w: #FFFFFF;
+  --g06: rgba(200,164,74,.06);
+  --g10: rgba(200,164,74,.10);
+
   /* ── Legacy backoffice aliases (map to DS3) ── */
   --bo-bg:             var(--bg-base);
   --bo-surface:        var(--bg-base);

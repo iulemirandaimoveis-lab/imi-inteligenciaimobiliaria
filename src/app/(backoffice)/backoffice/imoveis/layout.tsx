@@ -9,7 +9,7 @@ export default function ImoveisLayout({ children }: { children: React.ReactNode 
 
   return (
     <div>
-      {!isExplorer && <ImoveisSubNav />}
+      {!isExplorer && <div className="hidden md:block"><ImoveisSubNav /></div>}
       <div style={{ marginTop: 0, paddingTop: isExplorer ? 0 : 8 }}>{children}</div>
     </div>
   )

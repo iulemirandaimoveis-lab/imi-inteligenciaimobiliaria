@@ -54,9 +54,9 @@ export function ImoveisSubNav() {
                 fontWeight: active ? 600 : 400,
                 whiteSpace: 'nowrap',
                 textDecoration: 'none',
-                color: active ? '#C9A84C' : '#888',
-                background: active ? 'rgba(201,168,76,0.10)' : 'transparent',
-                borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
+                color: active ? 'var(--text-gold, #C9A84C)' : 'var(--text-tertiary, #888)',
+                background: active ? 'var(--g10, rgba(201,168,76,0.10))' : 'transparent',
+                borderBottom: active ? '2px solid var(--text-gold, #C9A84C)' : '2px solid transparent',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -70,7 +70,7 @@ export function ImoveisSubNav() {
         position: 'absolute',
         right: 0, top: 0, bottom: 0,
         width: 40,
-        background: 'linear-gradient(to right, transparent, var(--bg-base, #0B1928))',
+        background: 'linear-gradient(to right, transparent, var(--bg-base))',
         pointerEvents: 'none',
       }} />
     </div>

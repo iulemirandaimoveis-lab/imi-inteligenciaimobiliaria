@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     const verifyToken = process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN
 
     if (mode === 'subscribe' && token === verifyToken) {
-        console.log('[Instagram Webhook] Verificação bem-sucedida')
+        console.debug('[Instagram Webhook] Verificação bem-sucedida')
         return new NextResponse(challenge, { status: 200 })
     }
 

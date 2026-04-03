@@ -23,7 +23,7 @@ import {
   MobilePropertyCard, MobilePropertyCardSkeleton,
   MobileBottomSheet, MobileEmptyState, MobileSortChips,
 } from './mobile-ui'
-import { normalizeStatus } from '@/lib/format'
+import { normalizeStatus, fmt } from '@/lib/format'
 type ViewMode = 'grid' | 'list'
 type SortField = 'price' | 'imi_score' | 'area' | 'created_at' | 'yield_est'
 type SortDir = 'asc' | 'desc'
@@ -36,12 +36,6 @@ const MARKET_MAP: Record<string, string[]> = {
   AE: ['Emirados Árabes Unidos', 'AE', 'UAE', 'Dubai', 'emirates'],
 }
 // ─── Shared helpers ────────────────────────────────────────────────────────────
-function fmt(n?: number | null): string {
-  if (!n) return '—'
-  if (n >= 1_000_000) return `R$ ${(n / 1_000_000).toFixed(2).replace('.', ',')}M`
-  if (n >= 1_000) return `R$ ${(n / 1_000).toFixed(0)}K`
-  return `R$ ${n.toLocaleString('pt-BR')}`
-}
 
 const STATUS_CONFIGS: Record<string, { label: string; color: string }> = {
   disponivel:     { label: 'Disponível',     color: 'var(--success)' },

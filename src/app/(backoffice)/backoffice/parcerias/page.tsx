@@ -225,8 +225,8 @@ function NewPartnershipModal({
     onCreated: (id: string) => void
 }) {
     const [message, setMessage] = useState('')
-    const [ownerPct, setOwnerPct] = useState(50)
-    const [partnerPct, setPartnerPct] = useState(50)
+    const [ownerPct, setOwnerPct] = useState(45)
+    const [partnerPct, setPartnerPct] = useState(45)
     const [propertyPrice, setPropertyPrice] = useState<number>(0)
     const [submitting, setSubmitting] = useState(false)
     const [loadingPrice, setLoadingPrice] = useState(true)
@@ -318,14 +318,19 @@ function NewPartnershipModal({
                         <div className="flex items-center gap-3">
                             <div className="flex-1">
                                 <input
-                                    type="range" min={10} max={90} value={ownerPct}
-                                    onChange={(e) => { const v = Number(e.target.value); setOwnerPct(v); setPartnerPct(100 - v) }}
+                                    type="range" min={5} max={85} value={ownerPct}
+                                    onChange={(e) => { const v = Number(e.target.value); setOwnerPct(v); setPartnerPct(90 - v) }}
                                     className="w-full accent-[var(--gold,#C8A44A)]"
                                 />
                             </div>
                             <span className="text-sm font-mono font-bold min-w-[90px] text-center" style={{ color: T.text }}>
                                 {ownerPct}% / {partnerPct}%
                             </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.textMuted, marginTop: 4 }}>
+                            <span>Proprietário: {ownerPct}%</span>
+                            <span style={{ color: 'var(--text-gold, #C8A44A)', fontWeight: 600 }}>IMI: 10%</span>
+                            <span>Parceiro: {partnerPct}%</span>
                         </div>
                     </div>
 

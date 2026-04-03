@@ -1,17 +1,22 @@
+import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { user_id, status, last_seen_at } = body
-
-    if (!user_id) {
-      return NextResponse.json({ error: 'user_id required' }, { status: 400 })
+    // Auth check — prevent spoofing
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 
+    const body = await req.json()
+    const { status, last_seen_at } = body
+
+    // Use authenticated user.id, not body.user_id (prevents spoofing)
     await supabaseAdmin.from('user_presence').upsert({
-      user_id,
+      user_id: user.id,
       status: status || 'offline',
       last_seen_at: last_seen_at || new Date().toISOString(),
       updated_at: new Date().toISOString(),

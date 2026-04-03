@@ -226,7 +226,7 @@ export async function POST(request: NextRequest) {
                 commission_total_pct: commissionTotalPct,
                 commission_owner_pct,
                 commission_partner_pct,
-                commission_platform_pct: 0,
+                commission_platform_pct: 10,
                 status: 'proposed' as const,
                 proposed_at: now,
                 updated_at: now,

@@ -336,14 +336,14 @@ export default function MobileHeader() {
                                     <div style={{
                                         width: 1,
                                         height: 28,
-                                        background: '#C8A44A',
+                                        background: 'var(--text-gold, #C8A44A)',
                                         flexShrink: 0,
                                     }} />
                                     {/* Tagline · Brand Identity v1.1 DARK — gold on dark bg */}
                                     <span style={{
                                         fontSize: '11px',
                                         fontWeight: 600,
-                                        color: '#C8A44A',
+                                        color: 'var(--text-gold, #C8A44A)',
                                         letterSpacing: '2.5px',
                                         textTransform: 'uppercase',
                                         lineHeight: 1.45,

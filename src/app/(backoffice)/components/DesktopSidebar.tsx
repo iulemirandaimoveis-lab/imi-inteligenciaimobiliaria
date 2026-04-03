@@ -530,7 +530,7 @@ export function DesktopSidebar() {
                 {/* Gold divider · 1px · Brand Identity v1.1 DARK */}
                 <div
                     className="flex-shrink-0"
-                    style={{ width: 1, height: 28, background: '#C8A44A' }}
+                    style={{ width: 1, height: 28, background: 'var(--text-gold, #C8A44A)' }}
                 />
                 {/* Tagline · Brand Identity v1.1 DARK — gold on dark bg */}
                 <span
@@ -540,7 +540,7 @@ export function DesktopSidebar() {
                         fontWeight: 600,
                         letterSpacing: '2.5px',
                         textTransform: 'uppercase',
-                        color: '#C8A44A',
+                        color: 'var(--text-gold, #C8A44A)',
                         lineHeight: 1.45,
                     }}
                 >
