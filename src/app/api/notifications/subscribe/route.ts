@@ -39,9 +39,7 @@ export async function POST(req: NextRequest) {
                 {
                     user_id: user.id,
                     endpoint,
-                    p256dh: keys.p256dh,
-                    auth: keys.auth,
-                    updated_at: new Date().toISOString(),
+                    keys: { p256dh: keys.p256dh, auth: keys.auth },
                 },
                 { onConflict: 'endpoint' }
             )

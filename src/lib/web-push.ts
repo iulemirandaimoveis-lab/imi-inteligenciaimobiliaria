@@ -20,7 +20,7 @@ export async function sendWebPush(userId: string, payload: { title: string; body
     try {
         const { data: subscriptions } = await supabaseAdmin
             .from('push_subscriptions')
-            .select('endpoint, p256dh, auth')
+            .select('endpoint, keys')
             .eq('user_id', userId)
 
         if (!subscriptions?.length) return
@@ -38,7 +38,7 @@ export async function sendWebPush(userId: string, payload: { title: string; body
             try {
                 await (await getWebPush()).sendNotification({
                     endpoint: sub.endpoint,
-                    keys: { p256dh: sub.p256dh, auth: sub.auth },
+                    keys: { p256dh: sub.keys.p256dh, auth: sub.keys.auth },
                 }, notification)
             } catch (err: any) {
                 // Remove invalid subscriptions (410 Gone)
@@ -59,7 +59,7 @@ export async function sendWebPushToAll(payload: { title: string; body: string; u
     try {
         const { data: subscriptions } = await supabaseAdmin
             .from('push_subscriptions')
-            .select('endpoint, p256dh, auth')
+            .select('endpoint, keys')
 
         if (!subscriptions?.length) return
 
@@ -75,7 +75,7 @@ export async function sendWebPushToAll(payload: { title: string; body: string; u
             try {
                 await (await getWebPush()).sendNotification({
                     endpoint: sub.endpoint,
-                    keys: { p256dh: sub.p256dh, auth: sub.auth },
+                    keys: { p256dh: sub.keys.p256dh, auth: sub.keys.auth },
                 }, notification)
             } catch (err: any) {
                 if (err.statusCode === 410 || err.statusCode === 404) {
