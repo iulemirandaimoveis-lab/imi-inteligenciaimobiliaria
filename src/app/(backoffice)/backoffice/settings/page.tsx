@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -9,7 +10,7 @@ import {
   Key, Clock, AlertTriangle, Mail, MessageSquare,
   BarChart2, Facebook, Map, Zap, ChevronRight,
   Globe, Lock, Eye, EyeOff, Smartphone, Camera, Phone, FileText,
-  Briefcase,
+  Briefcase, Bug, ImagePlus, Send, Trash2, ExternalLink,
 } from 'lucide-react'
 import { PageIntelHeader } from '../../components/ui'
 
@@ -155,6 +156,7 @@ const TABS = [
   { id: 'notifications', label: 'Notificações',  icon: Bell      },
   { id: 'security',      label: 'Segurança',     icon: Shield    },
   { id: 'integrations',  label: 'Integrações',   icon: Database  },
+  { id: 'bugs',          label: 'Reportar Bug',  icon: Bug       },
 ]
 
 interface PersonalProfile {
@@ -167,10 +169,59 @@ interface PersonalProfile {
   avatarUrl: string
 }
 
+// ── Bug report types ─────────────────────────────────────────────────────────
+interface BugReport {
+  id: string
+  title: string
+  description: string
+  severity: string
+  category: string
+  screenshot_urls: string[]
+  page_url: string | null
+  status: string
+  admin_notes: string | null
+  created_at: string
+  updated_at: string
+  profiles?: { name: string | null; email: string | null; avatar_url: string | null }
+}
+
+const SEVERITIES = [
+  { value: 'low',      label: 'Baixa',    color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
+  { value: 'medium',   label: 'Média',    color: '#EAB308', bg: 'rgba(234,179,8,0.12)' },
+  { value: 'high',     label: 'Alta',     color: '#F97316', bg: 'rgba(249,115,22,0.12)' },
+  { value: 'critical', label: 'Crítica',  color: '#EF4444', bg: 'rgba(239,68,68,0.12)' },
+]
+
+const CATEGORIES = [
+  { value: 'geral',          label: 'Geral' },
+  { value: 'visual',         label: 'Visual / UI' },
+  { value: 'funcionalidade', label: 'Funcionalidade' },
+  { value: 'performance',    label: 'Performance' },
+  { value: 'mobile',         label: 'Mobile' },
+  { value: 'dados',          label: 'Dados' },
+  { value: 'seguranca',      label: 'Segurança' },
+]
+
+const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
+  open:          { label: 'Aberto',       color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
+  investigating: { label: 'Investigando', color: '#A855F7', bg: 'rgba(168,85,247,0.12)' },
+  in_progress:   { label: 'Em Progresso', color: '#EAB308', bg: 'rgba(234,179,8,0.12)' },
+  resolved:      { label: 'Resolvido',    color: '#22C55E', bg: 'rgba(34,197,94,0.12)' },
+  wont_fix:      { label: 'Não Corrigir', color: '#6B7280', bg: 'rgba(107,114,128,0.12)' },
+  closed:        { label: 'Fechado',      color: '#6B7280', bg: 'rgba(107,114,128,0.12)' },
+}
+
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme()
+  const searchParams = useSearchParams()
   const [mounted, setMounted] = useState(false)
-  const [activeTab, setActiveTab] = useState('personal')
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const urlTab = new URLSearchParams(window.location.search).get('tab')
+      if (urlTab && TABS.some(t => t.id === urlTab)) return urlTab
+    }
+    return 'personal'
+  })
   const [isSaving, setIsSaving] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [saveError, setSaveError] = useState('')
@@ -267,6 +318,107 @@ export default function SettingsPage() {
     }
   }
 
+  // ── Bug Report State ──
+  const bugScreenshotRef = useRef<HTMLInputElement>(null)
+  const [bugReports, setBugReports] = useState<BugReport[]>([])
+  const [bugIsAdmin, setBugIsAdmin] = useState(false)
+  const [bugLoading, setBugLoading] = useState(false)
+  const [bugSubmitting, setBugSubmitting] = useState(false)
+  const [bugSuccess, setBugSuccess] = useState(false)
+  const [bugForm, setBugForm] = useState({
+    title: '', description: '', severity: 'medium', category: 'geral',
+    screenshot_urls: [] as string[],
+  })
+  const [bugUploadingScreenshot, setBugUploadingScreenshot] = useState(false)
+  const [bugEditingId, setBugEditingId] = useState<string | null>(null)
+  const [bugAdminNotes, setBugAdminNotes] = useState('')
+  const [bugStatusUpdate, setBugStatusUpdate] = useState('')
+
+  const loadBugReports = useCallback(async () => {
+    setBugLoading(true)
+    try {
+      const res = await fetch('/api/bug-reports')
+      if (res.ok) {
+        const json = await res.json()
+        setBugReports(json.data || [])
+        setBugIsAdmin(json.isAdmin || false)
+      }
+    } catch { /* silent */ } finally {
+      setBugLoading(false)
+    }
+  }, [])
+
+  const handleBugSubmit = async () => {
+    if (!bugForm.title.trim() || !bugForm.description.trim()) {
+      setSaveError('Preencha o título e a descrição do bug.')
+      return
+    }
+    setBugSubmitting(true)
+    setSaveError('')
+    try {
+      const res = await fetch('/api/bug-reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...bugForm,
+          page_url: window.location.href,
+          console_errors: null,
+        }),
+      })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        throw new Error(d.error || 'Erro ao enviar')
+      }
+      setBugForm({ title: '', description: '', severity: 'medium', category: 'geral', screenshot_urls: [] })
+      setBugSuccess(true)
+      setTimeout(() => setBugSuccess(false), 4000)
+      loadBugReports()
+    } catch (e: unknown) {
+      setSaveError(e instanceof Error ? e.message : 'Erro ao enviar bug report')
+    } finally {
+      setBugSubmitting(false)
+    }
+  }
+
+  const handleBugScreenshotUpload = async (file: File) => {
+    if (!file?.type.startsWith('image/') || bugForm.screenshot_urls.length >= 5) return
+    setBugUploadingScreenshot(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload?folder=bug_reports&bucket=media', { method: 'POST', body: fd })
+      if (!res.ok) throw new Error('Falha no upload')
+      const json = await res.json()
+      const url = json.data?.url || json.url || json.publicUrl || json.path
+      if (url) {
+        setBugForm(prev => ({ ...prev, screenshot_urls: [...prev.screenshot_urls, url] }))
+      }
+    } catch (e: unknown) {
+      setSaveError('Erro no upload: ' + (e instanceof Error ? e.message : ''))
+    } finally {
+      setBugUploadingScreenshot(false)
+    }
+  }
+
+  const handleBugStatusPatch = async (bugId: string) => {
+    try {
+      const body: Record<string, string> = {}
+      if (bugStatusUpdate) body.status = bugStatusUpdate
+      if (bugAdminNotes) body.admin_notes = bugAdminNotes
+      const res = await fetch(`/api/bug-reports/${bugId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      if (res.ok) {
+        setBugEditingId(null)
+        setBugAdminNotes('')
+        setBugStatusUpdate('')
+        loadBugReports()
+      }
+    } catch { /* silent */ }
+  }
+
   useEffect(() => {
     setMounted(true)
     fetch('/api/settings').then(r => r.ok ? r.json() : null).then(data => {
@@ -278,6 +430,19 @@ export default function SettingsPage() {
       }
     }).catch(() => {})
   }, [])
+
+  // Deep link ?tab=bugs support
+  useEffect(() => {
+    const tab = searchParams?.get('tab')
+    if (tab && TABS.some(t => t.id === tab)) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
+
+  // Load bug reports when bugs tab is active
+  useEffect(() => {
+    if (activeTab === 'bugs') loadBugReports()
+  }, [activeTab, loadBugReports])
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -1124,6 +1289,403 @@ export default function SettingsPage() {
               >
                 Abrir <ChevronRight size={12} />
               </a>
+            </div>
+          </div>
+        )}
+
+        {/* ══ REPORTAR BUG ══ */}
+        {activeTab === 'bugs' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            {/* ── Success banner ── */}
+            <AnimatePresence>
+              {bugSuccess && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '14px 18px', borderRadius: 'var(--r-lg)',
+                    background: 'rgba(34,197,94,0.10)', border: '1px solid rgba(34,197,94,0.25)',
+                    color: '#22C55E', fontSize: 13, fontFamily: 'var(--font-sans)',
+                  }}
+                >
+                  <CheckCircle size={16} />
+                  Bug reportado com sucesso! A equipe foi notificada e analisará em breve.
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* ── New Bug Form ── */}
+            <div style={{ ...elevated, padding: 24 }}>
+              <SectionTitle sub="Descreva o problema com o máximo de detalhes possível. Prints ajudam muito!">
+                Reportar Novo Bug
+              </SectionTitle>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {/* Title */}
+                <div>
+                  <Label>Título do Bug</Label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Botão de salvar não funciona na página de imóveis"
+                    value={bugForm.title}
+                    onChange={e => setBugForm(prev => ({ ...prev, title: e.target.value }))}
+                    maxLength={300}
+                    style={inputBase}
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <Label>Descrição Detalhada</Label>
+                  <textarea
+                    placeholder="Descreva: 1) O que você estava fazendo 2) O que esperava acontecer 3) O que aconteceu de fato"
+                    value={bugForm.description}
+                    onChange={e => setBugForm(prev => ({ ...prev, description: e.target.value }))}
+                    maxLength={5000}
+                    rows={5}
+                    style={{
+                      ...inputBase,
+                      height: 'auto', padding: '12px 14px',
+                      resize: 'vertical', minHeight: 100,
+                    }}
+                  />
+                </div>
+
+                {/* Severity + Category row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
+                  <div>
+                    <Label>Severidade</Label>
+                    <select
+                      value={bugForm.severity}
+                      onChange={e => setBugForm(prev => ({ ...prev, severity: e.target.value }))}
+                      style={{ ...inputBase, cursor: 'pointer' }}
+                    >
+                      {SEVERITIES.map(s => (
+                        <option key={s.value} value={s.value}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Categoria</Label>
+                    <select
+                      value={bugForm.category}
+                      onChange={e => setBugForm(prev => ({ ...prev, category: e.target.value }))}
+                      style={{ ...inputBase, cursor: 'pointer' }}
+                    >
+                      {CATEGORIES.map(c => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Screenshots */}
+                <div>
+                  <Label>Screenshots (máx. 5)</Label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                    {bugForm.screenshot_urls.map((url, i) => (
+                      <div key={i} style={{
+                        position: 'relative', width: 80, height: 80,
+                        borderRadius: 'var(--r-md)', overflow: 'hidden',
+                        border: '1px solid var(--border-default)',
+                      }}>
+                        <img src={url} alt={`Screenshot ${i + 1}`} style={{
+                          width: '100%', height: '100%', objectFit: 'cover',
+                        }} />
+                        <button
+                          onClick={() => setBugForm(prev => ({
+                            ...prev,
+                            screenshot_urls: prev.screenshot_urls.filter((_, idx) => idx !== i),
+                          }))}
+                          style={{
+                            position: 'absolute', top: 2, right: 2,
+                            width: 20, height: 20, borderRadius: '50%',
+                            background: 'rgba(0,0,0,0.7)', border: 'none',
+                            color: '#fff', cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          }}
+                        >
+                          <Trash2 size={10} />
+                        </button>
+                      </div>
+                    ))}
+                    {bugForm.screenshot_urls.length < 5 && (
+                      <button
+                        onClick={() => bugScreenshotRef.current?.click()}
+                        disabled={bugUploadingScreenshot}
+                        style={{
+                          width: 80, height: 80,
+                          borderRadius: 'var(--r-md)',
+                          border: '2px dashed var(--border-default)',
+                          background: 'var(--bg-muted)',
+                          color: 'var(--text-tertiary)',
+                          cursor: 'pointer',
+                          display: 'flex', flexDirection: 'column',
+                          alignItems: 'center', justifyContent: 'center', gap: 4,
+                          transition: 'all 180ms ease',
+                        }}
+                      >
+                        {bugUploadingScreenshot
+                          ? <Loader2 size={16} className="animate-spin" />
+                          : <ImagePlus size={18} />
+                        }
+                        <span style={{ fontSize: 9, fontWeight: 600 }}>
+                          {bugUploadingScreenshot ? 'Enviando...' : 'Adicionar'}
+                        </span>
+                      </button>
+                    )}
+                    <input
+                      ref={bugScreenshotRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        const file = e.target.files?.[0]
+                        if (file) handleBugScreenshotUpload(file)
+                        e.target.value = ''
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Submit */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 8 }}>
+                  <button
+                    onClick={handleBugSubmit}
+                    disabled={bugSubmitting || !bugForm.title.trim() || !bugForm.description.trim()}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 8,
+                      height: 42, padding: '0 24px',
+                      borderRadius: 'var(--r-md)',
+                      background: 'var(--accent-400)',
+                      color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
+                      fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
+                      opacity: (bugSubmitting || !bugForm.title.trim() || !bugForm.description.trim()) ? 0.5 : 1,
+                      transition: 'all 180ms ease',
+                    }}
+                  >
+                    {bugSubmitting ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+                    {bugSubmitting ? 'Enviando...' : 'Enviar Report'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Bug Reports List ── */}
+            <div style={{ ...elevated, padding: 24 }}>
+              <SectionTitle sub={bugIsAdmin ? 'Todos os relatórios de bug dos usuários' : 'Seus relatórios de bug'}>
+                {bugIsAdmin ? 'Todos os Bug Reports' : 'Meus Bug Reports'}
+              </SectionTitle>
+
+              {bugLoading ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+                  <Loader2 size={24} className="animate-spin" style={{ color: 'var(--text-tertiary)' }} />
+                </div>
+              ) : bugReports.length === 0 ? (
+                <div style={{
+                  padding: '32px 20px', textAlign: 'center',
+                  color: 'var(--text-tertiary)', fontSize: 13,
+                  fontFamily: 'var(--font-sans)',
+                }}>
+                  <Bug size={32} style={{ opacity: 0.3, marginBottom: 8 }} />
+                  <p style={{ margin: 0 }}>Nenhum bug reportado ainda.</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {bugReports.map(bug => {
+                    const severity = SEVERITIES.find(s => s.value === bug.severity) || SEVERITIES[1]
+                    const status = STATUS_MAP[bug.status] || STATUS_MAP.open
+                    const isEditing = bugEditingId === bug.id
+
+                    return (
+                      <div key={bug.id} style={{
+                        padding: 16, borderRadius: 'var(--r-lg)',
+                        background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)',
+                      }}>
+                        {/* Header */}
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+                              <span style={{
+                                fontSize: 10, fontWeight: 700, padding: '3px 8px',
+                                borderRadius: 4, background: severity.bg, color: severity.color,
+                                fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                                letterSpacing: '0.06em',
+                              }}>
+                                {severity.label}
+                              </span>
+                              <span style={{
+                                fontSize: 10, fontWeight: 700, padding: '3px 8px',
+                                borderRadius: 4, background: status.bg, color: status.color,
+                                fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                                letterSpacing: '0.06em',
+                              }}>
+                                {status.label}
+                              </span>
+                              <span style={{
+                                fontSize: 10, color: 'var(--text-tertiary)',
+                                fontFamily: 'var(--font-mono)',
+                              }}>
+                                {CATEGORIES.find(c => c.value === bug.category)?.label || bug.category}
+                              </span>
+                            </div>
+                            <p style={{
+                              fontSize: 14, fontWeight: 600, color: 'var(--text-primary)',
+                              margin: 0, fontFamily: 'var(--font-sans)',
+                            }}>
+                              {bug.title}
+                            </p>
+                            <p style={{
+                              fontSize: 12, color: 'var(--text-secondary)', margin: '6px 0 0',
+                              fontFamily: 'var(--font-sans)', lineHeight: 1.5,
+                              display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                            }}>
+                              {bug.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Screenshots */}
+                        {bug.screenshot_urls && bug.screenshot_urls.length > 0 && (
+                          <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                            {bug.screenshot_urls.map((url, i) => (
+                              <a key={i} href={url} target="_blank" rel="noreferrer" style={{
+                                width: 56, height: 56, borderRadius: 6, overflow: 'hidden',
+                                border: '1px solid var(--border-default)', display: 'block',
+                              }}>
+                                <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              </a>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Meta */}
+                        <div style={{
+                          display: 'flex', alignItems: 'center', gap: 12, marginTop: 10,
+                          flexWrap: 'wrap',
+                        }}>
+                          {bugIsAdmin && bug.profiles && (
+                            <span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'var(--font-sans)' }}>
+                              Por: <strong style={{ color: 'var(--text-secondary)' }}>
+                                {bug.profiles.name || bug.profiles.email || 'Usuário'}
+                              </strong>
+                            </span>
+                          )}
+                          <span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                            {new Date(bug.created_at).toLocaleDateString('pt-BR', {
+                              day: '2-digit', month: 'short', year: 'numeric',
+                              hour: '2-digit', minute: '2-digit',
+                            })}
+                          </span>
+                        </div>
+
+                        {/* Admin notes display */}
+                        {bug.admin_notes && !isEditing && (
+                          <div style={{
+                            marginTop: 10, padding: '10px 12px',
+                            borderRadius: 'var(--r-md)',
+                            background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)',
+                          }}>
+                            <p style={{
+                              fontSize: 10, fontWeight: 700, color: 'var(--accent-400)',
+                              fontFamily: 'var(--font-mono)', margin: '0 0 4px',
+                              textTransform: 'uppercase', letterSpacing: '0.08em',
+                            }}>Nota Admin</p>
+                            <p style={{
+                              fontSize: 12, color: 'var(--text-secondary)',
+                              margin: 0, fontFamily: 'var(--font-sans)', lineHeight: 1.5,
+                            }}>
+                              {bug.admin_notes}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Admin controls */}
+                        {bugIsAdmin && (
+                          <div style={{ marginTop: 10 }}>
+                            {!isEditing ? (
+                              <button
+                                onClick={() => {
+                                  setBugEditingId(bug.id)
+                                  setBugAdminNotes(bug.admin_notes || '')
+                                  setBugStatusUpdate(bug.status)
+                                }}
+                                style={{
+                                  fontSize: 11, fontWeight: 600, color: 'var(--accent-400)',
+                                  background: 'none', border: 'none', cursor: 'pointer',
+                                  fontFamily: 'var(--font-sans)', padding: 0,
+                                }}
+                              >
+                                Gerenciar
+                              </button>
+                            ) : (
+                              <div style={{
+                                padding: 14, borderRadius: 'var(--r-md)',
+                                background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
+                                display: 'flex', flexDirection: 'column', gap: 10,
+                              }}>
+                                <div>
+                                  <Label>Status</Label>
+                                  <select
+                                    value={bugStatusUpdate}
+                                    onChange={e => setBugStatusUpdate(e.target.value)}
+                                    style={{ ...inputBase, height: 38, fontSize: 13, cursor: 'pointer' }}
+                                  >
+                                    {Object.entries(STATUS_MAP).map(([val, s]) => (
+                                      <option key={val} value={val}>{s.label}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                                <div>
+                                  <Label>Notas Admin</Label>
+                                  <textarea
+                                    value={bugAdminNotes}
+                                    onChange={e => setBugAdminNotes(e.target.value)}
+                                    rows={3}
+                                    maxLength={5000}
+                                    placeholder="Notas internas sobre o bug..."
+                                    style={{
+                                      ...inputBase, height: 'auto', padding: '10px 14px',
+                                      resize: 'vertical', minHeight: 60, fontSize: 13,
+                                    }}
+                                  />
+                                </div>
+                                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                                  <button
+                                    onClick={() => { setBugEditingId(null); setBugAdminNotes(''); setBugStatusUpdate('') }}
+                                    style={{
+                                      height: 34, padding: '0 14px',
+                                      borderRadius: 'var(--r-md)',
+                                      background: 'var(--bg-muted)', border: '1px solid var(--border-default)',
+                                      color: 'var(--text-secondary)', cursor: 'pointer',
+                                      fontSize: 12, fontWeight: 500, fontFamily: 'var(--font-sans)',
+                                    }}
+                                  >
+                                    Cancelar
+                                  </button>
+                                  <button
+                                    onClick={() => handleBugStatusPatch(bug.id)}
+                                    style={{
+                                      height: 34, padding: '0 14px',
+                                      borderRadius: 'var(--r-md)',
+                                      background: 'var(--accent-400)', border: 'none',
+                                      color: 'var(--text-inverse)', cursor: 'pointer',
+                                      fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-sans)',
+                                    }}
+                                  >
+                                    Salvar
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}

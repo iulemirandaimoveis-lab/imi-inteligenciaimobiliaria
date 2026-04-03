@@ -8,6 +8,7 @@ export type NotificationType =
   | 'imovel_novo' | 'imovel_atualizado'
   | 'mensagem_nova'
   | 'proposta_nova' | 'proposta_atualizada'
+  | 'bug_report'
   | 'sistema'
 
 export interface CreateNotificationParams {
