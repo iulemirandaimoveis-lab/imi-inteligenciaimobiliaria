@@ -603,5 +603,39 @@
       "O Modelo IMI Final",
       "A Carta"
     ]
+  },
+  {
+    "slug": "livro-28-avaliacao-mercadologica-joao-diniz",
+    "title": "Avaliação Mercadológica de Imóveis",
+    "subtitle": "Legislações, Conceitos, Práticas — João Diniz Marcello",
+    "author": "João Diniz Marcello",
+    "category": "avaliacao",
+    "isbn": "978-85-7146-152-9",
+    "pages": 347,
+    "featured": true,
+    "chapters": 21,
+    "chapter_titles": [
+      "Páginas Iniciais",
+      "Avaliações Mercadológicas",
+      "Considerações Iniciais",
+      "Legislações",
+      "Áreas de Atuação do Corretor",
+      "Conceitos",
+      "Definições",
+      "Índices do Mercado Imobiliário",
+      "Práticas",
+      "Avaliações de Aluguéis",
+      "Avaliações de Glebas",
+      "Avaliações de Imóveis Rurais",
+      "Avaliações de Servidões",
+      "Avaliações de Desapropriações",
+      "Liquidação Forçada",
+      "Avaliações de Situações Específicas",
+      "Avaliações e Perícias Judiciais",
+      "Honorários Avaliatórios",
+      "Modelo de Avaliação Mercadológica",
+      "Tabelas Técnicas",
+      "Bibliografia"
+    ]
   }
 ]
