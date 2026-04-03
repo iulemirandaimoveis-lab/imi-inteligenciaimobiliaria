@@ -522,7 +522,7 @@ export function DesktopSidebar() {
                         fontSize: 20,
                         fontWeight: 700,
                         letterSpacing: '2px',
-                        color: '#FFFFFF',
+                        color: 'var(--text-primary)',
                     }}
                 >
                     IMI

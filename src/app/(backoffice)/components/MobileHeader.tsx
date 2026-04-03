@@ -326,7 +326,7 @@ export default function MobileHeader() {
                                         fontFamily: "'Playfair Display', Georgia, serif",
                                         fontSize: 20,
                                         fontWeight: 700,
-                                        color: '#FFFFFF',
+                                        color: 'var(--text-primary)',
                                         letterSpacing: '2px',
                                         lineHeight: 1,
                                     }}>

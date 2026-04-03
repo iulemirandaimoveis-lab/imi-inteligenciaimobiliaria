@@ -1139,6 +1139,35 @@ export default function SettingsPage() {
               </p>
             </div>
 
+            {/* Admin: User Management */}
+            <a
+              href="/backoffice/settings/usuarios"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                padding: '14px 18px', borderRadius: 'var(--r-lg)',
+                background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+                textDecoration: 'none', cursor: 'pointer',
+                transition: 'all 180ms ease',
+              }}
+            >
+              <div style={{
+                width: 36, height: 36, borderRadius: 'var(--r-md)',
+                background: 'rgba(61,111,255,0.10)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              }}>
+                <Shield size={16} style={{ color: 'var(--accent-400)' }} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', margin: 0 }}>
+                  Gerenciar Usuários
+                </p>
+                <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: '2px 0 0', fontFamily: 'var(--font-sans)' }}>
+                  Criar, editar e remover usuários do sistema
+                </p>
+              </div>
+              <ChevronRight size={16} style={{ color: 'var(--text-tertiary)', flexShrink: 0 }} />
+            </a>
+
             {/* LGPD info */}
             <div style={{
               padding: '14px 16px', borderRadius: 'var(--r-lg)',

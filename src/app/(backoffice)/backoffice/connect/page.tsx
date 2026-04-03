@@ -1158,7 +1158,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
             borderRadius: 'var(--r-lg, 14px)',
             border: `1px solid ${T.border}`,
         }}
-        className="h-[calc(100dvh-164px)] sm:h-[calc(100dvh-152px)] lg:h-[calc(100dvh-112px)]"
+        className="h-[calc(100dvh-200px)] sm:h-[calc(100dvh-160px)] lg:h-[calc(100dvh-112px)]"
         >
             {/* New Channel / Direct Message Modal */}
             <AnimatePresence>
