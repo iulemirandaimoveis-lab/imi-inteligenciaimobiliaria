@@ -8,7 +8,7 @@ import {
     Loader2, RefreshCw, ExternalLink, BarChart3, Building2,
     MapPin, Monitor, Smartphone, Tablet, Globe, Clock,
     Zap, ArrowRight, Users, Download, Calendar, Flame,
-    Eye, FileText, Target, Activity,
+    Eye, FileText, Target, Activity, Route, GitBranch,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
@@ -56,6 +56,10 @@ interface Analytics {
         fingerprint: string; score: number; category: string; intent: string
         urgency: string; sessions: number; clicks: number; development: string | null; last_seen: string
     }>
+    visitorJourneys: Array<{
+        session_id: string; pages: number; totalDuration: number; path: string[]; started: string
+    }>
+    topFlows: Array<{ flow: string; count: number }>
 }
 
 type TimeRange = '7d' | '30d' | '90d'
@@ -1227,6 +1231,156 @@ export default function TrackingDashboardPage() {
                                 <div className="flex flex-col items-center justify-center h-32 gap-2">
                                     <Building2 size={20} style={{ color: T.textMuted, opacity: 0.4 }} />
                                     <p className="text-xs" style={{ color: T.textMuted }}>Nenhum empreendimento no período</p>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+
+                    {/* ── Visitor Journeys + Top Flows ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.188, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+                    >
+                        {/* Visitor Journeys */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <Route size={14} style={{ color: T.accent }} />
+                                Jornadas do Visitante
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Sessões com mais páginas visitadas
+                            </p>
+                            {data.visitorJourneys?.length > 0 ? (
+                                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                                    {data.visitorJourneys.slice(0, 10).map((j, i) => (
+                                        <div
+                                            key={j.session_id}
+                                            className="px-3 py-2.5 rounded-md transition-colors"
+                                            style={{ background: 'transparent' }}
+                                            onMouseEnter={e => e.currentTarget.style.background = T.hover}
+                                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                        >
+                                            <div className="flex items-center justify-between mb-1.5">
+                                                <div className="flex items-center gap-2">
+                                                    <span
+                                                        className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black"
+                                                        style={{ background: T.accentBg, color: T.accent }}
+                                                    >
+                                                        {j.pages}
+                                                    </span>
+                                                    <span className="text-[10px] font-mono" style={{ color: T.textMuted }}>
+                                                        {j.session_id}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    {j.totalDuration > 0 && (
+                                                        <span className="text-[9px]" style={{ color: T.textDim }}>
+                                                            {j.totalDuration > 60 ? `${Math.floor(j.totalDuration / 60)}m ${j.totalDuration % 60}s` : `${j.totalDuration}s`}
+                                                        </span>
+                                                    )}
+                                                    <span className="text-[9px]" style={{ color: T.textDim }}>
+                                                        {j.started ? new Date(j.started).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : ''}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {/* Page flow visualization */}
+                                            <div className="flex items-center gap-1 flex-wrap">
+                                                {j.path.slice(0, 6).map((page, pi) => {
+                                                    const shortPage = page === '/' ? 'Home'
+                                                        : page.replace(/^\/(imoveis|empreendimentos)\//, '').slice(0, 18)
+                                                    return (
+                                                        <span key={pi} className="flex items-center gap-1">
+                                                            <span
+                                                                className="text-[9px] px-1.5 py-0.5 rounded"
+                                                                style={{
+                                                                    background: pi === 0 ? T.accentBg : T.elevated,
+                                                                    color: pi === 0 ? T.accent : T.textMuted,
+                                                                }}
+                                                            >
+                                                                {shortPage}
+                                                            </span>
+                                                            {pi < Math.min(j.path.length - 1, 5) && (
+                                                                <ArrowRight size={8} style={{ color: T.textDim }} />
+                                                            )}
+                                                        </span>
+                                                    )
+                                                })}
+                                                {j.path.length > 6 && (
+                                                    <span className="text-[9px]" style={{ color: T.textDim }}>
+                                                        +{j.path.length - 6}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-32 gap-2">
+                                    <Route size={20} style={{ color: T.textMuted, opacity: 0.4 }} />
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Nenhuma jornada com 2+ páginas</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Top Page Flows */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <GitBranch size={14} style={{ color: T.accent }} />
+                                Fluxos Mais Comuns
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Transições de página mais frequentes
+                            </p>
+                            {data.topFlows?.length > 0 ? (
+                                <div className="space-y-2.5">
+                                    {data.topFlows.slice(0, 10).map((f, i) => {
+                                        const maxCount = data.topFlows[0]?.count || 1
+                                        const pct = Math.max(Math.round((f.count / maxCount) * 100), 4)
+                                        const [from, to] = f.flow.split(' → ')
+                                        const shortFrom = (from || '/') === '/' ? 'Home' : from.replace(/^\/(imoveis|empreendimentos)\//, '').slice(0, 20)
+                                        const shortTo = (to || '/') === '/' ? 'Home' : to.replace(/^\/(imoveis|empreendimentos)\//, '').slice(0, 20)
+                                        return (
+                                            <div key={f.flow}>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <div className="flex items-center gap-1.5 min-w-0">
+                                                        <span className="text-[10px] font-medium truncate" style={{ color: T.accent }}>
+                                                            {shortFrom}
+                                                        </span>
+                                                        <ArrowRight size={10} style={{ color: T.textDim }} />
+                                                        <span className="text-[10px] font-medium truncate" style={{ color: T.text }}>
+                                                            {shortTo}
+                                                        </span>
+                                                    </div>
+                                                    <span className="text-[10px] font-bold shrink-0 ml-2" style={{ color: T.textMuted }}>
+                                                        {f.count}x
+                                                    </span>
+                                                </div>
+                                                <div className="h-1 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                                    <div
+                                                        className="h-full rounded-full"
+                                                        style={{
+                                                            width: `${pct}%`,
+                                                            background: i < 3 ? T.accent : CHART_SECONDARY,
+                                                            opacity: 1 - (i * 0.07),
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-32 gap-2">
+                                    <GitBranch size={20} style={{ color: T.textMuted, opacity: 0.4 }} />
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Sem fluxos registrados</p>
                                 </div>
                             )}
                         </div>
