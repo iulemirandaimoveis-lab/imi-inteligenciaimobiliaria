@@ -455,7 +455,9 @@ export default function EditarImovelPage() {
       try {
         const res = await fetch(`/api/developments?id=${params.id}`)
         if (!res.ok) throw new Error('Erro ao carregar')
-        const d = await res.json()
+        const text = await res.text()
+        let d
+        try { d = JSON.parse(text) } catch { throw new Error('Resposta inválida do servidor') }
         const galleryImgs = Array.isArray(d.gallery_images) ? d.gallery_images :
           (Array.isArray(d.images) && typeof d.images[0] === 'string' ? d.images : [])
         setFormData({
@@ -582,7 +584,7 @@ export default function EditarImovelPage() {
           brochure_url: brochureUrl, video_url: formData.videoUrl || null, video_short_url: formData.videoShort || null,
         }),
       })
-      if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Erro ao atualizar') }
+      if (!res.ok) { let e; try { e = await res.json() } catch { e = {} }; throw new Error(e.error || 'Erro ao atualizar') }
       setLastSaved(new Date())
       toast.success('Empreendimento salvo!')
       // Convert newly-uploaded items to existing items (with real URLs)

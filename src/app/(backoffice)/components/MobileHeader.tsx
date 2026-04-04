@@ -212,8 +212,14 @@ export default function MobileHeader() {
                 .then(r => r.json())
                 .then(json => {
                     const items: Notification[] = Array.isArray(json) ? json : (json.data || [])
-                    setNotifications(items.slice(0, 20))
-                    setUnreadCount(items.filter((n: Notification) => !n.read).length)
+                    // Check localStorage for last-read timestamp (handles global notifications that RLS can't mark)
+                    let lastReadAt: string | null = null
+                    try { lastReadAt = localStorage.getItem('imi-notif-read-at') } catch {}
+                    const processedItems = lastReadAt
+                        ? items.map(n => (!n.read && n.created_at && n.created_at <= lastReadAt!) ? { ...n, read: true } : n)
+                        : items
+                    setNotifications(processedItems.slice(0, 20))
+                    setUnreadCount(processedItems.filter((n: Notification) => !n.read).length)
                 })
                 .catch(() => {})
         }
@@ -250,8 +256,11 @@ export default function MobileHeader() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ read_all: true }),
             })
+            // Optimistic update
             setNotifications(prev => prev.map(n => ({ ...n, read: true })))
             setUnreadCount(0)
+            // Persist last-read timestamp for global notifications that RLS might not update
+            try { localStorage.setItem('imi-notif-read-at', new Date().toISOString()) } catch {}
         } catch {}
     }
 

@@ -86,8 +86,9 @@ export default function CriadorIAPage() {
                 }),
             })
             if (!res.ok) {
-                const err = await res.json()
-                throw new Error(err.error || 'Erro ao gerar')
+                let err
+                try { err = await res.json() } catch { err = {} }
+                throw new Error(err.error || `Erro ao gerar (HTTP ${res.status})`)
             }
             const data = await res.json()
             setOutput({ legenda: data.legenda, reels: data.reels, prompt: data.prompt })
@@ -228,6 +229,12 @@ export default function CriadorIAPage() {
                     </button>
                     <AnimatePresence>
                         {showDevDropdown && (
+                            <>
+                            {/* Backdrop to prevent accidental clicks */}
+                            <div
+                                onClick={() => setShowDevDropdown(false)}
+                                style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'rgba(0,0,0,0.2)' }}
+                            />
                             <motion.div
                                 initial={{ opacity: 0, y: -6 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -255,6 +262,7 @@ export default function CriadorIAPage() {
                                     </button>
                                 ))}
                             </motion.div>
+                            </>
                         )}
                     </AnimatePresence>
                 </div>

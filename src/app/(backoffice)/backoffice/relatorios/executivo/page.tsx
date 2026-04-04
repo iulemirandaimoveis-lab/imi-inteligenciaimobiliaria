@@ -58,7 +58,7 @@ export default function RelatoriosExecutivoPage() {
           supabase.from('financial_transactions').select('amount').eq('type', 'receita').gte('date', monthStart),
           supabase.from('leads').select('created_at').gte('created_at', twelveMonthsAgo),
           supabase.from('leads').select('source'),
-          supabase.from('brokers').select('id, name, email').limit(5),
+          supabase.from('brokers').select('id, user_id, name, email').limit(5),
         ])
 
         const total = leadsCount || 0
@@ -136,11 +136,13 @@ export default function RelatoriosExecutivoPage() {
 
         // ── Top agents: brokers with lead counts ───────────────────────────
         if (brokersRaw && brokersRaw.length > 0) {
-          const agentPromises = brokersRaw.slice(0, 3).map((b: { id: string }) =>
-            supabase.from('leads').select('*', { count: 'exact', head: true }).eq('broker_id', b.id)
-          )
+          // Query leads by assigned_to (user_id) since leads use assigned_to, not broker_id
+          const agentPromises = brokersRaw.slice(0, 5).map((b: { id: string; user_id?: string }) => {
+            const userId = b.user_id || b.id
+            return supabase.from('leads').select('*', { count: 'exact', head: true }).eq('assigned_to', userId)
+          })
           const agentLeadCounts = await Promise.all(agentPromises)
-          const agents: AgentItem[] = brokersRaw.slice(0, 3).map((b: { id: string; name?: string; email?: string }, i: number) => {
+          const agents: AgentItem[] = brokersRaw.slice(0, 5).map((b: { id: string; user_id?: string; name?: string; email?: string }, i: number) => {
             const lc = agentLeadCounts[i]?.count || 0
             const parts = (b.name || b.email || 'AG').split(' ')
             const initials = parts.length >= 2 ? parts[0][0] + parts[1][0] : parts[0].slice(0, 2)
@@ -150,10 +152,12 @@ export default function RelatoriosExecutivoPage() {
               leads: lc,
               conv: 0,
               volume: lc > 0 ? parseFloat(((lc * 0.02)).toFixed(1)) : 0,
-              color: AGENT_COLORS[i],
+              color: AGENT_COLORS[i % AGENT_COLORS.length],
             }
-          }).filter(a => a.leads > 0)
-          if (agents.length > 0) setTopAgents(agents)
+          })
+          // Show all agents even with 0 leads, sorted by lead count
+          const sorted = agents.sort((a, b) => b.leads - a.leads)
+          setTopAgents(sorted.length > 0 ? sorted : agents)
         }
       } catch { /* use defaults */ }
       setLoading(false)

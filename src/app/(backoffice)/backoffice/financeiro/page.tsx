@@ -55,15 +55,24 @@ export default function FinanceiroPage() {
     payment_method: '',
     notes: '',
   })
+  const [loadError, setLoadError] = useState(false)
   const fetchTransactions = async () => {
     try {
-      const res = await fetch('/api/financeiro')
+      setLoadError(false)
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 15000)
+      const res = await fetch('/api/financeiro', { signal: controller.signal })
+      clearTimeout(timeout)
       if (res.ok) {
         const json = await res.json()
-        // API returns { data: [], pagination: {} }
         setTransactions(Array.isArray(json) ? json : (json.data ?? []))
+      } else {
+        setLoadError(true)
+        toast.error('Erro ao carregar dados financeiros')
       }
-    } catch (err) {
+    } catch {
+      setLoadError(true)
+      toast.error('Erro de conexão ao carregar dados financeiros')
     } finally {
       setLoading(false)
     }
@@ -76,10 +85,19 @@ export default function FinanceiroPage() {
     }
     setSaving(true)
     try {
+      const payload = {
+        type: form.type,
+        category: form.category,
+        description: form.description,
+        amount: parseFloat(form.amount),
+        date: form.due_date || new Date().toISOString().split('T')[0],
+        status: form.status,
+        notes: form.notes || undefined,
+      }
       const res = await fetch('/api/financeiro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, amount: parseFloat(form.amount), due_date: form.due_date || null }),
+        body: JSON.stringify(payload),
       })
       if (res.ok) {
         toast.success('Lançamento criado!')
@@ -87,8 +105,9 @@ export default function FinanceiroPage() {
         setForm({ type: 'receita', category: 'Comissão', description: '', amount: '', due_date: '', status: 'pendente', payment_method: '', notes: '' })
         fetchTransactions()
       } else {
-        const data = await res.json()
-        toast.error(data.error || 'Erro ao salvar')
+        const data = await res.json().catch(() => ({}))
+        const details = data.details ? Object.entries(data.details).map(([k, v]) => `${k}: ${v}`).join(', ') : ''
+        toast.error(details || data.error || 'Erro ao salvar')
       }
     } catch { toast.error('Erro de conexão') }
     finally { setSaving(false) }
@@ -125,12 +144,32 @@ export default function FinanceiroPage() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div style={{ height: '72px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {[1,2,3,4].map(i => (
-            <div key={i} style={{ flex: 1, height: '88px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} style={{ flex: '1 1 140px', height: '88px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))}
         </div>
         <div style={{ height: '300px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+      </div>
+    )
+  }
+  if (loadError && transactions.length === 0) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '64px 24px', textAlign: 'center' }}>
+        <DollarSign size={40} color="var(--text-secondary)" />
+        <p style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>Erro ao carregar dados financeiros</p>
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '360px' }}>Verifique sua conexão e tente novamente. Se o problema persistir, entre em contato com o suporte.</p>
+        <button
+          onClick={() => { setLoading(true); fetchTransactions() }}
+          style={{
+            marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
+            height: '40px', padding: '0 20px', borderRadius: '4px',
+            fontSize: '13px', fontWeight: 700, color: '#fff',
+            background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer',
+          }}
+        >
+          Tentar novamente
+        </button>
       </div>
     )
   }
@@ -143,7 +182,7 @@ export default function FinanceiroPage() {
           title="Financeiro"
           subtitle="Receitas, despesas e fluxo de caixa"
           actions={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               <button
                 onClick={() => {
                   const month = new Date().toISOString().slice(0, 7)
@@ -362,8 +401,19 @@ export default function FinanceiroPage() {
               </div>
               <div>
                 <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Valor (R$) *</label>
-                <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
-                  placeholder="0.00" style={inputStyle} />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={form.amount ? Number(form.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
+                  onChange={e => {
+                    // Strip non-numeric chars, parse as centavos
+                    const raw = e.target.value.replace(/\D/g, '')
+                    const cents = parseInt(raw || '0', 10)
+                    setForm(f => ({ ...f, amount: cents > 0 ? (cents / 100).toString() : '' }))
+                  }}
+                  placeholder="0,00"
+                  style={inputStyle}
+                />
               </div>
               <div>
                 <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Categoria</label>

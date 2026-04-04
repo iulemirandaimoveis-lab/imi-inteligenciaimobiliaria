@@ -84,6 +84,52 @@ export async function POST(request: Request) {
                 if (msg.includes('already been registered') || msg.includes('already exists')) {
                     return NextResponse.json({ error: `O email ${email} já está cadastrado no sistema.` }, { status: 409 })
                 }
+                // "Database error creating new user" usually means a trigger on auth.users is failing
+                if (msg.includes('Database error')) {
+                    console.error('Database error creating user — likely a trigger issue on auth.users or profiles table:', msg)
+                    // Try to create user without triggering the database issue by first checking if the issue
+                    // is a trigger on auth.users that inserts into profiles — since we do our own profile insert below
+                    // Retry without user_metadata to reduce trigger failure chance
+                    const { data: retryUser, error: retryError } = await supabaseAdmin.auth.admin.createUser({
+                        email,
+                        password: tempPassword,
+                        email_confirm: true,
+                    })
+                    if (!retryError && retryUser?.user) {
+                        const newUserId = retryUser.user.id
+                        // Manually set metadata
+                        await supabaseAdmin.auth.admin.updateUserById(newUserId, {
+                            user_metadata: { name, role: validRole }
+                        }).catch(() => {})
+                        // Continue with the rest of the flow (profile + broker sync below)
+                        const { error: profileError } = await supabaseAdmin
+                            .from('profiles')
+                            .upsert({ id: newUserId, email, name, role: validRole.toLowerCase() })
+                        if (profileError) console.error('Profiles sync error (retry):', profileError.message)
+                        const { data: existingBrokerByEmail2 } = await supabaseAdmin
+                            .from('brokers').select('id').eq('email', email).maybeSingle()
+                        const brokerPayload2 = {
+                            user_id: newUserId, name, email, status: 'active',
+                            role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
+                            permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
+                            updated_at: new Date().toISOString(),
+                        }
+                        if (existingBrokerByEmail2) {
+                            await supabaseAdmin.from('brokers').update(brokerPayload2).eq('id', existingBrokerByEmail2.id)
+                        } else {
+                            await supabaseAdmin.from('brokers').insert({ ...brokerPayload2, created_at: new Date().toISOString() })
+                        }
+                        await supabaseAdmin.auth.admin.generateLink({
+                            type: 'recovery', email,
+                            options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login?reset=true` }
+                        }).catch(() => {})
+                        return NextResponse.json({
+                            success: true,
+                            user: { id: newUserId, email, name, role: validRole },
+                            message: `Convite enviado para ${email}. O usuário receberá um link para definir sua senha.`
+                        })
+                    }
+                }
                 return NextResponse.json({ error: `Erro ao criar usuário: ${msg}` }, { status: 500 })
             }
             const newUserId = authUser.user.id

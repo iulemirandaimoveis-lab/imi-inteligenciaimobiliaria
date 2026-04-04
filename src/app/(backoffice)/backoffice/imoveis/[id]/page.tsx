@@ -51,13 +51,22 @@ export default function ImovelDetailPage() {
         rawData = directData as unknown as Development
       } else {
         // Fallback: try the API route (handles cases where RLS requires server-side admin)
-        const res = await fetch(`/api/developments?id=${id}`)
-        if (res.ok) {
-          const json = await res.json()
-          const apiData = json.data ?? json
-          if (apiData && (apiData.id || apiData.name)) {
-            rawData = apiData as unknown as Development
+        try {
+          const res = await fetch(`/api/developments?id=${id}`)
+          if (res.ok) {
+            const text = await res.text()
+            try {
+              const json = JSON.parse(text)
+              const apiData = json.data ?? json
+              if (apiData && (apiData.id || apiData.name)) {
+                rawData = apiData as unknown as Development
+              }
+            } catch {
+              console.error('API returned non-JSON response for development', id)
+            }
           }
+        } catch {
+          // Network error on fallback — continue with notFound
         }
       }
 
