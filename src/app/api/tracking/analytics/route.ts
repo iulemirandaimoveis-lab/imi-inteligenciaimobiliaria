@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
             { data: leads },
             { data: pageViews },
             { data: trackedLinks },
+            { data: leadScoresData },
         ] = await Promise.all([
             supabase.rpc('analytics_kpis', { start_date: startISO }),
             supabase.rpc('analytics_daily_timeline', { start_date: startISO, num_days: daysAgo }),
@@ -54,6 +55,11 @@ export async function GET(request: NextRequest) {
                 .eq('is_active', true)
                 .order('clicks', { ascending: false })
                 .limit(50),
+            supabase.from('tracker_lead_scores')
+                .select('visitor_fingerprint, development_id, current_score, score_category, intent_classification, urgency_level, total_sessions, total_clicks, last_session_at')
+                .gte('current_score', 5)
+                .order('current_score', { ascending: false })
+                .limit(100),
         ])
         const kpis = kpisData || {}
         const dailyTimeline = timelineData || []
@@ -229,6 +235,39 @@ export async function GET(request: NextRequest) {
             dowMap[dow]++
         })
         const byDayOfWeek = dowMap.map((clicks, i) => ({ day: dowLabels[i], clicks }))
+
+        // ── Lead Intent Scores ──
+        const ls = leadScoresData || []
+        const leadScoreSummary = {
+            total: ls.length,
+            ready: ls.filter(l => l.score_category === 'ready').length,
+            very_hot: ls.filter(l => l.score_category === 'very_hot').length,
+            hot: ls.filter(l => l.score_category === 'hot').length,
+            warm: ls.filter(l => l.score_category === 'warm').length,
+            cold: ls.filter(l => l.score_category === 'cold').length,
+        }
+        // Enrich top leads with development names
+        const topLeadDevIds = [...new Set(ls.slice(0, 20).map(l => l.development_id).filter(Boolean))]
+        let devNames: Record<string, string> = {}
+        if (topLeadDevIds.length > 0) {
+            const { data: devs } = await supabase
+                .from('developments')
+                .select('id, name')
+                .in('id', topLeadDevIds)
+            if (devs) devs.forEach(d => { devNames[d.id] = d.name })
+        }
+        const topLeadScores = ls.slice(0, 15).map(l => ({
+            fingerprint: l.visitor_fingerprint?.slice(0, 8) || '???',
+            score: l.current_score,
+            category: l.score_category,
+            intent: l.intent_classification,
+            urgency: l.urgency_level,
+            sessions: l.total_sessions,
+            clicks: l.total_clicks,
+            development: l.development_id ? (devNames[l.development_id] || null) : null,
+            last_seen: l.last_session_at,
+        }))
+
         return NextResponse.json({
             kpis: {
                 totalPageViews: kpis.totalPageViews || 0,
@@ -254,6 +293,8 @@ export async function GET(request: NextRequest) {
             byHour,
             byDayOfWeek,
             recentFeed,
+            leadScoreSummary,
+            topLeadScores,
         })
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

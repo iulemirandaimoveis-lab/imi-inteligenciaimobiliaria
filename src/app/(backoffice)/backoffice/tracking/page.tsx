@@ -7,7 +7,8 @@ import {
     MousePointerClick, Link2, QrCode, TrendingUp,
     Loader2, RefreshCw, ExternalLink, BarChart3, Building2,
     MapPin, Monitor, Smartphone, Tablet, Globe, Clock,
-    Zap, ArrowRight, Users, Download, Calendar,
+    Zap, ArrowRight, Users, Download, Calendar, Flame,
+    Eye, FileText, Target, Activity,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
@@ -47,6 +48,13 @@ interface Analytics {
         id: string; device_type: string; browser: string; os: string
         location: string | null; city: string | null; region: string | null; country: string | null
         referrer: string | null; created_at: string; tracked_link_id: string
+    }>
+    leadScoreSummary: {
+        total: number; ready: number; very_hot: number; hot: number; warm: number; cold: number
+    }
+    topLeadScores: Array<{
+        fingerprint: string; score: number; category: string; intent: string
+        urgency: string; sessions: number; clicks: number; development: string | null; last_seen: string
     }>
 }
 
@@ -946,6 +954,279 @@ export default function TrackingDashboardPage() {
                             })() : (
                                 <div className="flex items-center justify-center h-32">
                                     <p className="text-xs" style={{ color: T.textMuted }}>Sem dados</p>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+
+                    {/* ── Lead Intent Scores + By Source ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.18, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+                    >
+                        {/* Lead Intent Scores */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <Flame size={14} style={{ color: '#EF4444' }} />
+                                Lead Scoring
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Visitantes classificados por engajamento
+                            </p>
+
+                            {/* Score Summary Pills */}
+                            {data.leadScoreSummary && data.leadScoreSummary.total > 0 ? (
+                                <>
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        {[
+                                            { label: 'Ready', count: data.leadScoreSummary.ready, color: '#22C55E', bg: 'rgba(34,197,94,0.12)' },
+                                            { label: 'Very Hot', count: data.leadScoreSummary.very_hot, color: '#EF4444', bg: 'rgba(239,68,68,0.12)' },
+                                            { label: 'Hot', count: data.leadScoreSummary.hot, color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
+                                            { label: 'Warm', count: data.leadScoreSummary.warm, color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
+                                            { label: 'Cold', count: data.leadScoreSummary.cold, color: T.textMuted, bg: T.elevated },
+                                        ].filter(s => s.count > 0).map(s => (
+                                            <span
+                                                key={s.label}
+                                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold"
+                                                style={{ background: s.bg, color: s.color }}
+                                            >
+                                                <span className="w-1.5 h-1.5 rounded-full" style={{ background: s.color }} />
+                                                {s.label}: {s.count}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {/* Top Leads List */}
+                                    <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
+                                        {data.topLeadScores?.slice(0, 10).map((lead, i) => {
+                                            const catColor = lead.category === 'ready' ? '#22C55E'
+                                                : lead.category === 'very_hot' ? '#EF4444'
+                                                : lead.category === 'hot' ? '#F59E0B'
+                                                : lead.category === 'warm' ? '#3B82F6' : T.textMuted
+                                            return (
+                                                <div
+                                                    key={`${lead.fingerprint}-${i}`}
+                                                    className="flex items-center gap-2 px-2.5 py-2 rounded-md transition-colors"
+                                                    style={{ background: 'transparent' }}
+                                                    onMouseEnter={e => e.currentTarget.style.background = T.hover}
+                                                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                                >
+                                                    <div
+                                                        className="w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-black shrink-0"
+                                                        style={{ background: catColor + '20', color: catColor }}
+                                                    >
+                                                        {lead.score}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-1.5">
+                                                            <span className="text-[10px] font-mono font-bold" style={{ color: T.text }}>
+                                                                #{lead.fingerprint}
+                                                            </span>
+                                                            <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: catColor + '15', color: catColor }}>
+                                                                {lead.intent || lead.category}
+                                                            </span>
+                                                        </div>
+                                                        {lead.development && (
+                                                            <span className="text-[9px] truncate block mt-0.5" style={{ color: T.textDim }}>
+                                                                {lead.development}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-right shrink-0">
+                                                        <span className="text-[9px] font-semibold block" style={{ color: T.textMuted }}>
+                                                            {lead.clicks} clk · {lead.sessions} sess
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-32 gap-2">
+                                    <Target size={20} style={{ color: T.textMuted, opacity: 0.4 }} />
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Nenhum lead score registrado</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* By Source Breakdown */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <Activity size={14} style={{ color: T.accent }} />
+                                Por Fonte de Tráfego
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Sessões, cliques e leads por origem
+                            </p>
+                            {data.bySource?.length > 0 ? (
+                                <div className="space-y-3">
+                                    {data.bySource.slice(0, 8).map((src, i) => {
+                                        const maxTotal = data.bySource[0]?.total || 1
+                                        const pct = Math.max(Math.round((src.total / maxTotal) * 100), 4)
+                                        return (
+                                            <div key={src.name}>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs font-semibold capitalize" style={{ color: T.text }}>
+                                                            {src.name === 'direct' ? '🌐 Direto' : src.name}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-[9px]" style={{ color: CHART_SECONDARY }}>
+                                                            {src.sessions} sess
+                                                        </span>
+                                                        <span className="text-[9px]" style={{ color: T.accent }}>
+                                                            {src.clicks} clk
+                                                        </span>
+                                                        {src.leads > 0 && (
+                                                            <span className="text-[9px] font-bold" style={{ color: CHART_TERTIARY }}>
+                                                                {src.leads} leads
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="h-1.5 rounded-full overflow-hidden flex gap-[1px]" style={{ background: T.elevated }}>
+                                                    <div
+                                                        className="h-full rounded-full"
+                                                        style={{
+                                                            width: `${pct}%`,
+                                                            background: i === 0 ? T.accent : i < 3 ? CHART_SECONDARY : T.textMuted,
+                                                            opacity: 1 - (i * 0.08),
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center h-32">
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Sem dados de fonte</p>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+
+                    {/* ── Top Pages + Top Imóveis ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.185, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+                    >
+                        {/* Top Pages */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <FileText size={14} style={{ color: T.accent }} />
+                                Páginas Mais Visitadas
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                URLs com mais page views
+                            </p>
+                            {data.topPages?.length > 0 ? (
+                                <div className="space-y-2 max-h-[280px] overflow-y-auto">
+                                    {data.topPages.slice(0, 12).map((page, i) => {
+                                        const maxViews = data.topPages[0]?.views || 1
+                                        const pct = Math.max(Math.round((page.views / maxViews) * 100), 3)
+                                        return (
+                                            <div key={page.page}>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <span className="text-[11px] font-medium truncate max-w-[200px]" style={{ color: T.text }}>
+                                                        {page.page === '/' ? '🏠 Home' : page.page.replace(/^\/(imoveis|empreendimentos)\//, '')}
+                                                    </span>
+                                                    <div className="flex items-center gap-2 shrink-0">
+                                                        <span className="text-[9px]" style={{ color: T.textDim }}>
+                                                            {page.avgDuration > 0 ? `${page.avgDuration}s` : ''}
+                                                        </span>
+                                                        <span className="text-[10px] font-bold" style={{ color: T.accent }}>
+                                                            {formatNumber(page.views)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="h-1 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                                    <div
+                                                        className="h-full rounded-full"
+                                                        style={{
+                                                            width: `${pct}%`,
+                                                            background: i < 3 ? T.accent : CHART_SECONDARY,
+                                                            opacity: 1 - (i * 0.06),
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center h-32">
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Nenhum page view no período</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Top Imóveis / Empreendimentos */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <Building2 size={14} style={{ color: T.accent }} />
+                                Top Imóveis
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Empreendimentos com mais visualizações
+                            </p>
+                            {data.topProperties?.length > 0 ? (
+                                <div className="space-y-3">
+                                    {data.topProperties.slice(0, 10).map((prop, i) => {
+                                        const maxViews = data.topProperties[0]?.views || 1
+                                        const pct = Math.max(Math.round((prop.views / maxViews) * 100), 4)
+                                        const medal = i === 0 ? '🏆' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
+                                        return (
+                                            <div key={prop.slug}>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        {medal && <span className="text-sm shrink-0">{medal}</span>}
+                                                        <span className="text-xs font-semibold truncate capitalize" style={{ color: T.text }}>
+                                                            {prop.slug.replace(/-/g, ' ')}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1 shrink-0 ml-2">
+                                                        <Eye size={10} style={{ color: T.textDim }} />
+                                                        <span className="text-[10px] font-bold" style={{ color: T.accent }}>
+                                                            {formatNumber(prop.views)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                                    <div
+                                                        className="h-full rounded-full transition-all"
+                                                        style={{
+                                                            width: `${pct}%`,
+                                                            background: i === 0 ? T.accent : i < 3 ? CHART_SECONDARY : CHART_TERTIARY,
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-32 gap-2">
+                                    <Building2 size={20} style={{ color: T.textMuted, opacity: 0.4 }} />
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Nenhum empreendimento no período</p>
                                 </div>
                             )}
                         </div>
