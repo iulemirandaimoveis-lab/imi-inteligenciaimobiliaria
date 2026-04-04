@@ -59,7 +59,7 @@ Retorne EXATAMENTE este JSON (sem markdown, sem código, só o objeto JSON puro)
                 'anthropic-version': '2023-06-01',
             },
             body: JSON.stringify({
-                model: 'claude-3-5-sonnet-20240620',
+                model: 'claude-sonnet-4-6',
                 max_tokens: 2000,
                 temperature: 0.7,
                 system: systemPrompt,
@@ -96,8 +96,16 @@ Retorne EXATAMENTE este JSON (sem markdown, sem código, só o objeto JSON puro)
             tokens: data.usage?.output_tokens,
         })
     } catch (error: unknown) {
+        const detail = error instanceof Error ? error.message : String(error)
+        const isApiKey = detail.includes('API') || detail.includes('key') || detail.includes('auth')
+        const isRateLimit = detail.includes('rate') || detail.includes('429')
+        const userMsg = isApiKey
+            ? 'Chave da API de IA não configurada ou inválida. Contate o administrador.'
+            : isRateLimit
+                ? 'Limite de requisições atingido. Aguarde alguns minutos e tente novamente.'
+                : `Erro ao gerar conteúdo: ${detail}`
         return NextResponse.json(
-            { error: 'Erro ao gerar conteúdo', details: error instanceof Error ? error.message : String(error) },
+            { error: userMsg },
             { status: 500 }
         )
     }

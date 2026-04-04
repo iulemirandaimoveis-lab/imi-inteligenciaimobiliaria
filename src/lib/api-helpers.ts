@@ -66,7 +66,11 @@ export function apiHandler<TBody = unknown>(
         try { rawBody = await req.json() } catch { return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 }) }
         const result = schema.safeParse(rawBody)
         if (!result.success) {
-          return NextResponse.json({ error: 'Validation failed', details: result.error.flatten().fieldErrors }, { status: 400 })
+          const fieldErrors = result.error.flatten().fieldErrors
+          const fieldMessages = Object.entries(fieldErrors)
+            .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(', ')}`)
+            .join('; ')
+          return NextResponse.json({ error: fieldMessages || 'Validation failed', details: fieldErrors }, { status: 400 })
         }
         body = result.data
       }

@@ -158,8 +158,8 @@ export default function MetasPage() {
             {/* KPI strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                 <KPICard label="Receita Atual"    value={loading ? '—' : fmt(actuals.revenue)}        icon={<DollarSign size={14} />} accent="green" size="sm" />
-                <KPICard label="Meta Receita"     value={loading ? '—' : (revTarget > 0 ? fmt(revTarget) : 'N/D')} icon={<Target size={14} />} size="sm" />
-                <KPICard label="% Receita"        value={loading ? '—' : (revTarget > 0 ? `${revPct}%` : '—')} icon={<TrendingUp size={14} />} accent={revPct >= 100 ? 'green' : 'blue'} size="sm" />
+                <KPICard label="Meta Receita"     value={loading ? '—' : (revTarget > 0 ? fmt(revTarget) : 'Definir meta →')} icon={<Target size={14} />} size="sm" accent={revTarget > 0 ? 'gold' : 'warm'} />
+                <KPICard label="% Receita"        value={loading ? '—' : (revTarget > 0 ? `${revPct}%` : 'N/D')} icon={<TrendingUp size={14} />} accent={revPct >= 100 ? 'green' : 'blue'} size="sm" />
                 <KPICard label="Avaliações/Hon."  value={loading ? '—' : String(actuals.avaliacoes)}  icon={<Scale size={14} />} size="sm" />
             </div>
 

@@ -109,7 +109,7 @@ export function PageIntelHeader({
         </nav>
       )}
 
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div className="flex flex-col gap-1 min-w-0 flex-1">
           {/* Module micro-label */}
           <div className="flex items-center gap-2 flex-wrap">
@@ -132,6 +132,10 @@ export function PageIntelHeader({
                 color: 'var(--text-gold)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.12em',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                minWidth: 0,
               }}
             >
               {moduleLabel}
@@ -164,7 +168,6 @@ export function PageIntelHeader({
           {/* Title row + optional badge */}
           <div className="flex items-center gap-3 min-w-0">
             <h1
-              className="truncate"
               style={{
                 fontSize: '20px',
                 fontFamily: "var(--font-body, 'Outfit', sans-serif)",
@@ -174,6 +177,8 @@ export function PageIntelHeader({
                 color: 'var(--text-primary)',
                 margin: 0,
                 minWidth: 0,
+                overflowWrap: 'break-word',
+                wordBreak: 'normal',
               }}
             >
               {title}
@@ -220,7 +225,7 @@ export function PageIntelHeader({
 
         {/* Right actions */}
         {actions && (
-          <div className="flex-shrink-0 ml-3">
+          <div className="flex-shrink-0 sm:ml-3 overflow-x-auto">
             {actions}
           </div>
         )}
