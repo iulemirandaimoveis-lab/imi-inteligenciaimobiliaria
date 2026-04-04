@@ -214,6 +214,21 @@ export async function GET(request: NextRequest) {
             }))
             .sort((a, b) => b.clicks - a.clicks)
             .slice(0, 10)
+        // ── By Hour (peak hours heatmap) ──
+        const hourMap: number[] = new Array(24).fill(0)
+        uniqueEvts.forEach(e => {
+            const hour = new Date(e.created_at).getHours()
+            hourMap[hour]++
+        })
+        const byHour = hourMap.map((clicks, hour) => ({ hour, clicks }))
+        // ── By Day of Week ──
+        const dowMap: number[] = new Array(7).fill(0)
+        const dowLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+        uniqueEvts.forEach(e => {
+            const dow = new Date(e.created_at).getDay()
+            dowMap[dow]++
+        })
+        const byDayOfWeek = dowMap.map((clicks, i) => ({ day: dowLabels[i], clicks }))
         return NextResponse.json({
             kpis: {
                 totalPageViews: kpis.totalPageViews || 0,
@@ -236,6 +251,8 @@ export async function GET(request: NextRequest) {
             topCampaigns,
             topLinks,
             byBroker,
+            byHour,
+            byDayOfWeek,
             recentFeed,
         })
     } catch (err: unknown) {

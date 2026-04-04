@@ -19,6 +19,7 @@ import {
     MousePointerClick, Smartphone, Globe,
     Copy, ExternalLink, QrCode, Loader2, ArrowLeft,
     TrendingUp, Tablet, Clock, Users, Monitor, Share2, MessageCircle,
+    Bell, BellOff, Download,
 } from 'lucide-react'
 
 /* ── Types ─────────────────────────────────────────────────── */
@@ -92,6 +93,8 @@ export default function LinkDetailPage() {
     const [link, setLink] = useState<TrackedLink | null>(null)
     const [events, setEvents] = useState<LinkEvent[]>([])
     const [loading, setLoading] = useState(true)
+    const [alertMode, setAlertMode] = useState<string>('off')
+    const [alertLoading, setAlertLoading] = useState(false)
 
     /* ── Data fetch ──────────────────────────────────────── */
     useEffect(() => {
@@ -117,6 +120,14 @@ export default function LinkDetailPage() {
             setLoading(false)
         }
         load()
+
+        // Load alert settings
+        fetch(`/api/tracking/alerts?link_id=${id}`)
+            .then(r => r.json())
+            .then(d => {
+                if (d.alerts?.length > 0) setAlertMode(d.alerts[0].alert_mode)
+            })
+            .catch(() => {})
 
         // Realtime: live click feed for THIS link
         const channel = supabase
@@ -197,6 +208,37 @@ export default function LinkDetailPage() {
         navigator.clipboard.writeText(text)
         toast.success('Copiado!')
     }
+
+    /* ── Alert handler ───────────────────────────────────── */
+    const saveAlert = useCallback(async (mode: string) => {
+        setAlertLoading(true)
+        try {
+            const res = await fetch('/api/tracking/alerts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tracked_link_id: id, alert_mode: mode }),
+            })
+            if (res.ok) {
+                setAlertMode(mode)
+                toast.success(mode === 'off' ? 'Alertas desativados' : `Alertas: ${mode === 'every' ? 'cada clique' : mode === 'hourly' ? 'resumo horário' : 'resumo diário'}`)
+            }
+        } catch { toast.error('Erro ao salvar alerta') }
+        setAlertLoading(false)
+    }, [id])
+
+    /* ── Export handler ──────────────────────────────────── */
+    const handleExport = useCallback(() => {
+        toast.loading('Exportando...')
+        fetch(`/api/tracking/export?link_id=${id}&format=csv`)
+            .then(r => { if (!r.ok) throw new Error(); return r.blob() })
+            .then(blob => {
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url; a.download = `link-${link?.short_code || id}-export.csv`; a.click()
+                URL.revokeObjectURL(url); toast.dismiss(); toast.success('Exportado!')
+            })
+            .catch(() => { toast.dismiss(); toast.error('Erro ao exportar') })
+    }, [id, link?.short_code])
 
     /* ── Loading state ───────────────────────────────────── */
     if (loading) {
@@ -626,10 +668,85 @@ export default function LinkDetailPage() {
                             <QrCode size={18} />
                             Imprimir QR Code
                         </Link>
+
+                        {/* Export CSV */}
+                        <button
+                            onClick={handleExport}
+                            className="flex items-center gap-3 w-full"
+                            style={{
+                                padding: '14px 16px', borderRadius: T.radius.lg,
+                                background: T.elevated, border: `1px solid ${T.border}`,
+                                color: T.textMuted, fontSize: 13, fontWeight: 600,
+                                fontFamily: 'var(--font-sans)', cursor: 'pointer',
+                            }}
+                        >
+                            <Download size={18} />
+                            Exportar CSV
+                        </button>
+                    </motion.div>
+
+                    {/* Alert Configuration */}
+                    <motion.div
+                        variants={fadeUp} initial="hidden" animate="visible" custom={6}
+                        style={{
+                            background: T.surface,
+                            border: `1px solid ${T.border}`,
+                            borderRadius: T.radius.lg,
+                            padding: 20,
+                        }}
+                    >
+                        <h3 style={{
+                            fontFamily: 'var(--font-serif)', fontSize: 14, fontWeight: 600,
+                            color: T.text, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8,
+                        }}>
+                            <Bell size={16} style={{ color: T.accent }} />
+                            Configurar Alertas
+                        </h3>
+                        <p style={{ fontSize: 11, color: T.textDim, marginBottom: 12 }}>
+                            Receba notificação quando alguém clicar neste link
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            {[
+                                { value: 'every', label: 'Cada clique', desc: 'Notificação instantânea' },
+                                { value: 'hourly', label: 'Resumo horário', desc: 'Consolidado por hora' },
+                                { value: 'daily', label: 'Resumo diário', desc: 'Consolidado por dia' },
+                                { value: 'off', label: 'Desativado', desc: 'Sem alertas' },
+                            ].map(opt => (
+                                <button
+                                    key={opt.value}
+                                    onClick={() => saveAlert(opt.value)}
+                                    disabled={alertLoading}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                        padding: '10px 12px', borderRadius: T.radius.md, cursor: 'pointer',
+                                        background: alertMode === opt.value ? T.activeBg : 'transparent',
+                                        border: `1px solid ${alertMode === opt.value ? T.borderGold : T.borderLight}`,
+                                        transition: 'all 150ms ease',
+                                    }}
+                                >
+                                    <div style={{ textAlign: 'left' }}>
+                                        <span style={{
+                                            fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-sans)',
+                                            color: alertMode === opt.value ? T.accent : T.text,
+                                        }}>
+                                            {opt.label}
+                                        </span>
+                                        <span style={{ fontSize: 10, color: T.textDim, display: 'block', marginTop: 1 }}>
+                                            {opt.desc}
+                                        </span>
+                                    </div>
+                                    {alertMode === opt.value && (
+                                        <span style={{
+                                            width: 8, height: 8, borderRadius: '50%', background: T.accent, flexShrink: 0,
+                                        }} />
+                                    )}
+                                </button>
+                            ))}
+                        </div>
                     </motion.div>
 
                     {/* Back to Tracking */}
-                    <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={6}>
+                    <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={7}>
                         <Link
                             href="/backoffice/tracking"
                             className="flex items-center gap-2 justify-center"

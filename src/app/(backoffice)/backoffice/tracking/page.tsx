@@ -7,8 +7,9 @@ import {
     MousePointerClick, Link2, QrCode, TrendingUp,
     Loader2, RefreshCw, ExternalLink, BarChart3, Building2,
     MapPin, Monitor, Smartphone, Tablet, Globe, Clock,
-    Zap, ArrowRight, Users,
+    Zap, ArrowRight, Users, Download, Calendar,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -40,6 +41,8 @@ interface Analytics {
     topCampaigns: Array<{ campaign: string; clicks: number; leads: number; conversionRate: number }>
     topLinks: Array<{ id: string; name: string; short_code: string; clicks: number; unique_clicks: number; channel: string }>
     byBroker: Array<{ broker_id: string; name: string; clicks: number; links: number }>
+    byHour: Array<{ hour: number; clicks: number }>
+    byDayOfWeek: Array<{ day: string; clicks: number }>
     recentFeed: Array<{
         id: string; device_type: string; browser: string; os: string
         location: string | null; city: string | null; region: string | null; country: string | null
@@ -231,14 +234,43 @@ export default function TrackingDashboardPage() {
                         </button>
                     ))}
                 </div>
-                <button
-                    onClick={load}
-                    className="h-9 w-9 rounded-lg flex items-center justify-center transition-all hover:opacity-80"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                    title="Recarregar dados"
-                >
-                    <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => {
+                            toast.loading('Exportando...')
+                            fetch(`/api/tracking/export?time_range=${timeRange}&format=csv`)
+                                .then(r => {
+                                    if (!r.ok) throw new Error('Export failed')
+                                    return r.blob()
+                                })
+                                .then(blob => {
+                                    const url = URL.createObjectURL(blob)
+                                    const a = document.createElement('a')
+                                    a.href = url
+                                    a.download = `tracking-${timeRange}-${new Date().toISOString().slice(0, 10)}.csv`
+                                    a.click()
+                                    URL.revokeObjectURL(url)
+                                    toast.dismiss()
+                                    toast.success('Exportado!')
+                                })
+                                .catch(() => { toast.dismiss(); toast.error('Erro ao exportar') })
+                        }}
+                        className="h-9 px-3 rounded-lg flex items-center gap-1.5 transition-all hover:opacity-80"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                        title="Exportar CSV"
+                    >
+                        <Download size={13} style={{ color: T.textMuted }} />
+                        <span className="text-[10px] font-semibold hidden sm:inline" style={{ color: T.textMuted }}>CSV</span>
+                    </button>
+                    <button
+                        onClick={load}
+                        className="h-9 w-9 rounded-lg flex items-center justify-center transition-all hover:opacity-80"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                        title="Recarregar dados"
+                    >
+                        <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
+                    </button>
+                </div>
             </div>
 
             {/* ── Loading Skeleton ── */}
@@ -804,11 +836,126 @@ export default function TrackingDashboardPage() {
                         </div>
                     </motion.div>
 
-                    {/* ── Live Feed + Location ── */}
+                    {/* ── Peak Hours + Day of Week ── */}
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.17, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+                    >
+                        {/* Peak Hours Heatmap */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <Clock size={14} style={{ color: T.accent }} />
+                                Horários de Pico
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Distribuição de cliques por hora do dia
+                            </p>
+                            {data.byHour?.length > 0 ? (() => {
+                                const maxH = Math.max(...data.byHour.map(h => h.clicks), 1)
+                                return (
+                                    <div className="flex items-end gap-[3px]" style={{ height: 100 }}>
+                                        {data.byHour.map(h => {
+                                            const pct = Math.max((h.clicks / maxH) * 100, 3)
+                                            const isHot = h.clicks >= maxH * 0.7
+                                            const isWarm = h.clicks >= maxH * 0.4
+                                            return (
+                                                <div key={h.hour} className="flex-1 flex flex-col items-center gap-1 group relative">
+                                                    <div
+                                                        className="w-full rounded-t-sm transition-all cursor-default"
+                                                        style={{
+                                                            height: `${pct}%`,
+                                                            minHeight: 3,
+                                                            background: isHot ? T.accent : isWarm ? CHART_SECONDARY : T.elevated,
+                                                            opacity: h.clicks === 0 ? 0.3 : 1,
+                                                        }}
+                                                        title={`${h.hour}h — ${h.clicks} clique${h.clicks !== 1 ? 's' : ''}`}
+                                                    />
+                                                    {h.hour % 3 === 0 && (
+                                                        <span className="text-[8px]" style={{ color: T.textDim }}>
+                                                            {h.hour}h
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            })() : (
+                                <div className="flex items-center justify-center h-[100px]">
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Sem dados</p>
+                                </div>
+                            )}
+                            {data.byHour?.length > 0 && (() => {
+                                const peak = data.byHour.reduce((a, b) => b.clicks > a.clicks ? b : a)
+                                return peak.clicks > 0 ? (
+                                    <p className="text-[10px] mt-3 text-center" style={{ color: T.textMuted }}>
+                                        Pico: <span style={{ color: T.accent, fontWeight: 700 }}>{peak.hour}h</span> com {peak.clicks} cliques
+                                    </p>
+                                ) : null
+                            })()}
+                        </div>
+
+                        {/* Day of Week Distribution */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <Calendar size={14} style={{ color: T.accent }} />
+                                Por Dia da Semana
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Quando seus links recebem mais cliques
+                            </p>
+                            {data.byDayOfWeek?.length > 0 ? (() => {
+                                const maxD = Math.max(...data.byDayOfWeek.map(d => d.clicks), 1)
+                                return (
+                                    <div className="space-y-2.5">
+                                        {data.byDayOfWeek.map((d, i) => {
+                                            const pct = Math.max(Math.round((d.clicks / maxD) * 100), 2)
+                                            const isBest = d.clicks === maxD && maxD > 0
+                                            return (
+                                                <div key={d.day}>
+                                                    <div className="flex items-center justify-between mb-1">
+                                                        <span className="text-xs font-medium w-8" style={{ color: isBest ? T.accent : T.text }}>
+                                                            {d.day}
+                                                        </span>
+                                                        <span className="text-[10px] font-bold" style={{ color: T.textMuted }}>
+                                                            {d.clicks}
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                                        <div
+                                                            className="h-full rounded-full transition-all"
+                                                            style={{
+                                                                width: `${pct}%`,
+                                                                background: isBest ? T.accent : CHART_SECONDARY,
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            })() : (
+                                <div className="flex items-center justify-center h-32">
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Sem dados</p>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+
+                    {/* ── Live Feed + Location ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.19, duration: 0.35 }}
                         className="grid grid-cols-1 lg:grid-cols-3 gap-5"
                     >
                         {/* Recent Access Feed */}
