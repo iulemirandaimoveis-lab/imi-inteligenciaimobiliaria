@@ -38,6 +38,8 @@ interface Analytics {
     topPages: Array<{ page: string; views: number; avgDuration: number }>
     topProperties: Array<{ slug: string; views: number }>
     topCampaigns: Array<{ campaign: string; clicks: number; leads: number; conversionRate: number }>
+    topLinks: Array<{ id: string; name: string; short_code: string; clicks: number; unique_clicks: number; channel: string }>
+    byBroker: Array<{ broker_id: string; name: string; clicks: number; links: number }>
     recentFeed: Array<{
         id: string; device_type: string; browser: string; os: string
         location: string | null; city: string | null; region: string | null; country: string | null
@@ -680,6 +682,126 @@ export default function TrackingDashboardPage() {
                                 <p className="text-xs" style={{ color: T.textMuted }}>Nenhuma campanha no período</p>
                             </div>
                         )}
+                    </motion.div>
+
+                    {/* ── Top Links + Broker Ranking ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.16, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+                    >
+                        {/* Top Links Comparativo */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <Link2 size={14} style={{ color: T.accent }} />
+                                Top Links
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Links com mais cliques no período
+                            </p>
+                            {data.topLinks?.length > 0 ? (
+                                <div className="space-y-2.5">
+                                    {data.topLinks.slice(0, 8).map((link, i) => {
+                                        const maxClicks = data.topLinks[0]?.clicks || 1
+                                        const pct = Math.max(Math.round((link.clicks / maxClicks) * 100), 4)
+                                        return (
+                                            <Link key={link.id} href={`/backoffice/tracking/${link.id}`} className="block group">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        <span className="text-[10px] font-mono w-4 text-right shrink-0" style={{ color: T.textDim }}>
+                                                            {i + 1}.
+                                                        </span>
+                                                        <span className="text-xs font-medium truncate group-hover:underline" style={{ color: T.text }}>
+                                                            {link.name}
+                                                        </span>
+                                                        {link.channel && link.channel !== 'direct' && (
+                                                            <span className="text-[9px] px-1.5 py-0.5 rounded shrink-0" style={{ background: T.hover, color: T.textMuted }}>
+                                                                {link.channel}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[10px] font-bold shrink-0 ml-2" style={{ color: T.accent }}>
+                                                        {formatNumber(link.clicks)}
+                                                    </span>
+                                                </div>
+                                                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                                    <div
+                                                        className="h-full rounded-full transition-all"
+                                                        style={{
+                                                            width: `${pct}%`,
+                                                            background: i === 0 ? T.accent : i === 1 ? CHART_SECONDARY : CHART_TERTIARY,
+                                                            opacity: 1 - (i * 0.06),
+                                                        }}
+                                                    />
+                                                </div>
+                                            </Link>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center h-32">
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Nenhum link no período</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Ranking por Corretor */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold flex items-center gap-2 mb-1" style={{ color: T.text }}>
+                                <Users size={14} style={{ color: T.accent }} />
+                                Ranking por Corretor
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Cliques gerados por cada corretor
+                            </p>
+                            {data.byBroker?.length > 0 ? (
+                                <div className="space-y-3">
+                                    {data.byBroker.map((broker, i) => {
+                                        const maxClicks = data.byBroker[0]?.clicks || 1
+                                        const pct = Math.max(Math.round((broker.clicks / maxClicks) * 100), 4)
+                                        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
+                                        return (
+                                            <div key={broker.broker_id}>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <div className="flex items-center gap-2">
+                                                        {medal && <span className="text-sm">{medal}</span>}
+                                                        <span className="text-xs font-semibold" style={{ color: T.text }}>
+                                                            {broker.name}
+                                                        </span>
+                                                        <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: T.hover, color: T.textDim }}>
+                                                            {broker.links} link{broker.links !== 1 ? 's' : ''}
+                                                        </span>
+                                                    </div>
+                                                    <span className="text-xs font-bold" style={{ color: T.accent }}>
+                                                        {formatNumber(broker.clicks)}
+                                                    </span>
+                                                </div>
+                                                <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                                    <div
+                                                        className="h-full rounded-full transition-all"
+                                                        style={{
+                                                            width: `${pct}%`,
+                                                            background: i === 0 ? T.accent : i === 1 ? CHART_SECONDARY : CHART_TERTIARY,
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center h-32">
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Nenhum corretor com links</p>
+                                </div>
+                            )}
+                        </div>
                     </motion.div>
 
                     {/* ── Live Feed + Location ── */}

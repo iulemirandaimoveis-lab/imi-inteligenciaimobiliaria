@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
             { data: linkEvents },
             { data: leads },
             { data: pageViews },
+            { data: trackedLinks },
         ] = await Promise.all([
             supabase.rpc('analytics_kpis', { start_date: startISO }),
             supabase.rpc('analytics_daily_timeline', { start_date: startISO, num_days: daysAgo }),
@@ -48,6 +49,11 @@ export async function GET(request: NextRequest) {
                 .gte('created_at', startISO)
                 .order('created_at', { ascending: false })
                 .limit(2000),
+            supabase.from('tracked_links')
+                .select('id, short_code, campaign_name, title, clicks, unique_clicks, broker_id, corretor_id, created_by, destination_url, channel, is_active')
+                .eq('is_active', true)
+                .order('clicks', { ascending: false })
+                .limit(50),
         ])
         const kpis = kpisData || {}
         const dailyTimeline = timelineData || []
@@ -159,6 +165,55 @@ export async function GET(request: NextRequest) {
             .map(([city, clicks]) => ({ city, clicks }))
             .sort((a, b) => b.clicks - a.clicks)
             .slice(0, 10)
+        // ── Top Links (comparative ranking) ──
+        const tl = trackedLinks || []
+        const topLinks = tl.slice(0, 10).map(l => ({
+            id: l.id,
+            name: l.campaign_name || l.title || l.short_code || 'Link',
+            short_code: l.short_code,
+            clicks: l.clicks || 0,
+            unique_clicks: l.unique_clicks || 0,
+            channel: l.channel || 'direct',
+            destination_url: l.destination_url,
+        }))
+        // ── By Broker (ranking) ──
+        const brokerMap: Record<string, { clicks: number; links: number; broker_id: string }> = {}
+        tl.forEach(l => {
+            const bid = l.broker_id || l.corretor_id || l.created_by
+            if (!bid) return
+            if (!brokerMap[bid]) brokerMap[bid] = { clicks: 0, links: 0, broker_id: bid }
+            brokerMap[bid].clicks += (l.clicks || 0)
+            brokerMap[bid].links++
+        })
+        // Resolve broker names
+        const brokerIds = Object.keys(brokerMap)
+        let brokerNames: Record<string, string> = {}
+        if (brokerIds.length > 0) {
+            const { data: brokerProfiles } = await supabase
+                .from('brokers')
+                .select('id, name, user_id')
+                .in('id', brokerIds)
+            if (brokerProfiles) {
+                brokerProfiles.forEach(b => { brokerNames[b.id] = b.name || 'Corretor' })
+            }
+            // Fallback: try profiles table for remaining
+            const { data: profilesFallback } = await supabase
+                .from('profiles')
+                .select('id, full_name')
+                .in('id', brokerIds.filter(id => !brokerNames[id]))
+            if (profilesFallback) {
+                profilesFallback.forEach(p => { if (!brokerNames[p.id]) brokerNames[p.id] = p.full_name || 'Usuário' })
+            }
+        }
+        const byBroker = Object.entries(brokerMap)
+            .map(([id, d]) => ({
+                broker_id: id,
+                name: brokerNames[id] || 'Corretor',
+                clicks: d.clicks,
+                links: d.links,
+            }))
+            .sort((a, b) => b.clicks - a.clicks)
+            .slice(0, 10)
         return NextResponse.json({
             kpis: {
                 totalPageViews: kpis.totalPageViews || 0,
@@ -179,6 +234,8 @@ export async function GET(request: NextRequest) {
             topPages,
             topProperties,
             topCampaigns,
+            topLinks,
+            byBroker,
             recentFeed,
         })
     } catch (err: unknown) {

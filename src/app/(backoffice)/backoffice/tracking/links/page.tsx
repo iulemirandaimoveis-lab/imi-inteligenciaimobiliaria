@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import {
     ArrowLeft, Link2, Plus, Copy, QrCode, ExternalLink,
     Trash2, Download, Check, Loader2, Search, RefreshCw,
-    Filter, BarChart3,
+    Filter, BarChart3, MessageCircle,
 } from 'lucide-react'
 import QRCode from 'qrcode'
 import { toast } from 'sonner'
@@ -304,6 +304,16 @@ export default function TrackingLinksPage() {
                                         >
                                             <BarChart3 size={14} style={{ color: T.accent }} />
                                         </button>
+                                        <a
+                                            href={`https://wa.me/?text=${encodeURIComponent(`${link.campaign_name || 'Confira'}: ${link.short_url || link.url}`)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
+                                            style={{ background: T.hover }}
+                                            title="Compartilhar via WhatsApp"
+                                        >
+                                            <MessageCircle size={14} style={{ color: '#25D366' }} />
+                                        </a>
                                         <button
                                             onClick={() => window.open(link.short_url || link.url, '_blank')}
                                             className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"

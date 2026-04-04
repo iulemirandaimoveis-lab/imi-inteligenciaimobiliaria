@@ -18,7 +18,7 @@ import { motion } from 'framer-motion'
 import {
     MousePointerClick, Smartphone, Globe,
     Copy, ExternalLink, QrCode, Loader2, ArrowLeft,
-    TrendingUp, Tablet, Clock, Users, Monitor
+    TrendingUp, Tablet, Clock, Users, Monitor, Share2, MessageCircle,
 } from 'lucide-react'
 
 /* ── Types ─────────────────────────────────────────────────── */
@@ -546,8 +546,45 @@ export default function LinkDetailPage() {
                         </div>
                     </motion.div>
 
-                    {/* QR Quick Action */}
-                    <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={5}>
+                    {/* Quick Actions */}
+                    <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={5} className="flex flex-col gap-2">
+                        {/* Share via WhatsApp */}
+                        <a
+                            href={`https://wa.me/?text=${encodeURIComponent(`Confira: ${campaignTitle}\n${shortUrl}`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-3"
+                            style={{
+                                padding: '14px 16px', borderRadius: T.radius.lg,
+                                background: '#25D366', border: 'none',
+                                color: '#FFFFFF', fontSize: 13, fontWeight: 600,
+                                fontFamily: 'var(--font-sans)', textDecoration: 'none',
+                                transition: 'opacity 150ms ease',
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
+                            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                        >
+                            <MessageCircle size={18} />
+                            Compartilhar via WhatsApp
+                        </a>
+
+                        {/* Copy Link */}
+                        <button
+                            onClick={() => copyToClipboard(shortUrl)}
+                            className="flex items-center gap-3 w-full"
+                            style={{
+                                padding: '14px 16px', borderRadius: T.radius.lg,
+                                background: T.elevated, border: `1px solid ${T.border}`,
+                                color: T.text, fontSize: 13, fontWeight: 600,
+                                fontFamily: 'var(--font-sans)', cursor: 'pointer',
+                                transition: 'all 150ms ease',
+                            }}
+                        >
+                            <Copy size={18} />
+                            Copiar Link Curto
+                        </button>
+
+                        {/* Print QR Code */}
                         <Link
                             href={`/backoffice/tracking/qr/${id}/print`}
                             className="flex items-center gap-3"
