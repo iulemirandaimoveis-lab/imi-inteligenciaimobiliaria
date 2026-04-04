@@ -5,6 +5,7 @@ const withPWA = require('next-pwa')({
     skipWaiting: true,
     disable: process.env.NODE_ENV === 'development',
     buildExcludes: [/\.map$/, /middleware-manifest\.json$/],
+    customWorkerDir: 'worker',
     runtimeCaching: [
         {
             urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*/i,
