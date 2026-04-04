@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -117,6 +117,33 @@ export default function LinkDetailPage() {
             setLoading(false)
         }
         load()
+
+        // Realtime: live click feed for THIS link
+        const channel = supabase
+            .channel(`link-detail-${id}`)
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'link_events',
+                filter: `tracked_link_id=eq.${id}`,
+            }, (payload) => {
+                const evt = payload.new as any
+                setEvents(prev => [{
+                    id: evt.id,
+                    created_at: evt.created_at,
+                    device_type: evt.device_type,
+                    browser: evt.browser,
+                    os: evt.os,
+                    city: evt.metadata?.city || null,
+                    region: evt.metadata?.region || null,
+                    country: evt.metadata?.country || null,
+                    referrer: evt.referrer,
+                    ip_hash: evt.ip_address,
+                }, ...prev])
+            })
+            .subscribe()
+
+        return () => { supabase.removeChannel(channel) }
     }, [id])
 
     /* ── Derived data ────────────────────────────────────── */
