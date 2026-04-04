@@ -103,27 +103,35 @@ export default function MetasPage() {
 
     const saveGoal = async () => {
         setSaving(true)
-        const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) { setSaving(false); return }
+        try {
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) { setSaving(false); toast.error('Sessão expirada'); return }
 
-        const payload = {
-            user_id: user.id,
-            month: currentMonth,
-            target_revenue: parseFloat(form.target_revenue) || 0,
-            target_avaliacoes: parseInt(form.target_avaliacoes) || 0,
+            const payload = {
+                user_id: user.id,
+                month: currentMonth,
+                target_revenue: parseFloat(form.target_revenue) || 0,
+                target_avaliacoes: parseInt(form.target_avaliacoes) || 0,
+            }
+
+            const existing = goals.find(g => g.month === currentMonth)
+            const { error } = existing
+                ? await supabase.from('financial_goals').update(payload).eq('id', existing.id)
+                : await supabase.from('financial_goals').insert(payload)
+
+            if (error) {
+                toast.error(`Erro ao salvar meta: ${error.message}`)
+                setSaving(false)
+                return
+            }
+
+            toast.success('Meta salva com sucesso')
+            setEditing(false)
+            loadData()
+        } catch (err) {
+            toast.error('Erro de conexão ao salvar meta')
         }
-
-        const existing = goals.find(g => g.month === currentMonth)
-        if (existing) {
-            await supabase.from('financial_goals').update(payload).eq('id', existing.id)
-        } else {
-            await supabase.from('financial_goals').insert(payload)
-        }
-
-        toast.success('Meta salva com sucesso')
-        setEditing(false)
-        loadData()
         setSaving(false)
     }
 

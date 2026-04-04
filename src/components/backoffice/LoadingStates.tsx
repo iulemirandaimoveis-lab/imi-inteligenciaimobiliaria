@@ -89,7 +89,7 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
         <div className="bg-white rounded-2xl border border-imi-100 overflow-hidden">
             {/* Header */}
             <div className="bg-imi-50 px-6 py-4 border-b border-imi-100">
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[...Array(4)].map((_, i) => (
                         <Skeleton key={i} className="h-4" />
                     ))}
@@ -100,7 +100,7 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
             <div className="divide-y divide-imi-100">
                 {[...Array(rows)].map((_, i) => (
                     <div key={i} className="px-6 py-4">
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {[...Array(4)].map((_, j) => (
                                 <Skeleton key={j} className="h-5" />
                             ))}

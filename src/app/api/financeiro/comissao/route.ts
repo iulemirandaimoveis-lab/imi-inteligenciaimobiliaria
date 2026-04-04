@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
         const comissaoTotal = Math.round((valor_venda * pct) / 100 * 100) / 100
         const dueDateStr = due_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
         const created: Record<string, unknown>[] = []
+        const errors: string[] = []
         if (splits && splits.length > 0) {
             // Registrar comissão dividida
             for (const split of splits) {
@@ -76,7 +77,12 @@ export async function POST(request: NextRequest) {
                     })
                     .select()
                     .single()
-                if (!error && data) created.push(data)
+                if (error) {
+                    console.error('[comissao] split insert error:', error.message)
+                    errors.push(`Split ${split.user_id}: ${error.message}`)
+                } else if (data) {
+                    created.push(data)
+                }
             }
         } else {
             // Comissão única sem split
@@ -100,7 +106,17 @@ export async function POST(request: NextRequest) {
                 })
                 .select()
                 .single()
-            if (!error && data) created.push(data)
+            if (error) {
+                console.error('[comissao] insert error:', error.message)
+                errors.push(error.message)
+            } else if (data) {
+                created.push(data)
+            }
+        }
+        if (created.length === 0 && errors.length > 0) {
+            return NextResponse.json({
+                error: `Falha ao criar comissão: ${errors.join('; ')}`,
+            }, { status: 500 })
         }
         return NextResponse.json({
             success: true,
@@ -108,8 +124,10 @@ export async function POST(request: NextRequest) {
             percentual: pct,
             transactions_created: created.length,
             transactions: created,
+            warnings: errors.length > 0 ? errors : undefined,
         }, { status: 201 })
     } catch (err) {
-        return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
+        console.error('[comissao] unexpected error:', err)
+        return NextResponse.json({ error: 'Erro interno ao processar comissão' }, { status: 500 })
     }
 }

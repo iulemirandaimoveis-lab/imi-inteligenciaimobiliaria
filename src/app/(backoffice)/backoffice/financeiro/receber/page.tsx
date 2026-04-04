@@ -33,12 +33,24 @@ export default function ReceberPage() {
     const [search, setSearch] = useState('')
     const [statusFilter, setStatusFilter] = useState('todos')
 
+    const [error, setError] = useState(false)
+
     const load = async () => {
         setLoading(true)
+        setError(false)
         try {
-            const res = await fetch('/api/financeiro?type=receita')
-            if (res.ok) setTransactions(await res.json())
-        } catch { /* graceful */ }
+            const res = await fetch('/api/financeiro?type=receita&limit=500')
+            if (res.ok) {
+                const json = await res.json()
+                setTransactions(json.data || json || [])
+            } else {
+                setError(true)
+                toast.error('Erro ao carregar receitas')
+            }
+        } catch {
+            setError(true)
+            toast.error('Erro de conexão')
+        }
         setLoading(false)
     }
 

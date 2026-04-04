@@ -411,7 +411,7 @@ export default function LeadDetailPage() {
         </div>
 
         {/* Contact actions */}
-        <div className="grid grid-cols-3 gap-2 mb-5 min-w-0">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-5 min-w-0">
           <a
             href={`tel:${lead.phone}`}
             style={{
