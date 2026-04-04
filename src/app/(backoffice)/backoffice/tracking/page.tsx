@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
     MousePointerClick, Link2, QrCode, TrendingUp,
     Loader2, RefreshCw, ExternalLink, BarChart3, Building2,
     MapPin, Monitor, Smartphone, Tablet, Globe, Clock,
+    Zap, ArrowRight, Users,
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar,
@@ -95,6 +97,42 @@ export default function TrackingDashboardPage() {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState<Analytics | null>(null)
     const [error, setError] = useState(false)
+
+    // Realtime state
+    const [realtimeClicks, setRealtimeClicks] = useState<Array<{
+        id: string; device_type: string; browser: string; city: string | null
+        created_at: string; tracked_link_id: string
+    }>>([])
+    const [realtimeCount, setRealtimeCount] = useState(0)
+    const realtimeCountRef = useRef(0)
+
+    // Supabase Realtime subscription for live click feed
+    useEffect(() => {
+        const supabase = createClient()
+        const channel = supabase
+            .channel('tracking-realtime')
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'link_events',
+                filter: 'event_type=eq.click',
+            }, (payload) => {
+                const evt = payload.new as any
+                setRealtimeClicks(prev => [{
+                    id: evt.id,
+                    device_type: evt.device_type || 'desktop',
+                    browser: evt.browser || 'desconhecido',
+                    city: evt.metadata?.city || evt.location || null,
+                    created_at: evt.created_at,
+                    tracked_link_id: evt.tracked_link_id,
+                }, ...prev].slice(0, 20))
+                realtimeCountRef.current += 1
+                setRealtimeCount(realtimeCountRef.current)
+            })
+            .subscribe()
+
+        return () => { supabase.removeChannel(channel) }
+    }, [])
 
     const load = () => {
         setLoading(true)
@@ -339,6 +377,129 @@ export default function TrackingDashboardPage() {
                         />
                     </motion.div>
 
+                    {/* ── Realtime + Funnel Row ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.08, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-3 gap-5"
+                    >
+                        {/* Realtime Live Counter */}
+                        <div
+                            className="rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="relative">
+                                    <Zap size={14} style={{ color: T.success }} />
+                                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full animate-pulse" style={{ background: T.success }} />
+                                </div>
+                                <h3 className="text-sm font-bold" style={{ color: T.text }}>Tempo Real</h3>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="text-center">
+                                    <div className="text-3xl font-black" style={{ color: T.accent }}>
+                                        {realtimeCount}
+                                    </div>
+                                    <p className="text-[10px] mt-1" style={{ color: T.textDim }}>
+                                        cliques nesta sessão
+                                    </p>
+                                </div>
+                                {realtimeClicks.length > 0 && (
+                                    <div className="space-y-1.5 max-h-[140px] overflow-y-auto">
+                                        <AnimatePresence>
+                                            {realtimeClicks.slice(0, 5).map((click) => (
+                                                <motion.div
+                                                    key={click.id}
+                                                    initial={{ opacity: 0, x: -20 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    className="flex items-center gap-2 px-2 py-1.5 rounded-md"
+                                                    style={{ background: T.hover }}
+                                                >
+                                                    {click.device_type === 'mobile' ? <Smartphone size={10} style={{ color: T.textMuted }} /> : <Monitor size={10} style={{ color: T.textMuted }} />}
+                                                    <span className="text-[10px] truncate flex-1" style={{ color: T.text }}>
+                                                        {click.city || 'Desconhecido'} · {click.browser}
+                                                    </span>
+                                                    <span className="text-[9px] font-mono" style={{ color: T.textDim }}>agora</span>
+                                                </motion.div>
+                                            ))}
+                                        </AnimatePresence>
+                                    </div>
+                                )}
+                                {realtimeClicks.length === 0 && (
+                                    <p className="text-[10px] text-center py-4" style={{ color: T.textMuted }}>
+                                        Aguardando cliques...
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Conversion Funnel */}
+                        <div
+                            className="lg:col-span-2 rounded-lg p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                        >
+                            <h3 className="text-sm font-bold mb-1" style={{ color: T.text }}>
+                                Funil de Conversão
+                            </h3>
+                            <p className="text-[11px] mb-4" style={{ color: T.textDim }}>
+                                Jornada: Cliques → Sessões → Leads
+                            </p>
+                            {(() => {
+                                const k = data.kpis
+                                const steps = [
+                                    { label: 'Cliques', value: k.totalClicks, icon: MousePointerClick, color: CHART_PRIMARY },
+                                    { label: 'Sessões', value: k.totalSessions, icon: Globe, color: CHART_SECONDARY },
+                                    { label: 'Page Views', value: k.totalPageViews, icon: BarChart3, color: '#8B5CF6' },
+                                    { label: 'Leads', value: k.totalLeads, icon: Users, color: CHART_TERTIARY },
+                                ]
+                                const maxVal = Math.max(...steps.map(s => s.value), 1)
+                                return (
+                                    <div className="flex items-end gap-3 justify-between">
+                                        {steps.map((step, i) => {
+                                            const pct = Math.max((step.value / maxVal) * 100, 8)
+                                            const convRate = i > 0 && steps[i - 1].value > 0
+                                                ? ((step.value / steps[i - 1].value) * 100).toFixed(1) + '%'
+                                                : null
+                                            const Icon = step.icon
+                                            return (
+                                                <div key={step.label} className="flex-1 flex flex-col items-center gap-1">
+                                                    <span className="text-xs font-black" style={{ color: step.color }}>
+                                                        {formatNumber(step.value)}
+                                                    </span>
+                                                    <div
+                                                        className="w-full rounded-t-md transition-all"
+                                                        style={{
+                                                            height: `${Math.round(pct * 1.2)}px`,
+                                                            minHeight: 12,
+                                                            maxHeight: 120,
+                                                            background: step.color,
+                                                            opacity: 0.85,
+                                                        }}
+                                                    />
+                                                    <div className="flex items-center gap-1 mt-1">
+                                                        <Icon size={11} style={{ color: step.color }} />
+                                                        <span className="text-[10px] font-semibold" style={{ color: T.text }}>
+                                                            {step.label}
+                                                        </span>
+                                                    </div>
+                                                    {convRate && (
+                                                        <div className="flex items-center gap-0.5">
+                                                            <ArrowRight size={8} style={{ color: T.textDim }} />
+                                                            <span className="text-[9px] font-bold" style={{ color: T.textMuted }}>
+                                                                {convRate}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            })()}
+                        </div>
+                    </motion.div>
+
                     {/* ── Charts Row: Area + Pie ── */}
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}
@@ -544,10 +705,11 @@ export default function TrackingDashboardPage() {
                                     </p>
                                 </div>
                                 <span
-                                    className="text-[10px] font-bold px-2 py-1 rounded-md"
+                                    className="text-[10px] font-bold px-2 py-1 rounded-md flex items-center gap-1.5"
                                     style={{ background: `${T.success}15`, color: T.success }}
                                 >
-                                    LIVE
+                                    <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: T.success }} />
+                                    LIVE {realtimeCount > 0 ? `+${realtimeCount}` : ''}
                                 </span>
                             </div>
 
