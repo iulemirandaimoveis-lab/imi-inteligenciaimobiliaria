@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp, BarChart3, Users, GripVertical } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -241,11 +242,21 @@ export default function PipelineKanbanPage() {
         const newStage = over.id as string
         const newStatus = STAGE_TO_STATUS[newStage]
         if (!newStatus) return
+        // Save previous status for rollback
+        const prevLead = leads.find(l => l.id === leadId)
+        const prevStatus = prevLead?.status
         // Optimistic update
         setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: newStatus } : l))
         // Persist
         const supabase = createClient()
-        await supabase.from('leads').update({ status: newStatus }).eq('id', leadId)
+        const { error } = await supabase.from('leads').update({ status: newStatus }).eq('id', leadId)
+        if (error) {
+            // Revert optimistic update
+            if (prevStatus) {
+                setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: prevStatus } : l))
+            }
+            toast.error('Erro ao atualizar status do lead')
+        }
     }
 
     // Group leads by stage
