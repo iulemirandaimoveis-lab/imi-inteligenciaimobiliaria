@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit, MoreVertical,
-  X, Loader2, UserX, KeyRound,
+  X, Loader2, UserX, KeyRound, Lock,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -36,8 +36,24 @@ interface DeactivateModal {
 }
 export default function UsuariosPage() {
   const router = useRouter()
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
   const [usuariosData, setUsuariosData] = useState<UserRow[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Role guard — only ADMIN can access this page
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) { router.replace('/backoffice/hoje'); return }
+      supabase.from('profiles').select('role').eq('id', data.user.id).single()
+        .then(({ data: profile }) => {
+          const role = profile?.role?.toUpperCase() || ''
+          const allowed = ['ADMIN', 'SUPER_ADMIN', 'OWNER'].includes(role)
+          setIsAdmin(allowed)
+          if (!allowed) router.replace('/backoffice/settings')
+        })
+    })
+  }, [])
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -177,6 +193,19 @@ export default function UsuariosPage() {
     background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
     height: '44px', borderRadius: '6px', padding: '0 12px', fontSize: '13px', outline: 'none',
   }
+
+  if (isAdmin === null) return (
+    <div className="flex items-center justify-center h-64">
+      <Loader2 size={24} className="animate-spin" style={{ color: T.textMuted }} />
+    </div>
+  )
+  if (!isAdmin) return (
+    <div className="flex flex-col items-center justify-center h-64 gap-4">
+      <Lock size={40} style={{ color: T.textMuted }} />
+      <p style={{ color: T.textMuted, fontSize: 15 }}>Acesso restrito a administradores.</p>
+    </div>
+  )
+
   return (
     <div className="space-y-5">
       {/* Header */}
