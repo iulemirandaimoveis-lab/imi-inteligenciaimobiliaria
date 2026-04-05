@@ -86,7 +86,7 @@ export default function PWAManager() {
               userVisibleOnly: true,
               applicationServerKey: urlBase64ToUint8Array(
                 process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-              ).buffer as BufferSource,
+              ),
             })
             if (sub) {
               const res = await fetch('/api/notifications/subscribe', {
@@ -156,18 +156,26 @@ export default function PWAManager() {
 
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey).buffer as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
       })
 
-      await fetch('/api/notifications/subscribe', {
+      const res = await fetch('/api/notifications/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(subscription),
       })
 
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        console.error('[PWA] Subscribe failed:', res.status, data)
+        toast.error('Erro ao salvar assinatura de notificações.')
+        return
+      }
+
       toast.success('Notificações ativadas! Você receberá alertas de leads e eventos.')
-    } catch {
-      toast.error('Erro ao ativar notificações.')
+    } catch (err) {
+      console.error('[PWA] handleEnableNotifications error:', err)
+      toast.error('Erro ao ativar notificações. Verifique as permissões do navegador.')
     }
   }
 
