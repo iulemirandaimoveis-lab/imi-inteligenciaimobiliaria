@@ -62,6 +62,7 @@ async function deleteStaleSubscription(endpoint: string): Promise<void> {
             .delete()
             .eq('endpoint', endpoint)
     } catch (err) {
+        console.debug('[push] Failed to delete stale subscription', err)
     }
 }
 // Sends a push notification to a single subscription.

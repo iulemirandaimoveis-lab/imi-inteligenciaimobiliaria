@@ -368,7 +368,7 @@ export default function IntegracoesPage() {
                     subtitle="Conecte todas as plataformas — assinatura, email, WhatsApp, storage, redes sociais e pagamento"
                 />
                 {/* Status geral */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                     <KPICard label="Conectadas" value={String(conectadas)} icon={<CheckCircle size={16} />} accent="green" size="sm" />
                     <KPICard label="Disponíveis" value={String(INTEGRACOES.length)} icon={<Plug size={16} />} accent="blue" size="sm" />
                     <KPICard label="A configurar" value={String(configurar)} icon={<Settings size={16} />} accent="warm" size="sm" />

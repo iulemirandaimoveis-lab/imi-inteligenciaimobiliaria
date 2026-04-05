@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
                 break
             }
             default:
-                return NextResponse.json({ error: `Módulo '${module}' não suportado. Use: leads, financeiro, avaliacoes, campanhas, contratos` }, { status: 400 })
+                return NextResponse.json({ error: `Módulo '${moduleName}' não suportado. Use: leads, financeiro, avaliacoes, campanhas, contratos` }, { status: 400 })
         }
         const format = searchParams.get('format') || 'csv'
         if (format === 'pdf') {
