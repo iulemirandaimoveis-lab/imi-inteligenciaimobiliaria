@@ -515,7 +515,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             {/* Sticky Mobile CTA — always visible */}
             <div className="fixed left-0 right-0 z-[140] lg:hidden"
                 style={{
-                    bottom: 'calc(64px + env(safe-area-inset-bottom, 0px))',
+                    bottom: 'env(safe-area-inset-bottom, 0px)',
                     background: '#FFFFFF',
                     borderTop: '2px solid #B8B3A8',
                     padding: '12px 16px',
