@@ -20,24 +20,27 @@ const GOLD = '#C49D5B'
 const WHITE = '#FFFFFF'
 
 function drawIcon(size) {
-  const canvas = createCanvas(size, size)
+  // 2x supersampling for sharper output (especially at small sizes)
+  const S = 2
+  const w = size * S
+  const canvas = createCanvas(w, w)
   const ctx = canvas.getContext('2d')
-  const r = size * 0.22 // corner radius ratio
+  const r = w * 0.22 // corner radius ratio
 
   // Background gradient (top to bottom)
-  const grad = ctx.createLinearGradient(0, 0, 0, size)
+  const grad = ctx.createLinearGradient(0, 0, 0, w)
   grad.addColorStop(0, NAVY_TOP)
   grad.addColorStop(1, NAVY_BOT)
 
   // Rounded rect background
   ctx.beginPath()
   ctx.moveTo(r, 0)
-  ctx.lineTo(size - r, 0)
-  ctx.quadraticCurveTo(size, 0, size, r)
-  ctx.lineTo(size, size - r)
-  ctx.quadraticCurveTo(size, size, size - r, size)
-  ctx.lineTo(r, size)
-  ctx.quadraticCurveTo(0, size, 0, size - r)
+  ctx.lineTo(w - r, 0)
+  ctx.quadraticCurveTo(w, 0, w, r)
+  ctx.lineTo(w, w - r)
+  ctx.quadraticCurveTo(w, w, w - r, w)
+  ctx.lineTo(r, w)
+  ctx.quadraticCurveTo(0, w, 0, w - r)
   ctx.lineTo(0, r)
   ctx.quadraticCurveTo(0, 0, r, 0)
   ctx.closePath()
@@ -45,13 +48,13 @@ function drawIcon(size) {
   ctx.fill()
 
   // Gold bar at top
-  const barH = Math.max(size * 0.08, 2)
+  const barH = Math.max(w * 0.08, 4)
   const barR = barH / 2
   ctx.beginPath()
   ctx.moveTo(barR, 0)
-  ctx.lineTo(size - barR, 0)
-  ctx.quadraticCurveTo(size, 0, size, barR)
-  ctx.lineTo(size, barH)
+  ctx.lineTo(w - barR, 0)
+  ctx.quadraticCurveTo(w, 0, w, barR)
+  ctx.lineTo(w, barH)
   ctx.lineTo(0, barH)
   ctx.lineTo(0, barR)
   ctx.quadraticCurveTo(0, 0, barR, 0)
@@ -59,15 +62,23 @@ function drawIcon(size) {
   ctx.fillStyle = GOLD
   ctx.fill()
 
-  // IMI text
-  const fontSize = size * 0.38
+  // IMI text — subtle shadow for definition
+  const fontSize = w * 0.44
+  ctx.shadowColor = 'rgba(0,0,0,0.4)'
+  ctx.shadowBlur = w * 0.04
   ctx.fillStyle = WHITE
   ctx.font = `700 ${fontSize}px Georgia, serif`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText('IMI', size / 2, size * 0.56)
+  ctx.fillText('IMI', w / 2, w * 0.58)
+  ctx.shadowBlur = 0
 
-  return canvas
+  // Downsample to target size for crispness
+  const target = createCanvas(size, size)
+  const tctx = target.getContext('2d')
+  tctx.drawImage(canvas, 0, 0, w, w, 0, 0, size, size)
+
+  return target
 }
 
 // Generate all sizes
