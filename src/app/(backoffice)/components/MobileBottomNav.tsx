@@ -320,7 +320,14 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[0]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
+                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId="bo-nav-pill"
+                                            style={{ position: 'absolute', bottom: 6, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                        />
+                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -348,7 +355,14 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[1]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
+                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId="bo-nav-pill"
+                                            style={{ position: 'absolute', bottom: 6, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                        />
+                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -427,7 +441,14 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[2]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
+                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId="bo-nav-pill"
+                                            style={{ position: 'absolute', bottom: 6, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                        />
+                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -450,12 +471,19 @@ export function MobileBottomNav() {
 
                         <NavDivider />
 
-                        {/* Agenda */}
+                        {/* Connect */}
                         {(() => {
                             const item = BOTTOM_ITEMS[3]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
+                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId="bo-nav-pill"
+                                            style={{ position: 'absolute', bottom: 6, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                        />
+                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
