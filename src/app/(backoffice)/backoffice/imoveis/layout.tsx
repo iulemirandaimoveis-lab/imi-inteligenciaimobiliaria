@@ -10,7 +10,7 @@ export default function ImoveisLayout({ children }: { children: React.ReactNode 
   return (
     <div>
       {!isExplorer && (
-        <div className="hidden md:block overflow-x-auto [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">
+        <div className="overflow-x-auto [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">
           <ImoveisSubNav />
         </div>
       )}

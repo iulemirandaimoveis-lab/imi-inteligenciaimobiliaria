@@ -175,35 +175,10 @@ export async function POST(request: Request) {
                 message: `Convite enviado para ${email}. O usuário receberá um link para definir sua senha.`
             })
         } else {
-            // Fallback: use regular signUp (user will need to confirm email)
-            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                email,
-                password: tempPassword,
-                options: {
-                    data: { name, role: validRole },
-                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login`,
-                }
-            })
-            if (signUpError) {
-                return NextResponse.json({ error: signUpError.message }, { status: 500 })
-            }
-            // Sync to public.users and profiles so the user appears in the list
-            if (signUpData.user) {
-                const newUserId = signUpData.user.id
-                await supabase
-                    .from('profiles')
-                    .upsert({ id: newUserId, email, name, role: validRole, createdAt: new Date().toISOString() })
-                    .then(() => {})
-                await supabase
-                    .from('profiles')
-                    .upsert({ id: newUserId, email, name, role: validRole.toLowerCase(), created_at: new Date().toISOString() })
-                    .then(() => {})
-            }
-            return NextResponse.json({
-                success: true,
-                user: { id: signUpData.user?.id, email, name, role: validRole },
-                message: 'Usuário criado com sucesso.'
-            })
+            return NextResponse.json(
+                { error: 'Criação de usuários requer a chave de serviço do Supabase (SUPABASE_SERVICE_ROLE_KEY). Verifique as variáveis de ambiente no Vercel.' },
+                { status: 500 }
+            )
         }
     } catch (error: unknown) {
         return NextResponse.json(
@@ -255,12 +230,18 @@ export async function DELETE(request: Request) {
         if (!id) return NextResponse.json({ error: 'ID do usuário é obrigatório' }, { status: 400 })
         // Prevent self-deactivation
         if (id === user.id) return NextResponse.json({ error: 'Não é possível desativar o próprio usuário' }, { status: 400 })
-        // Soft-delete: ban user via auth admin API
-        if (hasServiceKey) {
-            await supabaseAdmin.auth.admin.updateUserById(id, {
-                ban_duration: '876000h' // effectively permanent
-            })
+        if (!hasServiceKey) {
+            return NextResponse.json({ error: 'Operação requer chave de serviço. Verifique as variáveis de ambiente do servidor.' }, { status: 500 })
         }
+        // Soft-delete: ban user via auth admin API
+        const { error: banError } = await supabaseAdmin.auth.admin.updateUserById(id, {
+            ban_duration: '876000h' // effectively permanent
+        })
+        if (banError) {
+            return NextResponse.json({ error: `Erro ao desativar: ${banError.message}` }, { status: 500 })
+        }
+        // Also update profiles.is_active
+        await supabaseAdmin.from('profiles').update({ is_active: false, updated_at: new Date().toISOString() }).eq('id', id)
         return NextResponse.json({ success: true })
     } catch (error: unknown) {
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
@@ -349,22 +330,35 @@ export async function GET(request: Request) {
             }
         }
 
-        // Try profiles first (has more columns), fallback to users
         const client = hasServiceKey ? supabaseAdmin : supabase
         const { data, error } = await client
             .from('profiles')
-            .select('id, email, name, role, avatar_url, phone, created_at')
+            .select('id, email, name, role, avatar_url, phone, is_active, created_at, updated_at')
             .order('created_at', { ascending: false })
-        if (error) {
-            // Fallback to users table with camelCase columns
-            const { data: usersData, error: usersError } = await client
-                .from('profiles')
-                .select('id, email, name, role, "createdAt"')
-                .order('"createdAt"', { ascending: false })
-            if (usersError) throw usersError
-            return NextResponse.json({ users: usersData || [] })
+        if (error) throw error
+
+        // Merge ban status from auth.users so the UI can show banned users as inactive
+        let users = data || []
+        if (hasServiceKey) {
+            try {
+                const { data: { users: authUsers } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 200 })
+                if (authUsers) {
+                    const banMap: Record<string, boolean> = {}
+                    for (const au of authUsers) {
+                        if (au.banned_until && new Date(au.banned_until) > new Date()) {
+                            banMap[au.id] = true
+                        }
+                    }
+                    users = users.map(u => ({
+                        ...u,
+                        is_active: banMap[u.id] ? false : (u.is_active !== false),
+                    }))
+                }
+            } catch {
+                // Non-critical: if auth.users lookup fails, use profiles.is_active as-is
+            }
         }
-        return NextResponse.json({ users: data || [] })
+        return NextResponse.json({ users })
     } catch (error: unknown) {
         return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 })
     }
