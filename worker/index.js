@@ -13,7 +13,16 @@ self.addEventListener('push', function(event) {
     actions: data.actions || [],
     requireInteraction: data.requireInteraction || false,
   };
-  event.waitUntil(self.registration.showNotification(data.title || 'IMI', options));
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'IMI', options).then(function() {
+      // Notify all open clients to play notification sound
+      return clients.matchAll({ type: 'window' }).then(function(windowClients) {
+        windowClients.forEach(function(client) {
+          client.postMessage({ type: 'IMI_PLAY_SOUND' });
+        });
+      });
+    })
+  );
 });
 
 self.addEventListener('notificationclick', function(event) {

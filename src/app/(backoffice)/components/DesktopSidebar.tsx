@@ -20,6 +20,7 @@ import { createClient } from '@/lib/supabase/client'
 interface NavItem {
     label: string
     href?: string
+    exact?: boolean
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon: React.ComponentType<any>
     badge?: string | number
@@ -83,7 +84,6 @@ const SECTIONS: NavSection[] = [
             { label: 'Parcerias', href: '/backoffice/parcerias', icon: Handshake, badge: 'NEW' },
             { label: 'Chat Equipe', href: '/backoffice/connect', icon: MessageSquare },
             { label: 'Agenda',    href: '/backoffice/agenda',    icon: CalendarDays    },
-            { label: 'Imóveis',   href: '/backoffice/imoveis',   icon: Building2        },
         ]
     },
     {
@@ -123,7 +123,8 @@ const SECTIONS: NavSection[] = [
             {
                 label: 'Imóveis', icon: Building2,
                 children: [
-                    { label: 'Listagem',       href: '/backoffice/imoveis',                icon: Building2 },
+                    { label: 'Listagem',       href: '/backoffice/imoveis',                icon: Building2, exact: true },
+                    { label: 'Mapa',           href: '/backoffice/imoveis/mapa',           icon: MapIcon },
                     { label: 'Explorer',       href: '/backoffice/imoveis/explorer',       icon: BarChart2 },
                     { label: 'Portfolio',      href: '/backoffice/imoveis/portfolio',      icon: LineChart },
                     { label: 'Comparar',       href: '/backoffice/imoveis/comparar',       icon: Scale },
@@ -306,7 +307,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
     })
 
     const isActive = item.href
-        ? pathname === item.href || (item.href !== '/backoffice/dashboard' && pathname.startsWith(item.href))
+        ? pathname === item.href || (!item.exact && item.href !== '/backoffice/dashboard' && pathname.startsWith(item.href))
         : false
     const hasChildren = !!item.children?.length
     const isParentActive = hasChildren && item.children!.some(c => c.href && pathname.startsWith(c.href))

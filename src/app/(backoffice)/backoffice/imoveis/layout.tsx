@@ -5,6 +5,7 @@ import { ImoveisSubNav } from './SubNav'
 
 export default function ImoveisLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  // Explorer fills full viewport — hide subnav for immersive experience
   const isExplorer = pathname.startsWith('/backoffice/imoveis/explorer')
 
   return (
