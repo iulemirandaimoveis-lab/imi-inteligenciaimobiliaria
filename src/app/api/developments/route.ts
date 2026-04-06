@@ -7,6 +7,21 @@ import { createNotification } from '@/lib/notifications'
 
 export const runtime = 'nodejs'
 
+function toYoutubeEmbed(url: string): string {
+    if (!url) return url
+    const patterns = [
+        /youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+        /youtu\.be\/([a-zA-Z0-9_-]+)/,
+        /youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
+    ]
+    for (const r of patterns) {
+        const m = url.match(r)
+        if (m) return `https://www.youtube.com/embed/${m[1]}`
+    }
+    return url
+}
+
 /**
  * Normalize field names from camelCase (form) to snake_case (DB).
  * Handles both naming conventions so forms can send either format.
@@ -232,7 +247,7 @@ export const POST = apiHandler(developmentPostSchema, async (req: NextRequest, b
             main: newDev.image || gallery[0] || '',
             gallery,
             floorPlans: Array.isArray(newDev.floor_plans) ? newDev.floor_plans : [],
-            videos: newDev.video_url ? [newDev.video_url] : [],
+            videos: newDev.video_url ? [toYoutubeEmbed(newDev.video_url)] : [],
         }
     }
     // Remove undefined/undeclared fields that could cause Supabase errors
@@ -311,7 +326,7 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
             main: normalized.image || gallery[0] || '',
             gallery,
             floorPlans: Array.isArray(normalized.floor_plans) ? normalized.floor_plans : [],
-            videos: normalized.video_url ? [normalized.video_url] : [],
+            videos: normalized.video_url ? [toYoutubeEmbed(normalized.video_url)] : [],
         }
     }
     // Remove undefined fields
