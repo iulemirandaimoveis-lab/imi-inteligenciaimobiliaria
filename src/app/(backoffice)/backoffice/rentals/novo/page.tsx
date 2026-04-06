@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft, Save, Loader2, Home, DollarSign, Users,
-  Bed, Bath, Clock, Building2, MapPin, Wifi,
+  Bed, Bath, Clock, Building2, MapPin, Wifi, Camera, Upload, X, Link as LinkIcon, FileVideo,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { uploadMultipleImages, uploadFile } from '@/lib/supabase-storage'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { T } from '@/app/(backoffice)/lib/theme'
 
@@ -121,6 +122,14 @@ export default function NovoImovelRentalPage() {
   const [directBooking, setDirectBooking] = useState(true)
   const [rules, setRules] = useState('')
 
+  // Media state
+  const [images, setImages] = useState<File[]>([])
+  const [floorPlans, setFloorPlans] = useState<File[]>([])
+  const [brochure, setBrochure] = useState<File | null>(null)
+  const [videoUrl, setVideoUrl] = useState('')
+  const [videoShortUrl, setVideoShortUrl] = useState('')
+  const [uploadingMedia, setUploadingMedia] = useState(false)
+
   // Load developments for the dropdown
   useEffect(() => {
     import('@/lib/supabase/client').then(({ createClient }) => {
@@ -146,6 +155,26 @@ export default function NovoImovelRentalPage() {
 
     setSaving(true)
     try {
+      // Upload media
+      setUploadingMedia(true)
+      let photoUrls: string[] = []
+      let floorPlanUrls: string[] = []
+      let brochureUrl: string | null = null
+
+      if (images.length > 0) {
+        const results = await uploadMultipleImages(images, { bucket: 'media', folder: 'rentals' })
+        photoUrls = results.filter(r => !r.error).map(r => r.url)
+      }
+      if (floorPlans.length > 0) {
+        const results = await uploadMultipleImages(floorPlans, { bucket: 'media', folder: 'rentals/floor-plans' })
+        floorPlanUrls = results.filter(r => !r.error).map(r => r.url)
+      }
+      if (brochure) {
+        const result = await uploadFile(brochure, 'media', 'rentals/brochures')
+        if (!result.error) brochureUrl = result.url
+      }
+      setUploadingMedia(false)
+
       const body = {
         name: name.trim(),
         address: address.trim() || undefined,
@@ -167,6 +196,11 @@ export default function NovoImovelRentalPage() {
         booking_listing_id: bookingId.trim() || undefined,
         direct_booking_enabled: directBooking,
         rules: rules.trim() || undefined,
+        photos: photoUrls.length > 0 ? photoUrls : undefined,
+        floor_plans: floorPlanUrls.length > 0 ? floorPlanUrls : undefined,
+        brochure_url: brochureUrl || undefined,
+        video_url: videoUrl.trim() || undefined,
+        video_short_url: videoShortUrl.trim() || undefined,
       }
 
       const res = await fetch('/api/rentals/properties', {
@@ -183,6 +217,7 @@ export default function NovoImovelRentalPage() {
       toast.success('Imovel cadastrado com sucesso!')
       router.push('/backoffice/rentals')
     } catch (err) {
+      setUploadingMedia(false)
       toast.error(err instanceof Error ? err.message : 'Erro ao cadastrar imovel')
     } finally {
       setSaving(false)
@@ -530,6 +565,82 @@ export default function NovoImovelRentalPage() {
           </div>
         </div>
 
+        {/* Media */}
+        <div style={cardStyle}>
+          <div style={sectionTitleStyle}>
+            <Camera size={16} style={{ color: T.gold }} />
+            Midia
+          </div>
+
+          {/* Gallery */}
+          <div style={{ marginBottom: 20 }}>
+            <label style={labelStyle}>Galeria de Imagens</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', background: T.elevated, border: `1px solid ${images.length > 0 ? T.gold : T.border}`, borderRadius: 6, cursor: 'pointer' }}>
+              <Upload size={15} color={images.length > 0 ? T.gold : T.textMuted} />
+              <span style={{ fontSize: 13, color: images.length > 0 ? T.gold : T.textMuted, fontFamily: 'var(--font-sans)', flex: 1 }}>
+                {images.length > 0 ? `${images.length} imagem(ns) selecionada(s)` : 'Selecionar imagens (JPG, PNG, WEBP)'}
+              </span>
+              {images.length > 0 && (
+                <button type="button" onClick={e => { e.preventDefault(); setImages([]) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, display: 'flex', alignItems: 'center' }}><X size={14} /></button>
+              )}
+              <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={e => { const files = Array.from(e.target.files || []); if (files.length) setImages(prev => [...prev, ...files]) }} />
+            </label>
+            {images.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 10 }}>
+                {images.map((file, idx) => (
+                  <div key={idx} style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 6, overflow: 'hidden', background: T.elevated }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={URL.createObjectURL(file)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    {idx === 0 && <span style={{ position: 'absolute', top: 4, left: 4, background: T.gold, color: '#0A1624', fontSize: 10, fontWeight: 800, padding: '2px 6px', borderRadius: 4 }}>CAPA</span>}
+                    <button type="button" onClick={() => setImages(prev => prev.filter((_, i) => i !== idx))} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: 22, height: 22, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}><X size={11} /></button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Floor Plans */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Plantas Baixas</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', background: T.elevated, border: `1px solid ${floorPlans.length > 0 ? T.gold : T.border}`, borderRadius: 6, cursor: 'pointer' }}>
+              <Upload size={15} color={floorPlans.length > 0 ? T.gold : T.textMuted} />
+              <span style={{ fontSize: 13, color: floorPlans.length > 0 ? T.gold : T.textMuted, fontFamily: 'var(--font-sans)', flex: 1 }}>
+                {floorPlans.length > 0 ? `${floorPlans.length} arquivo(s) selecionado(s)` : 'Selecionar plantas (imagem ou PDF)'}
+              </span>
+              <input type="file" accept="image/*,application/pdf" multiple style={{ display: 'none' }} onChange={e => { const files = Array.from(e.target.files || []); if (files.length) setFloorPlans(prev => [...prev, ...files]) }} />
+            </label>
+          </div>
+
+          {/* Brochure */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Brochure / Material</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', background: T.elevated, border: `1px solid ${brochure ? T.gold : T.border}`, borderRadius: 6, cursor: 'pointer' }}>
+              <Upload size={15} color={brochure ? T.gold : T.textMuted} />
+              <span style={{ fontSize: 13, color: brochure ? T.gold : T.textMuted, fontFamily: 'var(--font-sans)', flex: 1 }}>{brochure ? brochure.name : 'Selecionar PDF ou imagem'}</span>
+              {brochure && <button type="button" onClick={e => { e.preventDefault(); setBrochure(null) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, display: 'flex', alignItems: 'center' }}><X size={14} /></button>}
+              <input type="file" accept="application/pdf,image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) setBrochure(f) }} />
+            </label>
+          </div>
+
+          {/* Video URLs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label style={labelStyle}>URL do Video (YouTube / Vimeo)</label>
+              <div style={{ position: 'relative' }}>
+                <LinkIcon size={14} color={T.textMuted} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                <input type="url" value={videoUrl} onChange={e => setVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." style={{ ...inputStyle, paddingLeft: 36 }} />
+              </div>
+            </div>
+            <div>
+              <label style={labelStyle}>Video Curto (Reels / Shorts)</label>
+              <div style={{ position: 'relative' }}>
+                <FileVideo size={14} color={T.textMuted} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                <input type="url" value={videoShortUrl} onChange={e => setVideoShortUrl(e.target.value)} placeholder="https://youtube.com/shorts/..." style={{ ...inputStyle, paddingLeft: 36 }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Submit */}
         <div className="flex items-center justify-end gap-3 mb-8">
           <Link
@@ -559,7 +670,9 @@ export default function NovoImovelRentalPage() {
               opacity: saving ? 0.7 : 1,
             }}
           >
-            {saving ? (
+            {uploadingMedia ? (
+              <><Loader2 size={14} className="animate-spin" /> Enviando midia...</>
+            ) : saving ? (
               <><Loader2 size={14} className="animate-spin" /> Salvando...</>
             ) : (
               <><Save size={14} /> Cadastrar Imovel</>
