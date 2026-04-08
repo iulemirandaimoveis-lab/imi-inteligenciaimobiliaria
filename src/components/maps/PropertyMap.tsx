@@ -77,35 +77,127 @@ function getClusterExpansionZoom(source: any, clusterId: number): Promise<number
     })
 }
 
-// ─── Region detection & grouping ─────────────────────────────────────────────
+// ─── Geographic hierarchy: Continente › País › Estado › Município › Bairro ────
 
-interface Region {
-    id: string
-    label: string
-    flag: string
-    center: [number, number] // [lng, lat]
-    zoom: number
+type GeoLevel = 'world' | 'country' | 'state' | 'city' | 'neighborhood'
+
+interface GeoStep { level: GeoLevel; key: string; label: string; flag: string }
+interface GeoChild extends GeoStep { count: number }
+
+const WORLD_STEP: GeoStep = { level: 'world', key: 'todos', label: 'Todos', flag: '🌎' }
+
+const COUNTRY_CONFIG: Record<string, { label: string; flag: string }> = {
+    brasil: { label: 'Brasil',   flag: '🇧🇷' },
+    uae:    { label: 'Emirados', flag: '🇦🇪' },
+    eua:    { label: 'EUA',      flag: '🇺🇸' },
 }
 
-const REGIONS: Region[] = [
-    { id: 'todos', label: 'Todos', flag: '🌎', center: [-46.0, -14.0], zoom: 4 },
-    { id: 'nordeste', label: 'Nordeste', flag: '🇧🇷', center: [-34.9, -7.8], zoom: 7 },
-    { id: 'sao-paulo', label: 'São Paulo', flag: '🇧🇷', center: [-46.67, -23.58], zoom: 12 },
-    { id: 'dubai', label: 'Dubai', flag: '🇦🇪', center: [55.18, 25.08], zoom: 11 },
-    { id: 'eua', label: 'EUA', flag: '🇺🇸', center: [-80.5, 27.0], zoom: 6 },
-]
+const STATE_LABELS: Record<string, string> = {
+    pb: 'Paraíba', pe: 'Pernambuco', al: 'Alagoas', rn: 'R.G.Norte',
+    ce: 'Ceará', ba: 'Bahia', ma: 'Maranhão', pi: 'Piauí', se: 'Sergipe',
+    sp: 'São Paulo', rj: 'Rio de Janeiro', mg: 'Minas Gerais',
+}
 
-function getRegionId(dev: Development): string {
-    const country = (dev.location.country ?? '').toLowerCase().trim()
-    const state = (dev.location.state ?? '').toUpperCase().trim()
-    const city = (dev.location.city ?? '').toLowerCase().trim()
-    if (country.includes('emirados') || country.includes('uae') || country.includes('united arab') || city.includes('dubai'))
-        return 'dubai'
-    if (country.includes('estados unidos') || country.includes('usa') || country.includes('united states') || country.includes('eua'))
-        return 'eua'
-    if (state === 'SP' || city.includes('são paulo') || city.includes('sao paulo'))
-        return 'sao-paulo'
-    return 'nordeste' // Default for Brazilian NE properties
+function devCountryKey(dev: Development): string {
+    const c = (dev.location.country ?? '').toLowerCase()
+    if (c.includes('emirados') || c.includes('uae') || c.includes('united arab')) return 'uae'
+    if (c.includes('estados unidos') || c.includes('usa') || c.includes('united states') || c.includes('eua')) return 'eua'
+    return 'brasil'
+}
+
+function devStateKey(dev: Development): string {
+    const s = (dev.location.state ?? '').toLowerCase().trim()
+    const city = (dev.location.city ?? '').toLowerCase()
+    if (s === 'sp' || city.includes('são paulo') || city.includes('sao paulo')) return 'sp'
+    return s || 'outro'
+}
+
+function devCityKey(dev: Development): string {
+    return (dev.location.city ?? '').toLowerCase().trim().replace(/\s+/g, '-') || 'outro'
+}
+
+function devNeighborhoodKey(dev: Development): string {
+    return (dev.location.neighborhood ?? '').toLowerCase().trim().replace(/\s+/g, '-')
+}
+
+function applyGeoPath(devs: Development[], path: GeoStep[]): Development[] {
+    let result = devs
+    for (const step of path) {
+        if (step.level === 'world') continue
+        else if (step.level === 'country')      result = result.filter(d => devCountryKey(d) === step.key)
+        else if (step.level === 'state')        result = result.filter(d => devStateKey(d) === step.key)
+        else if (step.level === 'city')         result = result.filter(d => devCityKey(d) === step.key)
+        else if (step.level === 'neighborhood') result = result.filter(d => devNeighborhoodKey(d) === step.key)
+    }
+    return result
+}
+
+function getGeoChildren(devs: Development[], path: GeoStep[]): GeoChild[] {
+    const filtered = applyGeoPath(devs, path)
+    const currentLevel = path[path.length - 1].level
+    if (currentLevel === 'neighborhood') return []
+
+    const counts = new Map<string, number>()
+    const labels = new Map<string, string>()
+    const flags  = new Map<string, string>()
+    let nextLevel: GeoLevel
+
+    if (currentLevel === 'world') {
+        nextLevel = 'country'
+        for (const d of filtered) {
+            const k = devCountryKey(d)
+            counts.set(k, (counts.get(k) ?? 0) + 1)
+            const cfg = COUNTRY_CONFIG[k]
+            labels.set(k, cfg?.label ?? k)
+            flags.set(k,  cfg?.flag  ?? '🏳️')
+        }
+    } else if (currentLevel === 'country') {
+        const cKey = path.find(s => s.level === 'country')?.key
+        if (cKey === 'brasil') {
+            nextLevel = 'state'
+            for (const d of filtered) {
+                const k = devStateKey(d)
+                counts.set(k, (counts.get(k) ?? 0) + 1)
+                labels.set(k, STATE_LABELS[k] ?? k.toUpperCase())
+                flags.set(k, '📍')
+            }
+        } else {
+            // UAE / EUA: skip state level, go straight to city
+            nextLevel = 'city'
+            for (const d of filtered) {
+                const k = devCityKey(d)
+                counts.set(k, (counts.get(k) ?? 0) + 1)
+                labels.set(k, d.location.city ?? k)
+                flags.set(k, '🏙️')
+            }
+        }
+    } else if (currentLevel === 'state') {
+        nextLevel = 'city'
+        for (const d of filtered) {
+            const k = devCityKey(d)
+            counts.set(k, (counts.get(k) ?? 0) + 1)
+            labels.set(k, d.location.city ?? k)
+            flags.set(k, '🏙️')
+        }
+    } else {
+        // city → neighborhood
+        nextLevel = 'neighborhood'
+        for (const d of filtered) {
+            const k = devNeighborhoodKey(d)
+            if (!k) continue
+            counts.set(k, (counts.get(k) ?? 0) + 1)
+            labels.set(k, d.location.neighborhood ?? k)
+            flags.set(k, '🏘️')
+        }
+    }
+
+    return [...counts.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .map(([key, count]) => ({
+            level: nextLevel, key, count,
+            label: labels.get(key) ?? key,
+            flag:  flags.get(key)  ?? '📍',
+        }))
 }
 
 // ─── Map provider detection ──────────────────────────────────────────────────
@@ -140,7 +232,7 @@ export default function PropertyMap({
     const [mapLoaded, setMapLoaded] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [selectedProperty, setSelectedProperty] = useState<Development | null>(null)
-    const [activeRegion, setActiveRegion] = useState('todos')
+    const [geoPath, setGeoPath] = useState<GeoStep[]>([WORLD_STEP])
     const clusterReady = useRef(false)
 
     useEffect(() => { onMarkerClickRef.current = onMarkerClick }, [onMarkerClick])
@@ -158,29 +250,17 @@ export default function PropertyMap({
 
     const excludedCount = developments.length - validDevelopments.length
 
-    // Group by region
-    const regionMap = useMemo(() => {
-        const groups: Record<string, Development[]> = {}
-        for (const dev of validDevelopments) {
-            const rid = getRegionId(dev)
-            if (!groups[rid]) groups[rid] = []
-            groups[rid].push(dev)
-        }
-        return groups
-    }, [validDevelopments])
+    // Apply geo hierarchy filter
+    const filteredDevelopments = useMemo(() =>
+        applyGeoPath(validDevelopments, geoPath),
+        [validDevelopments, geoPath]
+    )
 
-    // Available regions (only show tabs for regions that have properties)
-    const availableRegions = useMemo(() => {
-        const ids = new Set(Object.keys(regionMap))
-        // Always show 'todos' first, then only regions with properties
-        return REGIONS.filter(r => r.id === 'todos' || ids.has(r.id))
-    }, [regionMap])
-
-    // Filtered developments for current region
-    const filteredDevelopments = useMemo(() => {
-        if (activeRegion === 'todos') return validDevelopments
-        return regionMap[activeRegion] || []
-    }, [activeRegion, validDevelopments, regionMap])
+    // Children for the next drill-down level
+    const geoChildren = useMemo(() =>
+        getGeoChildren(validDevelopments, geoPath),
+        [validDevelopments, geoPath]
+    )
 
     // ─── Clear and add markers ───────────────────────────────────────────────
 
@@ -209,7 +289,7 @@ export default function PropertyMap({
 
             const el = document.createElement('div')
             el.className = 'imi-property-marker'
-            el.style.cssText = 'position:relative;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);'
+            el.style.cssText = 'position:relative;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);display:inline-flex;flex-direction:column;align-items:center;width:max-content;'
 
             // Modern pill-style price marker
             const pin = document.createElement('div')
@@ -511,8 +591,8 @@ export default function PropertyMap({
                         style: darkMode
                             ? 'mapbox://styles/mapbox/dark-v11'
                             : 'mapbox://styles/mapbox/light-v11',
-                        center: REGIONS[0].center,
-                        zoom: REGIONS[0].zoom,
+                        center: [-46.0, -14.0],
+                        zoom: 4,
                         attributionControl: false,
                     })
                 } else {
@@ -521,8 +601,8 @@ export default function PropertyMap({
                     map.current = new mapLib.Map({
                         container: mapContainer.current!,
                         style: darkMode ? CARTO_DARK : CARTO_LIGHT,
-                        center: REGIONS[0].center,
-                        zoom: REGIONS[0].zoom,
+                        center: [-46.0, -14.0],
+                        zoom: 4,
                         attributionControl: false,
                     })
                 }
@@ -564,47 +644,34 @@ export default function PropertyMap({
         fitToDevs(filteredDevelopments)
     }, [mapLoaded, filteredDevelopments, addMarkers, fitToDevs])
 
-    // ─── Handle region change ────────────────────────────────────────────────
+    // ─── Geo hierarchy navigation ────────────────────────────────────────────
 
-    const handleRegionChange = useCallback((regionId: string) => {
-        setActiveRegion(regionId)
+    const handleGeoDrillDown = useCallback((child: GeoChild) => {
+        setGeoPath(prev => [...prev, { level: child.level, key: child.key, label: child.label, flag: child.flag }])
         setSelectedProperty(null)
+    }, [])
 
-        // For specific regions, fly to their center immediately for a snappier UX
-        // For "todos", fitToDevs will be called by the useEffect when filteredDevelopments changes
-        if (regionId !== 'todos' && map.current) {
-            const region = REGIONS.find(r => r.id === regionId)
-            if (region) {
-                map.current.flyTo({
-                    center: region.center,
-                    zoom: region.zoom,
-                    duration: 600,
-                })
-            }
-        } else if (regionId === 'todos' && map.current) {
-            // For "todos", immediately fit to all valid developments
-            fitToDevs(validDevelopments, true)
-        }
-    }, [fitToDevs, validDevelopments])
+    const handleGeoUp = useCallback((targetIndex: number) => {
+        setGeoPath(prev => prev.slice(0, targetIndex + 1))
+        setSelectedProperty(null)
+    }, [])
 
     // ─── External selectedId sync ────────────────────────────────────────────
 
     useEffect(() => {
         if (!selectedId || !mapLoaded) return
-        const marker = markersOnMap.current.get(selectedId)
-        const popup = popupsOnMap.current.get(selectedId)
-
-        // If the selected property is in a different region, switch to it
         const dev = validDevelopments.find(d => d.id === selectedId)
-        if (dev) {
-            const devRegion = getRegionId(dev)
-            if (activeRegion !== 'todos' && activeRegion !== devRegion) {
-                setActiveRegion(devRegion)
-                return // The region change effect will handle marker creation
-            }
+
+        // If property is not visible in current geo filter, reset to world level
+        if (dev && !filteredDevelopments.find(d => d.id === selectedId)) {
+            setGeoPath([WORLD_STEP])
+            return
         }
 
+        const marker = markersOnMap.current.get(selectedId)
+        const popup  = popupsOnMap.current.get(selectedId)
         if (!marker || !popup) return
+
         popupsOnMap.current.forEach((p, id) => { if (id !== selectedId) p.remove() })
         if (!popup.isOpen()) marker.togglePopup()
 
@@ -618,7 +685,7 @@ export default function PropertyMap({
         }
         if (dev) setSelectedProperty(dev)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedId, mapLoaded, activeRegion])
+    }, [selectedId, mapLoaded])
 
     // ─── Error / empty states ────────────────────────────────────────────────
 
@@ -671,61 +738,80 @@ export default function PropertyMap({
                 </div>
             )}
 
-            {/* Region filter tabs */}
-            {mapLoaded && availableRegions.length > 2 && (
+            {/* Geo hierarchy filter — Continente › País › Estado › Município › Bairro */}
+            {mapLoaded && (
                 <div style={{
-                    position: 'absolute', top: 14, left: 14, zIndex: 5,
-                    display: 'flex', gap: 4, flexWrap: 'wrap',
-                    background: 'rgba(255,255,255,0.92)',
-                    backdropFilter: 'blur(12px)',
-                    borderRadius: 14, padding: 4,
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04)',
+                    position: 'absolute', top: 12, left: 12, right: 12, zIndex: 5,
+                    background: 'rgba(255,255,255,0.96)',
+                    backdropFilter: 'blur(14px)',
+                    borderRadius: 13, padding: '7px 9px',
+                    boxShadow: '0 4px 18px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.05)',
                     border: '1px solid rgba(0,0,0,0.06)',
-                }}>
-                    {availableRegions.map((region) => {
-                        const isActive = activeRegion === region.id
-                        const count = region.id === 'todos'
-                            ? validDevelopments.length
-                            : (regionMap[region.id]?.length || 0)
-                        return (
-                            <button
-                                key={region.id}
-                                onClick={() => handleRegionChange(region.id)}
-                                style={{
-                                    background: isActive ? '#0B1928' : 'transparent',
-                                    color: isActive ? 'white' : '#5A6577',
-                                    fontSize: 12,
-                                    fontWeight: isActive ? 700 : 500,
-                                    padding: '6px 12px',
-                                    borderRadius: 10,
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
-                                    letterSpacing: '0.01em',
-                                    whiteSpace: 'nowrap',
-                                    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
-                                }}
-                            >
-                                {region.flag} {region.label} <span style={{ opacity: 0.6, fontSize: 11 }}>({count})</span>
-                            </button>
-                        )
-                    })}
-                </div>
-            )}
-
-            {/* Properties count badge — only when single region */}
-            {mapLoaded && availableRegions.length <= 2 && (
-                <div style={{
-                    position: 'absolute', top: 14, left: 14, zIndex: 5,
-                    background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)',
-                    color: '#0B1928', fontSize: 12, fontWeight: 700,
-                    padding: '7px 14px', borderRadius: 12,
-                    border: '1px solid rgba(0,0,0,0.06)',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                    letterSpacing: '0.03em', textTransform: 'uppercase',
                     fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+                    maxWidth: 420,
                 }}>
-                    {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
+                    {/* Breadcrumb path */}
+                    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2, lineHeight: 1 }}>
+                        {geoPath.map((step, i) => {
+                            const isLast = i === geoPath.length - 1
+                            return (
+                                <span key={`${step.key}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    {i > 0 && (
+                                        <span style={{ color: '#C5BFB5', fontSize: 10, margin: '0 1px' }}>›</span>
+                                    )}
+                                    <button
+                                        onClick={() => !isLast && handleGeoUp(i)}
+                                        style={{
+                                            background: isLast ? '#0B1928' : 'transparent',
+                                            color: isLast ? 'white' : '#948F84',
+                                            fontSize: isLast ? 11 : 10,
+                                            fontWeight: isLast ? 700 : 500,
+                                            padding: isLast ? '4px 9px' : '3px 5px',
+                                            borderRadius: 8,
+                                            border: 'none',
+                                            cursor: isLast ? 'default' : 'pointer',
+                                            whiteSpace: 'nowrap',
+                                            transition: 'all 0.15s',
+                                            display: 'inline-flex', alignItems: 'center', gap: 3,
+                                        }}
+                                    >
+                                        <span>{step.flag}</span>
+                                        <span>{step.label}</span>
+                                        {isLast && (
+                                            <span style={{ opacity: 0.55, fontSize: 10 }}>({filteredDevelopments.length})</span>
+                                        )}
+                                    </button>
+                                </span>
+                            )
+                        })}
+                    </div>
+
+                    {/* Child options for drill-down */}
+                    {geoChildren.length > 0 && (
+                        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 6 }}>
+                            {geoChildren.map(child => (
+                                <button
+                                    key={child.key}
+                                    onClick={() => handleGeoDrillDown(child)}
+                                    style={{
+                                        background: 'rgba(11,25,40,0.06)',
+                                        color: '#0B1928',
+                                        fontSize: 10, fontWeight: 600,
+                                        padding: '3px 8px',
+                                        borderRadius: 7,
+                                        border: 'none', cursor: 'pointer',
+                                        whiteSpace: 'nowrap',
+                                        transition: 'background 0.15s',
+                                        display: 'inline-flex', alignItems: 'center', gap: 3,
+                                    }}
+                                >
+                                    <span>{child.flag}</span>
+                                    <span>{child.label}</span>
+                                    <span style={{ opacity: 0.5, fontSize: 9 }}>({child.count})</span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
 
