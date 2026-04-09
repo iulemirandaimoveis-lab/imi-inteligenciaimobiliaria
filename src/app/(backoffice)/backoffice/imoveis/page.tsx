@@ -24,6 +24,7 @@ import {
   MobileBottomSheet, MobileEmptyState, MobileSortChips,
 } from './mobile-ui'
 import { normalizeStatus, fmt } from '@/lib/format'
+import { ImoveisSubNav } from './SubNav'
 type ViewMode = 'grid' | 'list'
 type SortField = 'price' | 'imi_score' | 'area' | 'created_at' | 'yield_est'
 type SortDir = 'asc' | 'desc'
@@ -1230,9 +1231,17 @@ function MobileImoveisList(props: SharedProps) {
           </>
         }
       />
+      {/* ── SUBNAV ── */}
+      <div style={{
+        position: 'sticky', top: 56, zIndex: 19,
+        background: 'var(--bg-base)',
+        borderBottom: '1px solid var(--border-subtle)',
+      }}>
+        <ImoveisSubNav />
+      </div>
       {/* ── STICKY SEARCH + FILTERS ── */}
       <div style={{
-        position: 'sticky', top: 56, zIndex: 20,
+        position: 'sticky', top: 100, zIndex: 20,
         background: 'var(--bg-base)',
         paddingTop: 10,
         borderBottom: '1px solid rgba(61,111,255,0.06)',

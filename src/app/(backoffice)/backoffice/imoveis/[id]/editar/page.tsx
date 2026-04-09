@@ -552,11 +552,14 @@ export default function EditarImovelPage() {
           concurrency: 3,
         })
         newFpUrls = r.filter(x => !x.error).map(x => x.url)
+        const fpFailed = r.filter(x => x.error).length
+        if (fpFailed > 0) toast.warning(`${fpFailed} planta(s) baixa(s) falharam no upload: ${r.find(x => x.error)?.error}`)
       }
       let brochureUrl: string | null = formData.existingBrochure || null
       if (formData.brochure) {
         const r = await uploadFile(formData.brochure, 'media', 'developments/brochures')
         if (!r.error) brochureUrl = r.url
+        else toast.warning(`Falha no upload do brochure: ${r.error}`)
       }
       const res = await fetch('/api/developments', {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },

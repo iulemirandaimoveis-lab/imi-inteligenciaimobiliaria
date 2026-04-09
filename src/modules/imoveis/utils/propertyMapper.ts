@@ -30,9 +30,11 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
     const textGallery = Array.isArray(dbProp.gallery_images) ? dbProp.gallery_images : [];
     const gallery = [...new Set([...jsonbGallery, ...textGallery])].filter(Boolean);
 
-    const baseVideos = Array.isArray(imagesJson.videos)
+    const rawBaseVideos = Array.isArray(imagesJson.videos)
         ? imagesJson.videos
         : (Array.isArray(dbProp.videos) ? dbProp.videos : []);
+    // Convert any raw YouTube URLs already stored in images.videos to embed format
+    const baseVideos = rawBaseVideos.map((v: string) => toYoutubeEmbed(v) || v);
     const videoEmbed = dbProp.video_url ? toYoutubeEmbed(dbProp.video_url) : null;
     const videos = videoEmbed && !baseVideos.includes(videoEmbed)
         ? [...baseVideos, videoEmbed]
@@ -170,8 +172,9 @@ export function mapRentalToDevelopment(r: Record<string, any>): Development {
         images: {
             main: photos[0] || '',
             gallery: photos,
-            videos: [],
-            floorPlans: [],
+            videos: r.video_url ? [toYoutubeEmbed(r.video_url) || r.video_url] : [],
+            floorPlans: Array.isArray(r.floor_plans) ? r.floor_plans : [],
+            brochure: r.brochure_url || undefined,
         },
         units: [],
         tags: [r.property_type || 'apartment', r.listing_mode || 'rental'].filter(Boolean),

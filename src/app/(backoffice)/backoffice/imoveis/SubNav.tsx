@@ -6,7 +6,8 @@ import { Building2, BarChart2, LineChart, Scale, List, Plus, Key, MapPin } from 
 
 const tabs = [
   { href: '/backoffice/imoveis', label: 'Listagem', icon: Building2 },
-  { href: '/backoffice/imoveis/explorer', label: 'Mapa', icon: MapPin },
+  { href: '/backoffice/imoveis/mapa', label: 'Mapa', icon: MapPin },
+  { href: '/backoffice/imoveis/explorer', label: 'Explorer', icon: BarChart2 },
   { href: '/backoffice/imoveis/portfolio', label: 'Portfolio', icon: LineChart },
   { href: '/backoffice/imoveis/comparar', label: 'Comparar', icon: Scale },
   { href: '/backoffice/imoveis/inventario', label: 'Inventário', icon: List },

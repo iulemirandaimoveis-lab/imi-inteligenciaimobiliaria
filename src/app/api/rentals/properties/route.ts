@@ -24,6 +24,10 @@ const PropertyPostSchema = z.object({
     owner_name: z.string().optional(),
     management_fee_pct: z.number().min(0).max(100).optional(),
     photos: z.array(z.string()).optional(),
+    floor_plans: z.array(z.string()).optional(),
+    brochure_url: z.string().optional(),
+    video_url: z.string().optional(),
+    video_short_url: z.string().optional(),
     amenities: z.array(z.string()).optional(),
     rules: z.string().optional(),
     check_in_time: z.string().optional(),
@@ -122,6 +126,10 @@ export async function POST(req: Request) {
             owner_name: b.owner_name || null,
             management_fee_pct: b.management_fee_pct ?? 20,
             photos: b.photos || [],
+            floor_plans: b.floor_plans || [],
+            brochure_url: b.brochure_url || null,
+            video_url: b.video_url || null,
+            video_short_url: b.video_short_url || null,
             amenities: b.amenities || [],
             rules: b.rules || null,
             check_in_time: b.check_in_time || '15:00',
@@ -188,6 +196,10 @@ export async function PUT(req: Request) {
         if (b.owner_name !== undefined) updates.owner_name = b.owner_name || null
         if (b.management_fee_pct !== undefined) updates.management_fee_pct = b.management_fee_pct
         if (b.photos !== undefined) updates.photos = b.photos
+        if (b.floor_plans !== undefined) updates.floor_plans = b.floor_plans
+        if (b.brochure_url !== undefined) updates.brochure_url = b.brochure_url || null
+        if (b.video_url !== undefined) updates.video_url = b.video_url || null
+        if (b.video_short_url !== undefined) updates.video_short_url = b.video_short_url || null
         if (b.amenities !== undefined) updates.amenities = b.amenities
         if (b.rules !== undefined) updates.rules = b.rules || null
         if (b.check_in_time !== undefined) updates.check_in_time = b.check_in_time

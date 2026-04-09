@@ -7,7 +7,6 @@ import {
   FileText, MessageSquare, Info, Zap,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 
 interface Notification {
   id: string
@@ -93,25 +92,20 @@ export default function SmartNotifications() {
     } catch { /* silent */ }
   }, [])
 
-  // Fetch on mount + setup Realtime
+  // Fetch on mount + listen for custom event from BackofficeRealtimeProvider
   useEffect(() => {
     fetchNotifications()
 
-    const supabase = createClient()
-    const channel = supabase
-      .channel('notif-realtime')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'notifications',
-      }, (payload) => {
-        const n = payload.new as Notification
-        setNotifications(prev => [n, ...prev])
-        setUnreadCount(prev => prev + 1)
+    function onNewNotif(e: Event) {
+      const n = (e as CustomEvent).detail as Notification
+      setNotifications(prev => {
+        if (prev.some(x => x.id === n.id)) return prev
+        return [n, ...prev]
       })
-      .subscribe()
-
-    return () => { supabase.removeChannel(channel) }
+      setUnreadCount(prev => prev + 1)
+    }
+    window.addEventListener('imi-notification', onNewNotif)
+    return () => window.removeEventListener('imi-notification', onNewNotif)
   }, [fetchNotifications])
 
   // Refetch when panel opens
@@ -195,7 +189,7 @@ export default function SmartNotifications() {
         style={{
           background: open ? 'var(--bg-elevated)' : 'transparent',
           border: `1px solid ${open ? 'var(--border-focus)' : 'transparent'}`,
-          color: open ? 'var(--accent-400)' : 'var(--text-tertiary)',
+          color: open || unreadCount > 0 ? 'var(--gold, #C8A44A)' : 'var(--text-secondary)',
         }}
       >
         <Bell size={16} />

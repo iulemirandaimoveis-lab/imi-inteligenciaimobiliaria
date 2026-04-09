@@ -95,17 +95,16 @@ export function PropertyCard({
           border: `1px solid ${isSelected
             ? 'rgba(200,164,74,0.75)'
             : hovered || isComparing
-              ? 'rgba(200,164,74,0.40)'
-              : 'rgba(200,164,74,0.18)'}`,
+              ? 'rgba(200,164,74,0.25)'
+              : 'rgba(200,164,74,0.38)'}`,
           borderRadius: 8,
           overflow: 'hidden',
-          transition: 'all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
+          transition: 'border-color 200ms ease, box-shadow 200ms ease, opacity 200ms ease',
           boxShadow: isSelected
             ? '0 0 0 2px rgba(200,164,74,0.30), 0 8px 32px rgba(0,0,0,0.35)'
             : hovered
-              ? '0 12px 40px rgba(0,0,0,0.35), 0 0 48px rgba(200,164,74,0.07)'
-              : '0 4px 16px rgba(0,0,0,0.25)',
+              ? '0 4px 16px rgba(0,0,0,0.20)'
+              : '0 8px 32px rgba(0,0,0,0.30), 0 0 24px rgba(200,164,74,0.05)',
           cursor: 'pointer',
           position: 'relative',
         }}
@@ -165,13 +164,12 @@ export function PropertyCard({
             </span>
           </div>
 
-          {/* Action buttons — bottom right, on hover (always on mobile) */}
+          {/* Action buttons — bottom right, always visible (dim on hover) */}
           <div className="prop-card-actions" style={{
             position: 'absolute', bottom: 8, right: 8, zIndex: 2,
             display: 'flex', gap: 4,
-            opacity: hovered ? 1 : 0,
-            transform: hovered ? 'translateY(0)' : 'translateY(4px)',
-            transition: 'all 200ms ease',
+            opacity: hovered ? 0.65 : 1,
+            transition: 'opacity 200ms ease',
           }}>
             {onFavorite && (
               <button

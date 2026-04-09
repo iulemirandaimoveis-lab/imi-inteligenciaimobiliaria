@@ -5,12 +5,13 @@ import { ImoveisSubNav } from './SubNav'
 
 export default function ImoveisLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  // Explorer fills full viewport — hide subnav for immersive experience
   const isExplorer = pathname.startsWith('/backoffice/imoveis/explorer')
 
   return (
     <div>
       {!isExplorer && (
-        <div className="overflow-x-auto [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">
+        <div className="hidden md:block overflow-x-auto [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">
           <ImoveisSubNav />
         </div>
       )}
