@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
-  Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit, MoreVertical,
-  X, Loader2, UserX, KeyRound, Lock,
+  Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit,
+  X, Loader2, UserX, KeyRound, Lock, Trash2,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -149,6 +149,22 @@ export default function UsuariosPage() {
       setDeactivateModal(m => ({ ...m, saving: false }))
     }
   }
+  async function handleDelete(user: UserRow) {
+    if (!confirm(`Excluir permanentemente "${user.name}" (${user.email})?\n\nEsta ação não pode ser desfeita. Todos os dados do usuário serão removidos.`)) return
+    try {
+      const res = await fetch(`/api/backoffice/users?id=${user.id}&action=delete`, {
+        method: 'DELETE',
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao excluir')
+      toast.success(`Usuário "${user.name}" excluído permanentemente`)
+      setLoading(true)
+      await loadUsers()
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Erro desconhecido')
+    }
+  }
+
   const filteredUsuarios = usuariosData.filter(user => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -376,6 +392,18 @@ export default function UsuariosPage() {
                             >
                               <UserX size={13} />
                               <span className="hidden sm:inline">Desativar</span>
+                            </button>
+                          )}
+                          {/* Excluir permanentemente — só para usuários inativos */}
+                          {user.status === 'inativo' && (
+                            <button
+                              onClick={() => handleDelete(user)}
+                              title="Excluir permanentemente"
+                              className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
+                              style={{ background: 'rgba(229,115,115,0.15)', border: '1px solid rgba(229,115,115,0.35)', color: 'var(--error)' }}
+                            >
+                              <Trash2 size={13} />
+                              <span className="hidden sm:inline">Excluir</span>
                             </button>
                           )}
                         </div>
