@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit,
-  X, Loader2, UserX, KeyRound, Lock, Trash2,
+  X, Loader2, UserX, KeyRound, Lock, Trash2, Copy, Check,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -63,6 +63,10 @@ export default function UsuariosPage() {
   const [deactivateModal, setDeactivateModal] = useState<DeactivateModal>({
     open: false, user: null, saving: false,
   })
+  const [resetLinkModal, setResetLinkModal] = useState<{ open: boolean; link: string; userName: string }>({
+    open: false, link: '', userName: '',
+  })
+  const [linkCopied, setLinkCopied] = useState(false)
   async function loadUsers() {
     try {
       const res = await fetch('/api/backoffice/users')
@@ -358,10 +362,9 @@ export default function UsuariosPage() {
                             <Edit size={13} />
                             <span className="hidden sm:inline">Editar</span>
                           </button>
-                          {/* Resetar Senha */}
+                          {/* Resetar Senha / Gerar Link */}
                           <button
                             onClick={async () => {
-                              if (!confirm(`Enviar link de redefinição de senha para ${user.email}?`)) return
                               try {
                                 const res = await fetch('/api/backoffice/users', {
                                   method: 'PATCH',
@@ -370,17 +373,21 @@ export default function UsuariosPage() {
                                 })
                                 const json = await res.json()
                                 if (!res.ok) throw new Error(json.error || 'Erro')
-                                toast.success(json.message || 'Link enviado com sucesso')
+                                if (json.resetLink) {
+                                  setResetLinkModal({ open: true, link: json.resetLink, userName: user.name })
+                                } else {
+                                  toast.success(json.message || 'Link gerado com sucesso')
+                                }
                               } catch (err) {
-                                toast.error(err instanceof Error ? err.message : 'Erro ao resetar senha')
+                                toast.error(err instanceof Error ? err.message : 'Erro ao gerar link')
                               }
                             }}
-                            title="Enviar link de redefinição de senha"
+                            title="Gerar link de acesso"
                             className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
                             style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.25)', color: 'var(--gold, #C8A44A)' }}
                           >
                             <KeyRound size={13} />
-                            <span className="hidden sm:inline">Resetar Senha</span>
+                            <span className="hidden sm:inline">Gerar Link</span>
                           </button>
                           {/* Desativar */}
                           {user.status === 'ativo' && (
@@ -527,6 +534,60 @@ export default function UsuariosPage() {
                 {deactivateModal.saving ? 'Desativando...' : 'Desativar'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* ── Reset Link Modal ──────────────────────────────────────────── */}
+      {resetLinkModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div
+            className="w-full max-w-md rounded-xl p-6 space-y-5"
+            style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-base" style={{ color: T.text }}>Link de Acesso</h2>
+              <button
+                onClick={() => { setResetLinkModal({ open: false, link: '', userName: '' }); setLinkCopied(false) }}
+                className="w-8 h-8 rounded-[6px] flex items-center justify-center hover:opacity-70"
+                style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <p className="text-sm" style={{ color: T.textMuted }}>
+              Copie e envie este link para <strong style={{ color: T.text }}>{resetLinkModal.userName}</strong> via WhatsApp ou outro canal.
+              Ao clicar, o usuário define sua própria senha.
+            </p>
+            <div className="rounded-lg p-3 flex items-start gap-3"
+              style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
+              <p className="flex-1 text-xs break-all select-all" style={{ color: T.textMuted, fontFamily: 'monospace', lineHeight: 1.6 }}>
+                {resetLinkModal.link}
+              </p>
+            </div>
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(resetLinkModal.link)
+                  setLinkCopied(true)
+                  toast.success('Link copiado!')
+                  setTimeout(() => setLinkCopied(false), 3000)
+                } catch {
+                  toast.error('Não foi possível copiar. Selecione e copie manualmente.')
+                }
+              }}
+              className="w-full h-11 rounded-[6px] text-sm font-semibold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+              style={{
+                background: linkCopied ? 'rgba(107,184,123,0.15)' : 'rgba(200,164,74,0.12)',
+                border: linkCopied ? '1px solid rgba(107,184,123,0.3)' : '1px solid rgba(200,164,74,0.3)',
+                color: linkCopied ? 'var(--success, #6bb87b)' : 'var(--gold, #C8A44A)',
+              }}
+            >
+              {linkCopied ? <Check size={14} /> : <Copy size={14} />}
+              {linkCopied ? 'Copiado!' : 'Copiar Link'}
+            </button>
+            <p className="text-xs text-center" style={{ color: T.textMuted }}>
+              O link expira em 24 horas.
+            </p>
           </div>
         </div>
       )}

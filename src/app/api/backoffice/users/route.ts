@@ -127,11 +127,12 @@ export async function POST(request: Request) {
                     user_metadata: { name, role: validRole },
                 }).catch(() => {})
                 await syncProfileAndBroker(newUserId, email, name, validRole)
-                await sendRecoveryEmail(email)
+                const inviteLink = await generateAccessLink(email)
                 return NextResponse.json({
                     success: true,
+                    inviteLink,
                     user: { id: newUserId, email, name, role: validRole },
-                    message: `Convite enviado para ${email}. O usuário receberá um link para definir sua senha.`,
+                    message: `Usuário ${name} criado com sucesso.`,
                 })
             }
 
@@ -140,12 +141,13 @@ export async function POST(request: Request) {
 
         const newUserId = authUser.user.id
         await syncProfileAndBroker(newUserId, email, name, validRole)
-        await sendRecoveryEmail(email)
+        const inviteLink = await generateAccessLink(email)
 
         return NextResponse.json({
             success: true,
+            inviteLink,
             user: { id: newUserId, email, name, role: validRole },
-            message: `Convite enviado para ${email}. O usuário receberá um link para definir sua senha.`,
+            message: `Usuário ${name} criado com sucesso.`,
         })
     } catch (error: unknown) {
         console.error('[backoffice/users POST]', error)
@@ -179,14 +181,35 @@ async function syncProfileAndBroker(userId: string, email: string, name: string,
     }
 }
 
-async function sendRecoveryEmail(email: string) {
-    await supabaseAdmin.auth.admin.generateLink({
+// Generates an invite/recovery link and returns the URL.
+// Email delivery is attempted but not required — the link is always returned
+// so the admin can share it manually (WhatsApp, etc.).
+async function generateAccessLink(email: string): Promise<string | null> {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
+    const redirectTo = `${siteUrl}/login?first_access=true`
+
+    // Try invite link first (ideal for new users — prompts to set password)
+    const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'invite',
+        email,
+        options: { redirectTo },
+    })
+    if (!inviteError && inviteData?.properties?.action_link) {
+        return inviteData.properties.action_link
+    }
+
+    // Fallback: recovery link
+    const { data: recoveryData, error: recoveryError } = await supabaseAdmin.auth.admin.generateLink({
         type: 'recovery',
         email,
-        options: {
-            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login?reset=true`,
-        },
-    }).catch(() => { /* non-critical */ })
+        options: { redirectTo },
+    })
+    if (!recoveryError && recoveryData?.properties?.action_link) {
+        return recoveryData.properties.action_link
+    }
+
+    console.warn('[backoffice/users] Could not generate access link:', inviteError?.message, recoveryError?.message)
+    return null
 }
 
 // ── PUT — Edit user (name / role) ─────────────────────────────────────────────
@@ -308,19 +331,15 @@ export async function PATCH(request: Request) {
             return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
         }
 
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
-        const { error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-            type: 'recovery',
-            email: profile.email,
-            options: { redirectTo: `${siteUrl}/login?reset=true` },
-        })
-        if (linkError) {
-            return NextResponse.json({ error: `Erro ao gerar link: ${linkError.message}` }, { status: 500 })
+        const resetLink = await generateAccessLink(profile.email)
+        if (!resetLink) {
+            return NextResponse.json({ error: 'Não foi possível gerar o link de acesso' }, { status: 500 })
         }
 
         return NextResponse.json({
             success: true,
-            message: `Link de recuperação enviado para ${profile.email}`,
+            resetLink,
+            message: `Link de acesso gerado para ${profile.email}`,
         })
     } catch (error: unknown) {
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
