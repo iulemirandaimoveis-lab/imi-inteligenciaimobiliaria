@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
-import { Bed, Ruler, Car, Calendar } from 'lucide-react'
+import { Bed, Ruler, Car, Calendar, MessageCircle } from 'lucide-react'
 import DevelopmentHero from '../components/DevelopmentHero'
 import DevelopmentDetails from '../components/DevelopmentDetails'
 import DevelopmentGallery from '../components/DevelopmentGallery'
@@ -261,10 +261,14 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <div key={i} role="group" aria-label={`${item.value} ${item.label.toLowerCase()}`} style={{
                             background: '#FFFFFF', padding: '16px 12px', textAlign: 'center' as const,
                             border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                         }}>
-                            <item.Icon size={18} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.5, margin: '0 auto' }} />
-                            <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '4px 0 0' }}>{item.value}</p>
-                            <p style={{ fontSize: 11, color: '#948F84', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '2px 0 0' }}>{item.label}</p>
+                            <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F0EDE5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
+                                <item.Icon size={16} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.7 }} />
+                            </div>
+                            <p style={{ fontSize: 17, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '0 0 2px' }}>{item.value}</p>
+                            <p style={{ fontSize: 10, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>{item.label}</p>
                         </div>
                     ))}
                 </div>
@@ -517,37 +521,49 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 style={{
                     bottom: 'env(safe-area-inset-bottom, 0px)',
                     background: '#FFFFFF',
-                    borderTop: '2px solid #B8B3A8',
+                    borderTop: '1px solid rgba(184,179,168,0.3)',
                     padding: '12px 16px',
-                    boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
+                    boxShadow: '0 -4px 24px rgba(0,0,0,0.1)',
                 }}>
+                {/* Gold accent line at top */}
+                <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                 <div className="flex items-center gap-3 max-w-lg mx-auto">
                     <div className="flex-1 min-w-0">
-                        <p style={{ fontSize: 10, color: '#948F84', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>A partir de</p>
+                        <p style={{ fontSize: 10, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>A partir de</p>
                         <p style={{ fontSize: 20, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
                             {development.priceRange.min > 0 ? `R$ ${development.priceRange.min >= 1000000 ? `${(development.priceRange.min / 1000000).toFixed(1).replace(/\.0$/, '')}M` : development.priceRange.min.toLocaleString('pt-BR')}` : 'Consulte'}
                         </p>
                     </div>
-                    <a href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`} target="_blank" rel="noopener noreferrer" style={{
-                        background: '#0B1928',
-                        color: '#FFFFFF',
-                        borderRadius: 12,
-                        padding: '0 24px',
-                        height: 48,
-                        fontWeight: 700,
-                        fontSize: 13,
-                        letterSpacing: '0.05em',
-                        textTransform: 'uppercase' as const,
-                        border: 'none',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 8,
-                        whiteSpace: 'nowrap',
-                        textDecoration: 'none',
-                    }}>
+                    <a
+                        href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            position: 'relative',
+                            background: '#0B1928',
+                            color: '#FFFFFF',
+                            borderRadius: 12,
+                            padding: '0 20px',
+                            height: 48,
+                            fontWeight: 700,
+                            fontSize: 11,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase' as const,
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 8,
+                            whiteSpace: 'nowrap',
+                            textDecoration: 'none',
+                            fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <MessageCircle size={14} />
                         Falar com Especialista
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                     </a>
                 </div>
             </div>

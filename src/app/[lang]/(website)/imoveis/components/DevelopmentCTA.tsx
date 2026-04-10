@@ -67,16 +67,17 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                     <div className="p-5 space-y-2.5">
                         <button
                             onClick={() => handleCTAClick('info')}
-                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                            className="w-full relative flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98]"
                             style={{ background: '#0B1928', color: '#fff', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
                             <MessageCircle className="w-4 h-4" />
                             Falar com Especialista
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                         </button>
 
                         <button
                             onClick={() => handleCTAClick('table')}
-                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 hover:bg-gray-50 active:scale-[0.98]"
                             style={{ background: '#FFFFFF', color: '#0B1928', border: '2px solid #0B1928', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
                             <FileText className="w-4 h-4" />
@@ -88,7 +89,7 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                                 href={development.images.brochure}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                                className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 hover:bg-gray-50"
                                 style={{ background: '#FFFFFF', color: '#948F84', border: '1px solid #B8B3A8', fontFamily: "var(--fu, 'Outfit', sans-serif)", textDecoration: 'none' }}
                             >
                                 <Download className="w-4 h-4" style={{ opacity: 0.6 }} />
@@ -127,7 +128,7 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                 {/* Quick phone */}
                 <a
                     href="tel:+5581997230455"
-                    className="flex items-center justify-center gap-2 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-colors"
+                    className="flex items-center justify-center gap-2 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 hover:bg-gray-50 active:scale-[0.98]"
                     style={{ background: '#FFFFFF', color: '#0B1928', border: '2px solid #0B1928', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                 >
                     <Phone className="w-3.5 h-3.5" />

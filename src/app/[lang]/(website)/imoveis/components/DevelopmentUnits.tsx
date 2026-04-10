@@ -106,8 +106,8 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                                 <td className="p-4 text-center">
                                     <button
                                         onClick={() => handleWhatsApp(unit)}
-                                        className="relative inline-flex items-center gap-1.5 h-9 px-4 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-colors overflow-hidden"
-                                        style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', minHeight: 44 }}
+                                        className="relative inline-flex items-center gap-1.5 h-9 px-4 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97]"
+                                        style={{ background: '#0B1928', color: '#fff', minHeight: 44 }}
                                     >
                                         <MessageCircle className="w-3 h-3" />
                                         Consultar
@@ -141,8 +141,8 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                             </div>
                             <button
                                 onClick={() => handleWhatsApp(unit)}
-                                className="relative h-11 px-4 rounded-[4px] text-[11px] font-bold uppercase tracking-wider transition-colors overflow-hidden"
-                                style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', minHeight: 44 }}
+                                className="relative h-11 px-4 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97]"
+                                style={{ background: '#0B1928', color: '#fff', minHeight: 44 }}
                             >
                                 Consultar
                                 <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
@@ -154,12 +154,14 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
 
             {/* Show More */}
             {units.length > 10 && !showAll && (
-                <div className="mt-8 text-center">
+                <div className="mt-8 flex justify-center">
                     <button
-                        className="text-gray-500 hover:text-gray-800 font-bold text-[11px] uppercase tracking-[0.2em] transition-colors"
                         onClick={() => setShowAll(true)}
+                        className="relative inline-flex items-center gap-2 h-11 px-7 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98]"
+                        style={{ background: '#0B1928', color: '#fff', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                     >
-                        Ver todas ({units.length} unidades)
+                        Ver todas as {units.length} unidades
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                     </button>
                 </div>
             )}
