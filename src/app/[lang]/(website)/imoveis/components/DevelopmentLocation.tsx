@@ -87,17 +87,19 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                 <div className="mb-5">
                     <button
                         onClick={() => setShowStreetView(!showStreetView)}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                        className="relative inline-flex items-center gap-2 h-11 px-5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden active:scale-[0.98]"
                         style={{
                             background: showStreetView ? '#0B1928' : 'transparent',
-                            color: showStreetView ? '#C8A44A' : '#0B1928',
-                            border: `2px solid ${showStreetView ? '#C8A44A' : '#0B1928'}`,
+                            color: showStreetView ? '#fff' : '#0B1928',
+                            border: `2px solid #0B1928`,
                             fontFamily: "var(--fu, 'Outfit', sans-serif)",
-                            boxShadow: showStreetView ? '0 0 0 2px rgba(200,164,74,0.15)' : 'none',
                         }}
                     >
                         <Eye className="w-4 h-4" />
                         {showStreetView ? 'Voltar ao Mapa' : 'Ver Street View'}
+                        {showStreetView && (
+                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
+                        )}
                     </button>
 
                     {showStreetView && (
@@ -147,10 +149,10 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                     href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative inline-flex items-center gap-2 px-5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden"
-                    style={{ background: '#0B1928', color: '#fff', border: 'none', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)", height: 48, borderRadius: 12 }}
+                    className="relative inline-flex items-center gap-2 h-11 px-5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98]"
+                    style={{ background: '#0B1928', color: '#fff', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                 >
-                    <Navigation size={12} />
+                    <Navigation size={14} />
                     Abrir no Maps
                     <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                 </a>

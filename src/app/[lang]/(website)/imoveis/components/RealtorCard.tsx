@@ -133,11 +133,12 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`Conversar no WhatsApp com ${broker.name}`}
-                        className="flex items-center justify-center gap-2 w-full h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                        className="relative flex items-center justify-center gap-2 w-full h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98]"
                         style={{ background: '#0B1928', color: '#fff', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                     >
                         <MessageCircle className="w-4 h-4" />
                         Falar com {broker.name.split(' ')[0]}
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                     </a>
                 )}
 
@@ -147,7 +148,7 @@ export default function RealtorCard({ broker, propertyName }: { broker: RealtorI
                         href={`https://wa.me/${broker.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá! Gostaria de agendar uma visita ao ${propertyName}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full mt-3 flex items-center justify-center gap-2 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                        className="w-full mt-3 flex items-center justify-center gap-2 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 hover:bg-gray-50 active:scale-[0.98]"
                         style={{ background: '#FFFFFF', color: '#0B1928', border: '2px solid #0B1928', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                     >
                         <Calendar className="w-4 h-4" />
