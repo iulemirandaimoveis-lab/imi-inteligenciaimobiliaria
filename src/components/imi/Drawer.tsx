@@ -22,11 +22,11 @@ const NAV_ITEMS = [
 ]
 
 const LANGUAGES = [
-    { code: 'pt', flag: '🇧🇷' },
-    { code: 'en', flag: '🇺🇸' },
-    { code: 'ja', flag: '🇯🇵' },
-    { code: 'ar', flag: '🇸🇦' },
-    { code: 'es', flag: '🇪🇸' },
+    { code: 'pt', countryCode: 'br' },
+    { code: 'en', countryCode: 'us' },
+    { code: 'ja', countryCode: 'jp' },
+    { code: 'ar', countryCode: 'sa' },
+    { code: 'es', countryCode: 'es' },
 ]
 
 export default function Drawer({ open, setOpen }: Props) {
@@ -144,7 +144,14 @@ export default function Drawer({ open, setOpen }: Props) {
                                             : 'bg-neutral-50 border border-neutral-200 opacity-50 hover:opacity-100'
                                         }`}
                                 >
-                                    {lang.flag}
+                                    <img
+                                        src={`https://flagcdn.com/w20/${lang.countryCode}.png`}
+                                        srcSet={`https://flagcdn.com/w40/${lang.countryCode}.png 2x`}
+                                        width={24}
+                                        height={18}
+                                        alt={lang.code}
+                                        className="rounded-[2px] object-cover"
+                                    />
                                 </Link>
                             )
                         })}
