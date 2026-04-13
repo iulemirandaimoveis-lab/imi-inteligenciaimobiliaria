@@ -44,11 +44,11 @@ const NAV_COLS = [
 ]
 
 const LANGS = [
-    { code: 'pt', flag: '🇧🇷', label: 'PT' },
-    { code: 'en', flag: '🇺🇸', label: 'EN' },
-    { code: 'es', flag: '🇪🇸', label: 'ES' },
-    { code: 'ja', flag: '🇯🇵', label: 'JP' },
-    { code: 'ar', flag: '🇸🇦', label: 'AR' },
+    { code: 'pt', label: 'PT', countryCode: 'br' },
+    { code: 'en', label: 'EN', countryCode: 'us' },
+    { code: 'es', label: 'ES', countryCode: 'es' },
+    { code: 'ja', label: 'JP', countryCode: 'jp' },
+    { code: 'ar', label: 'AR', countryCode: 'sa' },
 ]
 
 export default function Footer({ lang, settings }: FooterProps) {
@@ -202,7 +202,14 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     : 'text-white/30 hover:text-white hover:bg-white/[0.04] border border-transparent'
                                 }`}
                             >
-                                <span className="text-sm">{l.flag}</span>
+                                <img
+                                    src={`https://flagcdn.com/w20/${l.countryCode}.png`}
+                                    srcSet={`https://flagcdn.com/w40/${l.countryCode}.png 2x`}
+                                    width={20}
+                                    height={15}
+                                    alt={l.label}
+                                    className="rounded-[2px] object-cover"
+                                />
                                 {l.label}
                             </Link>
                         ))}

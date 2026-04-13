@@ -31,11 +31,11 @@ export default function MobileMenu({
     }, [isOpen])
 
     const languages = [
-        { code: 'pt', label: 'Português', flag: '🇧🇷' },
-        { code: 'en', label: 'English', flag: '🇺🇸' },
-        { code: 'ja', label: 'JP', flag: '🇯🇵' },
-        { code: 'ar', label: 'AR', flag: '🇸🇦' },
-        { code: 'es', label: 'ES', flag: '🇪🇸' },
+        { code: 'pt', label: 'Português', countryCode: 'br' },
+        { code: 'en', label: 'English', countryCode: 'us' },
+        { code: 'ja', label: 'JP', countryCode: 'jp' },
+        { code: 'ar', label: 'AR', countryCode: 'sa' },
+        { code: 'es', label: 'ES', countryCode: 'es' },
     ]
 
     if (!isOpen) return null
@@ -129,7 +129,14 @@ export default function MobileMenu({
                                             : 'border-transparent opacity-60'
                                         }`}
                                 >
-                                    <span className="text-2xl">{language.flag}</span>
+                                    <img
+                                        src={`https://flagcdn.com/w20/${language.countryCode}.png`}
+                                        srcSet={`https://flagcdn.com/w40/${language.countryCode}.png 2x`}
+                                        width={24}
+                                        height={18}
+                                        alt={language.label}
+                                        className="rounded-[2px] object-cover"
+                                    />
                                 </Link>
                             ))}
                         </div>

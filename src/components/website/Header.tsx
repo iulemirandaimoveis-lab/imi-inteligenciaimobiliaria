@@ -34,11 +34,11 @@ const NAV_MORE = [
 const NAV_ITEMS = [...NAV_MAIN, ...NAV_MORE]
 
 const LANGS = [
-    { code: 'pt', flag: '🇧🇷', label: 'PT' },
-    { code: 'en', flag: '🇺🇸', label: 'EN' },
-    { code: 'es', flag: '🇪🇸', label: 'ES' },
-    { code: 'ja', flag: '🇯🇵', label: 'JP' },
-    { code: 'ar', flag: '🇸🇦', label: 'AR' },
+    { code: 'pt', label: 'PT', countryCode: 'br' },
+    { code: 'en', label: 'EN', countryCode: 'us' },
+    { code: 'es', label: 'ES', countryCode: 'es' },
+    { code: 'ja', label: 'JP', countryCode: 'jp' },
+    { code: 'ar', label: 'AR', countryCode: 'sa' },
 ]
 
 export default function Header({ lang, settings }: HeaderProps) {
@@ -227,7 +227,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="relative overflow-hidden inline-flex items-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-300 border border-white/[0.15] hover:border-white/[0.25]"
+                                className="relative overflow-hidden inline-flex items-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] text-white text-[13px] font-semibold px-5 py-2.5 rounded-xl transition-all duration-300 border border-white/[0.15] hover:border-white/[0.25]"
                             >
                                 <MessageCircle size={15} strokeWidth={2.5} />
                                 WhatsApp
@@ -360,12 +360,19 @@ export default function Header({ lang, settings }: HeaderProps) {
                                             href={`/${l.code}`}
                                             onClick={() => setOpen(false)}
                                             title={l.label}
-                                            className={`flex-1 h-9 flex items-center justify-center rounded-lg text-lg transition-all duration-150 ${lang === l.code
+                                            className={`flex-1 h-9 flex items-center justify-center rounded-lg transition-all duration-150 ${lang === l.code
                                                 ? 'bg-white/[0.08] ring-2 ring-[#C8A44A]/50 ring-offset-1 ring-offset-[#0B1928]'
                                                 : 'bg-white/[0.03] border border-white/[0.06] hover:border-[#C8A44A]/30'
                                                 }`}
                                         >
-                                            {l.flag}
+                                            <img
+                                                src={`https://flagcdn.com/w20/${l.countryCode}.png`}
+                                                srcSet={`https://flagcdn.com/w40/${l.countryCode}.png 2x`}
+                                                width={20}
+                                                height={15}
+                                                alt={l.label}
+                                                className="rounded-[2px] object-cover"
+                                            />
                                         </Link>
                                     ))}
                                 </motion.div>
