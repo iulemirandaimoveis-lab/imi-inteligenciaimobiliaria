@@ -333,24 +333,30 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
     );
 }
 
+/** Extract a YouTube video ID from any YouTube URL variant (watch, youtu.be, shorts, embed) */
+function getYouTubeId(url: string): string | null {
+    const patterns = [
+        /youtube\.com\/watch\?(?:.*&)?v=([a-zA-Z0-9_-]{11})/,
+        /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    ];
+    for (const p of patterns) {
+        const m = url.match(p);
+        if (m) return m[1];
+    }
+    return null;
+}
+
 /** Normalise any YouTube or Vimeo URL to an embeddable form */
 function normalizeVideoUrl(url: string): string {
-    const ytWatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-    if (ytWatch) return `https://www.youtube.com/embed/${ytWatch[1]}?rel=0&modestbranding=1`;
-
-    const ytEmbed = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
-    if (ytEmbed) return url; // already an embed URL
+    const ytId = getYouTubeId(url);
+    if (ytId) return `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1`;
 
     const vimeo = url.match(/(?:vimeo\.com\/)(\d+)/);
     if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
 
     return url;
-}
-
-/** Extract a YouTube video ID from any YouTube URL variant */
-function getYouTubeId(url: string): string | null {
-    const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-    return m ? m[1] : null;
 }
 
 /** Click-to-play video embed with branded IMI placeholder */

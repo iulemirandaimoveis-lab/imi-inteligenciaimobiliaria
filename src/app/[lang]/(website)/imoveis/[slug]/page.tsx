@@ -19,6 +19,7 @@ import PropertyIntelligence from '../components/PropertyIntelligence'
 import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
 import { fmt } from '@/lib/format'
+import { POIGrid } from '@/components/imoveis/POIGrid'
 
 // Dynamic rendering — always fetch fresh data from Supabase
 export const dynamic = 'force-dynamic'
@@ -307,6 +308,23 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </section>
                         <section id="localizacao">
                             <DevelopmentLocation development={development} />
+                            {development.location.coordinates.lat != null &&
+                             development.location.coordinates.lng != null &&
+                             development.location.coordinates.lat !== 0 &&
+                             development.location.coordinates.lng !== 0 && (
+                                <div className="mt-8">
+                                    <POIGrid
+                                        developmentId={development.id}
+                                        latitude={development.location.coordinates.lat}
+                                        longitude={development.location.coordinates.lng}
+                                        imovelType={
+                                            (data.listing_mode === 'short_stay' || data.listing_category === 'short_stay')
+                                                ? 'short_stay'
+                                                : 'residencial'
+                                        }
+                                    />
+                                </div>
+                            )}
                         </section>
                         <section id="inteligencia-bairro">
                             <NeighborhoodIntel

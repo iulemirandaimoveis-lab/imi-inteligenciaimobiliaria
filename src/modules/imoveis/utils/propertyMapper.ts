@@ -1,19 +1,37 @@
 
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development';
 
-function toYoutubeEmbed(url: string): string | null {
-    if (!url) return null;
-    const patterns = [
-        /youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
-        /youtu\.be\/([a-zA-Z0-9_-]+)/,
-        /youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/,
-        /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
-    ];
-    for (const r of patterns) {
+const YT_PATTERNS = [
+    /youtube\.com\/watch\?(?:.*&)?v=([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+];
+
+function extractYouTubeId(url: string): string | null {
+    for (const r of YT_PATTERNS) {
         const m = url.match(r);
-        if (m) return `https://www.youtube.com/embed/${m[1]}`;
+        if (m) return m[1];
     }
     return null;
+}
+
+function toYoutubeEmbed(url: string): string | null {
+    if (!url) return null;
+    const id = extractYouTubeId(url);
+    return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+}
+
+/** Deduplicate a list of video URLs by their resolved YouTube video ID */
+function deduplicateVideos(urls: string[]): string[] {
+    const seen = new Set<string>();
+    return urls.filter(url => {
+        const id = extractYouTubeId(url);
+        const key = id ?? url;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- DB row shape is dynamic from Supabase joins
@@ -30,13 +48,12 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
     const textGallery = Array.isArray(dbProp.gallery_images) ? dbProp.gallery_images : [];
     const gallery = [...new Set([...jsonbGallery, ...textGallery])].filter(Boolean);
 
-    const baseVideos = Array.isArray(imagesJson.videos)
+    const baseVideos: string[] = Array.isArray(imagesJson.videos)
         ? imagesJson.videos
         : (Array.isArray(dbProp.videos) ? dbProp.videos : []);
-    const videoEmbed = dbProp.video_url ? toYoutubeEmbed(dbProp.video_url) : null;
-    const videos = videoEmbed && !baseVideos.includes(videoEmbed)
-        ? [...baseVideos, videoEmbed]
-        : baseVideos;
+    // Merge video_url and video_short_url into the videos array, then deduplicate by YouTube ID
+    const extraUrls: string[] = [dbProp.video_url, dbProp.video_short_url].filter(Boolean);
+    const videos = deduplicateVideos([...baseVideos, ...extraUrls]);
 
     const floorPlans = Array.isArray(imagesJson.floorPlans)
         ? imagesJson.floorPlans
