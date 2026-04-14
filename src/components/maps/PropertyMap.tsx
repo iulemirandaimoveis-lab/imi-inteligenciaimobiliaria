@@ -209,7 +209,7 @@ export default function PropertyMap({
 
             const el = document.createElement('div')
             el.className = 'imi-property-marker'
-            el.style.cssText = 'position:relative;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);'
+            el.style.cssText = 'position:relative;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);width:fit-content;max-width:120px;'
 
             // Modern pill-style price marker
             const pin = document.createElement('div')
@@ -223,16 +223,21 @@ export default function PropertyMap({
 
             const isDark = darkMode
             pin.style.cssText = `
-                padding:4px 8px;
-                border-radius:14px;
+                padding:4px 10px;
+                border-radius:999px;
                 background:${isDark ? '#0B1928' : 'rgba(16,20,35,0.94)'};
                 color:white;
-                font-size:10px;font-weight:700;letter-spacing:-0.01em;
+                font-size:11px;font-weight:700;letter-spacing:-0.01em;
                 white-space:nowrap;
+                width:fit-content;
+                min-width:unset;
+                max-width:120px;
                 box-shadow:0 2px 8px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.12);
                 border:1.5px solid rgba(255,255,255,0.9);
-                display:flex;align-items:center;gap:4px;
+                display:inline-flex;align-items:center;gap:4px;
                 font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+                overflow:hidden;
+                text-overflow:ellipsis;
             `
             // Status dot
             const dot = document.createElement('span')
