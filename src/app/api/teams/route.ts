@@ -14,37 +14,73 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams
         const search = searchParams.get('search') || ''
 
-        // Check user role via profiles or brokers
+        // Check user role — admin/broker_manager can see all teams
         const { data: profile } = await supabaseAdmin
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle()
+
+        const { data: broker } = await supabaseAdmin
             .from('brokers')
             .select('role, team_id')
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
 
-        const isAdminOrManager = profile?.role === 'admin' || profile?.role === 'manager'
+        const isAdminOrManager =
+            profile?.role === 'admin' ||
+            profile?.role === 'super_admin' ||
+            profile?.role === 'owner' ||
+            broker?.role === 'admin' ||
+            broker?.role === 'broker_manager'
 
-        let query = supabaseAdmin
+        let teamsQuery = supabaseAdmin
             .from('teams')
             .select('*', { count: 'exact' })
             .eq('is_active', true)
             .order('name', { ascending: true })
 
         // Non-admin users only see their own team
-        if (!isAdminOrManager && profile?.team_id) {
-            query = query.eq('id', profile.team_id)
+        if (!isAdminOrManager && broker?.team_id) {
+            teamsQuery = teamsQuery.eq('id', broker.team_id)
         }
 
         if (search) {
-            query = query.or(`name.ilike.%${search}%,region.ilike.%${search}%,specialty.ilike.%${search}%`)
+            teamsQuery = teamsQuery.or(`name.ilike.%${search}%,region.ilike.%${search}%,specialty.ilike.%${search}%`)
         }
 
-        const { data, error, count } = await query
+        const { data: teamsData, error, count } = await teamsQuery
 
         if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+            console.error('GET /api/teams error:', error.message)
+            return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        return NextResponse.json({ data: data || [], count: count || 0 })
+        // Fetch members for all teams in one query
+        const teamIds = (teamsData || []).map((t: { id: string }) => t.id)
+        let membersMap: Record<string, unknown[]> = {}
+
+        if (teamIds.length > 0) {
+            const { data: brokers } = await supabaseAdmin
+                .from('brokers')
+                .select('id, user_id, name, email, role, status, avatar_url, creci, phone, team_id, last_login_at, created_at')
+                .in('team_id', teamIds)
+
+            if (brokers) {
+                for (const b of brokers) {
+                    const tid = (b as { team_id: string }).team_id
+                    if (!membersMap[tid]) membersMap[tid] = []
+                    membersMap[tid].push(b)
+                }
+            }
+        }
+
+        const teams = (teamsData || []).map((team: { id: string; member_count: number }) => {
+            const members = membersMap[team.id] || []
+            return { ...team, members, member_count: members.length }
+        })
+
+        return NextResponse.json({ data: teams, count: count || 0 })
     } catch (err) {
         return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
@@ -61,20 +97,33 @@ export async function POST(request: NextRequest) {
 
         // Check admin/manager role
         const { data: profile } = await supabaseAdmin
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle()
+
+        const { data: broker } = await supabaseAdmin
             .from('brokers')
             .select('role')
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
 
-        if (profile?.role !== 'admin' && profile?.role !== 'manager') {
-            return NextResponse.json({ error: 'Permissão negada' }, { status: 403 })
+        const isAdminOrManager =
+            profile?.role === 'admin' ||
+            profile?.role === 'super_admin' ||
+            profile?.role === 'owner' ||
+            broker?.role === 'admin' ||
+            broker?.role === 'broker_manager'
+
+        if (!isAdminOrManager) {
+            return NextResponse.json({ error: 'Apenas administradores e gerentes podem criar equipes' }, { status: 403 })
         }
 
         const body = await request.json()
-        const { name, description, region, specialty, commission_rules, leader_id } = body
+        const { name, description, region, specialty, commission_rules, leader_id, color } = body
 
         if (!name?.trim()) {
-            return NextResponse.json({ error: 'name é obrigatório' }, { status: 400 })
+            return NextResponse.json({ error: 'O nome da equipe é obrigatório' }, { status: 400 })
         }
 
         // Look up leader name if leader_id provided
@@ -84,7 +133,7 @@ export async function POST(request: NextRequest) {
                 .from('brokers')
                 .select('name')
                 .eq('id', leader_id)
-                .single()
+                .maybeSingle()
             leaderName = leader?.name ?? null
         }
 
@@ -98,16 +147,28 @@ export async function POST(request: NextRequest) {
                 commission_rules: commission_rules ?? null,
                 leader_id: leader_id ?? null,
                 leader_name: leaderName,
+                color: color || '#C9A84C',
+                is_active: true,
+                status: 'active',
                 member_count: 0,
                 active_listings: 0,
                 monthly_volume: 0,
-                is_active: true,
             })
             .select()
             .single()
 
         if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+            console.error('POST /api/teams error:', error.message)
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        // If leader_id provided, assign them to the team
+        if (leader_id && team) {
+            await supabaseAdmin
+                .from('brokers')
+                .update({ team_id: team.id, updated_at: new Date().toISOString() })
+                .eq('id', leader_id)
+                .catch((e: Error) => console.warn('leader team_id assign failed:', e.message))
         }
 
         return NextResponse.json({ data: team }, { status: 201 })

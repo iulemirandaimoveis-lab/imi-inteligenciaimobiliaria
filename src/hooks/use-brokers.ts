@@ -9,8 +9,9 @@ export interface Broker {
     creci: string
     avatar_url: string | null
     status: 'active' | 'inactive'
-    role: 'broker' | 'broker_manager'
+    role: 'broker' | 'broker_manager' | 'admin'
     permissions: string[]
+    team_id: string | null
     last_login_at: string | null
     created_at: string
     updated_at: string
