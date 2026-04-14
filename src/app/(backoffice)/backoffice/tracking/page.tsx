@@ -18,6 +18,7 @@ import {
 } from 'recharts'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
+import RealtimeWidget from '@/components/backoffice/RealtimeWidget'
 
 /* ─── Types ─── */
 interface Analytics {
@@ -284,6 +285,15 @@ export default function TrackingDashboardPage() {
                     </button>
                 </div>
             </div>
+
+            {/* ── Real-time — Visitantes ao vivo (plataforma própria) ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+            >
+                <RealtimeWidget />
+            </motion.div>
 
             {/* ── Loading Skeleton ── */}
             {loading && (

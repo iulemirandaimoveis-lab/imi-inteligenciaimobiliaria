@@ -48,11 +48,9 @@ export default async function WebsiteLayout({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationSchema, webSiteSchema, localBusinessSchema]) }}
             />
+            {/* IMI Analytics — plataforma própria (substitui GA4, GTM, Meta Pixel) */}
             <Suspense fallback={null}>
-                <AnalyticsProvider
-                    googleAnalytics={settings.googleAnalytics}
-                    facebookPixel={settings.facebookPixel}
-                />
+                <AnalyticsProvider />
             </Suspense>
             <Header lang={lang} settings={settings} />
             <main id="main-content" className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
