@@ -19,23 +19,18 @@ export async function GET(
             .select('*')
             .eq('id', params.id)
             .eq('is_active', true)
-            .single()
+            .maybeSingle()
 
         if (error || !team) {
             return NextResponse.json({ error: 'Equipe não encontrada' }, { status: 404 })
         }
 
-        // Fetch team members from brokers table
-        const { data: members, error: membersError } = await supabaseAdmin
+        // Fetch team members from brokers table via team_id
+        const { data: members } = await supabaseAdmin
             .from('brokers')
-            .select('id, user_id, name, email, role, status, avatar_url')
+            .select('id, user_id, name, email, role, status, avatar_url, creci, phone, commission_rate, last_login_at, created_at')
             .eq('team_id', params.id)
-            .neq('status', 'inactive')
             .order('name', { ascending: true })
-
-        if (membersError) {
-            return NextResponse.json({ error: membersError instanceof Error ? membersError.message : 'Erro desconhecido' }, { status: 500 })
-        }
 
         return NextResponse.json({ data: { ...team, members: members || [] } })
     } catch (err) {
@@ -55,20 +50,32 @@ export async function PATCH(
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        // Check permissions: admin, manager, or team leader
+        // Check permissions: admin, broker_manager, or team leader
         const { data: profile } = await supabaseAdmin
-            .from('brokers')
+            .from('profiles')
             .select('role')
+            .eq('id', user.id)
+            .maybeSingle()
+
+        const { data: broker } = await supabaseAdmin
+            .from('brokers')
+            .select('id, role')
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
 
         const { data: team } = await supabaseAdmin
             .from('teams')
             .select('leader_id')
             .eq('id', params.id)
-            .single()
+            .maybeSingle()
 
-        const isAdminOrManager = profile?.role === 'admin' || profile?.role === 'manager'
+        const isAdminOrManager =
+            profile?.role === 'admin' ||
+            profile?.role === 'super_admin' ||
+            profile?.role === 'owner' ||
+            broker?.role === 'admin' ||
+            broker?.role === 'broker_manager'
+
         const isLeader = team?.leader_id === user.id
 
         if (!isAdminOrManager && !isLeader) {
@@ -77,8 +84,8 @@ export async function PATCH(
 
         const body = await request.json()
         const allowedFields = [
-            'name', 'description', 'avatar_url', 'region',
-            'specialty', 'commission_rules', 'leader_id',
+            'name', 'description', 'avatar_url', 'color',
+            'region', 'specialty', 'commission_rules', 'leader_id',
         ]
 
         const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
@@ -88,15 +95,22 @@ export async function PATCH(
             }
         }
 
-        // If leader_id changed, look up new leader name
+        // If leader_id changed, update leader_name
         if (body.leader_id !== undefined) {
             if (body.leader_id) {
                 const { data: leader } = await supabaseAdmin
                     .from('brokers')
                     .select('name')
                     .eq('id', body.leader_id)
-                    .single()
+                    .maybeSingle()
                 updates.leader_name = leader?.name ?? null
+
+                // Assign this broker to the team
+                await supabaseAdmin
+                    .from('brokers')
+                    .update({ team_id: params.id, updated_at: new Date().toISOString() })
+                    .eq('id', body.leader_id)
+                    .catch(() => {})
             } else {
                 updates.leader_name = null
             }
@@ -110,7 +124,7 @@ export async function PATCH(
             .single()
 
         if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+            return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
         return NextResponse.json({ data: updated })
@@ -131,24 +145,42 @@ export async function DELETE(
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        // Admin only
         const { data: profile } = await supabaseAdmin
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle()
+
+        const { data: broker } = await supabaseAdmin
             .from('brokers')
             .select('role')
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
 
-        if (profile?.role !== 'admin') {
-            return NextResponse.json({ error: 'Permissão negada — somente admin' }, { status: 403 })
+        const isAdmin =
+            profile?.role === 'admin' ||
+            profile?.role === 'super_admin' ||
+            profile?.role === 'owner' ||
+            broker?.role === 'admin'
+
+        if (!isAdmin) {
+            return NextResponse.json({ error: 'Apenas administradores podem excluir equipes' }, { status: 403 })
         }
+
+        // Unassign members from this team before soft-deleting
+        await supabaseAdmin
+            .from('brokers')
+            .update({ team_id: null, updated_at: new Date().toISOString() })
+            .eq('team_id', params.id)
+            .catch(() => {})
 
         const { error } = await supabaseAdmin
             .from('teams')
-            .update({ is_active: false, updated_at: new Date().toISOString() })
+            .update({ is_active: false, status: 'archived', updated_at: new Date().toISOString() })
             .eq('id', params.id)
 
         if (error) {
-            return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+            return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
         return NextResponse.json({ success: true })
