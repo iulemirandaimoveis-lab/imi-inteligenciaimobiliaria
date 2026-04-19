@@ -10,25 +10,36 @@ interface POIGridProps {
     imovelType?: 'short_stay' | 'residencial';
 }
 
-function formatDistance(meters: number): string {
+export function formatDistance(meters: number): string {
     if (!meters) return '';
     if (meters < 1000) return `${meters}m`;
     return `${(meters / 1000).toFixed(1)}km`;
 }
 
 function ScoreBadge({ score, label }: { score: number; label: string }) {
-    const color =
-        score >= 85 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-        : score >= 70 ? 'bg-green-500/20 text-green-400 border-green-500/30'
-        : score >= 55 ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-        : score >= 40 ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
-        : 'bg-red-500/20 text-red-400 border-red-500/30';
+    const palette =
+        score >= 85 ? { bg: '#ECFDF5', text: '#065F46', border: '#A7F3D0' }
+        : score >= 70 ? { bg: '#F0FDF4', text: '#166534', border: '#BBF7D0' }
+        : score >= 55 ? { bg: '#FEFCE8', text: '#713F12', border: '#FDE68A' }
+        : score >= 40 ? { bg: '#FFF7ED', text: '#7C2D12', border: '#FED7AA' }
+        : { bg: '#FEF2F2', text: '#7F1D1D', border: '#FECACA' };
 
     return (
-        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold ${color}`}>
-            <span className="font-mono text-sm">{score}</span>
-            <span>/100</span>
-            <span className="text-[10px] uppercase tracking-wider opacity-80">{label}</span>
+        <div
+            data-testid="score-badge"
+            style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 14px',
+                borderRadius: 9999,
+                border: `1px solid ${palette.border}`,
+                background: palette.bg,
+            }}
+        >
+            <span style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", fontSize: 14, fontWeight: 700, color: palette.text }}>{score}</span>
+            <span style={{ fontSize: 12, color: palette.text, opacity: 0.7 }}>/100</span>
+            <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: palette.text, opacity: 0.8 }}>{label}</span>
         </div>
     );
 }
@@ -37,25 +48,34 @@ function POICategoryCard({ cat }: { cat: POICategoryResult }) {
     const hasData = cat.items.length > 0;
     return (
         <div
-            className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
-                hasData
-                    ? 'bg-white/5 border-white/10 hover:bg-white/[0.08]'
-                    : 'bg-white/[0.02] border-white/5 opacity-50'
-            }`}
+            data-testid="poi-category-card"
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '10px 12px',
+                borderRadius: 12,
+                border: `1px solid rgba(184,179,168,${hasData ? '0.3' : '0.15'})`,
+                background: hasData ? '#FFFFFF' : '#F8F6F2',
+                opacity: hasData ? 1 : 0.6,
+                transition: 'box-shadow 0.15s ease',
+            }}
         >
-            <div className="text-xl flex-shrink-0">{cat.icon}</div>
-            <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold text-white/90 truncate">{cat.label}</div>
+            <div style={{ fontSize: 20, flexShrink: 0 }}>{cat.icon}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#0B1928', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {cat.label}
+                </div>
                 {hasData ? (
-                    <div className="text-xs text-white/50 mt-0.5 truncate">
+                    <div style={{ fontSize: 11, color: '#948F84', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {cat.items[0].name}
                     </div>
                 ) : (
-                    <div className="text-xs text-white/30 mt-0.5">Não encontrado</div>
+                    <div style={{ fontSize: 11, color: '#B8B3A8', marginTop: 2 }}>Não encontrado</div>
                 )}
             </div>
             {hasData && cat.nearest_distance_meters > 0 && (
-                <div className="text-xs font-mono text-white/60 flex-shrink-0">
+                <div style={{ fontSize: 11, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#0B1928', flexShrink: 0, fontWeight: 600 }}>
                     {formatDistance(cat.nearest_distance_meters)}
                 </div>
             )}
@@ -89,11 +109,11 @@ export function POIGrid({
 
     if (loading) {
         return (
-            <div className="space-y-3 animate-pulse">
-                <div className="h-8 bg-white/5 rounded-full w-40" />
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div data-testid="poi-grid-loading" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ height: 32, background: '#F0EDE5', borderRadius: 9999, width: 160 }} />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
                     {Array.from({ length: 8 }).map((_, i) => (
-                        <div key={i} className="h-16 bg-white/5 rounded-xl" />
+                        <div key={i} style={{ height: 60, background: '#F0EDE5', borderRadius: 12 }} />
                     ))}
                 </div>
             </div>
@@ -108,14 +128,14 @@ export function POIGrid({
         .slice(0, 4);
 
     return (
-        <section className="space-y-4">
-            {/* Header with score */}
-            <div className="flex items-center justify-between flex-wrap gap-3">
+        <section data-testid="poi-grid" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
                 <div>
-                    <h3 className="text-sm font-semibold text-white/90">
+                    <h3 style={{ fontSize: 14, fontWeight: 600, color: '#0B1928', margin: '0 0 2px' }}>
                         Conveniência e Proximidade
                     </h3>
-                    <p className="text-xs text-white/40 mt-0.5">
+                    <p style={{ fontSize: 12, color: '#948F84', margin: 0 }}>
                         Serviços e pontos de interesse próximos
                     </p>
                 </div>
@@ -123,7 +143,7 @@ export function POIGrid({
             </div>
 
             {/* Category grid */}
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
                 {data.categories.map((cat) => (
                     <POICategoryCard key={cat.category} cat={cat} />
                 ))}
@@ -131,27 +151,36 @@ export function POIGrid({
 
             {/* Top-rated highlights */}
             {highlights.length > 0 && (
-                <div className="pt-2 border-t border-white/[0.08]">
-                    <p className="text-[10px] text-white/30 uppercase tracking-wider mb-2">
+                <div style={{ paddingTop: 12, borderTop: '1px solid rgba(184,179,168,0.25)' }}>
+                    <p style={{ fontSize: 10, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, margin: '0 0 8px' }}>
                         Destaques próximos
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                         {highlights.map((poi) => (
                             <div
                                 key={poi.place_id}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/5 rounded-full border border-white/10 text-xs"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 6,
+                                    padding: '4px 10px',
+                                    background: '#F8F6F2',
+                                    borderRadius: 9999,
+                                    border: '1px solid rgba(184,179,168,0.3)',
+                                    fontSize: 12,
+                                }}
                             >
-                                <span className="text-amber-400">★</span>
-                                <span className="text-white/70">{poi.rating?.toFixed(1)}</span>
-                                <span className="text-white/50">·</span>
-                                <span className="text-white/60 truncate max-w-[100px]">{poi.name}</span>
+                                <span style={{ color: '#C8A44A' }}>★</span>
+                                <span style={{ color: '#0B1928', fontWeight: 600 }}>{poi.rating?.toFixed(1)}</span>
+                                <span style={{ color: '#B8B3A8' }}>·</span>
+                                <span style={{ color: '#948F84', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 100 }}>{poi.name}</span>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
 
-            <p className="text-[10px] text-white/20">
+            <p style={{ fontSize: 10, color: '#B8B3A8', margin: 0 }}>
                 Dados via Google Places · Atualizado a cada 7 dias
             </p>
         </section>
