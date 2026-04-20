@@ -114,14 +114,14 @@ const config: Config = {
             // ============================================
             borderRadius: {
                 none:  '0',
-                xs:    '2px',
-                sm:    '4px',
+                xs:    '3px',
+                sm:    '5px',
                 DEFAULT: '6px',
                 md:    '8px',
                 lg:    '10px',
                 xl:    '14px',
-                '2xl': '18px',
-                '3xl': '24px',
+                '2xl': '16px',
+                '3xl': '20px',
                 full:  '9999px',
                 pill:  '9999px',
             },
@@ -201,7 +201,8 @@ const config: Config = {
             },
 
             transitionTimingFunction: {
-                smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                smooth: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
             },
 
             // ============================================
@@ -230,10 +231,10 @@ const config: Config = {
             },
 
             animation: {
-                'fade-in': 'fade-in 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                'slide-up': 'slide-up 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-                'slide-down': 'slide-down 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-                'scale-in': 'scale-in 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                'fade-in': 'fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+                'slide-up': 'slide-up 250ms cubic-bezier(0.16, 1, 0.3, 1)',
+                'slide-down': 'slide-down 250ms cubic-bezier(0.16, 1, 0.3, 1)',
+                'scale-in': 'scale-in 200ms cubic-bezier(0.16, 1, 0.3, 1)',
                 shimmer: 'shimmer 2s infinite',
             },
 

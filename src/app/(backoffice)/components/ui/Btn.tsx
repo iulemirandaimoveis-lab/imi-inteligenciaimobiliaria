@@ -153,14 +153,15 @@ function buildStyle(
     cursor: disabled ? 'default' : 'pointer',
     opacity: disabled ? 0.5 : 1,
     pointerEvents: disabled ? 'none' : undefined,
-    transition: 'all var(--dur-2, 200ms) var(--ease)',
+    transition: 'all 250ms var(--ease)',
     transform: pressed && v.activeTransform && !disabled ? v.activeTransform : undefined,
     textDecoration: 'none',
     whiteSpace: 'nowrap',
     userSelect: 'none',
     outline: 'none',
-    letterSpacing: variant === 'primary' || variant === 'gold' ? '0.01em' : undefined,
-    fontWeight: variant === 'primary' || variant === 'gold' ? 600 : 500,
+    letterSpacing: variant === 'primary' || variant === 'gold' ? '1px' : undefined,
+    textTransform: variant === 'primary' || variant === 'gold' ? 'uppercase' : undefined,
+    fontWeight: 600,
   }
 
   return style
