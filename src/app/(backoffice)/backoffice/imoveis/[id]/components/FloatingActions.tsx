@@ -87,8 +87,8 @@ export function FloatingActions({ id }: { id: string }) {
           <a key={label} href={href} title={label} target={target}
             rel={target ? 'noopener noreferrer' : undefined}
             style={actionBtnStyle}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(61,111,255,0.5)'; (e.currentTarget as HTMLElement).style.color = 'var(--accent-400)' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(61,111,255,0.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,164,74,.40)'; (e.currentTarget as HTMLElement).style.color = 'var(--accent-400)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,164,74,.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}
           >
             <Icon size={16} />
           </a>
@@ -102,7 +102,7 @@ export function FloatingActions({ id }: { id: string }) {
           color: qrOpen ? '#C8A44A' : 'var(--text-secondary)',
         }}
         onMouseEnter={e => { if (!qrOpen) { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,164,74,0.4)'; (e.currentTarget as HTMLElement).style.color = '#C8A44A' }}}
-        onMouseLeave={e => { if (!qrOpen) { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(61,111,255,0.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}}
+        onMouseLeave={e => { if (!qrOpen) { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,164,74,.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}}
         >
           <QrCode size={16} />
         </button>
@@ -112,7 +112,7 @@ export function FloatingActions({ id }: { id: string }) {
           width: 40, height: 40, borderRadius: 10,
           background: copied ? 'rgba(107,184,123,0.2)' : 'rgba(11,25,40,0.9)',
           backdropFilter: 'blur(12px)',
-          border: `1px solid ${copied ? 'rgba(107,184,123,0.4)' : 'rgba(61,111,255,0.18)'}`,
+          border: `1px solid ${copied ? 'rgba(107,184,123,0.4)' : 'rgba(200,164,74,.18)'}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           color: copied ? '#6BB87B' : '#9FAAB8', cursor: 'pointer',
           transition: 'all 0.2s',

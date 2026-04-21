@@ -147,7 +147,7 @@ function MobileUnidades({
                                 background: 'var(--bg-elevated)',
                                 borderRadius: 12,
                                 padding: 14,
-                                border: '1px solid rgba(61,111,255,0.10)',
+                                border: '1px solid rgba(200,164,74,.10)',
                             }}
                         >
                             <div style={{
@@ -184,7 +184,7 @@ function MobileUnidades({
                     gap: 10,
                     height: 44,
                     background: 'var(--bg-elevated)',
-                    border: `1px solid ${searchFocused ? 'rgba(61,111,255,0.5)' : 'rgba(61,111,255,0.15)'}`,
+                    border: `1px solid ${searchFocused ? 'rgba(200,164,74,.40)' : 'rgba(200,164,74,.15)'}`,
                     borderRadius: 10,
                     padding: '0 14px',
                     transition: 'border-color 150ms ease',
@@ -257,7 +257,7 @@ function MobileUnidades({
                                 padding: '0 14px',
                                 borderRadius: 6,
                                 background: isActive ? 'var(--accent-400)' : 'transparent',
-                                border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.3)'}`,
+                                border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(200,164,74,.30)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
                                 fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 12,
@@ -287,11 +287,11 @@ function MobileUnidades({
                     }}>
                         <div style={{
                             width: 64, height: 64, borderRadius: 16,
-                            background: 'rgba(61,111,255,0.06)',
-                            border: '1px solid rgba(61,111,255,0.18)',
+                            background: 'rgba(200,164,74,.06)',
+                            border: '1px solid rgba(200,164,74,.18)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
-                            <Building2 size={28} style={{ color: 'rgba(61,111,255,0.35)' }} />
+                            <Building2 size={28} style={{ color: 'rgba(200,164,74,.35)' }} />
                         </div>
                         <div>
                             <div style={{
@@ -339,8 +339,8 @@ function MobileUnidades({
                                         borderRadius: 12,
                                         padding: 14,
                                         border: unidade.is_highlighted
-                                            ? '1px solid rgba(61,111,255,0.55)'
-                                            : '1px solid rgba(61,111,255,0.12)',
+                                            ? '1px solid rgba(200,164,74,.55)'
+                                            : '1px solid rgba(200,164,74,.12)',
                                         cursor: 'pointer',
                                     }}
                                 >
@@ -404,7 +404,7 @@ function MobileUnidades({
                                             gap: 14,
                                             marginBottom: 10,
                                             paddingBottom: 10,
-                                            borderBottom: '1px solid rgba(61,111,255,0.08)',
+                                            borderBottom: '1px solid rgba(200,164,74,.08)',
                                         }}>
                                             {(unidade.area ?? 0) > 0 && (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -504,7 +504,7 @@ function MobileUnidades({
                     fontFamily: 'var(--font-outfit, sans-serif)',
                     fontSize: 13,
                     fontWeight: 700,
-                    boxShadow: '0 4px 20px rgba(61,111,255,0.35)',
+                    boxShadow: '0 4px 20px rgba(200,164,74,.35)',
                     zIndex: 90,
                     letterSpacing: '0.2px',
                 }}
@@ -586,8 +586,8 @@ function DesktopUnidades({
                         </button>
                         <button
                             onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
-                            className="flex items-center gap-2 h-10 px-5 text-white rounded-[6px] font-semibold text-sm transition-all hover:scale-[1.02]"
-                            style={{ background: T.accent }}
+                            className="flex items-center gap-2 h-10 px-5 rounded-[6px] font-semibold text-sm transition-all hover:scale-[1.02]"
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                         >
                             <Plus size={15} />
                             <span className="hidden sm:inline">Nova Unidade</span>
@@ -705,8 +705,8 @@ function DesktopUnidades({
                     {unidades.length === 0 && (
                         <button
                             onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
-                            className="mt-5 h-10 px-6 rounded-[6px] font-semibold text-sm text-white transition-all hover:scale-[1.02]"
-                            style={{ background: T.accent }}
+                            className="mt-5 h-10 px-6 rounded-[6px] font-semibold text-sm transition-all hover:scale-[1.02]"
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                         >
                             + Nova Unidade
                         </button>

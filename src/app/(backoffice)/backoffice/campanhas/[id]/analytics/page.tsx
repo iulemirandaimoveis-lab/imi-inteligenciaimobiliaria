@@ -100,7 +100,7 @@ export default function CampanhaAnalyticsPage() {
         <button
           onClick={() => router.back()}
           className="h-11 px-5 rounded-[6px] text-sm font-semibold transition-opacity hover:opacity-80"
-          style={{ background: T.accent, color: 'var(--text-inverse)' }}
+          style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
         >
           Voltar
         </button>
@@ -136,7 +136,7 @@ export default function CampanhaAnalyticsPage() {
             <button
               onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
               className="h-11 px-4 rounded-[6px] font-semibold flex items-center gap-2 text-white transition-opacity hover:opacity-80"
-              style={{ background: T.accent }}
+              style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
             >
               <Edit size={16} />
               Editar

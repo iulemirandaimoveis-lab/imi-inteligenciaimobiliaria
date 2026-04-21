@@ -266,8 +266,8 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
                 <Link href={`/backoffice/conteudo/criador?property=${property.id}`} style={{ flex: 1 }}>
                   <button style={{
                     width: '100%', padding: '9px 14px', borderRadius: 6,
-                    background: T.accent,
-                    border: 'none', color: T.textInverse,
+                    background: 'var(--btn-primary-bg)',
+                    border: 'none', color: 'var(--btn-primary-text)',
                     fontSize: 11, fontWeight: 700, letterSpacing: '1.5px',
                     textTransform: 'uppercase', fontFamily: T.font.ui,
                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -702,7 +702,7 @@ function PropertyCard({
         {property.cover_image_url
           ? <Image src={property.cover_image_url} alt="" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} />
           : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-            <Building2 size={36} style={{ color: 'rgba(61,111,255,0.2)' }} />
+            <Building2 size={36} style={{ color: 'rgba(200,164,74,.20)' }} />
           </div>
         }
         {/* Select overlay */}
@@ -959,8 +959,8 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
             style={{
               display: 'flex', alignItems: 'center', gap: 5,
               padding: '6px 12px', borderRadius: 6,
-              background: T.accent,
-              border: 'none', color: T.textInverse,
+              background: 'var(--btn-primary-bg)',
+              border: 'none', color: 'var(--btn-primary-text)',
               fontSize: 11, fontWeight: 700,
               letterSpacing: 1, textTransform: 'uppercase',
               fontFamily: T.font.ui, cursor: 'pointer',
@@ -979,7 +979,7 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center' }}>
-          <Building2 size={40} style={{ color: 'rgba(61,111,255,0.2)' }} />
+          <Building2 size={40} style={{ color: 'rgba(200,164,74,.20)' }} />
           <p style={{ fontSize: 16, color: T.text, fontFamily: T.font.display }}>Nenhum imóvel encontrado</p>
           <p style={{ fontSize: 12, color: T.textDim, fontFamily: T.font.ui }}>Ajuste os filtros para ver mais resultados.</p>
         </div>
@@ -1111,7 +1111,7 @@ function RankingTab() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
               <div style={{ flex: 1, height: 6, borderRadius: 6, background: T.hover }}>
-                <div style={{ height: '100%', borderRadius: 6, width: `${((sortBy === 'yield' ? d.yield : d.avgSqm) / (sortBy === 'yield' ? maxYield : maxSqm)) * 100}%`, background: i === 0 ? `linear-gradient(90deg, #A8842A, ${T.accent})` : `linear-gradient(90deg, rgba(61,111,255,${0.25 + (1 - i / sorted.length) * 0.45}), rgba(61,111,255,${0.45 + (1 - i / sorted.length) * 0.35}))`, transition: 'width 0.6s cubic-bezier(0.16,1,0.3,1)' }} />
+                <div style={{ height: '100%', borderRadius: 6, width: `${((sortBy === 'yield' ? d.yield : d.avgSqm) / (sortBy === 'yield' ? maxYield : maxSqm)) * 100}%`, background: i === 0 ? `linear-gradient(90deg, #A8842A, ${T.accent})` : `linear-gradient(90deg, rgba(200,164,74,${0.25 + (1 - i / sorted.length) * 0.45}), rgba(200,164,74,${0.45 + (1 - i / sorted.length) * 0.35}))`, transition: 'width 0.6s cubic-bezier(0.16,1,0.3,1)' }} />
               </div>
             </div>
           </div>
@@ -1223,7 +1223,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center' }}>
         <div style={{ width: 64, height: 64, borderRadius: 6, background: T.hover, border: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Building2 size={28} style={{ color: 'rgba(61,111,255,0.35)' }} />
+          <Building2 size={28} style={{ color: 'rgba(200,164,74,.35)' }} />
         </div>
         <p style={{ fontFamily: T.font.display, fontSize: '18px', color: T.text }}>Sem imóveis cadastrados</p>
         <Link href="/backoffice/imoveis/novo">
@@ -1431,7 +1431,7 @@ function MobileExplorer() {
             </div>
           ) : properties.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px 24px' }}>
-              <Building2 size={36} style={{ color: 'rgba(61,111,255,0.2)', margin: '0 auto 12px' }} />
+              <Building2 size={36} style={{ color: 'rgba(200,164,74,.20)', margin: '0 auto 12px' }} />
               <p style={{ fontSize: '16px', color: T.text, fontFamily: T.font.display }}>Sem imóveis</p>
             </div>
           ) : (

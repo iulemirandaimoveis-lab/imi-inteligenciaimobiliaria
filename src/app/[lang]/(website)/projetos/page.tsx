@@ -189,7 +189,7 @@ export default async function ProjetosWebsitePage({
                                     <Link
                                         href={`/${lang}/contato`}
                                         className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all hover:opacity-90 active:scale-95"
-                                        style={{ background: destaque.acento, color: '#0B1928' }}
+                                        style={{ background: '#0A1624', color: '#FFFFFF' }}
                                     >
                                         Solicitar Briefing Exclusivo <ArrowRight size={15} />
                                     </Link>

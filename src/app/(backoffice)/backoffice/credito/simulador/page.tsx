@@ -108,7 +108,7 @@ export default function SimuladorCreditoPage() {
                     <button
                         onClick={() => { toast.success('Simulação salva com sucesso!'); router.push('/backoffice/credito') }}
                         className="flex items-center gap-2 px-5 rounded-[6px] text-sm font-bold text-white transition-all hover:opacity-90"
-                        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}
+                        style={{ height: '44px', background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}
                     >
                         <Save size={16} /> Salvar Simulação
                     </button>

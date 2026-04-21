@@ -433,7 +433,7 @@ export default function EbookReaderPage() {
                         onClick={() => goTo(chapterIdx + 1)}
                         disabled={chapterIdx >= totalChapters - 1}
                         className="flex items-center gap-2 px-4 py-3 min-h-[48px] rounded-xl text-sm font-semibold transition-all disabled:opacity-20 active:scale-[0.97]"
-                        style={{ color: '#0B1928', background: accentColor }}
+                        style={{ color: '#FFFFFF', background: '#0A1624' }}
                         aria-label="Proximo capitulo"
                     >
                         <span className="hidden sm:inline">Proximo</span> <ChevronRight size={16} />

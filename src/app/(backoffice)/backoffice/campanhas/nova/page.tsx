@@ -281,7 +281,7 @@ export default function NovaCampanhaPage() {
     border: `1px solid ${errKey && errors[errKey] ? 'var(--error)' : T.border}`,
     color: T.text,
   })
-  const inputClass = 'focus:outline-none focus:ring-2 focus:ring-[rgba(61,111,255,0.25)]'
+  const inputClass = 'focus:outline-none focus:ring-2 focus:ring-[rgba(200,164,74,.25)]'
 
   return (
     <div className="space-y-6">
@@ -356,7 +356,7 @@ export default function NovaCampanhaPage() {
                       isCompleted
                         ? { background: 'var(--success)', color: 'var(--text-inverse)' }
                         : isActive
-                          ? { background: T.accent, color: 'var(--text-inverse)' }
+                          ? { background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }
                           : { background: T.elevated, color: T.textMuted }
                     }
                   >

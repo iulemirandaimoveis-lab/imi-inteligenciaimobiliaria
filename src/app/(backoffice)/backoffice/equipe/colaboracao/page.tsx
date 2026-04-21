@@ -12,7 +12,7 @@ import { useBrokers, type Broker } from '@/hooks/use-brokers'
 
 /* ─── Status → Stage config ──────────────────────────────────────── */
 const STAGE_CONFIG: Record<string, { label: string; color: string }> = {
-  proposed:    { label: 'Proposta',   color: '#5B9BD5' },
+  proposed:    { label: 'Proposta',   color: 'var(--blu)' },
   negotiating: { label: 'Negociação', color: 'var(--accent-400)' },
   accepted:    { label: 'Aceita',     color: '#5DB887' },
   active:      { label: 'Ativa',      color: 'var(--success)' },
@@ -31,7 +31,7 @@ function initials(name: string) {
 }
 
 function colorForName(name: string) {
-  const colors = ['#5B9BD5', '#D4913A', '#5DB887', '#E06B6B', '#9B8FD5', '#C8A44A']
+  const colors = ['var(--blu)', '#D4913A', '#5DB887', '#E06B6B', '#9B8FD5', '#C8A44A']
   let h = 0
   for (const c of name) h = (h * 31 + c.charCodeAt(0)) & 0xff
   return colors[h % colors.length]
@@ -42,8 +42,8 @@ function DealCard({ partnership, index }: { partnership: Partnership; index: num
   const stage = STAGE_CONFIG[partnership.status] ?? STAGE_CONFIG.active
 
   return (
-    <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.15)', borderRadius: 8, overflow: 'hidden' }}>
-      <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(61,111,255,0.08)' }}>
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(200,164,74,.15)', borderRadius: 8, overflow: 'hidden' }}>
+      <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(200,164,74,.08)' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
           <div>
             <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-outfit, sans-serif)', marginBottom: 2 }}>
@@ -178,7 +178,7 @@ function InviteCard({ partnership, onAction }: { partnership: Partnership; onAct
           {/* Property */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8, margin: '10px 0', padding: '8px 12px',
-            borderRadius: 6, background: 'rgba(61,111,255,0.05)', border: '1px solid rgba(61,111,255,0.12)',
+            borderRadius: 6, background: 'rgba(200,164,74,.05)', border: '1px solid rgba(200,164,74,.12)',
           }}>
             <Building2 size={13} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
             <div>
@@ -255,7 +255,7 @@ function BrokerRow({ broker, isLast }: { broker: Broker; isLast: boolean }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px',
-      borderBottom: !isLast ? '1px solid rgba(61,111,255,0.06)' : 'none',
+      borderBottom: !isLast ? '1px solid rgba(200,164,74,.06)' : 'none',
     }}>
       <div style={{ position: 'relative', flexShrink: 0 }}>
         {broker.avatar_url ? (
@@ -291,7 +291,7 @@ function BrokerRow({ broker, isLast }: { broker: Broker; isLast: boolean }) {
         <Link href="/backoffice/parcerias">
           <button style={{
             display: 'flex', alignItems: 'center', gap: 4, padding: '5px 10px', borderRadius: 6,
-            background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.18)',
+            background: 'rgba(200,164,74,.06)', border: '1px solid rgba(200,164,74,.18)',
             color: 'var(--accent-400)', fontSize: 10, fontWeight: 600,
             fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
           }}>
@@ -340,14 +340,14 @@ export default function ColaboracaoPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', fontFamily: 'var(--font-outfit, sans-serif)' }}>
       {/* Header */}
-      <header style={{ padding: '24px 32px 20px', borderBottom: '1px solid rgba(61,111,255,0.12)', background: 'var(--bg-elevated)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'linear-gradient(rgba(61,111,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(61,111,255,0.015) 1px, transparent 1px)', backgroundSize: '52px 52px' }} />
+      <header style={{ padding: '24px 32px 20px', borderBottom: '1px solid rgba(200,164,74,.12)', background: 'var(--bg-elevated)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'linear-gradient(rgba(200,164,74,.015) 1px, transparent 1px), linear-gradient(90deg, rgba(200,164,74,.015) 1px, transparent 1px)', backgroundSize: '52px 52px' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
             <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--accent-400)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>IMI</span>
-            <span style={{ color: 'rgba(61,111,255,0.3)', fontSize: 11 }}>›</span>
+            <span style={{ color: 'rgba(200,164,74,.30)', fontSize: 11 }}>›</span>
             <Link href="/backoffice/equipe"><span style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase' as const, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Equipe</span></Link>
-            <span style={{ color: 'rgba(61,111,255,0.3)', fontSize: 11 }}>›</span>
+            <span style={{ color: 'rgba(200,164,74,.30)', fontSize: 11 }}>›</span>
             <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--accent-400)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700 }}>Colaboração</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
@@ -392,11 +392,11 @@ export default function ColaboracaoPage() {
               <span style={{ fontSize: 13 }}>Carregando parcerias...</span>
             </div>
           ) : allActiveDeals.length === 0 ? (
-            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8 }}>
-              <TrendingUp size={32} style={{ color: 'rgba(61,111,255,0.2)', margin: '0 auto 10px' }} />
+            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid rgba(200,164,74,.10)', borderRadius: 8 }}>
+              <TrendingUp size={32} style={{ color: 'rgba(200,164,74,.20)', margin: '0 auto 10px' }} />
               <p style={{ fontSize: 13, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Nenhuma parceria ativa</p>
               <Link href="/backoffice/parcerias">
-                <button style={{ marginTop: 12, padding: '8px 16px', borderRadius: 6, border: '1px solid rgba(61,111,255,0.2)', background: 'transparent', color: 'var(--accent-400)', fontSize: 12, cursor: 'pointer' }}>
+                <button style={{ marginTop: 12, padding: '8px 16px', borderRadius: 6, border: '1px solid var(--bdg)', background: 'transparent', color: 'var(--gold)', fontSize: 12, cursor: 'pointer' }}>
                   Criar primeira parceria
                 </button>
               </Link>
@@ -413,10 +413,10 @@ export default function ColaboracaoPage() {
         {/* ── Section 2: Convites de Parceria ── */}
         <section>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-            <Handshake size={15} style={{ color: '#5B9BD5' }} />
-            <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: '#5B9BD5', fontWeight: 700 }}>Convites de Parceria</span>
+            <Handshake size={15} style={{ color: 'var(--blu)' }} />
+            <span style={{ fontSize: 8.5, letterSpacing: 3, textTransform: 'uppercase' as const, color: 'var(--blu)', fontWeight: 700 }}>Convites de Parceria</span>
             {invites.length > 0 && (
-              <span style={{ display: 'inline-flex', padding: '2px 7px', borderRadius: 10, background: '#5B9BD520', border: '1px solid #5B9BD540', fontSize: 10, fontWeight: 700, color: '#5B9BD5' }}>
+              <span style={{ display: 'inline-flex', padding: '2px 7px', borderRadius: 10, background: 'rgba(96,165,250,.10)', border: '1px solid rgba(96,165,250,.20)', fontSize: 10, fontWeight: 700, color: 'var(--blu)' }}>
                 {invites.length}
               </span>
             )}
@@ -428,8 +428,8 @@ export default function ColaboracaoPage() {
               <span style={{ fontSize: 13 }}>Carregando convites...</span>
             </div>
           ) : invites.length === 0 ? (
-            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8 }}>
-              <Handshake size={32} style={{ color: 'rgba(61,111,255,0.2)', margin: '0 auto 10px' }} />
+            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid rgba(200,164,74,.10)', borderRadius: 8 }}>
+              <Handshake size={32} style={{ color: 'rgba(200,164,74,.20)', margin: '0 auto 10px' }} />
               <p style={{ fontSize: 13, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Nenhum convite pendente</p>
             </div>
           ) : (
@@ -457,17 +457,17 @@ export default function ColaboracaoPage() {
               <span style={{ fontSize: 13 }}>Carregando equipe...</span>
             </div>
           ) : brokers.length === 0 ? (
-            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8 }}>
-              <Users size={32} style={{ color: 'rgba(61,111,255,0.2)', margin: '0 auto 10px' }} />
+            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid rgba(200,164,74,.10)', borderRadius: 8 }}>
+              <Users size={32} style={{ color: 'rgba(200,164,74,.20)', margin: '0 auto 10px' }} />
               <p style={{ fontSize: 13, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Nenhum corretor cadastrado</p>
               <Link href="/backoffice/equipe">
-                <button style={{ marginTop: 12, padding: '8px 16px', borderRadius: 6, border: '1px solid rgba(61,111,255,0.2)', background: 'transparent', color: 'var(--accent-400)', fontSize: 12, cursor: 'pointer' }}>
+                <button style={{ marginTop: 12, padding: '8px 16px', borderRadius: 6, border: '1px solid var(--bdg)', background: 'transparent', color: 'var(--gold)', fontSize: 12, cursor: 'pointer' }}>
                   Gerenciar equipe
                 </button>
               </Link>
             </div>
           ) : (
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.12)', borderRadius: 8, overflow: 'hidden' }}>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(200,164,74,.12)', borderRadius: 8, overflow: 'hidden' }}>
               {brokers.map((broker, i) => (
                 <BrokerRow key={broker.id} broker={broker} isLast={i === brokers.length - 1} />
               ))}

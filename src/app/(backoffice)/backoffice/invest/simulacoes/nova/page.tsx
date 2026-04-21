@@ -117,7 +117,7 @@ export default function NovaSimulacaoPage() {
               className="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-all"
               style={
                 i < step
-                  ? { background: T.accent, color: '#0B1928' }
+                  ? { background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }
                   : i === step
                   ? { border: `2px solid ${T.accent}`, color: T.accent }
                   : { border: `1px solid ${T.border}`, color: T.textDim }
@@ -297,7 +297,7 @@ export default function NovaSimulacaoPage() {
             onClick={next}
             disabled={!canAdvance() || loading}
             className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-40"
-            style={{ background: T.accent, color: '#0B1928' }}
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {step === 2 ? 'Simular' : 'Proximo'}
@@ -315,7 +315,7 @@ export default function NovaSimulacaoPage() {
             <Link
               href="/backoffice/invest/simulacoes"
               className="px-4 py-2 rounded-lg text-sm font-medium"
-              style={{ background: T.accent, color: '#0B1928' }}
+              style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
             >
               Ver Todas
             </Link>

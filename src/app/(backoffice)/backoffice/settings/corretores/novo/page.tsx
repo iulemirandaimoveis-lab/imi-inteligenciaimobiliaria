@@ -182,7 +182,7 @@ export default function NovoCorretorPage() {
                     <div className="flex flex-col sm:flex-row gap-3">
                         <button onClick={handleCopy}
                             className="flex-1 flex items-center justify-center gap-2 h-12 rounded-lg text-sm font-semibold transition-all"
-                            style={{ background: T.accent, color: '#0B1928' }}>
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
                             <Copy size={16} />
                             {copied ? 'Copiado!' : 'Copiar Dados de Acesso'}
                         </button>
@@ -414,7 +414,7 @@ export default function NovoCorretorPage() {
                     </button>
                     <button type="submit" disabled={isSubmitting}
                         className="flex items-center justify-center gap-2 h-12 px-8 rounded-lg text-sm font-bold transition-all disabled:opacity-60"
-                        style={{ background: T.accent, color: '#0B1928' }}>
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
                         {isSubmitting ? (
                             <><Loader2 size={16} className="animate-spin" /> Cadastrando...</>
                         ) : (

@@ -241,7 +241,7 @@ export default function PropostaDetailPage() {
             </div>
             <button
               onClick={copyLink}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, background: T.accent, border: 'none', borderRadius: T.radius.sm, padding: '8px 12px', color: 'var(--text-inverse)', fontSize: 11, fontWeight: 700, cursor: 'pointer', transition: T.transition.fast }}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--btn-primary-bg)', border: 'none', borderRadius: T.radius.sm, padding: '8px 12px', color: 'var(--btn-primary-text)', fontSize: 11, fontWeight: 700, cursor: 'pointer', transition: T.transition.fast }}
             >
               <Copy size={12} />
               {copied ? 'Copiado!' : 'Copiar'}
@@ -409,7 +409,7 @@ export default function PropostaDetailPage() {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '12px 20px', borderRadius: T.radius.md, cursor: 'pointer',
-                  background: T.accent, border: 'none', color: 'var(--text-inverse)', fontSize: 13, fontWeight: 700,
+                  background: 'var(--btn-primary-bg)', border: 'none', color: 'var(--btn-primary-text)', fontSize: 13, fontWeight: 700,
                   width: '100%',
                   transition: T.transition.fast,
                 }}

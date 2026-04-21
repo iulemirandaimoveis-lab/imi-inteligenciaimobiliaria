@@ -134,8 +134,8 @@ export default function TrackingLinksPage() {
                         </button>
                         <button
                             onClick={() => router.push('/backoffice/tracking/qr')}
-                            className="h-10 px-4 rounded text-sm font-semibold flex items-center gap-2 text-white"
-                            style={{ background: T.accent }}
+                            className="h-10 px-4 rounded text-sm font-semibold flex items-center gap-2"
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                         >
                             <QrCode size={16} />
                             Novo QR Code

@@ -297,7 +297,7 @@ export default function OKRDetailPage() {
                         onClick={handleCheckIn}
                         disabled={savingCheckIn || !checkInValue}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-50"
-                        style={{ background: T.accent, color: '#0B1928' }}
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                       >
                         {savingCheckIn ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
                         Registrar

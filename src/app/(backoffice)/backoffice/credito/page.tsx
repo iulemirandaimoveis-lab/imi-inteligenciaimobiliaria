@@ -163,9 +163,9 @@ function SimuladorCredito() {
           <button key={s} onClick={() => setSistema(s)}
             className="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
             style={{
-              background: sistema === s ? T.accent : T.elevated,
-              border: `1px solid ${sistema === s ? T.accent : T.border}`,
-              color: sistema === s ? '#fff' : T.textMuted,
+              background: sistema === s ? 'var(--btn-primary-bg)' : T.elevated,
+              border: `1px solid ${sistema === s ? 'var(--btn-primary-bg)' : T.border}`,
+              color: sistema === s ? 'var(--btn-primary-text)' : T.textMuted,
             }}>
             Sistema {s}
           </button>
@@ -195,7 +195,7 @@ function SimuladorCredito() {
 
       <Link href="/backoffice/credito/novo"
         className="flex items-center justify-center gap-2 w-full rounded-[6px] text-sm font-bold text-white transition-all hover:opacity-90"
-        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--accent-400) 22%, transparent)' }}>
+        style={{ height: '44px', background: 'var(--btn-primary-bg)', boxShadow: '0 1px 3px rgba(0,0,0,.35)' }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
 
@@ -307,7 +307,7 @@ export default function CreditoPage() {
             whileTap={{ scale: 0.96 }}
             onClick={() => window.location.href = '/backoffice/credito/novo'}
             className="flex items-center gap-2 px-5 rounded-lg text-sm font-bold text-white flex-shrink-0"
-            style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--accent-400) 22%, transparent)', border: 'none' }}
+            style={{ height: '44px', background: 'var(--btn-primary-bg)', boxShadow: '0 1px 3px rgba(0,0,0,.35)', border: 'none' }}
           >
             <Plus size={16} /> <span className="hidden sm:inline">Nova Operação</span>
           </motion.button>
@@ -360,7 +360,7 @@ export default function CreditoPage() {
               <p className="empty-state-desc">Registre operações de crédito para acompanhar o processo.</p>
               <Link href="/backoffice/credito/novo"
                 className="mt-4 flex items-center gap-2 h-10 px-5 rounded-[6px] text-sm font-semibold text-white"
-                style={{ background: T.accent }}>
+                style={{ background: 'var(--btn-primary-bg)' }}>
                 <Plus size={14} /> Nova Operação
               </Link>
             </div>

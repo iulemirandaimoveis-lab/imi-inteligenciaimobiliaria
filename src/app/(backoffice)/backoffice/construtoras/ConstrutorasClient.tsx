@@ -80,8 +80,8 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                 actions={
                     <button
                         onClick={() => router.push('/backoffice/construtoras/nova')}
-                        className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] font-semibold transition-all hover:brightness-110"
-                        style={{ background: T.accent }}
+                        className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-semibold transition-all hover:brightness-110"
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         <Plus size={18} />
                         Nova Construtora
@@ -248,8 +248,8 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                     <p className="text-xs mb-6" style={{ color: T.textMuted }}>Cadastre construtoras para que elas sejam exibidas na página pública de Empreendimentos.</p>
                     <button
                         onClick={() => router.push('/backoffice/construtoras/nova')}
-                        className="inline-flex items-center gap-2 h-10 px-5 text-white rounded-[6px] text-sm font-medium hover:brightness-110 transition-colors"
-                        style={{ background: T.accent }}
+                        className="inline-flex items-center gap-2 h-10 px-5 rounded-[6px] text-sm font-medium hover:brightness-110 transition-colors"
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         <Plus size={16} />
                         Nova Construtora

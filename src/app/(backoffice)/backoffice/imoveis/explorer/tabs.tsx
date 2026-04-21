@@ -44,8 +44,8 @@ export function AIInsightsModal({ property, onClose }: { property: IMIProperty; 
   const scoreColor = getScoreColor(insight.investmentScore)
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, backdropFilter: 'blur(4px)' }} onClick={onClose}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(61,111,255,0.3)', borderRadius: 8, width: '100%', maxWidth: 560, overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(61,111,255,0.12)', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(61,111,255,0.04)' }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(200,164,74,.30)', borderRadius: 8, width: '100%', maxWidth: 560, overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(200,164,74,.12)', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(200,164,74,.04)' }}>
           <Sparkles size={16} style={{ color: 'var(--accent-400)' }} />
           <div style={{ flex: 1 }}>
             <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Análise IA — {property.name}</p>
@@ -56,12 +56,12 @@ export function AIInsightsModal({ property, onClose }: { property: IMIProperty; 
         <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
           {insight.loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '32px 0' }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid rgba(61,111,255,0.2)', borderTopColor: 'var(--accent-400)', animation: 'ai-spin 0.8s linear infinite' }} />
+              <div style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid rgba(200,164,74,.20)', borderTopColor: 'var(--accent-400)', animation: 'ai-spin 0.8s linear infinite' }} />
               <p style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Analisando com IA…</p>
             </div>
           ) : (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 16px', borderRadius: 6, background: 'rgba(61,111,255,0.05)', border: '1px solid rgba(61,111,255,0.15)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 16px', borderRadius: 6, background: 'rgba(200,164,74,.05)', border: '1px solid rgba(200,164,74,.15)' }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 32, fontWeight: 700, color: scoreColor, fontFamily: 'var(--font-dm-mono, monospace)', lineHeight: 1 }}>{insight.investmentScore}</div>
                   <div style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', marginTop: 4 }}>IMI Score</div>
@@ -74,7 +74,7 @@ export function AIInsightsModal({ property, onClose }: { property: IMIProperty; 
                 </div>
               </div>
               {[
-                { label: 'Perfil do Comprador Ideal', value: insight.buyerProfile, color: '#5B9BD5' },
+                { label: 'Perfil do Comprador Ideal', value: insight.buyerProfile, color: 'var(--blu)' },
                 { label: 'Posicionamento de Preço', value: insight.pricePositioning, color: 'var(--accent-400)' },
                 { label: 'Ângulo de Marketing', value: insight.marketingAngle, color: 'var(--success)' },
               ].map(item => (
@@ -85,10 +85,10 @@ export function AIInsightsModal({ property, onClose }: { property: IMIProperty; 
               ))}
               <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
                 <Link href={`/backoffice/conteudo/criador?property=${property.id}`} style={{ flex: 1 }}>
-                  <button style={{ width: '100%', padding: '9px 14px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--accent-400))', border: 'none', color: '#0B1120', fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}><Wand2 size={12} /> Gerar Conteúdo</button>
+                  <button style={{ width: '100%', padding: '9px 14px', borderRadius: 6, background: 'var(--btn-primary-bg)', border: 'none', color: 'var(--btn-primary-text)', fontSize: 11, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}><Wand2 size={12} /> Gerar Conteúdo</button>
                 </Link>
                 <Link href={`/backoffice/imoveis/${property.id}`} style={{ flex: 1 }}>
-                  <button style={{ width: '100%', padding: '9px 14px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(61,111,255,0.3)', color: 'var(--accent-400)', fontSize: 11, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Ver Imóvel</button>
+                  <button style={{ width: '100%', padding: '9px 14px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(200,164,74,.30)', color: 'var(--accent-400)', fontSize: 11, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Ver Imóvel</button>
                 </Link>
               </div>
             </>
@@ -114,15 +114,15 @@ export function MarketPanel({ properties, activeNeighborhoods }: { properties: I
   const trendNum = parseFloat(avgTrend)
   const stats = [
     { label: 'Preço Médio/m²', value: `R$ ${(avgSqm / 1000).toFixed(1)}k`, sub: 'área filtrada', color: 'var(--accent-400)' },
-    { label: 'Tendência 12m', value: `${trendNum >= 0 ? '+' : ''}${avgTrend}%`, sub: trendNum >= 4 ? 'Alta acelerada' : trendNum >= 2 ? 'Estável positivo' : 'Estável', color: trendNum >= 4 ? 'var(--success)' : trendNum >= 1 ? '#D4913A' : 'var(--text-tertiary)' },
+    { label: 'Tendência 12m', value: `${trendNum >= 0 ? '+' : ''}${avgTrend}%`, sub: trendNum >= 4 ? 'Alta acelerada' : trendNum >= 2 ? 'Estável positivo' : 'Estável', color: trendNum >= 4 ? 'var(--success)' : trendNum >= 1 ? 'var(--amb)' : 'var(--text-tertiary)' },
     { label: 'IMI Score Médio', value: avgImiScore != null ? String(avgImiScore) : '—', sub: filteredProps.length > 0 ? `${filteredProps.length} imóveis` : 'sem filtro', color: avgImiScore != null ? getScoreColor(avgImiScore) : 'var(--text-tertiary)' },
     { label: 'Yield Potencial', value: filteredProps.length > 0 ? `${yieldMin}–${yieldMax}%` : `${avgYield}% est.`, sub: 'estimado a.a.', color: 'var(--success)' },
-    { label: 'Absorção de Mercado', value: `${avgAbsorption}%`, sub: avgAbsorption >= 80 ? 'Alta demanda' : avgAbsorption >= 65 ? 'Demanda moderada' : 'Baixa demanda', color: avgAbsorption >= 80 ? 'var(--success)' : avgAbsorption >= 65 ? '#D4913A' : 'var(--error)' },
+    { label: 'Absorção de Mercado', value: `${avgAbsorption}%`, sub: avgAbsorption >= 80 ? 'Alta demanda' : avgAbsorption >= 65 ? 'Demanda moderada' : 'Baixa demanda', color: avgAbsorption >= 80 ? 'var(--success)' : avgAbsorption >= 65 ? 'var(--amb)' : 'var(--error)' },
   ]
   return (
-    <div style={{ display: 'flex', gap: 10, padding: '14px 28px', background: 'var(--bg-surface, #162040)', borderBottom: '1px solid rgba(61,111,255,0.10)', overflowX: 'auto' }}>
+    <div style={{ display: 'flex', gap: 10, padding: '14px 28px', background: 'var(--bg-surface, #162040)', borderBottom: '1px solid rgba(200,164,74,.10)', overflowX: 'auto' }}>
       {stats.map(s => (
-        <div key={s.label} style={{ flex: '0 0 auto', minWidth: 140, background: 'rgba(61,111,255,0.04)', border: '1px solid rgba(61,111,255,0.12)', borderRadius: 6, padding: '12px 14px' }}>
+        <div key={s.label} style={{ flex: '0 0 auto', minWidth: 140, background: 'rgba(200,164,74,.04)', border: '1px solid rgba(200,164,74,.12)', borderRadius: 6, padding: '12px 14px' }}>
           <div style={{ fontSize: 8.5, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, marginBottom: 6 }}>{s.label}</div>
           <div style={{ fontSize: 20, fontFamily: 'var(--font-dm-mono, monospace)', color: s.color, lineHeight: 1, marginBottom: 4 }}>{s.value}</div>
           <div style={{ fontSize: 10, color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{s.sub}</div>
@@ -141,34 +141,34 @@ export function FiltersPanel({ filters, onChange, properties }: { filters: Activ
   const activeCount = [filters.neighborhoods.length > 0, filters.minPrice != null || filters.maxPrice != null, filters.bedrooms != null, filters.types.length > 0, filters.statuses.length > 0, filters.destaque].filter(Boolean).length
 
   return (
-    <div style={{ padding: '12px 28px', borderBottom: '1px solid rgba(61,111,255,0.08)', background: 'var(--bg-base, #0B1120)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ padding: '12px 28px', borderBottom: '1px solid rgba(200,164,74,.08)', background: 'var(--bg-base, #0B1120)', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <div style={{ position: 'relative', flex: 1, maxWidth: 320 }}>
           <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
-          <input value={filters.search} onChange={e => onChange({ ...filters, search: e.target.value })} placeholder="Buscar imóvel, bairro, endereço…" style={{ width: '100%', paddingLeft: 32, paddingRight: 10, height: 34, borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--text-primary, #EBE7E0)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', outline: 'none' }} />
+          <input value={filters.search} onChange={e => onChange({ ...filters, search: e.target.value })} placeholder="Buscar imóvel, bairro, endereço…" style={{ width: '100%', paddingLeft: 32, paddingRight: 10, height: 34, borderRadius: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(200,164,74,.20)', color: 'var(--text-primary, #EBE7E0)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', outline: 'none' }} />
         </div>
         {activeCount > 0 && <button onClick={() => onChange(DEFAULT_FILTERS)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'rgba(224,107,107,0.1)', border: '1px solid rgba(224,107,107,0.25)', color: 'var(--error)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><X size={11} /> Limpar ({activeCount})</button>}
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
           <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', alignSelf: 'center', marginRight: 2 }}>Bairro:</span>
-          {allNeighborhoods.slice(0, 8).map(n => <button key={n} onClick={() => onChange({ ...filters, neighborhoods: toggle(filters.neighborhoods, n) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.neighborhoods.includes(n) ? 'rgba(61,111,255,0.18)' : 'rgba(255,255,255,0.04)', border: filters.neighborhoods.includes(n) ? '1px solid rgba(61,111,255,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.neighborhoods.includes(n) ? 'var(--accent-400)' : 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{n}</button>)}
+          {allNeighborhoods.slice(0, 8).map(n => <button key={n} onClick={() => onChange({ ...filters, neighborhoods: toggle(filters.neighborhoods, n) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.neighborhoods.includes(n) ? 'rgba(200,164,74,.18)' : 'rgba(255,255,255,0.04)', border: filters.neighborhoods.includes(n) ? '1px solid rgba(200,164,74,.35)' : '1px solid rgba(255,255,255,0.08)', color: filters.neighborhoods.includes(n) ? 'var(--accent-400)' : 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{n}</button>)}
         </div>
-        <div style={{ width: 1, height: 20, background: 'rgba(61,111,255,0.12)' }} />
+        <div style={{ width: 1, height: 20, background: 'rgba(200,164,74,.12)' }} />
         <div style={{ display: 'flex', gap: 4 }}>
           <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', alignSelf: 'center', marginRight: 2 }}>Tipo:</span>
-          {types.map(t => <button key={t} onClick={() => onChange({ ...filters, types: toggle(filters.types, t.toLowerCase()) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.types.includes(t.toLowerCase()) ? 'rgba(91,155,213,0.15)' : 'rgba(255,255,255,0.04)', border: filters.types.includes(t.toLowerCase()) ? '1px solid rgba(91,155,213,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.types.includes(t.toLowerCase()) ? '#5B9BD5' : 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{t}</button>)}
+          {types.map(t => <button key={t} onClick={() => onChange({ ...filters, types: toggle(filters.types, t.toLowerCase()) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.types.includes(t.toLowerCase()) ? 'rgba(200,164,74,.12)' : 'rgba(255,255,255,0.04)', border: filters.types.includes(t.toLowerCase()) ? '1px solid rgba(200,164,74,.35)' : '1px solid rgba(255,255,255,0.08)', color: filters.types.includes(t.toLowerCase()) ? 'var(--gold)' : 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{t}</button>)}
         </div>
-        <div style={{ width: 1, height: 20, background: 'rgba(61,111,255,0.12)' }} />
+        <div style={{ width: 1, height: 20, background: 'rgba(200,164,74,.12)' }} />
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Quartos:</span>
-          {[1, 2, 3, 4, 5].map(b => <button key={b} onClick={() => onChange({ ...filters, bedrooms: filters.bedrooms === b ? null : b })} style={{ width: 30, height: 26, borderRadius: 6, fontSize: 12, background: filters.bedrooms === b ? 'rgba(61,111,255,0.18)' : 'rgba(255,255,255,0.04)', border: filters.bedrooms === b ? '1px solid rgba(61,111,255,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.bedrooms === b ? 'var(--accent-400)' : 'var(--text-secondary)', fontFamily: 'var(--font-dm-mono, monospace)', cursor: 'pointer' }}>{b === 5 ? '5+' : b}</button>)}
+          {[1, 2, 3, 4, 5].map(b => <button key={b} onClick={() => onChange({ ...filters, bedrooms: filters.bedrooms === b ? null : b })} style={{ width: 30, height: 26, borderRadius: 6, fontSize: 12, background: filters.bedrooms === b ? 'rgba(200,164,74,.18)' : 'rgba(255,255,255,0.04)', border: filters.bedrooms === b ? '1px solid rgba(200,164,74,.35)' : '1px solid rgba(255,255,255,0.08)', color: filters.bedrooms === b ? 'var(--accent-400)' : 'var(--text-secondary)', fontFamily: 'var(--font-dm-mono, monospace)', cursor: 'pointer' }}>{b === 5 ? '5+' : b}</button>)}
         </div>
-        <div style={{ width: 1, height: 20, background: 'rgba(61,111,255,0.12)' }} />
+        <div style={{ width: 1, height: 20, background: 'rgba(200,164,74,.12)' }} />
         <div style={{ display: 'flex', gap: 4 }}>
           {statusOptions.map(s => <button key={s.value} onClick={() => onChange({ ...filters, statuses: toggle(filters.statuses, s.value) })} style={{ padding: '4px 9px', borderRadius: 20, fontSize: 11, background: filters.statuses.includes(s.value) ? `${STATUS_COLORS[s.value]}18` : 'rgba(255,255,255,0.04)', border: filters.statuses.includes(s.value) ? `1px solid ${STATUS_COLORS[s.value]}40` : '1px solid rgba(255,255,255,0.08)', color: filters.statuses.includes(s.value) ? STATUS_COLORS[s.value] : 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>{s.label}</button>)}
         </div>
-        <button onClick={() => onChange({ ...filters, destaque: !filters.destaque })} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 20, fontSize: 11, background: filters.destaque ? 'rgba(61,111,255,0.18)' : 'rgba(255,255,255,0.04)', border: filters.destaque ? '1px solid rgba(61,111,255,0.4)' : '1px solid rgba(255,255,255,0.08)', color: filters.destaque ? 'var(--accent-400)' : 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>
+        <button onClick={() => onChange({ ...filters, destaque: !filters.destaque })} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 20, fontSize: 11, background: filters.destaque ? 'rgba(200,164,74,.18)' : 'rgba(255,255,255,0.04)', border: filters.destaque ? '1px solid rgba(200,164,74,.35)' : '1px solid rgba(255,255,255,0.08)', color: filters.destaque ? 'var(--accent-400)' : 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', transition: 'all 0.15s' }}>
           <Star size={11} fill={filters.destaque ? 'currentColor' : 'none'} /> Destaques
         </button>
       </div>
@@ -185,11 +185,11 @@ export function PropertyCard({ property, view, onAIClick, selected, onSelect }: 
 
   if (view === 'list') {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '11px 16px', borderBottom: '1px solid rgba(61,111,255,0.05)', background: selected ? 'rgba(61,111,255,0.04)' : 'transparent', transition: 'background 0.15s' }} onMouseEnter={e => { if (!selected) e.currentTarget.style.background = 'rgba(61,111,255,0.025)' }} onMouseLeave={e => { if (!selected) e.currentTarget.style.background = 'transparent' }}>
-        <button onClick={() => onSelect(property.id)} style={{ width: 18, height: 18, borderRadius: 6, flexShrink: 0, background: selected ? 'var(--accent-400)' : 'rgba(255,255,255,0.06)', border: selected ? 'none' : '1px solid rgba(61,111,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>{selected && <Check size={11} color="#0B1120" />}</button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '11px 16px', borderBottom: '1px solid rgba(200,164,74,.05)', background: selected ? 'rgba(200,164,74,.04)' : 'transparent', transition: 'background 0.15s' }} onMouseEnter={e => { if (!selected) e.currentTarget.style.background = 'rgba(200,164,74,.025)' }} onMouseLeave={e => { if (!selected) e.currentTarget.style.background = 'transparent' }}>
+        <button onClick={() => onSelect(property.id)} style={{ width: 18, height: 18, borderRadius: 6, flexShrink: 0, background: selected ? 'var(--accent-400)' : 'rgba(255,255,255,0.06)', border: selected ? 'none' : '1px solid rgba(200,164,74,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>{selected && <Check size={11} color="#FFFFFF" />}</button>
         <Link href={`/backoffice/imoveis/${property.id}`} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-          <div style={{ width: 48, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(61,111,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
-            {property.cover_image_url ? <Image src={property.cover_image_url} alt="" fill sizes="48px" style={{ objectFit: 'cover' }} /> : <Building2 size={18} style={{ color: 'rgba(61,111,255,0.3)' }} />}
+          <div style={{ width: 48, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(200,164,74,.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
+            {property.cover_image_url ? <Image src={property.cover_image_url} alt="" fill sizes="48px" style={{ objectFit: 'cover' }} /> : <Building2 size={18} style={{ color: 'rgba(200,164,74,.30)' }} />}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>{property.name}</p>
@@ -199,16 +199,16 @@ export function PropertyCard({ property, view, onAIClick, selected, onSelect }: 
           <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: 13, fontWeight: 700, color: scColor, flexShrink: 0, width: 32, textAlign: 'center' }}>{sc}</span>
           <span style={{ display: 'inline-flex', padding: '2px 7px', borderRadius: 6, background: `${stColor}18`, border: `1px solid ${stColor}35`, fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: stColor, fontFamily: 'var(--font-outfit, sans-serif)', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{stLabel}</span>
         </Link>
-        <button onClick={() => onAIClick(property)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px', borderRadius: 6, background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--accent-400)', fontSize: 10, fontWeight: 700, letterSpacing: 1, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap' }}><Sparkles size={10} /> Ver análise IA</button>
+        <button onClick={() => onAIClick(property)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px', borderRadius: 6, background: 'rgba(200,164,74,.08)', border: '1px solid rgba(200,164,74,.20)', color: 'var(--accent-400)', fontSize: 10, fontWeight: 700, letterSpacing: 1, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap' }}><Sparkles size={10} /> Ver análise IA</button>
       </div>
     )
   }
 
   return (
-    <div style={{ background: 'var(--bg-surface, #162040)', border: selected ? '1px solid rgba(61,111,255,0.5)' : '1px solid rgba(61,111,255,0.12)', borderRadius: 6, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'border-color 0.15s, box-shadow 0.15s', boxShadow: selected ? '0 0 0 2px rgba(61,111,255,0.15)' : 'none' }}>
-      <div style={{ position: 'relative', height: 140, background: 'rgba(61,111,255,0.06)', flexShrink: 0 }}>
-        {property.cover_image_url ? <Image src={property.cover_image_url} alt="" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><Building2 size={36} style={{ color: 'rgba(61,111,255,0.2)' }} /></div>}
-        <button onClick={() => onSelect(property.id)} style={{ position: 'absolute', top: 8, left: 8, width: 22, height: 22, borderRadius: 6, background: selected ? 'var(--accent-400)' : 'rgba(0,0,0,0.5)', border: selected ? 'none' : '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>{selected && <Check size={12} color="#0B1120" />}</button>
+    <div style={{ background: 'var(--bg-surface, #162040)', border: selected ? '1px solid rgba(200,164,74,.40)' : '1px solid rgba(200,164,74,.12)', borderRadius: 6, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'border-color 0.15s, box-shadow 0.15s', boxShadow: selected ? '0 0 0 2px rgba(200,164,74,.15)' : 'none' }}>
+      <div style={{ position: 'relative', height: 140, background: 'rgba(200,164,74,.06)', flexShrink: 0 }}>
+        {property.cover_image_url ? <Image src={property.cover_image_url} alt="" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><Building2 size={36} style={{ color: 'rgba(200,164,74,.20)' }} /></div>}
+        <button onClick={() => onSelect(property.id)} style={{ position: 'absolute', top: 8, left: 8, width: 22, height: 22, borderRadius: 6, background: selected ? 'var(--accent-400)' : 'rgba(0,0,0,0.5)', border: selected ? 'none' : '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>{selected && <Check size={12} color="#FFFFFF" />}</button>
         <span style={{ position: 'absolute', top: 8, right: 8, display: 'inline-flex', padding: '3px 7px', borderRadius: 6, background: `${stColor}cc`, fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: '#fff', fontFamily: 'var(--font-outfit, sans-serif)', textTransform: 'uppercase' }}>{stLabel}</span>
         <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.7)', borderRadius: 6, padding: '3px 8px', fontFamily: 'var(--font-dm-mono, monospace)', fontSize: 13, fontWeight: 700, color: scColor, backdropFilter: 'blur(4px)' }}>{sc}</div>
       </div>
@@ -225,8 +225,8 @@ export function PropertyCard({ property, view, onAIClick, selected, onSelect }: 
           {property.area && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{property.area}m²</div>}
         </div>
         <div style={{ display: 'flex', gap: 6, marginTop: 'auto', paddingTop: 4 }}>
-          <button onClick={() => onAIClick(property)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '6px 8px', borderRadius: 6, background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--accent-400)', fontSize: 10, fontWeight: 700, letterSpacing: 1, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Sparkles size={10} /> Ver análise IA</button>
-          <Link href={`/backoffice/imoveis/${property.id}`}><button style={{ padding: '6px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(61,111,255,0.15)', color: 'var(--text-secondary)', fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><ChevronRight size={12} /></button></Link>
+          <button onClick={() => onAIClick(property)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '6px 8px', borderRadius: 6, background: 'rgba(200,164,74,.08)', border: '1px solid rgba(200,164,74,.20)', color: 'var(--accent-400)', fontSize: 10, fontWeight: 700, letterSpacing: 1, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Sparkles size={10} /> Ver análise IA</button>
+          <Link href={`/backoffice/imoveis/${property.id}`}><button style={{ padding: '6px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(200,164,74,.15)', color: 'var(--text-secondary)', fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><ChevronRight size={12} /></button></Link>
         </div>
       </div>
     </div>
@@ -270,35 +270,35 @@ export function SearchTab({ properties, loading }: { properties: IMIProperty[]; 
     <>
       <MarketPanel properties={properties} activeNeighborhoods={filters.neighborhoods} />
       <FiltersPanel filters={filters} onChange={setFilters} properties={properties} />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 28px', borderBottom: '1px solid rgba(61,111,255,0.08)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 28px', borderBottom: '1px solid rgba(200,164,74,.08)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{loading ? 'Carregando…' : `${filtered.length} imóveis`}{selected.length > 0 && ` · ${selected.length} selecionados`}</span>
           {selected.length > 0 && <button onClick={() => setSelected([])} style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-outfit, sans-serif)' }}>limpar seleção</button>}
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
-          <button onClick={() => showToast('Visualização em mapa — Em breve')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Map size={12} /> Mapa</button>
-          <div style={{ display: 'flex', border: '1px solid rgba(61,111,255,0.2)', borderRadius: 6, overflow: 'hidden' }}>
-            {(['grid', 'list'] as ViewMode[]).map(v => <button key={v} onClick={() => setView(v)} style={{ padding: '5px 10px', background: view === v ? 'rgba(61,111,255,0.12)' : 'transparent', border: 'none', cursor: 'pointer', color: view === v ? 'var(--accent-400)' : 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }}>{v === 'grid' ? '⊞' : '☰'}</button>)}
+          <button onClick={() => showToast('Visualização em mapa — Em breve')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(200,164,74,.20)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Map size={12} /> Mapa</button>
+          <div style={{ display: 'flex', border: '1px solid rgba(200,164,74,.20)', borderRadius: 6, overflow: 'hidden' }}>
+            {(['grid', 'list'] as ViewMode[]).map(v => <button key={v} onClick={() => setView(v)} style={{ padding: '5px 10px', background: view === v ? 'rgba(200,164,74,.12)' : 'transparent', border: 'none', cursor: 'pointer', color: view === v ? 'var(--accent-400)' : 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }}>{v === 'grid' ? '⊞' : '☰'}</button>)}
           </div>
-          <button onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Download size={12} /> Exportar CSV</button>
-          <button onClick={handleShareSelection} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Share2 size={12} /> Compartilhar</button>
-          <button onClick={handleGerarConteudo} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--accent-400))', border: 'none', color: '#0B1120', fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Wand2 size={12} /> Gerar conteúdo</button>
+          <button onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(200,164,74,.20)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Download size={12} /> Exportar CSV</button>
+          <button onClick={handleShareSelection} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(200,164,74,.20)', color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Share2 size={12} /> Compartilhar</button>
+          <button onClick={handleGerarConteudo} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 6, background: 'var(--btn-primary-bg)', border: 'none', color: 'var(--btn-primary-text)', fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}><Wand2 size={12} /> Gerar conteúdo</button>
         </div>
       </div>
       {loading ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', gap: 12 }}>
-          <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid rgba(61,111,255,0.2)', borderTopColor: 'var(--accent-400)', animation: 'spin 0.8s linear infinite' }} />
+          <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid rgba(200,164,74,.20)', borderTopColor: 'var(--accent-400)', animation: 'spin 0.8s linear infinite' }} />
           <span style={{ color: 'var(--text-secondary)', fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)' }}>Carregando imóveis…</span>
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center' }}>
-          <Building2 size={40} style={{ color: 'rgba(61,111,255,0.2)' }} />
+          <Building2 size={40} style={{ color: 'rgba(200,164,74,.20)' }} />
           <p style={{ fontSize: 16, color: 'var(--text-primary)', fontFamily: 'var(--font-playfair, serif)' }}>Nenhum imóvel encontrado</p>
           <p style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Ajuste os filtros para ver mais resultados.</p>
         </div>
       ) : view === 'list' ? (
         <div style={{ background: 'var(--bg-surface, #162040)', flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '8px 16px', borderBottom: '1px solid rgba(61,111,255,0.08)', background: 'rgba(61,111,255,0.03)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '8px 16px', borderBottom: '1px solid rgba(200,164,74,.08)', background: 'rgba(200,164,74,.03)' }}>
             <div style={{ width: 18 }} /><div style={{ width: 48 }} />
             {['Imóvel', 'Preço', 'Score', 'Status'].map((h, i) => <div key={h} style={{ flex: i === 0 ? 1 : undefined, width: i === 1 ? 80 : i === 2 ? 32 : i === 3 ? 76 : undefined, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-tertiary)', fontFamily: 'var(--font-outfit, sans-serif)', textAlign: i === 2 ? 'center' : undefined }}>{h}</div>)}
             <div style={{ width: 100 }} />
@@ -311,7 +311,7 @@ export function SearchTab({ properties, loading }: { properties: IMIProperty[]; 
         </div>
       )}
       {aiProperty && <AIInsightsModal property={aiProperty} onClose={() => setAiProperty(null)} />}
-      {toastMsg && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2000, background: 'var(--bg-surface, #162040)', border: '1px solid rgba(61,111,255,0.3)', borderRadius: 6, padding: '10px 16px', fontSize: 12, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>{toastMsg}</div>}
+      {toastMsg && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2000, background: 'var(--bg-surface, #162040)', border: '1px solid rgba(200,164,74,.30)', borderRadius: 6, padding: '10px 16px', fontSize: 12, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>{toastMsg}</div>}
     </>
   )
 }
@@ -331,13 +331,13 @@ export function RankingTab() {
         <p style={{ fontSize: '11px', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{neighborhoods.length} bairros · dados de benchmark IMI</p>
         <div style={{ display: 'flex', gap: 6 }}><TabBtn active={sortBy === 'yield'} onClick={() => setSortBy('yield')}>Yield</TabBtn><TabBtn active={sortBy === 'price'} onClick={() => setSortBy('price')}>Preço/m²</TabBtn></div>
       </div>
-      <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(61,111,255,0.18)', borderRadius: 6, overflow: 'hidden' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr', padding: '10px 20px', background: 'rgba(61,111,255,0.04)', borderBottom: '1px solid rgba(61,111,255,0.10)', gap: 12 }}>
+      <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(200,164,74,.18)', borderRadius: 6, overflow: 'hidden' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr', padding: '10px 20px', background: 'rgba(200,164,74,.04)', borderBottom: '1px solid rgba(200,164,74,.10)', gap: 12 }}>
           {['#', 'Bairro', 'Preço Médio/m²', 'Yield Est.', 'Tendência 12m', 'Distribuição'].map(h => <span key={h} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{h}</span>)}
         </div>
         {sorted.map((d, i) => (
-          <div key={d.name} style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr', padding: '12px 20px', borderBottom: i < sorted.length - 1 ? '1px solid rgba(61,111,255,0.05)' : 'none', gap: 12, alignItems: 'center' }}>
-            <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: i === 0 ? 'var(--accent-400)' : i === 1 ? 'var(--text-tertiary)' : i === 2 ? '#D4913A' : 'var(--text-tertiary, #5C6B7D)', fontWeight: i < 3 ? 600 : 400 }}>{i + 1}</span>
+          <div key={d.name} style={{ display: 'grid', gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr', padding: '12px 20px', borderBottom: i < sorted.length - 1 ? '1px solid rgba(200,164,74,.05)' : 'none', gap: 12, alignItems: 'center' }}>
+            <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: i === 0 ? 'var(--accent-400)' : i === 1 ? 'var(--text-tertiary)' : i === 2 ? 'var(--amb)' : 'var(--text-tertiary, #5C6B7D)', fontWeight: i < 3 ? 600 : 400 }}>{i + 1}</span>
             <span style={{ fontSize: '12px', color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 500 }}>{d.name}</span>
             <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', color: 'var(--accent-400)', fontWeight: 400 }}>R$ {d.avgSqm.toLocaleString('pt-BR')}/m²</span>
             <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', color: 'var(--success)' }}>{d.yield.toFixed(1)}% a.a.</span>
@@ -347,7 +347,7 @@ export function RankingTab() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
               <div style={{ flex: 1, height: 6, borderRadius: 6, background: 'rgba(255,255,255,0.05)' }}>
-                <div style={{ height: '100%', borderRadius: 6, width: `${((sortBy === 'yield' ? d.yield : d.avgSqm) / (sortBy === 'yield' ? maxYield : maxSqm)) * 100}%`, background: i === 0 ? 'linear-gradient(90deg, #A8842A, var(--accent-400))' : `linear-gradient(90deg, rgba(61,111,255,${0.25 + (1 - i / sorted.length) * 0.45}), rgba(61,111,255,${0.45 + (1 - i / sorted.length) * 0.35}))`, transition: 'width 0.6s cubic-bezier(0.16,1,0.3,1)' }} />
+                <div style={{ height: '100%', borderRadius: 6, width: `${((sortBy === 'yield' ? d.yield : d.avgSqm) / (sortBy === 'yield' ? maxYield : maxSqm)) * 100}%`, background: i === 0 ? 'linear-gradient(90deg, #A8842A, var(--accent-400))' : `linear-gradient(90deg, rgba(200,164,74,${0.25 + (1 - i / sorted.length) * 0.45}), rgba(200,164,74,${0.45 + (1 - i / sorted.length) * 0.35}))`, transition: 'width 0.6s cubic-bezier(0.16,1,0.3,1)' }} />
               </div>
             </div>
           </div>
@@ -367,7 +367,7 @@ export function AnaliseTab() {
   const bestYieldNeigh = Object.entries(NEIGHBORHOOD_YIELD).sort((a, b) => b[1] - a[1])[0]
   const bestPriceNeigh = Object.entries(NEIGHBORHOOD_AVG_SQM).sort((a, b) => a[1] - b[1])[0]
   const top3 = Object.entries(NEIGHBORHOOD_YIELD).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([name]) => name)
-  const chartColors = ['var(--accent-400)', 'var(--success)', '#5B9BD5']
+  const chartColors = ['var(--accent-400)', 'var(--success)', 'var(--blu)']
   const heatmapNeighs = neighborhoods.slice(0, 8)
   const metrics = ['Preço/m²', 'Yield', 'Tendência', 'Liquidez']
 
@@ -401,7 +401,7 @@ export function AnaliseTab() {
             const trend12m = NEIGHBORHOOD_TREND_12M[n] ?? 0
             const curPrice = NEIGHBORHOOD_AVG_SQM[n] ?? 0
             return (
-              <div key={n} style={{ flex: 1, background: 'var(--bg-surface, #162040)', border: '1px solid rgba(61,111,255,0.18)', borderRadius: 6, padding: '20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div key={n} style={{ flex: 1, background: 'var(--bg-surface, #162040)', border: '1px solid rgba(200,164,74,.18)', borderRadius: 6, padding: '20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
                     <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary, #EBE7E0)', fontFamily: 'var(--font-outfit, sans-serif)', marginBottom: 2 }}>{n}</p>
@@ -420,13 +420,13 @@ export function AnaliseTab() {
       </div>
       <div>
         <div style={{ marginBottom: 14 }}><Eyebrow>Heatmap de Indicadores por Bairro</Eyebrow></div>
-        <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(61,111,255,0.18)', borderRadius: 6, overflow: 'hidden' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: `160px repeat(${metrics.length}, 1fr)`, padding: '10px 16px', background: 'rgba(61,111,255,0.04)', borderBottom: '1px solid rgba(61,111,255,0.10)', gap: 8 }}>
+        <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(200,164,74,.18)', borderRadius: 6, overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: `160px repeat(${metrics.length}, 1fr)`, padding: '10px 16px', background: 'rgba(200,164,74,.04)', borderBottom: '1px solid rgba(200,164,74,.10)', gap: 8 }}>
             <span style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>Bairro</span>
             {metrics.map(m => <span key={m} style={{ fontSize: '7.5px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{m}</span>)}
           </div>
           {heatmapNeighs.map((n, ri) => (
-            <div key={n} style={{ display: 'grid', gridTemplateColumns: `160px repeat(${metrics.length}, 1fr)`, padding: '10px 16px', borderBottom: ri < heatmapNeighs.length - 1 ? '1px solid rgba(61,111,255,0.05)' : 'none', gap: 8, alignItems: 'center' }}>
+            <div key={n} style={{ display: 'grid', gridTemplateColumns: `160px repeat(${metrics.length}, 1fr)`, padding: '10px 16px', borderBottom: ri < heatmapNeighs.length - 1 ? '1px solid rgba(200,164,74,.05)' : 'none', gap: 8, alignItems: 'center' }}>
               <span style={{ fontSize: '11px', color: 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n}</span>
               {metrics.map((m, mi) => { const val = getMetricValue(n, m); const { min, max } = metricRanges[mi]; const display = m === 'Preço/m²' ? `R$${(val / 1000).toFixed(1)}k` : m === 'Yield' ? `${val.toFixed(1)}%` : m === 'Tendência' ? `${val >= 0 ? '+' : ''}${val}%` : `${val}`; return (<div key={m} style={{ padding: '4px 8px', borderRadius: 6, background: heatColor(val, min, max), textAlign: 'center' }}><span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: m === 'Tendência' && val < 0 ? 'var(--error)' : 'var(--text-primary, #EBE7E0)' }}>{display}</span></div>) })}
             </div>
@@ -444,9 +444,9 @@ export function OportunidadesTab({ properties }: { properties: IMIProperty[] }) 
   if (properties.length === 0) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center' }}>
-        <div style={{ width: 64, height: 64, borderRadius: 6, background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Building2 size={28} style={{ color: 'rgba(61,111,255,0.35)' }} /></div>
+        <div style={{ width: 64, height: 64, borderRadius: 6, background: 'rgba(200,164,74,.06)', border: '1px solid rgba(200,164,74,.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Building2 size={28} style={{ color: 'rgba(200,164,74,.35)' }} /></div>
         <p style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '18px', color: 'var(--text-primary, #EBE7E0)' }}>Sem imóveis cadastrados</p>
-        <Link href="/backoffice/imoveis/novo"><button style={{ padding: '8px 16px', borderRadius: 6, background: 'var(--btn-primary-bg, var(--accent-400))', border: 'none', color: '#0B1120', fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Cadastrar Imóvel</button></Link>
+        <Link href="/backoffice/imoveis/novo"><button style={{ padding: '8px 16px', borderRadius: 6, background: 'var(--btn-primary-bg)', border: 'none', color: 'var(--btn-primary-text)', fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer' }}>Cadastrar Imóvel</button></Link>
       </div>
     )
   }
@@ -458,7 +458,7 @@ export function OportunidadesTab({ properties }: { properties: IMIProperty[] }) 
   function PropertyRow({ p, rank, metric }: { p: IMIProperty; rank: number; metric?: string }) {
     const sc = p.imi_score ?? 0; const scColor = getScoreColor(sc); const stColor = STATUS_COLORS[p.status] ?? 'var(--text-tertiary)'
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderBottom: '1px solid rgba(61,111,255,0.05)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderBottom: '1px solid rgba(200,164,74,.05)' }}>
         <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '12px', width: 24, flexShrink: 0, textAlign: 'center', color: rank <= 3 ? 'var(--accent-400)' : 'var(--text-tertiary, #5C6B7D)', fontWeight: rank <= 3 ? 600 : 400 }}>{rank}</span>
         <Link href={`/backoffice/imoveis/${p.id}`} style={{ flex: 1, minWidth: 0 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -471,16 +471,16 @@ export function OportunidadesTab({ properties }: { properties: IMIProperty[] }) 
         {metric === 'delta' && <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--success)', flexShrink: 0, width: 52, textAlign: 'right' }}>+{(p.market_delta_pct ?? 0).toFixed(1)}%</span>}
         {metric === 'yield' && <span style={{ fontFamily: 'var(--font-dm-mono, monospace)', fontSize: '11px', color: 'var(--success)', flexShrink: 0, width: 56, textAlign: 'right' }}>{(p.yield_est ?? 0).toFixed(2)}%</span>}
         <span style={{ display: 'inline-flex', padding: '2px 7px', borderRadius: 6, background: `${stColor}15`, border: `1px solid ${stColor}30`, fontSize: '7.5px', fontWeight: 600, letterSpacing: '0.5px', color: stColor, fontFamily: 'var(--font-outfit, sans-serif)', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{STATUS_LABELS[p.status] ?? p.status}</span>
-        <button onClick={() => setAiProperty(p)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.2)', color: 'var(--accent-400)', fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}><Sparkles size={9} /> IA</button>
+        <button onClick={() => setAiProperty(p)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, background: 'rgba(200,164,74,.08)', border: '1px solid rgba(200,164,74,.20)', color: 'var(--accent-400)', fontSize: 10, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}><Sparkles size={9} /> IA</button>
       </div>
     )
   }
 
   function OppSection({ title, eyebrow, items, metric, emptyMsg }: { title: string; eyebrow: string; items: IMIProperty[]; metric: 'score' | 'delta' | 'yield'; emptyMsg: string }) {
     return (
-      <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(61,111,255,0.18)', borderRadius: 6, overflow: 'hidden' }}>
-        <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(61,111,255,0.10)', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Eyebrow>{eyebrow}</Eyebrow><span style={{ width: 1, height: 12, background: 'rgba(61,111,255,0.2)', display: 'inline-block' }} /><span style={{ fontSize: '11px', color: 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{title}</span>
+      <div style={{ background: 'var(--bg-surface, #162040)', border: '1px solid rgba(200,164,74,.18)', borderRadius: 6, overflow: 'hidden' }}>
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(200,164,74,.10)', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Eyebrow>{eyebrow}</Eyebrow><span style={{ width: 1, height: 12, background: 'rgba(200,164,74,.20)', display: 'inline-block' }} /><span style={{ fontSize: '11px', color: 'var(--text-secondary, #9FAAB8)', fontFamily: 'var(--font-outfit, sans-serif)' }}>{title}</span>
         </div>
         {items.length === 0 ? <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--text-tertiary, #5C6B7D)', fontFamily: 'var(--font-outfit, sans-serif)', fontSize: '11px' }}>{emptyMsg}</div> : items.map((p, i) => <PropertyRow key={p.id} p={p} rank={i + 1} metric={metric} />)}
       </div>

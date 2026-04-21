@@ -168,7 +168,7 @@ export default function OnboardingPage() {
                             <div style={{
                                 width: '42px', height: '42px', borderRadius: '6px',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                background: 'rgba(61,111,255,0.12)', border: '1px solid rgba(61,111,255,0.25)',
+                                background: 'rgba(200,164,74,.12)', border: '1px solid rgba(200,164,74,.25)',
                             }}>
                                 <Building2 size={20} style={{ color: 'var(--accent-400)' }} />
                             </div>
@@ -243,8 +243,8 @@ export default function OnboardingPage() {
                                                 style={{
                                                     padding: '12px 14px', borderRadius: '6px', textAlign: 'left',
                                                     cursor: 'pointer', transition: 'all 0.18s ease',
-                                                    background: data.niche === n.value ? 'rgba(61,111,255,0.12)' : 'var(--bg-surface)',
-                                                    border: `1px solid ${data.niche === n.value ? 'rgba(61,111,255,0.4)' : 'var(--border-default)'}`,
+                                                    background: data.niche === n.value ? 'rgba(200,164,74,.12)' : 'var(--bg-surface)',
+                                                    border: `1px solid ${data.niche === n.value ? 'rgba(200,164,74,.35)' : 'var(--border-default)'}`,
                                                 }}
                                             >
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>

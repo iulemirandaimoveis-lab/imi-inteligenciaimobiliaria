@@ -46,7 +46,7 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
               fontWeight: isActive ? 600 : 500,
               border: `1px solid ${isActive ? 'var(--platinum-400)' : 'var(--border-subtle)'}`,
               background: isActive
-                ? 'rgba(61,111,255,0.10)'
+                ? 'rgba(200,164,74,.10)'
                 : 'transparent',
               color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)',
               transition: 'all var(--dur-2, 200ms) var(--ease)',
@@ -85,7 +85,7 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
                   fontFamily: 'var(--font-mono)',
                   fontSize: '11px',
                   fontWeight: 700,
-                  background: isActive ? 'rgba(61,111,255,0.12)' : 'var(--bg-muted)',
+                  background: isActive ? 'rgba(200,164,74,.12)' : 'var(--bg-muted)',
                   color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)',
                   padding: '0px 5px',
                   borderRadius: '6px',

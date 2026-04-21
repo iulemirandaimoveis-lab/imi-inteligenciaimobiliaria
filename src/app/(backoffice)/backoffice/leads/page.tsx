@@ -244,11 +244,11 @@ export default function LeadsPage() {
         <div
           style={{
             position: 'relative',
-            border: `1px solid ${searchFocused ? 'rgba(61,111,255,0.25)' : 'var(--border-default)'}`,
+            border: `1px solid ${searchFocused ? 'rgba(200,164,74,.25)' : 'var(--border-default)'}`,
             borderRadius: '12px',
             background: 'var(--bg-surface)',
             transition: 'border-color 0.18s',
-            boxShadow: searchFocused ? '0 0 0 3px rgba(61,111,255,0.10)' : 'none',
+            boxShadow: searchFocused ? '0 0 0 3px rgba(200,164,74,.10)' : 'none',
           }}
         >
           <Search

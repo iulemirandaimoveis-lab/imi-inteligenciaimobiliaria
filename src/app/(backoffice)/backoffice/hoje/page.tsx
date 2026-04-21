@@ -277,7 +277,7 @@ export default function HojePage() {
               style={{
                 width: 56, height: 56, borderRadius: '50%',
                 overflow: 'hidden', position: 'relative',
-                border: `2px solid rgba(61,111,255,0.4)`,
+                border: `2px solid rgba(200,164,74,.35)`,
                 background: 'var(--bg-elevated)',
                 cursor: 'pointer', padding: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -458,8 +458,8 @@ export default function HojePage() {
           transition={{ delay: 0.12 }}
           className="rounded-lg"
           style={{
-            background: 'linear-gradient(135deg, rgba(61,111,255,0.08) 0%, rgba(61,111,255,0.04) 100%)',
-            border: '1px solid rgba(61,111,255,0.25)',
+            background: 'linear-gradient(135deg, rgba(200,164,74,.08) 0%, rgba(200,164,74,.04) 100%)',
+            border: '1px solid rgba(200,164,74,.25)',
             padding: '14px 16px',
             position: 'relative',
           }}
@@ -483,8 +483,8 @@ export default function HojePage() {
           <div className="flex items-start gap-3">
             <div style={{
               width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-              background: 'rgba(61,111,255,0.12)',
-              border: '1px solid rgba(61,111,255,0.25)',
+              background: 'rgba(200,164,74,.12)',
+              border: '1px solid rgba(200,164,74,.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <Plug size={16} style={{ color: 'var(--accent-400)' }} />
@@ -501,7 +501,7 @@ export default function HojePage() {
                 style={{
                   height: 30, padding: '0 14px', borderRadius: 8,
                   background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer',
-                  fontSize: '11px', fontWeight: 700, color: '#0B1120',
+                  fontSize: '11px', fontWeight: 700, color: 'var(--btn-primary-text)',
                   letterSpacing: '0.03em',
                 }}
               >
@@ -653,8 +653,8 @@ export default function HojePage() {
                 style={{
                   fontSize: '11px', fontWeight: 600,
                   color: 'var(--accent-400)',
-                  background: 'rgba(61,111,255,0.10)',
-                  border: '1px solid rgba(61,111,255,0.25)',
+                  background: 'rgba(200,164,74,.10)',
+                  border: '1px solid rgba(200,164,74,.25)',
                   padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
                 }}
               >
@@ -770,7 +770,7 @@ export default function HojePage() {
         >
           <div style={{
             width: '36px', height: '36px', borderRadius: '10px',
-            background: 'rgba(61,111,255,0.10)', border: '1px solid rgba(61,111,255,0.25)',
+            background: 'rgba(200,164,74,.10)', border: '1px solid rgba(200,164,74,.25)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
           }}>
             <TrendingUp size={16} style={{ color: 'var(--accent-400)' }} />
@@ -905,9 +905,9 @@ export default function HojePage() {
                   position: 'absolute', top: 8, right: 8,
                   fontSize: '7px', fontWeight: 800, padding: '1px 4px',
                   borderRadius: 6,
-                  background: 'rgba(61,111,255,0.12)',
+                  background: 'rgba(200,164,74,.12)',
                   color: 'var(--accent-400)',
-                  border: '1px solid rgba(61,111,255,0.25)',
+                  border: '1px solid rgba(200,164,74,.25)',
                 }}>{mod.badge}</span>
               )}
               <div style={{

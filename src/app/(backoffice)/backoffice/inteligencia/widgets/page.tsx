@@ -16,7 +16,7 @@ interface WidgetConfig {
 type Toast = { type: 'success' | 'error'; message: string } | null
 
 const CATEGORY_STYLE: Record<string, { bg: string; color: string; label: string }> = {
-  market:  { bg: 'rgba(61,111,255,0.12)',  color: 'var(--accent-400)', label: 'Mercado'   },
+  market:  { bg: 'rgba(200,164,74,.12)',  color: 'var(--accent-400)', label: 'Mercado'   },
   finance: { bg: 'rgba(96,165,250,0.12)',  color: 'var(--info)',                  label: 'Finanças'  },
   compare: { bg: 'rgba(139,92,246,0.12)',  color: 'var(--accent-400)',                  label: 'Comparação' },
   risk:    { bg: 'rgba(239,68,68,0.12)',   color: '#EF4444',                  label: 'Risco'     },

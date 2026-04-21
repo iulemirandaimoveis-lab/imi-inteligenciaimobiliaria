@@ -157,7 +157,7 @@ export default function MetasDashboard() {
             <Link
               href="/backoffice/metas/kpis"
               className="px-4 py-2 rounded-lg text-sm font-medium"
-              style={{ background: T.accent, color: '#0B1928' }}
+              style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
             >
               Ver KPIs
             </Link>
@@ -262,7 +262,7 @@ export default function MetasDashboard() {
             <Link
               href="/backoffice/metas/kpis"
               className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium"
-              style={{ background: T.accent, color: '#0B1928' }}
+              style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
             >
               Configurar KPIs
             </Link>

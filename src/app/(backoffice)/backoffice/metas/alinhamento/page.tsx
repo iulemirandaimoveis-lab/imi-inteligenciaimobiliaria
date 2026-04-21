@@ -256,7 +256,7 @@ export default function AlinhamentoPage() {
           <Link
             href="/backoffice/metas/okrs/novo"
             className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium"
-            style={{ background: T.accent, color: '#0B1928' }}
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             Criar OKR
           </Link>

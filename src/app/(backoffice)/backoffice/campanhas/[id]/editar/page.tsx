@@ -283,7 +283,7 @@ export default function EditarCampanhaPage() {
                       isCompleted
                         ? { background: T.success, color: 'var(--text-inverse)' }
                         : isActive
-                          ? { background: T.accent, color: 'var(--text-inverse)' }
+                          ? { background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }
                           : { background: T.elevated, color: T.textMuted }
                     }
                   >
@@ -814,8 +814,8 @@ export default function EditarCampanhaPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium text-white transition-all hover:opacity-90"
-            style={{ background: T.accent }}
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium transition-all hover:opacity-90"
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             Próximo
             <ArrowRight size={20} />
@@ -825,8 +825,8 @@ export default function EditarCampanhaPage() {
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ background: T.accent }}
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-medium transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             {isSubmitting ? (
               <>

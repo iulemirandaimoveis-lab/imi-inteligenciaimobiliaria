@@ -576,8 +576,8 @@ export default function SettingsPage() {
                   <div style={{
                     width: 80, height: 80, borderRadius: 6,
                     overflow: 'hidden',
-                    background: 'rgba(61,111,255,0.15)',
-                    border: '2.5px solid rgba(61,111,255,0.35)',
+                    background: 'rgba(200,164,74,.15)',
+                    border: '2.5px solid rgba(200,164,74,.35)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0,
                   }}>
@@ -889,7 +889,7 @@ export default function SettingsPage() {
             {/* Multi-market info */}
             <div style={{
               padding: '14px 16px', borderRadius: 'var(--r-lg)',
-              background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.20)',
+              background: 'rgba(200,164,74,.06)', border: '1px solid rgba(200,164,74,.20)',
               display: 'flex', alignItems: 'center', gap: 12,
             }}>
               <Globe size={16} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
@@ -934,7 +934,7 @@ export default function SettingsPage() {
                         display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
                         gap: 8, padding: '16px 18px', minWidth: 140, flex: 1,
                         borderRadius: 'var(--r-xl)',
-                        background: isSelected ? 'rgba(61,111,255,0.08)' : 'var(--bg-elevated)',
+                        background: isSelected ? 'rgba(200,164,74,.08)' : 'var(--bg-elevated)',
                         border: isSelected ? '2px solid var(--accent-400)' : '1.5px solid var(--border-subtle)',
                         cursor: 'pointer', textAlign: 'left',
                         transition: 'all 180ms ease',
@@ -943,7 +943,7 @@ export default function SettingsPage() {
                     >
                       <div style={{
                         width: 36, height: 36, borderRadius: 'var(--r-md)',
-                        background: isSelected ? 'rgba(61,111,255,0.15)' : 'var(--bg-muted)',
+                        background: isSelected ? 'rgba(200,164,74,.15)' : 'var(--bg-muted)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
                         <Icon size={18} style={{ color: isSelected ? 'var(--accent-400)' : 'var(--text-tertiary)' }} />
@@ -988,7 +988,7 @@ export default function SettingsPage() {
                       style={{
                         display: 'flex', alignItems: 'center', gap: 8,
                         padding: '12px 14px', borderRadius: 'var(--r-lg)',
-                        background: active ? 'rgba(61,111,255,0.08)' : 'var(--bg-elevated)',
+                        background: active ? 'rgba(200,164,74,.08)' : 'var(--bg-elevated)',
                         border: active ? '1.5px solid var(--accent-400)' : '1.5px solid var(--border-subtle)',
                         color: active ? 'var(--accent-400)' : 'var(--text-secondary)',
                         cursor: 'pointer', fontFamily: 'var(--font-sans)', fontSize: 13,
@@ -1097,7 +1097,7 @@ export default function SettingsPage() {
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                         height: 40, borderRadius: 'var(--r-md)',
-                        background: active ? 'rgba(61,111,255,0.10)' : 'var(--bg-elevated)',
+                        background: active ? 'rgba(200,164,74,.10)' : 'var(--bg-elevated)',
                         border: active ? '1.5px solid var(--accent-400)' : '1.5px solid var(--border-subtle)',
                         color: active ? 'var(--accent-400)' : 'var(--text-secondary)',
                         fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: active ? 700 : 500,
@@ -1152,7 +1152,7 @@ export default function SettingsPage() {
             >
               <div style={{
                 width: 36, height: 36, borderRadius: 'var(--r-md)',
-                background: 'rgba(61,111,255,0.10)',
+                background: 'rgba(200,164,74,.10)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
               }}>
                 <Shield size={16} style={{ color: 'var(--accent-400)' }} />

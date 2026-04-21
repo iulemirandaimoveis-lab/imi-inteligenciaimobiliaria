@@ -763,9 +763,10 @@ export default function DashboardClient({
                         whileTap={{ scale: 0.95 }}
                         whileHover={{ scale: 1.02 }}
                         onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                        className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-[13px] font-semibold text-white flex-shrink-0"
+                        className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-[13px] font-semibold flex-shrink-0"
                         style={{
-                            background: T.accent,
+                            background: 'var(--btn-primary-bg)',
+                            color: 'var(--btn-primary-text)',
                             boxShadow: 'var(--shadow-md)',
                         }}
                     >

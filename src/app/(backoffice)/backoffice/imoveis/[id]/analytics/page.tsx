@@ -92,8 +92,8 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                     height: 36, minWidth: 52,
                                     padding: '0 16px',
                                     borderRadius: 6,
-                                    background: isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.08)',
-                                    border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.2)'}`,
+                                    background: isActive ? 'var(--accent-400)' : 'rgba(200,164,74,.08)',
+                                    border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(200,164,74,.20)'}`,
                                     color: isActive ? T.text : 'var(--text-tertiary)',
                                     fontFamily: 'var(--font-outfit, sans-serif)',
                                     fontSize: 12, fontWeight: isActive ? 700 : 500,
@@ -119,7 +119,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                             key={k.label}
                             style={{
                                 background: 'var(--bg-elevated)',
-                                border: '1px solid rgba(61,111,255,0.12)',
+                                border: '1px solid rgba(200,164,74,.12)',
                                 borderRadius: 6,
                                 padding: 14,
                             }}
@@ -162,7 +162,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                 <div style={{ padding: '20px 14px 0' }}>
                     <div style={{
                         background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(61,111,255,0.12)',
+                        border: '1px solid rgba(200,164,74,.12)',
                         borderRadius: 6,
                         padding: 14,
                     }}>
@@ -204,10 +204,10 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                 <stop offset="95%" stopColor="var(--accent-400)" stopOpacity={0} />
                                             </linearGradient>
                                         </defs>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(61,111,255,0.08)" vertical={false} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(200,164,74,.08)" vertical={false} />
                                         <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
                                         <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 6, fontSize: 11, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(61,111,255,0.2)' }} />
+                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(200,164,74,.25)', borderRadius: 6, fontSize: 11, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(200,164,74,.20)' }} />
                                         <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--accent-400)" strokeWidth={2} fill="url(#mobileViewsGrad)" dot={false} />
                                         <Area type="monotone" dataKey="leads" name="Leads" stroke="#5DB887" strokeWidth={1.5} fill="rgba(93,184,135,0.08)" dot={false} />
                                     </AreaChart>
@@ -220,7 +220,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                 <div style={{ padding: '16px 14px 0' }}>
                     <div style={{
                         background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(61,111,255,0.12)',
+                        border: '1px solid rgba(200,164,74,.12)',
                         borderRadius: 6,
                         padding: 14,
                     }}>
@@ -269,7 +269,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                                     fontFamily: 'var(--font-outfit, sans-serif)',
                                                     fontSize: 11, fontWeight: 700,
                                                     color: 'var(--accent-400)',
-                                                    background: 'rgba(61,111,255,0.12)',
+                                                    background: 'rgba(200,164,74,.12)',
                                                     borderRadius: 6,
                                                     padding: '2px 8px',
                                                 }}>{f.percentage}%</span>
@@ -277,7 +277,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         </div>
                                         <div style={{
                                             height: 4, borderRadius: 6,
-                                            background: 'rgba(61,111,255,0.12)',
+                                            background: 'rgba(200,164,74,.12)',
                                             overflow: 'hidden',
                                         }}>
                                             <div style={{
@@ -297,7 +297,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                     <div style={{ padding: '16px 14px 0' }}>
                         <div style={{
                             background: 'var(--bg-elevated)',
-                            border: '1px solid rgba(61,111,255,0.12)',
+                            border: '1px solid rgba(200,164,74,.12)',
                             borderRadius: 6,
                             padding: 14,
                         }}>
@@ -324,12 +324,12 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         padding: '10px 12px',
                                         background: 'var(--bg-muted)',
                                         borderRadius: 6,
-                                        border: '1px solid rgba(61,111,255,0.08)',
+                                        border: '1px solid rgba(200,164,74,.08)',
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                             <div style={{
                                                 width: 28, height: 28, borderRadius: 6,
-                                                background: 'rgba(61,111,255,0.12)',
+                                                background: 'rgba(200,164,74,.12)',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 flexShrink: 0,
                                             }}>
@@ -344,7 +344,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                             fontFamily: 'var(--font-dm-mono, monospace)',
                                             fontSize: 12, fontWeight: 700,
                                             color: 'var(--accent-400)',
-                                            background: 'rgba(61,111,255,0.10)',
+                                            background: 'rgba(200,164,74,.10)',
                                             borderRadius: 6,
                                             padding: '4px 8px',
                                         }}>{loc.percentage}%</span>
@@ -359,7 +359,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                     <div style={{ padding: '16px 14px 0' }}>
                         <div style={{
                             background: 'var(--bg-elevated)',
-                            border: '1px solid rgba(61,111,255,0.12)',
+                            border: '1px solid rgba(200,164,74,.12)',
                             borderRadius: 6,
                             padding: 14,
                         }}>
@@ -417,7 +417,7 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                     <div style={{ padding: '16px 14px 0' }}>
                         <div style={{
                             background: 'var(--bg-elevated)',
-                            border: '1px solid rgba(61,111,255,0.12)',
+                            border: '1px solid rgba(200,164,74,.12)',
                             borderRadius: 6,
                             padding: 14,
                         }}>
@@ -444,12 +444,12 @@ function MobileAnalytics({ data, periodoFilter, setPeriodoFilter, params, router
                                         padding: '10px 12px',
                                         background: 'var(--bg-muted)',
                                         borderRadius: 6,
-                                        border: '1px solid rgba(61,111,255,0.08)',
+                                        border: '1px solid rgba(200,164,74,.08)',
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
                                             <div style={{
                                                 width: 28, height: 28, borderRadius: 6,
-                                                background: 'rgba(61,111,255,0.12)',
+                                                background: 'rgba(200,164,74,.12)',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 flexShrink: 0,
                                                 fontFamily: 'var(--font-dm-mono, monospace)',
@@ -519,7 +519,7 @@ function MobileEmpty({ onBack }: { onBack: () => void }) {
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 }}>
             <MobileGlobalStyles />
-            <BarChart3 size={40} style={{ color: 'rgba(61,111,255,0.25)' }} />
+            <BarChart3 size={40} style={{ color: 'rgba(200,164,74,.25)' }} />
             <div style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: 18, fontWeight: 600, color: 'var(--imi-cream)', marginBottom: 6 }}>
                     Sem dados de analytics
@@ -532,8 +532,8 @@ function MobileEmpty({ onBack }: { onBack: () => void }) {
                 onClick={onBack}
                 style={{
                     height: 44, padding: '0 24px', borderRadius: 6,
-                    background: 'rgba(61,111,255,0.12)',
-                    border: '1px solid rgba(61,111,255,0.25)',
+                    background: 'rgba(200,164,74,.12)',
+                    border: '1px solid rgba(200,164,74,.25)',
                     color: 'var(--accent-400)',
                     fontFamily: 'var(--font-outfit, sans-serif)',
                     fontSize: 12, fontWeight: 700,
@@ -729,10 +729,10 @@ export default function ImovelAnalyticsPage() {
                                         <stop offset="95%" stopColor="#6BB87B" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(61,111,255,0.08)" vertical={false} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(200,164,74,.08)" vertical={false} />
                                 <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: 'var(--font-outfit, sans-serif)' }} axisLine={false} tickLine={false} />
                                 <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                                <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(61,111,255,0.2)' }} />
+                                <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(200,164,74,.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} cursor={{ stroke: 'rgba(200,164,74,.20)' }} />
                                 <Area type="monotone" dataKey="value" name="Cliques" stroke="var(--accent-400)" strokeWidth={2} fill="url(#viewsGrad)" dot={false} />
                                 <Area type="monotone" dataKey="leads" name="Leads" stroke="#6BB87B" strokeWidth={1.5} fill="url(#leadsGrad)" dot={false} />
                             </AreaChart>
@@ -761,7 +761,7 @@ export default function ImovelAnalyticsPage() {
                                                 <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                                             ))}
                                         </Pie>
-                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} />
+                                        <Tooltip contentStyle={{ background: 'var(--bg-surface)', border: '1px solid rgba(200,164,74,.25)', borderRadius: 6, fontSize: 12, color: 'var(--imi-cream)' }} />
                                     </PieChart>
                                 </ResponsiveContainer>
                                 <div className="space-y-2 mt-2">

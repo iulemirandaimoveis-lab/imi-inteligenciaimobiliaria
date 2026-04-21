@@ -152,7 +152,7 @@ function MobileInventario({
                             className="mob-btn-tap"
                             style={{
                                 width: 44, height: 44, borderRadius: 10,
-                                background: 'rgba(61,111,255,0.15)',
+                                background: 'rgba(200,164,74,.15)',
                                 border: 'none', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 color: 'var(--accent-400)',
@@ -273,7 +273,7 @@ function MobileInventario({
                     style={{
                         width: '100%', height: 44, boxSizing: 'border-box',
                         background: 'var(--bg-elevated)',
-                        border: '1px solid rgba(61,111,255,0.15)',
+                        border: '1px solid rgba(200,164,74,.15)',
                         borderRadius: 10,
                         padding: '0 14px 0 40px',
                         fontFamily: 'var(--font-outfit, sans-serif)',
@@ -305,7 +305,7 @@ function MobileInventario({
                                 height: 32, padding: '0 12px',
                                 borderRadius: 6,
                                 background: isActive ? 'var(--accent-400)' : 'transparent',
-                                border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(61,111,255,0.3)'}`,
+                                border: `1px solid ${isActive ? 'var(--accent-400)' : 'rgba(200,164,74,.30)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
                                 fontFamily: 'var(--font-outfit, sans-serif)',
                                 fontSize: 11, fontWeight: isActive ? 700 : 500,
@@ -343,7 +343,7 @@ function MobileInventario({
                                 borderRadius: 12, overflow: 'hidden',
                                 marginBottom: 12,
                                 background: 'var(--bg-elevated)',
-                                border: '1px solid rgba(61,111,255,0.12)',
+                                border: '1px solid rgba(200,164,74,.12)',
                             }}>
                                 {/* Image skeleton */}
                                 <div style={{
@@ -382,11 +382,11 @@ function MobileInventario({
                     }}>
                         <div style={{
                             width: 72, height: 72, borderRadius: 20,
-                            background: 'rgba(61,111,255,0.06)',
-                            border: '1px solid rgba(61,111,255,0.18)',
+                            background: 'rgba(200,164,74,.06)',
+                            border: '1px solid rgba(200,164,74,.18)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
-                            <Building2 size={32} style={{ color: 'rgba(61,111,255,0.4)' }} />
+                            <Building2 size={32} style={{ color: 'rgba(200,164,74,.35)' }} />
                         </div>
                         <div>
                             <div style={{
@@ -439,7 +439,7 @@ function MobileInventario({
                                 style={{
                                     background: 'var(--bg-elevated)',
                                     borderRadius: 12,
-                                    border: '1px solid rgba(61,111,255,0.12)',
+                                    border: '1px solid rgba(200,164,74,.12)',
                                     overflow: 'hidden',
                                     touchAction: 'manipulation',
                                     WebkitTapHighlightColor: 'transparent',
@@ -461,7 +461,7 @@ function MobileInventario({
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             background: 'linear-gradient(135deg, #162040 0%, #1A3250 100%)',
                                         }}>
-                                            <Building2 size={44} style={{ color: 'rgba(61,111,255,0.15)' }} />
+                                            <Building2 size={44} style={{ color: 'rgba(200,164,74,.15)' }} />
                                         </div>
                                     )}
 
@@ -651,8 +651,8 @@ export default function InventarioPage() {
                 actions={
                     <Link
                         href="/backoffice/imoveis/novo"
-                        className="flex items-center gap-2 h-10 px-5 rounded-[6px] font-semibold text-sm text-white transition-all hover:brightness-110"
-                        style={{ background: T.accent, textDecoration: 'none' }}
+                        className="flex items-center gap-2 h-10 px-5 rounded-[6px] font-semibold text-sm transition-all hover:brightness-110"
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', textDecoration: 'none' }}
                     >
                         <Plus size={15} /> Novo Imóvel
                     </Link>

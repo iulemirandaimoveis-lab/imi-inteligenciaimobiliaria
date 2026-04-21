@@ -240,7 +240,7 @@ export default function PWAManager() {
           className="fixed top-14 lg:top-16 left-0 right-0 z-50 flex items-center gap-3 px-4 py-3 lg:pl-64"
           style={{
             background: 'var(--bg-elevated)',
-            borderBottom: '1px solid rgba(61,111,255,0.25)',
+            borderBottom: '1px solid rgba(200,164,74,.25)',
             animation: 'slideDown 0.3s ease-out',
           }}
         >
@@ -280,7 +280,7 @@ export default function PWAManager() {
           className="fixed bottom-16 left-0 right-0 z-[55] flex items-center gap-3 px-4 py-3"
           style={{
             background: 'var(--bg-base)',
-            borderTop: '2px solid rgba(61,111,255,0.25)',
+            borderTop: '2px solid rgba(200,164,74,.25)',
             animation: 'slideUp 0.3s ease-out',
           }}
         >

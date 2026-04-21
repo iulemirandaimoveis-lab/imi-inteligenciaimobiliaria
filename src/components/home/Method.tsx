@@ -134,8 +134,8 @@ export default function Method({ dict }: MethodProps) {
                                     whileHover={{ scale: 1.05 }}
                                     className="text-[52px] font-black leading-none mb-4 select-none transition-all duration-500"
                                     style={{
-                                        color: 'rgba(200,164,74,0.15)',
-                                        WebkitTextStroke: '1.5px rgba(200,164,74,0.15)',
+                                        color: 'rgba(200,164,74,0.08)',
+                                        WebkitTextStroke: '1.5px rgba(200,164,74,0.40)',
                                         fontFamily: 'var(--font-mono)',
                                     }}
                                 >

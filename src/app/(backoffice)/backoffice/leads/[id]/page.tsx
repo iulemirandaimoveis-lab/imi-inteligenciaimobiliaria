@@ -228,7 +228,7 @@ export default function LeadDetailPage() {
             <button
               onClick={() => router.push(`/backoffice/propostas/nova?lead_id=${id}`)}
               className="bo-btn bo-btn-sm"
-              style={{ background: 'rgba(61,111,255,0.12)', color: 'var(--accent-400)', borderColor: 'rgba(61,111,255,0.25)' }}
+              style={{ background: 'rgba(200,164,74,.12)', color: 'var(--accent-400)', borderColor: 'rgba(200,164,74,.25)' }}
               title="Criar Proposta"
             >
               <FileText size={13} />
@@ -362,7 +362,7 @@ export default function LeadDetailPage() {
         <div style={{
           position: 'absolute', top: '-30px', right: '-20px',
           width: '100px', height: '100px', borderRadius: '50%',
-          background: 'rgba(61,111,255,0.10)', filter: 'blur(30px)', pointerEvents: 'none',
+          background: 'rgba(200,164,74,.10)', filter: 'blur(30px)', pointerEvents: 'none',
         }} />
 
         {/* Label */}
@@ -401,7 +401,7 @@ export default function LeadDetailPage() {
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               background: 'var(--bg-elevated)',
-              border: '1px solid rgba(61,111,255,0.25)',
+              border: '1px solid rgba(200,164,74,.25)',
               borderRadius: '6px', padding: '12px',
               flexShrink: 0,
             }}
@@ -652,9 +652,9 @@ export default function LeadDetailPage() {
                           position: 'relative', zIndex: 1,
                           width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
                           background: event.accent
-                            ? 'rgba(61,111,255,0.10)'
+                            ? 'rgba(200,164,74,.10)'
                             : 'rgba(255,255,255,0.04)',
-                          border: `2px solid ${event.accent ? 'rgba(61,111,255,0.25)' : 'var(--border-default)'}`,
+                          border: `2px solid ${event.accent ? 'rgba(200,164,74,.25)' : 'var(--border-default)'}`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
                           <event.icon
@@ -835,13 +835,13 @@ export default function LeadDetailPage() {
                   style={{
                     display: 'flex', alignItems: 'flex-start', gap: '12px',
                     padding: '12px', borderRadius: '6px', marginBottom: '8px',
-                    background: i === 0 ? 'rgba(61,111,255,0.07)' : 'rgba(255,255,255,0.03)',
-                    border: `1px solid ${i === 0 ? 'rgba(61,111,255,0.2)' : 'var(--border-default)'}`,
+                    background: i === 0 ? 'rgba(200,164,74,.07)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${i === 0 ? 'rgba(200,164,74,.20)' : 'var(--border-default)'}`,
                   }}
                 >
                   <div style={{
                     minWidth: '40px', height: '40px', borderRadius: '6px',
-                    background: i === 0 ? 'rgba(61,111,255,0.15)' : 'rgba(255,255,255,0.05)',
+                    background: i === 0 ? 'rgba(200,164,74,.15)' : 'rgba(255,255,255,0.05)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <Building2 size={16} style={{ color: i === 0 ? 'var(--accent-400)' : 'var(--text-secondary)' }} />

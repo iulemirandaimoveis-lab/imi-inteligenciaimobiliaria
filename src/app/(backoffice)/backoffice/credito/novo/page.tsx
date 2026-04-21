@@ -183,7 +183,7 @@ export default function CreditoNovoPage() {
                                             done
                                                 ? { background: T.success, color: 'var(--text-inverse)' }
                                                 : active
-                                                    ? { background: T.accent, color: 'var(--text-inverse)' }
+                                                    ? { background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }
                                                     : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }
                                         }
                                     >
@@ -451,8 +451,8 @@ export default function CreditoNovoPage() {
                         <button
                             type="button"
                             onClick={handleNext}
-                            className="flex items-center gap-2 h-11 px-8 rounded-[6px] font-semibold text-white transition-all hover:opacity-90"
-                            style={{ background: T.accent }}
+                            className="flex items-center gap-2 h-11 px-8 rounded-[6px] font-semibold transition-all hover:opacity-90"
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                         >
                             Continuar
                             <ArrowRight size={18} />
@@ -462,8 +462,8 @@ export default function CreditoNovoPage() {
                             type="button"
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="flex items-center gap-2 h-11 px-8 rounded-[6px] font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
-                            style={{ background: T.accent }}
+                            className="flex items-center gap-2 h-11 px-8 rounded-[6px] font-semibold transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                         >
                             {isSubmitting ? (
                                 <><Loader2 size={18} className="animate-spin" /> Enviando...</>

@@ -779,8 +779,8 @@ export default function EditarAvaliacaoPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-semibold text-white transition-all hover:opacity-90"
-            style={{ background: T.accent }}
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-semibold transition-all hover:opacity-90"
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             Próximo
             <ArrowRight size={18} />
@@ -790,8 +790,8 @@ export default function EditarAvaliacaoPage() {
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ background: T.accent }}
+            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-semibold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             {isSubmitting ? (
               <>

@@ -290,8 +290,8 @@ export function MobileLeadCard({
               fontSize: '11px',
               fontWeight: 600,
               color: 'var(--accent-400)',
-              background: 'rgba(61,111,255,0.10)',
-              border: '1px solid rgba(61,111,255,0.20)',
+              background: 'rgba(200,164,74,.10)',
+              border: '1px solid rgba(200,164,74,.20)',
               padding: '2px 7px',
               borderRadius: 'var(--r-sm, 5px)',
             }}

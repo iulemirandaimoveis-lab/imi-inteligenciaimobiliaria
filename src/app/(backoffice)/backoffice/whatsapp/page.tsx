@@ -306,9 +306,9 @@ export default function WhatsAppPage() {
             <span style={{
               fontSize: 11, fontWeight: 700, padding: '4px 10px',
               borderRadius: 6,
-              background: apiConfigured ? 'rgba(37,211,102,0.12)' : 'rgba(61,111,255,0.12)',
+              background: apiConfigured ? 'rgba(37,211,102,0.12)' : 'rgba(200,164,74,.12)',
               color: apiConfigured ? '#25D366' : 'var(--accent-400)',
-              border: apiConfigured ? '1px solid rgba(37,211,102,0.30)' : '1px solid rgba(61,111,255,0.30)',
+              border: apiConfigured ? '1px solid rgba(37,211,102,0.30)' : '1px solid rgba(200,164,74,.30)',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
               fontFamily: 'var(--font-mono)',
@@ -818,8 +818,8 @@ export default function WhatsAppPage() {
                         <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                           <div style={{
                             width: 22, height: 22, borderRadius: 6, flexShrink: 0,
-                            background: 'rgba(61,111,255,0.12)',
-                            border: '1.5px solid rgba(61,111,255,0.30)',
+                            background: 'rgba(200,164,74,.12)',
+                            border: '1.5px solid rgba(200,164,74,.30)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                           }}>
                             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--accent-400)' }}>
@@ -853,8 +853,8 @@ export default function WhatsAppPage() {
               <div style={{
                 padding: '16px 20px',
                 borderRadius: 'var(--r-lg)',
-                background: 'linear-gradient(135deg, rgba(61,111,255,0.07) 0%, transparent 100%)',
-                border: '1px solid rgba(61,111,255,0.18)',
+                background: 'linear-gradient(135deg, rgba(200,164,74,.07) 0%, transparent 100%)',
+                border: '1px solid rgba(200,164,74,.18)',
                 display: 'flex', alignItems: 'center', gap: 16,
               }}>
                 <Zap size={20} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
@@ -1076,7 +1076,7 @@ function MessageBubble({ message }: { message: WhatsAppMessage }) {
           {message.is_ai_generated && (
             <span style={{
               fontSize: 9, fontWeight: 600, padding: '1px 4px', borderRadius: 3,
-              background: 'rgba(61,111,255,0.12)', color: 'var(--accent-400)',
+              background: 'rgba(200,164,74,.12)', color: 'var(--accent-400)',
               fontFamily: 'var(--font-mono)',
             }}>
               IA

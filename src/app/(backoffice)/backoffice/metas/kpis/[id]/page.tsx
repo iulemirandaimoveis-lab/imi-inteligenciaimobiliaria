@@ -195,7 +195,7 @@ export default function KPIDetailPage() {
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
-          style={{ background: T.accent, color: '#0B1928' }}
+          style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
         >
           <Plus className="w-4 h-4" />
           Registrar Leitura
@@ -226,7 +226,7 @@ export default function KPIDetailPage() {
               onClick={handleNewReading}
               disabled={saving || !newValue}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
-              style={{ background: T.accent, color: '#0B1928' }}
+              style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
               Salvar

@@ -79,7 +79,7 @@ export default function ReportDetailPage() {
           <button className="p-2 rounded-[6px] transition-colors" style={{ border: `1px solid ${T.border}` }}>
             <Printer className="w-4 h-4" style={{ color: T.textMuted }} />
           </button>
-          <button className="flex items-center gap-2 px-3 py-2 rounded-[6px] text-sm font-medium" style={{ background: T.accent, color: '#0B1928' }}>
+          <button className="flex items-center gap-2 px-3 py-2 rounded-[6px] text-sm font-medium" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
             <Download className="w-4 h-4" />
             PDF
           </button>

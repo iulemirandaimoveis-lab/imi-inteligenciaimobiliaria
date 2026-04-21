@@ -62,7 +62,7 @@ export default function NovaConsultoriaPage() {
 
   const steps = ['Cliente', 'Tipo & Escopo', 'Honorários']
 
-  const inputClass = 'w-full h-11 px-3 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(61,111,255,0.25)]'
+  const inputClass = 'w-full h-11 px-3 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(200,164,74,.25)]'
   const inputStyle = { background: T.bg, border: `1px solid ${T.border}`, color: T.text }
 
   return (
@@ -188,7 +188,7 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Descrição do Projeto</label>
               <textarea value={form.descricao} onChange={e => set('descricao', e.target.value)}
                 rows={3} placeholder="Descreva o contexto, o imóvel ou empreendimento envolvido, e o escopo esperado…"
-                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(61,111,255,0.25)] resize-none"
+                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(200,164,74,.25)] resize-none"
                 style={inputStyle} />
             </div>
 
@@ -196,7 +196,7 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Objetivo Principal do Cliente</label>
               <textarea value={form.objetivo} onChange={e => set('objetivo', e.target.value)}
                 rows={2} placeholder="O que o cliente precisa resolver ou decidir com esta consultoria?"
-                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(61,111,255,0.25)] resize-none"
+                className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(200,164,74,.25)] resize-none"
                 style={inputStyle} />
             </div>
           </>
@@ -261,7 +261,7 @@ export default function NovaConsultoriaPage() {
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Observações Internas</label>
                 <textarea value={form.observacoes} onChange={e => set('observacoes', e.target.value)}
                   rows={3} placeholder="Notas sobre o cliente, contexto sensível, histórico de negociação…"
-                  className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(61,111,255,0.25)] resize-none"
+                  className="w-full px-3 py-2 rounded-[6px] text-sm focus:outline-none focus:border-[rgba(200,164,74,.25)] resize-none"
                   style={inputStyle} />
               </div>
             </div>

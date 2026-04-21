@@ -127,7 +127,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                     <button
                         onClick={() => router.push('/backoffice/equipe')}
                         className="mt-4 h-10 px-5 rounded-[6px] text-sm font-medium"
-                        style={{ background: T.accent, color: 'var(--text-inverse)' }}
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         Voltar para Equipe
                     </button>
@@ -294,7 +294,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                     </button>
                     <button type="submit" disabled={isSubmitting}
                         className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold hover:brightness-110 transition-all disabled:opacity-60"
-                        style={{ background: T.accent }}>
+                        style={{ background: 'var(--btn-primary-bg)' }}>
                         <UserCog size={16} />
                         {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
                     </button>

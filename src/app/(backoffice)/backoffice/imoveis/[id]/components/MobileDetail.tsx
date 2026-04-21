@@ -37,7 +37,7 @@ const MONO: React.CSSProperties = {
 
 const CARD: React.CSSProperties = {
   background: 'var(--bg-elevated)',
-  border: '1px solid rgba(61,111,255,0.15)',
+  border: '1px solid rgba(200,164,74,.15)',
   borderRadius: 12,
 }
 
@@ -145,7 +145,7 @@ export function MobileImovelDetail({
     background: 'rgba(11,25,40,0.72)',
     backdropFilter: 'blur(12px)',
     WebkitBackdropFilter: 'blur(12px)',
-    border: '1px solid rgba(61,111,255,0.18)',
+    border: '1px solid rgba(200,164,74,.18)',
   }
 
   // Yield calculator derived values
@@ -320,7 +320,7 @@ export function MobileImovelDetail({
             if (!spec) return null
             const { icon: Icon, value } = spec as { icon: React.ElementType; value: string }
             return (
-              <div key={i} style={{ background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.2)', borderRadius: 8, padding: '8px 12px', minHeight: 40, display: 'flex', alignItems: 'center', gap: 7 }}>
+              <div key={i} style={{ background: 'rgba(200,164,74,.08)', border: '1px solid rgba(200,164,74,.20)', borderRadius: 8, padding: '8px 12px', minHeight: 40, display: 'flex', alignItems: 'center', gap: 7 }}>
                 <Icon size={14} style={{ color: 'var(--text-tertiary)' }} />
                 <span style={{ ...MONO, fontSize: 13, color: 'var(--text-primary)' }}>{value}</span>
               </div>
@@ -330,7 +330,7 @@ export function MobileImovelDetail({
       </div>
 
       {/* ═══ TAB BAR ═══ */}
-      <div style={{ marginTop: 20, borderBottom: '1px solid rgba(61,111,255,0.14)', overflow: 'hidden' }}>
+      <div style={{ marginTop: 20, borderBottom: '1px solid rgba(200,164,74,.14)', overflow: 'hidden' }}>
         <div style={{ display: 'flex', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', padding: '0 16px' }}>
           {TABS.map(tab => (
             <button
@@ -372,7 +372,7 @@ export function MobileImovelDetail({
                 <p style={{ ...EYEBROW, marginBottom: 10 }}>Caracteristicas</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {allFeatures.map((feat, i) => (
-                    <span key={i} style={{ background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.15)', borderRadius: 20, padding: '6px 12px', fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>{feat}</span>
+                    <span key={i} style={{ background: 'rgba(200,164,74,.06)', border: '1px solid rgba(200,164,74,.15)', borderRadius: 20, padding: '6px 12px', fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>{feat}</span>
                   ))}
                 </div>
               </div>
@@ -389,7 +389,7 @@ export function MobileImovelDetail({
                   { label: 'CEP', value: dev.cep || null },
                   { label: 'Estado', value: dev.state || null },
                 ].map(({ label, value }, i) => (
-                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: i < 4 ? '1px solid rgba(61,111,255,0.08)' : 'none' }}>
+                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: i < 4 ? '1px solid rgba(200,164,74,.08)' : 'none' }}>
                     <span style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif' }}>{label}</span>
                     <span style={{ fontSize: 13, color: value ? 'var(--text-primary)' : undefined, fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>
                       {value || <span style={{ color: 'var(--text-tertiary)', fontStyle: 'italic', fontSize: 11 }}>Nao informado</span>}
@@ -417,7 +417,7 @@ export function MobileImovelDetail({
                     style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                       height: 44, borderRadius: 10,
-                      background: 'transparent', border: '1px solid rgba(61,111,255,0.25)',
+                      background: 'transparent', border: '1px solid rgba(200,164,74,.25)',
                       color: 'var(--accent-400)', textDecoration: 'none',
                       fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
                       letterSpacing: '1.2px', textTransform: 'uppercase',
@@ -439,7 +439,7 @@ export function MobileImovelDetail({
                       <Image src={dev.developer.logo_url} alt={dev.developer.name} fill sizes="48px" style={{ objectFit: 'contain' }} />
                     </div>
                   ) : (
-                    <div style={{ width: 48, height: 48, borderRadius: 10, background: 'rgba(61,111,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 10, background: 'rgba(200,164,74,.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Building2 size={20} style={{ color: 'var(--accent-400)' }} />
                     </div>
                   )}
@@ -503,7 +503,7 @@ export function MobileImovelDetail({
                   <div>
                     <div style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 2 }}>IMI Score</div>
                     <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>/100 - Indice de Oportunidade</div>
-                    <div style={{ height: 4, width: 120, background: 'rgba(61,111,255,0.1)', borderRadius: 6, marginTop: 6, overflow: 'hidden' }}>
+                    <div style={{ height: 4, width: 120, background: 'rgba(200,164,74,.10)', borderRadius: 6, marginTop: 6, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${score}%`, background: scoreColor, borderRadius: 6, transition: 'width 0.8s ease' }} />
                     </div>
                   </div>
@@ -519,7 +519,7 @@ export function MobileImovelDetail({
                           <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>{label}</span>
                           <span style={{ ...MONO, fontSize: 12, color, fontWeight: 500 }}>{value}/{max}</span>
                         </div>
-                        <div style={{ height: 6, background: 'rgba(61,111,255,0.1)', borderRadius: 6, overflow: 'hidden' }}>
+                        <div style={{ height: 6, background: 'rgba(200,164,74,.10)', borderRadius: 6, overflow: 'hidden' }}>
                           <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: 6, transition: 'width 1s cubic-bezier(0.16,1,0.3,1)' }} />
                         </div>
                       </div>
@@ -549,7 +549,7 @@ export function MobileImovelDetail({
                         max={isPercent ? 100 : undefined}
                         style={{
                           width: '100%', padding: '10px 12px', borderRadius: 8,
-                          background: 'var(--bg-base)', border: '1px solid rgba(61,111,255,0.2)',
+                          background: 'var(--bg-base)', border: '1px solid rgba(200,164,74,.20)',
                           color: 'var(--text-primary)', outline: 'none', ...MONO, fontSize: 14,
                           boxSizing: 'border-box',
                         }}
@@ -565,7 +565,7 @@ export function MobileImovelDetail({
                     { label: 'Yield Liquido', value: `${netYield.toFixed(1)}%`, color: '#5B9BD5' },
                     { label: 'Cashflow/mes', value: fmtCurrency(monthlyCashflow), color: 'var(--accent-400)' },
                   ].map(({ label, value, color }) => (
-                    <div key={label} style={{ background: 'rgba(61,111,255,0.06)', borderRadius: 8, padding: '10px 8px', textAlign: 'center' }}>
+                    <div key={label} style={{ background: 'rgba(200,164,74,.06)', borderRadius: 8, padding: '10px 8px', textAlign: 'center' }}>
                       <div style={{ fontSize: 9, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 4 }}>{label}</div>
                       <div style={{ ...MONO, fontSize: 14, color, fontWeight: 500 }}>{value}</div>
                     </div>
@@ -601,7 +601,7 @@ export function MobileImovelDetail({
               <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 12 }}>* Dados ilustrativos baseados em medias do bairro {dev.neighborhood ?? ''}</p>
               <div style={{ ...CARD, overflow: 'hidden' }}>
                 {/* This property */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(61,111,255,0.06)', borderBottom: '1px solid rgba(61,111,255,0.1)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(200,164,74,.06)', borderBottom: '1px solid rgba(200,164,74,.10)' }}>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif' }}>{dev.name}</div>
                     <div style={{ ...MONO, fontSize: 11, color: 'var(--text-tertiary)' }}>{dev.area_from ? `${dev.area_from} m2` : '\u2014'} | {priceSqm ? `R$ ${fmtNum(priceSqm)}/m2` : '\u2014'}</div>
@@ -609,7 +609,7 @@ export function MobileImovelDetail({
                   <span style={{ ...MONO, fontSize: 10, color: 'var(--text-tertiary)' }}>este</span>
                 </div>
                 {comparables.map((comp, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderBottom: i < comparables.length - 1 ? '1px solid rgba(61,111,255,0.06)' : 'none' }}>
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderBottom: i < comparables.length - 1 ? '1px solid rgba(200,164,74,.06)' : 'none' }}>
                     <div>
                       <div style={{ fontSize: 12, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif' }}>{comp.name}</div>
                       <div style={{ ...MONO, fontSize: 11, color: 'var(--text-tertiary)' }}>{comp.area} m2 | R$ {fmtNum(comp.priceSqm)}/m2</div>
@@ -681,7 +681,7 @@ export function MobileImovelDetail({
                   { icon: QrCode, label: 'QR Code', href: `/backoffice/tracking/qr?propertyId=${id}&propertyName=${encodeURIComponent(dev?.name || '')}` },
                   { icon: Zap, label: 'Campanha', href: `/backoffice/campanhas?imovel=${id}` },
                 ].map(({ icon: Icon, label, href }) => (
-                  <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.14)', borderRadius: 10, padding: '14px 16px', textDecoration: 'none' }}>
+                  <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(200,164,74,.06)', border: '1px solid rgba(200,164,74,.14)', borderRadius: 10, padding: '14px 16px', textDecoration: 'none' }}>
                     <Icon size={16} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
                     <span style={{ fontSize: 13, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>{label}</span>
                   </Link>
@@ -693,7 +693,7 @@ export function MobileImovelDetail({
             <div>
               <p style={{ ...EYEBROW, marginBottom: 10 }}>Compartilhar</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <button onClick={handleCopyLink} style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 10, color: 'var(--accent-400)', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
+                <button onClick={handleCopyLink} style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(200,164,74,.25)', borderRadius: 10, color: 'var(--accent-400)', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
                   <Copy size={14} /> {copied ? 'Copiado!' : 'Link'}
                 </button>
                 <button onClick={handleWhatsApp} style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(93,184,135,0.35)', borderRadius: 10, color: '#5DB887', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
@@ -718,7 +718,7 @@ export function MobileImovelDetail({
                 { icon: '\ud83d\udccb', label: 'Leads este mes', value: '\u2014', color: 'var(--text-secondary)' },
                 { icon: '\ud83d\udcc5', label: 'Ultima atualizacao', value: dev?.updated_at ? new Date(dev.updated_at).toLocaleDateString('pt-BR') : '\u2014', color: 'var(--text-secondary)' },
               ].map(({ icon, label, value, color }) => (
-                <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(61,111,255,0.06)' }}>
+                <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(200,164,74,.06)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ fontSize: 14 }}>{icon}</span>
                     <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>{label}</span>

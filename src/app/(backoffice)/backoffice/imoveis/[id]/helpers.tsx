@@ -55,7 +55,7 @@ export const EYEBROW: React.CSSProperties = {
 
 export const CARD: React.CSSProperties = {
   background: 'var(--bg-surface)',
-  border: '1px solid rgba(61,111,255,0.18)',
+  border: '1px solid rgba(200,164,74,.18)',
   borderRadius: '12px',
 }
 
@@ -81,7 +81,7 @@ export const BTN_PRIMARY: React.CSSProperties = {
 
 export const BTN_SECONDARY: React.CSSProperties = {
   background: 'transparent',
-  border: '1px solid rgba(61,111,255,0.25)',
+  border: '1px solid rgba(200,164,74,.25)',
   color: 'var(--gold, var(--accent-400))',
   borderRadius: '6px',
   letterSpacing: '1.8px',

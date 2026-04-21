@@ -42,7 +42,7 @@ const STATUS_CFG: Record<
     Partnership['status'],
     { label: string; color: string; bg: string }
 > = {
-    proposed:    { label: 'Proposta',    color: 'var(--accent-400)', bg: 'rgba(61,111,255,0.12)' },
+    proposed:    { label: 'Proposta',    color: 'var(--accent-400)', bg: 'rgba(200,164,74,.12)' },
     negotiating: { label: 'Negociando',  color: 'var(--warning)',    bg: 'rgba(251,191,36,0.12)' },
     accepted:    { label: 'Aceita',      color: 'var(--success)',    bg: 'rgba(34,197,94,0.12)' },
     active:      { label: 'Ativa',       color: 'var(--success)',    bg: 'rgba(34,197,94,0.12)' },
@@ -242,7 +242,7 @@ export default function PartnershipChatPage() {
         <div style={{ minHeight: '100vh', color: T.text, fontFamily: 'var(--font-ui, var(--font-outfit, sans-serif))' }}>
             <style>{`
                 .pc-input::placeholder { color: ${T.textDim}; }
-                .pc-input:focus { outline: none; border-color: ${T.gold} !important; box-shadow: 0 0 0 3px rgba(61,111,255,0.10); }
+                .pc-input:focus { outline: none; border-color: ${T.gold} !important; box-shadow: 0 0 0 3px rgba(200,164,74,.10); }
                 .pc-btn:hover:not(:disabled) { opacity: 0.85; }
                 .pc-action:hover:not(:disabled) { filter: brightness(1.1); }
                 .pc-back:hover { background: ${T.hover} !important; }

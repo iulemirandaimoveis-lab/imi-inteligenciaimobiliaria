@@ -641,8 +641,8 @@ export default function QRGeneratorPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleGenerate}
                 disabled={loading || !selectedDev}
-                className="w-full h-14 rounded-[6px] text-white font-bold text-base flex items-center justify-center gap-2.5 transition-all disabled:opacity-40"
-                style={{ background: T.accent }}
+                className="w-full h-14 rounded-[6px] font-bold text-base flex items-center justify-center gap-2.5 transition-all disabled:opacity-40"
+                style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
             >
                 {loading ? <Loader2 size={20} className="animate-spin" /> : <Sparkles size={20} />}
                 {loading ? 'Gerando...' : 'Gerar Link + QR Code'}

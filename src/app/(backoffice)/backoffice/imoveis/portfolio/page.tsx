@@ -22,10 +22,10 @@ const DT = {
   bg:       'var(--bg-base)',
   surface:  'var(--bg-surface)',
   elevated: 'var(--bg-elevated)',
-  border:   'rgba(61,111,255,0.15)',
-  borderHi: 'rgba(61,111,255,0.35)',
+  border:   'rgba(200,164,74,.15)',
+  borderHi: 'rgba(200,164,74,.35)',
   gold:     'var(--accent-400)',
-  goldBg:   'rgba(61,111,255,0.08)',
+  goldBg:   'rgba(200,164,74,.08)',
   text:     'var(--text-primary)',
   textSub:  'var(--text-secondary)',
   textDim:  'var(--text-tertiary)',
@@ -37,7 +37,7 @@ const DT = {
 const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
   disponivel:    { label: 'Disponível',  color: 'var(--success)', bg: 'rgba(93,184,135,0.12)' },
   publicado:     { label: 'Publicado',   color: 'var(--success)', bg: 'rgba(93,184,135,0.12)' },
-  lancamento:    { label: 'Lançamento',  color: 'var(--accent-400)', bg: 'rgba(61,111,255,0.12)'  },
+  lancamento:    { label: 'Lançamento',  color: 'var(--accent-400)', bg: 'rgba(200,164,74,.12)'  },
   em_construcao: { label: 'Construção',  color: 'var(--warning)', bg: 'rgba(212,145,58,0.12)'  },
   reservado:     { label: 'Reservado',   color: '#A78BFA', bg: 'rgba(167,139,250,0.12)' },
   vendido:       { label: 'Vendido',     color: 'var(--text-secondary)', bg: 'rgba(159,170,184,0.10)' },
@@ -168,10 +168,10 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
   return (
     <div style={{ minHeight: '100vh', background: DT.bg, color: DT.text, fontFamily: 'var(--font-outfit, sans-serif)' }}>
       <style suppressHydrationWarning>{`
-        .desk-row:hover { background: rgba(61,111,255,0.04) !important; }
-        .desk-action-btn:hover { background: rgba(61,111,255,0.14) !important; color: var(--accent-400) !important; }
+        .desk-row:hover { background: rgba(200,164,74,.04) !important; }
+        .desk-action-btn:hover { background: rgba(200,164,74,.14) !important; color: var(--accent-400) !important; }
         .desk-new-btn:hover { background: #b8943e !important; }
-        .desk-kpi:hover { border-color: rgba(61,111,255,0.35) !important; transform: translateY(-1px); }
+        .desk-kpi:hover { border-color: rgba(200,164,74,.35) !important; transform: translateY(-1px); }
         .desk-kpi { transition: border-color 0.2s, transform 0.2s; }
       `}</style>
 
@@ -419,7 +419,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                           <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none' }}>
                             <button className="desk-action-btn" style={{
                               display: 'flex', alignItems: 'center', gap: 5,
-                              background: 'rgba(61,111,255,0.06)',
+                              background: 'rgba(200,164,74,.06)',
                               border: `1px solid ${DT.border}`,
                               borderRadius: 6, padding: '5px 10px',
                               cursor: 'pointer', color: DT.textSub,
@@ -434,7 +434,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                           <Link href={`/backoffice/imoveis/${p.id}/editar`} style={{ textDecoration: 'none' }}>
                             <button className="desk-action-btn" style={{
                               display: 'flex', alignItems: 'center', gap: 5,
-                              background: 'rgba(61,111,255,0.06)',
+                              background: 'rgba(200,164,74,.06)',
                               border: `1px solid ${DT.border}`,
                               borderRadius: 6, padding: '5px 10px',
                               cursor: 'pointer', color: DT.textSub,

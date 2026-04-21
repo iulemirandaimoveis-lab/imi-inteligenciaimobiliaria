@@ -159,7 +159,7 @@ export default function PropostasPage() {
                   <p>Nenhuma proposta ainda.</p>
                   <button
                     onClick={() => router.push('/backoffice/propostas/nova')}
-                    style={{ marginTop: 12, padding: '8px 20px', background: T.accent, border: 'none', borderRadius: T.radius.md, color: 'var(--text-inverse)', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
+                    style={{ marginTop: 12, padding: '8px 20px', background: 'var(--btn-primary-bg)', border: 'none', borderRadius: T.radius.md, color: 'var(--btn-primary-text)', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
                   >
                     Criar Primeira Proposta
                   </button>

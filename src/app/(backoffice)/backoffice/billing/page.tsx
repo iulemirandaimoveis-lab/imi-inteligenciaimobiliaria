@@ -113,8 +113,8 @@ export default function BillingPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.08 }}
                                 style={{
-                                    background: plan.highlight ? 'rgba(61,111,255,0.06)' : 'var(--bg-surface)',
-                                    border: `1px solid ${plan.highlight ? 'rgba(61,111,255,0.3)' : 'var(--border-default)'}`,
+                                    background: plan.highlight ? 'rgba(200,164,74,.06)' : 'var(--bg-surface)',
+                                    border: `1px solid ${plan.highlight ? 'rgba(200,164,74,.30)' : 'var(--border-default)'}`,
                                     borderRadius: '6px',
                                     padding: '28px 24px',
                                     position: 'relative',
@@ -134,7 +134,7 @@ export default function BillingPage() {
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                                     <div style={{
                                         width: 40, height: 40, borderRadius: '6px',
-                                        background: plan.highlight ? 'rgba(61,111,255,0.12)' : 'rgba(255,255,255,0.05)',
+                                        background: plan.highlight ? 'rgba(200,164,74,.12)' : 'rgba(255,255,255,0.05)',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     }}>
                                         <Icon size={18} style={{ color: plan.highlight ? 'var(--accent-400)' : 'var(--text-secondary)' }} />

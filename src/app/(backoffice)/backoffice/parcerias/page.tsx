@@ -23,7 +23,7 @@ const STATUS_CFG: Record<
     Partnership['status'],
     { label: string; color: string; bg: string }
 > = {
-    proposed:    { label: 'Proposta',    color: 'var(--accent-400)', bg: 'rgba(61,111,255,0.12)' },
+    proposed:    { label: 'Proposta',    color: 'var(--accent-400)', bg: 'rgba(200,164,74,.12)' },
     negotiating: { label: 'Negociando',  color: 'var(--warning)',    bg: 'rgba(251,191,36,0.12)' },
     accepted:    { label: 'Aceita',      color: 'var(--success)',    bg: 'rgba(34,197,94,0.12)' },
     active:      { label: 'Ativa',       color: 'var(--success)',    bg: 'rgba(34,197,94,0.12)' },
@@ -363,7 +363,7 @@ function NewPartnershipModal({
                         onClick={handleSubmit}
                         disabled={submitting || !message.trim() || loadingPrice}
                         className="h-9 px-5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 disabled:opacity-50"
-                        style={{ background: 'var(--gold, #C8A44A)', color: '#0B1928', cursor: submitting ? 'wait' : 'pointer' }}
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', cursor: submitting ? 'wait' : 'pointer' }}
                     >
                         {submitting ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
                         Enviar Proposta

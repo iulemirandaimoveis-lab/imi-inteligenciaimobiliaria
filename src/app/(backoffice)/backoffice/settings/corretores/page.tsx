@@ -44,7 +44,7 @@ export default function CorretoresPage() {
                 actions={
                     <Link href="/backoffice/settings/corretores/novo"
                         className="bo-btn bo-btn-primary"
-                        style={{ background: T.accent }}>
+                        style={{ background: 'var(--btn-primary-bg)' }}>
                         <Plus size={16} /> Novo Corretor
                     </Link>
                 }

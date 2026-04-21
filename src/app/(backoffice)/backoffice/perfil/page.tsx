@@ -205,7 +205,7 @@ export default function PerfilPage() {
                         onClick={handleSave}
                         disabled={saving}
                         className="flex items-center gap-2 h-10 px-5 rounded-lg text-sm font-semibold"
-                        style={{ background: T.accent, color: '#0B1928' }}
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                         Salvar
@@ -335,7 +335,7 @@ export default function PerfilPage() {
                         <div className="flex gap-2">
                             <button onClick={handleChangePassword} disabled={changingPassword}
                                 className="flex items-center gap-2 h-9 px-4 rounded-lg text-xs font-semibold"
-                                style={{ background: T.accent, color: '#0B1928' }}>
+                                style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
                                 {changingPassword ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
                                 Alterar
                             </button>

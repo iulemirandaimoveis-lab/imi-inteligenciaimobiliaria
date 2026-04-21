@@ -137,8 +137,8 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             display: 'inline-block',
                             padding: '5px 14px',
                             borderRadius: 6,
-                            background: 'rgba(61,111,255,0.10)',
-                            border: '1px solid rgba(61,111,255,0.28)',
+                            background: 'rgba(200,164,74,.10)',
+                            border: '1px solid rgba(200,164,74,.28)',
                             fontFamily: 'var(--font-outfit, sans-serif)',
                             fontSize: 11,
                             fontWeight: 700,
@@ -160,7 +160,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             top: 20,
                             bottom: 20,
                             width: 1,
-                            background: 'rgba(61,111,255,0.12)',
+                            background: 'rgba(200,164,74,.12)',
                             zIndex: 0,
                         }} />
 
@@ -203,7 +203,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                             background: 'var(--bg-elevated)',
                                             borderRadius: 6,
                                             padding: 14,
-                                            border: '1px solid rgba(61,111,255,0.12)',
+                                            border: '1px solid rgba(200,164,74,.12)',
                                         }}>
                                             {/* Event type badge */}
                                             <span style={{
@@ -276,14 +276,14 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             width: 64,
                             height: 64,
                             borderRadius: 6,
-                            background: 'rgba(61,111,255,0.06)',
-                            border: '1px solid rgba(61,111,255,0.15)',
+                            background: 'rgba(200,164,74,.06)',
+                            border: '1px solid rgba(200,164,74,.15)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             marginBottom: 16,
                         }}>
-                            <Building2 size={28} style={{ color: 'rgba(61,111,255,0.35)' }} />
+                            <Building2 size={28} style={{ color: 'rgba(200,164,74,.35)' }} />
                         </div>
                         <div style={{
                             fontFamily: 'var(--font-playfair, serif)',
@@ -328,7 +328,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                     fontSize: 13,
                     fontWeight: 700,
                     letterSpacing: '0.3px',
-                    boxShadow: '0 4px 20px rgba(61,111,255,0.35)',
+                    boxShadow: '0 4px 20px rgba(200,164,74,.35)',
                     zIndex: 50,
                 }}
             >
@@ -376,8 +376,8 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                 subtitle="Histórico completo de eventos do ativo imobiliário"
                 actions={
                     <button
-                        className="h-10 px-5 rounded-[6px] font-semibold text-sm flex items-center gap-2 text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        style={{ background: T.accent }}
+                        className="h-10 px-5 rounded-[6px] font-semibold text-sm flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         <Plus size={16} />
                         Registrar Evento

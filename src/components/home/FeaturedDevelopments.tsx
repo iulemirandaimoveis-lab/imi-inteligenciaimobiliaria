@@ -117,7 +117,7 @@ function FeaturedCard({
                             )}
                         </div>
                         <div className="w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full border backdrop-blur-sm transition-all duration-300 group-hover:scale-110"
-                            style={{ background: 'rgba(61,111,255,0.15)', borderColor: 'rgba(61,111,255,0.3)' }}>
+                            style={{ background: 'rgba(200,164,74,.15)', borderColor: 'rgba(200,164,74,.30)' }}>
                             <ArrowRight size={13} className="text-white transition-transform duration-300 group-hover:translate-x-0.5" />
                         </div>
                     </div>

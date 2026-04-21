@@ -228,7 +228,7 @@ export default function FornecedoresPage() {
                 display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px',
                 borderRadius: 6, fontSize: 12, fontWeight: countryFilter === c.id ? 600 : 400,
                 border: countryFilter === c.id ? '1.5px solid var(--accent-400)' : `1.5px solid ${T.borderLight}`,
-                background: countryFilter === c.id ? 'rgba(61,111,255,0.10)' : 'transparent',
+                background: countryFilter === c.id ? 'rgba(200,164,74,.10)' : 'transparent',
                 color: countryFilter === c.id ? 'var(--accent-400)' : T.textDim,
                 cursor: 'pointer',
               }}
@@ -278,7 +278,7 @@ export default function FornecedoresPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ fontSize: 14, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{dev.name}</span>
                     {dev.stock_ticker && (
-                      <span style={{ fontSize: 10, color: 'var(--accent-400)', background: 'rgba(61,111,255,0.10)', padding: '1px 6px', borderRadius: 4, fontWeight: 600 }}>
+                      <span style={{ fontSize: 10, color: 'var(--accent-400)', background: 'rgba(200,164,74,.10)', padding: '1px 6px', borderRadius: 4, fontWeight: 600 }}>
                         {dev.stock_ticker}
                       </span>
                     )}
@@ -305,7 +305,7 @@ export default function FornecedoresPage() {
                 {(dev.segment ?? []).slice(0, 3).map(s => (
                   <span key={s} style={{
                     fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600,
-                    color: 'var(--accent-400)', background: 'rgba(61,111,255,0.08)',
+                    color: 'var(--accent-400)', background: 'rgba(200,164,74,.08)',
                   }}>
                     {SEGMENTS[s] || s}
                   </span>

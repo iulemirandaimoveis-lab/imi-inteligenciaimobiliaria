@@ -315,8 +315,8 @@ export default function NovoProjetoPage() {
                 {currentStep < steps.length - 1 ? (
                     <button
                         onClick={() => setCurrentStep(currentStep + 1)}
-                        className="h-11 px-6 text-white rounded-[6px] text-sm font-medium transition-colors"
-                        style={{ background: T.accent }}
+                        className="h-11 px-6 rounded-[6px] text-sm font-medium transition-colors"
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         Próximo
                     </button>
@@ -324,8 +324,8 @@ export default function NovoProjetoPage() {
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold transition-all hover:brightness-110 disabled:opacity-60"
-                        style={{ background: T.accent }}
+                        className="flex items-center gap-2 h-11 px-6 rounded-[6px] text-sm font-semibold transition-all hover:brightness-110 disabled:opacity-60"
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         <Save size={16} />
                         {isSubmitting ? 'Salvando...' : 'Salvar Projeto'}

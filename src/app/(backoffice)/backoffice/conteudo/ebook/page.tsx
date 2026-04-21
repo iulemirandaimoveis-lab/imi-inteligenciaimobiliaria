@@ -421,7 +421,7 @@ export default function EbookPage() {
                                         />
                                         <button onClick={addPonto}
                                             className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
-                                            style={{ background: T.accent, color: 'var(--text-inverse)' }}
+                                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                                         >
                                             <Plus size={14} />
                                         </button>

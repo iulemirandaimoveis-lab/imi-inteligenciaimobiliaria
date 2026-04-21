@@ -167,7 +167,7 @@ export default function NovoUsuarioPage() {
                             type="submit"
                             disabled={loading}
                             className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
-                            style={{ background: T.accent }}>
+                            style={{ background: 'var(--btn-primary-bg)' }}>
                             {loading && <Loader2 size={15} className="animate-spin" />}
                             {loading ? 'Enviando convite...' : 'Convidar Usuário'}
                         </button>

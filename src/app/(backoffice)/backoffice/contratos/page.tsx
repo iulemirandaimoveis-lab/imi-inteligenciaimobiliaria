@@ -108,7 +108,7 @@ export default function ContratosPage() {
                             style={{
                                 height: '44px',
                                 background: 'var(--accent-400)',
-                                boxShadow: '0 4px 14px rgba(61,111,255,0.28)',
+                                boxShadow: '0 4px 14px rgba(200,164,74,.28)',
                                 border: 'none',
                             }}
                         >
@@ -322,7 +322,7 @@ export default function ContratosPage() {
                                         style={{
                                             height: '44px',
                                             background: 'var(--accent-400)',
-                                            boxShadow: '0 4px 14px rgba(61,111,255,0.22)',
+                                            boxShadow: '0 4px 14px rgba(200,164,74,.22)',
                                             border: 'none',
                                         }}
                                     >

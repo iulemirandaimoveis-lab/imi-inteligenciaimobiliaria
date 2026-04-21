@@ -208,8 +208,8 @@ export default function TrackingDashboardPage() {
                         <div className="flex gap-2">
                             <Link
                                 href="/backoffice/tracking/qr"
-                                className="h-10 px-4 rounded-[6px] text-xs font-semibold flex items-center gap-2 text-white transition-all hover:opacity-90"
-                                style={{ background: T.accent }}
+                                className="h-10 px-4 rounded-[6px] text-xs font-semibold flex items-center gap-2 transition-all hover:opacity-90"
+                                style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                             >
                                 <QrCode size={14} /> Gerar QR Code
                             </Link>

@@ -92,7 +92,7 @@ const S = {
         padding: '9px 12px', fontSize: 13, color: 'var(--text-primary)', fontFamily: 'inherit', outline: 'none', width: '100%',
     },
     btn: {
-        width: '100%', padding: '11px', background: 'var(--accent-400)', color: 'var(--navy,#0B1928)',
+        width: '100%', padding: '11px', background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)',
         border: 'none', borderRadius: 'var(--r-sm,4px)', fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
         cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase' as const,
     },

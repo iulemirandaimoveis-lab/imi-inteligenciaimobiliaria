@@ -447,8 +447,8 @@ export default function CanaisPage() {
                         style={{
                             display: 'flex', alignItems: 'center', gap: 8,
                             padding: '9px 16px', borderRadius: 8,
-                            border: 'none', background: T.accent,
-                            color: '#000', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                            border: 'none', background: 'var(--btn-primary-bg)',
+                            color: 'var(--btn-primary-text)', fontSize: 13, fontWeight: 600, cursor: 'pointer',
                         }}
                     >
                         <Plus size={14} />
@@ -552,8 +552,8 @@ export default function CanaisPage() {
                             style={{
                                 display: 'flex', alignItems: 'center', gap: 8,
                                 padding: '10px 20px', borderRadius: 8,
-                                border: 'none', background: T.accent,
-                                color: '#000', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                border: 'none', background: 'var(--btn-primary-bg)',
+                                color: 'var(--btn-primary-text)', fontSize: 13, fontWeight: 600, cursor: 'pointer',
                             }}
                         >
                             <Plus size={14} />

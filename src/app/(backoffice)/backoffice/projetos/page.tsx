@@ -103,8 +103,8 @@ export default function ProjetosPage() {
                 subtitle="Portfólio de desenvolvimentos ativos"
                 actions={
                     <button onClick={() => setShowModal(true)}
-                        className="flex items-center gap-2 h-11 px-5 text-white rounded-[6px] text-sm font-semibold hover:brightness-110 transition"
-                        style={{ background: T.accent }}>
+                        className="flex items-center gap-2 h-11 px-5 rounded-[6px] text-sm font-semibold hover:brightness-110 transition"
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
                         <Plus size={16} /> Novo Projeto
                     </button>
                 }
@@ -172,8 +172,8 @@ export default function ProjetosPage() {
                         <h3 className="text-lg font-semibold mb-2" style={{ color: T.text }}>Nenhum projeto encontrado</h3>
                         <p className="text-sm mb-6" style={{ color: T.textMuted }}>Crie um novo projeto para começar</p>
                         <button onClick={() => setShowModal(true)}
-                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-[6px] text-sm font-semibold hover:brightness-110 transition"
-                            style={{ background: T.accent }}>
+                            className="inline-flex items-center gap-2 h-11 px-6 rounded-[6px] text-sm font-semibold hover:brightness-110 transition"
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
                             <Plus size={16} /> Novo Projeto
                         </button>
                     </div>
@@ -352,8 +352,8 @@ export default function ProjetosPage() {
                                 Cancelar
                             </button>
                             <button onClick={handleCreate} disabled={saving || !form.nome}
-                                className="flex-1 h-11 text-white rounded-[6px] font-semibold hover:brightness-110 transition disabled:opacity-40"
-                                style={{ background: T.accent }}>
+                                className="flex-1 h-11 rounded-[6px] font-semibold hover:brightness-110 transition disabled:opacity-40"
+                                style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
                                 {saving ? <Loader2 className="animate-spin mx-auto" size={20} /> : 'Criar Projeto'}
                             </button>
                         </div>

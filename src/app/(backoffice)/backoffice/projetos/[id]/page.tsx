@@ -205,8 +205,8 @@ export default function ProjetoDetalhePage() {
 
                         <button
                             onClick={() => router.push(`/backoffice/projetos/${params.id}/editar`)}
-                            className="flex items-center gap-2 h-11 px-6 text-white rounded-[6px] font-semibold transition-all hover:brightness-110"
-                            style={{ background: T.accent }}
+                            className="flex items-center gap-2 h-11 px-6 rounded-[6px] font-semibold transition-all hover:brightness-110"
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                         >
                             <Edit size={16} />
                             Editar

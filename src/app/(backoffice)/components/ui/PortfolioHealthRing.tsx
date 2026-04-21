@@ -50,7 +50,7 @@ function gradeColor(g: HealthGrade): string {
 }
 
 function gradeBg(g: HealthGrade): string {
-  if (g === 'A+' || g === 'A') return 'rgba(61,111,255,0.12)'
+  if (g === 'A+' || g === 'A') return 'rgba(200,164,74,.12)'
   if (g === 'B+' || g === 'B') return 'var(--info-bg)'
   if (g === 'C') return 'var(--warning-bg)'
   return 'var(--error-bg)'

@@ -68,14 +68,14 @@ export function FeatureGate({ tier, children, featureName }: FeatureGateProps) {
             }}>
                 <div style={{
                     background: 'var(--bg-surface, #1a1a1a)',
-                    border: '1px solid rgba(61,111,255,0.25)',
+                    border: '1px solid rgba(200,164,74,.25)',
                     borderRadius: '16px', padding: '20px 24px',
                     textAlign: 'center', maxWidth: '280px',
                     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
                 }}>
                     <div style={{
                         width: 40, height: 40, borderRadius: '10px',
-                        background: 'rgba(61,111,255,0.12)',
+                        background: 'rgba(200,164,74,.12)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         margin: '0 auto 12px',
                     }}>

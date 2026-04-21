@@ -103,7 +103,7 @@ export default function OKRsListPage() {
           <Link
             href="/backoffice/metas/okrs/novo"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
-            style={{ background: T.accent, color: '#0B1928' }}
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             <Plus className="w-4 h-4" />
             Novo OKR
@@ -155,7 +155,7 @@ export default function OKRsListPage() {
           <Link
             href="/backoffice/metas/okrs/novo"
             className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg text-sm font-medium"
-            style={{ background: T.accent, color: '#0B1928' }}
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             <Plus className="w-4 h-4" />
             Novo OKR

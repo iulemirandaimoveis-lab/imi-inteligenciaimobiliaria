@@ -159,7 +159,7 @@ export function ValuationEngine({
             height: 16,
             borderRadius: '50%',
             background: 'radial-gradient(circle at 40% 35%, var(--accent-300), var(--accent-400))',
-            boxShadow: '0 0 6px rgba(61,111,255,0.4)',
+            boxShadow: '0 0 6px rgba(200,164,74,.35)',
             flexShrink: 0,
           }}
         />
@@ -247,7 +247,7 @@ export function ValuationEngine({
                   borderRadius: '50%',
                   background: 'var(--accent-400)',
                   border: '2px solid var(--bg-surface)',
-                  boxShadow: 'var(--shadow-gold, 0 0 8px rgba(61,111,255,0.5))',
+                  boxShadow: 'var(--shadow-gold, 0 0 8px rgba(200,164,74,.40))',
                   zIndex: 1,
                 }}
               />
