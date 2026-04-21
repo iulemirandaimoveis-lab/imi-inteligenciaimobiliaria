@@ -288,7 +288,7 @@ export default function OrganizacaoPage() {
 
   return (
     <div style={{ maxWidth: 800, paddingBottom: 100 }}>
-      <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 8, fontSize: 12, background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.15)', color: 'var(--text-secondary)' }}>
+      <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 8, fontSize: 12, background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)', color: 'var(--text-secondary)' }}>
         Para gerenciar corretores e equipe, acesse{' '}
         <a href="/backoffice/equipe" style={{ color: 'var(--accent-400)', fontWeight: 700, textDecoration: 'underline' }}>Equipe</a>
       </div>

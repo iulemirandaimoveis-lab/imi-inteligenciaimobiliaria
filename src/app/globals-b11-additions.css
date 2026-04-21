@@ -26,13 +26,13 @@
   /* ── Legacy blue aliases → DS3 gold (accent migration) ── */
   --imi-blue:        var(--imi-gold-500);
   --imi-blue-bright: var(--imi-gold-500);
-  --imi-blue-dim:    rgba(184,148,58,0.10);
-  --imi-blue-border: rgba(184,148,58,0.25);
+  --imi-blue-dim:    rgba(200,164,74,0.10);
+  --imi-blue-border: rgba(200,164,74,0.25);
 
   /* AI Gold — insight cards, premium actions */
   --imi-ai-gold:   var(--imi-gold-500);
-  --imi-ai-bg:     rgba(184,148,58,0.10);
-  --imi-ai-border: rgba(184,148,58,0.25);
+  --imi-ai-bg:     rgba(200,164,74,0.10);
+  --imi-ai-border: rgba(200,164,74,0.25);
 
   /* AI Green — live, active states */
   --imi-ai-green:    var(--success);
@@ -180,8 +180,8 @@
 /* ── PREMIUM CARD VARIANTS ─────────────────────────────────── */
 /* AI / featured card — gold accent */
 .intel-card-ai {
-  background: linear-gradient(135deg, rgba(184,148,58,0.06) 0%, var(--bg-surface) 50%);
-  border: 1px solid rgba(184,148,58,0.22);
+  background: linear-gradient(135deg, rgba(200,164,74,0.06) 0%, var(--bg-surface) 50%);
+  border: 1px solid rgba(200,164,74,0.22);
   border-radius: var(--r-xl, 16px);
   transition: all var(--dur-3, 280ms) var(--ease);
   overflow: hidden;
@@ -190,8 +190,8 @@
 }
 
 .intel-card-ai:hover {
-  border-color: rgba(184,148,58,0.38);
-  box-shadow: 0 0 32px rgba(184,148,58,0.10), 0 8px 24px rgba(0,0,0,0.15);
+  border-color: rgba(200,164,74,0.38);
+  box-shadow: 0 0 32px rgba(200,164,74,0.10), 0 8px 24px rgba(0,0,0,0.15);
   transform: translateY(-1px);
 }
 
@@ -231,7 +231,7 @@
 .glow-cold { box-shadow: 0 0 10px rgba(26,78,138,0.40),   0 0 24px rgba(26,78,138,0.15); }
 .glow-blue { box-shadow: 0 0 12px rgba(61,81,138,0.38),   0 0 32px rgba(61,81,138,0.12); }
 .glow-ai   { box-shadow: 0 0 10px rgba(26,122,74,0.38),   0 0 24px rgba(26,122,74,0.12); }
-.glow-gold { box-shadow: 0 0 10px rgba(184,148,58,0.40),  0 0 24px rgba(184,148,58,0.15); }
+.glow-gold { box-shadow: 0 0 10px rgba(200,164,74,0.40),  0 0 24px rgba(200,164,74,0.15); }
 
 /* ── LIVE INDICATOR ────────────────────────────────────────── */
 .live-dot {
@@ -470,11 +470,11 @@
   border-radius: 16px 16px 0 0;
 }
 :root .premium-card::before {
-  background: rgba(184,148,58,0.12);
+  background: rgba(200,164,74,0.12);
 }
 
 .premium-card:hover {
-  border-color: rgba(184,148,58,0.28);
+  border-color: rgba(200,164,74,0.28);
   box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.07);
   transform: translateY(-1px);
 }
@@ -492,7 +492,7 @@
 }
 
 .stat-surface:hover {
-  border-color: rgba(184,148,58,0.22);
+  border-color: rgba(200,164,74,0.22);
   box-shadow: var(--bo-card-shadow);
 }
 
@@ -531,7 +531,7 @@
 
 .btn-premium:hover {
   filter: brightness(1.10);
-  box-shadow: 0 4px 16px rgba(184,148,58,0.32), 0 0 0 1px rgba(255,255,255,0.10) inset;
+  box-shadow: 0 4px 16px rgba(200,164,74,0.32), 0 0 0 1px rgba(255,255,255,0.10) inset;
   transform: translateY(-1px);
 }
 
@@ -588,7 +588,7 @@
 
 .input-precision:focus {
   border-color: var(--imi-gold-500);
-  box-shadow: 0 0 0 3px rgba(184,148,58,0.14);
+  box-shadow: 0 0 0 3px rgba(200,164,74,0.14);
 }
 
 /* ── SECTION DIVIDER PRECISION ───────────────────────────────── */

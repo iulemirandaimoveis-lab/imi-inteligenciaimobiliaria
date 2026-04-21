@@ -54,7 +54,7 @@ export default function MotorAvaliacoesPage() {
     <div style={{ minHeight: '100vh', color: T.text, fontFamily: 'var(--font-ui, var(--font-outfit, sans-serif))' }}>
       <style>{`
         .mi::placeholder { color: ${T.textDim}; }
-        .mi:focus { outline: none; border-color: ${T.gold} !important; box-shadow: 0 0 0 3px rgba(184,148,58,0.12); }
+        .mi:focus { outline: none; border-color: ${T.gold} !important; box-shadow: 0 0 0 3px rgba(200,164,74,0.12); }
         .mq:hover { border-color: ${T.gold} !important; background: ${T.goldBg} !important; color: ${T.text} !important; }
         .mq:hover .mqi { color: ${T.gold} !important; }
         .md:hover { background: ${T.errorBg}; border-color: rgba(239,68,68,0.3) !important; color: ${T.error} !important; }

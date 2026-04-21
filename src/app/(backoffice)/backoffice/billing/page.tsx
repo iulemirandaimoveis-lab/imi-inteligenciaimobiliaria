@@ -123,7 +123,7 @@ export default function BillingPage() {
                                 {plan.highlight && (
                                     <div style={{
                                         position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
-                                        background: 'var(--accent-400)', color: '#000',
+                                        background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)',
                                         fontSize: '11px', fontWeight: 800, padding: '4px 14px', borderRadius: '6px',
                                         letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap',
                                     }}>

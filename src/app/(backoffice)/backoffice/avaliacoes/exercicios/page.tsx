@@ -1060,7 +1060,7 @@ export default function ExerciciosPage() {
             <span className="text-xs px-2 py-0.5 rounded-[6px]" style={{ background: T.elevated, color: T.textMuted }}>{current.categoria}</span>
             <span className="text-xs px-2 py-0.5 rounded-[6px]" style={{ background: T.elevated, color: T.textMuted }}>{NIVEIS[current.nivel]}</span>
             {current.normaRef && (
-              <span className="text-xs px-2 py-0.5 rounded-[6px] font-mono" style={{ background: 'rgba(184,148,58,0.12)', color: 'var(--accent-400, #C8A44A)' }}>
+              <span className="text-xs px-2 py-0.5 rounded-[6px] font-mono" style={{ background: 'rgba(200,164,74,0.12)', color: 'var(--accent-400, #C8A44A)' }}>
                 {current.normaRef}
               </span>
             )}
@@ -1103,7 +1103,7 @@ export default function ExerciciosPage() {
           </div>
 
           {revealed && (
-            <div className="p-4 rounded-lg text-sm" style={{ background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.20)' }}>
+            <div className="p-4 rounded-lg text-sm" style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.20)' }}>
               <p className="font-semibold mb-1" style={{ color: 'var(--accent-400, #C8A44A)' }}>Explicação</p>
               <p style={{ color: T.textMuted }}>{current.explicacao}</p>
             </div>
@@ -1139,7 +1139,7 @@ export default function ExerciciosPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, bg: 'rgba(184,148,58,0.12)', color: 'var(--accent-400, #C8A44A)' },
+          { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, bg: 'rgba(200,164,74,0.12)', color: 'var(--accent-400, #C8A44A)' },
           { label: 'Categorias', value: CATEGORIAS.length, icon: Target, bg: 'rgba(0,214,143,0.12)', color: 'var(--success)' },
           { label: 'IA Ilimitada', value: '∞', icon: Sparkles, bg: 'rgba(245,158,11,0.12)', color: 'var(--warning)' },
         ].map(item => {
@@ -1259,7 +1259,7 @@ export default function ExerciciosPage() {
                   <div className="space-y-3 p-3 rounded-lg" style={{ background: T.elevated }}>
                     <p className="text-sm font-medium" style={{ color: T.text }}>{parsed.pergunta}</p>
                     {parsed.normaRef && (
-                      <span className="inline-block text-xs px-2 py-0.5 rounded font-mono" style={{ background: 'rgba(184,148,58,0.12)', color: 'var(--accent-400, #C8A44A)' }}>
+                      <span className="inline-block text-xs px-2 py-0.5 rounded font-mono" style={{ background: 'rgba(200,164,74,0.12)', color: 'var(--accent-400, #C8A44A)' }}>
                         {parsed.normaRef}
                       </span>
                     )}
@@ -1272,7 +1272,7 @@ export default function ExerciciosPage() {
                         {i === parsed.correta && <CheckCircle size={12} style={{ color: 'var(--success)' }} />}
                       </div>
                     ))}
-                    <div className="p-2 rounded text-xs" style={{ background: 'rgba(184,148,58,0.08)', border: '1px solid rgba(184,148,58,0.15)', color: T.textMuted }}>
+                    <div className="p-2 rounded text-xs" style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)', color: T.textMuted }}>
                       {parsed.explicacao}
                     </div>
                   </div>

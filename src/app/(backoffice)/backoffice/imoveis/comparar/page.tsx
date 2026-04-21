@@ -104,11 +104,11 @@ function EmptyState() {
     }}>
       <div style={{
         width: 80, height: 80, borderRadius: 6,
-        background: 'rgba(184,148,58,0.06)',
-        border: '1px solid rgba(184,148,58,0.18)',
+        background: 'rgba(200,164,74,0.06)',
+        border: '1px solid rgba(200,164,74,0.18)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        <Scale size={36} style={{ color: 'rgba(184,148,58,0.35)' }} />
+        <Scale size={36} style={{ color: 'rgba(200,164,74,0.35)' }} />
       </div>
       <div>
         <p style={{
@@ -215,11 +215,11 @@ function MobileComparar() {
         }}>
           <div style={{
             width: 80, height: 80, borderRadius: 6,
-            background: 'rgba(184,148,58,0.06)',
-            border: '1px solid rgba(184,148,58,0.18)',
+            background: 'rgba(200,164,74,0.06)',
+            border: '1px solid rgba(200,164,74,0.18)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Plus size={36} style={{ color: 'rgba(184,148,58,0.35)' }} />
+            <Plus size={36} style={{ color: 'rgba(200,164,74,0.35)' }} />
           </div>
           <div>
             <p style={{ fontFamily: 'var(--font-playfair, "Libre Baskerville", serif)', fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>
@@ -257,7 +257,7 @@ function MobileComparar() {
       <div style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
         height: 56, background: 'var(--bg-elevated)',
-        borderBottom: '1px solid rgba(184,148,58,0.15)',
+        borderBottom: '1px solid rgba(200,164,74,0.15)',
         display: 'flex', alignItems: 'center', paddingLeft: 4, paddingRight: 16, gap: 4,
       }}>
         <button
@@ -295,7 +295,7 @@ function MobileComparar() {
           }}>
             <div style={{
               width: 18, height: 18, borderRadius: '50%',
-              border: '2px solid rgba(184,148,58,0.2)',
+              border: '2px solid rgba(200,164,74,0.2)',
               borderTopColor: 'var(--accent-400)',
               animation: 'mob-spin 0.8s linear infinite',
             }} />
@@ -322,7 +322,7 @@ function MobileComparar() {
                 return (
                   <div key={p.id} style={{
                     background: 'var(--bg-elevated)',
-                    border: '1px solid rgba(184,148,58,0.15)',
+                    border: '1px solid rgba(200,164,74,0.15)',
                     borderRadius: 6, overflow: 'hidden',
                   }}>
                     {/* Card header with image + info */}
@@ -410,7 +410,7 @@ function MobileComparar() {
                     {/* Quick stats row */}
                     <div style={{
                       display: 'flex', gap: 0,
-                      borderTop: '1px solid rgba(184,148,58,0.08)', marginTop: 12,
+                      borderTop: '1px solid rgba(200,164,74,0.08)', marginTop: 12,
                     }}>
                       {[
                         { label: 'Valor', value: fmt(p.price) },
@@ -419,7 +419,7 @@ function MobileComparar() {
                       ].map((stat, si) => (
                         <div key={stat.label} style={{
                           flex: 1, padding: '10px 12px', textAlign: 'center',
-                          borderRight: si < 2 ? '1px solid rgba(184,148,58,0.08)' : 'none',
+                          borderRight: si < 2 ? '1px solid rgba(200,164,74,0.08)' : 'none',
                         }}>
                           <div style={{
                             fontSize: '11px', color: 'var(--text-tertiary)',
@@ -461,9 +461,9 @@ function MobileComparar() {
                   <div style={{
                     display: 'grid',
                     gridTemplateColumns: `100px repeat(${properties.length}, 1fr)`,
-                    background: 'rgba(184,148,58,0.04)',
+                    background: 'rgba(200,164,74,0.04)',
                     borderRadius: '4px 4px 0 0',
-                    border: '1px solid rgba(184,148,58,0.15)',
+                    border: '1px solid rgba(200,164,74,0.15)',
                     borderBottom: 'none',
                     overflow: 'hidden',
                   }}>
@@ -471,7 +471,7 @@ function MobileComparar() {
                     {properties.map((p, idx) => (
                       <div key={p.id} style={{
                         padding: '10px 10px',
-                        borderLeft: '1px solid rgba(184,148,58,0.08)',
+                        borderLeft: '1px solid rgba(200,164,74,0.08)',
                       }}>
                         <p style={{
                           fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)',
@@ -491,10 +491,10 @@ function MobileComparar() {
                       <div key={group}>
                         {/* Group header */}
                         <div style={{
-                          background: 'rgba(184,148,58,0.06)',
-                          borderLeft: '1px solid rgba(184,148,58,0.15)',
-                          borderRight: '1px solid rgba(184,148,58,0.15)',
-                          borderTop: '1px solid rgba(184,148,58,0.10)',
+                          background: 'rgba(200,164,74,0.06)',
+                          borderLeft: '1px solid rgba(200,164,74,0.15)',
+                          borderRight: '1px solid rgba(200,164,74,0.15)',
+                          borderTop: '1px solid rgba(200,164,74,0.10)',
                           padding: '8px 10px',
                         }}>
                           <span style={{
@@ -514,7 +514,7 @@ function MobileComparar() {
                               style={{
                                 display: 'grid',
                                 gridTemplateColumns: `100px repeat(${properties.length}, 1fr)`,
-                                border: '1px solid rgba(184,148,58,0.10)',
+                                border: '1px solid rgba(200,164,74,0.10)',
                                 borderTop: 'none',
                                 borderRadius: isLastRow ? '0 0 4px 4px' : 0,
                                 overflow: 'hidden',
@@ -523,8 +523,8 @@ function MobileComparar() {
                               {/* Row label */}
                               <div style={{
                                 padding: '10px 10px',
-                                background: 'rgba(184,148,58,0.015)',
-                                borderRight: '1px solid rgba(184,148,58,0.08)',
+                                background: 'rgba(200,164,74,0.015)',
+                                borderRight: '1px solid rgba(200,164,74,0.08)',
                                 display: 'flex', alignItems: 'center',
                               }}>
                                 <span style={{
@@ -549,8 +549,8 @@ function MobileComparar() {
                                     key={p.id}
                                     style={{
                                       padding: '10px 10px',
-                                      borderLeft: '1px solid rgba(184,148,58,0.05)',
-                                      background: isBest ? 'rgba(184,148,58,0.07)' : 'transparent',
+                                      borderLeft: '1px solid rgba(200,164,74,0.05)',
+                                      background: isBest ? 'rgba(200,164,74,0.07)' : 'transparent',
                                       display: 'flex', alignItems: 'center', gap: 4,
                                     }}
                                   >
@@ -588,7 +588,7 @@ function MobileComparar() {
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
         height: 72, background: 'var(--bg-elevated)',
-        borderTop: '1px solid rgba(184,148,58,0.15)',
+        borderTop: '1px solid rgba(200,164,74,0.15)',
         display: 'flex', alignItems: 'center',
         paddingLeft: 14, paddingRight: 14, gap: 12,
       }}>
@@ -597,7 +597,7 @@ function MobileComparar() {
           style={{
             flex: 1, height: 44, borderRadius: 6,
             background: 'transparent',
-            border: '1px solid rgba(184,148,58,0.25)',
+            border: '1px solid rgba(200,164,74,0.25)',
             color: 'var(--accent-400)',
             fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
             textTransform: 'uppercase', cursor: 'pointer',
@@ -694,22 +694,22 @@ function DesktopComparar() {
       {/* ── Header ───────────────────────────────────────── */}
       <header className="comparar-header" style={{
         padding: '20px 28px',
-        borderBottom: '1px solid rgba(184,148,58,0.12)',
+        borderBottom: '1px solid rgba(200,164,74,0.12)',
         background: 'var(--bg-surface, #162040)',
         position: 'relative', overflow: 'hidden',
       }}>
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
           backgroundImage: `
-            linear-gradient(rgba(184,148,58,0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(184,148,58,0.02) 1px, transparent 1px)
+            linear-gradient(rgba(200,164,74,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(200,164,74,0.02) 1px, transparent 1px)
           `,
           backgroundSize: '48px 48px',
         }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
             <Eyebrow>IMI</Eyebrow>
-            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
+            <span style={{ color: 'rgba(200,164,74,0.3)', fontSize: 11 }}>›</span>
             <Link href="/backoffice/imoveis">
               <span style={{
                 fontSize: '11px', fontWeight: 500, letterSpacing: '2px',
@@ -717,7 +717,7 @@ function DesktopComparar() {
                 fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
               }}>Imóveis</span>
             </Link>
-            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
+            <span style={{ color: 'rgba(200,164,74,0.3)', fontSize: 11 }}>›</span>
             <Eyebrow>Comparativo</Eyebrow>
           </div>
 
@@ -743,7 +743,7 @@ function DesktopComparar() {
                   display: 'flex', alignItems: 'center', gap: 6,
                   padding: '8px 14px', borderRadius: 6,
                   background: 'transparent',
-                  border: '1px solid rgba(184,148,58,0.25)',
+                  border: '1px solid rgba(200,164,74,0.25)',
                   color: 'var(--gold, var(--accent-400))',
                   fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px',
                   textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',
@@ -798,7 +798,7 @@ function DesktopComparar() {
         ) : (
           <div style={{
             background: 'var(--bg-surface, #162040)',
-            border: '1px solid rgba(184,148,58,0.18)',
+            border: '1px solid rgba(200,164,74,0.18)',
             borderRadius: 6, overflow: 'hidden',
             minWidth: 640,
           }}>
@@ -806,13 +806,13 @@ function DesktopComparar() {
             <div style={{
               display: 'grid',
               gridTemplateColumns: `200px repeat(${properties.length}, 1fr)`,
-              borderBottom: '1px solid rgba(184,148,58,0.15)',
+              borderBottom: '1px solid rgba(200,164,74,0.15)',
             }}>
               {/* Row label col header */}
               <div style={{
                 padding: '16px 20px',
-                borderRight: '1px solid rgba(184,148,58,0.08)',
-                background: 'rgba(184,148,58,0.03)',
+                borderRight: '1px solid rgba(200,164,74,0.08)',
+                background: 'rgba(200,164,74,0.03)',
               }} />
 
               {/* Property columns */}
@@ -824,8 +824,8 @@ function DesktopComparar() {
                     key={p.id}
                     style={{
                       padding: '16px',
-                      borderRight: idx < properties.length - 1 ? '1px solid rgba(184,148,58,0.08)' : 'none',
-                      background: 'rgba(184,148,58,0.02)',
+                      borderRight: idx < properties.length - 1 ? '1px solid rgba(200,164,74,0.08)' : 'none',
+                      background: 'rgba(200,164,74,0.02)',
                       display: 'flex', flexDirection: 'column', gap: 10, position: 'relative',
                     }}
                   >
@@ -922,9 +922,9 @@ function DesktopComparar() {
                   {/* Group header */}
                   <div style={{
                     padding: '10px 20px',
-                    background: 'rgba(184,148,58,0.05)',
-                    borderTop: '1px solid rgba(184,148,58,0.10)',
-                    borderBottom: '1px solid rgba(184,148,58,0.08)',
+                    background: 'rgba(200,164,74,0.05)',
+                    borderTop: '1px solid rgba(200,164,74,0.10)',
+                    borderBottom: '1px solid rgba(200,164,74,0.08)',
                   }}>
                     <Eyebrow>{group}</Eyebrow>
                   </div>
@@ -939,15 +939,15 @@ function DesktopComparar() {
                           display: 'grid',
                           gridTemplateColumns: `200px repeat(${properties.length}, 1fr)`,
                           borderBottom: ri < groupRows.length - 1
-                            ? '1px solid rgba(184,148,58,0.05)'
+                            ? '1px solid rgba(200,164,74,0.05)'
                             : 'none',
                         }}
                       >
                         {/* Row label */}
                         <div style={{
                           padding: '11px 20px',
-                          borderRight: '1px solid rgba(184,148,58,0.08)',
-                          background: 'rgba(184,148,58,0.015)',
+                          borderRight: '1px solid rgba(200,164,74,0.08)',
+                          background: 'rgba(200,164,74,0.015)',
                           display: 'flex', alignItems: 'center',
                         }}>
                           <span style={{
@@ -975,9 +975,9 @@ function DesktopComparar() {
                               style={{
                                 padding: '12px 16px',
                                 borderRight: pi < properties.length - 1
-                                  ? '1px solid rgba(184,148,58,0.05)' : 'none',
+                                  ? '1px solid rgba(200,164,74,0.05)' : 'none',
                                 background: isBest
-                                  ? 'rgba(184,148,58,0.07)'
+                                  ? 'rgba(200,164,74,0.07)'
                                   : 'transparent',
                                 display: 'flex', alignItems: 'center', gap: 6,
                                 transition: 'background 0.2s',
@@ -1012,7 +1012,7 @@ function DesktopComparar() {
             {properties.length < 5 && (
               <div style={{
                 padding: '16px 20px',
-                borderTop: '1px solid rgba(184,148,58,0.10)',
+                borderTop: '1px solid rgba(200,164,74,0.10)',
                 display: 'grid',
                 gridTemplateColumns: `200px repeat(${properties.length}, 1fr)`,
               }}>
@@ -1026,7 +1026,7 @@ function DesktopComparar() {
                       display: 'flex', alignItems: 'center', gap: 6,
                       padding: '8px 14px', borderRadius: 6,
                       background: 'transparent',
-                      border: '1px dashed rgba(184,148,58,0.35)',
+                      border: '1px dashed rgba(200,164,74,0.35)',
                       color: 'var(--gold, var(--accent-400))',
                       fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px',
                       textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)',

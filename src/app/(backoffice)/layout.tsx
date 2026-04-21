@@ -77,7 +77,7 @@ export default async function BackofficeLayout({
                     style: {
                         background: 'var(--imi-navy-900, #0B1120)',
                         border: '1px solid var(--imi-gold-700, #8A6820)',
-                        borderLeft: '3px solid var(--imi-gold-500, #B8943A)',
+                        borderLeft: '3px solid var(--gold, #C8A44A)',
                         color: 'var(--imi-gold-100, #F4EACC)',
                         fontFamily: 'var(--font-sans)',
                         fontSize: '13px',

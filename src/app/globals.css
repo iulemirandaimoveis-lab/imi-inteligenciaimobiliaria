@@ -93,7 +93,7 @@
   --surface-overlay:      #FEFEFE;
   --surface-float:        #FFFFFF;
   --surface-border:       rgba(11,17,32,0.14);
-  --surface-border-gold:  rgba(184, 148, 58, 0.25);
+  --surface-border-gold:  rgba(200,164,74, 0.25);
 
   /* ── DS3.1 Semantic ── */
   --color-success:        #2ECC71;
@@ -262,9 +262,9 @@
 
   /* Sidebar */
   --sidebar-bg:          var(--imi-navy-800);
-  --sidebar-border:      rgba(184,148,58,0.18);
-  --sidebar-hover:       rgba(184,148,58,0.07);
-  --sidebar-active:      rgba(184,148,58,0.14);
+  --sidebar-border:      rgba(200,164,74,0.18);
+  --sidebar-hover:       rgba(200,164,74,0.07);
+  --sidebar-active:      rgba(200,164,74,0.14);
   --sidebar-text:        var(--imi-navy-300);
   --sidebar-text-active: #F0F2F8;
 
@@ -541,12 +541,12 @@
     outline: 2px solid var(--imi-gold-500, #B8943A);
     outline-offset: 2px;
     border-radius: var(--r-sm, 5px);
-    box-shadow: 0 0 0 4px rgba(184,148,58,0.12);
+    box-shadow: 0 0 0 4px rgba(200,164,74,0.12);
   }
 
   /* Selection color */
   ::selection {
-    background: rgba(184,148,58,0.25);
+    background: rgba(200,164,74,0.25);
     color: var(--imi-navy-900, #0B1120);
   }
 
@@ -636,8 +636,8 @@
 }
 
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(184,148,58,0); }
-  50%       { box-shadow: 0 0 0 4px rgba(184,148,58,0.18); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200,164,74,0); }
+  50%       { box-shadow: 0 0 0 4px rgba(200,164,74,0.18); }
 }
 
 @keyframes shimmer {
@@ -896,17 +896,17 @@
   /* Cinematic glow — gold accent border glow */
   .cinematic-glow {
     box-shadow:
-      0 0 0 1px rgba(184,148,58,0.12),
+      0 0 0 1px rgba(200,164,74,0.12),
       0 4px 24px rgba(0, 0, 0, 0.08),
-      0 0 0 0 rgba(184,148,58,0);
+      0 0 0 0 rgba(200,164,74,0);
     transition: box-shadow 0.3s ease;
   }
 
   .cinematic-glow:hover {
     box-shadow:
-      0 0 0 1px rgba(184,148,58,0.28),
+      0 0 0 1px rgba(200,164,74,0.28),
       0 8px 32px rgba(0, 0, 0, 0.12),
-      0 0 20px -5px rgba(184,148,58,0.18);
+      0 0 20px -5px rgba(200,164,74,0.18);
   }
 
   /* ── DS3.1 Typography Utility Classes ── */
@@ -2435,8 +2435,8 @@ img, video, iframe, canvas, svg {
   color: var(--text-secondary);
 }
 :root .backoffice-root .chip-btn.active {
-  background: rgba(184,148,58,0.10);
-  border-color: rgba(184,148,58,0.40);
+  background: rgba(200,164,74,0.10);
+  border-color: rgba(200,164,74,0.40);
   color: var(--imi-gold-700);
 }
 

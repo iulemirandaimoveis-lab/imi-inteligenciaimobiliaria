@@ -92,7 +92,7 @@ export function FeatureGate({ tier, children, featureName }: FeatureGateProps) {
                         style={{
                             display: 'inline-flex', alignItems: 'center', gap: '6px',
                             padding: '8px 16px', borderRadius: '10px',
-                            background: 'var(--accent-400, #b8943a)', color: '#000',
+                            background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)',
                             fontSize: '12px', fontWeight: 700, textDecoration: 'none',
                         }}
                     >

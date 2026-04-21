@@ -54,7 +54,7 @@ export default function LandingPageClient({ development: dev, code }: Props) {
 
     const template = getTemplate(dev)
 
-    const accentColor = template === 'luxury' ? '#b8943a'
+    const accentColor = template === 'luxury' ? '#C8A44A'
         : template === 'standard' ? '#3b82f6'
         : '#22c55e'
 
@@ -277,7 +277,7 @@ export default function LandingPageClient({ development: dev, code }: Props) {
                                     disabled={loading}
                                     style={{
                                         height: '50px', borderRadius: '12px',
-                                        background: accentColor, color: template === 'luxury' ? '#000' : '#fff',
+                                        background: template === 'luxury' ? '#0A1624' : accentColor, color: '#fff',
                                         fontSize: '15px', fontWeight: 700, border: 'none', cursor: 'pointer',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                                         opacity: loading ? 0.7 : 1, transition: 'opacity 0.18s',

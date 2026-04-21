@@ -159,7 +159,7 @@ export default function AvaliacoesPage() {
             >
               <div style={{
                 width: '28px', height: '28px', borderRadius: '6px',
-                background: 'rgba(184,148,58,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'rgba(200,164,74,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <a.icon size={13} color="var(--accent-400)" />
               </div>

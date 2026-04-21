@@ -677,7 +677,7 @@ export default function NovaPTAMPage() {
             </div>
             <span style={{
               display: 'inline-block', marginTop: 12,
-              background: T.gold, color: '#050B14',
+              background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)',
               padding: '4px 16px', borderRadius: 20,
               fontWeight: 700, fontSize: 13,
             }}>

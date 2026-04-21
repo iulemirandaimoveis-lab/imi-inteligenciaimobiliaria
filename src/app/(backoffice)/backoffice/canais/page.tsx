@@ -294,7 +294,7 @@ function ChannelCard({ channel, index }: { channel: Channel; index: number }) {
                             {(channel.unread_count ?? 0) > 0 && (
                                 <div style={{
                                     minWidth: 20, height: 20, borderRadius: 10,
-                                    background: T.accent, color: '#000',
+                                    background: T.accent, color: '#0A1624',
                                     fontSize: 11, fontWeight: 700,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     padding: '0 5px',

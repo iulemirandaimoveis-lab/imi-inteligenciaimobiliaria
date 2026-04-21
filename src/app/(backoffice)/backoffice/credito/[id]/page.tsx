@@ -203,7 +203,7 @@ export default function CreditoDetalhesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="rounded-lg p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(184,148,58,0.12)' }}>
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(200,164,74,0.12)' }}>
                             <Home size={20} style={{ color: '#C8A44A' }} />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Valor do Imóvel</p>
