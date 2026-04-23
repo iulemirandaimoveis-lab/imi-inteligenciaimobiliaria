@@ -244,7 +244,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
             border: '1px solid rgba(0,0,0,0.06)',
             boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
             overflow: 'hidden',
-            fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+            fontFamily: "var(--fu, 'Outfit', sans-serif)",
         }}>
             {/* Header */}
             <div style={{
@@ -257,7 +257,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                         fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const,
                         letterSpacing: '0.12em', color: GOLD, marginBottom: 4,
                     }}>
-                        Inteligencia do Bairro
+                        Inteligência do Bairro
                     </div>
                     <div style={{ fontSize: compact ? 16 : 20, fontWeight: 800, letterSpacing: '-0.02em' }}>
                         {data.neighborhood}
@@ -280,7 +280,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                 {/* Price metrics row */}
                 <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
                     <StatCard
-                        label="Preco / m2"
+                        label="Preço/m²"
                         value={formatCurrency(data.median_price_sqm ? Number(data.median_price_sqm) : null)}
                         subtext={data.price_trend_12m != null
                             ? `${Number(data.price_trend_12m) > 0 ? '\u2191' : '\u2193'} ${formatPercent(Number(data.price_trend_12m))} em 12m`
@@ -290,14 +290,14 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                         label="Yield Aluguel"
                         value={data.avg_rental_yield != null ? `${Number(data.avg_rental_yield).toFixed(1)}%` : '--'}
                         subtext={data.avg_monthly_rent_sqm != null
-                            ? `${formatCurrency(Number(data.avg_monthly_rent_sqm))}/m2/mes`
+                            ? `${formatCurrency(Number(data.avg_monthly_rent_sqm))}/m²/mês`
                             : undefined}
                     />
                     <StatCard
                         label="Tempo de Venda"
                         value={data.avg_days_on_market != null ? `${data.avg_days_on_market}d` : '--'}
                         subtext={data.absorption_rate != null
-                            ? `${Number(data.absorption_rate).toFixed(1)}% absorcao/mes`
+                            ? `${Number(data.absorption_rate).toFixed(1)}% absorção/mês`
                             : undefined}
                     />
                 </div>
@@ -336,7 +336,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                                 display: 'inline-flex', alignItems: 'center', gap: 4,
                             }}>
                                 <span style={{ width: 8, height: 2, background: NAVY, opacity: 0.4, borderRadius: 1, display: 'inline-block' }} />
-                                media {data.city}
+                                média {data.city}
                             </span>
                         )}
                     </div>
@@ -351,7 +351,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                         cityAvg={cityAvg?.transit_score}
                     />
                     <ScoreBar
-                        label="Seguranca"
+                        label="Segurança"
                         value={data.safety_score}
                         cityAvg={cityAvg?.safety_score}
                     />
@@ -366,16 +366,16 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                         <StatCard
                             label="Estoque"
                             value={data.inventory_count != null ? `${data.inventory_count}` : '--'}
-                            subtext="imoveis disponiveis"
+                            subtext="imóveis disponíveis"
                         />
                         <StatCard
-                            label="Vacancia"
+                            label="Vacância"
                             value={data.vacancy_rate != null ? `${Number(data.vacancy_rate).toFixed(1)}%` : '--'}
                         />
                         <StatCard
                             label="Lancamentos 12m"
                             value={data.new_launches_12m != null ? `${data.new_launches_12m}` : '--'}
-                            subtext="novos empreendimentos"
+                            subtext="novos lançamentos"
                         />
                     </div>
                 )}
@@ -388,7 +388,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                             textTransform: 'uppercase' as const, letterSpacing: '0.08em',
                             marginBottom: 10,
                         }}>
-                            Comparar com bairros proximos
+                            Comparar com bairros próximos
                         </div>
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                             {nearby.slice(0, 5).map((n) => {
@@ -430,7 +430,7 @@ export default function NeighborhoodIntel({ neighborhood, city, compact = false 
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
                 <span style={{ fontSize: 9, color: MUTED, letterSpacing: '0.05em', textTransform: 'uppercase' as const }}>
-                    IMI Inteligencia Imobiliaria
+                    IMI Inteligência Imobiliária
                 </span>
                 <span style={{ fontSize: 9, color: 'rgba(0,0,0,0.2)' }}>
                     Fonte: {data.data_source || 'imi_internal'}
