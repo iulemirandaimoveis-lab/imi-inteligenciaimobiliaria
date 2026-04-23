@@ -35,13 +35,13 @@ const MUTED = '#948F84'
 const LIGHT_BG = '#F8F6F2'
 
 const CATEGORY_META: Record<string, { label: string; icon: typeof MapPin; color: string }> = {
-    health:     { label: 'Saude',      icon: Heart,            color: '#EF4444' },
-    education:  { label: 'Educacao',   icon: GraduationCap,    color: '#3B82F6' },
+    health:     { label: 'Saúde',      icon: Heart,            color: '#EF4444' },
+    education:  { label: 'Educação',   icon: GraduationCap,    color: '#3B82F6' },
     transport:  { label: 'Transporte', icon: Bus,              color: '#8B5CF6' },
-    shopping:   { label: 'Comercio',   icon: ShoppingBag,      color: '#F59E0B' },
-    food:       { label: 'Alimentacao',icon: UtensilsCrossed,  color: '#EC4899' },
+    shopping:   { label: 'Comércio',   icon: ShoppingBag,      color: '#F59E0B' },
+    food:       { label: 'Alimentação',icon: UtensilsCrossed,  color: '#EC4899' },
     leisure:    { label: 'Lazer',      icon: TreePine,         color: '#10B981' },
-    safety:     { label: 'Seguranca',  icon: Shield,           color: '#6366F1' },
+    safety:     { label: 'Segurança',  icon: Shield,           color: '#6366F1' },
 }
 
 function formatDistance(m: number): string {
@@ -101,10 +101,10 @@ export default function NearbyPOIs({ lat, lng, address }: NearbyPOIsProps) {
             }}>
                 <div>
                     <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: GOLD, marginBottom: 4 }}>
-                        O que tem na regiao
+                        O que há na região
                     </div>
                     <div style={{ fontSize: 16, fontWeight: 800 }}>
-                        Score de Localizacao: {data.overall_score}/100
+                        Score de Localização: {data.overall_score}/100
                     </div>
                 </div>
                 <div style={{
@@ -155,7 +155,7 @@ export default function NearbyPOIs({ lat, lng, address }: NearbyPOIsProps) {
 
                 {/* Top POIs list */}
                 <div style={{ fontSize: 11, fontWeight: 700, color: NAVY, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
-                    Mais proximos
+                    Mais próximos
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {data.pois.sort((a, b) => a.distance - b.distance).slice(0, 8).map(poi => {
@@ -179,7 +179,7 @@ export default function NearbyPOIs({ lat, lng, address }: NearbyPOIsProps) {
             </div>
 
             <div style={{ borderTop: '1px solid rgba(0,0,0,0.04)', padding: '8px 20px', display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 9, color: MUTED, letterSpacing: '0.05em', textTransform: 'uppercase' }}>IMI Inteligencia Imobiliaria</span>
+                <span style={{ fontSize: 9, color: MUTED, letterSpacing: '0.05em', textTransform: 'uppercase' }}>IMI Inteligência Imobiliária</span>
                 <span style={{ fontSize: 9, color: 'rgba(0,0,0,0.2)' }}>Fonte: OpenStreetMap</span>
             </div>
         </div>

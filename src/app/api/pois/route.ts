@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { POI_CONFIG, type POICategory, type ConvenienceData, type POICategoryResult, type POIItem } from '@/types/poi';
+import { fetchNearbyPOIs as fetchOSMPOIs, type POI as OSMPOI } from '@/lib/poi-service';
 
 export const runtime = 'nodejs';
 
@@ -23,6 +24,22 @@ const GOOGLE_TYPE_MAP: Record<string, string> = {
     school: 'school',
     bank: 'bank',
     airport: 'airport',
+};
+
+// OSM element type → POICategory (derived from OSM tag values)
+const OSM_TYPE_TO_CATEGORY: Partial<Record<string, POICategory>> = {
+    hospital: 'hospital',
+    pharmacy: 'pharmacy',
+    school: 'school',
+    university: 'school',
+    supermarket: 'supermarket',
+    mall: 'shopping_mall',
+    restaurant: 'restaurant',
+    cafe: 'restaurant',
+    park: 'park',
+    cinema: 'park',
+    bus_station: 'gas_station',
+    station: 'gas_station',
 };
 
 function calculateScore(
@@ -48,13 +65,12 @@ function getScoreLabel(score: number): ConvenienceData['score_label'] {
     return 'Limitado';
 }
 
-async function fetchNearbyPOIs(
+async function fetchGooglePOIs(
     lat: number,
     lng: number,
     category: string,
     radius: number,
 ): Promise<POIItem[]> {
-    // Accept either the dedicated Places key or the general Maps key (same billing account)
     const apiKey = process.env.GOOGLE_PLACES_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     if (!apiKey) return [];
 
@@ -98,6 +114,46 @@ async function fetchNearbyPOIs(
     }
 }
 
+function buildFromOSM(
+    osmPois: OSMPOI[],
+    config: (typeof POI_CONFIG)[string],
+): { categoryResults: POICategoryResult[]; scoreInputs: { found: boolean; distance: number; weight: number }[] } {
+    const categoryResults: POICategoryResult[] = [];
+    const scoreInputs: { found: boolean; distance: number; weight: number }[] = [];
+
+    for (const cat of config) {
+        const items: POIItem[] = osmPois
+            .filter((poi) => OSM_TYPE_TO_CATEGORY[poi.type] === cat.category)
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, 3)
+            .map((poi) => ({
+                name: poi.name,
+                category: cat.category,
+                distance_meters: poi.distance,
+                place_id: `osm-${poi.id}`,
+            }));
+
+        const nearest = items.length > 0 ? Math.min(...items.map((p) => p.distance_meters)) : 0;
+
+        categoryResults.push({
+            category: cat.category,
+            label: cat.label,
+            icon: cat.icon,
+            color: cat.color,
+            items,
+            nearest_distance_meters: nearest,
+        });
+
+        scoreInputs.push({
+            found: items.length > 0,
+            distance: nearest || 9999,
+            weight: cat.weight,
+        });
+    }
+
+    return { categoryResults, scoreInputs };
+}
+
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const lat = parseFloat(searchParams.get('lat') || '');
@@ -124,24 +180,23 @@ export async function GET(request: NextRequest) {
                 .maybeSingle();
 
             const cachedData = cached?.pois as ConvenienceData | undefined;
-            // Only return cached result if it actually has real data
             if (cachedData && cachedData.score > 0) {
                 return NextResponse.json(cachedData);
             }
         } catch {
-            // Cache miss — continue to Google Places
+            // Cache miss — continue to fetching
         }
     }
 
     const config = POI_CONFIG[imovelType] ?? POI_CONFIG.residencial;
 
-    // Fetch all POI categories in parallel
+    // Try Google Places first
     const settled = await Promise.allSettled(
-        config.map((cat) => fetchNearbyPOIs(lat, lng, cat.category, cat.radius)),
+        config.map((cat) => fetchGooglePOIs(lat, lng, cat.category, cat.radius)),
     );
 
-    const categoryResults: POICategoryResult[] = [];
-    const scoreInputs: { found: boolean; distance: number; weight: number }[] = [];
+    let categoryResults: POICategoryResult[] = [];
+    let scoreInputs: { found: boolean; distance: number; weight: number }[] = [];
 
     for (let i = 0; i < config.length; i++) {
         const cat = config[i];
@@ -164,7 +219,23 @@ export async function GET(request: NextRequest) {
         });
     }
 
-    const score = calculateScore(scoreInputs);
+    let score = calculateScore(scoreInputs);
+
+    // OSM/Overpass fallback — when Google Places returns no usable data
+    if (score === 0) {
+        try {
+            const osmResult = await fetchOSMPOIs(lat, lng, 1500);
+            if (osmResult.pois.length > 0) {
+                const osm = buildFromOSM(osmResult.pois, config);
+                categoryResults = osm.categoryResults;
+                scoreInputs = osm.scoreInputs;
+                score = calculateScore(osm.scoreInputs);
+            }
+        } catch {
+            // OSM also failed — return empty (POIGrid will hide the section)
+        }
+    }
+
     const convenienceData: ConvenienceData = {
         development_id: developmentId,
         score,
