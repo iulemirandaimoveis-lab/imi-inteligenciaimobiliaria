@@ -14,15 +14,14 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
 import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
-import NearbyPOIs from '@/components/intelligence/NearbyPOIs'
 import PropertyIntelligence from '../components/PropertyIntelligence'
 import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
 import { fmt } from '@/lib/format'
 import { POIGrid } from '@/components/imoveis/POIGrid'
 
-// Dynamic rendering — always fetch fresh data from Supabase
-export const dynamic = 'force-dynamic'
+// Revalidate every hour — balances freshness with performance (ISR)
+export const revalidate = 3600
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
@@ -331,13 +330,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 neighborhood={development.location?.neighborhood}
                                 city={development.location?.city}
                                 compact
-                            />
-                        </section>
-                        <section id="pois-regiao">
-                            <NearbyPOIs
-                                lat={development.location.coordinates.lat}
-                                lng={development.location.coordinates.lng}
-                                address={[development.location.address, development.location.neighborhood, development.location.city, development.location.state].filter(Boolean).join(', ')}
                             />
                         </section>
                     </div>

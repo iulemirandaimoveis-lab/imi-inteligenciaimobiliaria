@@ -126,22 +126,39 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
             )}
 
             {/* Address card + Google Maps link */}
-            <motion.div variants={slideUp} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+            <motion.div variants={slideUp} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                {/* Address card — light theme, fully readable */}
                 <div
-                    className="inline-flex items-center gap-3 p-4 rounded-[10px]"
-                    style={{ background: 'rgba(14,28,48,.52)', backdropFilter: 'blur(20px)', border: '1px solid rgba(200,164,74,.12)' }}
+                    className="flex items-center gap-3 p-4 rounded-xl flex-1 min-w-0"
+                    style={{
+                        background: '#FFFFFF',
+                        border: '1px solid rgba(184,179,168,0.35)',
+                        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                    }}
                 >
                     <div
-                        className="w-9 h-9 rounded-[4px] flex items-center justify-center flex-shrink-0"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: 'rgba(200,164,74,0.1)' }}
                     >
                         <MapPin className="w-4 h-4" style={{ color: GOLD }} />
                     </div>
-                    <div>
-                        <p className="font-semibold text-white text-sm">{development.location.neighborhood}</p>
-                        <p className="text-xs" style={{ color: '#627D98' }}>
-                            {development.location.address || `${development.location.city}, ${development.location.state}`}
+                    <div className="min-w-0">
+                        <p
+                            className="font-semibold text-sm truncate"
+                            style={{ color: '#0B1928', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+                        >
+                            {development.location.neighborhood}
+                            {development.location.city && (
+                                <span style={{ fontWeight: 400, color: '#948F84' }}>
+                                    {', '}{development.location.city}
+                                </span>
+                            )}
                         </p>
+                        {development.location.address && (
+                            <p className="text-xs mt-0.5 truncate" style={{ color: '#948F84' }}>
+                                {development.location.address}
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -149,7 +166,7 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                     href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative inline-flex items-center gap-2 h-11 px-5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98]"
+                    className="relative inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98] flex-shrink-0"
                     style={{ background: '#0B1928', color: '#fff', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                 >
                     <Navigation size={14} />

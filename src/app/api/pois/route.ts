@@ -54,7 +54,8 @@ async function fetchNearbyPOIs(
     category: string,
     radius: number,
 ): Promise<POIItem[]> {
-    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    // Accept either the dedicated Places key or the general Maps key (same billing account)
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     if (!apiKey) return [];
 
     const googleType = GOOGLE_TYPE_MAP[category] || category;
@@ -111,7 +112,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Coordenadas inválidas' }, { status: 400 });
     }
 
-    // Check Supabase cache (only if service role key is available)
+    // Check Supabase cache — only serve if score > 0 (avoids serving stale empty results)
     if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
         try {
             const { data: cached } = await supabase
@@ -122,8 +123,10 @@ export async function GET(request: NextRequest) {
                 .gt('expires_at', new Date().toISOString())
                 .maybeSingle();
 
-            if (cached?.pois) {
-                return NextResponse.json(cached.pois as ConvenienceData);
+            const cachedData = cached?.pois as ConvenienceData | undefined;
+            // Only return cached result if it actually has real data
+            if (cachedData && cachedData.score > 0) {
+                return NextResponse.json(cachedData);
             }
         } catch {
             // Cache miss — continue to Google Places
@@ -170,8 +173,8 @@ export async function GET(request: NextRequest) {
         cached_at: new Date().toISOString(),
     };
 
-    // Persist to cache (best-effort)
-    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    // Persist to cache only when we have real data (score > 0)
+    if (score > 0 && process.env.SUPABASE_SERVICE_ROLE_KEY) {
         supabase
             .from('poi_cache')
             .upsert({
