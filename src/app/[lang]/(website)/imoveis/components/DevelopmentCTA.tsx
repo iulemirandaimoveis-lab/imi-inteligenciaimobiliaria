@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Development } from '../types/development';
-import { MessageCircle, FileText, Building2, MapPin, Calendar, Phone, Download, Shield, Star } from 'lucide-react';
+import { MessageCircle, FileText, Building2, MapPin, Calendar, Download, Shield, Star } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import LeadCaptureModal from './LeadCaptureModal';
 
@@ -125,15 +125,6 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                     </div>
                 </div>
 
-                {/* Quick phone */}
-                <a
-                    href="tel:+5581997230455"
-                    className="flex items-center justify-center gap-2 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 hover:bg-gray-50 active:scale-[0.98]"
-                    style={{ background: '#FFFFFF', color: '#0B1928', border: '2px solid #0B1928', textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
-                >
-                    <Phone className="w-3.5 h-3.5" />
-                    (81) 9 9723-0455
-                </a>
             </div>
 
             <AnimatePresence>
