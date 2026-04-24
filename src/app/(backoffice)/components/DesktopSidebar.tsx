@@ -50,13 +50,13 @@ function useUserRole(): UserRole {
 
 const SECTION_ACCESS: Record<string, UserRole[]> = {
     'Operações Diárias': ['admin', 'manager', 'agent', 'viewer'],
-    'Captação': ['admin', 'manager', 'agent'],
-    'Conversão': ['admin', 'manager', 'agent'],
-    'Portfólio': ['admin', 'manager', 'agent'],
-    'Operação': ['admin', 'manager'],
-    'Financeiro': ['admin', 'manager'],
-    'Inteligência': ['admin', 'manager', 'agent'],
-    'Configurações': ['admin'],
+    'Captação':          ['admin', 'manager', 'agent', 'viewer'],
+    'Conversão':         ['admin', 'manager', 'agent', 'viewer'],
+    'Portfólio':         ['admin', 'manager', 'agent', 'viewer'],
+    'Operação':          ['admin', 'manager', 'viewer'],
+    'Financeiro':        ['admin', 'manager', 'viewer'],
+    'Inteligência':      ['admin', 'manager', 'agent', 'viewer'],
+    'Configurações':     ['admin'],
 }
 
 // ── Section colors for visual differentiation ──
