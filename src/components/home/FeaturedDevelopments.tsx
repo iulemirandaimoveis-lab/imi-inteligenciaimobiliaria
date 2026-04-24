@@ -74,8 +74,10 @@ function FeaturedCard({
                 </div>
             )}
 
-            {/* Gradient overlay — stronger for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#060E18]/98 via-[#060E18]/40 to-transparent" />
+            {/* Bottom gradient — guarantees text readability on any photo */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/75 to-transparent" />
+            {/* Top vignette — guarantees badge readability */}
+            <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/60 to-transparent" />
 
             {/* Content */}
             <div className="absolute inset-0 flex flex-col justify-between p-5 sm:p-6">
@@ -85,11 +87,13 @@ function FeaturedCard({
                         {statusLabel}
                     </span>
                     {country ? (
-                        <span className="text-[10px] font-semibold text-white/50 uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/8 border border-white/10">
+                        <span className="text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-full backdrop-blur-sm"
+                            style={{ color: 'rgba(255,255,255,0.9)', background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.18)' }}>
                             {country}
                         </span>
                     ) : (
-                        <span className="text-[10px] font-medium text-white/35 uppercase tracking-widest">
+                        <span className="text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-full backdrop-blur-sm"
+                            style={{ color: 'rgba(255,255,255,0.85)', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.12)' }}>
                             {dev.location.state}
                         </span>
                     )}
@@ -97,13 +101,14 @@ function FeaturedCard({
 
                 {/* Bottom content */}
                 <div>
-                    <p className="flex items-center gap-1 text-[9px] uppercase tracking-[0.2em] font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'var(--font-sans)' }}>
+                    <p className="flex items-center gap-1 text-[9px] uppercase tracking-[0.2em] font-semibold mb-1.5"
+                        style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--font-sans)', textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
                         <MapPin size={8} />
                         {dev.location.neighborhood}, {dev.location.city}
                     </p>
                     <h3
                         className={`font-bold text-white leading-tight mb-3 ${large ? 'text-2xl sm:text-[28px]' : 'text-base sm:text-lg'}`}
-                        style={{ fontFamily: 'var(--font-display)', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
+                        style={{ fontFamily: 'var(--font-display)', textShadow: '0 1px 10px rgba(0,0,0,0.95), 0 4px 28px rgba(0,0,0,0.8)' }}
                     >
                         {dev.name}
                     </h3>
@@ -111,8 +116,9 @@ function FeaturedCard({
                         <div>
                             {price && (
                                 <>
-                                    <p className="text-[9px] text-white/60 uppercase tracking-wider mb-0.5">A partir de</p>
-                                    <p className={`font-bold text-white ${large ? 'text-lg' : 'text-sm'}`} style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>{price}</p>
+                                    <p className="text-[9px] text-white/80 uppercase tracking-wider mb-0.5">A partir de</p>
+                                    <p className={`font-bold text-white ${large ? 'text-lg' : 'text-sm'}`}
+                                        style={{ textShadow: '0 1px 8px rgba(0,0,0,0.9)' }}>{price}</p>
                                 </>
                             )}
                         </div>
