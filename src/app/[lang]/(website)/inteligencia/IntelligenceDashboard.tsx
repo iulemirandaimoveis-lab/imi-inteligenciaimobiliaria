@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { BarChart3, TrendingUp, TrendingDown, Shield, Footprints, DollarSign, Timer, Building2, ArrowUpRight, RefreshCw } from 'lucide-react'
 import PriceHeatmap from '@/components/intelligence/PriceHeatmap'
+import SubsidySimulator from './SubsidySimulator'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -149,6 +150,48 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
                             Decisoes orientadas por dados. Explore precos, tendencias e indicadores de qualidade de vida
                             por bairro nas principais cidades do mercado.
                         </p>
+                    </div>
+                </div>
+            </section>
+
+            {/* ─── SUBSIDY SIMULATOR ────────────────────────────────────── */}
+            <section className="py-12 md:py-16 border-b border-white/[0.05]">
+                <div className="container-custom">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                        {/* Left: pitch */}
+                        <div className="lg:sticky lg:top-24">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="w-8 h-px bg-[#334E68]" />
+                                <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">
+                                    Motor de Decisão
+                                </span>
+                            </div>
+                            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-5 leading-tight">
+                                Quanto você pode{' '}
+                                <span className="text-[#C8A44A] italic">receber de subsídio</span>?
+                            </h2>
+                            <p className="text-[#9CA3AF] text-base font-light leading-relaxed mb-8 max-w-md">
+                                Descubra em minutos se você tem direito ao MCMV ou Habite Seguro, quanto
+                                de desconto no imóvel e como estruturar duas compras com subsídios separados.
+                            </p>
+                            <div className="space-y-4">
+                                {[
+                                    { label: 'MCMV Faixa 1', desc: 'Até R$ 55.000 de subsídio', highlight: true },
+                                    { label: 'Habite Seguro', desc: 'Para policiais, bombeiros e guardas', highlight: false },
+                                    { label: 'Estratégia dupla', desc: 'Dois CPFs, dois subsídios', highlight: false },
+                                ].map(({ label, desc, highlight }) => (
+                                    <div key={label} className={`flex items-center gap-3 p-4 rounded-xl border ${highlight ? 'bg-[rgba(200,164,74,0.06)] border-[rgba(200,164,74,0.18)]' : 'bg-[#0B1928] border-white/[0.05]'}`}>
+                                        <div className={`w-1.5 h-10 rounded-full shrink-0 ${highlight ? 'bg-[#C8A44A]' : 'bg-[#1A3250]'}`} />
+                                        <div>
+                                            <div className="text-sm font-bold text-white">{label}</div>
+                                            <div className="text-[11px] text-[#9CA3AF]">{desc}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        {/* Right: simulator */}
+                        <SubsidySimulator lang={lang} />
                     </div>
                 </div>
             </section>
