@@ -129,13 +129,13 @@ export default function Method({ dict }: MethodProps) {
                             )}
 
                             <div className="relative z-10">
-                                {/* Step number with hover glow */}
+                                {/* Step number — always visible in gold */}
                                 <motion.div
-                                    whileHover={{ scale: 1.05 }}
+                                    whileHover={{ scale: 1.04, opacity: 0.7 }}
                                     className="text-[52px] font-black leading-none mb-4 select-none transition-all duration-500"
                                     style={{
-                                        color: 'rgba(200,164,74,0.15)',
-                                        WebkitTextStroke: '1.5px rgba(200,164,74,0.15)',
+                                        color: 'rgba(200,164,74,0.65)',
+                                        WebkitTextStroke: '1.5px rgba(200,164,74,0.85)',
                                         fontFamily: 'var(--font-mono)',
                                     }}
                                 >
@@ -149,11 +149,11 @@ export default function Method({ dict }: MethodProps) {
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.6, delay: 0.3 + i * 0.15 }}
                                     className="h-px mb-4"
-                                    style={{ background: 'rgba(200,164,74,0.5)' }}
+                                    style={{ background: '#C8A44A' }}
                                 />
 
-                                <h3 className="text-[15px] font-bold text-white mb-2 group-hover:text-[#C8A44A] transition-colors duration-300">{step.title}</h3>
-                                <p className="text-[13px] text-white/45 leading-relaxed">{step.desc}</p>
+                                <h3 className="text-[15px] font-bold mb-2 transition-colors duration-300 group-hover:text-white/70" style={{ color: '#C8A44A' }}>{step.title}</h3>
+                                <p className="text-[13px] text-white/65 leading-relaxed">{step.desc}</p>
                             </div>
                         </motion.div>
                     ))}
