@@ -116,9 +116,9 @@ function FeaturedCard({
                                 </>
                             )}
                         </div>
-                        <div className="w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full border backdrop-blur-sm transition-all duration-300 group-hover:scale-110"
-                            style={{ background: 'rgba(61,111,255,0.15)', borderColor: 'rgba(61,111,255,0.3)' }}>
-                            <ArrowRight size={13} className="text-white transition-transform duration-300 group-hover:translate-x-0.5" />
+                        <div className="w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full border backdrop-blur-sm transition-all duration-300 group-hover:opacity-70"
+                            style={{ background: 'rgba(200,164,74,0.18)', borderColor: 'rgba(200,164,74,0.45)' }}>
+                            <ArrowRight size={13} style={{ color: '#C8A44A' }} className="transition-transform duration-300 group-hover:translate-x-0.5" />
                         </div>
                     </div>
                 </div>
@@ -162,7 +162,7 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
                                 style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
                             >
                                 Empreendimentos{' '}
-                                <span style={{ color: 'var(--text-tertiary)' }}>Selecionados</span>
+                                <span style={{ color: '#C8A44A' }}>Selecionados</span>
                             </h2>
                             <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}>Brasil · Estados Unidos · Emirados Árabes</p>
                         </div>
