@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
-import { Bed, Ruler, Car, Calendar, MessageCircle } from 'lucide-react'
+import { Bed, Bath, Ruler, Car, Calendar, MessageCircle } from 'lucide-react'
 import DevelopmentHero from '../components/DevelopmentHero'
 import DevelopmentDetails from '../components/DevelopmentDetails'
 import DevelopmentGallery from '../components/DevelopmentGallery'
@@ -96,10 +96,10 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
 
 const ANCHOR_SECTIONS = [
     { id: 'detalhes', label: 'Detalhes' },
-    { id: 'inteligencia', label: 'IMI Score' },
     { id: 'galeria', label: 'Galeria' },
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
+    { id: 'inteligencia', label: 'IMI Score' },
     { id: 'financiamento', label: 'Financiamento' },
 ]
 
@@ -254,6 +254,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 }}>
                     {[
                         { label: 'Quartos', value: development.specs.bedroomsRange, Icon: Bed },
+                        { label: 'Banheiros', value: development.specs.bathroomsRange || '\u2014', Icon: Bath },
                         { label: 'Área', value: development.specs.areaRange, Icon: Ruler },
                         { label: 'Vagas', value: development.specs.parkingRange || '\u2014', Icon: Car },
                         ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, Icon: Calendar }] : []),
@@ -284,21 +285,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <section id="detalhes">
                             <DevelopmentDetails development={development} />
                         </section>
-                        <section id="inteligencia">
-                            <PropertyIntelligence property={{
-                                id: development.id,
-                                name: development.name,
-                                price: development.priceRange?.min || Number(data.price_from || data.price_min) || 0,
-                                area: Number(data.area_from) || 0,
-                                bedrooms: Number(data.bedrooms_from) || 0,
-                                parking: Number(data.parking_from) || 0,
-                                neighborhood: data.neighborhood || '',
-                                city: data.city || 'Recife',
-                                state: data.state || 'PE',
-                                type: data.type || 'apartamento',
-                                status: data.status_commercial || 'published',
-                            } as IMIProperty} />
-                        </section>
                         <section id="galeria">
                             <DevelopmentGallery development={development} />
                         </section>
@@ -324,6 +310,21 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                     />
                                 </div>
                             )}
+                        </section>
+                        <section id="inteligencia">
+                            <PropertyIntelligence property={{
+                                id: development.id,
+                                name: development.name,
+                                price: development.priceRange?.min || Number(data.price_from || data.price_min) || 0,
+                                area: Number(data.area_from) || 0,
+                                bedrooms: Number(data.bedrooms_from) || 0,
+                                parking: Number(data.parking_from) || 0,
+                                neighborhood: data.neighborhood || '',
+                                city: data.city || 'Recife',
+                                state: data.state || 'PE',
+                                type: data.type || 'apartamento',
+                                status: data.status_commercial || 'published',
+                            } as IMIProperty} />
                         </section>
                         <section id="inteligencia-bairro">
                             <NeighborhoodIntel
