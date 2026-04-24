@@ -58,6 +58,13 @@ const DEFAULT_FORM: FormState = {
 const R$ = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
+// Compact: R$ 250k / R$ 1,2M — avoids overflow in tight grids
+const Rk = (v: number): string => {
+  if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
+  if (v >= 1_000) return `R$ ${Math.round(v / 1_000)}k`
+  return R$(v)
+}
+
 const pct = (v: number) => `${v.toFixed(0)}%`
 
 function SliderField({
@@ -306,15 +313,15 @@ function Step4({ strategy, form, lang }: { strategy: StrategyResult; form: FormS
                   </span>
                 )}
               </div>
-              <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="flex flex-wrap gap-x-4 gap-y-2 mb-3">
                 {[
-                  { l: 'Imóvel', v: R$(step.property_value) },
-                  { l: 'Subsídio', v: R$(step.subsidy) },
-                  { l: 'Parcela', v: R$(step.monthly_payment) },
+                  { l: 'Imóvel', v: Rk(step.property_value) },
+                  { l: 'Subsídio', v: Rk(step.subsidy) },
+                  { l: 'Parcela/mês', v: Rk(step.monthly_payment) },
                 ].map(({ l, v }) => (
-                  <div key={l}>
+                  <div key={l} className="min-w-0">
                     <div className="text-[9px] text-[#556170] uppercase tracking-wider">{l}</div>
-                    <div className="text-xs font-bold text-white font-mono">{v}</div>
+                    <div className="text-xs font-bold text-white font-mono whitespace-nowrap">{v}</div>
                   </div>
                 ))}
               </div>
@@ -439,16 +446,16 @@ export default function SubsidySimulator({ lang }: { lang: string }) {
         <p className="text-[12px] text-[#556170] mt-1">Descubra seu subsídio e estruture sua compra em minutos</p>
 
         {/* Step indicators */}
-        <div className="flex items-center gap-1 mt-4">
+        <div className="flex items-center mt-4 gap-0">
           {([1, 2, 3, 4] as Step[]).map((n, i) => (
-            <div key={n} className="flex items-center gap-1">
-              <div className="flex items-center gap-1.5">
+            <div key={n} className="flex items-center">
+              <div className="flex items-center gap-1">
                 <StepDot n={n} current={step} />
-                <span className={`text-[10px] font-semibold transition-colors ${step === n ? 'text-[#C8A44A]' : step > n ? 'text-[#4ADE80]' : 'text-[#556170]'}`}>
+                <span className={`hidden sm:block text-[10px] font-semibold transition-colors ${step === n ? 'text-[#C8A44A]' : step > n ? 'text-[#4ADE80]' : 'text-[#556170]'}`}>
                   {STEP_LABELS[i]}
                 </span>
               </div>
-              {i < 3 && <div className="w-4 h-px bg-[rgba(255,255,255,0.06)] mx-1" />}
+              {i < 3 && <div className="w-3 sm:w-5 h-px bg-[rgba(255,255,255,0.06)] mx-1" />}
             </div>
           ))}
         </div>
