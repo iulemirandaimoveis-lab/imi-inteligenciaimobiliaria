@@ -23,6 +23,7 @@ export const metadata: Metadata = {
         template: '%s | IMI Backoffice',
     },
     description: 'IMI — Inteligência Imobiliária | Backoffice',
+    manifest: '/manifest-backoffice.json',
 }
 
 export default async function BackofficeLayout({
