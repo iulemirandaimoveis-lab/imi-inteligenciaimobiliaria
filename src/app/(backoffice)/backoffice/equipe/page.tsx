@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '../../lib/theme'
-import { useTeams, createTeam, deleteTeam, addMemberToTeam, removeMemberFromTeam, type Team, type TeamMember } from '@/hooks/use-teams'
+import { useTeams, createTeam, updateTeam, deleteTeam, addMemberToTeam, removeMemberFromTeam, type Team, type TeamMember } from '@/hooks/use-teams'
 import { useBrokers, type Broker } from '@/hooks/use-brokers'
 
 /* ─── CONSTANTS ────────────────────────────────────────────────── */
@@ -554,6 +554,195 @@ function CreateTeamModal({
     )
 }
 
+/* ─── EDIT TEAM MODAL ──────────────────────────────────────────── */
+function EditTeamModal({
+    team, onClose, onUpdated, brokers,
+}: {
+    team: Team
+    onClose: () => void
+    onUpdated: () => void
+    brokers: Broker[]
+}) {
+    const [form, setForm] = useState({
+        name: team.name,
+        description: team.description || '',
+        region: team.region || '',
+        specialty: team.specialty || '',
+        leader_id: team.leader_id || '',
+        color: team.color || TEAM_COLORS[0],
+    })
+    const [saving, setSaving] = useState(false)
+
+    async function handleSubmit() {
+        if (!form.name.trim()) { toast.error('Nome da equipe é obrigatório'); return }
+        setSaving(true)
+        try {
+            await updateTeam(team.id, {
+                name: form.name.trim(),
+                description: form.description.trim() || undefined,
+                region: form.region.trim() || undefined,
+                specialty: form.specialty.trim() || undefined,
+                leader_id: form.leader_id || null,
+                color: form.color,
+            } as Partial<Team>)
+            toast.success(`Equipe "${form.name}" atualizada com sucesso!`)
+            onUpdated()
+            onClose()
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Erro ao atualizar equipe')
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    const inputStyle: React.CSSProperties = {
+        background: T.surface, border: `1px solid ${T.border}`, color: T.text,
+        height: 40, borderRadius: 6, padding: '0 12px', fontSize: 13, outline: 'none', width: '100%',
+    }
+
+    return (
+        <>
+            <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+                onClick={onClose}
+            />
+            <motion.div
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 60 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+                className="fixed bottom-0 left-0 right-0 z-50 lg:inset-0 lg:flex lg:items-center lg:justify-center pointer-events-none"
+            >
+                <div
+                    className="pointer-events-auto rounded-t-2xl lg:rounded-xl w-full lg:max-w-md max-h-[92vh] overflow-y-auto"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                >
+                    <div className="pt-3 pb-1 flex justify-center lg:hidden">
+                        <div className="w-9 h-1 rounded-full" style={{ background: T.border }} />
+                    </div>
+                    <div className="p-6">
+                        <div className="flex items-center justify-between mb-5">
+                            <div>
+                                <h2 className="text-base font-bold" style={{ color: T.text }}>Editar Equipe</h2>
+                                <p className="text-xs mt-0.5" style={{ color: T.textDim }}>
+                                    Altere os dados da equipe
+                                </p>
+                            </div>
+                            <button onClick={onClose}
+                                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/5"
+                                style={{ color: T.textMuted }}>
+                                <X size={16} />
+                            </button>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>
+                                    Nome da Equipe *
+                                </label>
+                                <input
+                                    type="text" autoFocus
+                                    value={form.name}
+                                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                                    placeholder="Ex: Equipe Alpha, Zona Sul..."
+                                    style={inputStyle}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>
+                                    Descrição
+                                </label>
+                                <input
+                                    type="text"
+                                    value={form.description}
+                                    onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                                    placeholder="Foco, especialidade, missão..."
+                                    style={inputStyle}
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>Região</label>
+                                    <input
+                                        type="text"
+                                        value={form.region}
+                                        onChange={e => setForm(f => ({ ...f, region: e.target.value }))}
+                                        placeholder="Ex: Zona Sul"
+                                        style={inputStyle}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>Especialidade</label>
+                                    <input
+                                        type="text"
+                                        value={form.specialty}
+                                        onChange={e => setForm(f => ({ ...f, specialty: e.target.value }))}
+                                        placeholder="Ex: Alto padrão"
+                                        style={inputStyle}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>
+                                    Líder da Equipe
+                                </label>
+                                <select
+                                    value={form.leader_id}
+                                    onChange={e => setForm(f => ({ ...f, leader_id: e.target.value }))}
+                                    style={inputStyle}
+                                >
+                                    <option value="">Sem líder</option>
+                                    {brokers.filter(b => b.status === 'active').map(b => (
+                                        <option key={b.id} value={b.id}>{b.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold block mb-2" style={{ color: T.textDim }}>
+                                    Cor da Equipe
+                                </label>
+                                <div className="flex gap-2 flex-wrap">
+                                    {TEAM_COLORS.map(c => (
+                                        <button
+                                            key={c}
+                                            onClick={() => setForm(f => ({ ...f, color: c }))}
+                                            className="w-7 h-7 rounded-full transition-transform"
+                                            style={{
+                                                background: c,
+                                                transform: form.color === c ? 'scale(1.25)' : 'scale(1)',
+                                                boxShadow: form.color === c ? `0 0 0 2px ${T.elevated}, 0 0 0 4px ${c}` : 'none',
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={onClose}
+                                disabled={saving}
+                                className="flex-1 h-11 rounded-lg text-sm font-medium"
+                                style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textMuted }}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={saving}
+                                className="flex-1 h-11 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2"
+                                style={{ background: saving ? T.elevated : form.color }}
+                            >
+                                {saving && <Loader2 size={14} className="animate-spin" />}
+                                {saving ? 'Salvando...' : 'Salvar Alterações'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+        </>
+    )
+}
+
 /* ─── KPI CARD ─────────────────────────────────────────────────── */
 function KPI({ label, value, icon: Icon, color }: {
     label: string; value: number | string; icon: React.ElementType; color: string
@@ -576,6 +765,7 @@ export default function EquipePage() {
     const [tab, setTab] = useState<Tab>('equipes')
     const [search, setSearch] = useState('')
     const [showCreateTeam, setShowCreateTeam] = useState(false)
+    const [editingTeam, setEditingTeam] = useState<Team | null>(null)
     const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [deleting, setDeleting] = useState(false)
@@ -768,7 +958,7 @@ export default function EquipePage() {
                                     key={team.id}
                                     team={team}
                                     index={i}
-                                    onEdit={() => toast.info('Em breve: edição de equipe')}
+                                    onEdit={t => setEditingTeam(t)}
                                     onDelete={t => { setDeletingTeam(t); setConfirmDelete(true) }}
                                     onAddMember={handleAddMember}
                                     onRemoveMember={handleRemoveMember}
@@ -824,6 +1014,18 @@ export default function EquipePage() {
                     <CreateTeamModal
                         onClose={() => setShowCreateTeam(false)}
                         onCreated={() => mutateTeams()}
+                        brokers={brokers}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* ── EDIT TEAM MODAL ──────────────────────────────────────── */}
+            <AnimatePresence>
+                {editingTeam && (
+                    <EditTeamModal
+                        team={editingTeam}
+                        onClose={() => setEditingTeam(null)}
+                        onUpdated={() => mutateTeams()}
                         brokers={brokers}
                     />
                 )}
