@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import { T } from '../../lib/theme'
 import { useTeams, createTeam, deleteTeam, addMemberToTeam, removeMemberFromTeam, type Team, type TeamMember } from '@/hooks/use-teams'
 import { useBrokers, type Broker } from '@/hooks/use-brokers'
+import { UserActivityTab } from '../../components/equipe/UserActivityTab'
 
 /* ─── CONSTANTS ────────────────────────────────────────────────── */
 const ROLE_CFG: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
@@ -570,7 +571,7 @@ function KPI({ label, value, icon: Icon, color }: {
 }
 
 /* ─── MAIN PAGE ────────────────────────────────────────────────── */
-type Tab = 'equipes' | 'membros'
+type Tab = 'equipes' | 'membros' | 'atividade'
 
 export default function EquipePage() {
     const [tab, setTab] = useState<Tab>('equipes')
@@ -683,8 +684,9 @@ export default function EquipePage() {
                 <div className="flex items-center gap-0.5 p-1 rounded-lg flex-shrink-0"
                     style={{ background: T.elevated }}>
                     {([
-                        { key: 'equipes',  label: 'Equipes',  icon: Building2 },
-                        { key: 'membros',  label: 'Membros',  icon: Users },
+                        { key: 'equipes',   label: 'Equipes',   icon: Building2 },
+                        { key: 'membros',   label: 'Membros',   icon: Users },
+                        { key: 'atividade', label: 'Atividade', icon: CheckCircle },
                     ] as { key: Tab; label: string; icon: React.ElementType }[]).map(t => (
                         <button
                             key={t.key}
@@ -700,19 +702,21 @@ export default function EquipePage() {
                     ))}
                 </div>
 
-                {/* Search */}
-                <div className="relative flex-1 min-w-0">
-                    <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                        style={{ color: T.textMuted }} />
-                    <input
-                        type="text"
-                        placeholder={tab === 'equipes' ? 'Buscar equipes...' : 'Buscar por nome ou email...'}
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        className="w-full h-9 pl-9 pr-4 rounded-lg text-sm outline-none"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                    />
-                </div>
+                {/* Search — hidden on atividade tab */}
+                {tab !== 'atividade' && (
+                    <div className="relative flex-1 min-w-0">
+                        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                            style={{ color: T.textMuted }} />
+                        <input
+                            type="text"
+                            placeholder={tab === 'equipes' ? 'Buscar equipes...' : 'Buscar por nome ou email...'}
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            className="w-full h-9 pl-9 pr-4 rounded-lg text-sm outline-none"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                        />
+                    </div>
+                )}
 
                 {/* Role filter (membros only) */}
                 {tab === 'membros' && (
@@ -817,6 +821,9 @@ export default function EquipePage() {
                     )}
                 </>
             )}
+
+            {/* ── ATIVIDADE TAB ───────────────────────────────────────── */}
+            {tab === 'atividade' && <UserActivityTab />}
 
             {/* ── CREATE TEAM MODAL ────────────────────────────────────── */}
             <AnimatePresence>

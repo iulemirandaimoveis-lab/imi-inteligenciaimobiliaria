@@ -3,6 +3,12 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { PresenceProvider } from '@/features/connect/components/PresenceProvider'
+import { useBackofficeSession } from '@/hooks/useBackofficeSession'
+
+function SessionTracker() {
+    useBackofficeSession()
+    return null
+}
 
 export default function PresenceWrapper({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<{ id: string; name: string; avatar?: string | null } | null>(null)
@@ -24,6 +30,7 @@ export default function PresenceWrapper({ children }: { children: React.ReactNod
 
     return (
         <PresenceProvider userId={user.id} userName={user.name} avatarUrl={user.avatar}>
+            <SessionTracker />
             {children}
         </PresenceProvider>
     )
