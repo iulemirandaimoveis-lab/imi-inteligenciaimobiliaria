@@ -1015,7 +1015,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                     <div style={{
                         padding: '12px 20px', borderTop: `1px solid ${T.border}`,
                         display: 'flex', alignItems: 'center', gap: 8, background: T.surface,
-                        paddingBottom: isMobile ? 76 : 12,
+                        paddingBottom: isMobile ? 'calc(76px + env(safe-area-inset-bottom, 0px))' : 12,
                     }}>
                         {voiceRecorder.isRecording ? (
                             /* ── Voice Recording UI ── */
@@ -1161,13 +1161,18 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
         </motion.div>
     )
 
+    // Height: accounts for header, content padding, bottom nav, and device safe areas (notch/home bar)
+    const connectHeight = isMobile
+        ? 'calc(100dvh - 144px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))'
+        : 'calc(100dvh - 112px)'
+
     return (
         <div style={{
             display: 'flex', overflow: 'hidden',
             borderRadius: 'var(--r-lg, 14px)',
             border: `1px solid ${T.border}`,
+            height: connectHeight,
         }}
-        className="h-[calc(100dvh-164px)] sm:h-[calc(100dvh-140px)] lg:h-[calc(100dvh-112px)]"
         >
             {/* New Channel / Direct Message Modal */}
             <AnimatePresence>
@@ -1447,6 +1452,141 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
             <div className="flex md:hidden" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
                 {mobileView === 'list' ? channelList : chatArea}
             </div>
+
+            {/* Mobile Channel Info — bottom sheet overlay */}
+            <AnimatePresence>
+                {showChannelInfo && activeChannel && isMobile && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowChannelInfo(false)}
+                            className="md:hidden fixed inset-0 z-50"
+                            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+                        />
+                        <motion.div
+                            initial={{ y: '100%' }}
+                            animate={{ y: 0 }}
+                            exit={{ y: '100%' }}
+                            transition={{ type: 'spring', stiffness: 380, damping: 36 }}
+                            className="md:hidden fixed inset-x-0 bottom-0 z-50"
+                            style={{
+                                borderRadius: '20px 20px 0 0',
+                                background: T.base,
+                                border: `1px solid ${T.border}`,
+                                borderBottom: 'none',
+                                maxHeight: '75dvh',
+                                paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
+                                overflowY: 'auto',
+                            }}
+                        >
+                            {/* Drag handle */}
+                            <div className="flex justify-center pt-3 pb-1">
+                                <div style={{ width: 36, height: 4, borderRadius: 999, background: T.border }} />
+                            </div>
+                            <div style={{ padding: '12px 20px 20px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                                    <span style={{ fontSize: 15, fontWeight: 700, color: T.text, fontFamily: T.font.serif }}>
+                                        Detalhes do Canal
+                                    </span>
+                                    <button
+                                        onClick={() => setShowChannelInfo(false)}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, padding: 4 }}
+                                    >
+                                        <X size={18} />
+                                    </button>
+                                </div>
+                                {/* Channel avatar/icon */}
+                                <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                                    {activeChannel.type === 'direct' && activeChannel.other_user ? (
+                                        <div style={{ display: 'inline-block' }}>
+                                            <ChatAvatar name={activeChannel.other_user.name ?? 'U'} url={activeChannel.other_user.avatar_url} size={72} />
+                                        </div>
+                                    ) : (
+                                        <div style={{
+                                            width: 72, height: 72, borderRadius: 20, margin: '0 auto',
+                                            background: T.elevated, display: 'flex',
+                                            alignItems: 'center', justifyContent: 'center', color: T.gold,
+                                        }}>
+                                            <ChannelIcon type={activeChannel.type} size={32} />
+                                        </div>
+                                    )}
+                                    <div style={{ fontSize: 17, fontWeight: 700, color: T.text, marginTop: 14 }}>
+                                        {activeChannel.type === 'direct' && activeChannel.other_user
+                                            ? activeChannel.other_user.name
+                                            : activeChannel.name}
+                                    </div>
+                                    <div style={{ fontSize: 13, color: T.textDim, marginTop: 4 }}>
+                                        {activeChannel.type === 'direct' ? 'Conversa direta' : `Canal ${activeChannel.type}`}
+                                    </div>
+                                </div>
+                                {/* Stats */}
+                                <div style={{
+                                    background: T.elevated, borderRadius: T.radius.lg, padding: 16,
+                                    marginBottom: 16, border: `1px solid ${T.borderLight}`,
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                                        <span style={{ fontSize: 13, color: T.textDim }}>Mensagens</span>
+                                        <span style={{ fontSize: 13, fontWeight: 700, color: T.text, fontFamily: T.font.mono }}>
+                                            {activeChannel.message_count}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                                        <span style={{ fontSize: 13, color: T.textDim }}>Criado em</span>
+                                        <span style={{ fontSize: 13, fontWeight: 600, color: T.text }}>
+                                            {activeChannel.created_at ? new Date(activeChannel.created_at).toLocaleDateString('pt-BR') : '—'}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span style={{ fontSize: 13, color: T.textDim }}>Tipo</span>
+                                        <span style={{ fontSize: 13, fontWeight: 600, color: T.gold, textTransform: 'capitalize' }}>
+                                            {activeChannel.type}
+                                        </span>
+                                    </div>
+                                </div>
+                                {/* Members */}
+                                {activeChannel.members && activeChannel.members.length > 0 && (
+                                    <div>
+                                        <div style={{ fontSize: 12, fontWeight: 700, color: T.textMuted, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                            <Users size={12} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                                            Membros ({activeChannel.members.length})
+                                        </div>
+                                        {activeChannel.members.map((member: { user_id: string; role?: string; profile?: { id?: string; name?: string; email?: string; avatar_url?: string | null } | null }) => {
+                                            const memberName = member.user_id === user.id ? 'Você' : (member.profile?.name || member.profile?.email || member.user_id.slice(0, 8))
+                                            const memberOnline = isOnline(member.user_id)
+                                            return (
+                                                <div key={member.user_id} style={{
+                                                    display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0',
+                                                    borderBottom: `1px solid ${T.borderLight}`,
+                                                }}>
+                                                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                                                        <ChatAvatar name={memberName} url={member.profile?.avatar_url} size={36} />
+                                                        <span style={{
+                                                            position: 'absolute', bottom: -1, right: -1,
+                                                            width: 10, height: 10, borderRadius: '50%',
+                                                            background: memberOnline ? '#4ADE80' : '#6B7280',
+                                                            border: '2px solid var(--bg-base, #0F1923)',
+                                                        }} />
+                                                    </div>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <div style={{ fontSize: 14, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                            {memberName}
+                                                        </div>
+                                                        <div style={{ fontSize: 12, color: memberOnline ? '#4ADE80' : T.textDim }}>
+                                                            {memberOnline ? 'Online' : 'Offline'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     )
 }
