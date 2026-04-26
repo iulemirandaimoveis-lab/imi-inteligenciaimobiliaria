@@ -2,7 +2,7 @@
   <!-- Dark navy background — backoffice / PWA / Apple Touch -->
   <rect width="512" height="512" rx="80" fill="#0B1928"/>
   <!-- Gold bar — top unifier (100% width per brandkit) -->
-  <rect x="0" y="0" width="512" height="40" rx="20" fill="#C49D5B"/>
+  <rect x="0" y="0" width="512" height="28" rx="14" fill="#C49D5B"/>
   <!-- IMI text — centered, Playfair Display 700 style -->
-  <text x="256" y="330" text-anchor="middle" font-family="'Playfair Display','Georgia',serif" font-size="200" font-weight="700" fill="white" letter-spacing="12">IMI</text>
+  <text x="256" y="310" text-anchor="middle" font-family="'Playfair Display','Georgia',serif" font-size="140" font-weight="700" fill="white" letter-spacing="8">IMI</text>
 </svg>

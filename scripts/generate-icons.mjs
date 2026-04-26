@@ -48,7 +48,7 @@ function drawIcon(size) {
   ctx.fill()
 
   // Gold bar at top
-  const barH = Math.max(w * 0.08, 4)
+  const barH = Math.max(w * 0.056, 3)
   const barR = barH / 2
   ctx.beginPath()
   ctx.moveTo(barR, 0)
@@ -63,7 +63,7 @@ function drawIcon(size) {
   ctx.fill()
 
   // IMI text — subtle shadow for definition
-  const fontSize = w * 0.44
+  const fontSize = w * 0.308
   ctx.shadowColor = 'rgba(0,0,0,0.4)'
   ctx.shadowBlur = w * 0.04
   ctx.fillStyle = WHITE
