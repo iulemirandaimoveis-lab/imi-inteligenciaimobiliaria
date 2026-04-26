@@ -32,7 +32,7 @@ BEGIN
 
         -- Encerra todas as sessões ativas (força novo login)
         DELETE FROM auth.sessions       WHERE user_id = v_user_id;
-        DELETE FROM auth.refresh_tokens WHERE user_id = v_user_id;
+        DELETE FROM auth.refresh_tokens WHERE user_id = v_user_id::text;
 
         -- Garante que o perfil não exige reset de senha
         UPDATE public.profiles SET
