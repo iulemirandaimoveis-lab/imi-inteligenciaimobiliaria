@@ -63,35 +63,48 @@ export async function POST(
             return NextResponse.json({ error: 'Corretor não encontrado' }, { status: 404 })
         }
 
-        // Assign broker to this team
+        // Assign broker to this team (primary team remains in brokers.team_id)
         const { data: updated, error } = await supabaseAdmin
             .from('brokers')
-            .update({ team_id: params.id, updated_at: new Date().toISOString() })
+            .update({ team_id: broker.team_id ?? params.id, updated_at: new Date().toISOString() })
             .eq('id', broker_id)
-            .select('id, name, email, role, status, avatar_url, team_id')
+            .select('id, user_id, name, email, role, status, avatar_url, team_id')
             .single()
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        // Update team member_count
-        await supabaseAdmin.rpc('update_team_member_count', { p_team_id: params.id }).catch(() => {
-            // Fallback: manual count update
-            supabaseAdmin
-                .from('brokers')
-                .select('id', { count: 'exact' })
-                .eq('team_id', params.id)
-                .then(({ count }) => {
-                    if (count !== null) {
-                        supabaseAdmin
-                            .from('teams')
-                            .update({ member_count: count, updated_at: new Date().toISOString() })
-                            .eq('id', params.id)
-                            .then(() => {})
-                    }
+        if (updated?.user_id) {
+            const { error: membershipError } = await supabaseAdmin
+                .from('team_members')
+                .upsert({
+                    team_id: params.id,
+                    user_id: updated.user_id,
+                    broker_id: updated.id,
+                    role: 'member',
+                }, {
+                    onConflict: 'team_id,user_id',
                 })
-        })
+
+            if (membershipError) {
+                console.warn('team_members upsert failed:', membershipError.message)
+            }
+        }
+
+        // Update team member_count
+        const { error: rpcError } = await supabaseAdmin.rpc('update_team_member_count', { p_team_id: params.id })
+        if (rpcError) {
+            const { count } = await supabaseAdmin
+                .from('team_members')
+                .select('id', { count: 'exact', head: true })
+                .eq('team_id', params.id)
+
+            await supabaseAdmin
+                .from('teams')
+                .update({ member_count: count ?? 0, updated_at: new Date().toISOString() })
+                .eq('id', params.id)
+        }
 
         return NextResponse.json({ data: updated }, { status: 201 })
     } catch (err) {
@@ -149,28 +162,55 @@ export async function DELETE(
             return NextResponse.json({ error: 'broker_id é obrigatório' }, { status: 400 })
         }
 
-        // Remove broker from team
-        const { error } = await supabaseAdmin
+        const { data: broker } = await supabaseAdmin
             .from('brokers')
-            .update({ team_id: null, updated_at: new Date().toISOString() })
+            .select('id, user_id, team_id')
             .eq('id', broker_id)
-            .eq('team_id', params.id)
+            .maybeSingle()
 
-        if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
+        if (!broker) {
+            return NextResponse.json({ error: 'Corretor não encontrado' }, { status: 404 })
+        }
+
+        if (broker.user_id) {
+            await supabaseAdmin
+                .from('team_members')
+                .delete()
+                .eq('team_id', params.id)
+                .eq('user_id', broker.user_id)
+        }
+
+        // If this team is currently the broker primary team, try to set another membership as primary.
+        if (broker.team_id === params.id) {
+            const { data: remainingMemberships } = broker.user_id
+                ? await supabaseAdmin
+                    .from('team_members')
+                    .select('team_id')
+                    .eq('user_id', broker.user_id)
+                    .limit(1)
+                : { data: [] }
+
+            const nextPrimaryTeamId = remainingMemberships?.[0]?.team_id ?? null
+            const { error } = await supabaseAdmin
+                .from('brokers')
+                .update({ team_id: nextPrimaryTeamId, updated_at: new Date().toISOString() })
+                .eq('id', broker_id)
+
+            if (error) {
+                return NextResponse.json({ error: error.message }, { status: 500 })
+            }
         }
 
         // Update team member_count
         const { count } = await supabaseAdmin
-            .from('brokers')
-            .select('id', { count: 'exact' })
+            .from('team_members')
+            .select('id', { count: 'exact', head: true })
             .eq('team_id', params.id)
 
         await supabaseAdmin
             .from('teams')
             .update({ member_count: count ?? 0, updated_at: new Date().toISOString() })
             .eq('id', params.id)
-            .catch(() => {})
 
         return NextResponse.json({ success: true })
     } catch (err) {

@@ -25,14 +25,27 @@ export async function GET(
             return NextResponse.json({ error: 'Equipe não encontrada' }, { status: 404 })
         }
 
-        // Fetch team members from brokers table via team_id
+        const { data: teamMembersRows } = await supabaseAdmin
+            .from('team_members')
+            .select('broker_id')
+            .eq('team_id', params.id)
+
+        const membershipBrokerIds = (teamMembersRows || [])
+            .map((row) => row.broker_id)
+            .filter((brokerId): brokerId is string => Boolean(brokerId))
+
+        // Fetch team members from brokers table (primary team + secondary memberships)
         const { data: members } = await supabaseAdmin
             .from('brokers')
             .select('id, user_id, name, email, role, status, avatar_url, creci, phone, commission_rate, last_login_at, created_at')
-            .eq('team_id', params.id)
+            .or(`team_id.eq.${params.id},id.in.(${membershipBrokerIds.join(',') || '00000000-0000-0000-0000-000000000000'})`)
             .order('name', { ascending: true })
 
-        return NextResponse.json({ data: { ...team, members: members || [] } })
+        const uniqueMembers = (members || []).filter((member, index, list) =>
+            list.findIndex((m) => m.id === member.id) === index,
+        )
+
+        return NextResponse.json({ data: { ...team, members: uniqueMembers } })
     } catch (err) {
         return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
@@ -110,7 +123,25 @@ export async function PATCH(
                     .from('brokers')
                     .update({ team_id: params.id, updated_at: new Date().toISOString() })
                     .eq('id', body.leader_id)
-                    .catch(() => {})
+
+                const { data: leaderBroker } = await supabaseAdmin
+                    .from('brokers')
+                    .select('user_id')
+                    .eq('id', body.leader_id)
+                    .maybeSingle()
+
+                if (leaderBroker?.user_id) {
+                    await supabaseAdmin
+                        .from('team_members')
+                        .upsert({
+                            team_id: params.id,
+                            broker_id: body.leader_id,
+                            user_id: leaderBroker.user_id,
+                            role: 'leader',
+                        }, {
+                            onConflict: 'team_id,user_id',
+                        })
+                }
             } else {
                 updates.leader_name = null
             }
@@ -169,10 +200,14 @@ export async function DELETE(
 
         // Unassign members from this team before soft-deleting
         await supabaseAdmin
+            .from('team_members')
+            .delete()
+            .eq('team_id', params.id)
+
+        await supabaseAdmin
             .from('brokers')
             .update({ team_id: null, updated_at: new Date().toISOString() })
             .eq('team_id', params.id)
-            .catch(() => {})
 
         const { error } = await supabaseAdmin
             .from('teams')

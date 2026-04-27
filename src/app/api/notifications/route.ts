@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
             .select('role')
             .eq('id', user.id)
             .single()
-        const isAdmin = profile?.role === 'admin' || profile?.role === 'owner'
+        const isAdmin = profile?.role === 'admin' || profile?.role === 'owner' || profile?.role === 'super_admin'
 
         let query = supabase
             .from('notifications')

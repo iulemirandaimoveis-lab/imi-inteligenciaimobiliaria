@@ -34,15 +34,30 @@ export async function GET(request: NextRequest) {
             broker?.role === 'admin' ||
             broker?.role === 'broker_manager'
 
+        const { data: memberships } = await supabaseAdmin
+            .from('team_members')
+            .select('team_id')
+            .eq('user_id', user.id)
+
+        const membershipTeamIds = (memberships || [])
+            .map((membership) => membership.team_id)
+            .filter((teamId): teamId is string => Boolean(teamId))
+
         let teamsQuery = supabaseAdmin
             .from('teams')
             .select('*', { count: 'exact' })
             .eq('is_active', true)
             .order('name', { ascending: true })
 
-        // Non-admin users only see their own team
-        if (!isAdminOrManager && broker?.team_id) {
-            teamsQuery = teamsQuery.eq('id', broker.team_id)
+        // Non-admin users only see teams they belong to (supports multi-team)
+        if (!isAdminOrManager) {
+            const visibleTeamIds = new Set<string>(membershipTeamIds)
+            if (broker?.team_id) visibleTeamIds.add(broker.team_id)
+            const ids = [...visibleTeamIds]
+            if (ids.length === 0) {
+                return NextResponse.json({ data: [], count: 0 })
+            }
+            teamsQuery = teamsQuery.in('id', ids)
         }
 
         if (search) {
@@ -61,16 +76,37 @@ export async function GET(request: NextRequest) {
         let membersMap: Record<string, unknown[]> = {}
 
         if (teamIds.length > 0) {
+            const { data: relationRows } = await supabaseAdmin
+                .from('team_members')
+                .select('team_id, broker_id')
+                .in('team_id', teamIds)
+
+            const brokerIdsFromRelation = (relationRows || [])
+                .map((row) => row.broker_id)
+                .filter((brokerId): brokerId is string => Boolean(brokerId))
+
             const { data: brokers } = await supabaseAdmin
                 .from('brokers')
                 .select('id, user_id, name, email, role, status, avatar_url, creci, phone, team_id, last_login_at, created_at')
-                .in('team_id', teamIds)
+                .or(`team_id.in.(${teamIds.join(',')}),id.in.(${brokerIdsFromRelation.join(',') || '00000000-0000-0000-0000-000000000000'})`)
 
             if (brokers) {
+                const brokerById = new Map(brokers.map((b) => [b.id, b]))
+                for (const relation of relationRows || []) {
+                    if (!relation.team_id || !relation.broker_id) continue
+                    const brokerFromRelation = brokerById.get(relation.broker_id)
+                    if (!brokerFromRelation) continue
+                    if (!membersMap[relation.team_id]) membersMap[relation.team_id] = []
+                    const alreadyAdded = (membersMap[relation.team_id] as { id: string }[]).some((m) => m.id === relation.broker_id)
+                    if (!alreadyAdded) membersMap[relation.team_id].push(brokerFromRelation)
+                }
+
                 for (const b of brokers) {
-                    const tid = (b as { team_id: string }).team_id
+                    const tid = (b as { team_id: string | null }).team_id
+                    if (!tid) continue
                     if (!membersMap[tid]) membersMap[tid] = []
-                    membersMap[tid].push(b)
+                    const alreadyAdded = (membersMap[tid] as { id: string }[]).some((m) => m.id === b.id)
+                    if (!alreadyAdded) membersMap[tid].push(b)
                 }
             }
         }
@@ -164,11 +200,14 @@ export async function POST(request: NextRequest) {
 
         // If leader_id provided, assign them to the team
         if (leader_id && team) {
-            await supabaseAdmin
+            const { error: leaderAssignError } = await supabaseAdmin
                 .from('brokers')
                 .update({ team_id: team.id, updated_at: new Date().toISOString() })
                 .eq('id', leader_id)
-                .catch((e: Error) => console.warn('leader team_id assign failed:', e.message))
+
+            if (leaderAssignError) {
+                console.warn('leader team_id assign failed:', leaderAssignError.message)
+            }
         }
 
         return NextResponse.json({ data: team }, { status: 201 })
