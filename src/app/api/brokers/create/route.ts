@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
+const ADMIN_ROLES = ['admin', 'ADMIN', 'super_admin', 'SUPER_ADMIN', 'owner']
+
 function generateTempPassword(): string {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
     let pw = ''
     for (let i = 0; i < 12; i++) pw += chars.charAt(Math.floor(Math.random() * chars.length))
-    return pw
+    return pw + 'A1!'
 }
 
 export async function POST(request: Request) {
@@ -15,6 +17,20 @@ export async function POST(request: Request) {
         const { data: { user }, error: sessionErr } = await supabase.auth.getUser()
         if (sessionErr || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        // Verify caller is admin
+        const { data: callerProfile } = await supabaseAdmin
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+
+        if (!callerProfile || !ADMIN_ROLES.includes(callerProfile.role)) {
+            return NextResponse.json(
+                { error: 'Apenas administradores podem criar membros da equipe' },
+                { status: 403 }
+            )
         }
 
         const body = await request.json()
@@ -28,8 +44,9 @@ export async function POST(request: Request) {
         const { data: existingBroker } = await supabaseAdmin
             .from('brokers')
             .select('id, email')
-            .eq('email', email)
+            .eq('email', email.toLowerCase().trim())
             .maybeSingle()
+
         if (existingBroker) {
             return NextResponse.json(
                 { error: 'Já existe um corretor cadastrado com este email.' },
@@ -37,30 +54,25 @@ export async function POST(request: Request) {
             )
         }
 
-        // Generate temporary password — user will change on first login
         const tempPassword = generateTempPassword()
 
-        // Check if auth user already exists — targeted lookup by email
-        let existingAuth: { id: string; email?: string; user_metadata?: Record<string, unknown> } | null = null
+        // Check if auth user already exists via profiles table
+        let existingAuth: { id: string; user_metadata?: Record<string, unknown> } | null = null
         const { data: profileMatch } = await supabaseAdmin
             .from('profiles')
             .select('id')
-            .eq('email', email)
+            .eq('email', email.toLowerCase().trim())
             .maybeSingle()
+
         if (profileMatch) {
             const { data: { user: authUser } } = await supabaseAdmin.auth.admin.getUserById(profileMatch.id)
             if (authUser) existingAuth = authUser
-        }
-        if (!existingAuth) {
-            // Fallback: try creating — if duplicate, the createUser call below will handle it
         }
 
         let userId: string
 
         if (existingAuth) {
-            // Auth user exists but no broker record — reuse the auth user
             userId = existingAuth.id
-            // Update the password to the new temp password
             await supabaseAdmin.auth.admin.updateUserById(userId, {
                 password: tempPassword,
                 user_metadata: {
@@ -70,15 +82,11 @@ export async function POST(request: Request) {
                 },
             })
         } else {
-            // Create new auth user with temp password
             const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-                email,
+                email: email.toLowerCase().trim(),
                 password: tempPassword,
                 email_confirm: true,
-                user_metadata: {
-                    full_name: name,
-                    must_change_password: true,
-                },
+                user_metadata: { full_name: name, must_change_password: true },
             })
             if (authError) {
                 return NextResponse.json({ error: authError.message }, { status: 400 })
@@ -87,17 +95,20 @@ export async function POST(request: Request) {
         }
 
         // Create broker record
+        const brokerRole = role || 'broker'
         const { data: broker, error: brokerError } = await supabaseAdmin
             .from('brokers')
             .insert({
                 user_id: userId,
                 name,
-                email,
+                email: email.toLowerCase().trim(),
                 phone: phone || null,
                 creci: creci || null,
                 status: status || 'active',
-                role: role || 'broker',
-                permissions: permissions?.length ? permissions : ['dashboard', 'imoveis', 'leads', 'agenda'],
+                role: brokerRole,
+                permissions: permissions?.length
+                    ? permissions
+                    : ['dashboard', 'imoveis', 'leads', 'agenda'],
                 created_by: user.id,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
@@ -106,7 +117,6 @@ export async function POST(request: Request) {
             .single()
 
         if (brokerError) {
-            // Only delete auth user if WE just created it (not reused)
             if (!existingAuth) {
                 await supabaseAdmin.auth.admin.deleteUser(userId)
             }
@@ -114,21 +124,28 @@ export async function POST(request: Request) {
         }
 
         // Sync to profiles table
-        await supabaseAdmin.from('profiles').upsert({
-            id: userId,
-            email,
-            name,
-            role: role === 'broker_manager' ? 'admin' : 'corretor',
-            created_at: new Date().toISOString(),
-        }, { onConflict: 'id' }).then(() => {})
+        const { error: profileError } = await supabaseAdmin
+            .from('profiles')
+            .upsert({
+                id: userId,
+                email: email.toLowerCase().trim(),
+                name,
+                role: brokerRole === 'broker_manager' ? 'admin' : 'corretor',
+            }, { onConflict: 'id' })
 
-        // Return broker + temp password (admin sees it once to share with user)
+        if (profileError) {
+            console.error('Profile sync error (non-critical):', profileError.message)
+        }
+
         return NextResponse.json({
             ...broker,
             temp_password: tempPassword,
-            message: `Corretor ${name} cadastrado. Senha provisória gerada. O usuário deve alterá-la no primeiro acesso.`,
+            message: `${name} cadastrado. Compartilhe a senha provisória — o usuário deve alterá-la no primeiro acesso.`,
         }, { status: 201 })
+
     } catch (err: unknown) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        const msg = err instanceof Error ? err.message : String(err)
+        console.error('brokers/create error:', msg)
+        return NextResponse.json({ error: msg }, { status: 500 })
     }
 }
