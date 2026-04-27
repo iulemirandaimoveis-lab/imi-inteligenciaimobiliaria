@@ -4,6 +4,14 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 export const dynamic = 'force-dynamic'
 // Check if service role key is configured
 const hasServiceKey = !!(process.env.SUPABASE_SERVICE_ROLE_KEY)
+
+function mapRoleForAuthMetadata(role: string) {
+    const normalized = role.trim().toUpperCase()
+    if (normalized === 'ADMIN' || normalized === 'SUPER_ADMIN' || normalized === 'OWNER') return 'admin'
+    if (normalized === 'GESTOR' || normalized === 'MANAGER') return 'manager'
+    return 'broker'
+}
+
 export async function POST(request: Request) {
     try {
         // Verify the caller is authenticated
@@ -34,6 +42,7 @@ export async function POST(request: Request) {
         // Auto-generate a temporary password — user will set their own via recovery email
         const tempPassword = crypto.randomUUID().slice(0, 12) + 'A1!'
         const validRole = role || 'EDITOR'
+        const authMetadataRole = mapRoleForAuthMetadata(validRole)
         if (hasServiceKey) {
             // Check for existing user with this email (efficient — no listUsers)
             const { data: existingProfile } = await supabaseAdmin
@@ -77,7 +86,7 @@ export async function POST(request: Request) {
                 email,
                 password: tempPassword,
                 email_confirm: true,
-                user_metadata: { name, role: validRole }
+                user_metadata: { name, role: authMetadataRole }
             })
             if (createError) {
                 const msg = createError.message
@@ -99,7 +108,7 @@ export async function POST(request: Request) {
                         const newUserId = retryUser.user.id
                         // Manually set metadata
                         await supabaseAdmin.auth.admin.updateUserById(newUserId, {
-                            user_metadata: { name, role: validRole }
+                            user_metadata: { name, role: authMetadataRole }
                         }).catch(() => {})
                         // Continue with the rest of the flow (profile + broker sync below)
                         const { error: profileError } = await supabaseAdmin
