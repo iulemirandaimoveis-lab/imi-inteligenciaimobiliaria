@@ -5,6 +5,7 @@ const withPWA = require('next-pwa')({
     skipWaiting: true,
     disable: process.env.NODE_ENV === 'development',
     buildExcludes: [/\.map$/, /middleware-manifest\.json$/],
+    customWorkerDir: 'worker',
     runtimeCaching: [
         {
             urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*/i,
@@ -89,11 +90,11 @@ const nextConfig = {
                             "default-src 'self'",
                             `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''} https://www.googletagmanager.com https://www.google-analytics.com https://api.mapbox.com https://*.sentry-cdn.com`.trim(),
                             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.mapbox.com",
-                            "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://*.mapbox.com https://*.basemaps.cartocdn.com https://*.googleapis.com https://*.gstatic.com https://*.google.com",
+                            "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://*.mapbox.com https://*.basemaps.cartocdn.com https://*.googleapis.com https://*.gstatic.com https://*.google.com https://img.youtube.com https://i.ytimg.com",
                             "font-src 'self' https://fonts.gstatic.com https://fonts.mapbox.com",
                             "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://*.mapbox.com https://www.google-analytics.com https://basemaps.cartocdn.com https://*.ingest.sentry.io https://*.sentry.io",
                             "worker-src 'self' blob:",
-                            "frame-src 'self' https://www.google.com https://maps.google.com",
+                            "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
                             "frame-ancestors 'self'",
                             "base-uri 'self'",
                             "form-action 'self'",

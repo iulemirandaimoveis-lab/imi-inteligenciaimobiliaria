@@ -103,27 +103,35 @@ export default function MetasPage() {
 
     const saveGoal = async () => {
         setSaving(true)
-        const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) { setSaving(false); return }
+        try {
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) { setSaving(false); toast.error('Sessão expirada'); return }
 
-        const payload = {
-            user_id: user.id,
-            month: currentMonth,
-            target_revenue: parseFloat(form.target_revenue) || 0,
-            target_avaliacoes: parseInt(form.target_avaliacoes) || 0,
+            const payload = {
+                user_id: user.id,
+                month: currentMonth,
+                target_revenue: parseFloat(form.target_revenue) || 0,
+                target_avaliacoes: parseInt(form.target_avaliacoes) || 0,
+            }
+
+            const existing = goals.find(g => g.month === currentMonth)
+            const { error } = existing
+                ? await supabase.from('financial_goals').update(payload).eq('id', existing.id)
+                : await supabase.from('financial_goals').insert(payload)
+
+            if (error) {
+                toast.error(`Erro ao salvar meta: ${error.message}`)
+                setSaving(false)
+                return
+            }
+
+            toast.success('Meta salva com sucesso')
+            setEditing(false)
+            loadData()
+        } catch (err) {
+            toast.error('Erro de conexão ao salvar meta')
         }
-
-        const existing = goals.find(g => g.month === currentMonth)
-        if (existing) {
-            await supabase.from('financial_goals').update(payload).eq('id', existing.id)
-        } else {
-            await supabase.from('financial_goals').insert(payload)
-        }
-
-        toast.success('Meta salva com sucesso')
-        setEditing(false)
-        loadData()
         setSaving(false)
     }
 
@@ -158,8 +166,8 @@ export default function MetasPage() {
             {/* KPI strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                 <KPICard label="Receita Atual"    value={loading ? '—' : fmt(actuals.revenue)}        icon={<DollarSign size={14} />} accent="green" size="sm" />
-                <KPICard label="Meta Receita"     value={loading ? '—' : (revTarget > 0 ? fmt(revTarget) : 'N/D')} icon={<Target size={14} />} size="sm" />
-                <KPICard label="% Receita"        value={loading ? '—' : (revTarget > 0 ? `${revPct}%` : '—')} icon={<TrendingUp size={14} />} accent={revPct >= 100 ? 'green' : 'blue'} size="sm" />
+                <KPICard label="Meta Receita"     value={loading ? '—' : (revTarget > 0 ? fmt(revTarget) : 'Definir meta →')} icon={<Target size={14} />} size="sm" accent={revTarget > 0 ? 'gold' : 'warm'} />
+                <KPICard label="% Receita"        value={loading ? '—' : (revTarget > 0 ? `${revPct}%` : 'N/D')} icon={<TrendingUp size={14} />} accent={revPct >= 100 ? 'green' : 'blue'} size="sm" />
                 <KPICard label="Avaliações/Hon."  value={loading ? '—' : String(actuals.avaliacoes)}  icon={<Scale size={14} />} size="sm" />
             </div>
 

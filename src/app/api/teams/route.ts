@@ -74,13 +74,37 @@ export async function GET(request: NextRequest) {
             query = query.ilike('name', `%${search}%`)
         }
 
-        const { data, error, count } = await query
+        const { data: teamsData, error, count } = await teamsQuery
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        return NextResponse.json({ data: data || [], count: count || 0 })
+        // Fetch members for all teams in one query
+        const teamIds = (teamsData || []).map((t: { id: string }) => t.id)
+        let membersMap: Record<string, unknown[]> = {}
+
+        if (teamIds.length > 0) {
+            const { data: brokers } = await supabaseAdmin
+                .from('brokers')
+                .select('id, user_id, name, email, role, status, avatar_url, creci, phone, team_id, last_login_at, created_at')
+                .in('team_id', teamIds)
+
+            if (brokers) {
+                for (const b of brokers) {
+                    const tid = (b as { team_id: string }).team_id
+                    if (!membersMap[tid]) membersMap[tid] = []
+                    membersMap[tid].push(b)
+                }
+            }
+        }
+
+        const teams = (teamsData || []).map((team: { id: string; member_count: number }) => {
+            const members = membersMap[team.id] || []
+            return { ...team, members, member_count: members.length }
+        })
+
+        return NextResponse.json({ data: teams, count: count || 0 })
     } catch (err) {
         return NextResponse.json(
             { error: err instanceof Error ? err.message : 'Internal Server Error' },

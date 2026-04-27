@@ -335,16 +335,26 @@ export default function LeadsInboxPage() {
                                                 >
                                                     <Phone size={16} style={{ color: '#60A5FA' }} />
                                                 </a>
-                                                <a
-                                                    href={`https://wa.me/55${(lead.phone || '').replace(/\D/g, '')}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    onClick={e => e.stopPropagation()}
-                                                    className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg flex items-center justify-center transition-colors hover:scale-110"
-                                                    style={{ background: 'rgba(37,211,102,0.12)', border: '1px solid rgba(37,211,102,0.25)' }}
-                                                >
-                                                    <MessageSquare size={16} style={{ color: '#25D366' }} />
-                                                </a>
+                                                {lead.phone && (lead.phone || '').replace(/\D/g, '').length >= 10 ? (
+                                                    <a
+                                                        href={`https://wa.me/55${(lead.phone || '').replace(/\D/g, '')}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={e => e.stopPropagation()}
+                                                        className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg flex items-center justify-center transition-colors hover:scale-110"
+                                                        style={{ background: 'rgba(37,211,102,0.12)', border: '1px solid rgba(37,211,102,0.25)' }}
+                                                    >
+                                                        <MessageSquare size={16} style={{ color: '#25D366' }} />
+                                                    </a>
+                                                ) : (
+                                                    <div
+                                                        className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg flex items-center justify-center opacity-30 cursor-not-allowed"
+                                                        style={{ background: 'rgba(37,211,102,0.06)', border: '1px solid rgba(37,211,102,0.10)' }}
+                                                        title="Telefone não disponível"
+                                                    >
+                                                        <MessageSquare size={16} style={{ color: '#25D366' }} />
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     )}

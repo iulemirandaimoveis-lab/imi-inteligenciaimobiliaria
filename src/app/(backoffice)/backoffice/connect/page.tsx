@@ -644,6 +644,15 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                             {totalUnread}
                         </span>
                     )}
+                    {onlineUsers.length > 0 && (
+                        <span style={{
+                            display: 'flex', alignItems: 'center', gap: 4,
+                            fontSize: 11, color: '#4ADE80', fontWeight: 600,
+                        }}>
+                            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ADE80', display: 'inline-block', boxShadow: '0 0 5px #4ADE80' }} />
+                            {onlineUsers.length} online
+                        </span>
+                    )}
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
                     <button
@@ -1158,7 +1167,7 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
             borderRadius: 'var(--r-lg, 14px)',
             border: `1px solid ${T.border}`,
         }}
-        className="h-[calc(100dvh-200px)] sm:h-[calc(100dvh-160px)] lg:h-[calc(100dvh-112px)]"
+        className="h-[calc(100dvh-164px)] sm:h-[calc(100dvh-140px)] lg:h-[calc(100dvh-112px)]"
         >
             {/* New Channel / Direct Message Modal */}
             <AnimatePresence>

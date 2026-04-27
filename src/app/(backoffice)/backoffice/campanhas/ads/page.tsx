@@ -138,7 +138,7 @@ export default function AdsPerformancePage() {
             />
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                 <KPICard label="Total Gasto"  value={loading ? '—' : formatCurrency(totalSpent)}                      icon={<DollarSign size={14} />} accent="blue" size="sm" />
                 <KPICard label="Total Leads"  value={loading ? '—' : totalLeads.toLocaleString('pt-BR')}      icon={<Users size={14} />}      accent="green" size="sm" />
                 <KPICard label="CPL Médio"    value={loading ? '—' : formatCurrency(avgCPL)}                          icon={<MousePointerClick size={14} />} size="sm" />

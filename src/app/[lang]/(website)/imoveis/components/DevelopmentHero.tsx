@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useCallback, useEffect } from 'react';
-import { Building2, MapPin, Calendar, FileText, Bed, Ruler, Share2, Camera, X, ChevronLeft, ChevronRight, Check, Shield } from 'lucide-react';
+import { Building2, MapPin, Calendar, FileText, Share2, Camera, X, ChevronLeft, ChevronRight, Check, Shield } from 'lucide-react';
 import { Development } from '../types/development';
 import { motion, AnimatePresence } from 'framer-motion';
 import { slideUp, staggerContainer } from '@/lib/animations';
@@ -258,20 +258,6 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
 
                                 {/* Specs pills */}
                                 <div className="flex flex-wrap gap-2 pb-1">
-                                    {development.specs?.bedroomsRange && development.specs.bedroomsRange !== '—' && (
-                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-[4px]"
-                                            style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>
-                                            <Bed size={12} style={{ color: GOLD, opacity: 0.6 }} />
-                                            <span className="text-xs font-semibold text-white/80">{development.specs.bedroomsRange} quartos</span>
-                                        </div>
-                                    )}
-                                    {development.specs?.areaRange && development.specs.areaRange !== '—' && (
-                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-[4px]"
-                                            style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>
-                                            <Ruler size={12} style={{ color: GOLD, opacity: 0.6 }} />
-                                            <span className="text-xs font-semibold text-white/80">{development.specs.areaRange}</span>
-                                        </div>
-                                    )}
                                     {development.tags?.length > 0 && (
                                         <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-[4px]"
                                             style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>

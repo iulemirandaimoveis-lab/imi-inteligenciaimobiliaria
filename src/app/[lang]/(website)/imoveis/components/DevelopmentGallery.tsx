@@ -156,14 +156,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                         <SectionTitle label="Vídeo" />
                         <div className="space-y-3">
                             {development.images.videos.map((video, idx) => (
-                                <div key={idx} className="aspect-video rounded-[14px] overflow-hidden bg-gray-900 shadow-lg">
-                                    <iframe
-                                        src={video}
-                                        className="w-full h-full border-0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                    />
-                                </div>
+                                <VideoEmbed key={idx} src={video} title={`${development.name} — Vídeo ${idx + 1}`} />
                             ))}
                         </div>
                     </div>
@@ -337,6 +330,101 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                 )}
             </AnimatePresence>
         </>
+    );
+}
+
+/** Extract a YouTube video ID from any YouTube URL variant (watch, youtu.be, shorts, embed) */
+function getYouTubeId(url: string): string | null {
+    const patterns = [
+        /youtube\.com\/watch\?(?:.*&)?v=([a-zA-Z0-9_-]{11})/,
+        /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    ];
+    for (const p of patterns) {
+        const m = url.match(p);
+        if (m) return m[1];
+    }
+    return null;
+}
+
+/** Normalise any YouTube or Vimeo URL to an embeddable form */
+function normalizeVideoUrl(url: string): string {
+    const ytId = getYouTubeId(url);
+    if (ytId) return `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1`;
+
+    const vimeo = url.match(/(?:vimeo\.com\/)(\d+)/);
+    if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+
+    return url;
+}
+
+/** Click-to-play video embed with branded IMI placeholder */
+function VideoEmbed({ src, title }: { src: string; title: string }) {
+    const [playing, setPlaying] = useState(false);
+    const embedUrl = normalizeVideoUrl(src);
+    const ytId = getYouTubeId(src);
+    const thumbnail = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : null;
+
+    if (playing) {
+        return (
+            <div className="aspect-video rounded-[14px] overflow-hidden shadow-lg" style={{ border: '1px solid rgba(200,164,74,0.12)' }}>
+                <iframe
+                    src={`${embedUrl}${embedUrl.includes('?') ? '&' : '?'}autoplay=1`}
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title={title}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <button
+            type="button"
+            onClick={() => setPlaying(true)}
+            className="relative w-full aspect-video rounded-[14px] overflow-hidden group cursor-pointer block text-left"
+            style={{ border: '1px solid rgba(200,164,74,0.12)' }}
+            aria-label={`Reproduzir: ${title}`}
+        >
+            {/* Thumbnail or brand placeholder */}
+            {thumbnail ? (
+                <img
+                    src={thumbnail}
+                    alt={title}
+                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
+                />
+            ) : (
+                <div className="w-full h-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0B1928 0%, #142840 100%)' }}>
+                    <Building2 className="w-12 h-12" style={{ color: 'rgba(200,164,74,0.2)' }} strokeWidth={1} />
+                </div>
+            )}
+
+            {/* Dark overlay */}
+            <div className="absolute inset-0 transition-all duration-300" style={{ background: thumbnail ? 'rgba(5,11,20,0.45)' : 'rgba(5,11,20,0.0)' }} />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'rgba(5,11,20,0.25)' }} />
+
+            {/* Gold play button */}
+            <div className="absolute inset-0 flex items-center justify-center">
+                <div
+                    className="w-16 h-16 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                    style={{ background: '#C8A44A', boxShadow: '0 8px 32px rgba(200,164,74,0.45)' }}
+                >
+                    <svg viewBox="0 0 24 24" fill="#0B1928" width="22" height="22" style={{ marginLeft: 3 }} aria-hidden="true">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </div>
+            </div>
+
+            {/* Title label */}
+            <div
+                className="absolute bottom-3 left-4 right-4 flex items-center gap-2"
+                style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+            >
+                <span className="text-xs font-semibold truncate" style={{ color: 'rgba(255,255,255,0.85)' }}>{title}</span>
+            </div>
+        </button>
     );
 }
 

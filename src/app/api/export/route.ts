@@ -53,14 +53,14 @@ export async function GET(request: NextRequest) {
             case 'financeiro': {
                 let query = supabase
                     .from('financial_transactions')
-                    .select('id, type, category, description, amount, date, status, notes, created_at')
-                    .order('date', { ascending: false })
+                    .select('id, type, category, description, amount, due_date, paid_date, status, payment_method, notes, created_at')
+                    .order('due_date', { ascending: false })
                     .limit(5000)
                 if (month) {
                     const start = `${month}-01`
                     const [y, m] = month.split('-').map(Number)
                     const endDate = new Date(y, m, 1).toISOString().split('T')[0]
-                    query = query.gte('date', start).lt('date', endDate)
+                    query = query.gte('due_date', start).lt('due_date', endDate)
                 }
                 const { data } = await query
                 rows = (data || []) as Record<string, unknown>[]
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
                 break
             }
             default:
-                return NextResponse.json({ error: `Módulo '${module}' não suportado. Use: leads, financeiro, avaliacoes, campanhas, contratos` }, { status: 400 })
+                return NextResponse.json({ error: `Módulo '${moduleName}' não suportado. Use: leads, financeiro, avaliacoes, campanhas, contratos` }, { status: 400 })
         }
         const format = searchParams.get('format') || 'csv'
         if (format === 'pdf') {

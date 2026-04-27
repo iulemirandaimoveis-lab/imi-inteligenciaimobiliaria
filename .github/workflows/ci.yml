@@ -28,6 +28,8 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npx jest --passWithNoTests --forceExit --maxWorkers=2 src/__tests__
+      - name: Intelligence engine unit tests
+        run: npx jest --passWithNoTests --forceExit --maxWorkers=2 --testEnvironment=node src/lib/intelligence/__tests__
 
   lint:
     runs-on: ubuntu-latest

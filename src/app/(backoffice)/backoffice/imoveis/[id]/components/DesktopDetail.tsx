@@ -268,12 +268,12 @@ export function DesktopImovelDetail({
                 <p style={{ ...EYEBROW, marginBottom: 16 }}>Especificações</p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
                   {[
-                    { icon: Ruler, label: 'Área', value: dev.area_from ? `${dev.area_from}${dev.area_to && dev.area_to !== dev.area_from ? `–${dev.area_to}` : ''} m²` : '—' },
-                    { icon: Bed, label: 'Quartos', value: dev.bedrooms ? `${dev.bedrooms}+` : '—' },
-                    { icon: Bath, label: 'Banheiros', value: dev.bathrooms ? `${dev.bathrooms}+` : '—' },
-                    { icon: Car, label: 'Vagas', value: dev.parking_spaces ? `${dev.parking_spaces}+` : '—' },
-                    { icon: Building2, label: 'Tipo', value: dev.type ?? '—' },
-                    { icon: Activity, label: 'Condição', value: dev.condition ?? '—' },
+                    { icon: Ruler, label: 'Área', value: dev.area_from ? `${dev.area_from}${dev.area_to && dev.area_to !== dev.area_from ? `–${dev.area_to}` : ''} m²` : 'Não informado' },
+                    { icon: Bed, label: 'Quartos', value: dev.bedrooms ? `${dev.bedrooms}+` : 'Não informado' },
+                    { icon: Bath, label: 'Banheiros', value: dev.bathrooms ? `${dev.bathrooms}+` : 'Não informado' },
+                    { icon: Car, label: 'Vagas', value: dev.parking_spaces ? `${dev.parking_spaces}+` : 'Não informado' },
+                    { icon: Building2, label: 'Tipo', value: dev.type ?? 'Não informado' },
+                    { icon: Activity, label: 'Condição', value: dev.condition ?? 'Não informado' },
                     { icon: CheckSquare, label: 'Status', value: statusCfg.label },
                     { icon: MapPin, label: 'Cidade', value: dev.city ?? '—' },
                     { icon: MapPin, label: 'Bairro', value: dev.neighborhood ?? '—' },

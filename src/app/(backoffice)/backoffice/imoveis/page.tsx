@@ -45,6 +45,7 @@ const STATUS_CONFIGS: Record<string, { label: string; color: string }> = {
   em_negociacao:  { label: 'Negociação',     color: 'var(--text-secondary)' },
   vendido:        { label: 'Vendido',        color: 'var(--error)' },
   arquivado:      { label: 'Arquivado',      color: 'var(--text-tertiary)' },
+  privado:        { label: 'Arquivado',      color: 'var(--text-tertiary)' },
   rascunho:       { label: 'Rascunho',       color: 'var(--text-tertiary)' },
 }
 // ─── Shared props interface ─────────────────────────────────────────────────────
@@ -1450,6 +1451,10 @@ export default function ImoveisPage() {
   useEffect(() => { fetchProperties() }, [fetchProperties])
   const filtered = useMemo(() => {
     let list = [...properties]
+    // Exclude archived/private by default — only show when explicitly filtered
+    if (filters.status.length === 0) {
+      list = list.filter(p => p.status !== 'arquivado' && p.status !== 'privado')
+    }
     // Market/country filter
     if (market) {
       const accepted = MARKET_MAP[market]?.map(v => v.toLowerCase()) ?? []

@@ -9,15 +9,10 @@ import {
     Activity, Award, LayoutGrid, Building2, X, Loader2,
     ChevronDown, ChevronUp, UserMinus
 } from 'lucide-react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { format, formatDistanceToNow } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 import { toast } from 'sonner'
-import { useBrokers, updateBrokerStatus, type Broker } from '@/hooks/use-brokers'
-import { PageIntelHeader, KPICard, FilterTabs, type FilterTab } from '../../components/ui'
 import { T } from '../../lib/theme'
-import { getStatusConfig } from '../../lib/constants'
+import { useTeams, createTeam, deleteTeam, addMemberToTeam, removeMemberFromTeam, type Team, type TeamMember } from '@/hooks/use-teams'
+import { useBrokers, type Broker } from '@/hooks/use-brokers'
 
 /* ─── TYPES ─────────────────────────────────────────────────────── */
 interface TeamMember {
@@ -48,9 +43,9 @@ interface Team {
 
 /* ─── ROLE CONFIG ───────────────────────────────────────────────── */
 const ROLE_CFG: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
-    broker:         { label: 'Corretor',  icon: User,   color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
-    broker_manager: { label: 'Gerente',   icon: Crown,  color: 'var(--warning)', bg: 'rgba(251,191,36,0.12)' },
-    admin:          { label: 'Admin',     icon: Shield, color: 'var(--prp, #A78BFA)', bg: 'rgba(167,139,250,0.12)' },
+    broker:         { label: 'Corretor',        icon: User,   color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
+    broker_manager: { label: 'Gerente',         icon: Crown,  color: '#FBBF24', bg: 'rgba(251,191,36,0.12)' },
+    admin:          { label: 'Administrador',   icon: Shield, color: '#A78BFA', bg: 'rgba(167,139,250,0.12)' },
 }
 
 function Avatar({ name, url, size = 8 }: { name: string; url?: string | null; size?: number }) {
@@ -69,13 +64,17 @@ function Avatar({ name, url, size = 8 }: { name: string; url?: string | null; si
 function BrokerCard({ broker, index, onToggleStatus, onDelete }: {
     broker: Broker
     index: number
-    onToggleStatus: (id: string, current: string) => Promise<void>
-    onDelete: (broker: Broker) => void
+    onEdit: (t: Team) => void
+    onDelete: (t: Team) => void
+    onAddMember: (teamId: string, brokerId: string) => Promise<void>
+    onRemoveMember: (teamId: string, brokerId: string) => Promise<void>
+    allBrokers: Broker[]
 }) {
+    const [expanded, setExpanded] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
-    const role = ROLE_CFG[broker.role] || ROLE_CFG.broker
-    const RoleIcon = role.icon
-    const isActive = broker.status === 'active'
+    const [addingMember, setAddingMember] = useState(false)
+    const [selectedBrokerId, setSelectedBrokerId] = useState('')
+    const [saving, setSaving] = useState(false)
 
     const initials = broker.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
     const lastLogin = broker.last_login_at
@@ -87,8 +86,8 @@ function BrokerCard({ broker, index, onToggleStatus, onDelete }: {
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="group relative rounded-lg overflow-hidden transition-all duration-200"
+            transition={{ delay: index * 0.05, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-xl overflow-hidden"
             style={{ background: T.surface, border: `1px solid ${T.border}` }}
         >
             <div className="absolute top-0 left-0 right-0 h-[2px] transition-opacity duration-300"
@@ -169,7 +168,64 @@ function BrokerCard({ broker, index, onToggleStatus, onDelete }: {
                                     </motion.div>
                                 </>
                             )}
-                        </AnimatePresence>
+                            {team.region && (
+                                <span className="text-[10px]" style={{ color: T.textDim }}>
+                                    {team.region}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                        <button
+                            onClick={() => setExpanded(e => !e)}
+                            className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:bg-white/5"
+                            style={{ color: T.textMuted }}
+                        >
+                            {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </button>
+                        <div className="relative">
+                            <button
+                                onClick={() => setMenuOpen(o => !o)}
+                                className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:bg-white/5"
+                                style={{ color: T.textMuted }}
+                            >
+                                <MoreHorizontal size={14} />
+                            </button>
+                            <AnimatePresence>
+                                {menuOpen && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.9, y: -4 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.9, y: -4 }}
+                                            transition={{ duration: 0.12 }}
+                                            className="absolute right-0 top-8 z-50 rounded-lg overflow-hidden shadow-2xl w-40"
+                                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                                        >
+                                            <button onClick={() => { setMenuOpen(false); onEdit(team) }}
+                                                className="flex items-center gap-2 w-full px-3 py-2 text-xs hover:bg-white/5"
+                                                style={{ color: T.text }}>
+                                                <Edit size={11} /> Editar Equipe
+                                            </button>
+                                            <button onClick={() => { setMenuOpen(false); setAddingMember(true) }}
+                                                className="flex items-center gap-2 w-full px-3 py-2 text-xs hover:bg-white/5"
+                                                style={{ color: '#60A5FA' }}>
+                                                <UserPlus size={11} /> Adicionar Membro
+                                            </button>
+                                            <div style={{ height: '1px', background: T.border }} />
+                                            <button onClick={() => { setMenuOpen(false); onDelete(team) }}
+                                                className="flex items-center gap-2 w-full px-3 py-2 text-xs hover:bg-red-500/10"
+                                                style={{ color: '#EF4444' }}>
+                                                <Trash2 size={11} /> Excluir
+                                            </button>
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 </div>
 
@@ -184,13 +240,7 @@ function BrokerCard({ broker, index, onToggleStatus, onDelete }: {
                             <span>{broker.phone}</span>
                         </div>
                     )}
-                    {broker.creci && (
-                        <div className="flex items-center gap-2 text-[11px]" style={{ color: T.textDim }}>
-                            <Award size={10} className="flex-shrink-0 opacity-60" />
-                            <span className="font-mono">CRECI {broker.creci}</span>
-                        </div>
-                    )}
-                </div>
+                </AnimatePresence>
 
                 <div className="flex items-center justify-between pt-3 text-[10px]"
                     style={{ borderTop: `1px solid ${T.border}`, color: T.textDim }}>
@@ -590,6 +640,7 @@ export default function EquipePage() {
         search,
         status: tab === 'active' ? 'active' : tab === 'inactive' ? 'inactive' : 'all',
     })
+    const [saving, setSaving] = useState(false)
 
     const fetchTeams = useCallback(async () => {
         setLoadingTeams(true)
@@ -629,30 +680,262 @@ export default function EquipePage() {
     const handleToggleStatus = async (id: string, current: string) => {
         const newStatus = current === 'active' ? 'inactive' : 'active'
         try {
-            await updateBrokerStatus(id, newStatus as 'active' | 'inactive')
-            toast.success(`Membro ${newStatus === 'active' ? 'ativado' : 'desativado'} com sucesso`)
-            mutate()
-        } catch {
-            toast.error('Erro ao atualizar status')
+            await createTeam({
+                name: form.name.trim(),
+                description: form.description.trim() || undefined,
+                region: form.region.trim() || undefined,
+                specialty: form.specialty.trim() || undefined,
+                leader_id: form.leader_id || null,
+                color: form.color,
+            })
+            toast.success(`Equipe "${form.name}" criada com sucesso!`)
+            onCreated()
+            onClose()
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Erro ao criar equipe')
+        } finally {
+            setSaving(false)
         }
     }
 
-    const handleDelete = async () => {
-        if (!confirmDelete) return
-        setDeleting(true)
+    const inputStyle: React.CSSProperties = {
+        background: T.surface, border: `1px solid ${T.border}`, color: T.text,
+        height: 40, borderRadius: 6, padding: '0 12px', fontSize: 13, outline: 'none', width: '100%',
+    }
+
+    return (
+        <>
+            <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+                onClick={onClose}
+            />
+            <motion.div
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 60 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+                className="fixed bottom-0 left-0 right-0 z-50 lg:inset-0 lg:flex lg:items-center lg:justify-center pointer-events-none"
+            >
+                <div
+                    className="pointer-events-auto rounded-t-2xl lg:rounded-xl w-full lg:max-w-md max-h-[92vh] overflow-y-auto"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                >
+                    {/* Drag handle (mobile) */}
+                    <div className="pt-3 pb-1 flex justify-center lg:hidden">
+                        <div className="w-9 h-1 rounded-full" style={{ background: T.border }} />
+                    </div>
+
+                    <div className="p-6">
+                        <div className="flex items-center justify-between mb-5">
+                            <div>
+                                <h2 className="text-base font-bold" style={{ color: T.text }}>Nova Equipe</h2>
+                                <p className="text-xs mt-0.5" style={{ color: T.textDim }}>
+                                    Crie uma equipe e defina seu líder
+                                </p>
+                            </div>
+                            <button onClick={onClose}
+                                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/5"
+                                style={{ color: T.textMuted }}>
+                                <X size={16} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>
+                                    Nome da Equipe *
+                                </label>
+                                <input
+                                    type="text" autoFocus
+                                    value={form.name}
+                                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                                    placeholder="Ex: Equipe Alpha, Zona Sul..."
+                                    style={inputStyle}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>
+                                    Descrição
+                                </label>
+                                <input
+                                    type="text"
+                                    value={form.description}
+                                    onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                                    placeholder="Foco, especialidade, missão..."
+                                    style={inputStyle}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>
+                                        Região
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={form.region}
+                                        onChange={e => setForm(f => ({ ...f, region: e.target.value }))}
+                                        placeholder="Ex: Zona Sul"
+                                        style={inputStyle}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>
+                                        Especialidade
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={form.specialty}
+                                        onChange={e => setForm(f => ({ ...f, specialty: e.target.value }))}
+                                        placeholder="Ex: Alto padrão"
+                                        style={inputStyle}
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-semibold block mb-1.5" style={{ color: T.textDim }}>
+                                    Líder da Equipe
+                                </label>
+                                <select
+                                    value={form.leader_id}
+                                    onChange={e => setForm(f => ({ ...f, leader_id: e.target.value }))}
+                                    style={inputStyle}
+                                >
+                                    <option value="">Sem líder (definir depois)</option>
+                                    {brokers.filter(b => b.status === 'active').map(b => (
+                                        <option key={b.id} value={b.id}>{b.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-semibold block mb-2" style={{ color: T.textDim }}>
+                                    Cor da Equipe
+                                </label>
+                                <div className="flex gap-2 flex-wrap">
+                                    {TEAM_COLORS.map(c => (
+                                        <button
+                                            key={c}
+                                            onClick={() => setForm(f => ({ ...f, color: c }))}
+                                            className="w-7 h-7 rounded-full transition-transform"
+                                            style={{
+                                                background: c,
+                                                transform: form.color === c ? 'scale(1.25)' : 'scale(1)',
+                                                boxShadow: form.color === c ? `0 0 0 2px ${T.elevated}, 0 0 0 4px ${c}` : 'none',
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={onClose}
+                                disabled={saving}
+                                className="flex-1 h-11 rounded-lg text-sm font-medium"
+                                style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textMuted }}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={saving}
+                                className="flex-1 h-11 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2"
+                                style={{ background: saving ? T.elevated : form.color }}
+                            >
+                                {saving && <Loader2 size={14} className="animate-spin" />}
+                                {saving ? 'Criando...' : 'Criar Equipe'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+        </>
+    )
+}
+
+/* ─── KPI CARD ─────────────────────────────────────────────────── */
+function KPI({ label, value, icon: Icon, color }: {
+    label: string; value: number | string; icon: React.ElementType; color: string
+}) {
+    return (
+        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="flex items-center gap-2 mb-2">
+                <Icon size={13} style={{ color }} />
+                <p className="text-[11px] font-medium" style={{ color: T.textDim }}>{label}</p>
+            </div>
+            <p className="text-2xl font-bold" style={{ color: T.text }}>{value}</p>
+        </div>
+    )
+}
+
+/* ─── MAIN PAGE ────────────────────────────────────────────────── */
+type Tab = 'equipes' | 'membros'
+
+export default function EquipePage() {
+    const [tab, setTab] = useState<Tab>('equipes')
+    const [search, setSearch] = useState('')
+    const [showCreateTeam, setShowCreateTeam] = useState(false)
+    const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
+    const [confirmDelete, setConfirmDelete] = useState(false)
+    const [deleting, setDeleting] = useState(false)
+    const [roleFilter, setRoleFilter] = useState('all')
+
+    const { teams, isLoading: teamsLoading, mutate: mutateTeams } = useTeams(search)
+    const { brokers, isLoading: brokersLoading, mutate: mutateBrokers } = useBrokers({ search, status: 'all' })
+
+    // KPI stats
+    const totalMembers = useMemo(() => brokers.length, [brokers])
+    const activeMembers = useMemo(() => brokers.filter(b => b.status === 'active').length, [brokers])
+    const managers = useMemo(() => brokers.filter(b => b.role === 'broker_manager').length, [brokers])
+    const totalTeams = teams.length
+
+    const filteredBrokers = useMemo(() =>
+        brokers.filter(b =>
+            (roleFilter === 'all' || b.role === roleFilter) &&
+            (search === '' || b.name.toLowerCase().includes(search.toLowerCase()) || b.email.toLowerCase().includes(search.toLowerCase()))
+        ),
+    [brokers, roleFilter, search])
+
+    async function handleAddMember(teamId: string, brokerId: string) {
         try {
-            const res = await fetch(`/api/equipe?id=${confirmDelete.id}`, { method: 'DELETE' })
-            if (!res.ok) {
-                const json = await res.json()
-                throw new Error(json.error || 'Erro ao remover')
-            }
-            toast.success(`${confirmDelete.name} removido da equipe`)
-            mutate()
+            await addMemberToTeam(teamId, brokerId)
+            toast.success('Membro adicionado à equipe!')
+            mutateTeams()
+            mutateBrokers()
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Erro ao adicionar membro')
+        }
+    }
+
+    async function handleRemoveMember(teamId: string, brokerId: string) {
+        try {
+            await removeMemberFromTeam(teamId, brokerId)
+            toast.success('Membro removido da equipe')
+            mutateTeams()
+            mutateBrokers()
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Erro ao remover membro')
+        }
+    }
+
+    async function handleDeleteTeam() {
+        if (!deletingTeam) return
+        setDeleting(true)
+        try {
+            await deleteTeam(deletingTeam.id)
+            toast.success(`Equipe "${deletingTeam.name}" excluída`)
+            mutateTeams()
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Erro ao excluir equipe')
         } finally {
             setDeleting(false)
-            setConfirmDelete(null)
+            setDeletingTeam(null)
+            setConfirmDelete(false)
         }
     }
 
@@ -847,7 +1130,18 @@ export default function EquipePage() {
 
             {/* Delete Confirmation */}
             <AnimatePresence>
-                {confirmDelete && (
+                {showCreateTeam && (
+                    <CreateTeamModal
+                        onClose={() => setShowCreateTeam(false)}
+                        onCreated={() => mutateTeams()}
+                        brokers={brokers}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* ── DELETE TEAM CONFIRM ──────────────────────────────────── */}
+            <AnimatePresence>
+                {confirmDelete && deletingTeam && (
                     <>
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
@@ -858,10 +1152,13 @@ export default function EquipePage() {
                             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
                             <div className="pointer-events-auto rounded-xl p-6 w-full max-w-sm text-center"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                <Trash2 size={28} className="mx-auto mb-3" style={{ color: '#ef4444' }} />
-                                <h3 className="text-base font-bold mb-1" style={{ color: T.text }}>Remover membro?</h3>
-                                <p className="text-sm mb-5" style={{ color: T.textMuted }}>
-                                    <strong>{confirmDelete.name}</strong> será removido permanentemente da equipe e perderá acesso ao sistema.
+                                <AlertCircle size={28} className="mx-auto mb-3" style={{ color: '#EF4444' }} />
+                                <h3 className="text-base font-bold mb-1" style={{ color: T.text }}>
+                                    Excluir equipe?
+                                </h3>
+                                <p className="text-sm mb-5" style={{ color: T.textDim }}>
+                                    A equipe <strong style={{ color: T.text }}>{deletingTeam.name}</strong> será
+                                    desativada e os membros serão desvinculados.
                                 </p>
                                 <div className="flex gap-3">
                                     <button onClick={() => setConfirmDelete(null)} disabled={deleting}

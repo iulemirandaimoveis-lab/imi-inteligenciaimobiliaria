@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
             { data: leads },
             { data: pageViews },
             { data: trackedLinks },
+            { data: leadScoresData },
         ] = await Promise.all([
             supabase.rpc('analytics_kpis', { start_date: startISO }),
             supabase.rpc('analytics_daily_timeline', { start_date: startISO, num_days: daysAgo }),
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
                 .order('created_at', { ascending: false })
                 .limit(500),
             supabase.from('page_views')
-                .select('page_path, duration_seconds, development_slug, created_at')
+                .select('session_id, page_path, duration_seconds, development_slug, created_at')
                 .gte('created_at', startISO)
                 .order('created_at', { ascending: false })
                 .limit(2000),
@@ -54,6 +55,11 @@ export async function GET(request: NextRequest) {
                 .eq('is_active', true)
                 .order('clicks', { ascending: false })
                 .limit(50),
+            supabase.from('tracker_lead_scores')
+                .select('visitor_fingerprint, development_id, current_score, score_category, intent_classification, urgency_level, total_sessions, total_clicks, last_session_at')
+                .gte('current_score', 5)
+                .order('current_score', { ascending: false })
+                .limit(100),
         ])
         const kpis = kpisData || {}
         const dailyTimeline = timelineData || []
@@ -229,6 +235,83 @@ export async function GET(request: NextRequest) {
             dowMap[dow]++
         })
         const byDayOfWeek = dowMap.map((clicks, i) => ({ day: dowLabels[i], clicks }))
+
+        // ── Lead Intent Scores ──
+        const ls = leadScoresData || []
+        const leadScoreSummary = {
+            total: ls.length,
+            ready: ls.filter(l => l.score_category === 'ready').length,
+            very_hot: ls.filter(l => l.score_category === 'very_hot').length,
+            hot: ls.filter(l => l.score_category === 'hot').length,
+            warm: ls.filter(l => l.score_category === 'warm').length,
+            cold: ls.filter(l => l.score_category === 'cold').length,
+        }
+        // Enrich top leads with development names
+        const topLeadDevIds = [...new Set(ls.slice(0, 20).map(l => l.development_id).filter(Boolean))]
+        let devNames: Record<string, string> = {}
+        if (topLeadDevIds.length > 0) {
+            const { data: devs } = await supabase
+                .from('developments')
+                .select('id, name')
+                .in('id', topLeadDevIds)
+            if (devs) devs.forEach(d => { devNames[d.id] = d.name })
+        }
+        const topLeadScores = ls.slice(0, 15).map(l => ({
+            fingerprint: l.visitor_fingerprint?.slice(0, 8) || '???',
+            score: l.current_score,
+            category: l.score_category,
+            intent: l.intent_classification,
+            urgency: l.urgency_level,
+            sessions: l.total_sessions,
+            clicks: l.total_clicks,
+            development: l.development_id ? (devNames[l.development_id] || null) : null,
+            last_seen: l.last_session_at,
+        }))
+
+        // ── Visitor Journeys (top sessions by page count) ──
+        const sessionPages: Record<string, Array<{ page: string; duration: number; ts: string }>> = {}
+        pvs.forEach(pv => {
+            if (!pv.session_id) return
+            if (!sessionPages[pv.session_id]) sessionPages[pv.session_id] = []
+            sessionPages[pv.session_id].push({
+                page: pv.page_path || '/',
+                duration: pv.duration_seconds || 0,
+                ts: pv.created_at,
+            })
+        })
+        // Sort each session's pages by timestamp (ascending = chronological)
+        Object.values(sessionPages).forEach(pages => {
+            pages.sort((a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime())
+        })
+        // Top journeys: sessions with most pages
+        const visitorJourneys = Object.entries(sessionPages)
+            .filter(([_, pages]) => pages.length >= 2)
+            .sort((a, b) => b[1].length - a[1].length)
+            .slice(0, 15)
+            .map(([sessionId, pages]) => ({
+                session_id: sessionId.slice(0, 12),
+                pages: pages.length,
+                totalDuration: pages.reduce((s, p) => s + p.duration, 0),
+                path: pages.map(p => p.page),
+                started: pages[0]?.ts,
+            }))
+
+        // ── Common Page Flows (most common A → B transitions) ──
+        const flowMap: Record<string, number> = {}
+        Object.values(sessionPages).forEach(pages => {
+            for (let i = 0; i < pages.length - 1; i++) {
+                const from = pages[i].page
+                const to = pages[i + 1].page
+                if (from === to) continue
+                const key = `${from} → ${to}`
+                flowMap[key] = (flowMap[key] || 0) + 1
+            }
+        })
+        const topFlows = Object.entries(flowMap)
+            .map(([flow, count]) => ({ flow, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10)
+
         return NextResponse.json({
             kpis: {
                 totalPageViews: kpis.totalPageViews || 0,
@@ -254,6 +337,10 @@ export async function GET(request: NextRequest) {
             byHour,
             byDayOfWeek,
             recentFeed,
+            leadScoreSummary,
+            topLeadScores,
+            visitorJourneys,
+            topFlows,
         })
     } catch (err: unknown) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

@@ -100,17 +100,22 @@ export default function LeadDetailPage() {
   const [localStatus, setLocalStatus] = useState<string | null>(null)
 
   // Fire Claude analysis once lead loads
+  const [aiError, setAiError] = useState(false)
   useEffect(() => {
     if (!lead) return
     setAiLoading(true)
+    setAiError(false)
     fetch('/api/ai/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'lead', data: lead }),
     })
-      .then(r => r.json())
-      .then(res => { if (res.analysis) setAiAnalysis(res.analysis) })
-      .catch(() => {})
+      .then(r => {
+        if (!r.ok) throw new Error('AI analysis failed')
+        return r.json()
+      })
+      .then(res => { if (res.analysis) setAiAnalysis(res.analysis); else setAiError(true) })
+      .catch(() => { setAiError(true) })
       .finally(() => setAiLoading(false))
   }, [lead?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -411,7 +416,7 @@ export default function LeadDetailPage() {
         </div>
 
         {/* Contact actions */}
-        <div className="grid grid-cols-3 gap-2 mb-5 min-w-0">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-5 min-w-0">
           <a
             href={`tel:${lead.phone}`}
             style={{

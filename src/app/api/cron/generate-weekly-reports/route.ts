@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
                 });
                 reports.push(report.id);
             } catch (error) {
+                console.error('[cron] Failed to generate weekly report for broker', error)
             }
         }
         return NextResponse.json({

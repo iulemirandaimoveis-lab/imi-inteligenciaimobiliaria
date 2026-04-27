@@ -345,7 +345,7 @@ export default function HojePage() {
         transition={{ delay: 0.06 }}
       >
         <SectionHeader title="Ações Rápidas" />
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {QUICK_ACTIONS.slice(0, 6).map((a, i) => (
             <motion.button
               key={a.label}

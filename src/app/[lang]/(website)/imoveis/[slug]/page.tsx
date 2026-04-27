@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
-import { Bed, Ruler, Car, Calendar } from 'lucide-react'
+import { Bed, Bath, Ruler, Car, Calendar, MessageCircle } from 'lucide-react'
 import DevelopmentHero from '../components/DevelopmentHero'
 import DevelopmentDetails from '../components/DevelopmentDetails'
 import DevelopmentGallery from '../components/DevelopmentGallery'
@@ -14,14 +14,14 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
 import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
-import NearbyPOIs from '@/components/intelligence/NearbyPOIs'
 import PropertyIntelligence from '../components/PropertyIntelligence'
 import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
 import { fmt } from '@/lib/format'
+import { POIGrid } from '@/components/imoveis/POIGrid'
 
-// Dynamic rendering — always fetch fresh data from Supabase
-export const dynamic = 'force-dynamic'
+// Revalidate every hour — balances freshness with performance (ISR)
+export const revalidate = 3600
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
@@ -96,10 +96,10 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
 
 const ANCHOR_SECTIONS = [
     { id: 'detalhes', label: 'Detalhes' },
-    { id: 'inteligencia', label: 'IMI Score' },
     { id: 'galeria', label: 'Galeria' },
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
+    { id: 'inteligencia', label: 'IMI Score' },
     { id: 'financiamento', label: 'Financiamento' },
 ]
 
@@ -254,6 +254,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 }}>
                     {[
                         { label: 'Quartos', value: development.specs.bedroomsRange, Icon: Bed },
+                        { label: 'Banheiros', value: development.specs.bathroomsRange || '\u2014', Icon: Bath },
                         { label: 'Área', value: development.specs.areaRange, Icon: Ruler },
                         { label: 'Vagas', value: development.specs.parkingRange || '\u2014', Icon: Car },
                         ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, Icon: Calendar }] : []),
@@ -261,10 +262,14 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <div key={i} role="group" aria-label={`${item.value} ${item.label.toLowerCase()}`} style={{
                             background: '#FFFFFF', padding: '16px 12px', textAlign: 'center' as const,
                             border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                         }}>
-                            <item.Icon size={18} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.5, margin: '0 auto' }} />
-                            <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '4px 0 0' }}>{item.value}</p>
-                            <p style={{ fontSize: 11, color: '#948F84', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '2px 0 0' }}>{item.label}</p>
+                            <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F0EDE5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
+                                <item.Icon size={16} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.7 }} />
+                            </div>
+                            <p style={{ fontSize: 17, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '0 0 2px' }}>{item.value}</p>
+                            <p style={{ fontSize: 10, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>{item.label}</p>
                         </div>
                     ))}
                 </div>
@@ -279,6 +284,32 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     <div className="lg:col-span-8 space-y-12 md:space-y-20">
                         <section id="detalhes">
                             <DevelopmentDetails development={development} />
+                        </section>
+                        <section id="galeria">
+                            <DevelopmentGallery development={development} />
+                        </section>
+                        <section id="unidades">
+                            <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
+                        </section>
+                        <section id="localizacao">
+                            <DevelopmentLocation development={development} />
+                            {development.location.coordinates.lat != null &&
+                             development.location.coordinates.lng != null &&
+                             development.location.coordinates.lat !== 0 &&
+                             development.location.coordinates.lng !== 0 && (
+                                <div className="mt-8">
+                                    <POIGrid
+                                        developmentId={development.id}
+                                        latitude={development.location.coordinates.lat}
+                                        longitude={development.location.coordinates.lng}
+                                        imovelType={
+                                            (data.listing_mode === 'short_stay' || data.listing_category === 'short_stay')
+                                                ? 'short_stay'
+                                                : 'residencial'
+                                        }
+                                    />
+                                </div>
+                            )}
                         </section>
                         <section id="inteligencia">
                             <PropertyIntelligence property={{
@@ -295,27 +326,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 status: data.status_commercial || 'published',
                             } as IMIProperty} />
                         </section>
-                        <section id="galeria">
-                            <DevelopmentGallery development={development} />
-                        </section>
-                        <section id="unidades">
-                            <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
-                        </section>
-                        <section id="localizacao">
-                            <DevelopmentLocation development={development} />
-                        </section>
                         <section id="inteligencia-bairro">
                             <NeighborhoodIntel
                                 neighborhood={development.location?.neighborhood}
                                 city={development.location?.city}
                                 compact
-                            />
-                        </section>
-                        <section id="pois-regiao">
-                            <NearbyPOIs
-                                lat={development.location.coordinates.lat}
-                                lng={development.location.coordinates.lng}
-                                address={[development.location.address, development.location.neighborhood, development.location.city, development.location.state].filter(Boolean).join(', ')}
                             />
                         </section>
                     </div>
@@ -515,39 +530,51 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             {/* Sticky Mobile CTA — always visible */}
             <div className="fixed left-0 right-0 z-[140] lg:hidden"
                 style={{
-                    bottom: 'calc(64px + env(safe-area-inset-bottom, 0px))',
+                    bottom: 'env(safe-area-inset-bottom, 0px)',
                     background: '#FFFFFF',
-                    borderTop: '2px solid #B8B3A8',
+                    borderTop: '1px solid rgba(184,179,168,0.3)',
                     padding: '12px 16px',
-                    boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
+                    boxShadow: '0 -4px 24px rgba(0,0,0,0.1)',
                 }}>
+                {/* Gold accent line at top */}
+                <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                 <div className="flex items-center gap-3 max-w-lg mx-auto">
                     <div className="flex-1 min-w-0">
-                        <p style={{ fontSize: 10, color: '#948F84', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>A partir de</p>
+                        <p style={{ fontSize: 10, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>A partir de</p>
                         <p style={{ fontSize: 20, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
                             {development.priceRange.min > 0 ? `R$ ${development.priceRange.min >= 1000000 ? `${(development.priceRange.min / 1000000).toFixed(1).replace(/\.0$/, '')}M` : development.priceRange.min.toLocaleString('pt-BR')}` : 'Consulte'}
                         </p>
                     </div>
-                    <a href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`} target="_blank" rel="noopener noreferrer" style={{
-                        background: '#0B1928',
-                        color: '#FFFFFF',
-                        borderRadius: 12,
-                        padding: '0 24px',
-                        height: 48,
-                        fontWeight: 700,
-                        fontSize: 13,
-                        letterSpacing: '0.05em',
-                        textTransform: 'uppercase' as const,
-                        border: 'none',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 8,
-                        whiteSpace: 'nowrap',
-                        textDecoration: 'none',
-                    }}>
+                    <a
+                        href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            position: 'relative',
+                            background: '#0B1928',
+                            color: '#FFFFFF',
+                            borderRadius: 12,
+                            padding: '0 20px',
+                            height: 48,
+                            fontWeight: 700,
+                            fontSize: 11,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase' as const,
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 8,
+                            whiteSpace: 'nowrap',
+                            textDecoration: 'none',
+                            fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <MessageCircle size={14} />
                         Falar com Especialista
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                     </a>
                 </div>
             </div>

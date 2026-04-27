@@ -201,10 +201,17 @@ export default function SmartNotifications() {
         <Bell size={16} />
         {unreadCount > 0 && (
           <span
-            className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-[10px] font-bold text-white rounded-full flex items-center justify-center"
-            style={{ background: 'var(--accent-400)', boxShadow: '0 0 0 2px var(--bg-surface)' }}
+            className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] text-[11px] font-bold text-white flex items-center justify-center"
+            style={{
+              background: '#FF3B30',
+              borderRadius: 999,
+              padding: unreadCount > 9 ? '0 5px' : '0',
+              boxShadow: '0 0 0 2px var(--bg-surface)',
+              lineHeight: 1,
+              letterSpacing: '-0.01em',
+            }}
           >
-            {unreadCount > 9 ? '9+' : unreadCount}
+            {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>

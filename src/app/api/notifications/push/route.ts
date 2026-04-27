@@ -62,12 +62,13 @@ async function deleteStaleSubscription(endpoint: string): Promise<void> {
             .delete()
             .eq('endpoint', endpoint)
     } catch (err) {
+        console.debug('[push] Failed to delete stale subscription', err)
     }
 }
 // Sends a push notification to a single subscription.
 // Returns true on success, false on failure.
 async function sendToSubscription(
-    subscription: { endpoint: string; p256dh: string; auth: string },
+    subscription: { endpoint: string; keys: { p256dh: string; auth: string } },
     payload: PushPayload
 ): Promise<boolean> {
     try {
@@ -75,8 +76,8 @@ async function sendToSubscription(
             {
                 endpoint: subscription.endpoint,
                 keys: {
-                    p256dh: subscription.p256dh,
-                    auth: subscription.auth,
+                    p256dh: subscription.keys.p256dh,
+                    auth: subscription.keys.auth,
                 },
             },
             JSON.stringify(payload)
@@ -124,9 +125,10 @@ export async function POST(req: NextRequest) {
         }
         const payload: PushPayload = { title, body: msgBody, url, tag, icon }
         // Fetch subscriptions using service-role client to bypass RLS
+        // Keys are stored as JSONB column: keys: { p256dh, auth }
         let query = supabaseAdmin
             .from('push_subscriptions')
-            .select('endpoint, p256dh, auth')
+            .select('endpoint, keys')
         if (userId) {
             query = query.eq('user_id', userId)
         }

@@ -30,6 +30,7 @@ export async function GET() {
         // AI check — Anthropic key configured
         checks.ai = !!(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY)
     } catch (err: unknown) {
+        console.debug('[health] Check failed', err)
     }
     const serviceChecks = [checks.database, checks.storage, checks.auth, checks.ai]
     const allHealthy = serviceChecks.every(v => v === true)

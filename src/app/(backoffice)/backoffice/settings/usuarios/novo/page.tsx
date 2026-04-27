@@ -1,16 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, User, Mail, Shield, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { createClient } from '@/lib/supabase/client'
 
 export default function NovoUsuarioPage() {
     const router = useRouter()
-    const [form, setForm] = useState({ name: '', email: '', role: 'EDITOR' })
+    const [form, setForm] = useState({ name: '', email: '', role: 'CORRETOR' })
     const [loading, setLoading] = useState(false)
+    const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+
+    useEffect(() => {
+        const supabase = createClient()
+        supabase.auth.getUser().then(({ data }) => {
+            if (!data.user) { router.replace('/backoffice/hoje'); return }
+            supabase.from('profiles').select('role').eq('id', data.user.id).single()
+                .then(({ data: profile }) => {
+                    const role = profile?.role?.toUpperCase() || ''
+                    const allowed = ['ADMIN', 'SUPER_ADMIN', 'OWNER'].includes(role)
+                    setIsAdmin(allowed)
+                    if (!allowed) router.replace('/backoffice/settings')
+                })
+        })
+    }, [])
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -36,6 +52,12 @@ export default function NovoUsuarioPage() {
             setLoading(false)
         }
     }
+
+    if (isAdmin === null) return (
+        <div className="flex items-center justify-center h-64">
+            <Loader2 size={24} className="animate-spin" style={{ color: T.textMuted }} />
+        </div>
+    )
 
     const inputStyle: React.CSSProperties = {
         background: T.elevated,
@@ -116,8 +138,10 @@ export default function NovoUsuarioPage() {
                                 onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
                                 style={{ ...inputStyle, paddingRight: '14px' }}>
                                 <option value="ADMIN">Administrador — Acesso total</option>
-                                <option value="EDITOR">Corretor / Editor — Gestão de leads e imóveis</option>
-                                <option value="VIEWER">Avaliador / Viewer — Apenas leitura</option>
+                                <option value="GESTOR">Gestor — Gestão completa</option>
+                                <option value="CORRETOR">Corretor — Leads, imóveis, agenda</option>
+                                <option value="AVALIADOR">Avaliador — Laudos e avaliações</option>
+                                <option value="MARKETING">Marketing — Campanhas e conteúdo</option>
                             </select>
                         </div>
                     </div>

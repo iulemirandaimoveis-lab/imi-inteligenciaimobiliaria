@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bed, Maximize, Bath, Car, Check, Sparkles, Building2, Waves, TreePine, Dumbbell, Droplets, Gamepad2, PartyPopper, Flame, Bike, Eye, Sofa, Shirt, Snowflake, Shield, CircleParking, Monitor, Sun } from 'lucide-react';
+import { Check, Sparkles, Building2, Waves, TreePine, Dumbbell, Droplets, Gamepad2, PartyPopper, Flame, Bike, Eye, Sofa, Shirt, Snowflake, Shield, CircleParking, Monitor, Sun } from 'lucide-react';
 import { Development } from '../types/development';
 import { slideUp, staggerContainer } from '@/lib/animations';
 import { fmt } from '@/lib/format';
@@ -125,13 +125,6 @@ function FinancialSimulator({ price }: { price: number }) {
 }
 
 export default function DevelopmentDetails({ development }: DevelopmentDetailsProps) {
-    const specs = [
-        { icon: Maximize, label: 'Área', value: development.specs.areaRange, unit: '' },
-        { icon: Bed, label: 'Quartos', value: development.specs.bedroomsRange, unit: '' },
-        { icon: Bath, label: 'Banheiros', value: development.specs.bathroomsRange || '-', unit: '' },
-        { icon: Car, label: 'Vagas', value: development.specs.parkingRange || '-', unit: '' },
-    ];
-
     return (
         <motion.div
             initial="hidden"
@@ -174,31 +167,6 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                    style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)", color: '#2D3748' }}>
                     {development.description}
                 </p>
-            </motion.div>
-
-            {/* Specs Grid — light cards */}
-            <motion.div variants={slideUp} className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-14">
-                {specs.map((spec, idx) => (
-                    <div
-                        key={idx}
-                        className="rounded-2xl p-5 md:p-7 relative overflow-hidden group transition-all duration-300 hover:translate-y-[-2px]"
-                        style={{
-                            background: '#FFFFFF',
-                            border: '1px solid rgba(184,179,168,0.3)',
-                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-                        }}
-                    >
-                        <div className="relative z-10">
-                            <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: '#F0EDE5' }}>
-                                <spec.icon className="w-5 h-5" strokeWidth={1.5} style={{ color: '#0B1928' }} />
-                            </div>
-                            <p className="uppercase tracking-[0.2em] font-bold mb-2" style={{ fontSize: 10, color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>{spec.label}</p>
-                            <p className="font-bold" style={{ fontSize: 22, lineHeight: 1.1, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#0B1928' }}>
-                                {spec.value}{spec.unit}
-                            </p>
-                        </div>
-                    </div>
-                ))}
             </motion.div>
 
             {/* Features / Diferenciais */}

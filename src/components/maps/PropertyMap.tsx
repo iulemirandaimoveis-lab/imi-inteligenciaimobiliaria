@@ -44,6 +44,39 @@ const STATUS_COLORS: Record<string, string> = {
     under_construction: '#F59E0B',
 }
 
+// ─── Cluster constants & helpers ─────────────────────────────────────────────
+
+/** Below this zoom level clusters are shown; at or above, individual price pills appear */
+const CLUSTER_ZOOM_THRESHOLD = 10
+
+function buildGeoJSON(devs: Development[]) {
+    return {
+        type: 'FeatureCollection' as const,
+        features: devs.map(dev => ({
+            type: 'Feature' as const,
+            geometry: {
+                type: 'Point' as const,
+                coordinates: [dev.location.coordinates.lng!, dev.location.coordinates.lat!],
+            },
+            properties: { id: dev.id },
+        })),
+    }
+}
+
+// Supports both MapLibre 5+ (Promise) and Mapbox GL (callback) APIs
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getClusterExpansionZoom(source: any, clusterId: number): Promise<number> {
+    if (typeof source.getClusterExpansionZoom === 'function') {
+        const result = source.getClusterExpansionZoom(clusterId)
+        if (result && typeof result.then === 'function') return result
+    }
+    return new Promise((resolve, reject) => {
+        source.getClusterExpansionZoom(clusterId, (err: Error | null, zoom: number) => {
+            if (err) reject(err); else resolve(zoom)
+        })
+    })
+}
+
 // ─── Region detection & grouping ─────────────────────────────────────────────
 
 interface Region {
@@ -108,6 +141,7 @@ export default function PropertyMap({
     const [error, setError] = useState<string | null>(null)
     const [selectedProperty, setSelectedProperty] = useState<Development | null>(null)
     const [activeRegion, setActiveRegion] = useState('todos')
+    const clusterReady = useRef(false)
 
     useEffect(() => { onMarkerClickRef.current = onMarkerClick }, [onMarkerClick])
 
@@ -161,6 +195,13 @@ export default function PropertyMap({
         if (!map.current || !mapLib) return
         clearMarkers()
 
+        // Sync cluster GeoJSON source with current data
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const src = map.current.getSource('imi-properties') as any
+            if (src?.setData) src.setData(buildGeoJSON(devs))
+        } catch { /* source not ready yet */ }
+
         devs.forEach((dev) => {
             const { lat, lng } = dev.location.coordinates
             if (lat == null || lng == null) return
@@ -168,7 +209,7 @@ export default function PropertyMap({
 
             const el = document.createElement('div')
             el.className = 'imi-property-marker'
-            el.style.cssText = 'position:relative;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);'
+            el.style.cssText = 'position:relative;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);width:fit-content;max-width:120px;'
 
             // Modern pill-style price marker
             const pin = document.createElement('div')
@@ -182,20 +223,25 @@ export default function PropertyMap({
 
             const isDark = darkMode
             pin.style.cssText = `
-                padding:6px 12px;
-                border-radius:20px;
-                background:${isDark ? '#0B1928' : 'rgba(16,20,35,0.92)'};
+                padding:4px 10px;
+                border-radius:999px;
+                background:${isDark ? '#0B1928' : 'rgba(16,20,35,0.94)'};
                 color:white;
-                font-size:11px;font-weight:800;letter-spacing:-0.02em;
+                font-size:11px;font-weight:700;letter-spacing:-0.01em;
                 white-space:nowrap;
-                box-shadow:0 4px 16px rgba(0,0,0,0.25),0 1px 3px rgba(0,0,0,0.12);
-                border:2px solid white;
-                display:flex;align-items:center;gap:5px;
+                width:fit-content;
+                min-width:unset;
+                max-width:120px;
+                box-shadow:0 2px 8px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.12);
+                border:1.5px solid rgba(255,255,255,0.9);
+                display:inline-flex;align-items:center;gap:4px;
                 font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+                overflow:hidden;
+                text-overflow:ellipsis;
             `
             // Status dot
             const dot = document.createElement('span')
-            dot.style.cssText = `width:6px;height:6px;border-radius:50%;background:${statusColor};flex-shrink:0;`
+            dot.style.cssText = `width:5px;height:5px;border-radius:50%;background:${statusColor};flex-shrink:0;`
             pin.appendChild(dot)
 
             const labelEl = document.createElement('span')
@@ -207,8 +253,8 @@ export default function PropertyMap({
             const pointer = document.createElement('div')
             pointer.style.cssText = `
                 width:0;height:0;
-                border-left:6px solid transparent;border-right:6px solid transparent;
-                border-top:6px solid ${isDark ? '#0B1928' : 'rgba(16,20,35,0.92)'};
+                border-left:5px solid transparent;border-right:5px solid transparent;
+                border-top:5px solid ${isDark ? '#0B1928' : 'rgba(16,20,35,0.94)'};
                 margin:0 auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.1));
             `
             el.appendChild(pointer)
@@ -312,6 +358,15 @@ export default function PropertyMap({
             markersOnMap.current.set(dev.id, marker)
             popupsOnMap.current.set(dev.id, popup)
         })
+
+        // Apply zoom-based visibility immediately after markers are placed
+        if (map.current) {
+            const zoom = map.current.getZoom()
+            const showClusters = zoom < CLUSTER_ZOOM_THRESHOLD
+            markersOnMap.current.forEach(m => {
+                m.getElement().style.display = showClusters ? 'none' : ''
+            })
+        }
     }, [clearMarkers, lang])
 
     const fitToDevs = useCallback((devs: Development[], animate = true) => {
@@ -335,6 +390,113 @@ export default function PropertyMap({
             minZoom: 3,
             duration: animate ? 800 : 0,
         })
+    }, [])
+
+    // ─── Zoom-level cluster/marker toggle ─────────────────────────────────────
+
+    const updateZoomMode = useCallback(() => {
+        if (!map.current) return
+        const zoom = map.current.getZoom()
+        const showClusters = zoom < CLUSTER_ZOOM_THRESHOLD
+
+        // Toggle individual DOM price-pill markers
+        markersOnMap.current.forEach(m => {
+            m.getElement().style.display = showClusters ? 'none' : ''
+        })
+
+        // Toggle cluster GL layers
+        if (map.current.getLayer('imi-clusters')) {
+            map.current.setLayoutProperty('imi-clusters', 'visibility', showClusters ? 'visible' : 'none')
+            map.current.setLayoutProperty('imi-cluster-halo', 'visibility', showClusters ? 'visible' : 'none')
+            map.current.setLayoutProperty('imi-cluster-count', 'visibility', showClusters ? 'visible' : 'none')
+        }
+    }, [])
+
+    // ─── One-time cluster layer setup (called inside 'load' event) ────────────
+
+    const setupClusterLayers = useCallback(() => {
+        if (!map.current || !mapLib || clusterReady.current) return
+
+        map.current.addSource('imi-properties', {
+            type: 'geojson',
+            data: { type: 'FeatureCollection', features: [] },
+            cluster: true,
+            // Stop clustering once zoom >= CLUSTER_ZOOM_THRESHOLD (individual pins take over)
+            clusterMaxZoom: CLUSTER_ZOOM_THRESHOLD - 1,
+            // Pixel radius to consider two points part of the same cluster
+            clusterRadius: 55,
+        })
+
+        // Soft glow halo behind cluster circles
+        map.current.addLayer({
+            id: 'imi-cluster-halo',
+            type: 'circle',
+            source: 'imi-properties',
+            filter: ['has', 'point_count'],
+            paint: {
+                'circle-color': '#0B1928',
+                'circle-radius': ['step', ['get', 'point_count'], 26, 5, 33, 15, 41],
+                'circle-opacity': 0.18,
+                'circle-stroke-width': 0,
+            },
+        })
+
+        // Main cluster circles — size & shade scale with count
+        map.current.addLayer({
+            id: 'imi-clusters',
+            type: 'circle',
+            source: 'imi-properties',
+            filter: ['has', 'point_count'],
+            paint: {
+                'circle-color': [
+                    'step', ['get', 'point_count'],
+                    '#0B1928',   //  1–9
+                    10, '#1a3a5c', // 10–29
+                    30, '#2563EB', // 30+
+                ],
+                'circle-radius': ['step', ['get', 'point_count'], 18, 5, 24, 15, 32],
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#FFFFFF',
+                'circle-opacity': 0.95,
+            },
+        })
+
+        // Count label inside each cluster
+        map.current.addLayer({
+            id: 'imi-cluster-count',
+            type: 'symbol',
+            source: 'imi-properties',
+            filter: ['has', 'point_count'],
+            layout: {
+                'text-field': '{point_count_abbreviated}',
+                'text-size': 11,
+                'text-anchor': 'center',
+            },
+            paint: { 'text-color': '#FFFFFF' },
+        })
+
+        // Click cluster → zoom in to expand
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        map.current.on('click', 'imi-clusters', async (e: any) => {
+            const features = map.current.queryRenderedFeatures(e.point, { layers: ['imi-clusters'] })
+            if (!features.length) return
+            const clusterId = features[0].properties.cluster_id
+            const coords = (features[0].geometry as { coordinates: [number, number] }).coordinates
+            try {
+                const src = map.current.getSource('imi-properties')
+                const zoom = await getClusterExpansionZoom(src, clusterId)
+                map.current.flyTo({ center: coords, zoom: zoom + 0.5, duration: 500 })
+            } catch { /* ignore */ }
+        })
+
+        map.current.on('mouseenter', 'imi-clusters', () => {
+            map.current.getCanvas().style.cursor = 'pointer'
+        })
+        map.current.on('mouseleave', 'imi-clusters', () => {
+            map.current.getCanvas().style.cursor = ''
+        })
+
+        clusterReady.current = true
     }, [])
 
     // ─── Initialize map ──────────────────────────────────────────────────────
@@ -376,6 +538,9 @@ export default function PropertyMap({
                 )
 
                 map.current.on('load', () => {
+                    setupClusterLayers()
+                    // Re-evaluate cluster vs pin view on every zoom change
+                    map.current.on('zoom', updateZoomMode)
                     setMapLoaded(true)
                 })
             } catch {

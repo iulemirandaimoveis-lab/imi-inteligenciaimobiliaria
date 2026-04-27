@@ -268,6 +268,7 @@ export function MobileBottomNav() {
     const [open, setOpen] = useState(false)
     const [keyboardOpen, setKeyboardOpen] = useState(false)
     const dragControls = useDragControls()
+    const [stats, setStats] = useState({ imoveis: '—', leads: '—' })
 
     // Detect virtual keyboard
     useEffect(() => {
@@ -290,6 +291,15 @@ export function MobileBottomNav() {
     useEffect(() => {
         setOpen(false)
     }, [pathname])
+
+    // Fetch live stats when menu opens
+    useEffect(() => {
+        if (!open) return
+        fetch('/api/backoffice/stats/counts')
+            .then(r => r.ok ? r.json() : null)
+            .then(d => { if (d) setStats({ imoveis: String(d.imoveis ?? '—'), leads: String(d.leads ?? '—') }) })
+            .catch(() => {})
+    }, [open])
 
     if (keyboardOpen) return null
 
@@ -320,7 +330,14 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[0]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
+                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId="bo-nav-pill"
+                                            style={{ position: 'absolute', top: 0, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                        />
+                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -348,7 +365,14 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[1]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
+                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId="bo-nav-pill"
+                                            style={{ position: 'absolute', top: 0, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                        />
+                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -427,7 +451,14 @@ export function MobileBottomNav() {
                             const item = BOTTOM_ITEMS[2]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
+                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId="bo-nav-pill"
+                                            style={{ position: 'absolute', top: 0, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                        />
+                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -450,12 +481,19 @@ export function MobileBottomNav() {
 
                         <NavDivider />
 
-                        {/* Agenda */}
+                        {/* Connect */}
                         {(() => {
                             const item = BOTTOM_ITEMS[3]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
-                                <Link key={item.href} href={item.href} className="flex-1" aria-label={`Navegar para ${item.name}`}>
+                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId="bo-nav-pill"
+                                            style={{ position: 'absolute', top: 0, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                        />
+                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
@@ -585,8 +623,8 @@ export function MobileBottomNav() {
                                         >
                                             <Bell size={14} style={{ color: 'var(--text-tertiary)' }} />
                                             <span
-                                                className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full"
-                                                style={{ background: 'var(--accent-400)', border: '2px solid var(--bg-surface)' }}
+                                                className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 text-[10px] font-bold text-white flex items-center justify-center rounded-full"
+                                                style={{ background: '#FF3B30', border: '2px solid var(--bg-surface)', padding: '0 3px', lineHeight: 1 }}
                                             />
                                         </Link>
                                         <button
@@ -622,8 +660,8 @@ export function MobileBottomNav() {
                                     <div className="flex gap-2">
                                         {[
                                             { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--accent-400)', bg: 'rgba(200,164,74,0.12)' },
-                                            { label: 'Imóveis', value: '—', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
-                                            { label: 'Leads', value: '—', color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
+                                            { label: 'Imóveis', value: stats.imoveis, color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
+                                            { label: 'Leads', value: stats.leads, color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
                                         ].map((w, i) => (
                                             <div
                                                 key={w.label}
