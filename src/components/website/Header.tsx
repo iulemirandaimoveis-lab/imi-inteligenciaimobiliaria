@@ -379,7 +379,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <p className="font-bold text-white text-[13px]">Iule Miranda</p>
-                                        <p className="text-[10px] text-[#C8A44A]/60 font-bold uppercase tracking-[0.15em]">CRECI 17933</p>
+                                        <p className="text-[10px] text-[#C8A44A]/60 font-bold uppercase tracking-[0.15em]">CRECI 17933-F</p>
                                     </div>
                                     <a
                                         href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}

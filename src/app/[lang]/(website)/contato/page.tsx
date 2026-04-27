@@ -88,14 +88,14 @@ export default function ContactPage() {
         {
             icon: Mail,
             title: 'Email',
-            content: 'iulemirandaimoveis@gmail.com',
+            content: 'iule.miranda.imoveis@gmail.com',
             sub: 'Respondemos em até 24h',
-            link: 'mailto:iulemirandaimoveis@gmail.com',
+            link: 'mailto:iule.miranda.imoveis@gmail.com',
         },
         {
             icon: Shield,
             title: 'CRECI',
-            content: 'CRECI 9.226-F',
+            content: 'CRECI 17933-F',
             sub: 'Registro Profissional',
             link: null,
         },
@@ -371,7 +371,7 @@ export default function ContactPage() {
                                 </div>
                                 <div className="space-y-2">
                                     <p className="text-[12px] text-white/50">
-                                        <span className="text-white/70 font-semibold">CRECI 9.226-F</span> — Conselho Regional de Corretores de Imóveis
+                                        <span className="text-white/70 font-semibold">CRECI 17933-F</span> — Conselho Regional de Corretores de Imóveis
                                     </p>
                                     <p className="text-[12px] text-white/50">
                                         <span className="text-white/70 font-semibold">CNAI</span> — Cadastro Nacional de Avaliadores Imobiliários

@@ -108,13 +108,13 @@ export default function Footer() {
                             fontSize: 11, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase',
                             color: '#C8A44A', marginBottom: 16,
                             fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
-                        }}>CRECI 17933 | CNAI 53290</p>
+                        }}>CRECI 17933-F | CNAI 53290</p>
 
-                        <a href="mailto:iulemirandaimoveis@gmail.com" style={{ ...S.contactRow, wordBreak: 'break-all' as const }}>
+                        <a href="mailto:iule.miranda.imoveis@gmail.com" style={{ ...S.contactRow, wordBreak: 'break-all' as const }}>
                             <div style={S.iconBox}>
                                 <svg width="16" height="16" fill="none" stroke="#C8A44A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 8l9 6 9-6M3 8v10a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9-4 9 4"/></svg>
                             </div>
-                            <span style={{ wordBreak: 'break-all' }}>iulemirandaimoveis@gmail.com</span>
+                            <span style={{ wordBreak: 'break-all' }}>iule.miranda.imoveis@gmail.com</span>
                         </a>
                         <a href="https://wa.me/5581997230455" style={S.contactRow}>
                             <div style={S.iconBox}>
@@ -164,7 +164,7 @@ export default function Footer() {
                     padding: '16px 0', borderTop: '1px solid rgba(200,164,74,0.08)',
                     display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12,
                 }}>
-                    {['CRECI 17933', 'CNAI 53290', 'NBR 14653'].map(cred => (
+                    {['CRECI 17933-F', 'CNAI 53290', 'NBR 14653'].map(cred => (
                         <span key={cred} style={{
                             fontSize: 11, fontWeight: 600, letterSpacing: '1px',
                             color: '#C8A44A', padding: '4px 10px', borderRadius: 4,

@@ -148,7 +148,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         brokerData = {
             id: 'default',
             name: 'Iule Miranda',
-            email: 'iulemirandaimoveis@gmail.com',
+            email: 'iule.miranda.imoveis@gmail.com',
             phone: '+5581997230455',
             creci: '17933',
             avatar_url: null,

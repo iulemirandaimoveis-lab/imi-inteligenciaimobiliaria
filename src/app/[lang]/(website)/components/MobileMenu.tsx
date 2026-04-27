@@ -141,7 +141,7 @@ export default function MobileMenu({
                     <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100">
                         <p className="font-black text-lg text-[#1A1D23] mb-1">Iule Miranda</p>
                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
-                            CRECI 17933 | CNAI 53290
+                            CRECI 17933-F | CNAI 53290
                         </p>
                     </div>
                 </div>

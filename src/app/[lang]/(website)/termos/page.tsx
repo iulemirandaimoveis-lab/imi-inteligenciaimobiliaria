@@ -90,7 +90,7 @@ export default function TermosPage() {
                     <p className="text-base leading-relaxed" style={{ color: '#3D3D3D' }}>
                         Estes Termos de Uso regem o acesso e a utilização do site e dos serviços da{' '}
                         <strong>IMI – Inteligência Imobiliária</strong>, pertencente a Iule Miranda,
-                        corretora de imóveis credenciada (CRECI 17933 | CNAI 53290), com sede em Recife, Pernambuco.
+                        corretora de imóveis credenciada (CRECI 17933-F | CNAI 53290), com sede em Recife, Pernambuco.
                         Por favor, leia com atenção antes de utilizar nossos serviços.
                     </p>
                 </div>
@@ -139,11 +139,11 @@ export default function TermosPage() {
                         <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
                             Fale diretamente com nossa equipe pelo e-mail{' '}
                             <a
-                                href="mailto:iulemirandaimoveis@gmail.com"
+                                href="mailto:iule.miranda.imoveis@gmail.com"
                                 className="font-semibold underline"
                                 style={{ color: '#C8A44A' }}
                             >
-                                iulemirandaimoveis@gmail.com
+                                iule.miranda.imoveis@gmail.com
                             </a>
                         </p>
                     </div>

@@ -9,7 +9,7 @@ import {
 
 export const metadata: Metadata = {
     title: 'Sobre | IMI — Inteligência Imobiliária',
-    description: 'Conheça a IMI e Iule Miranda — avaliador imobiliário, perito judicial (CRECI 17933 · CNAI 53290) e estrategista em inteligência imobiliária premium.',
+    description: 'Conheça a IMI e Iule Miranda — avaliador imobiliário, perito judicial (CRECI 17933-F · CNAI 53290) e estrategista em inteligência imobiliária premium.',
     openGraph: {
         title: 'Sobre a IMI — Inteligência Imobiliária',
         description: 'Avaliações imobiliárias, perícias judiciais e consultoria estratégica no Brasil e mercados internacionais.',
@@ -178,7 +178,7 @@ export default async function AboutPage({
                             <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4">
                                 <p className="text-white font-bold text-sm">Iule Miranda</p>
                                 <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
-                                    CRECI 17933 · CNAI 53290 · Perito Judicial
+                                    CRECI 17933-F · CNAI 53290 · Perito Judicial
                                 </p>
                             </div>
                         </div>

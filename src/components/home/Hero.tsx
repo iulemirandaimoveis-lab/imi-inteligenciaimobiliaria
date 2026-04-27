@@ -47,7 +47,7 @@ const STATS = [
 ]
 
 const TRUST = [
-  { icon: BadgeCheck, text: 'CRECI 17933' },
+  { icon: BadgeCheck, text: 'CRECI 17933-F' },
   { icon: Scale, text: 'CNAI 53290' },
   { icon: FileText, text: 'NBR 14653' },
 ]

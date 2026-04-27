@@ -157,7 +157,7 @@ export default function Drawer({ open, setOpen }: Props) {
                         <p className="font-black text-sm text-neutral-900">Iule Miranda</p>
                         <div className="h-0.5 w-6 bg-navy-800 mx-auto my-1.5 rounded-full" />
                         <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider mb-2">
-                            CRECI 17933 | CNAI 53290
+                            CRECI 17933-F | CNAI 53290
                         </p>
                         <div className="space-y-1 text-[11px] text-neutral-500">
                             <a
@@ -169,10 +169,10 @@ export default function Drawer({ open, setOpen }: Props) {
                                 +55 81 9 9723-0455
                             </a>
                             <a
-                                href="mailto:iulemirandaimoveis@gmail.com"
+                                href="mailto:iule.miranda.imoveis@gmail.com"
                                 className="block hover:text-neutral-800 transition-colors"
                             >
-                                iulemirandaimoveis@gmail.com
+                                iule.miranda.imoveis@gmail.com
                             </a>
                         </div>
                         <a

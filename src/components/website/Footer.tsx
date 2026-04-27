@@ -115,18 +115,18 @@ export default function Footer({ lang, settings }: FooterProps) {
                         <div className="border-l-[3px] border-[#C8A44A]/50 bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-xl p-3 lg:p-4 mb-4 lg:mb-6">
                             <p className="font-bold text-white text-[13px] lg:text-[14px] mb-0.5">Iule Miranda</p>
                             <p className="text-[#C8A44A]/70 text-[9px] font-bold uppercase tracking-[0.2em] mb-3">
-                                CRECI 17933 | CNAI 53290
+                                CRECI 17933-F | CNAI 53290
                             </p>
 
                             <div className="space-y-[6px]">
                                 <a
-                                    href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
+                                    href={`mailto:${settings?.companyEmail || 'iule.miranda.imoveis@gmail.com'}`}
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
                                     <div className="w-[28px] h-[28px] bg-white/[0.06] rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.06]">
                                         <Mail className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
+                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iule.miranda.imoveis@gmail.com'}</span>
                                 </a>
 
                                 <a
