@@ -200,7 +200,7 @@ export async function GET(request: NextRequest) {
 
     for (let i = 0; i < config.length; i++) {
         const cat = config[i];
-        const items: POIItem[] = settled[i].status === 'fulfilled' ? settled[i].value : [];
+        const items: POIItem[] = settled[i].status === 'fulfilled' ? (settled[i] as PromiseFulfilledResult<POIItem[]>).value : [];
         const nearest = items.length > 0 ? Math.min(...items.map((p) => p.distance_meters)) : 0;
 
         categoryResults.push({
