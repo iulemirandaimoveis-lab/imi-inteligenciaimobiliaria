@@ -74,13 +74,19 @@ interface RateLimitEntry {
 const memStore = new Map<string, RateLimitEntry>()
 
 // Clean up old entries every 5 minutes
-if (typeof setInterval !== 'undefined') {
-    setInterval(() => {
+// - Skip in tests to avoid open handles on Jest teardown
+// - In Node runtime, unref the timer so it does not keep the process alive
+if (typeof setInterval !== 'undefined' && process.env.NODE_ENV !== 'test') {
+    const cleanupTimer = setInterval(() => {
         const now = Date.now()
         for (const [key, entry] of memStore.entries()) {
             if (now > entry.resetTime) memStore.delete(key)
         }
     }, 5 * 60 * 1000)
+
+    if (typeof (cleanupTimer as NodeJS.Timeout).unref === 'function') {
+        (cleanupTimer as NodeJS.Timeout).unref()
+    }
 }
 
 function memRateLimit(

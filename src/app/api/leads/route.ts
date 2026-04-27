@@ -123,8 +123,9 @@ export const POST = apiHandler(leadSchema, async (request: NextRequest, body: z.
         new_data: { name: body.name, email: body.email, source: body.source },
         ...meta,
     })
-    // Notification — fire-and-forget
-    if (user) {
+    const isTestEnv = process.env.NODE_ENV === 'test'
+    // Notification — fire-and-forget (skip in tests to avoid open handles)
+    if (!isTestEnv && user) {
         createNotification({
             userId: user.id,
             type: 'lead_novo',

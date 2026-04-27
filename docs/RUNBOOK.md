@@ -76,7 +76,7 @@ FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaS
 ```
 
 ### Fix
-- `package.json` já usa `NODE_OPTIONS='--max-old-space-size=8192'`
+- `package.json` usa `NODE_OPTIONS='--max-old-space-size=4096'` (ajustar para 8192 apenas se necessário no ambiente)
 - `next.config.js` tem `typescript.ignoreBuildErrors: true` para pular type-checking no build
 - Type-check separadamente: `npm run type-check`
 

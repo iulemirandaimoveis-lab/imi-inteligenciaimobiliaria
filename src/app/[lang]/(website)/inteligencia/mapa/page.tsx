@@ -3,10 +3,13 @@ import { createClient } from '@supabase/supabase-js'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 import MapaClient from './MapaClient'
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+function getPublicSupabase() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!supabaseUrl || !supabaseAnonKey) return null
+
+    return createClient(supabaseUrl, supabaseAnonKey)
+}
 
 export const metadata: Metadata = {
     title: 'Mapa Interativo | Inteligência IMI',
@@ -21,6 +24,12 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function MapaPage() {
+    const supabase = getPublicSupabase()
+    if (!supabase) {
+        console.warn('[MapaPage] Missing Supabase public envs, returning empty dataset')
+        return <MapaClient developments={[]} />
+    }
+
     const { data, error } = await supabase
         .from('developments')
         .select('*')

@@ -86,7 +86,7 @@ export default function PWAManager() {
               userVisibleOnly: true,
               applicationServerKey: urlBase64ToUint8Array(
                 process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-              ),
+              ) as BufferSource,
             })
             if (sub) {
               const res = await fetch('/api/notifications/subscribe', {
@@ -156,7 +156,7 @@ export default function PWAManager() {
 
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey),
+        applicationServerKey: urlBase64ToUint8Array(vapidKey) as BufferSource,
       })
 
       const res = await fetch('/api/notifications/subscribe', {

@@ -5,10 +5,13 @@ import { fetchNearbyPOIs as fetchOSMPOIs, type POI as OSMPOI } from '@/lib/poi-s
 
 export const runtime = 'nodejs';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+function getSupabaseAdmin() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !supabaseServiceKey) return null;
+
+    return createClient(supabaseUrl, supabaseServiceKey);
+}
 
 // Google Places type mapping
 const GOOGLE_TYPE_MAP: Record<string, string> = {
@@ -169,7 +172,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Check Supabase cache — only serve if score > 0 (avoids serving stale empty results)
-    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const supabase = getSupabaseAdmin();
+    if (supabase) {
         try {
             const { data: cached } = await supabase
                 .from('poi_cache')
@@ -200,7 +204,8 @@ export async function GET(request: NextRequest) {
 
     for (let i = 0; i < config.length; i++) {
         const cat = config[i];
-        const items: POIItem[] = settled[i].status === 'fulfilled' ? settled[i].value : [];
+        const settledResult = settled[i];
+        const items: POIItem[] = settledResult.status === 'fulfilled' ? settledResult.value : [];
         const nearest = items.length > 0 ? Math.min(...items.map((p) => p.distance_meters)) : 0;
 
         categoryResults.push({
@@ -245,7 +250,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Persist to cache only when we have real data (score > 0)
-    if (score > 0 && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    if (score > 0 && supabase) {
         supabase
             .from('poi_cache')
             .upsert({

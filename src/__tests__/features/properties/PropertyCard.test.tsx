@@ -11,8 +11,12 @@ import { render, screen, fireEvent } from '@testing-library/react'
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
+    const { fill, ...imgProps } = props
+    const style = fill
+      ? { ...(imgProps.style ?? {}), position: 'absolute', inset: 0, width: '100%', height: '100%' }
+      : imgProps.style
     // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-    return <img {...props} />
+    return <img {...imgProps} style={style} />
   },
 }))
 

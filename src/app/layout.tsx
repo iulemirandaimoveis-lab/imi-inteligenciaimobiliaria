@@ -1,17 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
-import { Playfair_Display } from 'next/font/google';
 // DEPLOY_VERSION: v6.0.0 - DS6 PRECISION DARK
 import './globals.css';
 
-// D3.1 — Reduced to 3 font families: GeistSans, GeistMono, Playfair_Display
-const playfair = Playfair_Display({
-    subsets: ['latin'],
-    weight: ['400', '500', '600', '700'],
-    variable: '--font-playfair',
-    display: 'swap',
-});
+// D3.1 — Reduced to 3 font families:
+// GeistSans + GeistMono + serif display via CSS variable (--font-playfair) in globals.css
 
 export const viewport: Viewport = {
     width: 'device-width',
@@ -76,7 +70,7 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="pt-BR" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} ${playfair.variable}`}>
+        <html lang="pt-BR" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable}`}>
             <body className="min-h-screen bg-[var(--bg-base,#080D18)] relative" style={{ fontFamily: "var(--font-sans)" }}>
                 <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">
                     Pular para o conteúdo

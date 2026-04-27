@@ -5,7 +5,7 @@
 ## Stack
 
 - **Frontend:** Next.js 14 (App Router) + TypeScript + Tailwind CSS
-- **Backend:** 164 API routes + Supabase (PostgreSQL + Auth + Storage + Realtime)
+- **Backend:** 200+ API routes + Supabase (PostgreSQL + Auth + Storage + Realtime)
 - **AI:** Anthropic Claude + Google Gemini (multi-LLM with cost tracking)
 - **Deploy:** Vercel + Supabase Cloud
 - **PWA:** next-pwa with offline support

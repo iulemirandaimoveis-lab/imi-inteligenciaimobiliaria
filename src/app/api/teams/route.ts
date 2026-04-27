@@ -164,11 +164,13 @@ export async function POST(request: NextRequest) {
 
         // If leader_id provided, assign them to the team
         if (leader_id && team) {
-            await supabaseAdmin
+            const { error: leaderAssignError } = await supabaseAdmin
                 .from('brokers')
                 .update({ team_id: team.id, updated_at: new Date().toISOString() })
                 .eq('id', leader_id)
-                .catch((e: Error) => console.warn('leader team_id assign failed:', e.message))
+            if (leaderAssignError) {
+                console.warn('leader team_id assign failed:', leaderAssignError.message)
+            }
         }
 
         return NextResponse.json({ data: team }, { status: 201 })

@@ -31,6 +31,8 @@ export async function createNotification(params: CreateNotificationParams): Prom
       read: false,
     })
 
+    if (process.env.NODE_ENV === 'test') return
+
     // Trigger real browser push notification
     const pushPayload = {
       title: params.title,

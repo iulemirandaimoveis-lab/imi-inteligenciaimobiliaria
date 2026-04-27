@@ -76,22 +76,21 @@ export async function POST(
         }
 
         // Update team member_count
-        await supabaseAdmin.rpc('update_team_member_count', { p_team_id: params.id }).catch(() => {
+        const { error: memberCountRpcError } = await supabaseAdmin.rpc('update_team_member_count', { p_team_id: params.id })
+        if (memberCountRpcError) {
             // Fallback: manual count update
-            supabaseAdmin
+            const { count } = await supabaseAdmin
                 .from('brokers')
                 .select('id', { count: 'exact' })
                 .eq('team_id', params.id)
-                .then(({ count }) => {
-                    if (count !== null) {
-                        supabaseAdmin
-                            .from('teams')
-                            .update({ member_count: count, updated_at: new Date().toISOString() })
-                            .eq('id', params.id)
-                            .then(() => {})
-                    }
-                })
-        })
+
+            if (count !== null) {
+                await supabaseAdmin
+                    .from('teams')
+                    .update({ member_count: count, updated_at: new Date().toISOString() })
+                    .eq('id', params.id)
+            }
+        }
 
         return NextResponse.json({ data: updated }, { status: 201 })
     } catch (err) {
@@ -166,11 +165,14 @@ export async function DELETE(
             .select('id', { count: 'exact' })
             .eq('team_id', params.id)
 
-        await supabaseAdmin
+        const { error: updateTeamError } = await supabaseAdmin
             .from('teams')
             .update({ member_count: count ?? 0, updated_at: new Date().toISOString() })
             .eq('id', params.id)
-            .catch(() => {})
+
+        if (updateTeamError) {
+            console.warn('Failed to update team member_count:', updateTeamError.message)
+        }
 
         return NextResponse.json({ success: true })
     } catch (err) {

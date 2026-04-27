@@ -106,11 +106,14 @@ export async function PATCH(
                 updates.leader_name = leader?.name ?? null
 
                 // Assign this broker to the team
-                await supabaseAdmin
+                const { error: leaderAssignError } = await supabaseAdmin
                     .from('brokers')
                     .update({ team_id: params.id, updated_at: new Date().toISOString() })
                     .eq('id', body.leader_id)
-                    .catch(() => {})
+
+                if (leaderAssignError) {
+                    console.warn('Failed to assign leader to team:', leaderAssignError.message)
+                }
             } else {
                 updates.leader_name = null
             }
@@ -168,11 +171,14 @@ export async function DELETE(
         }
 
         // Unassign members from this team before soft-deleting
-        await supabaseAdmin
+        const { error: unassignError } = await supabaseAdmin
             .from('brokers')
             .update({ team_id: null, updated_at: new Date().toISOString() })
             .eq('team_id', params.id)
-            .catch(() => {})
+
+        if (unassignError) {
+            console.warn('Failed to unassign team brokers before archive:', unassignError.message)
+        }
 
         const { error } = await supabaseAdmin
             .from('teams')

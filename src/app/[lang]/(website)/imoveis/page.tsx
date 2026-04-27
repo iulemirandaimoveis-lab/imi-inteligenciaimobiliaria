@@ -5,11 +5,13 @@ import { mapDbPropertyToDevelopment, mapRentalToDevelopment } from '@/modules/im
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { PAGE_METADATA } from '@/lib/page-metadata'
 
-// Public anon client — uses RLS policies (anon_read on developments/developers)
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+function getPublicSupabase() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!supabaseUrl || !supabaseAnonKey) return null
+
+    return createClient(supabaseUrl, supabaseAnonKey)
+}
 
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
     return PAGE_METADATA.imoveis(params.lang)
@@ -24,6 +26,17 @@ export default async function ImoveisPage({
     params: { lang: string }
     searchParams: { construtora?: string }
 }) {
+    const supabase = getPublicSupabase()
+    if (!supabase) {
+        console.warn('[ImoveisPage] Missing Supabase public envs, returning empty dataset')
+        return (
+            <ImoveisClient
+                initialDevelopments={[]}
+                lang={params.lang || 'pt'}
+            />
+        )
+    }
+
     let query = supabase
         .from('developments')
         .select('*')
