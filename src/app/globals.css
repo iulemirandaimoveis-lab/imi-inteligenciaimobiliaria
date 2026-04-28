@@ -168,6 +168,18 @@
   --info-bg:    #E8F0FA;
 
   /* ── Shorthand tokens (light equivalents of .dark vars) ── */
+  --bg: var(--bg-base);
+  --n: var(--bg-surface);
+  --n2: var(--bg-elevated);
+  --n3: #F4F2EA;
+  --n4: #ECEAE0;
+  --n5: #E4E0D4;
+  --gold: var(--imi-gold-600);
+  --gb: var(--imi-gold-500);
+  --gd: var(--imi-gold-700);
+  --bdr: rgba(11,17,32,0.10);
+  --bdg: rgba(184,148,58,0.24);
+
   --t1: var(--imi-navy-900);
   --t2: var(--imi-stone-600);
   --t3: var(--imi-stone-500);
