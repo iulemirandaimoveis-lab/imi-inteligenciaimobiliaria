@@ -2268,6 +2268,34 @@
   color: var(--bo-text-dim);
 }
 
+/* Backoffice: controls stay highlighted by default, dim on interaction */
+.backoffice-root .toolbar-input,
+.backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+.backoffice-root select,
+.backoffice-root textarea,
+.backoffice-root .input,
+.backoffice-root .inp {
+  border-color: rgba(200,164,74,0.42) !important;
+  box-shadow: 0 0 0 1px rgba(200,164,74,0.18) !important;
+  transition: border-color 150ms ease, box-shadow 150ms ease, opacity 150ms ease !important;
+}
+
+.backoffice-root .toolbar-input:hover,
+.backoffice-root .toolbar-input:focus,
+.backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):hover,
+.backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):focus,
+.backoffice-root select:hover,
+.backoffice-root select:focus,
+.backoffice-root textarea:hover,
+.backoffice-root textarea:focus,
+.backoffice-root .input:hover,
+.backoffice-root .input:focus,
+.backoffice-root .inp:hover,
+.backoffice-root .inp:focus {
+  border-color: var(--border-default) !important;
+  box-shadow: none !important;
+}
+
 /* Standard icon-only square button (sort, view toggle) */
 .toolbar-icon-btn {
   display: inline-flex;
@@ -2758,4 +2786,3 @@ body.dark::before {
     opacity: .015;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-
