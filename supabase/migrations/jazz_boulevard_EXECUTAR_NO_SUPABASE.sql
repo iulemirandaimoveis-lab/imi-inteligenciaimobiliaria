@@ -86,7 +86,7 @@ SELECT
   '2027-12-01'::date,
 
   '["Lojas e Mall no Térreo","Salas Empresariais","Estacionamento Rotativo","Academia","Área Gourmet","Varanda com Vista para as Colinas","Revitalização Rádio Difusora","Tour Virtual 360°","Duas Torres","Portaria 24h","Coworking","Rooftop"]'::jsonb,
-  ARRAY['lançamento','multiuso','garanhuns','jazz boulevard','fusion center','soul residence','sete colinas','cp construção'],
+  '["lançamento","multiuso","garanhuns","jazz boulevard","fusion center","soul residence","sete colinas","cp construção"]'::jsonb,
 
   TRUE, TRUE, 1,
   NULL,
