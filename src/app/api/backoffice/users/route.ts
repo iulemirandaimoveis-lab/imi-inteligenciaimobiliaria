@@ -33,7 +33,8 @@ export async function POST(request: Request) {
         }
         const body = await request.json()
         const { email, name, role } = body
-        if (!email || !name) {
+        const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
+        if (!normalizedEmail || !name) {
             return NextResponse.json(
                 { error: 'Email e nome são obrigatórios' },
                 { status: 400 }
@@ -48,18 +49,18 @@ export async function POST(request: Request) {
             const { data: existingProfile } = await supabaseAdmin
                 .from('profiles')
                 .select('id')
-                .eq('email', email)
+                .ilike('email', normalizedEmail)
                 .maybeSingle()
 
             if (existingProfile) {
                 // User exists — sync to profiles/brokers and return success
                 const existingId = existingProfile.id
                 await supabaseAdmin.from('profiles').upsert({
-                    id: existingId, email, name, role: validRole.toLowerCase()
+                    id: existingId, email: normalizedEmail, name, role: validRole.toLowerCase()
                 })
                 // Upsert broker — handle both user_id and email unique constraints
                 const { data: existingBroker } = await supabaseAdmin
-                    .from('brokers').select('id').eq('email', email).maybeSingle()
+                    .from('brokers').select('id').ilike('email', normalizedEmail).maybeSingle()
                 if (existingBroker) {
                     await supabaseAdmin.from('brokers').update({
                         user_id: existingId, name, status: 'active',
@@ -69,7 +70,7 @@ export async function POST(request: Request) {
                     }).eq('id', existingBroker.id)
                 } else {
                     await supabaseAdmin.from('brokers').upsert({
-                        user_id: existingId, name, email, status: 'active',
+                        user_id: existingId, name, email: normalizedEmail, status: 'active',
                         role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
                         permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
                         updated_at: new Date().toISOString(),
@@ -77,13 +78,13 @@ export async function POST(request: Request) {
                 }
                 return NextResponse.json({
                     success: true,
-                    user: { id: existingId, email, name, role: validRole },
-                    message: `Usuário ${email} já existia — perfil atualizado com sucesso.`
+                    user: { id: existingId, email: normalizedEmail, name, role: validRole },
+                    message: `Usuário ${normalizedEmail} já existia — perfil atualizado com sucesso.`
                 })
             }
             // Admin flow: create user via admin API (bypasses email confirmation)
             const { data: authUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-                email,
+                email: normalizedEmail,
                 password: tempPassword,
                 email_confirm: true,
                 user_metadata: { name, role: authMetadataRole }
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
             if (createError) {
                 const msg = createError.message
                 if (msg.includes('already been registered') || msg.includes('already exists')) {
-                    return NextResponse.json({ error: `O email ${email} já está cadastrado no sistema.` }, { status: 409 })
+                    return NextResponse.json({ error: `O email ${normalizedEmail} já está cadastrado no sistema.` }, { status: 409 })
                 }
                 // "Database error creating new user" usually means a trigger on auth.users is failing
                 if (msg.includes('Database error')) {
@@ -100,7 +101,7 @@ export async function POST(request: Request) {
                     // is a trigger on auth.users that inserts into profiles — since we do our own profile insert below
                     // Retry without user_metadata to reduce trigger failure chance
                     const { data: retryUser, error: retryError } = await supabaseAdmin.auth.admin.createUser({
-                        email,
+                        email: normalizedEmail,
                         password: tempPassword,
                         email_confirm: true,
                     })
@@ -113,12 +114,12 @@ export async function POST(request: Request) {
                         // Continue with the rest of the flow (profile + broker sync below)
                         const { error: profileError } = await supabaseAdmin
                             .from('profiles')
-                            .upsert({ id: newUserId, email, name, role: validRole.toLowerCase() })
+                            .upsert({ id: newUserId, email: normalizedEmail, name, role: validRole.toLowerCase() })
                         if (profileError) console.error('Profiles sync error (retry):', profileError.message)
                         const { data: existingBrokerByEmail2 } = await supabaseAdmin
-                            .from('brokers').select('id').eq('email', email).maybeSingle()
+                            .from('brokers').select('id').ilike('email', normalizedEmail).maybeSingle()
                         const brokerPayload2 = {
-                            user_id: newUserId, name, email, status: 'active',
+                            user_id: newUserId, name, email: normalizedEmail, status: 'active',
                             role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
                             permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
                             updated_at: new Date().toISOString(),
@@ -129,13 +130,13 @@ export async function POST(request: Request) {
                             await supabaseAdmin.from('brokers').insert({ ...brokerPayload2, created_at: new Date().toISOString() })
                         }
                         await supabaseAdmin.auth.admin.generateLink({
-                            type: 'recovery', email,
+                            type: 'recovery', email: normalizedEmail,
                             options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login?reset=true` }
                         }).catch(() => {})
                         return NextResponse.json({
                             success: true,
-                            user: { id: newUserId, email, name, role: validRole },
-                            message: `Convite enviado para ${email}. O usuário receberá um link para definir sua senha.`
+                            user: { id: newUserId, email: normalizedEmail, name, role: validRole },
+                            message: `Convite enviado para ${normalizedEmail}. O usuário receberá um link para definir sua senha.`
                         })
                     }
                 }
@@ -145,7 +146,7 @@ export async function POST(request: Request) {
             // Sync to profiles
             const { error: profileError } = await supabaseAdmin
                 .from('profiles')
-                .upsert({ id: newUserId, email, name, role: validRole.toLowerCase() })
+                .upsert({ id: newUserId, email: normalizedEmail, name, role: validRole.toLowerCase() })
             if (profileError) {
                 console.error('Profiles sync error:', profileError.message)
                 // Non-critical: user was created in auth, profile sync can be retried
@@ -153,11 +154,11 @@ export async function POST(request: Request) {
             // Sync to brokers table so user appears in Equipe
             // Check by email first to avoid unique constraint violation on email
             const { data: existingBrokerByEmail } = await supabaseAdmin
-                .from('brokers').select('id').eq('email', email).maybeSingle()
+                .from('brokers').select('id').ilike('email', normalizedEmail).maybeSingle()
             const brokerPayload = {
                 user_id: newUserId,
                 name,
-                email,
+                email: normalizedEmail,
                 status: 'active',
                 role: validRole.toLowerCase() === 'admin' ? 'broker_manager' : 'broker',
                 permissions: ['dashboard', 'imoveis', 'leads', 'agenda', 'avaliacoes', 'financeiro', 'contratos'],
@@ -173,15 +174,15 @@ export async function POST(request: Request) {
             // Send password reset email so user can set their own password
             await supabaseAdmin.auth.admin.generateLink({
                 type: 'recovery',
-                email,
+                email: normalizedEmail,
                 options: {
                     redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login?reset=true`
                 }
             }).catch(() => { /* non-critical if email fails */ })
             return NextResponse.json({
                 success: true,
-                user: { id: newUserId, email, name, role: validRole },
-                message: `Convite enviado para ${email}. O usuário receberá um link para definir sua senha.`
+                user: { id: newUserId, email: normalizedEmail, name, role: validRole },
+                message: `Convite enviado para ${normalizedEmail}. O usuário receberá um link para definir sua senha.`
             })
         } else {
             return NextResponse.json(
