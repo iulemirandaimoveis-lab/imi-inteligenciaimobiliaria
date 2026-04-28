@@ -11,6 +11,7 @@ import {
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
     Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot,
     Map as MapIcon, Handshake, MessageCircle, Camera, Key, Eye, Link2, Trophy,
+    GraduationCap, Globe2, Award,
 } from 'lucide-react'
 import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -56,6 +57,7 @@ const SECTION_ACCESS: Record<string, UserRole[]> = {
     'Operação': ['admin', 'manager'],
     'Financeiro': ['admin', 'manager'],
     'Inteligência': ['admin', 'manager', 'agent'],
+    'Academy & Carreira': ['admin', 'manager', 'agent', 'viewer'],
     'Configurações': ['admin'],
 }
 
@@ -68,6 +70,7 @@ const SECTION_COLORS: Record<string, string> = {
     'Operação': '#4ECDC4',
     'Financeiro': '#84CC16',
     'Inteligência': 'var(--info)',
+    'Academy & Carreira': '#C8A44A',
     'Configurações': 'var(--text-tertiary)',
 }
 
@@ -235,6 +238,14 @@ const SECTIONS: NavSection[] = [
                     { label: 'QR Codes',     href: '/backoffice/tracking/qr',     icon: QrCode },
                 ]
             },
+        ]
+    },
+    {
+        label: 'Academy & Carreira',
+        items: [
+            { label: 'IMI Academy',    href: '/backoffice/academy',  icon: GraduationCap, badge: 'NEW' },
+            { label: 'Minha Carreira', href: '/backoffice/carreira', icon: Award,         badge: 'NEW' },
+            { label: 'Global Market',  href: '/backoffice/global',   icon: Globe2,        badge: 'NEW' },
         ]
     },
     {
