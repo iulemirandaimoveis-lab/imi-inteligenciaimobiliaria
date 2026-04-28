@@ -89,7 +89,7 @@ SELECT
   '["lançamento","multiuso","garanhuns","jazz boulevard","fusion center","soul residence","sete colinas","cp construção"]'::jsonb,
 
   TRUE, TRUE, 1,
-  NULL,
+  'https://youtube.com/shorts/F04Bu2g4qCE',
   'https://tour.panoee.net/TORRE_SOUL_RESIDENCE',
   TRUE,
   'O empreendimento que celebra a essência da música e da cultura através da arquitetura. Garanhuns ama tradição e a CP Construção ama inovação. E o Jazz Boulevard é a materialização de tudo isso.',
@@ -98,7 +98,7 @@ SELECT
 
   '[{"id":"sala-empresarial","name":"Sala Empresarial","tower":"Fusion Center","tower_id":"fusion-center","category":"comercial","area_from":30.40,"area_to":53.31,"bedrooms":0,"bathrooms":1,"parking":0,"price_from":null,"price_to":null,"images":[],"description":"Salas de 30,40m² a 53,31m² para seus negócios em ritmo de pleno crescimento."},{"id":"studio","name":"Studio","tower":"Fusion Center","tower_id":"fusion-center","category":"residencial","area_from":45.77,"area_to":92.31,"bedrooms":1,"bathrooms":1,"parking":1,"price_from":405472,"price_to":974391,"images":[],"description":"Studios de 45,77m² a 92,31m² para morar ou investir."},{"id":"loft","name":"Loft","tower":"Fusion Center","tower_id":"fusion-center","category":"residencial","area_from":46.43,"area_to":61.94,"bedrooms":1,"bathrooms":1,"parking":1,"price_from":509778,"price_to":706530,"images":[],"description":"Lofts de 46,43m² a 61,94m² com varandas voltadas para as colinas da Suíça Pernambucana."},{"id":"apartamento-fusion","name":"Apartamento","tower":"Fusion Center","tower_id":"fusion-center","category":"residencial","area_from":60.87,"area_to":92.31,"bedrooms":2,"bathrooms":2,"parking":1,"price_from":550049,"price_to":974391,"images":[],"description":"Apartamentos de 60,87m² a 92,31m² com varanda e vista para as colinas."},{"id":"soul-tipo-cd","name":"Apartamento 95m²","tower":"Soul Residence","tower_id":"soul-residence","category":"residencial","area_from":95.45,"area_to":96.79,"bedrooms":3,"bathrooms":3,"parking":2,"price_from":870765,"price_to":1051872,"images":[],"description":"Apartamentos de 95,45m² a 96,79m² com toda a estrutura e sofisticação do Soul Residence."},{"id":"soul-tipo-b","name":"Apartamento 120m²","tower":"Soul Residence","tower_id":"soul-residence","category":"residencial","area_from":120.61,"area_to":120.61,"bedrooms":3,"bathrooms":3,"parking":2,"price_from":1110295,"price_to":1329139,"images":[],"description":"Apartamentos de 120,61m² com amplos ambientes e vista privilegiada para as Sete Colinas."},{"id":"soul-tipo-a","name":"Apartamento 167m²","tower":"Soul Residence","tower_id":"soul-residence","category":"residencial","area_from":167.09,"area_to":167.21,"bedrooms":4,"bathrooms":4,"parking":3,"price_from":1538174,"price_to":1841356,"images":[],"description":"167m² de sofisticação absoluta. Para famílias que vivem em grande estilo com vista para as Sete Colinas."}]'::jsonb,
 
-  '{"main":"","gallery":[],"floorPlans":[],"videos":[],"virtualTour":"https://tour.panoee.net/TORRE_SOUL_RESIDENCE"}'::jsonb
+  '{"main":"","gallery":[],"floorPlans":[],"videos":["https://youtube.com/shorts/F04Bu2g4qCE"],"virtualTour":"https://tour.panoee.net/TORRE_SOUL_RESIDENCE"}'::jsonb
 
 FROM public.developers d
 WHERE d.slug = 'cp-construcao'
@@ -119,4 +119,6 @@ ON CONFLICT (slug) DO UPDATE SET
   price_min              = EXCLUDED.price_min,
   price_max              = EXCLUDED.price_max,
   developer_id           = EXCLUDED.developer_id,
+  video_url              = EXCLUDED.video_url,
+  images                 = EXCLUDED.images,
   updated_at             = now();
