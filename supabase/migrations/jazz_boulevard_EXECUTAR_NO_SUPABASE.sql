@@ -41,7 +41,7 @@ VALUES (
 -- ── PARTE 3: Jazz Boulevard (usando SELECT para pegar o developer_id) ─────
 INSERT INTO public.developments (
   id,
-  title, name, slug, description,
+  name, slug, description,
   type, tipo, property_type,
   status, status_commercial, status_comercial,
   developer_id,
@@ -65,7 +65,6 @@ INSERT INTO public.developments (
 SELECT
   gen_random_uuid(),
 
-  'Jazz Boulevard',
   'Jazz Boulevard',
   'jazz-boulevard-garanhuns',
   'O Jazz Boulevard é o primeiro complexo multiuso de Garanhuns, PE. Composto por duas torres — Fusion Center e Soul Residence — o empreendimento está em frente ao tradicional Relógio das Flores e incorpora a musicalidade e a pluralidade cultural da cidade.',
