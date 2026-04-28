@@ -644,13 +644,13 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                             {totalUnread}
                         </span>
                     )}
-                    {onlineUsers.length > 0 && (
+                    {onlineUsers.size > 0 && (
                         <span style={{
                             display: 'flex', alignItems: 'center', gap: 4,
                             fontSize: 11, color: '#4ADE80', fontWeight: 600,
                         }}>
                             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ADE80', display: 'inline-block', boxShadow: '0 0 5px #4ADE80' }} />
-                            {onlineUsers.length} online
+                            {onlineUsers.size} online
                         </span>
                     )}
                 </div>
@@ -1407,8 +1407,8 @@ function ConnectInner({ user }: { user: { id: string; name: string; avatar_url?:
                                             <Users size={12} style={{ verticalAlign: 'middle', marginRight: 6 }} />
                                             Membros ({activeChannel.members.length})
                                         </div>
-                                        {activeChannel.members.map((member: { user_id: string; role?: string; profile?: { id?: string; name?: string; email?: string; avatar_url?: string | null } | null }) => {
-                                            const memberName = member.user_id === user.id ? 'Você' : (member.profile?.name || member.profile?.email || member.user_id.slice(0, 8))
+                                        {activeChannel.members.map((member) => {
+                                            const memberName = member.user_id === user.id ? 'Você' : (member.profile?.name ?? member.profile?.email ?? member.user_id.slice(0, 8))
                                             const memberOnline = isOnline(member.user_id)
                                             return (
                                                 <div key={member.user_id} style={{

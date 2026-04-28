@@ -16,8 +16,8 @@ const T = {
     g10: 'rgba(200,164,74,.06)',
     g20: 'rgba(200,164,74,.14)',
     inputBg: 'rgba(20,36,64,.4)',
-    inputBorder: 'rgba(200,164,74,.14)',
-    focusShadow: 'rgba(200,164,74,.08)',
+    inputBorder: 'rgba(200,164,74,.35)',
+    focusShadow: 'rgba(200,164,74,.16)',
     playfair: "'Playfair Display', Georgia, serif",
     outfit: "'Outfit', system-ui, sans-serif",
 }
@@ -171,6 +171,7 @@ export default function LoginPage() {
         outline: 'none',
         caretColor: T.gold,
         boxSizing: 'border-box',
+        boxShadow: `0 0 0 1px rgba(200,164,74,.22)`,
         transition: 'border-color 0.18s ease, box-shadow 0.18s ease',
     }
 
@@ -242,7 +243,7 @@ export default function LoginPage() {
 
     const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         e.currentTarget.style.borderColor = T.inputBorder
-        e.currentTarget.style.boxShadow = 'none'
+        e.currentTarget.style.boxShadow = '0 0 0 1px rgba(200,164,74,.22)'
     }
 
     return (
