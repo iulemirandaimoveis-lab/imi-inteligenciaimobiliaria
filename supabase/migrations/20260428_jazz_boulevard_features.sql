@@ -13,17 +13,15 @@ ALTER TABLE public.developments
   ADD COLUMN IF NOT EXISTS towers              JSONB DEFAULT '[]'::jsonb;
 
 -- ── 2. Developer — CP Construção ───────────────────────────────
-INSERT INTO public.developers (id, name, slug, description, logo_url, website, city, state, status)
+INSERT INTO public.developers (id, name, slug, logo, website, city, state)
 VALUES (
   gen_random_uuid(),
   'CP Construção',
   'cp-construcao',
-  'Desde 1987, a CP Construção transforma sonhos em realidade, construindo o futuro com inovação, segurança e excelência. Fundada pelo engenheiro Clauston Pacas em Santa Cruz do Capibaribe, a empresa é protagonista na verticalização de Caruaru e agora chega a Garanhuns com o Jazz Boulevard, o primeiro complexo multiuso da cidade.',
   NULL,
   'https://www.cpconstrucao.com.br',
   'Caruaru',
-  'PE',
-  'active'
+  'PE'
 ) ON CONFLICT (slug) DO NOTHING;
 
 -- ── 3. Development — Jazz Boulevard ───────────────────────────
