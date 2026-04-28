@@ -7,7 +7,7 @@ import {
   DollarSign, TrendingUp, ChevronRight, Star, Eye, ArrowUpRight, Banknote
 } from 'lucide-react'
 import { T } from '../../lib/theme'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 
 // ─── Static Demo Data ─────────────────────────────────────────────────────────
 
@@ -63,7 +63,7 @@ export default function GlobalPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const sb = createClientComponentClient()
+        const sb = createClient()
         const [propRes, advRes] = await Promise.all([
           sb.from('global_properties').select('id', { count: 'exact', head: true }).eq('is_active', true),
           sb.from('team_members').select('id', { count: 'exact', head: true }),

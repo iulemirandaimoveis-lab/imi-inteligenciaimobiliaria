@@ -8,7 +8,7 @@ import {
   Wheat, Bot, Settings, Building2, Trophy, Target, Filter
 } from 'lucide-react'
 import { T } from '../../lib/theme'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 
 // ─── Static Data (used while DB tables are not yet available) ───────────────
 
@@ -246,7 +246,7 @@ export default function AcademyPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const sb = createClientComponentClient()
+        const sb = createClient()
         const { data: { user } } = await sb.auth.getUser()
         if (!user) { setLoading(false); return }
 
