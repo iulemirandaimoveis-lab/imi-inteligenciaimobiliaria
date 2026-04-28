@@ -5,12 +5,6 @@ import { mapDbPropertyToDevelopment, mapRentalToDevelopment } from '@/modules/im
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { PAGE_METADATA } from '@/lib/page-metadata'
 
-// Public anon client — uses RLS policies (anon_read on developments/developers)
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
     return PAGE_METADATA.imoveis(params.lang)
 }
@@ -24,6 +18,11 @@ export default async function ImoveisPage({
     params: { lang: string }
     searchParams: { construtora?: string }
 }) {
+    // Created here (not at module level) so CI build doesn't throw with empty env vars
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
     let query = supabase
         .from('developments')
         .select('*')
