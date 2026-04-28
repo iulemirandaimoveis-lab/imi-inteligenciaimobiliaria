@@ -129,6 +129,11 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
         createdAt: dbProp.created_at || new Date().toISOString(),
         updatedAt: dbProp.updated_at || new Date().toISOString(),
         listingCategory: 'comprar',
+        // Scrollytelling / cinematic features
+        scrollytellingEnabled: dbProp.scrollytelling_enabled || false,
+        conceptDescription: dbProp.concept_description || null,
+        towers: Array.isArray(dbProp.towers) ? dbProp.towers : [],
+        floorPlanTypes: Array.isArray(dbProp.floor_plan_types) ? dbProp.floor_plan_types : [],
     };
 }
 

@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import {
   Check, Loader2, Upload, X, MapPin, Star,
   Link, FileVideo, DollarSign, CalendarDays,
-  Image as ImageIcon,
+  Image as ImageIcon, Plus,
 } from 'lucide-react'
 import type { FormData } from './types'
 import { TYPES, CONDITIONS, STATUSES, FEATURES } from './types'
@@ -242,7 +242,7 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
         </label>
       </Field>
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
-        <Field label="URL do vídeo (YouTube / Vimeo)">
+        <Field label="Vídeo principal (YouTube / Vimeo)">
           <div style={{ position: 'relative' }}>
             <input className="ni" style={{ ...inputStyle, paddingLeft: 38 }} value={form.videoUrl} onChange={e => set('videoUrl', e.target.value)} placeholder="https://youtube.com/watch?v=..." />
             <Link size={14} color={T.textDim} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
@@ -254,6 +254,51 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
             <FileVideo size={14} color={T.textDim} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
           </div>
         </Field>
+      </div>
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+          <label style={labelStyle}>Vídeos adicionais</label>
+          <button
+            type="button"
+            onClick={() => set('extraVideos', [...form.extraVideos, ''])}
+            style={{ display: 'flex', alignItems: 'center', gap: 5, background: T.goldBg, border: `1px solid ${T.border}`, borderRadius: 6, padding: '5px 11px', fontSize: 12, fontWeight: 600, color: T.gold, cursor: 'pointer', fontFamily: 'var(--font-sans)', transition: 'all var(--dur-2) var(--ease)' }}
+          >
+            <Plus size={13} />Adicionar vídeo
+          </button>
+        </div>
+        {form.extraVideos.length === 0 && (
+          <div style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-sans)', padding: '10px 14px', background: T.elevated, border: `1px dashed ${T.border}`, borderRadius: 6 }}>
+            Nenhum vídeo adicional. Clique em "Adicionar vídeo" para incluir mais links.
+          </div>
+        )}
+        {form.extraVideos.map((url, idx) => (
+          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <input
+                className="ni"
+                style={{ ...inputStyle, paddingLeft: 38 }}
+                value={url}
+                onChange={e => {
+                  const newArr = [...form.extraVideos]
+                  newArr[idx] = e.target.value
+                  set('extraVideos', newArr)
+                }}
+                placeholder={`https://youtube.com/watch?v=... (vídeo ${idx + 1})`}
+              />
+              <Link size={14} color={T.textDim} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const newArr = form.extraVideos.filter((_, i) => i !== idx)
+                set('extraVideos', newArr)
+              }}
+              style={{ background: 'none', border: `1px solid ${T.border}`, borderRadius: 6, width: 34, height: 34, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim, flexShrink: 0, transition: 'all var(--dur-2) var(--ease)' }}
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   )
