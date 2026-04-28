@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { POI_CONFIG, type POICategory, type ConvenienceData, type POICategoryResult, type POIItem } from '@/types/poi';
 import { fetchNearbyPOIs as fetchOSMPOIs, type POI as OSMPOI } from '@/lib/poi-service';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-let _supabase: ReturnType<typeof createClient> | null = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _supabase: SupabaseClient<any, any, any> | null = null;
 function getSupabase() {
     if (!_supabase) {
         _supabase = createClient(
