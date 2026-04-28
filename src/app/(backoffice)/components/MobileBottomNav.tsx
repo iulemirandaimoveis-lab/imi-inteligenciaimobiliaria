@@ -321,6 +321,7 @@ export function MobileBottomNav() {
                         WebkitBackdropFilter: 'blur(24px)',
                         border: '1px solid var(--border-default)',
                         boxShadow: 'var(--shadow-lg)',
+                        overflow: 'hidden',
                     }}
                 >
                     <div className="flex items-center h-16 px-2">
@@ -331,16 +332,17 @@ export function MobileBottomNav() {
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
-                                    {active && (
-                                        <motion.span
-                                            layoutId="bo-nav-pill"
-                                            style={{ position: 'absolute', top: 0, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
-                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                                        />
-                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                        style={{
+                                            margin: '0 4px',
+                                            height: 48,
+                                            borderRadius: 8,
+                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
+                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
+                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                        }}
                                     >
                                         <item.icon
                                             size={active ? 22 : 20}
@@ -366,16 +368,17 @@ export function MobileBottomNav() {
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
-                                    {active && (
-                                        <motion.span
-                                            layoutId="bo-nav-pill"
-                                            style={{ position: 'absolute', top: 0, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
-                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                                        />
-                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                        style={{
+                                            margin: '0 4px',
+                                            height: 48,
+                                            borderRadius: 8,
+                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
+                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
+                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                        }}
                                     >
                                         <item.icon
                                             size={active ? 22 : 20}
@@ -407,8 +410,9 @@ export function MobileBottomNav() {
                                     width: 44,
                                     height: 44,
                                     borderRadius: 7,
-                                    background: open ? 'var(--accent-400)' : 'var(--bg-elevated)',
-                                    border: `1px solid ${open ? 'var(--accent-400)' : 'rgba(200,164,74,0.2)'}`,
+                                    background: open ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
+                                    border: `1px solid ${open ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
+                                    boxShadow: open ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
                                     transition: 'background 0.2s, border-color 0.2s',
                                 }}
                             >
@@ -421,7 +425,7 @@ export function MobileBottomNav() {
                                             exit={{ rotate: 45, opacity: 0 }}
                                             transition={{ duration: 0.18 }}
                                         >
-                                            <X size={20} color="white" strokeWidth={2.5} />
+                                            <X size={20} color="var(--accent-400)" strokeWidth={2.5} />
                                         </motion.div>
                                     ) : (
                                         <motion.div
@@ -452,16 +456,17 @@ export function MobileBottomNav() {
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
-                                    {active && (
-                                        <motion.span
-                                            layoutId="bo-nav-pill"
-                                            style={{ position: 'absolute', top: 0, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
-                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                                        />
-                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                        style={{
+                                            margin: '0 4px',
+                                            height: 48,
+                                            borderRadius: 8,
+                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
+                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
+                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                        }}
                                     >
                                         <item.icon
                                             size={active ? 22 : 20}
@@ -487,16 +492,17 @@ export function MobileBottomNav() {
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
-                                    {active && (
-                                        <motion.span
-                                            layoutId="bo-nav-pill"
-                                            style={{ position: 'absolute', top: 0, left: '50%', marginLeft: -14, width: 28, height: 3, borderRadius: 99, background: 'var(--accent-400)', boxShadow: '0 0 8px rgba(200,164,74,0.5)' }}
-                                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                                        />
-                                    )}
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
                                         className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                        style={{
+                                            margin: '0 4px',
+                                            height: 48,
+                                            borderRadius: 8,
+                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
+                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
+                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                        }}
                                     >
                                         <item.icon
                                             size={active ? 22 : 20}
