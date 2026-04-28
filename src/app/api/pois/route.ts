@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { POI_CONFIG, type POICategory, type ConvenienceData, type POICategoryResult, type POIItem } from '@/types/poi';
 import { fetchNearbyPOIs as fetchOSMPOIs, type POI as OSMPOI } from '@/lib/poi-service';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _supabase: SupabaseClient<any, any, any> | null = null;
+function getSupabase() {
+    if (!_supabase) {
+        _supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        );
+    }
+    return _supabase;
+}
 
 // Google Places type mapping
 const GOOGLE_TYPE_MAP: Record<string, string> = {
@@ -171,7 +179,7 @@ export async function GET(request: NextRequest) {
     // Check Supabase cache — only serve if score > 0 (avoids serving stale empty results)
     if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
         try {
-            const { data: cached } = await supabase
+            const { data: cached } = await getSupabase()
                 .from('poi_cache')
                 .select('pois')
                 .eq('development_id', developmentId)
@@ -200,7 +208,7 @@ export async function GET(request: NextRequest) {
 
     for (let i = 0; i < config.length; i++) {
         const cat = config[i];
-        const items: POIItem[] = settled[i].status === 'fulfilled' ? settled[i].value : [];
+        const items: POIItem[] = settled[i].status === 'fulfilled' ? (settled[i] as PromiseFulfilledResult<POIItem[]>).value : [];
         const nearest = items.length > 0 ? Math.min(...items.map((p) => p.distance_meters)) : 0;
 
         categoryResults.push({
@@ -246,7 +254,7 @@ export async function GET(request: NextRequest) {
 
     // Persist to cache only when we have real data (score > 0)
     if (score > 0 && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        supabase
+        getSupabase()
             .from('poi_cache')
             .upsert({
                 development_id: developmentId,

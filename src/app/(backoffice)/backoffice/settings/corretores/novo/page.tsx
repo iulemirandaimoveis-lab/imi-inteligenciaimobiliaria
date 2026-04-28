@@ -1,8 +1,8 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     UserPlus, Shield, CheckCircle, Smartphone, Mail, User, CheckSquare,
-    Copy, Eye, EyeOff, ArrowLeft, Briefcase, Award, Loader2
+    Copy, Eye, EyeOff, ArrowLeft, Briefcase, Award, Loader2, Users
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -20,9 +20,17 @@ const schema = z.object({
     role: z.enum(['broker', 'broker_manager']),
     status: z.enum(['active', 'inactive']),
     permissions: z.array(z.string()).min(1, 'Selecione pelo menos um módulo'),
+    team_id: z.string().optional(),
+    new_team_name: z.string().optional(),
 })
 
 type FormData = z.infer<typeof schema>
+
+interface Team {
+    id: string
+    name: string
+    leader?: { name: string } | null
+}
 
 const ROLES = [
     { id: 'broker', label: 'Corretor', desc: 'Acesso aos módulos selecionados', icon: User },
@@ -60,9 +68,13 @@ const modules = [
 
 export default function NovoCorretorPage() {
     const router = useRouter()
-    const [createdResult, setCreatedResult] = useState<{ name: string; email: string; temp_password: string } | null>(null)
+    const [createdResult, setCreatedResult] = useState<{
+        name: string; email: string; temp_password: string
+    } | null>(null)
     const [showPassword, setShowPassword] = useState(false)
     const [copied, setCopied] = useState(false)
+    const [teams, setTeams] = useState<Team[]>([])
+    const [loadingTeams, setLoadingTeams] = useState(true)
 
     const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -70,11 +82,31 @@ export default function NovoCorretorPage() {
             role: 'broker',
             status: 'active',
             permissions: ['dashboard', 'imoveis', 'leads', 'agenda'],
+            team_id: '',
         }
     })
 
     const selectedPermissions = watch('permissions') || []
     const selectedRole = watch('role')
+    const selectedTeamId = watch('team_id')
+
+    // Fetch active teams
+    useEffect(() => {
+        fetch('/api/teams')
+            .then(r => r.json())
+            .then(j => setTeams(j.data || []))
+            .catch(() => setTeams([]))
+            .finally(() => setLoadingTeams(false))
+    }, [])
+
+    // When switching to broker_manager, default to "create new team"
+    useEffect(() => {
+        if (selectedRole === 'broker_manager' && selectedTeamId === '') {
+            setValue('team_id', 'new')
+        } else if (selectedRole === 'broker' && selectedTeamId === 'new') {
+            setValue('team_id', '')
+        }
+    }, [selectedRole, selectedTeamId, setValue])
 
     const togglePermission = (id: string) => {
         if (id === 'dashboard') return
@@ -93,13 +125,54 @@ export default function NovoCorretorPage() {
 
     const onSubmit = async (data: FormData) => {
         try {
+            // 1. Create broker
             const res = await fetch('/api/brokers/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+                body: JSON.stringify({
+                    name: data.name,
+                    email: data.email,
+                    phone: data.phone,
+                    creci: data.creci,
+                    role: data.role,
+                    status: data.status,
+                    permissions: data.permissions,
+                }),
             })
             const result = await res.json()
             if (!res.ok) throw new Error(result.error || 'Erro ao cadastrar')
+
+            const brokerId: string = result.id
+            const brokerUserId: string = result.user_id
+
+            // 2. Team assignment
+            if (data.team_id === 'new' && data.role === 'broker_manager') {
+                // Create new team with this manager as leader
+                const teamName = data.new_team_name?.trim() || `Equipe ${data.name.split(' ')[0]}`
+                const teamRes = await fetch('/api/teams', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: teamName, leader_id: brokerUserId }),
+                })
+                if (!teamRes.ok) {
+                    const j = await teamRes.json()
+                    toast.warning(`Membro criado, mas erro ao criar equipe: ${j.error}`)
+                }
+            } else if (data.team_id && data.team_id !== 'new' && data.team_id !== '') {
+                // Add to existing team
+                const memberRes = await fetch(`/api/teams/${data.team_id}/members`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        broker_id: brokerId,
+                        role: data.role === 'broker_manager' ? 'leader' : 'member',
+                    }),
+                })
+                if (!memberRes.ok) {
+                    const j = await memberRes.json()
+                    toast.warning(`Membro criado, mas erro ao assignar equipe: ${j.error}`)
+                }
+            }
 
             setCreatedResult({
                 name: result.name,
@@ -123,7 +196,7 @@ export default function NovoCorretorPage() {
 
     const fieldStyle: React.CSSProperties = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
 
-    // ── SUCCESS STATE ─────────────────────────────────────
+    // ── SUCCESS STATE ──────────────────────────────────────────────
     if (createdResult) {
         return (
             <div className="space-y-6 pb-20 max-w-2xl mx-auto">
@@ -135,7 +208,6 @@ export default function NovoCorretorPage() {
 
                 <div className="rounded-xl p-8 text-center space-y-6"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                    {/* Success icon */}
                     <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto"
                         style={{ background: `${T.success}15` }}>
                         <CheckCircle size={40} style={{ color: T.success }} />
@@ -146,7 +218,6 @@ export default function NovoCorretorPage() {
                         <p className="text-sm mt-1" style={{ color: T.textMuted }}>{createdResult.email}</p>
                     </div>
 
-                    {/* Credentials card */}
                     <div className="rounded-lg p-5 text-left space-y-4"
                         style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider"
@@ -173,12 +244,12 @@ export default function NovoCorretorPage() {
                             </div>
                         </div>
 
-                        <div className="p-3 rounded-lg text-xs" style={{ background: `${T.warning}10`, border: `1px solid ${T.warning}30`, color: T.warning }}>
+                        <div className="p-3 rounded-lg text-xs"
+                            style={{ background: `${T.warning}10`, border: `1px solid ${T.warning}30`, color: T.warning }}>
                             O usuário será solicitado a alterar a senha no primeiro acesso.
                         </div>
                     </div>
 
-                    {/* Actions */}
                     <div className="flex flex-col sm:flex-row gap-3">
                         <button onClick={handleCopy}
                             className="flex-1 flex items-center justify-center gap-2 h-12 rounded-lg text-sm font-semibold transition-all"
@@ -202,7 +273,7 @@ export default function NovoCorretorPage() {
         )
     }
 
-    // ── FORM STATE ─────────────────────────────────────
+    // ── FORM STATE ─────────────────────────────────────────────────
     return (
         <div className="space-y-6 pb-20 max-w-5xl mx-auto">
             <PageIntelHeader
@@ -240,7 +311,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-40" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="Ex: João da Silva Santos" {...register('name')}
-                                            className="w-full h-12 pl-10 pr-4 rounded-lg outline-none text-sm focus:ring-2 focus:ring-[var(--accent-400)]/30 transition-all"
+                                            className="w-full h-12 pl-10 pr-4 rounded-lg outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.name && <p className="text-xs" style={{ color: T.error }}>{errors.name.message}</p>}
@@ -250,7 +321,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-40" style={{ color: T.textMuted }} />
                                         <input type="email" placeholder="nome@imi.com" {...register('email')}
-                                            className="w-full h-12 pl-10 pr-4 rounded-lg outline-none text-sm focus:ring-2 focus:ring-[var(--accent-400)]/30 transition-all"
+                                            className="w-full h-12 pl-10 pr-4 rounded-lg outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                     {errors.email && <p className="text-xs" style={{ color: T.error }}>{errors.email.message}</p>}
@@ -260,7 +331,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <Smartphone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-40" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="(83) 99999-9999" {...register('phone')}
-                                            className="w-full h-12 pl-10 pr-4 rounded-lg outline-none text-sm focus:ring-2 focus:ring-[var(--accent-400)]/30 transition-all"
+                                            className="w-full h-12 pl-10 pr-4 rounded-lg outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                 </div>
@@ -269,7 +340,7 @@ export default function NovoCorretorPage() {
                                     <div className="relative">
                                         <Award size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-40" style={{ color: T.textMuted }} />
                                         <input type="text" placeholder="12345-F" {...register('creci')}
-                                            className="w-full h-12 pl-10 pr-4 rounded-lg outline-none text-sm focus:ring-2 focus:ring-[var(--accent-400)]/30 transition-all"
+                                            className="w-full h-12 pl-10 pr-4 rounded-lg outline-none text-sm"
                                             style={fieldStyle} />
                                     </div>
                                 </div>
@@ -285,7 +356,7 @@ export default function NovoCorretorPage() {
                             </div>
                         </div>
 
-                        {/* Cargo / Role */}
+                        {/* Cargo */}
                         <div className="rounded-xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-2 mb-6">
                                 <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${T.accent}15` }}>
@@ -318,7 +389,64 @@ export default function NovoCorretorPage() {
                             </div>
                         </div>
 
-                        {/* Info about password */}
+                        {/* Equipe */}
+                        <div className="rounded-xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div className="flex items-center gap-2 mb-5">
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${T.accent}15` }}>
+                                    <Users size={16} style={{ color: T.accent }} />
+                                </div>
+                                <div>
+                                    <h2 className="text-sm font-bold" style={{ color: T.text }}>Equipe</h2>
+                                    <p className="text-[11px] mt-0.5" style={{ color: T.textDim }}>
+                                        {selectedRole === 'broker_manager'
+                                            ? 'Gerentes podem liderar uma equipe existente ou criar uma nova'
+                                            : 'Opcional — associe o corretor a uma equipe'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {loadingTeams ? (
+                                <div className="h-12 rounded-lg animate-pulse" style={{ background: T.surface }} />
+                            ) : (
+                                <div className="space-y-3">
+                                    <select
+                                        {...register('team_id')}
+                                        className="w-full h-12 px-4 rounded-lg outline-none text-sm"
+                                        style={fieldStyle}
+                                    >
+                                        <option value="">Sem equipe</option>
+                                        {teams.map(t => (
+                                            <option key={t.id} value={t.id}>
+                                                {t.name}{t.leader ? ` — Gestor: ${t.leader.name}` : ''}
+                                            </option>
+                                        ))}
+                                        {selectedRole === 'broker_manager' && (
+                                            <option value="new">✦ Criar nova equipe</option>
+                                        )}
+                                    </select>
+
+                                    {selectedTeamId === 'new' && selectedRole === 'broker_manager' && (
+                                        <div className="space-y-1.5">
+                                            <label className="text-[11px] font-bold uppercase tracking-wider block" style={{ color: T.textDim }}>
+                                                Nome da Nova Equipe
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Ex: Equipe Alpha, Equipe Centro..."
+                                                {...register('new_team_name')}
+                                                className="w-full h-12 px-4 rounded-lg outline-none text-sm"
+                                                style={fieldStyle}
+                                            />
+                                            <p className="text-[10px]" style={{ color: T.textDim }}>
+                                                Deixe em branco para usar &quot;Equipe {'{nome}'}&quot; automaticamente
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Password info */}
                         <div className="rounded-xl p-5 flex items-start gap-3"
                             style={{ background: `${T.info}08`, border: `1px solid ${T.info}20` }}>
                             <Shield size={18} className="flex-shrink-0 mt-0.5" style={{ color: T.info }} />
@@ -353,7 +481,7 @@ export default function NovoCorretorPage() {
                             </div>
 
                             <div className="p-5 space-y-5 max-h-[500px] overflow-y-auto">
-                                {/* Dashboard — locked */}
+                                {/* Dashboard locked */}
                                 <div className="p-3.5 rounded-lg flex items-center justify-between"
                                     style={{ background: `${T.accent}10`, border: `1px solid ${T.accent}25` }}>
                                     <span className="font-semibold text-sm flex items-center gap-2" style={{ color: T.accent }}>
@@ -376,7 +504,7 @@ export default function NovoCorretorPage() {
                                                         background: isSelected ? `${T.accent}08` : 'transparent',
                                                         border: isSelected ? `1px solid ${T.accent}30` : `1px solid ${T.border}`,
                                                     }}>
-                                                    <div className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 transition-colors"
+                                                    <div className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
                                                         style={{
                                                             background: isSelected ? T.accent : 'transparent',
                                                             border: `1.5px solid ${isSelected ? T.accent : T.border}`,
@@ -406,7 +534,8 @@ export default function NovoCorretorPage() {
                 </div>
 
                 {/* Submit */}
-                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6"
+                    style={{ borderTop: `1px solid ${T.border}` }}>
                     <button type="button" onClick={() => router.back()}
                         className="h-12 px-6 rounded-lg text-sm font-medium transition-all"
                         style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>

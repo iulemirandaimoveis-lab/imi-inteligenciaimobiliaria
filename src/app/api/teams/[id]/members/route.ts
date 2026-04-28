@@ -2,10 +2,23 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
+const ADMIN_ROLES = ['admin', 'ADMIN', 'super_admin', 'SUPER_ADMIN', 'owner']
+
+async function getCallerRoles(userId: string) {
+    const [profileRes, brokerRes] = await Promise.all([
+        supabaseAdmin.from('profiles').select('role').eq('id', userId).single(),
+        supabaseAdmin.from('brokers').select('role').eq('user_id', userId).maybeSingle(),
+    ])
+    return {
+        profileRole: profileRes.data?.role || '',
+        brokerRole: brokerRes.data?.role || '',
+    }
+}
+
 // POST /api/teams/[id]/members — add broker to team
 export async function POST(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const supabase = await createClient()
@@ -14,95 +27,64 @@ export async function POST(
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        const { data: profile } = await supabaseAdmin
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .maybeSingle()
+        const { profileRole, brokerRole } = await getCallerRoles(user.id)
+        const canManage =
+            ADMIN_ROLES.includes(profileRole) ||
+            brokerRole === 'broker_manager' ||
+            brokerRole === 'admin'
 
-        const { data: callerBroker } = await supabaseAdmin
-            .from('brokers')
-            .select('role')
-            .eq('user_id', user.id)
-            .maybeSingle()
-
-        const isAdminOrManager =
-            profile?.role === 'admin' ||
-            profile?.role === 'super_admin' ||
-            profile?.role === 'owner' ||
-            callerBroker?.role === 'admin' ||
-            callerBroker?.role === 'broker_manager'
-
-        const { data: team } = await supabaseAdmin
-            .from('teams')
-            .select('leader_id')
-            .eq('id', params.id)
-            .maybeSingle()
-
-        const isLeader = team?.leader_id === user.id
-
-        if (!isAdminOrManager && !isLeader) {
+        if (!canManage) {
             return NextResponse.json({ error: 'Permissão negada' }, { status: 403 })
         }
 
+        const { id: teamId } = await params
         const body = await request.json()
-        const { broker_id } = body
+        const { broker_id, role = 'member' } = body
 
         if (!broker_id) {
             return NextResponse.json({ error: 'broker_id é obrigatório' }, { status: 400 })
         }
 
-        // Verify broker exists
-        const { data: broker } = await supabaseAdmin
+        // Fetch broker to get user_id
+        const { data: broker, error: brokerErr } = await supabaseAdmin
             .from('brokers')
-            .select('id, name, team_id')
+            .select('id, user_id, name')
             .eq('id', broker_id)
-            .maybeSingle()
+            .single()
 
-        if (!broker) {
+        if (brokerErr || !broker) {
             return NextResponse.json({ error: 'Corretor não encontrado' }, { status: 404 })
         }
 
-        // Assign broker to this team
-        const { data: updated, error } = await supabaseAdmin
-            .from('brokers')
-            .update({ team_id: params.id, updated_at: new Date().toISOString() })
-            .eq('id', broker_id)
-            .select('id, name, email, role, status, avatar_url, team_id')
+        const { data, error } = await supabaseAdmin
+            .from('team_members')
+            .upsert({
+                team_id: teamId,
+                user_id: broker.user_id,
+                broker_id: broker.id,
+                role,
+                joined_at: new Date().toISOString(),
+            }, { onConflict: 'team_id,user_id' })
+            .select()
             .single()
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        // Update team member_count
-        await supabaseAdmin.rpc('update_team_member_count', { p_team_id: params.id }).catch(() => {
-            // Fallback: manual count update
-            supabaseAdmin
-                .from('brokers')
-                .select('id', { count: 'exact' })
-                .eq('team_id', params.id)
-                .then(({ count }) => {
-                    if (count !== null) {
-                        supabaseAdmin
-                            .from('teams')
-                            .update({ member_count: count, updated_at: new Date().toISOString() })
-                            .eq('id', params.id)
-                            .then(() => {})
-                    }
-                })
-        })
-
-        return NextResponse.json({ data: updated }, { status: 201 })
+        return NextResponse.json({ data }, { status: 201 })
     } catch (err) {
-        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json(
+            { error: err instanceof Error ? err.message : 'Internal Server Error' },
+            { status: 500 }
+        )
     }
 }
 
-// DELETE /api/teams/[id]/members?broker_id=xxx — remove broker from team
+// DELETE /api/teams/[id]/members?broker_id=... — remove broker from team
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const supabase = await createClient()
@@ -111,69 +93,36 @@ export async function DELETE(
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        const { data: profile } = await supabaseAdmin
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .maybeSingle()
+        const { profileRole, brokerRole } = await getCallerRoles(user.id)
+        const canManage =
+            ADMIN_ROLES.includes(profileRole) ||
+            brokerRole === 'broker_manager' ||
+            brokerRole === 'admin'
 
-        const { data: callerBroker } = await supabaseAdmin
-            .from('brokers')
-            .select('role')
-            .eq('user_id', user.id)
-            .maybeSingle()
-
-        const isAdminOrManager =
-            profile?.role === 'admin' ||
-            profile?.role === 'super_admin' ||
-            profile?.role === 'owner' ||
-            callerBroker?.role === 'admin' ||
-            callerBroker?.role === 'broker_manager'
-
-        const { data: team } = await supabaseAdmin
-            .from('teams')
-            .select('leader_id')
-            .eq('id', params.id)
-            .maybeSingle()
-
-        const isLeader = team?.leader_id === user.id
-
-        if (!isAdminOrManager && !isLeader) {
+        if (!canManage) {
             return NextResponse.json({ error: 'Permissão negada' }, { status: 403 })
         }
 
-        const { searchParams } = new URL(request.url)
-        const broker_id = searchParams.get('broker_id')
+        const { id: teamId } = await params
+        const brokerId = request.nextUrl.searchParams.get('broker_id')
 
-        if (!broker_id) {
+        if (!brokerId) {
             return NextResponse.json({ error: 'broker_id é obrigatório' }, { status: 400 })
         }
 
-        // Remove broker from team
         const { error } = await supabaseAdmin
-            .from('brokers')
-            .update({ team_id: null, updated_at: new Date().toISOString() })
-            .eq('id', broker_id)
-            .eq('team_id', params.id)
+            .from('team_members')
+            .delete()
+            .eq('team_id', teamId)
+            .eq('broker_id', brokerId)
 
-        if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 })
-        }
-
-        // Update team member_count
-        const { count } = await supabaseAdmin
-            .from('brokers')
-            .select('id', { count: 'exact' })
-            .eq('team_id', params.id)
-
-        await supabaseAdmin
-            .from('teams')
-            .update({ member_count: count ?? 0, updated_at: new Date().toISOString() })
-            .eq('id', params.id)
-            .catch(() => {})
-
+        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json({ success: true })
     } catch (err) {
-        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json(
+            { error: err instanceof Error ? err.message : 'Internal Server Error' },
+            { status: 500 }
+        )
     }
 }
+
