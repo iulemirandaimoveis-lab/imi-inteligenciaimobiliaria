@@ -13,6 +13,8 @@ import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
+import ScrollytellingIntro from '../components/ScrollytellingIntro'
+import FloorPlanTypesSection from '../components/FloorPlanTypesSection'
 import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
 import PropertyIntelligence from '../components/PropertyIntelligence'
 import { generateBreadcrumbSchema } from '@/lib/seo'
@@ -94,13 +96,23 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
     }
 }
 
-const ANCHOR_SECTIONS = [
+const ANCHOR_SECTIONS_DEFAULT = [
     { id: 'detalhes', label: 'Detalhes' },
     { id: 'galeria', label: 'Galeria' },
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
     { id: 'inteligencia', label: 'IMI Score' },
     { id: 'financiamento', label: 'Financiamento' },
+]
+
+const ANCHOR_SECTIONS_SCROLLYTELLING = [
+    { id: 'detalhes', label: 'Detalhes' },
+    { id: 'conceito', label: 'Conceito' },
+    { id: 'plantas', label: 'Plantas' },
+    { id: 'galeria', label: 'Galeria' },
+    { id: 'unidades', label: 'Unidades' },
+    { id: 'localizacao', label: 'Localização' },
+    { id: 'inteligencia', label: 'IMI Score' },
 ]
 
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
@@ -276,7 +288,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             </div>
 
             {/* Anchor Navigation */}
-            <AnchorNav sections={ANCHOR_SECTIONS} />
+            <AnchorNav sections={development.scrollytellingEnabled ? ANCHOR_SECTIONS_SCROLLYTELLING : ANCHOR_SECTIONS_DEFAULT} />
 
             <div className="container-custom py-10 md:py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-14">
@@ -285,6 +297,32 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <section id="detalhes">
                             <DevelopmentDetails development={development} />
                         </section>
+
+                        {/* Cinematic scrollytelling intro — only for enabled developments */}
+                        {development.scrollytellingEnabled && (
+                            development.conceptDescription || (development.towers && development.towers.length > 0)
+                        ) && (
+                            <section id="conceito">
+                                <ScrollytellingIntro
+                                    developmentName={development.name}
+                                    conceptDescription={development.conceptDescription ?? ''}
+                                    towers={development.towers}
+                                    heroImages={development.images.gallery}
+                                />
+                            </section>
+                        )}
+
+                        {/* Typed floor plans section — shown when floorPlanTypes exist */}
+                        {development.floorPlanTypes && development.floorPlanTypes.length > 0 && (
+                            <section id="plantas">
+                                <FloorPlanTypesSection
+                                    floorPlanTypes={development.floorPlanTypes}
+                                    towers={development.towers}
+                                    developmentName={development.name}
+                                />
+                            </section>
+                        )}
+
                         <section id="galeria">
                             <DevelopmentGallery development={development} />
                         </section>

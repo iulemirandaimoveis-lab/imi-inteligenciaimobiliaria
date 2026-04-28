@@ -54,6 +54,32 @@ export interface DevelopmentExternalLinks {
     galleryUrl?: string;                 // Google Drive ou similar
 }
 
+export interface DevelopmentTower {
+    id: string;
+    name: string;
+    tagline: string;
+    description: string;
+    floor_count: number;
+    image: string | null;
+}
+
+export interface DevelopmentFloorPlanType {
+    id: string;
+    name: string;
+    tower: string;
+    tower_id: string;
+    category: 'residencial' | 'comercial';
+    area_from: number;
+    area_to: number;
+    bedrooms: number;
+    bathrooms: number;
+    parking: number;
+    price_from: number | null;
+    price_to: number | null;
+    images: string[];
+    description: string;
+}
+
 export interface Development {
     id: string;
     slug: string;                        // URL-friendly: "setai-beach-resort"
@@ -84,4 +110,9 @@ export interface Development {
     dailyRate?: number;                  // Diária (para short_stay / temporada)
     monthlyRate?: number;                // Mensal (para aluguel)
     rentalId?: string;                   // ID in rental_properties table (for rental items)
+    // Scrollytelling / cinematic features
+    scrollytellingEnabled?: boolean;
+    conceptDescription?: string;
+    towers?: DevelopmentTower[];
+    floorPlanTypes?: DevelopmentFloorPlanType[];
 }
