@@ -157,6 +157,7 @@
   --shadow-xl: 0 24px 48px rgba(11,17,32,0.14), 0 8px 16px rgba(11,17,32,0.08);
   --shadow-gold: 0 4px 20px rgba(184,148,58,0.2);
   --shadow-glow: 0 0 16px rgba(184,148,58,0.12);
+  --shadow-soft: 0 8px 28px rgba(11,17,32,0.18);
 
   --success:    #1A7A4A;
   --success-bg: #EBF7F1;
@@ -186,6 +187,15 @@
   --w: #FFFFFF;
   --g06: rgba(200,164,74,.06);
   --g10: rgba(200,164,74,.10);
+  --gold-light: var(--imi-gold-500);
+  --gold-dark: var(--imi-gold-700);
+  --white: #FFFFFF;
+  --border-gold: rgba(184,148,58,0.35);
+  --border-gold-strong: rgba(184,148,58,0.62);
+  --focus-ring: 0 0 0 3px rgba(184,148,58,0.16);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 
   /* ── Legacy backoffice aliases (map to DS3) ── */
   --bo-bg:             var(--bg-base);
@@ -378,6 +388,7 @@
   --shadow-xl: 0 32px 64px rgba(0,0,0,0.8), 0 0 0 1px rgba(200,164,74,.20);
   --shadow-gold: 0 0 20px rgba(200,164,74,0.20);
   --shadow-glow: 0 0 40px rgba(200,164,74,.04);
+  --shadow-soft: 0 8px 28px rgba(0,0,0,0.28);
 
   --success:    #4ADE80;
   --success-bg: rgba(74,222,128,0.06);
@@ -387,6 +398,15 @@
   --error-bg:   rgba(248,113,113,0.06);
   --info:       #60A5FA;
   --info-bg:    rgba(96,165,250,0.06);
+  --gold-light: #D4B86A;
+  --gold-dark: #A8842A;
+  --white: #FFFFFF;
+  --border-gold: rgba(200,164,74,0.35);
+  --border-gold-strong: rgba(200,164,74,0.65);
+  --focus-ring: 0 0 0 3px rgba(200,164,74,0.16);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 
   /* ── Legacy backoffice aliases — MASTER v2 mapped ── */
   --bo-bg:             var(--bg-base);
@@ -2287,25 +2307,29 @@
 .backoffice-root textarea,
 .backoffice-root .input,
 .backoffice-root .inp {
-  border-color: rgba(200,164,74,0.42) !important;
-  box-shadow: 0 0 0 1px rgba(200,164,74,0.18) !important;
-  transition: border-color 150ms ease, box-shadow 150ms ease, opacity 150ms ease !important;
+  border-color: var(--border-gold) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--border-gold) 55%, transparent) !important;
+  transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease), background 150ms var(--ease) !important;
 }
 
 .backoffice-root .toolbar-input:hover,
-.backoffice-root .toolbar-input:focus,
 .backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):hover,
-.backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):focus,
 .backoffice-root select:hover,
-.backoffice-root select:focus,
 .backoffice-root textarea:hover,
-.backoffice-root textarea:focus,
 .backoffice-root .input:hover,
+.backoffice-root .inp:hover {
+  border-color: var(--border-gold-strong) !important;
+}
+
+.backoffice-root .toolbar-input:focus,
+.backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):focus,
+.backoffice-root select:focus,
+.backoffice-root textarea:focus,
 .backoffice-root .input:focus,
-.backoffice-root .inp:hover,
 .backoffice-root .inp:focus {
-  border-color: var(--border-default) !important;
-  box-shadow: none !important;
+  border-color: var(--gold) !important;
+  box-shadow: var(--focus-ring) !important;
+  background: color-mix(in srgb, var(--n2) 88%, var(--n5) 12%) !important;
 }
 
 /* Standard icon-only square button (sort, view toggle) */
@@ -2359,19 +2383,34 @@
   font-family: var(--font-sans);
   letter-spacing: 0.01em;
   cursor: pointer;
-  border: 1px solid transparent;
+  border: 1px solid var(--border-gold);
   transition: all var(--dur-2, 200ms) var(--ease);
   white-space: nowrap;
   text-decoration: none;
   flex-shrink: 0;
   line-height: 1;
+  position: relative;
+  overflow: hidden;
 }
 .bo-btn:focus-visible {
-  outline: 2px solid var(--border-focus);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 .bo-btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 .bo-btn svg { flex-shrink: 0; }
+.bo-btn::after {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), transparent);
+  opacity: 0.85;
+  transition: all var(--dur-2, 200ms) var(--ease);
+  pointer-events: none;
+}
+.bo-btn:hover::after { left: 7%; right: 7%; opacity: 1; }
 
 /* ── Sizes — DS3 spec ────────────────────────────────────────  */
 .bo-btn-xs  { height: 28px; padding: 0 10px; font-size: 12px; border-radius: var(--r-sm, 5px); gap: 4px; }
@@ -2387,59 +2426,82 @@
 
 /* Primary — gold sólido, white text */
 .bo-btn-primary {
-  background: var(--imi-gold-500);
-  color: #FFFFFF;
-  border-color: transparent;
+  background: var(--n);
+  color: var(--white);
+  border-color: var(--border-gold);
+  box-shadow: 0 2px 8px rgba(0,0,0,.28);
 }
 [data-theme="dark"] .bo-btn-primary,
 .dark .bo-btn-primary {
-  background: var(--imi-gold-500);
-  color: #FFFFFF;
+  background: var(--n);
+  color: var(--white);
 }
 .bo-btn-primary:not(:disabled):hover {
-  background: var(--imi-gold-600);
+  background: color-mix(in srgb, var(--n) 88%, var(--n2) 12%);
+  border-color: var(--border-gold-strong);
+  box-shadow: 0 6px 18px rgba(0,0,0,.36), var(--shadow-gold);
   transform: translateY(-1px);
 }
 .bo-btn-primary:not(:disabled):active { transform: scale(0.97); }
 
 /* Secondary — surface bg + border + text */
 .bo-btn-secondary {
-  background: var(--bg-muted);
-  color: var(--text-primary);
-  border-color: var(--border-default);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+  color: var(--gold-light);
+  border-color: var(--border-gold);
 }
-.bo-btn-secondary:not(:disabled):hover { background: var(--bg-hover); }
+.bo-btn-secondary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  border-color: var(--gold);
+}
 .bo-btn-secondary:not(:disabled):active { transform: scale(0.97); }
 
 /* Ghost — invisible until hover */
 .bo-btn-ghost {
-  background: transparent;
+  background: rgba(255,255,255,.025);
   color: var(--text-secondary);
-  border-color: transparent;
+  border-color: var(--border-gold);
 }
 .bo-btn-ghost:not(:disabled):hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  background: rgba(255,255,255,.045);
+  color: var(--white);
+  border-color: var(--border-gold-strong);
 }
 
 /* Danger — red tint */
 .bo-btn-danger {
-  background: var(--error-bg);
+  background: var(--n);
   color: var(--error);
-  border-color: transparent;
+  border-color: rgba(248,113,113,.35);
 }
 .bo-btn-danger:not(:disabled):hover {
-  background: var(--error);
-  color: #FFFFFF;
+  border-color: rgba(248,113,113,.6);
+  box-shadow: 0 0 20px rgba(248,113,113,.12);
+}
+.bo-btn-danger::after {
+  background: linear-gradient(90deg, transparent, var(--error), transparent);
 }
 
 /* Outline — border + transparent bg */
 .bo-btn-outline {
-  background: transparent;
-  color: var(--text-primary);
-  border-color: var(--border-default);
+  background: var(--n2);
+  color: var(--white);
+  border-color: var(--border-gold);
 }
-.bo-btn-outline:not(:disabled):hover { background: var(--bg-hover); }
+.bo-btn-outline:not(:disabled):hover {
+  border-color: var(--border-gold-strong);
+  box-shadow: var(--shadow-gold);
+}
+
+/* ── Premium Button aliases (for inline migration) ── */
+.btn { @apply bo-btn; border-radius: var(--radius-md); }
+.btn-sm { @apply bo-btn-sm; font-size: 8.5px; letter-spacing: 1.2px; }
+.btn-md { height: 40px; padding: 11px 24px; font-size: 9px; letter-spacing: 1.2px; }
+.btn-lg { @apply bo-btn-lg; font-size: 10px; letter-spacing: 1.2px; }
+.btn-pri { @apply bo-btn-primary; }
+.btn-sec { @apply bo-btn-secondary; }
+.btn-ghost { @apply bo-btn-ghost; }
+.btn-danger { @apply bo-btn-danger; }
 
 /* ── MOBILE OVERFLOW UTILITIES ──────────────────────────────── */
 .no-overflow {
@@ -2478,6 +2540,27 @@ img, video, iframe, canvas, svg {
   background: rgba(184,148,58,0.10);
   border-color: rgba(184,148,58,0.40);
   color: var(--imi-gold-700);
+}
+
+.badge,
+.chip,
+.chip-btn {
+  border: 1px solid var(--border-gold);
+}
+
+.chip,
+.chip-btn {
+  background: var(--n4);
+  color: var(--text-secondary);
+}
+
+.chip:hover,
+.chip.active,
+.chip-btn:hover,
+.chip-btn.active {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
 }
 
 /* ── Toolbar inputs: white bg for legibility on cream base ── */
