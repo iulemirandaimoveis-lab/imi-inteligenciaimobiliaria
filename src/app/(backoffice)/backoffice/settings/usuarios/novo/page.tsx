@@ -43,7 +43,10 @@ export default function NovoUsuarioPage() {
             })
             const data = await response.json()
             if (!response.ok) throw new Error(data.error || 'Erro ao criar o usuário')
-            toast.success(data.message || `Convite enviado para ${form.email}. O usuário receberá um link para definir sua senha.`)
+            toast.success(data.message || 'Usuário criado com sucesso.')
+            if (data.temp_password) {
+                toast.info(`Senha provisória: ${data.temp_password}`)
+            }
             router.push('/backoffice/settings/usuarios')
             router.refresh()
         } catch (err: unknown) {
@@ -149,7 +152,7 @@ export default function NovoUsuarioPage() {
                     {/* Info box */}
                     <div className="rounded-lg p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
                         <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                            O usuario recebera um email para definir sua propria senha no primeiro acesso. Nao e necessario criar uma senha manualmente.
+                            Se o envio de e-mail estiver desativado, compartilhe a senha provisoria exibida ao salvar e oriente o usuario a usar a opcao "Primeiro acesso" na tela de login.
                         </p>
                     </div>
 

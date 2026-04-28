@@ -379,6 +379,15 @@ export default function LoginPage() {
                     Esqueceu a senha?
                 </Link>
 
+                <Link
+                    href="/login/primeiro-acesso"
+                    style={{ ...forgotStyle, marginTop: '8px' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = T.gold }}
+                    onMouseLeave={e => { e.currentTarget.style.color = T.t3 }}
+                >
+                    Primeiro acesso? Definir senha com senha provisória
+                </Link>
+
                 {/* Bottom badges */}
                 <div style={{
                     display: 'flex',

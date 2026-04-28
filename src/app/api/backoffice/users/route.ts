@@ -133,12 +133,13 @@ export async function POST(request: Request) {
                             type: 'recovery', email: normalizedEmail,
                             options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login?reset=true` }
                         }).catch(() => {})
-                        return NextResponse.json({
-                            success: true,
-                            user: { id: newUserId, email: normalizedEmail, name, role: validRole },
-                            message: `Convite enviado para ${normalizedEmail}. O usuário receberá um link para definir sua senha.`
-                        })
-                    }
+                return NextResponse.json({
+                    success: true,
+                    user: { id: newUserId, email: normalizedEmail, name, role: validRole },
+                    temp_password: tempPassword,
+                    message: `Usuário criado com senha provisória. Enquanto o envio de e-mail estiver inativo, compartilhe a senha provisória com segurança para o primeiro acesso.`
+                })
+            }
                 }
                 return NextResponse.json({ error: `Erro ao criar usuário: ${msg}` }, { status: 500 })
             }
@@ -182,7 +183,8 @@ export async function POST(request: Request) {
             return NextResponse.json({
                 success: true,
                 user: { id: newUserId, email: normalizedEmail, name, role: validRole },
-                message: `Convite enviado para ${normalizedEmail}. O usuário receberá um link para definir sua senha.`
+                temp_password: tempPassword,
+                message: `Usuário criado com senha provisória. Enquanto o envio de e-mail estiver inativo, compartilhe a senha provisória com segurança para o primeiro acesso.`
             })
         } else {
             return NextResponse.json(
