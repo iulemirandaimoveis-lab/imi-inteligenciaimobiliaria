@@ -2,10 +2,22 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/lib/supabase/server';
 import { AIRequest, AIProvider } from '@/types/commercial-system';
 import { getRelevantBookContext } from '@/lib/ai/books-context';
-// Configuração do cliente Claude
+
 const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY || '',
 });
+
+// Pricing per 1M tokens (May 2026)
+const MODEL_PRICING: Record<string, { input: number; output: number; cacheWrite: number; cacheRead: number }> = {
+    'claude-sonnet-4-6':          { input: 3.0,  output: 15.0,  cacheWrite: 3.75,   cacheRead: 0.30  },
+    'claude-haiku-4-5-20251001':  { input: 0.25, output: 1.25,  cacheWrite: 0.3125, cacheRead: 0.025 },
+    'claude-opus-4-7':            { input: 15.0, output: 75.0,  cacheWrite: 18.75,  cacheRead: 1.50  },
+};
+
+function getPricing(model: string) {
+    return MODEL_PRICING[model] ?? MODEL_PRICING['claude-sonnet-4-6'];
+}
+
 export interface ClaudeRequestParams {
     tenant_id: string;
     prompt: string;
@@ -17,7 +29,10 @@ export interface ClaudeRequestParams {
     related_entity_type?: string;
     related_entity_id?: string;
     requested_by?: string;
+    /** Enable Anthropic prompt caching — cuts repeated system-prompt costs ~90% */
+    use_cache?: boolean;
 }
+
 export interface ClaudeResponse {
     content: string;
     ai_request_id: string;
@@ -25,9 +40,35 @@ export interface ClaudeResponse {
     tokens_output: number;
     cost_usd: number;
 }
+
 /**
- * Função principal para chamadas à API Claude
- * Loga automaticamente todas as requests no banco
+ * Safe JSON extractor for AI responses.
+ * Tries direct parse → markdown code block → first JSON object → first JSON array.
+ * Throws with context on total failure.
+ */
+export function parseJsonFromAI<T = unknown>(text: string): T {
+    // 1. Direct parse (model returned clean JSON)
+    try { return JSON.parse(text.trim()) as T; } catch {}
+
+    // 2. Strip markdown fences  ```json ... ```
+    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fence) { try { return JSON.parse(fence[1].trim()) as T; } catch {} }
+
+    // 3. Extract first {...} object (most common case)
+    const objMatch = text.match(/\{[\s\S]*\}/);
+    if (objMatch) { try { return JSON.parse(objMatch[0]) as T; } catch {} }
+
+    // 4. Extract first [...] array
+    const arrMatch = text.match(/\[[\s\S]*\]/);
+    if (arrMatch) { try { return JSON.parse(arrMatch[0]) as T; } catch {} }
+
+    throw new Error(`parseJsonFromAI: could not extract JSON from response (first 300 chars): ${text.substring(0, 300)}`);
+}
+
+/**
+ * Central Claude API caller.
+ * Logs every request (success or error) to ai_requests table.
+ * Supports prompt caching via use_cache flag.
  */
 export async function callClaude(params: ClaudeRequestParams): Promise<ClaudeResponse> {
     const startTime = Date.now();
@@ -35,26 +76,37 @@ export async function callClaude(params: ClaudeRequestParams): Promise<ClaudeRes
     const model = params.model || 'claude-sonnet-4-6';
     const temperature = params.temperature ?? 0.7;
     const max_tokens = params.max_tokens || 4096;
+    const pricing = getPricing(model);
+
     let response: Anthropic.Message;
     let status: 'success' | 'error' | 'timeout' = 'success';
     let error_message: string | null = null;
+
     try {
-        response = await anthropic.messages.create({
-            model,
-            max_tokens,
-            temperature,
-            system: params.system_prompt,
-            messages: [
-                {
-                    role: 'user',
-                    content: params.prompt,
-                },
-            ],
-        });
+        // Build system param — use array format with cache_control when caching is requested
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const systemParam: any = params.use_cache && params.system_prompt
+            ? [{ type: 'text', text: params.system_prompt, cache_control: { type: 'ephemeral' } }]
+            : params.system_prompt;
+
+        const requestOptions = params.use_cache
+            ? { headers: { 'anthropic-beta': 'prompt-caching-2024-07-31' } }
+            : undefined;
+
+        response = await anthropic.messages.create(
+            {
+                model,
+                max_tokens,
+                temperature,
+                system: systemParam,
+                messages: [{ role: 'user', content: params.prompt }],
+            },
+            requestOptions
+        );
     } catch (error: unknown) {
         status = 'error';
         error_message = error instanceof Error ? error.message : 'Unknown error';
-        // Loga erro
+
         await supabase.from('ai_requests').insert({
             tenant_id: params.tenant_id,
             provider: 'anthropic' as AIProvider,
@@ -71,25 +123,32 @@ export async function callClaude(params: ClaudeRequestParams): Promise<ClaudeRes
             requested_by: params.requested_by,
             latency_ms: Date.now() - startTime,
         });
+
         throw new Error(`Claude API Error: ${error_message}`);
     }
-    const endTime = Date.now();
-    const latency_ms = endTime - startTime;
-    // Extrai texto da resposta
+
+    const latency_ms = Date.now() - startTime;
+
     const textContent = response.content.find((block) => block.type === 'text');
     const content = textContent && 'text' in textContent ? textContent.text : '';
-    // Calcula tokens e custo
+
     const tokens_input = response.usage.input_tokens;
     const tokens_output = response.usage.output_tokens;
     const tokens_total = tokens_input + tokens_output;
-    // Preços Claude 3.5 Sonnet (fevereiro 2026)
-    // Input: $3.00 / 1M tokens
-    // Output: $15.00 / 1M tokens
-    const cost_input = (tokens_input / 1_000_000) * 3.0;
-    const cost_output = (tokens_output / 1_000_000) * 15.0;
-    const cost_usd = cost_input + cost_output;
-    // Salva log no banco
-    const { data: aiRequest, error: dbError } = await supabase
+
+    // Extended cache usage fields (present when caching is enabled)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const usage = response.usage as any;
+    const cache_creation_tokens: number = usage.cache_creation_input_tokens ?? 0;
+    const cache_read_tokens: number = usage.cache_read_input_tokens ?? 0;
+
+    const cost_usd =
+        (tokens_input       / 1_000_000) * pricing.input +
+        (tokens_output      / 1_000_000) * pricing.output +
+        (cache_creation_tokens / 1_000_000) * pricing.cacheWrite +
+        (cache_read_tokens  / 1_000_000) * pricing.cacheRead;
+
+    const { data: aiRequest } = await supabase
         .from('ai_requests')
         .insert({
             tenant_id: params.tenant_id,
@@ -115,8 +174,7 @@ export async function callClaude(params: ClaudeRequestParams): Promise<ClaudeRes
         })
         .select('id')
         .single();
-    if (dbError) {
-    }
+
     return {
         content,
         ai_request_id: aiRequest?.id || '',
@@ -125,6 +183,7 @@ export async function callClaude(params: ClaudeRequestParams): Promise<ClaudeRes
         cost_usd,
     };
 }
+
 /**
  * Helper para construir system prompt com contexto do tenant
  */
@@ -135,10 +194,11 @@ export async function buildSystemPrompt(tenant_id: string, additional_context?: 
         .select('*, niche_playbooks(*)')
         .eq('id', tenant_id)
         .single();
-    if (!tenant) {
-        throw new Error('Tenant not found');
-    }
+
+    if (!tenant) throw new Error('Tenant not found');
+
     const playbook = tenant.niche_playbooks;
+
     let systemPrompt = `Você é um assistente especializado em marketing e conteúdo para o nicho de ${tenant.niche}.
 CONTEXTO DO CLIENTE:
 - Nome: ${tenant.name}
@@ -147,6 +207,7 @@ CONTEXTO DO CLIENTE:
 IDENTIDADE VISUAL:
 - Cores primárias: ${JSON.stringify(tenant.brand_colors)}
 - Fontes: ${JSON.stringify(tenant.brand_fonts)}`;
+
     if (playbook) {
         systemPrompt += `\n
 PLAYBOOK DO NICHO:
@@ -156,13 +217,16 @@ RESTRIÇÕES LEGAIS E ÉTICAS:
 ${playbook.legal_restrictions || 'Nenhuma restrição específica.'}
 IMPORTANTE: Sempre respeite as restrições legais. Não prometa resultados garantidos. Use linguagem ética e transparente.`;
     }
+
     if (additional_context) {
         systemPrompt += `\n\nCONTEXTO ADICIONAL:\n${additional_context}`;
     }
+
     return systemPrompt;
 }
+
 /**
- * Função específica: Gerar planejamento mensal de conteúdo
+ * Gerar planejamento mensal de conteúdo
  */
 export async function generateContentCalendar(params: {
     tenant_id: string;
@@ -175,6 +239,7 @@ export async function generateContentCalendar(params: {
     requested_by?: string;
 }) {
     const systemPrompt = await buildSystemPrompt(params.tenant_id);
+
     const prompt = `Crie um planejamento estratégico de conteúdo para ${params.month}/${params.year}.
 OBJETIVOS DO MÊS:
 ${params.objectives.map((obj, i) => `${i + 1}. ${obj}`).join('\n')}
@@ -201,6 +266,7 @@ Retorne um plano em JSON com esta estrutura:
   ]
 }
 Garanta que haja pelo menos 20 posts sugeridos distribuídos ao longo do mês.`;
+
     const response = await callClaude({
         tenant_id: params.tenant_id,
         prompt,
@@ -209,21 +275,15 @@ Garanta que haja pelo menos 20 posts sugeridos distribuídos ao longo do mês.`;
         max_tokens: 4096,
         request_type: 'generate_calendar',
         requested_by: params.requested_by,
+        use_cache: true,
     });
-    // Parse JSON da resposta
-    const jsonMatch = response.content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-        throw new Error('Failed to parse AI response as JSON');
-    }
-    const aiPlan = JSON.parse(jsonMatch[0]);
-    return {
-        ai_plan: aiPlan,
-        ai_request_id: response.ai_request_id,
-        cost_usd: response.cost_usd,
-    };
+
+    const aiPlan = parseJsonFromAI(response.content);
+    return { ai_plan: aiPlan, ai_request_id: response.ai_request_id, cost_usd: response.cost_usd };
 }
+
 /**
- * Função específica: Gerar conteúdo de post individual
+ * Gerar conteúdo de post individual
  */
 export async function generatePostContent(params: {
     tenant_id: string;
@@ -235,8 +295,7 @@ export async function generatePostContent(params: {
 }) {
     const baseSystemPrompt = await buildSystemPrompt(params.tenant_id, params.additional_context);
 
-    // Inject book context based on the topic
-    const bookContext = await getRelevantBookContext(params.topic || '')
+    const bookContext = await getRelevantBookContext(params.topic || '');
     const systemPrompt = bookContext
         ? `${baseSystemPrompt}\n\nUse o seguinte conhecimento especializado dos livros IMI como base:\n${bookContext}`
         : baseSystemPrompt;
@@ -257,6 +316,7 @@ Regras:
 - CTA claro e acionável
 - 5-10 hashtags relevantes
 - Image prompt deve ser em inglês, detalhado e específico para Gemini`;
+
     const response = await callClaude({
         tenant_id: params.tenant_id,
         prompt,
@@ -265,15 +325,16 @@ Regras:
         max_tokens: 2048,
         request_type: 'generate_content',
         requested_by: params.requested_by,
+        use_cache: true,
     });
-    const jsonMatch = response.content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-        throw new Error('Failed to parse AI response as JSON');
+
+    interface PostData {
+        base_copy: string;
+        base_cta: string;
+        hashtags: string[];
+        tone: string;
+        image_prompt: string;
     }
-    const postData = JSON.parse(jsonMatch[0]);
-    return {
-        ...postData,
-        ai_request_id: response.ai_request_id,
-        cost_usd: response.cost_usd,
-    };
+    const postData = parseJsonFromAI<PostData>(response.content);
+    return { ...postData, ai_request_id: response.ai_request_id, cost_usd: response.cost_usd };
 }

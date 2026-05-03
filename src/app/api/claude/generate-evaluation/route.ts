@@ -1,130 +1,131 @@
 // app/api/claude/generate-evaluation/route.ts
-// API Route para gerar laudos técnicos com Claude
+// Gera laudos técnicos NBR 14653-2 via Claude com logging centralizado de custo
 import { NextResponse } from 'next/server'
+import { callClaude } from '@/lib/ai/claude'
 import { createClient } from '@/lib/supabase/server'
 import { limiters } from '@/lib/rate-limit'
+
 export const runtime = 'nodejs'
-interface GenerateEvaluationRequest {
-    prompt: string
-    evaluationId: string
-    documents: Array<{ url: string; name: string }>
-}
+
+// Cached — same for every evaluation call, cuts repeated system-prompt cost ~90%
+const EVALUATION_SYSTEM = `Você é um engenheiro avaliador imobiliário certificado pelo IBAPE/CONFEA, especialista em laudos técnicos conforme a norma ABNT NBR 14653-2 (Avaliação de Imóveis Urbanos).
+
+PRINCÍPIOS FUNDAMENTAIS:
+1. Siga RIGOROSAMENTE a estrutura e nomenclatura da NBR 14653-2
+2. Use linguagem técnica, formal e juridicamente precisa
+3. Inclua sempre: método utilizado, grau de fundamentação e grau de precisão
+4. Cite explicitamente a NBR 14653-2 e outras normas aplicáveis (NBR 14653-1, NBR 5674)
+5. Apresente intervalos de confiança e amplitude quando disponíveis
+6. Destaque fatores de homogeneização com justificativa técnica
+7. Seja conservador — nunca super-estime sem dados concretos
+8. Indique claramente limitações, premissas e condicionantes da avaliação
+
+MÉTODOS DISPONÍVEIS (citar o(s) aplicado(s)):
+- Comparativo Direto de Dados de Mercado (CDDM) — principal para residencial urbano
+- Evolutivo (custo de reedificação + terreno)
+- Renda (VPL de fluxo de caixa) — para imóveis geradores de renda
+- Involutivo (máximo aproveitamento do terreno)
+
+ESTRUTURA OBRIGATÓRIA DO LAUDO:
+## 1. Identificação e Objetivo
+## 2. Documentação Analisada
+## 3. Caracterização do Imóvel
+## 4. Caracterização da Região
+## 5. Metodologia Adotada
+## 6. Pesquisa de Mercado e Tratamento de Dados
+## 7. Resultado da Avaliação
+## 8. Ressalvas e Condicionantes
+## 9. Conclusão
+## 10. Responsável Técnico
+
+FORMATAÇÃO:
+- Use Markdown (##, ###, **negrito**, tabelas, listas)
+- Valores monetários: R$ com separador de milhar (ponto) e decimal (vírgula)
+- Datas no formato DD/MM/AAAA
+- Destaque o VALOR DE AVALIAÇÃO em negrito e caixa alta
+
+COMPLIANCE OBRIGATÓRIO:
+- Nunca invente dados não fornecidos — indique "a confirmar" ou "não disponível"
+- Sempre declare grau de fundamentação: I, II ou III
+- Declare grau de precisão: III (>30%), II (15–30%), I (<15%)`
+
 export async function POST(request: Request) {
     try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
         const rl = await limiters.ai(user.id)
         if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 })
-        const { prompt, evaluationId } = await request.json() as { prompt: string; evaluationId: string }
-        if (!prompt) {
-            return NextResponse.json(
-                { error: 'Prompt é obrigatório' },
-                { status: 400 }
-            )
+
+        const { prompt, evaluationId, tenant_id } = await request.json() as {
+            prompt: string
+            evaluationId?: string
+            tenant_id?: string
         }
+
+        if (!prompt) return NextResponse.json({ error: 'Prompt é obrigatório' }, { status: 400 })
+
         if (!(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY)) {
-            return NextResponse.json(
-                { error: 'API Key não configurada' },
-                { status: 500 }
-            )
+            return NextResponse.json({ error: 'API Key não configurada' }, { status: 500 })
         }
-        // Chamar Claude API
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': (process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY) as string,
-                'anthropic-version': '2023-06-01'
-            },
-            body: JSON.stringify({
-                model: 'claude-sonnet-4-6',
-                max_tokens: 4000,
-                temperature: 0.3, // Baixa para ser mais preciso e técnico
-                system: `Você é um avaliador técnico imobiliário certificado, especialista em laudos segundo a norma NBR 14653-2.
-Seu objetivo é gerar laudos técnicos precisos, profissionais e juridicamente válidos.
-DIRETRIZES CRÍTICAS:
-1. Siga RIGOROSAMENTE a estrutura da NBR 14653-2
-2. Use linguagem técnica e formal
-3. Inclua dados numéricos e justificativas
-4. Cite métodos de avaliação apropriados
-5. Apresente intervalos de confiança quando aplicável
-6. Destaque fatores de valorização/desvalorização
-7. Seja conservador em estimativas sem dados concretos
-8. Indique claramente quando informações são insuficientes
-FORMATO DE SAÍDA:
-- Use Markdown para formatação
-- Estruture com títulos (##) e subtítulos (###)
-- Use listas para itens
-- Destaque valores com **negrito**
-- Inclua tabelas quando apropriado
-COMPLIANCE:
-- Nunca invente dados que não foram fornecidos
-- Sempre indique grau de fundamentação e precisão
-- Mencione limitações da avaliação
-- Cite a NBR 14653 explicitamente`,
-                messages: [
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ]
-            })
+
+        const response = await callClaude({
+            tenant_id: tenant_id || user.id,
+            prompt,
+            system_prompt: EVALUATION_SYSTEM,
+            model: 'claude-sonnet-4-6',
+            temperature: 0.2,   // Maximum precision for technical reports
+            max_tokens: 8000,   // Laudos completos exigem espaço
+            request_type: 'generate_evaluation',
+            related_entity_type: evaluationId ? 'avaliacao' : undefined,
+            related_entity_id: evaluationId,
+            requested_by: user.id,
+            use_cache: true,
         })
-        if (!response.ok) {
-            const errorText = await response.text()
-            let errorJson
-            try {
-                errorJson = JSON.parse(errorText)
-            } catch {
-                errorJson = { error: { message: errorText } }
-            }
-            throw new Error(errorJson.error?.message || 'Erro ao chamar Claude API')
-        }
-        const data = await response.json()
-        // Extrair conteúdo da resposta
-        const content = data.content
-            .filter((block: { type: string }) => block.type === 'text')
-            .map((block: { type: string; text: string }) => block.text)
-            .join('\n\n')
-        // Persist laudo to avaliacoes table if evaluationId provided
+
         if (evaluationId) {
             await supabase
                 .from('avaliacoes')
                 .update({
-                    laudo_content: content,
+                    laudo_content: response.content,
                     laudo_generated_at: new Date().toISOString(),
+                    laudo_cost_usd: response.cost_usd,
+                    laudo_ai_request_id: response.ai_request_id,
                     updated_at: new Date().toISOString(),
                 })
                 .eq('id', evaluationId)
         }
 
         return NextResponse.json({
-            content,
-            tokens: data.usage,
-            model: data.model,
-            generatedAt: new Date().toISOString()
+            content: response.content,
+            tokens: { input: response.tokens_input, output: response.tokens_output },
+            cost_usd: response.cost_usd,
+            ai_request_id: response.ai_request_id,
+            model: 'claude-sonnet-4-6',
+            generatedAt: new Date().toISOString(),
         })
     } catch (error: unknown) {
         return NextResponse.json(
             {
                 error: 'Erro ao gerar laudo técnico',
-                details: error instanceof Error ? error.message : String(error)
+                details: error instanceof Error ? error.message : String(error),
             },
             { status: 500 }
         )
     }
 }
-// Função auxiliar para validar API key
+
 export async function GET() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const hasApiKey = !!(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY)
     return NextResponse.json({
         status: hasApiKey ? 'configured' : 'missing_api_key',
         message: hasApiKey
             ? 'API configurada corretamente'
-            : 'Configure ANTHROPIC_API_KEY nas variáveis de ambiente'
+            : 'Configure ANTHROPIC_API_KEY nas variáveis de ambiente',
     })
 }
