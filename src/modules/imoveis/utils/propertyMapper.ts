@@ -76,7 +76,7 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
 
     // Developer Logic
     // If returned from join, use developers object. Otherwise check for flat fields.
-    const developerName = dbProp.developers?.name || dbProp.developer_name || 'IMI - Inteligência Imobiliária';
+    const developerName = dbProp.developers?.name || dbProp.developer_name || dbProp.developer || 'IMI - Inteligência Imobiliária';
     const developerLogo = dbProp.developers?.logo_url || dbProp.developers?.logo || dbProp.developer_logo || null;
 
     return {

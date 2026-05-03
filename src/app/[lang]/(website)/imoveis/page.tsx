@@ -26,7 +26,8 @@ export default async function ImoveisPage({
 }) {
     let query = supabase
         .from('developments')
-        .select('id,slug,title,name,status,status_commercial,type,tags,description,neighborhood,city,state,country,region,address,lat,lng,price_from,price_to,price_min,price_max,area_from,area_to,bedrooms,bathrooms,parking_spaces,parking_spots,delivery_date,registration_number,is_highlighted,display_order,created_at,updated_at,images,gallery_images,image,videos,floor_plans,features,selling_points,video_url,video_short_url,virtual_tour_url,brochure_url,developer_name,developer_logo,developers(name,logo_url)')
+        .select('id,slug,name,developer,status,status_commercial,type,tags,description,neighborhood,city,state,country,region,address,lat,lng,price_from,price_to,price_min,price_max,area_from,area_to,bedrooms,bathrooms,parking_spaces,delivery_date,registration_number,is_highlighted,display_order,created_at,updated_at,images,gallery_images,image,videos,floor_plans,features,selling_points,video_url,video_short_url,virtual_tour_url,brochure_url,developer_logo,developers(name,logo_url)')
+
         .in('status_commercial', ['published', 'campaign', 'available'])
         .order('is_highlighted', { ascending: false })
         .order('created_at', { ascending: false })
