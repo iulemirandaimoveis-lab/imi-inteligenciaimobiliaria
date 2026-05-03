@@ -79,14 +79,25 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                 onClick={() => openLightbox(0)}
                                 className="col-span-2 row-span-2 relative overflow-hidden cursor-pointer group"
                             >
-                                <Image
-                                    src={gridImages[0]}
-                                    alt={development.name}
-                                    fill
-                                    priority
-                                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                                    sizes="50vw"
-                                />
+                                {development.images.heroVideo ? (
+                                    <video
+                                        src={development.images.heroVideo}
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <Image
+                                        src={gridImages[0]}
+                                        alt={development.name}
+                                        fill
+                                        priority
+                                        className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                                        sizes="50vw"
+                                    />
+                                )}
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                             </button>
 
@@ -126,14 +137,25 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             onClick={() => openLightbox(0)}
                             className="md:hidden relative w-full aspect-[16/10] overflow-hidden"
                         >
-                            <Image
-                                src={gridImages[0]}
-                                alt={development.name}
-                                fill
-                                priority
-                                className="object-cover"
-                                sizes="100vw"
-                            />
+                            {development.images.heroVideo ? (
+                                <video
+                                    src={development.images.heroVideo}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                            ) : (
+                                <Image
+                                    src={gridImages[0]}
+                                    alt={development.name}
+                                    fill
+                                    priority
+                                    className="object-cover"
+                                    sizes="100vw"
+                                />
+                            )}
                             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.95) 0%, rgba(5,11,20,0.7) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.1) 100%)' }} />
                         </button>
 

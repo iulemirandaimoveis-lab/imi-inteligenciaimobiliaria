@@ -45,6 +45,7 @@ export interface DevelopmentImages {
     floorPlans: string[];                // Plantas baixas
     virtualTour?: string;                // Link para tour virtual
     brochure?: string;                   // URL do brochure/book PDF
+    heroVideo?: string;                  // URL de vídeo MP4 para loop no hero
 }
 
 export interface DevelopmentExternalLinks {
