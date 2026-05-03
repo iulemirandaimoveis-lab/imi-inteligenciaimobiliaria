@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: { params: { lang: string } })
     return PAGE_METADATA.imoveis(params.lang)
 }
 
-// ISR: revalidate every 60 seconds — balances freshness with CDN caching
-export const revalidate = 60
+// Always server-render — ensures stock is never stale-cached at build time
+export const dynamic = 'force-dynamic'
 export default async function ImoveisPage({
     params,
     searchParams,
@@ -26,7 +26,7 @@ export default async function ImoveisPage({
 }) {
     let query = supabase
         .from('developments')
-        .select('id,slug,name,status_commercial,listing_mode,listing_category,type,tags,description,short_description,neighborhood,city,state,country,region,price_from,price_min,price_max,area_from,area_max,bedrooms_from,bedrooms_max,bathrooms_from,parking_from,delivery_date,is_highlighted,created_at,images,gallery_images,image,developer_id,order')
+        .select('id,slug,title,name,status,status_commercial,type,tags,description,neighborhood,city,state,country,region,address,lat,lng,price_from,price_to,price_min,price_max,area_from,area_to,bedrooms,bathrooms,parking_spaces,parking_spots,delivery_date,registration_number,is_highlighted,display_order,created_at,updated_at,images,gallery_images,image,videos,floor_plans,features,selling_points,video_url,video_short_url,virtual_tour_url,brochure_url,developer_name,developer_logo,developers(name,logo_url)')
         .in('status_commercial', ['published', 'campaign', 'available'])
         .order('is_highlighted', { ascending: false })
         .order('created_at', { ascending: false })

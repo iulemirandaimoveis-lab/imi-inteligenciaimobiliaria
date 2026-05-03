@@ -142,10 +142,10 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
 
     return (
         <motion.article
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.5, delay: (index % 6) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, margin: '0px' }}
+            transition={{ duration: 0.3, delay: (index % 6) * 0.04, ease: [0.22, 1, 0.36, 1] }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className="group relative bg-white overflow-hidden flex flex-col cursor-pointer"
