@@ -120,7 +120,8 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             videos: videos,
             floorPlans: floorPlans,
             virtualTour: dbProp.virtual_tour_url,
-            brochure: dbProp.brochure_url
+            brochure: dbProp.brochure_url,
+            heroVideo: imagesJson.hero_video || (dbProp.slug === 'jazz-boulevard-garanhuns' ? '/jazz-boulevard/hero.mp4' : undefined),
         },
         units: [], // Units are loaded separately on detail view if needed
         tags: Array.isArray(dbProp.tags) ? dbProp.tags : [],

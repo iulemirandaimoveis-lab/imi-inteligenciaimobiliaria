@@ -109,6 +109,21 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
     const area = dev.specs.areaRange !== '—' ? dev.specs.areaRange : null;
     const locationStr = [dev.location.neighborhood, dev.location.city].filter(Boolean).join(', ');
     const [isHovered, setIsHovered] = useState(false);
+    const [shareCopied, setShareCopied] = useState(false);
+
+    const handleShare = (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const url = `${window.location.origin}/${lang}/imoveis/${dev.slug}`;
+        if (navigator.share) {
+            navigator.share({ title: dev.name, text: dev.shortDescription || dev.name, url }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(url).then(() => {
+                setShareCopied(true);
+                setTimeout(() => setShareCopied(false), 2000);
+            });
+        }
+    };
 
     // IMI Score
     const parseMin = (s?: string) => parseInt(String(s || '0').replace(/[^\d]/g, '')) || 0;
@@ -220,25 +235,23 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
                         transition: 'all 0.3s ease',
                     }}
                 >
-                    {[Heart, Share2].map((Icon, i) => (
-                        <button
-                            key={i}
-                            onClick={e => e.preventDefault()}
-                            aria-label={i === 0 ? 'Favoritar' : 'Compartilhar'}
-                            className="w-[44px] h-[44px] sm:w-[34px] sm:h-[34px] rounded-full flex items-center justify-center cursor-pointer border-none active:scale-[0.92]"
-                            style={{
-                                background: 'rgba(255,255,255,0.85)',
-                                backdropFilter: 'blur(8px)',
-                                color: '#5A6577',
-                                transition: 'all 0.2s ease',
-                                WebkitTapHighlightColor: 'transparent',
-                            }}
-                            onMouseEnter={e => { (e.target as HTMLElement).style.background = '#fff'; (e.target as HTMLElement).style.transform = 'scale(1.1)'; }}
-                            onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.85)'; (e.target as HTMLElement).style.transform = 'scale(1)'; }}
-                        >
-                            <Icon size={15} />
-                        </button>
-                    ))}
+                    <button
+                        onClick={e => e.preventDefault()}
+                        aria-label="Favoritar"
+                        className="w-[44px] h-[44px] sm:w-[34px] sm:h-[34px] rounded-full flex items-center justify-center cursor-pointer border-none active:scale-[0.92]"
+                        style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', color: '#5A6577', transition: 'all 0.2s ease', WebkitTapHighlightColor: 'transparent' }}
+                    >
+                        <Heart size={15} />
+                    </button>
+                    <button
+                        onClick={handleShare}
+                        aria-label={shareCopied ? 'Link copiado!' : 'Compartilhar'}
+                        title={shareCopied ? 'Link copiado!' : 'Compartilhar'}
+                        className="w-[44px] h-[44px] sm:w-[34px] sm:h-[34px] rounded-full flex items-center justify-center cursor-pointer border-none active:scale-[0.92]"
+                        style={{ background: shareCopied ? '#C8A44A' : 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', color: shareCopied ? '#fff' : '#5A6577', transition: 'all 0.2s ease', WebkitTapHighlightColor: 'transparent' }}
+                    >
+                        <Share2 size={15} />
+                    </button>
                 </div>
 
                 {/* Property type chip — bottom right */}
