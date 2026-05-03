@@ -306,7 +306,7 @@ describe('POST /api/leads', () => {
     const json = await response.json()
 
     expect(response.status).toBe(400)
-    expect(json.error).toBe('Validation failed')
+    expect(json.error).toBe('name: Nome deve ter pelo menos 2 caracteres')
     expect(json.details).toBeDefined()
   })
 
