@@ -111,7 +111,7 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
     const [isHovered, setIsHovered] = useState(false);
     const [shareCopied, setShareCopied] = useState(false);
 
-    const handleShare = (e: MouseEvent) => {
+    const handleShare = (e: import('react').MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
         const url = `${window.location.origin}/${lang}/imoveis/${dev.slug}`;

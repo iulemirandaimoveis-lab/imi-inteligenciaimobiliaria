@@ -187,7 +187,8 @@ export async function GET(request: NextRequest) {
                 .gt('expires_at', new Date().toISOString())
                 .maybeSingle();
 
-            const cachedData = cached?.pois as ConvenienceData | undefined;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cachedData = (cached as any)?.pois as ConvenienceData | undefined;
             if (cachedData && cachedData.score > 0) {
                 return NextResponse.json(cachedData);
             }
@@ -208,7 +209,8 @@ export async function GET(request: NextRequest) {
 
     for (let i = 0; i < config.length; i++) {
         const cat = config[i];
-        const items: POIItem[] = settled[i].status === 'fulfilled' ? settled[i].value : [];
+        const result = settled[i];
+        const items: POIItem[] = result.status === 'fulfilled' ? result.value : [];
         const nearest = items.length > 0 ? Math.min(...items.map((p) => p.distance_meters)) : 0;
 
         categoryResults.push({
@@ -254,16 +256,17 @@ export async function GET(request: NextRequest) {
 
     // Persist to cache only when we have real data (score > 0)
     if (score > 0 && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         getSupabase()
             .from('poi_cache')
             .upsert({
                 development_id: developmentId,
                 category: imovelType,
-                pois: convenienceData,
+                pois: convenienceData as any,
                 convenience_score: score,
                 cached_at: new Date().toISOString(),
                 expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-            })
+            } as any)
             .then(({ error }) => {
                 if (error) console.warn('[POI cache] upsert failed:', error.message);
             });
