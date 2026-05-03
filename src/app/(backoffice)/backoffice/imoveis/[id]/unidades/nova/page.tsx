@@ -24,6 +24,7 @@ interface FormData {
     parking_spots: string
     position: string
     tower: string
+    floor_plan_url: string
     is_highlighted: boolean
     notes: string
 }
@@ -220,6 +221,19 @@ function UnitForm({ form, setForm, saving, onSubmit, onBack, devName, isMobile }
                     />
                 </Field>
 
+                {/* Floor Plan URL */}
+                <div style={{ gridColumn: isMobile ? '1' : '1 / -1' }}>
+                    <Field label="URL da Planta Baixa" hint="Link direto para imagem ou PDF da planta desta unidade">
+                        <input
+                            style={inputStyle}
+                            type="url"
+                            placeholder="https://..."
+                            value={form.floor_plan_url}
+                            onChange={set('floor_plan_url')}
+                        />
+                    </Field>
+                </div>
+
                 {/* Notes */}
                 <div style={{ gridColumn: isMobile ? '1' : '1 / -1' }}>
                     <Field label="Observações">
@@ -412,6 +426,7 @@ export default function NovaUnidadePage() {
         parking_spots: '',
         position: '',
         tower: '',
+        floor_plan_url: '',
         is_highlighted: false,
         notes: '',
     })
@@ -451,6 +466,7 @@ export default function NovaUnidadePage() {
             parking_spots: form.parking_spots ? Number(form.parking_spots) : null,
             position: form.position || null,
             tower: form.tower.trim() || null,
+            floor_plan_url: form.floor_plan_url.trim() || null,
             is_highlighted: form.is_highlighted,
             notes: form.notes.trim() || null,
         })

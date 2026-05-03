@@ -17,7 +17,6 @@ import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
 import PropertyIntelligence from '../components/PropertyIntelligence'
 import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
-import { fmt } from '@/lib/format'
 import { POIGrid } from '@/components/imoveis/POIGrid'
 
 // Revalidate every hour — balances freshness with performance (ISR)
@@ -143,9 +142,15 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             .single()
         brokerData = broker
     }
-    // Fallback: always show a broker (owner/admin) if none assigned
+    // Fallback: fetch the default broker (Iule Miranda) from brokers table
     if (!brokerData) {
-        brokerData = {
+        const { data: defaultBroker } = await supabaseAdmin
+            .from('brokers')
+            .select('id, name, email, phone, creci, avatar_url')
+            .ilike('name', '%iule%')
+            .limit(1)
+            .maybeSingle()
+        brokerData = defaultBroker ?? {
             id: 'default',
             name: 'Iule Miranda',
             email: 'iulemirandaimoveis@gmail.com',
@@ -317,8 +322,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 name: development.name,
                                 price: development.priceRange?.min || Number(data.price_from || data.price_min) || 0,
                                 area: Number(data.area_from) || 0,
-                                bedrooms: Number(data.bedrooms_from) || 0,
-                                parking: Number(data.parking_from) || 0,
+                                bedrooms: Number(data.bedrooms) || 0,
+                                parking: Number(data.parking_spaces) || 0,
                                 neighborhood: data.neighborhood || '',
                                 city: data.city || 'Recife',
                                 state: data.state || 'PE',
@@ -345,182 +350,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     </aside>
                 </div>
             </div>
-
-            {/* ── Estimativa de Valor ─────────────────────────────────── */}
-            {(() => {
-                const basePrice = Number(data.price_from || data.price_min) || 0
-                const areaNum = Number(data.area_from) || 0
-                if (basePrice <= 0) return null
-
-                const valorEstimado = basePrice
-                const valorMin = Math.round(valorEstimado * 0.85)
-                const valorMax = Math.round(valorEstimado * 1.15)
-
-                // Where the listing price sits in the range (0-100%)
-                const listingPrice = basePrice
-                const barPosition = Math.max(0, Math.min(100, ((listingPrice - valorMin) / (valorMax - valorMin)) * 100))
-
-                // Price per m²
-                const pricePerM2 = areaNum > 0 ? Math.round(basePrice / areaNum) : 0
-                const avgNeighborhood = pricePerM2 > 0 ? Math.round(pricePerM2 * 1.0) : 0
-                const neighborhoodMin = Math.round(avgNeighborhood * 0.80)
-                const neighborhoodMax = Math.round(avgNeighborhood * 1.20)
-
-                const fmtShort = (v: number) => {
-                    if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
-                    if (v >= 1_000) return `R$ ${(v / 1_000).toFixed(0)}mil`
-                    return fmt(v)
-                }
-
-                return (
-                    <div className="container-custom py-10 md:py-16">
-                        <div style={{
-                            background: '#FFFFFF',
-                            border: '1px solid rgba(184,179,168,0.3)',
-                            borderRadius: 20,
-                            padding: '32px 28px',
-                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-                        }}>
-                            {/* Header */}
-                            <div style={{ marginBottom: 8 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                                    <div style={{ width: 32, height: 2, borderRadius: 1, background: '#B8B3A8' }} />
-                                    <span style={{ fontSize: 10, textTransform: 'uppercase' as const, letterSpacing: '0.25em', fontWeight: 700, color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Inteligência de Mercado</span>
-                                </div>
-                                <h2 style={{
-                                    fontSize: 26,
-                                    fontWeight: 700,
-                                    color: '#0B1928',
-                                    fontFamily: "var(--font-heading, 'Playfair Display', serif)",
-                                    margin: '0 0 4px',
-                                    lineHeight: 1.2,
-                                }}>
-                                    Estimativa de Valor
-                                </h2>
-                                <p style={{ fontSize: 14, color: '#948F84', margin: '0 0 28px', lineHeight: 1.6 }}>
-                                    Análise estimada com base nos dados do empreendimento
-                                </p>
-                            </div>
-
-                            {/* Value Range Cards */}
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 28 }}>
-                                <div style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16, padding: '16px 14px', textAlign: 'center' as const }}>
-                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.2em', color: '#948F84', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Mínimo</p>
-                                    <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>{fmtShort(valorMin)}</p>
-                                </div>
-                                <div style={{ background: '#0B1928', borderRadius: 16, padding: '16px 14px', textAlign: 'center' as const }}>
-                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.2em', color: '#C8A44A', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Estimado</p>
-                                    <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>{fmtShort(valorEstimado)}</p>
-                                </div>
-                                <div style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16, padding: '16px 14px', textAlign: 'center' as const }}>
-                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.2em', color: '#948F84', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Máximo</p>
-                                    <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>{fmtShort(valorMax)}</p>
-                                </div>
-                            </div>
-
-                            {/* Visual Bar */}
-                            <div style={{ marginBottom: 28 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                                    <span style={{ fontSize: 11, fontWeight: 600, color: '#948F84' }}>Mín</span>
-                                    <span style={{ fontSize: 11, fontWeight: 700, color: '#C8A44A' }}>Valor de Tabela</span>
-                                    <span style={{ fontSize: 11, fontWeight: 600, color: '#948F84' }}>Máx</span>
-                                </div>
-                                <div style={{ position: 'relative' as const, height: 10, borderRadius: 5, background: '#0B1928', overflow: 'hidden' }}>
-                                    {/* Gold filled portion */}
-                                    <div style={{
-                                        position: 'absolute' as const,
-                                        top: 0,
-                                        left: 0,
-                                        height: '100%',
-                                        width: `${barPosition}%`,
-                                        borderRadius: 5,
-                                        background: 'linear-gradient(90deg, #C8A44A 0%, #D4B45A 100%)',
-                                        transition: 'width 0.6s ease',
-                                    }} />
-                                    {/* Position marker */}
-                                    <div style={{
-                                        position: 'absolute' as const,
-                                        top: -3,
-                                        left: `${barPosition}%`,
-                                        transform: 'translateX(-50%)',
-                                        width: 16,
-                                        height: 16,
-                                        borderRadius: '50%',
-                                        background: '#C8A44A',
-                                        border: '3px solid #FFFFFF',
-                                        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-                                    }} />
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
-                                    <span style={{ fontSize: 11, color: '#948F84', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{fmtShort(valorMin)}</span>
-                                    <span style={{ fontSize: 11, color: '#948F84', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{fmtShort(valorMax)}</span>
-                                </div>
-                            </div>
-
-                            {/* Price per m² section */}
-                            {pricePerM2 > 0 && (
-                                <div style={{
-                                    background: '#F8F6F2',
-                                    border: '1px solid rgba(184,179,168,0.3)',
-                                    borderRadius: 16,
-                                    padding: '20px',
-                                    marginBottom: 20,
-                                }}>
-                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.2em', color: '#948F84', margin: '0 0 12px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Preço por m²</p>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                                        <div>
-                                            <p style={{ fontSize: 11, color: '#948F84', margin: '0 0 4px' }}>Este imóvel</p>
-                                            <p style={{ fontSize: 22, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
-                                                {fmt(pricePerM2)}<span style={{ fontSize: 12, fontWeight: 400, color: '#948F84' }}>/m²</span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p style={{ fontSize: 11, color: '#948F84', margin: '0 0 4px' }}>Média do bairro*</p>
-                                            <p style={{ fontSize: 22, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
-                                                {fmt(avgNeighborhood)}<span style={{ fontSize: 12, fontWeight: 400, color: '#948F84' }}>/m²</span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    {/* Neighborhood range mini-bar */}
-                                    <div style={{ marginTop: 16 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                                            <span style={{ fontSize: 10, color: '#948F84' }}>{fmt(neighborhoodMin)}/m²</span>
-                                            <span style={{ fontSize: 10, color: '#948F84' }}>{fmt(neighborhoodMax)}/m²</span>
-                                        </div>
-                                        <div style={{ position: 'relative' as const, height: 6, borderRadius: 3, background: 'rgba(11,25,40,0.08)' }}>
-                                            {/* Property position within neighborhood range */}
-                                            <div style={{
-                                                position: 'absolute' as const,
-                                                top: -2,
-                                                left: `${Math.max(0, Math.min(100, ((pricePerM2 - neighborhoodMin) / (neighborhoodMax - neighborhoodMin)) * 100))}%`,
-                                                transform: 'translateX(-50%)',
-                                                width: 10,
-                                                height: 10,
-                                                borderRadius: '50%',
-                                                background: '#C8A44A',
-                                                border: '2px solid #FFFFFF',
-                                                boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
-                                            }} />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Disclaimer */}
-                            <p style={{
-                                fontSize: 11,
-                                color: '#948F84',
-                                margin: 0,
-                                lineHeight: 1.6,
-                                borderTop: '1px solid rgba(184,179,168,0.3)',
-                                paddingTop: 16,
-                            }}>
-                                * Estimativa baseada em dados de mercado. Consulte para avaliação formal NBR 14653.
-                            </p>
-                        </div>
-                    </div>
-                )
-            })()}
 
             {/* Similar Properties */}
             {similarDevs.length > 0 && (

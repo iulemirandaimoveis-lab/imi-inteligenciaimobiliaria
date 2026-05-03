@@ -119,8 +119,8 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             gallery: gallery,
             videos: videos,
             floorPlans: floorPlans,
-            virtualTour: dbProp.virtual_tour_url,
-            brochure: dbProp.brochure_url,
+            virtualTour: dbProp.virtual_tour_url && dbProp.virtual_tour_url.startsWith('http') ? dbProp.virtual_tour_url : undefined,
+            brochure: dbProp.brochure_url || undefined,
             heroVideo: imagesJson.hero_video || undefined,
         },
         units: [], // Units are loaded separately on detail view if needed

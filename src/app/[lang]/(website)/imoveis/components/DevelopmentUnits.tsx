@@ -3,8 +3,25 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { formatCurrency as formatBRL } from '@/lib/utils';
-import Button from '@/components/ui/Button';
-import { MessageCircle, Info, Loader2 } from 'lucide-react';
+import { MessageCircle, Info, Loader2, FileImage } from 'lucide-react';
+
+const STATUS_STYLE: Record<string, { label: string; bg: string; color: string }> = {
+    available: { label: 'Disponível', bg: 'rgba(22,163,74,0.08)', color: '#16A34A' },
+    reserved:  { label: 'Reservada',  bg: 'rgba(234,88,12,0.08)',  color: '#EA580C' },
+    sold:      { label: 'Vendida',    bg: 'rgba(100,116,139,0.08)', color: '#64748B' },
+};
+
+function StatusBadge({ status }: { status: string }) {
+    const s = STATUS_STYLE[status] ?? STATUS_STYLE.available;
+    return (
+        <span
+            className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
+            style={{ background: s.bg, color: s.color }}
+        >
+            {s.label}
+        </span>
+    );
+}
 
 interface DevelopmentUnitsProps {
     propertyId: string;
@@ -86,6 +103,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                             <th className="text-left p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Unidade</th>
                             <th className="text-left p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Tipologia</th>
                             <th className="text-left p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Área</th>
+                            <th className="text-left p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Status</th>
                             <th className="text-right p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Valor</th>
                             <th className="text-center p-4 font-bold text-gray-400 text-[11px] uppercase tracking-widest">Ação</th>
                         </tr>
@@ -93,26 +111,50 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                     <tbody>
                         {unitsToShow.map((unit) => (
                             <tr key={unit.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                                <td className="p-4 font-bold text-gray-900 text-sm">{unit.unit_name}</td>
+                                <td className="p-4">
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-bold text-gray-900 text-sm">{unit.unit_name}</span>
+                                        {unit.floor_plan_url && (
+                                            <a
+                                                href={unit.floor_plan_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                title="Ver planta"
+                                                className="flex items-center gap-1 text-[10px] font-semibold transition-opacity hover:opacity-70"
+                                                style={{ color: '#C8A44A', textDecoration: 'none' }}
+                                            >
+                                                <FileImage className="w-3 h-3" />
+                                                Planta
+                                            </a>
+                                        )}
+                                    </div>
+                                </td>
                                 <td className="p-4">
                                     <span className="text-[11px] font-bold py-0.5 px-2.5 bg-gray-50 border border-gray-100 rounded text-gray-400 uppercase tracking-wider">
                                         {unit.unit_type === 'apartment' ? 'Apto' : unit.unit_type}
                                     </span>
                                 </td>
                                 <td className="p-4 text-gray-600 text-sm">{unit.area ? `${unit.area}m²` : '-'}</td>
+                                <td className="p-4">
+                                    <StatusBadge status={unit.status} />
+                                </td>
                                 <td className="p-4 text-right font-bold text-gray-900">
-                                    {unit.price ? formatBRL(unit.price) : 'Sob Consulta'}
+                                    {unit.total_price ? formatBRL(unit.total_price) : 'Sob Consulta'}
                                 </td>
                                 <td className="p-4 text-center">
-                                    <button
-                                        onClick={() => handleWhatsApp(unit)}
-                                        className="relative inline-flex items-center gap-1.5 h-9 px-4 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97]"
-                                        style={{ background: '#0B1928', color: '#fff', minHeight: 44 }}
-                                    >
-                                        <MessageCircle className="w-3 h-3" />
-                                        Consultar
-                                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
-                                    </button>
+                                    {unit.status !== 'sold' ? (
+                                        <button
+                                            onClick={() => handleWhatsApp(unit)}
+                                            className="relative inline-flex items-center gap-1.5 h-9 px-4 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97]"
+                                            style={{ background: '#0B1928', color: '#fff', minHeight: 44 }}
+                                        >
+                                            <MessageCircle className="w-3 h-3" />
+                                            Consultar
+                                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
+                                        </button>
+                                    ) : (
+                                        <span className="text-[11px] text-gray-400 font-semibold">Vendida</span>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -124,29 +166,46 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
             <div className="md:hidden space-y-3">
                 {unitsToShow.map((unit) => (
                     <div key={unit.id} className="bg-white border border-gray-100 rounded-[10px] p-4">
-                        <div className="flex justify-between items-center mb-3">
-                            <span className="font-bold text-gray-900">Unidade {unit.unit_name}</span>
+                        <div className="flex justify-between items-center mb-2">
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-gray-900">Unidade {unit.unit_name}</span>
+                                {unit.floor_plan_url && (
+                                    <a
+                                        href={unit.floor_plan_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-0.5 text-[10px] font-semibold"
+                                        style={{ color: '#C8A44A', textDecoration: 'none' }}
+                                    >
+                                        <FileImage className="w-3 h-3" />
+                                        Planta
+                                    </a>
+                                )}
+                            </div>
+                            <StatusBadge status={unit.status} />
+                        </div>
+                        <div className="flex items-center gap-2 mb-3">
                             <span className="text-[11px] font-bold px-2 py-0.5 bg-gray-50 text-gray-400 rounded-[3px] uppercase tracking-wider">
                                 {unit.unit_type === 'apartment' ? 'Apto' : unit.unit_type}
                             </span>
+                            {unit.area && (
+                                <span className="text-xs text-gray-400">{unit.area}m²</span>
+                            )}
                         </div>
                         <div className="flex justify-between items-end">
-                            <div>
-                                {unit.area && (
-                                    <p className="text-xs text-gray-400 mb-0.5">{unit.area}m²</p>
-                                )}
-                                <p className="text-lg font-bold text-gray-900">
-                                    {unit.price ? formatBRL(unit.price) : 'Sob Consulta'}
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => handleWhatsApp(unit)}
-                                className="relative h-11 px-4 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97]"
-                                style={{ background: '#0B1928', color: '#fff', minHeight: 44 }}
-                            >
-                                Consultar
-                                <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
-                            </button>
+                            <p className="text-lg font-bold text-gray-900">
+                                {unit.total_price ? formatBRL(unit.total_price) : 'Sob Consulta'}
+                            </p>
+                            {unit.status !== 'sold' && (
+                                <button
+                                    onClick={() => handleWhatsApp(unit)}
+                                    className="relative h-11 px-4 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97]"
+                                    style={{ background: '#0B1928', color: '#fff', minHeight: 44 }}
+                                >
+                                    Consultar
+                                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
+                                </button>
+                            )}
                         </div>
                     </div>
                 ))}
