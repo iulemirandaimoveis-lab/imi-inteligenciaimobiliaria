@@ -121,7 +121,7 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             floorPlans: floorPlans,
             virtualTour: dbProp.virtual_tour_url,
             brochure: dbProp.brochure_url,
-            heroVideo: imagesJson.hero_video || (dbProp.slug === 'jazz-boulevard-garanhuns' ? '/jazz-boulevard/hero.mp4' : undefined),
+            heroVideo: imagesJson.hero_video || undefined,
         },
         units: [], // Units are loaded separately on detail view if needed
         tags: Array.isArray(dbProp.tags) ? dbProp.tags : [],
