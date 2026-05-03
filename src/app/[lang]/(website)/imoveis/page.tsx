@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: { params: { lang: string } })
     return PAGE_METADATA.imoveis(params.lang)
 }
 
-// Dynamic rendering — always fetch fresh data from Supabase
-export const dynamic = 'force-dynamic'
+// ISR: revalidate every 60 seconds — balances freshness with CDN caching
+export const revalidate = 60
 export default async function ImoveisPage({
     params,
     searchParams,
@@ -26,7 +26,7 @@ export default async function ImoveisPage({
 }) {
     let query = supabase
         .from('developments')
-        .select('*')
+        .select('id,slug,name,status_commercial,listing_mode,listing_category,type,tags,description,short_description,neighborhood,city,state,country,region,price_from,price_min,price_max,area_from,area_max,bedrooms_from,bedrooms_max,bathrooms_from,parking_from,delivery_date,is_highlighted,created_at,images,gallery_images,image,developer_id,order')
         .in('status_commercial', ['published', 'campaign', 'available'])
         .order('is_highlighted', { ascending: false })
         .order('created_at', { ascending: false })
