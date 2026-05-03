@@ -98,7 +98,7 @@ describe('apiHandler', () => {
     const json = await res.json()
 
     expect(res.status).toBe(400)
-    expect(json.error).toContain('Validation failed')
+    expect(json.error).toContain('name:')
     expect(json.details).toBeDefined()
   })
 
