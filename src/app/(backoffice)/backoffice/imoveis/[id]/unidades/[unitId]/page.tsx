@@ -517,7 +517,7 @@ export default function EditarUnidadePage() {
         const supabase = createClient()
         Promise.all([
             supabase.from('developments').select('name').eq('id', id).single(),
-            supabase.from('development_units').select('*').eq('id', unitId).single(),
+            supabase.from('development_units').select('*').eq('id', unitId).eq('development_id', id).single(),
         ]).then(([{ data: dev }, { data: unit }]) => {
             if (dev?.name) setDevName(dev.name)
             if (unit) {
@@ -570,6 +570,7 @@ export default function EditarUnidadePage() {
                 notes: form.notes.trim() || null,
             })
             .eq('id', unitId)
+            .eq('development_id', id)
 
         setSaving(false)
 
@@ -592,6 +593,7 @@ export default function EditarUnidadePage() {
             .from('development_units')
             .delete()
             .eq('id', unitId)
+            .eq('development_id', id)
 
         setDeleting(false)
 
