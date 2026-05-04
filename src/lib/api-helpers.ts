@@ -70,7 +70,7 @@ export function apiHandler<TBody = unknown>(
           const fieldMessages = Object.entries(fieldErrors)
             .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(', ')}`)
             .join('; ')
-          return NextResponse.json({ error: fieldMessages || 'Validation failed', details: fieldErrors }, { status: 400 })
+          return NextResponse.json({ error: 'Validation failed', details: fieldErrors }, { status: 400 })
         }
         body = result.data
       }
