@@ -15,6 +15,7 @@ import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
 import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
 import PropertyIntelligence from '../components/PropertyIntelligence'
+import LaunchInvestmentSimulator from '../components/LaunchInvestmentSimulator'
 import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
 import { fmt } from '@/lib/format'
@@ -94,10 +95,20 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
     }
 }
 
-const ANCHOR_SECTIONS = [
+const ANCHOR_SECTIONS_DEFAULT = [
     { id: 'detalhes', label: 'Detalhes' },
     { id: 'galeria', label: 'Galeria' },
     { id: 'unidades', label: 'Unidades' },
+    { id: 'localizacao', label: 'Localização' },
+    { id: 'inteligencia', label: 'IMI Score' },
+    { id: 'financiamento', label: 'Financiamento' },
+]
+
+const ANCHOR_SECTIONS_LAUNCH = [
+    { id: 'detalhes', label: 'Detalhes' },
+    { id: 'galeria', label: 'Galeria' },
+    { id: 'unidades', label: 'Unidades' },
+    { id: 'investimento', label: 'Retorno' },
     { id: 'localizacao', label: 'Localização' },
     { id: 'inteligencia', label: 'IMI Score' },
     { id: 'financiamento', label: 'Financiamento' },
@@ -131,6 +142,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
 
     const development = mapDbPropertyToDevelopment(data)
+
+    const isLaunch = data.status === 'launch' || data.status_commercial === 'campaign'
+    const isShortStay = data.listing_mode === 'short_stay' || data.listing_category === 'short_stay'
+    const showInvestmentSimulator = isLaunch || isShortStay
+    const ANCHOR_SECTIONS = showInvestmentSimulator ? ANCHOR_SECTIONS_LAUNCH : ANCHOR_SECTIONS_DEFAULT
 
     // Fetch broker separately (resilient — won't break if brokers table is missing)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -291,6 +307,16 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <section id="unidades">
                             <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
                         </section>
+
+                        {showInvestmentSimulator && (
+                            <section id="investimento" className="scroll-mt-32">
+                                <LaunchInvestmentSimulator
+                                    basePrice={Number(data.price_from || data.price_min) || 490000}
+                                    propertyName={development.name}
+                                />
+                            </section>
+                        )}
+
                         <section id="localizacao">
                             <DevelopmentLocation development={development} />
                             {development.location.coordinates.lat != null &&
