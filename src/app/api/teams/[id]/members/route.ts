@@ -76,22 +76,20 @@ export async function POST(
         }
 
         // Update team member_count
-        await supabaseAdmin.rpc('update_team_member_count', { p_team_id: params.id }).catch(() => {
-            // Fallback: manual count update
-            supabaseAdmin
+        try {
+            await supabaseAdmin.rpc('update_team_member_count', { p_team_id: params.id })
+        } catch {
+            const { count: memberCount } = await supabaseAdmin
                 .from('brokers')
                 .select('id', { count: 'exact' })
                 .eq('team_id', params.id)
-                .then(({ count }) => {
-                    if (count !== null) {
-                        supabaseAdmin
-                            .from('teams')
-                            .update({ member_count: count, updated_at: new Date().toISOString() })
-                            .eq('id', params.id)
-                            .then(() => {})
-                    }
-                })
-        })
+            if (memberCount !== null) {
+                await supabaseAdmin
+                    .from('teams')
+                    .update({ member_count: memberCount, updated_at: new Date().toISOString() })
+                    .eq('id', params.id)
+            }
+        }
 
         return NextResponse.json({ data: updated }, { status: 201 })
     } catch (err) {
@@ -166,11 +164,12 @@ export async function DELETE(
             .select('id', { count: 'exact' })
             .eq('team_id', params.id)
 
-        await supabaseAdmin
-            .from('teams')
-            .update({ member_count: count ?? 0, updated_at: new Date().toISOString() })
-            .eq('id', params.id)
-            .catch(() => {})
+        try {
+            await supabaseAdmin
+                .from('teams')
+                .update({ member_count: count ?? 0, updated_at: new Date().toISOString() })
+                .eq('id', params.id)
+        } catch { /* best-effort count sync */ }
 
         return NextResponse.json({ success: true })
     } catch (err) {

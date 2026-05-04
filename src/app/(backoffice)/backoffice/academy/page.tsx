@@ -259,8 +259,8 @@ export default function AcademyPage() {
 
         if (enrollments && enrollments.length > 0) {
           const byPillar: Record<string, number[]> = {}
-          enrollments.forEach((e: { progress_pct: number; academy_courses: { pillar: string } | null }) => {
-            const pillar = (e.academy_courses as { pillar: string } | null)?.pillar
+          enrollments.forEach((e: { progress_pct: number; academy_courses: { pillar: string }[] | null }) => {
+            const pillar = e.academy_courses?.[0]?.pillar
             if (pillar) {
               if (!byPillar[pillar]) byPillar[pillar] = []
               byPillar[pillar].push(e.progress_pct || 0)

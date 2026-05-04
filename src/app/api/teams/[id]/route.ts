@@ -106,11 +106,12 @@ export async function PATCH(
                 updates.leader_name = leader?.name ?? null
 
                 // Assign this broker to the team
-                await supabaseAdmin
-                    .from('brokers')
-                    .update({ team_id: params.id, updated_at: new Date().toISOString() })
-                    .eq('id', body.leader_id)
-                    .catch(() => {})
+                try {
+                    await supabaseAdmin
+                        .from('brokers')
+                        .update({ team_id: params.id, updated_at: new Date().toISOString() })
+                        .eq('id', body.leader_id)
+                } catch { /* best-effort leader assignment */ }
             } else {
                 updates.leader_name = null
             }
@@ -168,11 +169,12 @@ export async function DELETE(
         }
 
         // Unassign members from this team before soft-deleting
-        await supabaseAdmin
-            .from('brokers')
-            .update({ team_id: null, updated_at: new Date().toISOString() })
-            .eq('team_id', params.id)
-            .catch(() => {})
+        try {
+            await supabaseAdmin
+                .from('brokers')
+                .update({ team_id: null, updated_at: new Date().toISOString() })
+                .eq('team_id', params.id)
+        } catch { /* best-effort member unassign before delete */ }
 
         const { error } = await supabaseAdmin
             .from('teams')
