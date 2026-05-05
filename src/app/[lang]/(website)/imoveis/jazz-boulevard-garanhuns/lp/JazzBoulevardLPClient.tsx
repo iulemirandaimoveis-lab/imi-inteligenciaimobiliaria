@@ -20,6 +20,7 @@ export default function JazzBoulevardLPClient() {
   const [telefone, setTelefone] = useState('')
   const [email, setEmail] = useState('')
   const [proposalLink, setProposalLink] = useState('')
+  const [proposalPdf, setProposalPdf] = useState('')
 
   const calc = useMemo(() => {
     const taxaGestao = 0.16
@@ -82,11 +83,16 @@ export default function JazzBoulevardLPClient() {
 
 
   async function createProposalLink() {
-    const token = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
-    const link = `${window.location.origin}/pt/imoveis/jazz-boulevard-garanhuns/lp?proposal=${token}`
-    await supabase.from('jazz_leads').insert({ nome, telefone, email, proposal_token: token, capital_disponivel: valorImovel * unidades, receita_simulada: calc.receitaLiquida, yield_simulado: calc.yieldAnual })
-    await trackEvent('proposal_generated', { token, nome, telefone, email })
-    setProposalLink(link)
+    const resp = await fetch('/api/jazz/proposal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ origin: window.location.origin })
+    })
+    const data = await resp.json()
+    await supabase.from('jazz_leads').insert({ nome, telefone, email, proposal_token: data.token, capital_disponivel: valorImovel * unidades, receita_simulada: calc.receitaLiquida, yield_simulado: calc.yieldAnual })
+    await trackEvent('proposal_generated', { token: data.token, nome, telefone, email })
+    setProposalLink(data.proposalUrl)
+    setProposalPdf(data.pdfUrl)
   }
 
   return (
@@ -193,6 +199,7 @@ export default function JazzBoulevardLPClient() {
               <button onClick={createProposalLink} className="rounded-full bg-[#2cc2b0] px-6 py-2 text-sm font-semibold text-black">Gerar proposta automática</button>
             </div>
             {proposalLink && <p className="mt-3 break-all text-xs text-[#E8C97A]">Link único: {proposalLink}</p>}
+            {proposalPdf && <p className="mt-1 break-all text-xs text-[#2cc2b0]">PDF da proposta: {proposalPdf}</p>}
           </div>
           <div className="rounded-2xl border border-[#C8A96A44] p-4 text-sm text-white/80">
             <p>Webhooks monitorados:</p>
