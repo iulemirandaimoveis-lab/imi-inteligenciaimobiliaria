@@ -92,12 +92,16 @@ export default function JazzBoulevardLPClient() {
   }, [])
 
   async function trackEvent(evento: string, payload: Record<string, unknown>) {
-    await supabase.from('jazz_events').insert({ evento, payload, created_at: new Date().toISOString() })
-    await fetch('/api/jazz/webhook', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ evento, payload, origem: 'lp-jazz' })
-    })
+    try {
+      await supabase.from('jazz_events').insert({ evento, payload, created_at: new Date().toISOString() })
+      await fetch('/api/jazz/webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ evento, payload, origem: 'lp-jazz' })
+      })
+    } catch (error) {
+      console.error('trackEvent_error', error)
+    }
   }
 
   async function simulateAndSend() {
