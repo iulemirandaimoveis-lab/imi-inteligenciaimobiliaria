@@ -22,6 +22,8 @@ export default function JazzBoulevardLPClient() {
   const [proposalLink, setProposalLink] = useState('')
   const [proposalPdf, setProposalPdf] = useState('')
   const startedAt = useRef<number>(Date.now())
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
   const sentDepths = useRef<Set<number>>(new Set())
 
   const calc = useMemo(() => {
@@ -124,6 +126,13 @@ export default function JazzBoulevardLPClient() {
     }
   }
 
+
+  function validateLead() {
+    if (!nome || !telefone || !email) return 'Preencha nome, WhatsApp e e-mail.'
+    if (!email.includes('@')) return 'E-mail inválido.'
+    return ''
+  }
+
   async function simulateAndSend() {
     await trackEvent('start_simulation', { valorImovel, diaria, ocupacao, tempo, unidades })
     await supabase.from('jazz_simulations').insert({ valor_imovel: valorImovel, diaria, ocupacao, tempo, unidades, receita_liquida: calc.receitaLiquida, yield: calc.yieldAnual })
@@ -133,16 +142,29 @@ export default function JazzBoulevardLPClient() {
 
 
   async function createProposalLink() {
-    const resp = await fetch('/api/jazz/proposal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ origin: window.location.origin })
-    })
-    const data = await resp.json()
-    await supabase.from('jazz_leads').insert({ nome, telefone, email, proposal_token: data.token, capital_disponivel: valorImovel * unidades, receita_simulada: calc.receitaLiquida, yield_simulado: calc.yieldAnual })
-    await trackEvent('proposal_generated', { token: data.token, nome, telefone, email })
-    setProposalLink(data.proposalUrl)
-    setProposalPdf(data.pdfUrl)
+    const validationError = validateLead()
+    if (validationError) {
+      setErrorMsg(validationError)
+      return
+    }
+
+    setErrorMsg('')
+    setIsSubmitting(true)
+
+    try {
+      const resp = await fetch('/api/jazz/proposal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin: window.location.origin })
+      })
+      const data = await resp.json()
+      await supabase.from('jazz_leads').insert({ nome, telefone, email, proposal_token: data.token, capital_disponivel: valorImovel * unidades, receita_simulada: calc.receitaLiquida, yield_simulado: calc.yieldAnual })
+      await trackEvent('proposal_generated', { token: data.token, nome, telefone, email })
+      setProposalLink(data.proposalUrl)
+      setProposalPdf(data.pdfUrl)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -247,8 +269,9 @@ export default function JazzBoulevardLPClient() {
               <input className="w-full rounded-xl border border-white/15 bg-black/30 px-3 py-2" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
               <input className="w-full rounded-xl border border-white/15 bg-black/30 px-3 py-2" placeholder="WhatsApp" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
               <input className="w-full rounded-xl border border-white/15 bg-black/30 px-3 py-2" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-              <button onClick={createProposalLink} className="rounded-full bg-[#2cc2b0] px-6 py-2 text-sm font-semibold text-black">Gerar proposta automática</button>
+              <button disabled={isSubmitting} onClick={createProposalLink} className="rounded-full bg-[#2cc2b0] px-6 py-2 text-sm font-semibold text-black disabled:cursor-not-allowed disabled:opacity-60">{isSubmitting ? 'Gerando proposta...' : 'Gerar proposta automática'}</button>
             </div>
+            {errorMsg && <p className="mt-2 text-xs text-red-300">{errorMsg}</p>}
             {proposalLink && <p className="mt-3 break-all text-xs text-[#E8C97A]">Link único: {proposalLink}</p>}
             {proposalPdf && <p className="mt-1 break-all text-xs text-[#2cc2b0]">PDF da proposta: {proposalPdf}</p>}
           </div>
