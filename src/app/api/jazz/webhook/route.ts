@@ -5,6 +5,7 @@ const secret = process.env.JAZZ_WEBHOOK_SECRET ?? 'dev-secret'
 
 export async function POST(req: Request) {
   const body = await req.json()
+  const idempotencyKey = req.headers.get('x-idempotency-key')
   if (!body?.evento) {
     return NextResponse.json({ ok: false, error: 'missing_evento' }, { status: 400 })
   }
@@ -15,6 +16,7 @@ export async function POST(req: Request) {
     ok: true,
     receivedAt: new Date().toISOString(),
     signature,
-    forwardedTo: ['crm', 'analytics', 'whatsapp']
+    forwardedTo: ['crm', 'analytics', 'whatsapp'],
+    idempotencyKey
   })
 }

@@ -22,6 +22,7 @@ export default function JazzBoulevardLPClient() {
   const [proposalLink, setProposalLink] = useState('')
   const [proposalPdf, setProposalPdf] = useState('')
   const startedAt = useRef<number>(Date.now())
+  const sentDepths = useRef<Set<number>>(new Set())
 
   const calc = useMemo(() => {
     const taxaGestao = 0.16
@@ -77,7 +78,8 @@ export default function JazzBoulevardLPClient() {
 
     const onScroll = () => {
       const depth = Math.round(((window.scrollY + window.innerHeight) / document.body.scrollHeight) * 100)
-      if ([25, 50, 75, 100].includes(depth)) {
+      if ([25, 50, 75, 100].includes(depth) && !sentDepths.current.has(depth)) {
+        sentDepths.current.add(depth)
         trackEvent('scroll_depth', { depth })
       }
     }
@@ -91,14 +93,32 @@ export default function JazzBoulevardLPClient() {
     }
   }, [])
 
+
+  async function postWithRetry(url: string, body: Record<string, unknown>, attempts = 3) {
+    let lastError: unknown
+    for (let i = 1; i <= attempts; i += 1) {
+      try {
+        await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-idempotency-key': `${Date.now()}-${i}-${Math.random().toString(36).slice(2, 8)}`
+          },
+          body: JSON.stringify(body)
+        })
+        return
+      } catch (error) {
+        lastError = error
+        await new Promise((resolve) => setTimeout(resolve, 250 * i))
+      }
+    }
+    throw lastError
+  }
+
   async function trackEvent(evento: string, payload: Record<string, unknown>) {
     try {
       await supabase.from('jazz_events').insert({ evento, payload, created_at: new Date().toISOString() })
-      await fetch('/api/jazz/webhook', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ evento, payload, origem: 'lp-jazz' })
-      })
+      await postWithRetry('/api/jazz/webhook', { evento, payload, origem: 'lp-jazz' })
     } catch (error) {
       console.error('trackEvent_error', error)
     }
