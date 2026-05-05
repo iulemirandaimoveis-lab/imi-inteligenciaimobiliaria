@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { createClient } from '@supabase/supabase-js'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
@@ -15,6 +16,10 @@ export default function JazzBoulevardLPClient() {
   const [ocupacao, setOcupacao] = useState(0.66)
   const [tempo, setTempo] = useState(20)
   const [unidades, setUnidades] = useState(1)
+  const [nome, setNome] = useState('')
+  const [telefone, setTelefone] = useState('')
+  const [email, setEmail] = useState('')
+  const [proposalLink, setProposalLink] = useState('')
 
   const calc = useMemo(() => {
     const taxaGestao = 0.16
@@ -75,9 +80,19 @@ export default function JazzBoulevardLPClient() {
     window.open('https://wa.me/5581999999999?text=Quero%20a%20proposta%20autom%C3%A1tica%20do%20Jazz%20Boulevard', '_blank')
   }
 
+
+  async function createProposalLink() {
+    const token = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+    const link = `${window.location.origin}/pt/imoveis/jazz-boulevard-garanhuns/lp?proposal=${token}`
+    await supabase.from('jazz_leads').insert({ nome, telefone, email, proposal_token: token, capital_disponivel: valorImovel * unidades, receita_simulada: calc.receitaLiquida, yield_simulado: calc.yieldAnual })
+    await trackEvent('proposal_generated', { token, nome, telefone, email })
+    setProposalLink(link)
+  }
+
   return (
     <main className="min-h-screen bg-[#050607] text-white">
       <section className="relative overflow-hidden border-b border-white/10 px-4 pb-14 pt-16">
+        <Image src="/images/jazz-boulevard-hero.jpg" alt="Jazz Boulevard" fill className="object-cover opacity-35" priority />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-black/35" />
         <div className="relative mx-auto grid max-w-7xl gap-8 md:grid-cols-2">
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
@@ -163,6 +178,31 @@ export default function JazzBoulevardLPClient() {
           <h3 className="text-xl">Mapa de captação e perfil de investidor</h3>
           <p className="mt-2 text-white/80">Público principal: médicos, empresários, advogados e profissionais liberais com perfil conservador e capital mínimo de R$ 1 milhão.</p>
           <div className="mt-4 flex flex-wrap gap-2">{cities.map((c) => <span key={c} className="rounded-full border border-[#C8A96A55] px-3 py-1 text-xs">{c}</span>)}</div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-6">
+        <div className="grid gap-5 rounded-3xl border border-white/10 bg-white/5 p-6 md:grid-cols-2">
+          <div>
+            <h3 className="text-xl">Proposta automática e link rastreável</h3>
+            <p className="mt-2 text-sm text-white/75">Gere seu link único + registro no Supabase para receber simulação e proposta no WhatsApp.</p>
+            <div className="mt-4 space-y-2">
+              <input className="w-full rounded-xl border border-white/15 bg-black/30 px-3 py-2" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+              <input className="w-full rounded-xl border border-white/15 bg-black/30 px-3 py-2" placeholder="WhatsApp" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+              <input className="w-full rounded-xl border border-white/15 bg-black/30 px-3 py-2" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <button onClick={createProposalLink} className="rounded-full bg-[#2cc2b0] px-6 py-2 text-sm font-semibold text-black">Gerar proposta automática</button>
+            </div>
+            {proposalLink && <p className="mt-3 break-all text-xs text-[#E8C97A]">Link único: {proposalLink}</p>}
+          </div>
+          <div className="rounded-2xl border border-[#C8A96A44] p-4 text-sm text-white/80">
+            <p>Webhooks monitorados:</p>
+            <ul className="mt-2 list-disc pl-5">
+              <li>início da simulação</li>
+              <li>alteração de inputs</li>
+              <li>visualização dos gráficos</li>
+              <li>clique WhatsApp</li>
+            </ul>
+          </div>
         </div>
       </section>
 
