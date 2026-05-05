@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { createClient } from '@supabase/supabase-js'
@@ -21,6 +21,7 @@ export default function JazzBoulevardLPClient() {
   const [email, setEmail] = useState('')
   const [proposalLink, setProposalLink] = useState('')
   const [proposalPdf, setProposalPdf] = useState('')
+  const startedAt = useRef<number>(Date.now())
 
   const calc = useMemo(() => {
     const taxaGestao = 0.16
@@ -69,6 +70,26 @@ export default function JazzBoulevardLPClient() {
     { mes: 'Jan', oc: 58 }, { mes: 'Fev', oc: 84 }, { mes: 'Mar', oc: 72 }, { mes: 'Abr', oc: 61 }, { mes: 'Mai', oc: 74 }, { mes: 'Jun', oc: 56 },
     { mes: 'Jul', oc: 68 }, { mes: 'Ago', oc: 78 }, { mes: 'Set', oc: 91 }, { mes: 'Out', oc: 70 }, { mes: 'Nov', oc: 52 }, { mes: 'Dez', oc: 64 }
   ]
+
+
+  useEffect(() => {
+    trackEvent('view_hero', { page: 'lp-jazz' })
+
+    const onScroll = () => {
+      const depth = Math.round(((window.scrollY + window.innerHeight) / document.body.scrollHeight) * 100)
+      if ([25, 50, 75, 100].includes(depth)) {
+        trackEvent('scroll_depth', { depth })
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      const seconds = Math.round((Date.now() - startedAt.current) / 1000)
+      trackEvent('time_on_page', { seconds })
+    }
+  }, [])
 
   async function trackEvent(evento: string, payload: Record<string, unknown>) {
     await supabase.from('jazz_events').insert({ evento, payload, created_at: new Date().toISOString() })
@@ -156,6 +177,7 @@ export default function JazzBoulevardLPClient() {
       <section className="mx-auto max-w-7xl px-4 py-6">
         <div className="h-80 rounded-3xl border border-white/10 bg-white/5 p-4">
           <p className="mb-2 text-lg">Linha de crescimento patrimonial (20 anos)</p>
+          <button onClick={() => trackEvent('view_20_year_projection', { years: 20 })} className="mb-2 text-xs text-[#2cc2b0] underline">Registrar visualização do gráfico</button>
           <ResponsiveContainer width="100%" height="90%"><LineChart data={chart20y}><CartesianGrid stroke="#ffffff1e" /><XAxis dataKey="ano" /><YAxis /><Tooltip /><Legend /><Line dataKey="valorizacao" stroke="#C8A96A" /><Line dataKey="renda" stroke="#2cc2b0" /><Line dataKey="total" stroke="#7CE2D8" /></LineChart></ResponsiveContainer>
         </div>
       </section>
