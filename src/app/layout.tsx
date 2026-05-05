@@ -1,14 +1,16 @@
 import type { Metadata, Viewport } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
-import { Playfair_Display } from 'next/font/google';
+import localFont from 'next/font/local';
 // DEPLOY_VERSION: v6.0.0 - DS6 PRECISION DARK
 import './globals.css';
 
-// D3.1 — Reduced to 3 font families: GeistSans, GeistMono, Playfair_Display
-const playfair = Playfair_Display({
-    subsets: ['latin'],
-    weight: ['400', '500', '600', '700'],
+// D3.1 — Reduced to 3 font families: GeistSans, GeistMono, Display (local fallback to avoid network build failures)
+const playfair = localFont({
+    src: [
+        { path: '../../public/fonts/cormorant-garamond-latin-wght-normal.woff2', weight: '400', style: 'normal' },
+        { path: '../../public/fonts/cormorant-garamond-latin-wght-italic.woff2', weight: '400', style: 'italic' }
+    ],
     variable: '--font-playfair',
     display: 'swap',
 });
