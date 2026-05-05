@@ -93,6 +93,11 @@ export default function JazzBoulevardLPClient() {
 
   async function trackEvent(evento: string, payload: Record<string, unknown>) {
     await supabase.from('jazz_events').insert({ evento, payload, created_at: new Date().toISOString() })
+    await fetch('/api/jazz/webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ evento, payload, origem: 'lp-jazz' })
+    })
   }
 
   async function simulateAndSend() {
@@ -230,6 +235,7 @@ export default function JazzBoulevardLPClient() {
               <li>alteração de inputs</li>
               <li>visualização dos gráficos</li>
               <li>clique WhatsApp</li>
+              <li>disparo assinado para CRM/analytics</li>
             </ul>
           </div>
         </div>
