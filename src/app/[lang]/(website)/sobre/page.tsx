@@ -56,6 +56,30 @@ const stats = [
     { number: '98%', label: 'Satisfação dos Clientes' },
 ]
 
+const certifications = [
+    {
+        title: 'Curso de Extensão — Wealth Management, Family Office e Gestão de Recursos de Terceiros',
+        institution: 'PUCRS — Escola de Negócios',
+        year: '2020',
+        hours: '10 horas',
+        image: '/certificados/pucrs-wealth-management.jpg',
+    },
+    {
+        title: 'Ericksonian Hypnosis Training — Level I',
+        institution: 'ACT Institute (ABH, IHA, ASCH, ISH, NBCCH)',
+        year: '2017',
+        hours: '36 horas',
+        image: '/certificados/act-ericksonian-level-1.jpg',
+    },
+    {
+        title: 'Avaliação de Imóveis e Perícias Judiciais',
+        institution: 'CRECI-PE — 7ª Região',
+        year: '2025',
+        hours: '24 horas',
+        image: '/certificados/creci-pe-avaliacao-pericias-judiciais.jpg',
+    },
+]
+
 const SOCIAL = [
     {
         icon: Linkedin,
@@ -490,28 +514,3 @@ export default async function AboutPage({
         </main>
     )
 }
-const certifications = [
-    {
-        title: 'Curso de Extensão — Wealth Management, Family Office e Gestão de Recursos de Terceiros',
-        institution: 'PUCRS — Escola de Negócios',
-        year: '2020',
-        hours: '10 horas',
-        image: '/certificados/pucrs-wealth-management.jpg',
-    },
-    {
-        title: 'Ericksonian Hypnosis Training — Level I',
-        institution: 'ACT Institute (ABH, IHA, ASCH, ISH, NBCCH)',
-        year: '2017',
-        hours: '36 horas',
-        image: '/certificados/act-ericksonian-level-1.jpg',
-    },
-    {
-        title: 'Avaliação de Imóveis e Perícias Judiciais',
-        institution: 'CRECI-PE — 7ª Região',
-        year: '2025',
-        hours: '24 horas',
-        image: '/certificados/creci-pe-avaliacao-pericias-judiciais.jpg',
-    },
-]
-
-
