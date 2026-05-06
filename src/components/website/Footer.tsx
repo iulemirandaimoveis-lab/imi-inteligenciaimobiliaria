@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { Mail, MessageCircle, Linkedin } from 'lucide-react'
 import React from 'react'
@@ -76,6 +77,17 @@ export default function Footer({ lang, settings }: FooterProps) {
                         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                         className="lg:col-span-5 overflow-hidden"
                     >
+                        <div className="mb-6">
+                            <Image
+                                src="/apple-touch-icon.png"
+                                alt="Brasão Iule Miranda"
+                                width={140}
+                                height={140}
+                                className="w-[88px] sm:w-[104px] lg:w-[120px] h-auto rounded-xl border border-[#C8A44A]/25 bg-white/5"
+                                priority
+                            />
+                        </div>
+
                         <Link href={`/${lang}`} className="inline-flex items-center gap-2.5 sm:gap-3 group mb-8">
                             <span
                                 className="leading-none select-none transition-colors duration-300 group-hover:text-[#C8A44A]"
