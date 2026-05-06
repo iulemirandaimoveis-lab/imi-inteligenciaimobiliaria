@@ -99,6 +99,22 @@ const SOCIAL = [
     },
 ]
 
+
+const certificationImages = [
+    {
+        src: '/about-cert-creci-pe.jpg',
+        alt: 'Certificado CRECI-PE de Avaliação de Imóveis e Perícias Judiciais',
+    },
+    {
+        src: '/about-cert-act.jpg',
+        alt: 'Certificado ACT Institute — Ericksonian Hypnosis Training Level I',
+    },
+    {
+        src: '/about-cert-pucrs.jpg',
+        alt: 'Certificado PUCRS de extensão em Wealth Management e Family Office',
+    },
+]
+
 const EBOOKS = [
     {
         title: 'Guia Completo de Avaliação Imobiliária NBR 14653',
@@ -257,6 +273,32 @@ export default async function AboutPage({
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+
+            {/* ── GALERIA DE CERTIFICADOS ─────────────────── */}
+            <section className="py-16 md:py-24 border-b border-white/[0.05]">
+                <div className="container-custom">
+                    <div className="mb-10">
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="w-8 h-px bg-[#C8A44A]" />
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Certificados</span>
+                        </div>
+                        <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-3">
+                            Formação e Atualização <span className="text-[#C8A44A] italic">Contínua</span>
+                        </h2>
+                        <p className="text-white/50 text-lg font-light max-w-3xl">
+                            Registros visuais das certificações apresentadas no perfil profissional.
+                        </p>
+                    </div>
+                    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {certificationImages.map((img) => (
+                            <div key={img.src} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0D0F14]">
+                                <Image src={img.src} alt={img.alt} fill className="object-cover" />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
