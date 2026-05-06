@@ -255,6 +255,12 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
           </div>
         </Field>
       </div>
+      <Field label="Tour virtual (link externo)">
+        <div style={{ position: 'relative' }}>
+          <input className="ni" style={{ ...inputStyle, paddingLeft: 38 }} value={form.virtualTourUrl} onChange={e => set('virtualTourUrl', e.target.value)} placeholder="https://tour.panoee.net/..." />
+          <Link size={14} color={T.textDim} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+        </div>
+      </Field>
     </div>
   )
 }

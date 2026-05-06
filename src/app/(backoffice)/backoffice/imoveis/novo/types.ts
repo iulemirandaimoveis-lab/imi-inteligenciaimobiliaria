@@ -20,7 +20,7 @@ export interface FormData {
   totalUnits: string; availableUnits: string; deliveryDate: string
   description: string; status_commercial: string; is_highlighted: boolean
   images: File[]; floorPlans: File[]; brochure: File | null
-  videoUrl: string; videoShort: string
+  videoUrl: string; videoShort: string; virtualTourUrl: string
 }
 
 export const DEFAULT_FORM: FormData = {
@@ -34,7 +34,7 @@ export const DEFAULT_FORM: FormData = {
   totalUnits: '', availableUnits: '', deliveryDate: '',
   description: '', status_commercial: 'draft', is_highlighted: false,
   images: [], floorPlans: [], brochure: null,
-  videoUrl: '', videoShort: '',
+  videoUrl: '', videoShort: '', virtualTourUrl: '',
 }
 
 export interface StepProps {
