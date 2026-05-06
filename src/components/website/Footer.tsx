@@ -79,7 +79,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                     >
                         <div className="mb-6">
                             <Image
-                                src="/apple-touch-icon.png"
+                                src="/brasao-iule-miranda.png"
                                 alt="Brasão Iule Miranda"
                                 width={140}
                                 height={140}
