@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { CheckSquare, Square, Trash2, Eye, EyeOff, Star, StarOff, Layers } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import { createClient } from '@/lib/supabase/client'
 
 interface BulkActionsProps {
     selectedIds: string[]
@@ -20,7 +19,6 @@ export default function BulkActions({
     totalCount,
     onActionComplete,
 }: BulkActionsProps) {
-    const supabase = createClient()
     const [isProcessing, setIsProcessing] = useState(false)
 
     if (selectedIds.length === 0) {
@@ -56,42 +54,48 @@ export default function BulkActions({
 
         try {
             if (action === 'delete') {
-                const { error } = await supabase
-                    .from('developments')
-                    .delete()
-                    .in('id', selectedIds)
+                await Promise.all(selectedIds.map(async (id) => {
+                    const response = await fetch(`/api/developments?id=${id}`, { method: 'DELETE' })
+                    if (!response.ok) {
+                        const data = await response.json().catch(() => null)
+                        throw new Error(data?.error || `Falha ao excluir imóvel ${id}`)
+                    }
+                }))
+            } else if (action === 'activate' || action === 'deactivate' || action === 'archive') {
+                const statusMap = {
+                    activate: 'disponivel',
+                    deactivate: 'arquivado',
+                    archive: 'arquivado',
+                } as const
 
-                if (error) throw error
+                const status = statusMap[action]
+                await Promise.all(selectedIds.map(async (id) => {
+                    const response = await fetch('/api/developments', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, status }),
+                    })
+                    if (!response.ok) {
+                        const data = await response.json().catch(() => null)
+                        throw new Error(data?.error || `Falha ao atualizar status do imóvel ${id}`)
+                    }
+                }))
             } else {
-                const updates: Record<string, unknown> = {}
-
-                switch (action) {
-                    case 'activate':
-                        updates.status = 'disponivel'
-                        updates.status_commercial = 'published'
-                        break
-                    case 'deactivate':
-                        updates.status = 'arquivado'
-                        updates.status_commercial = 'draft'
-                        break
-                    case 'archive':
-                        updates.status = 'arquivado'
-                        updates.status_commercial = 'private'
-                        break
-                    case 'feature':
-                        updates.is_highlighted = true
-                        break
-                    case 'unfeature':
-                        updates.is_highlighted = false
-                        break
+                const updates: Record<string, unknown> = {
+                    is_highlighted: action === 'feature',
                 }
 
-                const { error } = await supabase
-                    .from('developments')
-                    .update(updates)
-                    .in('id', selectedIds)
-
-                if (error) throw error
+                await Promise.all(selectedIds.map(async (id) => {
+                    const response = await fetch('/api/developments', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, ...updates }),
+                    })
+                    if (!response.ok) {
+                        const data = await response.json().catch(() => null)
+                        throw new Error(data?.error || `Falha ao atualizar imóvel ${id}`)
+                    }
+                }))
             }
 
             onClearSelection()
