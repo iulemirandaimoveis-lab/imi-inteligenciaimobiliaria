@@ -40,12 +40,13 @@ export default function BulkActions({
         )
     }
 
-    async function handleBulkAction(action: 'activate' | 'deactivate' | 'feature' | 'unfeature' | 'delete') {
+    async function handleBulkAction(action: 'activate' | 'deactivate' | 'feature' | 'unfeature' | 'archive' | 'delete') {
         const confirmMessages = {
             activate: `Deseja ativar ${selectedIds.length} imóveis selecionados?`,
             deactivate: `Deseja desativar ${selectedIds.length} imóveis selecionados?`,
             feature: `Transformar ${selectedIds.length} imóveis em destaque comercial?`,
             unfeature: `Remover status de destaque de ${selectedIds.length} imóveis?`,
+            archive: `Arquivar ${selectedIds.length} imóveis selecionados?`,
             delete: `⚠️ ALERTA: Esta ação excluirá permanentemente ${selectedIds.length} registros. Esta operação é IRREVERSÍVEL. Confirmar?`,
         }
 
@@ -66,16 +67,22 @@ export default function BulkActions({
 
                 switch (action) {
                     case 'activate':
-                        updates.status = 'active'
+                        updates.status = 'disponivel'
+                        updates.status_commercial = 'published'
                         break
                     case 'deactivate':
-                        updates.status = 'inactive'
+                        updates.status = 'arquivado'
+                        updates.status_commercial = 'draft'
+                        break
+                    case 'archive':
+                        updates.status = 'arquivado'
+                        updates.status_commercial = 'private'
                         break
                     case 'feature':
-                        updates.featured = true
+                        updates.is_highlighted = true
                         break
                     case 'unfeature':
-                        updates.featured = false
+                        updates.is_highlighted = false
                         break
                 }
 
@@ -148,6 +155,17 @@ export default function BulkActions({
                     >
                         <Star className="w-3.5 h-3.5" />
                         Destacar
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleBulkAction('archive')}
+                        disabled={isProcessing}
+                        className="bg-imi-800 border-imi-700 text-white text-[10px] h-9 px-3 hover:bg-imi-700"
+                    >
+                        <Square className="w-3.5 h-3.5" />
+                        Arquivar
                     </Button>
 
                     <Button
