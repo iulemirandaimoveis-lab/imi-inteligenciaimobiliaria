@@ -207,39 +207,10 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                 {development.images.virtualTour && (
                     <div>
                         <SectionTitle label="Tour Virtual 360°" />
-                        {shouldOpenTourExternally ? (
-                            <div className="relative w-full min-h-[220px] md:min-h-[260px] rounded-[8px] overflow-hidden border-2 border-[var(--Lb)] bg-[var(--Lc)] p-6 md:p-7 flex flex-col justify-between gap-6">
-                                <div className="bg-[var(--Lr)] text-[var(--La)] px-4 py-2 rounded-[6px] inline-flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.08em] w-fit border-2 border-[var(--Lb)]">
-                                    <span className="w-2 h-2 rounded-full bg-[var(--Lgrn)]" />
-                                    Tour Interativo
-                                </div>
-                                <div className="space-y-3">
-                                    <p className="text-[var(--Lt2)] text-sm md:text-base leading-relaxed font-medium">
-                                        Este tour virtual abre em uma página dedicada para melhor experiência 360°.
-                                    </p>
-                                    <a
-                                        href={development.images.virtualTour}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center px-6 py-3 rounded-[6px] bg-[var(--La)] hover:bg-[var(--La2)] text-white font-bold text-[11px] uppercase tracking-[0.08em] transition-all duration-200 ease-out border border-transparent hover:-translate-y-px"
-                                    >
-                                        Abrir Tour Virtual
-                                    </a>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="relative w-full aspect-video md:h-[480px] rounded-[14px] overflow-hidden border border-gray-100 shadow-lg">
-                                <iframe
-                                    src={development.images.virtualTour}
-                                    className="w-full h-full border-0"
-                                    allowFullScreen
-                                />
-                                <div className="absolute top-4 left-4 bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-[4px] flex items-center gap-2.5 text-xs font-semibold">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                    Tour Interativo
-                                </div>
-                            </div>
-                        )}
+                        <VirtualTourPanel
+                            url={development.images.virtualTour}
+                            openExternally={shouldOpenTourExternally}
+                        />
                     </div>
                 )}
             </div>
@@ -364,6 +335,46 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                 )}
             </AnimatePresence>
         </>
+    );
+}
+
+function VirtualTourPanel({ url, openExternally }: { url: string; openExternally: boolean }) {
+    if (openExternally) {
+        return (
+            <div className="relative w-full min-h-[220px] md:min-h-[260px] rounded-[8px] overflow-hidden border-2 border-[var(--Lb)] bg-[var(--Lc)] p-6 md:p-7 flex flex-col justify-between gap-6">
+                <div className="bg-[var(--Lr)] text-[var(--La)] px-4 py-2 rounded-[6px] inline-flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.08em] w-fit border-2 border-[var(--Lb)]">
+                    <span className="w-2 h-2 rounded-full bg-[var(--Lgrn)]" />
+                    Tour Interativo
+                </div>
+                <div className="space-y-3">
+                    <p className="text-[var(--Lt2)] text-sm md:text-base leading-relaxed font-medium">
+                        Este tour virtual abre em uma página dedicada para melhor experiência 360°.
+                    </p>
+                    <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center px-6 py-3 rounded-[6px] bg-[var(--La)] hover:bg-[var(--La2)] text-white font-bold text-[11px] uppercase tracking-[0.08em] transition-all duration-200 ease-out border border-transparent hover:-translate-y-px"
+                    >
+                        Abrir Tour Virtual
+                    </a>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="relative w-full aspect-video md:h-[480px] rounded-[14px] overflow-hidden border border-gray-100 shadow-lg">
+            <iframe
+                src={url}
+                className="w-full h-full border-0"
+                allowFullScreen
+            />
+            <div className="absolute top-4 left-4 bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-[4px] flex items-center gap-2.5 text-xs font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                Tour Interativo
+            </div>
+        </div>
     );
 }
 
