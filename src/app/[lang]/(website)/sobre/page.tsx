@@ -183,12 +183,14 @@ export default async function AboutPage({
                 <div className="container-custom">
                     <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                         {/* Photo */}
-                        <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.05] max-w-sm mx-auto lg:max-w-none">
-                            <img
+                        <div className="relative rounded-2xl overflow-hidden border border-white/[0.05] max-w-sm mx-auto lg:max-w-none bg-[#0D0F14]">
+                            <Image
                                 src="/about-profile.jpg"
                                 alt="Iule Miranda"
-                                className="absolute inset-0 w-full h-full object-cover object-top"
-                                loading="eager"
+                                width={800}
+                                height={1000}
+                                priority
+                                className="w-full h-auto object-cover object-top"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/60 via-transparent to-transparent" />
                             <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4">
@@ -275,16 +277,6 @@ export default async function AboutPage({
                         <p className="text-white/50 text-lg font-light max-w-3xl">
                             Registros visuais das certificações apresentadas no perfil profissional.
                         </p>
-                    </div>
-                    <div className="max-w-sm mx-auto mb-8">
-                        <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0D0F14]">
-                            <Image
-                                src="/about-profile.jpg"
-                                alt="Iule Miranda"
-                                fill
-                                className="object-cover object-top"
-                            />
-                        </div>
                     </div>
                     <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {certificationImages.map((img) => (
