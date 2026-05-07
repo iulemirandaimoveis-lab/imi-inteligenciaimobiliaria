@@ -276,6 +276,16 @@ export default async function AboutPage({
                             Registros visuais das certificações apresentadas no perfil profissional.
                         </p>
                     </div>
+                    <div className="max-w-sm mx-auto mb-8">
+                        <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0D0F14]">
+                            <Image
+                                src="/about-profile.jpg"
+                                alt="Iule Miranda"
+                                fill
+                                className="object-cover object-top"
+                            />
+                        </div>
+                    </div>
                     <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {certificationImages.map((img) => (
                             <div key={img.src} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0D0F14]">

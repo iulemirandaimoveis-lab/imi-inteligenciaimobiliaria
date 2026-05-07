@@ -90,7 +90,7 @@ export default function Footer() {
                                 alt="Brasão profissional Iule Miranda"
                                 width={180}
                                 height={180}
-                                style={{ width: 'clamp(96px, 15vw, 160px)', height: 'auto' }}
+                                style={{ width: 'clamp(88px, 12vw, 132px)', height: 'auto' }}
                             />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
