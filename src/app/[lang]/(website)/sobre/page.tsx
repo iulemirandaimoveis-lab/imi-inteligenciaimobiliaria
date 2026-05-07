@@ -255,23 +255,6 @@ export default async function AboutPage({
                                 Conectar no LinkedIn
                             </a>
 
-
-                            <div className="mt-10 rounded-2xl border border-[#C8A44A]/20 bg-[#C8A44A]/5 p-6">
-                                <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.2em] mb-5">
-                                    Certificações e Formação Complementar
-                                </p>
-                                <div className="space-y-4">
-                                    {certifications.map((cert) => (
-                                        <div key={cert.title} className="rounded-xl border border-white/10 bg-[#0D0F14]/60 p-4">
-                                            <p className="text-white text-sm font-semibold leading-snug">{cert.title}</p>
-                                            <p className="text-white/60 text-sm mt-1">{cert.institution}</p>
-                                            <p className="text-[#C8A44A] text-xs font-semibold uppercase tracking-[0.14em] mt-2">
-                                                {cert.hours} · {cert.year}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -296,7 +279,7 @@ export default async function AboutPage({
                     <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {certificationImages.map((img) => (
                             <div key={img.src} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0D0F14]">
-                                <Image src={img.src} alt={img.alt} fill className="object-cover" />
+                                <Image src={img.src} alt={img.alt} fill className="object-contain p-2" />
                             </div>
                         ))}
                     </div>
@@ -522,25 +505,3 @@ export default async function AboutPage({
         </main>
     )
 }
-const certifications = [
-    {
-        title: 'Curso de Extensão — Wealth Management, Family Office e Gestão de Recursos de Terceiros',
-        institution: 'PUCRS — Escola de Negócios',
-        year: '2020',
-        hours: '10 horas',
-    },
-    {
-        title: 'Ericksonian Hypnosis Training — Level I',
-        institution: 'ACT Institute (ABH, IHA, ASCH, ISH, NBCCH)',
-        year: '2017',
-        hours: '36 horas',
-    },
-    {
-        title: 'Avaliação de Imóveis e Perícias Judiciais',
-        institution: 'CRECI-PE — 7ª Região',
-        year: '2025',
-        hours: '24 horas',
-    },
-]
-
-

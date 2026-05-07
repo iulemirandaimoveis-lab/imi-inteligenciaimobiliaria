@@ -79,7 +79,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                     >
                         <div className="mb-6">
                             <Image
-                                src="/brasao-iule-miranda.png"
+                                src="/brasao-creci-iule1.png"
                                 alt="Brasão Iule Miranda"
                                 width={140}
                                 height={140}
