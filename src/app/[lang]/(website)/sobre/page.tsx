@@ -102,15 +102,15 @@ const SOCIAL = [
 
 const certificationImages = [
     {
-        src: '/about-cert-creci-pe.jpg',
+        src: '/certificado-cnai.jpg',
         alt: 'Certificado CRECI-PE de Avaliação de Imóveis e Perícias Judiciais',
     },
     {
-        src: '/about-cert-act.jpg',
+        src: '/certificado-act.jpg',
         alt: 'Certificado ACT Institute — Ericksonian Hypnosis Training Level I',
     },
     {
-        src: '/about-cert-pucrs.jpg',
+        src: '/Certificado-puc.jpg',
         alt: 'Certificado PUCRS de extensão em Wealth Management e Family Office',
     },
 ]
