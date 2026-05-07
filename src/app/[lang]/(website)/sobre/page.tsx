@@ -181,37 +181,26 @@ export default async function AboutPage({
             {/* ── FUNDADOR ──────────────────────────────────── */}
             <section className="py-16 md:py-24 border-b border-white/[0.05]">
                 <div className="container-custom">
-                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                        {/* Photo */}
-                        <div className="relative rounded-2xl overflow-hidden border border-white/[0.05] max-w-sm mx-auto lg:max-w-none bg-[#0D0F14]">
-                            <Image
-                                src="/about-profile.jpg"
-                                alt="Iule Miranda"
-                                width={800}
-                                height={1000}
-                                priority
-                                className="w-full h-auto object-cover object-top"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/60 via-transparent to-transparent" />
-                            <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4">
-                                <p className="text-white font-bold text-sm">Iule Miranda</p>
-                                <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
-                                    CRECI 17933 · CNAI 53290 · Perito Judicial
-                                </p>
-                            </div>
-                        </div>
-
+                    <div className="max-w-4xl">
                         {/* Bio */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
                                 <div className="w-8 h-px bg-[#C8A44A]" />
                                 <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Identidade Profissional</span>
                             </div>
-                            <h2
-                                className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white mb-3"
-                            >
-                                Iule Miranda
-                            </h2>
+                            <div className="flex items-center gap-4 mb-3">
+                                <Image
+                                    src="/about-profile.jpg"
+                                    alt="Iule Miranda"
+                                    width={80}
+                                    height={80}
+                                    priority
+                                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover object-top border border-white/10"
+                                />
+                                <h2 className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white">
+                                    Iule Miranda
+                                </h2>
+                            </div>
                             <p className="text-[#C8A44A] text-sm font-bold uppercase tracking-[0.15em] mb-6">
                                 Avaliador Imobiliário · Analista de Mercado · Estrategista em Inteligência Imobiliária
                             </p>
