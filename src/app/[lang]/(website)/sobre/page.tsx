@@ -122,7 +122,7 @@ const EBOOKS = [
         description: 'Tudo que você precisa saber sobre avaliações técnicas: metodologia, laudos, normas e como interpretar resultados.',
         slug: 'guia-avaliacao-nbr-14653',
         amazonUrl: null,
-        coverImage: '/images/books/guia-avaliacao-imobiliaria-nbr-14653.png',
+        coverImage: '/Guia Completo de Avaliação Imobiliária NBR 14653.png',
     },
     {
         title: 'Investindo em Dubai: Oportunidades para o Investidor Brasileiro',
@@ -130,7 +130,7 @@ const EBOOKS = [
         description: 'Como estruturar seu investimento imobiliário nos Emirados Árabes Unidos com segurança jurídica e rentabilidade.',
         slug: 'investindo-dubai-investidor-brasileiro',
         amazonUrl: null,
-        coverImage: '/images/books/investindo-em-dubai.png',
+        coverImage: '/Investindo em Dubai.png',
     },
     {
         title: 'Mercado Imobiliário de Alto Padrão: Recife e João Pessoa',
@@ -138,7 +138,7 @@ const EBOOKS = [
         description: 'Relatório completo de tendências, preços por bairro, oportunidades e perspectivas para o Nordeste.',
         slug: 'mercado-alto-padrao-recife-joao-pessoa',
         amazonUrl: null,
-        coverImage: '/images/books/mercado-imobiliario-recife-joao-pessoa.png',
+        coverImage: '/Mercado Imobiliário de Alto Padrão.png',
     },
 ]
 
