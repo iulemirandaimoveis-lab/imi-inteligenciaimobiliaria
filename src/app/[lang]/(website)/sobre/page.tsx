@@ -4,7 +4,7 @@ import Link from 'next/link'
 import {
     Target, Shield, Globe, TrendingUp,
     Linkedin, MessageCircle, Youtube, Instagram,
-    BookOpen, ExternalLink, ArrowRight,
+    ExternalLink, ArrowRight,
 } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -122,6 +122,7 @@ const EBOOKS = [
         description: 'Tudo que você precisa saber sobre avaliações técnicas: metodologia, laudos, normas e como interpretar resultados.',
         slug: 'guia-avaliacao-nbr-14653',
         amazonUrl: null,
+        coverImage: '/books-capas/Guia Completo de Avaliação Imobiliária NBR 14653.png',
     },
     {
         title: 'Investindo em Dubai: Oportunidades para o Investidor Brasileiro',
@@ -129,6 +130,7 @@ const EBOOKS = [
         description: 'Como estruturar seu investimento imobiliário nos Emirados Árabes Unidos com segurança jurídica e rentabilidade.',
         slug: 'investindo-dubai-investidor-brasileiro',
         amazonUrl: null,
+        coverImage: '/books-capas/Investindo em Dubai.png',
     },
     {
         title: 'Mercado Imobiliário de Alto Padrão: Recife e João Pessoa',
@@ -136,6 +138,7 @@ const EBOOKS = [
         description: 'Relatório completo de tendências, preços por bairro, oportunidades e perspectivas para o Nordeste.',
         slug: 'mercado-alto-padrao-recife-joao-pessoa',
         amazonUrl: null,
+        coverImage: '/books-capas/Mercado Imobiliário de Alto Padrão.png',
     },
 ]
 
@@ -184,11 +187,13 @@ export default async function AboutPage({
                     <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                         {/* Photo */}
                         <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.05] max-w-sm mx-auto lg:max-w-none bg-[#0D0F14]">
-                            <img
+                            <Image
                                 src="/about-profile.jpg"
                                 alt="Iule Miranda"
-                                className="absolute inset-0 h-full w-full object-cover object-top"
-                                loading="eager"
+                                fill
+                                priority
+                                className="object-cover object-top"
+                                sizes="(max-width: 1024px) 100vw, 50vw"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/60 via-transparent to-transparent" />
                             <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4">
@@ -427,12 +432,15 @@ export default async function AboutPage({
                                 key={book.slug}
                                 className="group bg-navy-950 border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] flex flex-col"
                             >
-                                <div className="relative aspect-[3/2] bg-gradient-to-br from-[#1A1E2A] to-[#0D1117] flex items-center justify-center border-b border-white/[0.05]">
-                                    <div className="text-center p-6">
-                                        <BookOpen className="w-10 h-10 text-[#C8A44A] mx-auto mb-3" strokeWidth={1} />
-                                        <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em]">E-book IMI</p>
-                                    </div>
-                                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+                                <div className="relative aspect-[3/2] bg-[#0D1117] border-b border-white/[0.05] overflow-hidden">
+                                    <Image
+                                        src={book.coverImage}
+                                        alt={`Capa do livro ${book.title}`}
+                                        fill
+                                        className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0D1117]/35 to-transparent" />
                                 </div>
                                 <div className="p-6 flex flex-col flex-1">
                                     <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{book.subtitle}</p>
