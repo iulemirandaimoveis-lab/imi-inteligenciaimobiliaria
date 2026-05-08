@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, ArrowRight, ShoppingCart, Clock, Filter, MessageCircle } from 'lucide-react'
@@ -242,6 +242,8 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
     const hasBookContent = bookSlugs.includes(ebook.slug)
     const pilarColor = ebook.pilar ? PILAR_COLORS[ebook.pilar] : null
     const pilarLabel = ebook.pilar ? PILAR_LABELS[ebook.pilar] : null
+    const fallbackCover = useMemo(() => `/books/covers/${ebook.slug}.webp`, [ebook.slug])
+    const [currentCover, setCurrentCover] = useState(ebook.cover_image || fallbackCover)
 
     return (
         <motion.div
@@ -267,13 +269,20 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
         >
             {/* Cover */}
             <div className="relative w-full aspect-[3/4] overflow-hidden" style={{ minHeight: 240 }}>
-                {ebook.cover_image ? (
+                {currentCover ? (
                     <Image
-                        src={ebook.cover_image}
+                        src={currentCover}
                         alt={ebook.title}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        onError={() => {
+                            if (currentCover !== fallbackCover) {
+                                setCurrentCover(fallbackCover)
+                                return
+                            }
+                            setCurrentCover('')
+                        }}
                     />
                 ) : (
                     <PlaceholderCover title={ebook.title} subtitle={ebook.subtitle} pilar={ebook.pilar} />
