@@ -184,12 +184,11 @@ export default async function AboutPage({
                     <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                         {/* Photo */}
                         <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.05] max-w-sm mx-auto lg:max-w-none bg-[#0D0F14]">
-                            <Image
+                            <img
                                 src="/about-profile.jpg"
                                 alt="Iule Miranda"
-                                fill
-                                className="object-cover object-top"
-                                priority
+                                className="absolute inset-0 h-full w-full object-cover object-top"
+                                loading="eager"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/60 via-transparent to-transparent" />
                             <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4">
