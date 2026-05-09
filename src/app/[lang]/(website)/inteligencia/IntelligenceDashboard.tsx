@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { useLocationFilters } from '@/hooks/useLocationFilters'
 import { TrendingUp, TrendingDown, Building2, RefreshCw } from 'lucide-react'
 import PriceHeatmap from '@/components/intelligence/PriceHeatmap'
+import { LocationSearchPanel } from '@/components/intelligence/LocationSearchPanel'
 import { BRAZIL_FALLBACK_CITIES } from './brazilIntelligenceFallback'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -115,10 +115,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
     const [loading, setLoading] = useState(true)
     const [refreshing, setRefreshing] = useState(false)
     const [expandedId, setExpandedId] = useState<string | null>(null)
-
-    const selectedState = useMemo(() => ALL_CITIES.find((city) => city.key === selectedCity)?.state, [selectedCity])
-    const selectedCitySlug = useMemo(() => selectedCity.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-'), [selectedCity])
-    const { states, municipalities, neighborhoods: availableNeighborhoods, query, setQuery } = useLocationFilters(selectedState, selectedCitySlug)
+    const [selectedNeighborhood, setSelectedNeighborhood] = useState('')
 
 
     const fetchCity = useCallback(async (city: string) => {
@@ -148,19 +145,27 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
     }, [fetchCity, selectedCity])
 
     useEffect(() => { fetchCity(selectedCity) }, [selectedCity, fetchCity])
+    const displayedNeighborhoods = useMemo(
+        () => (selectedNeighborhood
+            ? neighborhoods.filter((n) => n.neighborhood.toLowerCase().includes(selectedNeighborhood.toLowerCase()))
+            : neighborhoods),
+        [neighborhoods, selectedNeighborhood],
+    )
 
-    const validPrices = neighborhoods.filter((n: NeighborhoodData) => n.median_price_sqm != null)
+    const validPrices = displayedNeighborhoods.filter((n: NeighborhoodData) => n.median_price_sqm != null)
     const cityAvgPrice = validPrices.length > 0
         ? Math.round(validPrices.reduce((s: number, n: NeighborhoodData) => s + Number(n.median_price_sqm), 0) / validPrices.length)
         : null
 
-    const bestYield = neighborhoods
+    const bestYield = displayedNeighborhoods
         .filter((n: NeighborhoodData) => n.avg_rental_yield != null)
         .sort((a: NeighborhoodData, b: NeighborhoodData) => Number(b.avg_rental_yield) - Number(a.avg_rental_yield))[0] ?? null
 
-    const fastestSelling = neighborhoods
+    const fastestSelling = displayedNeighborhoods
         .filter((n: NeighborhoodData) => n.avg_days_on_market != null)
         .sort((a: NeighborhoodData, b: NeighborhoodData) => Number(a.avg_days_on_market) - Number(b.avg_days_on_market))[0] ?? null
+
+    const currentMunicipality = ALL_CITIES.find((city) => city.key === selectedCity)
 
     const currentGeo = GEO.find(g => g.countries.some(c => c.cities.some(ci => ci.key === selectedCity)))
     const currentCountry = currentGeo?.countries.find(c => c.cities.some(ci => ci.key === selectedCity))
@@ -201,45 +206,29 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                         <span>{currentGeo?.continent}</span>
                         <span className="opacity-40">/</span>
                         <span>{currentCountry?.flag} {currentCountry?.name}</span>
-                        {currentCityObj?.state && <>
+                        {currentMunicipality?.state && <>
                             <span className="opacity-40">/</span>
-                            <span>{currentCityObj.state}</span>
+                            <span>{currentMunicipality.state}</span>
                         </>}
                         <span className="opacity-40">/</span>
-                        <span>{currentCityObj?.state ?? 'BR'}</span>
-                        <span className="opacity-40">/</span>
-                        <span className="text-[#C8A44A]">{currentCityObj?.name}</span>
+                        <span>{currentMunicipality?.name}</span>
+                        {selectedNeighborhood && <>
+                            <span className="opacity-40">/</span>
+                            <span className="text-[#C8A44A]">{selectedNeighborhood}</span>
+                        </>}
                     </div>
                 </div>
-                {/* City tabs */}
                 <div className="container-custom pt-2">
-                    <input
-                        value={query}
-                        onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Buscar estado, município ou bairro"
-                        className="w-full h-9 rounded-lg bg-[#0B1928] border border-white/[0.06] px-3 text-xs text-white placeholder:text-[#556170] outline-none"
-                    />
-                    <p className="mt-1 text-[10px] text-[#556170]">{states.length} estados · {municipalities.length} municípios · {availableNeighborhoods.length} bairros</p>
-                </div>
-                <div className="container-custom py-2">
                     <div className="flex items-center gap-2">
-                        <div className="flex overflow-x-auto gap-1 scrollbar-hide -mx-1 px-1 flex-1 min-w-0">
-                            {ALL_CITIES.map((city) => (
-                                <button
-                                    key={city.key}
-                                    onClick={() => {
-                                        setSelectedCity(city.key)
-                                        router.replace(`/${lang}/inteligencia/brasil/${city.state.toLowerCase()}/${city.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
-                                    }}
-                                    className={`shrink-0 px-3 sm:px-4 py-2 rounded-lg text-[11px] sm:text-xs font-bold uppercase tracking-[0.08em] transition-all duration-200 ${
-                                        selectedCity === city.key
-                                            ? 'bg-[#C8A44A] text-[#060D16] shadow-lg shadow-[#C8A44A]/20'
-                                            : 'bg-[#0B1928] text-[#556170] hover:text-white hover:bg-[#142438] border border-white/[0.05]'
-                                    }`}
-                                >
-                                    {city.name}
-                                </button>
-                            ))}
+                        <div className="flex-1">
+                            <LocationSearchPanel
+                                onMunicipalitySelect={(municipalityName, stateUf) => {
+                                    setSelectedCity(municipalityName)
+                                    setSelectedNeighborhood('')
+                                    router.replace(`/${lang}/inteligencia/brasil/${stateUf.toLowerCase()}/${municipalityName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
+                                }}
+                                onNeighborhoodSelect={setSelectedNeighborhood}
+                            />
                         </div>
                         <button
                             onClick={handleRefresh}
@@ -294,11 +283,11 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                                 <NeighborhoodCardSkeleton key={i} index={i} />
                             ))}
                         </div>
-                    ) : neighborhoods.length === 0 ? (
+                    ) : displayedNeighborhoods.length === 0 ? (
                         <EmptyState city={currentCityObj?.name ?? selectedCity} />
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {neighborhoods.map((n, i) => (
+                            {displayedNeighborhoods.map((n, i) => (
                                 <NeighborhoodCard
                                     key={n.id}
                                     data={n}

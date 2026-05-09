@@ -36,6 +36,10 @@ export function useIntelligenceLocationSearch() {
   const states = useMemo(() => statesRequest.data?.states ?? [], [statesRequest.data])
   const municipalities = useMemo(() => municipalitiesRequest.data?.municipalities ?? [], [municipalitiesRequest.data])
   const neighborhoods = useMemo(() => neighborhoodsRequest.data?.neighborhoods ?? [], [neighborhoodsRequest.data])
+  const selectedMunicipality = useMemo(
+    () => municipalities.find((municipality) => municipality.id === municipalityId) ?? null,
+    [municipalities, municipalityId],
+  )
 
   return {
     stateUf,
@@ -45,6 +49,7 @@ export function useIntelligenceLocationSearch() {
     states,
     municipalities,
     neighborhoods,
+    selectedMunicipality,
     isLoading: statesRequest.isLoading || municipalitiesRequest.isLoading || neighborhoodsRequest.isLoading,
     error: statesRequest.error || municipalitiesRequest.error || neighborhoodsRequest.error,
   }
