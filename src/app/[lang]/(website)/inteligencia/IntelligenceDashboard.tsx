@@ -110,27 +110,43 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
     const initialState = initialLocation[1]?.toUpperCase()
     const initialCitySlug = initialLocation[2]
     const initialCity = ALL_CITIES.find((city) => city.state.toLowerCase() === (initialState ?? '').toLowerCase() && city.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-') === initialCitySlug)?.key ?? ALL_CITIES[0].key
-    const [selectedCity, setSelectedCity] = useState(initialCity)
+    const [selectedLocation, setSelectedLocation] = useState({ state: initialState ?? '', municipality: initialCity, neighborhood: '' })
     const [neighborhoods, setNeighborhoods] = useState<NeighborhoodData[]>([])
-    const [loading, setLoading] = useState(true)
+    const [dataState, setDataState] = useState<'idle' | 'loading' | 'ready' | 'empty' | 'error'>('idle')
+    const [dataSource, setDataSource] = useState<'api' | 'fallback' | 'none'>('none')
     const [refreshing, setRefreshing] = useState(false)
     const [expandedId, setExpandedId] = useState<string | null>(null)
-    const [selectedNeighborhood, setSelectedNeighborhood] = useState('')
-
+    const selectedCity = selectedLocation.municipality
 
     const fetchCity = useCallback(async (city: string) => {
-        setLoading(true)
+        setDataState('loading')
         setExpandedId(null)
         try {
             const res = await fetch(`/api/intelligence/neighborhood?city=${encodeURIComponent(city)}`)
-            if (!res.ok) { setNeighborhoods(toFallbackNeighborhoods(city)); return }
+            if (!res.ok) {
+                const fallback = toFallbackNeighborhoods(city)
+                setNeighborhoods(fallback)
+                setDataSource(fallback.length > 0 ? 'fallback' : 'none')
+                setDataState(fallback.length > 0 ? 'ready' : 'empty')
+                return
+            }
             const json = await res.json()
             const apiNeighborhoods = json.neighborhoods || []
-            setNeighborhoods(apiNeighborhoods.length > 0 ? apiNeighborhoods : toFallbackNeighborhoods(city))
+            if (apiNeighborhoods.length > 0) {
+                setNeighborhoods(apiNeighborhoods)
+                setDataSource('api')
+                setDataState('ready')
+                return
+            }
+            const fallback = toFallbackNeighborhoods(city)
+            setNeighborhoods(fallback)
+            setDataSource(fallback.length > 0 ? 'fallback' : 'none')
+            setDataState(fallback.length > 0 ? 'ready' : 'empty')
         } catch {
-            setNeighborhoods(toFallbackNeighborhoods(city))
-        } finally {
-            setLoading(false)
+            const fallback = toFallbackNeighborhoods(city)
+            setNeighborhoods(fallback)
+            setDataSource(fallback.length > 0 ? 'fallback' : 'none')
+            setDataState(fallback.length > 0 ? 'ready' : 'error')
         }
     }, [])
 
@@ -146,10 +162,10 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
 
     useEffect(() => { fetchCity(selectedCity) }, [selectedCity, fetchCity])
     const displayedNeighborhoods = useMemo(
-        () => (selectedNeighborhood
-            ? neighborhoods.filter((n) => n.neighborhood.toLowerCase().includes(selectedNeighborhood.toLowerCase()))
+        () => (selectedLocation.neighborhood
+            ? neighborhoods.filter((n) => n.neighborhood.toLowerCase().includes(selectedLocation.neighborhood.toLowerCase()))
             : neighborhoods),
-        [neighborhoods, selectedNeighborhood],
+        [neighborhoods, selectedLocation.neighborhood],
     )
 
     const validPrices = displayedNeighborhoods.filter((n: NeighborhoodData) => n.median_price_sqm != null)
@@ -212,9 +228,9 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                         </>}
                         <span className="opacity-40">/</span>
                         <span>{currentMunicipality?.name}</span>
-                        {selectedNeighborhood && <>
+                        {selectedLocation.neighborhood && <>
                             <span className="opacity-40">/</span>
-                            <span className="text-[#C8A44A]">{selectedNeighborhood}</span>
+                            <span className="text-[#C8A44A]">{selectedLocation.neighborhood}</span>
                         </>}
                     </div>
                 </div>
@@ -222,12 +238,16 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                     <div className="flex items-center gap-2">
                         <div className="flex-1">
                             <LocationSearchPanel
+                                onStateSelect={(stateUf) => {
+                                    setSelectedLocation((prev) => ({ ...prev, state: stateUf, neighborhood: '' }))
+                                }}
                                 onMunicipalitySelect={(municipalityName, stateUf) => {
-                                    setSelectedCity(municipalityName)
-                                    setSelectedNeighborhood('')
+                                    setSelectedLocation({ state: stateUf, municipality: municipalityName, neighborhood: '' })
                                     router.replace(`/${lang}/inteligencia/brasil/${stateUf.toLowerCase()}/${municipalityName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
                                 }}
-                                onNeighborhoodSelect={setSelectedNeighborhood}
+                                onNeighborhoodSelect={(neighborhoodName) => {
+                                    setSelectedLocation((prev) => ({ ...prev, neighborhood: neighborhoodName }))
+                                }}
                             />
                         </div>
                         <button
@@ -247,19 +267,19 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                     <div className="grid grid-cols-3 gap-2 md:gap-4">
                         <CompactMetric
                             label="Preço médio/m²"
-                            value={loading ? null : formatCurrency(cityAvgPrice)}
-                            loading={loading}
+                            value={dataState === 'loading' ? null : formatCurrency(cityAvgPrice)}
+                            loading={dataState === 'loading'}
                         />
                         <CompactMetric
                             label={`Melhor yield${bestYield ? ` · ${bestYield.neighborhood}` : ''}`}
-                            value={loading || !bestYield ? null : `${Number(bestYield.avg_rental_yield).toFixed(1)}% a.a.`}
-                            loading={loading}
+                            value={dataState === 'loading' || !bestYield ? null : `${Number(bestYield.avg_rental_yield).toFixed(1)}% a.a.`}
+                            loading={dataState === 'loading'}
                             highlight
                         />
                         <CompactMetric
                             label={`Venda mais rápida${fastestSelling ? ` · ${fastestSelling.neighborhood}` : ''}`}
-                            value={loading || !fastestSelling ? null : `${fastestSelling.avg_days_on_market}d`}
-                            loading={loading}
+                            value={dataState === 'loading' || !fastestSelling ? null : `${fastestSelling.avg_days_on_market}d`}
+                            loading={dataState === 'loading'}
                         />
                     </div>
                 </div>
@@ -277,13 +297,16 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                         <span className="text-[#C8A44A] italic">{currentCityObj?.name ?? selectedCity}</span>
                     </h2>
 
-                    {loading ? (
+                    <p className="text-xs text-[#94A0B2] mb-4">
+                        {dataSource === 'api' ? 'Dados atualizados' : dataSource === 'fallback' ? 'Estimativa IMI' : 'Dados em expansão para esta região.'}
+                    </p>
+                    {dataState === 'loading' ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {Array.from({ length: 6 }).map((_, i) => (
                                 <NeighborhoodCardSkeleton key={i} index={i} />
                             ))}
                         </div>
-                    ) : displayedNeighborhoods.length === 0 ? (
+                    ) : displayedNeighborhoods.length === 0 || dataState === 'empty' || dataState === 'error' ? (
                         <EmptyState city={currentCityObj?.name ?? selectedCity} />
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -299,12 +322,15 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                             ))}
                         </div>
                     )}
+                    <p className="text-xs text-[#556170] mt-5">
+                        Use estes números como referência inicial. Consulte um especialista IMI para análise personalizada.
+                    </p>
                 </div>
             </section>
 
             {/* ─── PRICE HEATMAP ────────────────────────────────────────── */}
             <div className="border-t border-white/[0.05]">
-                <PriceHeatmap neighborhoods={neighborhoods} cityAvgPrice={cityAvgPrice} loading={loading} />
+                <PriceHeatmap neighborhoods={neighborhoods} cityAvgPrice={cityAvgPrice} loading={dataState === 'loading'} />
             </div>
 
             {/* ─── CTA ──────────────────────────────────────────────────── */}
@@ -395,9 +421,9 @@ function NeighborhoodCard({ data, cityAvgPrice, index, expanded, onToggle }: {
 
                 <div className="grid grid-cols-3 gap-1.5">
                     {[
-                        { label: 'Caminhab.', value: data.walkability_score != null ? `${data.walkability_score}` : '--' },
-                        { label: 'Segurança', value: data.safety_score != null ? `${data.safety_score}` : '--' },
-                        { label: 'Yield', value: data.avg_rental_yield != null ? `${Number(data.avg_rental_yield).toFixed(1)}%` : '--' },
+                        { label: 'Rentab. estimada', value: data.avg_rental_yield != null ? `${Number(data.avg_rental_yield).toFixed(1)}%` : '--' },
+                        { label: 'Liquidez', value: data.absorption_rate != null ? `${Number(data.absorption_rate).toFixed(1)}%` : '--' },
+                        { label: 'Valorização 12m', value: data.price_trend_12m != null ? formatPercent(Number(data.price_trend_12m)) : '--' },
                     ].map(({ label, value }) => (
                         <div key={label} className="bg-[#060D16] rounded-lg p-2 text-center">
                             <div className="text-xs font-bold text-white">{value}</div>
@@ -411,8 +437,8 @@ function NeighborhoodCard({ data, cityAvgPrice, index, expanded, onToggle }: {
                 <div className="px-4 pb-4 pt-2 border-t border-white/[0.05]">
                     <div className="grid grid-cols-2 gap-2.5">
                         {[
-                            { label: 'Estoque', value: data.inventory_count != null ? `${data.inventory_count} imóveis` : '--' },
-                            { label: 'Tempo venda', value: data.avg_days_on_market != null ? `${data.avg_days_on_market} dias` : '--' },
+                            { label: 'Estoque disponível', value: data.inventory_count != null ? `${data.inventory_count} imóveis` : '--' },
+                            { label: 'Tempo médio de venda', value: data.avg_days_on_market != null ? `${data.avg_days_on_market} dias` : '--' },
                             { label: 'Absorção/mês', value: data.absorption_rate != null ? `${Number(data.absorption_rate).toFixed(1)}%` : '--' },
                             { label: 'Vacância', value: data.vacancy_rate != null ? `${Number(data.vacancy_rate).toFixed(1)}%` : '--' },
                             { label: 'Aluguel/m²', value: data.avg_monthly_rent_sqm != null ? formatCurrency(Number(data.avg_monthly_rent_sqm)) : '--' },
