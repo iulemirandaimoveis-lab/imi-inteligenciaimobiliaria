@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useIntelligenceLocationSearch } from '@/hooks/useIntelligenceLocationSearch'
 
 interface LocationSearchPanelProps {
+  onStateSelect?: (stateUf: string) => void
   onMunicipalitySelect?: (municipalityName: string, stateUf: string) => void
   onNeighborhoodSelect?: (neighborhoodName: string) => void
 }
@@ -14,7 +15,7 @@ const locationTypeLabel: Record<'state' | 'municipality' | 'neighborhood', strin
   neighborhood: 'Bairro',
 }
 
-export function LocationSearchPanel({ onMunicipalitySelect, onNeighborhoodSelect }: LocationSearchPanelProps) {
+export function LocationSearchPanel({ onStateSelect, onMunicipalitySelect, onNeighborhoodSelect }: LocationSearchPanelProps) {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('')
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const {
@@ -73,6 +74,18 @@ export function LocationSearchPanel({ onMunicipalitySelect, onNeighborhoodSelect
                 className="block w-full rounded px-3 py-2 text-left hover:bg-muted"
                 onClick={() => {
                   selectSuggestion(suggestion)
+                  if (suggestion.type === 'state' && suggestion.stateUf) {
+                    onStateSelect?.(suggestion.stateUf)
+                    onNeighborhoodSelect?.('')
+                  }
+                  if (suggestion.type === 'municipality' && suggestion.stateUf) {
+                    onMunicipalitySelect?.(suggestion.name, suggestion.stateUf)
+                    onNeighborhoodSelect?.('')
+                  }
+                  if (suggestion.type === 'neighborhood' && suggestion.stateUf && suggestion.municipalityName) {
+                    onMunicipalitySelect?.(suggestion.municipalityName, suggestion.stateUf)
+                    onNeighborhoodSelect?.(suggestion.name)
+                  }
                   setIsSuggestionsOpen(false)
                 }}
               >
@@ -92,6 +105,7 @@ export function LocationSearchPanel({ onMunicipalitySelect, onNeighborhoodSelect
             setStateUf(event.target.value)
             setMunicipalityId(null)
             setSelectedNeighborhood('')
+            onStateSelect?.(event.target.value)
             onNeighborhoodSelect?.('')
           }}
           className="rounded-md border px-3 py-2"
