@@ -33,34 +33,7 @@ interface NeighborhoodData {
     updated_at: string
 }
 
-// ─── Geo hierarchy ────────────────────────────────────────────────────────────
-
-const BRAZIL_CITIES = BRAZIL_FALLBACK_CITIES.map((c) => ({ name: c.city, key: c.city, state: c.state }))
-
-const GEO = [
-    {
-        continent: 'América do Sul',
-        countries: [
-            {
-                name: 'Brasil', flag: '🇧🇷', cities: [
-                    ...BRAZIL_CITIES,
-                ],
-            },
-        ],
-    },
-    {
-        continent: 'Oriente Médio',
-        countries: [
-            {
-                name: 'Emirados Árabes', flag: '🇦🇪', cities: [
-                    { name: 'Dubai', key: 'Dubai', state: '' },
-                ],
-            },
-        ],
-    },
-]
-
-const ALL_CITIES = GEO.flatMap(g => g.countries.flatMap(c => c.cities))
+const DEFAULT_CITY = BRAZIL_FALLBACK_CITIES[0]
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -109,8 +82,9 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
     const router = useRouter()
     const initialState = initialLocation[1]?.toUpperCase()
     const initialCitySlug = initialLocation[2]
-    const initialCity = ALL_CITIES.find((city) => city.state.toLowerCase() === (initialState ?? '').toLowerCase() && city.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-') === initialCitySlug)?.key ?? ALL_CITIES[0].key
-    const [selectedCity, setSelectedCity] = useState(initialCity)
+    const initialMunicipality = BRAZIL_FALLBACK_CITIES.find((city) => city.state.toLowerCase() === (initialState ?? '').toLowerCase() && city.city.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-') === initialCitySlug) ?? DEFAULT_CITY
+    const [selectedCity, setSelectedCity] = useState(initialMunicipality.city)
+    const [selectedState, setSelectedState] = useState(initialMunicipality.state)
     const [neighborhoods, setNeighborhoods] = useState<NeighborhoodData[]>([])
     const [loading, setLoading] = useState(true)
     const [refreshing, setRefreshing] = useState(false)
@@ -165,11 +139,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
         .filter((n: NeighborhoodData) => n.avg_days_on_market != null)
         .sort((a: NeighborhoodData, b: NeighborhoodData) => Number(a.avg_days_on_market) - Number(b.avg_days_on_market))[0] ?? null
 
-    const currentMunicipality = ALL_CITIES.find((city) => city.key === selectedCity)
-
-    const currentGeo = GEO.find(g => g.countries.some(c => c.cities.some(ci => ci.key === selectedCity)))
-    const currentCountry = currentGeo?.countries.find(c => c.cities.some(ci => ci.key === selectedCity))
-    const currentCityObj = currentCountry?.cities.find(ci => ci.key === selectedCity)
+    const currentMunicipality = BRAZIL_FALLBACK_CITIES.find((city) => city.city === selectedCity)
 
     return (
         <main className="bg-[#060D16] min-h-screen">
@@ -196,22 +166,18 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                 </div>
             </section>
 
-            {/* ─── GEO BREADCRUMB + CITY TABS ───────────────────────────── */}
+            {/* ─── GEO BREADCRUMB + SEARCH ───────────────────────────── */}
             <div className="sticky top-0 z-30 bg-[#060D16]/95 backdrop-blur-md border-b border-white/[0.05]">
                 {/* Geo breadcrumb */}
                 <div className="container-custom pt-2.5 pb-0">
                     <div className="flex items-center gap-1.5 text-[10px] text-[#556170] font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
                         <span>Global</span>
                         <span className="opacity-40">/</span>
-                        <span>{currentGeo?.continent}</span>
+                        <span>Brasil</span>
                         <span className="opacity-40">/</span>
-                        <span>{currentCountry?.flag} {currentCountry?.name}</span>
-                        {currentMunicipality?.state && <>
-                            <span className="opacity-40">/</span>
-                            <span>{currentMunicipality.state}</span>
-                        </>}
+                        <span>{selectedState || currentMunicipality?.state}</span>
                         <span className="opacity-40">/</span>
-                        <span>{currentMunicipality?.name}</span>
+                        <span>{selectedCity}</span>
                         {selectedNeighborhood && <>
                             <span className="opacity-40">/</span>
                             <span className="text-[#C8A44A]">{selectedNeighborhood}</span>
@@ -224,6 +190,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                             <LocationSearchPanel
                                 onMunicipalitySelect={(municipalityName, stateUf) => {
                                     setSelectedCity(municipalityName)
+                                    setSelectedState(stateUf)
                                     setSelectedNeighborhood('')
                                     router.replace(`/${lang}/inteligencia/brasil/${stateUf.toLowerCase()}/${municipalityName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
                                 }}
@@ -274,7 +241,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                     </div>
                     <h2 className="font-display text-xl sm:text-2xl font-bold text-white mb-6">
                         Panorama em{' '}
-                        <span className="text-[#C8A44A] italic">{currentCityObj?.name ?? selectedCity}</span>
+                        <span className="text-[#C8A44A] italic">{selectedCity}</span>
                     </h2>
 
                     {loading ? (
@@ -284,7 +251,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                             ))}
                         </div>
                     ) : displayedNeighborhoods.length === 0 ? (
-                        <EmptyState city={currentCityObj?.name ?? selectedCity} />
+                        <EmptyState city={selectedCity} />
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {displayedNeighborhoods.map((n, i) => (
