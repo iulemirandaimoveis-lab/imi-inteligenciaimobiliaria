@@ -28,6 +28,13 @@ export const getMunicipalitiesByUf = cache(async (uf: string): Promise<Intellige
   })).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
 })
 
+export const getMunicipalityNameByIbgeCode = cache(async (ibgeCode: number): Promise<string | null> => {
+  const response = await fetch(`${BASE}/municipios/${ibgeCode}`, { next: { revalidate: 60 * 60 * 24 * 30 } })
+  if (!response.ok) return null
+  const data = await response.json() as { nome?: string }
+  return data.nome ?? null
+})
+
 export const getNeighborhoodsByMunicipality = (municipalityName: string, municipalityIbgeCode: number): IntelligenceNeighborhood[] => {
   const city = BRAZIL_FALLBACK_CITIES.find((item) => slugify(item.city) === slugify(municipalityName))
   if (!city) return []

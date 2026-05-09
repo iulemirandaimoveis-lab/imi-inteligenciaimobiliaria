@@ -29,7 +29,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
   const [refreshing, setRefreshing] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
-  const { states, municipalities, neighborhoods: realNeighborhoods, municipalityQuery, setMunicipalityQuery } = useIntelligenceLocationFilters(selectedState, selectedMunicipality?.ibgeCode, selectedMunicipality?.name)
+  const { states, municipalities, neighborhoods: realNeighborhoods, municipalityQuery, setMunicipalityQuery } = useIntelligenceLocationFilters(selectedState, selectedMunicipality?.ibgeCode)
 
   useEffect(() => {
     if (!selectedState || municipalities.length === 0) return

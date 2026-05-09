@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getMunicipalitiesByUf, getNeighborhoodsByMunicipality, getStates } from '@/services/intelligence-locations'
+import { getMunicipalitiesByUf, getMunicipalityNameByIbgeCode, getNeighborhoodsByMunicipality, getStates } from '@/services/intelligence-locations'
 
 export async function GET(request: NextRequest) {
   const uf = request.nextUrl.searchParams.get('uf')
   const municipalityIbgeCode = request.nextUrl.searchParams.get('municipalityIbgeCode')
-  const municipalityName = request.nextUrl.searchParams.get('municipalityName')
 
   try {
-    if (municipalityIbgeCode && municipalityName) {
+    if (municipalityIbgeCode) {
+      const municipalityName = await getMunicipalityNameByIbgeCode(Number(municipalityIbgeCode))
+      if (!municipalityName) return NextResponse.json([])
       return NextResponse.json(getNeighborhoodsByMunicipality(municipalityName, Number(municipalityIbgeCode)))
     }
     if (uf) return NextResponse.json(await getMunicipalitiesByUf(uf))

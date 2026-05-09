@@ -10,11 +10,11 @@ const fetcher = async <T,>(url: string): Promise<T> => {
   return res.json() as Promise<T>
 }
 
-export function useIntelligenceLocationFilters(selectedUf?: string, municipalityIbgeCode?: number, municipalityName?: string) {
+export function useIntelligenceLocationFilters(selectedUf?: string, municipalityIbgeCode?: number) {
   const [municipalityQuery, setMunicipalityQuery] = useState('')
   const states = useSWR<IntelligenceState[]>('/api/intelligence/locations', fetcher)
   const municipalities = useSWR<IntelligenceMunicipality[]>(selectedUf ? `/api/intelligence/locations?uf=${selectedUf}` : null, fetcher)
-  const neighborhoods = useSWR<IntelligenceNeighborhood[]>(municipalityIbgeCode && municipalityName ? `/api/intelligence/locations?municipalityIbgeCode=${municipalityIbgeCode}&municipalityName=${encodeURIComponent(municipalityName)}` : null, fetcher)
+  const neighborhoods = useSWR<IntelligenceNeighborhood[]>(municipalityIbgeCode ? `/api/intelligence/locations?municipalityIbgeCode=${municipalityIbgeCode}` : null, fetcher)
 
   const filteredMunicipalities = useMemo(() => {
     const list = municipalities.data ?? []
