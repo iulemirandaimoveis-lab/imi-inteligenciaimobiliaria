@@ -1,8 +1,15 @@
 'use client'
 
+import { useState } from 'react'
 import { useIntelligenceLocationSearch } from '@/hooks/useIntelligenceLocationSearch'
 
-export function LocationSearchPanel() {
+interface LocationSearchPanelProps {
+  onMunicipalitySelect?: (municipalityName: string, stateUf: string) => void
+  onNeighborhoodSelect?: (neighborhoodName: string) => void
+}
+
+export function LocationSearchPanel({ onMunicipalitySelect, onNeighborhoodSelect }: LocationSearchPanelProps) {
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState('')
   const {
     stateUf,
     setStateUf,
@@ -11,6 +18,7 @@ export function LocationSearchPanel() {
     states,
     municipalities,
     neighborhoods,
+    selectedMunicipality,
     isLoading,
   } = useIntelligenceLocationSearch()
 
@@ -22,6 +30,8 @@ export function LocationSearchPanel() {
           onChange={(event) => {
             setStateUf(event.target.value)
             setMunicipalityId(null)
+            setSelectedNeighborhood('')
+            onNeighborhoodSelect?.('')
           }}
           className="rounded-md border px-3 py-2"
         >
@@ -33,7 +43,15 @@ export function LocationSearchPanel() {
 
         <select
           value={municipalityId ?? ''}
-          onChange={(event) => setMunicipalityId(event.target.value ? Number(event.target.value) : null)}
+          onChange={(event) => {
+            const nextId = event.target.value ? Number(event.target.value) : null
+            setMunicipalityId(nextId)
+            const municipality = municipalities.find((item) => item.id === nextId)
+            if (municipality) {
+              setSelectedNeighborhood('')
+              onMunicipalitySelect?.(municipality.name, municipality.stateUf)
+            }
+          }}
           disabled={!stateUf}
           className="rounded-md border px-3 py-2"
         >
@@ -43,10 +61,18 @@ export function LocationSearchPanel() {
           ))}
         </select>
 
-        <select disabled className="rounded-md border px-3 py-2">
+        <select
+          value={selectedNeighborhood}
+          onChange={(event) => {
+            setSelectedNeighborhood(event.target.value)
+            onNeighborhoodSelect?.(event.target.value)
+          }}
+          disabled={!selectedMunicipality}
+          className="rounded-md border px-3 py-2"
+        >
           <option value="">Bairro</option>
           {neighborhoods.map((neighborhood) => (
-            <option key={neighborhood.id} value={neighborhood.id}>{neighborhood.name}</option>
+            <option key={neighborhood.id} value={neighborhood.name}>{neighborhood.name}</option>
           ))}
         </select>
       </div>
