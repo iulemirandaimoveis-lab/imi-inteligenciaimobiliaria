@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from 'react'
 import { TrendingUp, TrendingDown, Building2, RefreshCw } from 'lucide-react'
 import PriceHeatmap from '@/components/intelligence/PriceHeatmap'
 import SubsidySimulator from './SubsidySimulator'
-import { BRAZIL_FALLBACK_CITIES } from './brazilIntelligenceFallback'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -32,34 +31,13 @@ interface NeighborhoodData {
     updated_at: string
 }
 
-// ─── Geo hierarchy ────────────────────────────────────────────────────────────
-
-const BRAZIL_CITIES = BRAZIL_FALLBACK_CITIES.map((c) => ({ name: c.city, key: c.city, state: c.state }))
-
-const GEO = [
-    {
-        continent: 'América do Sul',
-        countries: [
-            {
-                name: 'Brasil', flag: '🇧🇷', cities: [
-                    ...BRAZIL_CITIES,
-                ],
-            },
-        ],
-    },
-    {
-        continent: 'Oriente Médio',
-        countries: [
-            {
-                name: 'Emirados Árabes', flag: '🇦🇪', cities: [
-                    { name: 'Dubai', key: 'Dubai', state: '' },
-                ],
-            },
-        ],
-    },
-]
-
-const ALL_CITIES = GEO.flatMap(g => g.countries.flatMap(c => c.cities))
+interface StateData { id: number; code: string; name: string }
+interface MunicipalityData { id: number; name: string; stateCode: string }
+interface BrazilIntelligenceData {
+    country: 'BR'
+    states: StateData[]
+    municipalitiesByState: Record<string, MunicipalityData[]>
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -73,76 +51,40 @@ function formatPercent(v: number | null): string {
     return `${v > 0 ? '+' : ''}${v.toFixed(1)}%`
 }
 
-function toFallbackNeighborhoods(city: string): NeighborhoodData[] {
-    const cityData = BRAZIL_FALLBACK_CITIES.find((item) => item.city === city)
-    if (!cityData) return []
-
-    return cityData.neighborhoods.map((item, index) => ({
-        id: `fallback-${cityData.state}-${cityData.city}-${index}`,
-        neighborhood: item.neighborhood,
-        city: cityData.city,
-        state: cityData.state,
-        median_price_sqm: item.median_price_sqm,
-        avg_price_sqm: item.median_price_sqm,
-        price_trend_12m: item.price_trend_12m,
-        price_trend_3m: Number((item.price_trend_12m / 4).toFixed(1)),
-        inventory_count: 40 + index * 8,
-        avg_days_on_market: item.avg_days_on_market,
-        absorption_rate: Number((14 - index * 1.5).toFixed(1)),
-        walkability_score: 58 + index * 7,
-        transit_score: 52 + index * 8,
-        safety_score: 60 + index * 6,
-        avg_rental_yield: item.avg_rental_yield,
-        avg_monthly_rent_sqm: Number((item.median_price_sqm * 0.0062).toFixed(2)),
-        vacancy_rate: Number((6.8 - index * 0.7).toFixed(1)),
-        new_launches_12m: 2 + index,
-        valorization_5y: Number((item.price_trend_12m * 3.1).toFixed(1)),
-        data_source: 'fallback_nacional_imi',
-        updated_at: new Date().toISOString(),
-    }))
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function IntelligenceDashboard({ lang }: { lang: string }) {
-    const [selectedCity, setSelectedCity] = useState(ALL_CITIES[0].key)
+    const [geoData, setGeoData] = useState<BrazilIntelligenceData>({ country: 'BR', states: [], municipalitiesByState: {} })
+    const [selectedState, setSelectedState] = useState('')
+    const [selectedMunicipalityId, setSelectedMunicipalityId] = useState('')
+    const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState('all')
     const [neighborhoods, setNeighborhoods] = useState<NeighborhoodData[]>([])
     const [loading, setLoading] = useState(true)
     const [refreshing, setRefreshing] = useState(false)
     const [expandedId, setExpandedId] = useState<string | null>(null)
-    const [usingFallback, setUsingFallback] = useState(false)
+    const [usingNeighborhoodFallback, setUsingNeighborhoodFallback] = useState(false)
+    const selectedMunicipality = (geoData.municipalitiesByState[selectedState] || []).find(m => String(m.id) === selectedMunicipalityId)
+    const selectedCityName = selectedMunicipality?.name || ''
 
     const fetchCity = useCallback(async (city: string) => {
         setLoading(true)
         setExpandedId(null)
         try {
             const res = await fetch(`/api/intelligence/neighborhood?city=${encodeURIComponent(city)}`)
-            if (!res.ok) {
-                const fallback = toFallbackNeighborhoods(city)
-                setUsingFallback(fallback.length > 0)
-                setNeighborhoods(fallback)
-                return
-            }
+            if (!res.ok) { setUsingNeighborhoodFallback(true); setNeighborhoods([]); return }
             const json = await res.json()
-            if (json?.error) {
-                const fallback = toFallbackNeighborhoods(city)
-                setUsingFallback(fallback.length > 0)
-                setNeighborhoods(fallback)
-                return
-            }
+            if (json?.error) { setUsingNeighborhoodFallback(true); setNeighborhoods([]); return }
             const apiNeighborhoods = json.neighborhoods || []
             if (apiNeighborhoods.length > 0) {
-                setUsingFallback(false)
+                setUsingNeighborhoodFallback(false)
                 setNeighborhoods(apiNeighborhoods)
             } else {
-                const fallback = toFallbackNeighborhoods(city)
-                setUsingFallback(fallback.length > 0)
-                setNeighborhoods(fallback)
+                setUsingNeighborhoodFallback(true)
+                setNeighborhoods([])
             }
         } catch {
-            const fallback = toFallbackNeighborhoods(city)
-            setUsingFallback(fallback.length > 0)
-            setNeighborhoods(fallback)
+            setUsingNeighborhoodFallback(true)
+            setNeighborhoods([])
         } finally {
             setLoading(false)
         }
@@ -152,30 +94,58 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
         setRefreshing(true)
         try {
             const res = await fetch('/api/intelligence/refresh', { method: 'POST' })
-            if (res.ok) await fetchCity(selectedCity)
+            if (res.ok && selectedCityName) await fetchCity(selectedCityName)
         } catch { /* silent */ } finally {
             setRefreshing(false)
         }
-    }, [fetchCity, selectedCity])
+    }, [fetchCity, selectedCityName])
 
-    useEffect(() => { fetchCity(selectedCity) }, [selectedCity, fetchCity])
+    useEffect(() => {
+        fetch('/api/intelligence/locations')
+            .then(r => r.json())
+            .then((json) => {
+                const states = (json.states || []) as StateData[]
+                const first = states[0]
+                setGeoData({ country: 'BR', states, municipalitiesByState: {} })
+                if (first) setSelectedState(first.code)
+            })
+    }, [])
 
-    const validPrices = neighborhoods.filter((n: NeighborhoodData) => n.median_price_sqm != null)
+    useEffect(() => {
+        if (!selectedState || geoData.municipalitiesByState[selectedState]) return
+        fetch(`/api/intelligence/locations?uf=${selectedState}`)
+            .then(r => r.json())
+            .then((json) => {
+                const municipalities = (json.municipalities || []) as MunicipalityData[]
+                setGeoData(prev => ({ ...prev, municipalitiesByState: { ...prev.municipalitiesByState, [selectedState]: municipalities } }))
+                if (municipalities[0]) setSelectedMunicipalityId(String(municipalities[0].id))
+            })
+    }, [selectedState, geoData.municipalitiesByState])
+
+    useEffect(() => {
+        if (!selectedCityName) return
+        fetchCity(selectedCityName)
+        setSelectedNeighborhoodId('all')
+    }, [selectedCityName, fetchCity])
+
+    const filteredNeighborhoods = selectedNeighborhoodId === 'all'
+        ? neighborhoods
+        : neighborhoods.filter(n => n.id === selectedNeighborhoodId)
+
+    const validPrices = filteredNeighborhoods.filter((n: NeighborhoodData) => n.median_price_sqm != null)
     const cityAvgPrice = validPrices.length > 0
         ? Math.round(validPrices.reduce((s: number, n: NeighborhoodData) => s + Number(n.median_price_sqm), 0) / validPrices.length)
         : null
 
-    const bestYield = neighborhoods
+    const bestYield = filteredNeighborhoods
         .filter((n: NeighborhoodData) => n.avg_rental_yield != null)
         .sort((a: NeighborhoodData, b: NeighborhoodData) => Number(b.avg_rental_yield) - Number(a.avg_rental_yield))[0] ?? null
 
-    const fastestSelling = neighborhoods
+    const fastestSelling = filteredNeighborhoods
         .filter((n: NeighborhoodData) => n.avg_days_on_market != null)
         .sort((a: NeighborhoodData, b: NeighborhoodData) => Number(a.avg_days_on_market) - Number(b.avg_days_on_market))[0] ?? null
 
-    const currentGeo = GEO.find(g => g.countries.some(c => c.cities.some(ci => ci.key === selectedCity)))
-    const currentCountry = currentGeo?.countries.find(c => c.cities.some(ci => ci.key === selectedCity))
-    const currentCityObj = currentCountry?.cities.find(ci => ci.key === selectedCity)
+    const currentStateObj = geoData.states.find(s => s.code === selectedState)
 
     return (
         <main className="bg-[#060D16] min-h-screen">
@@ -256,34 +226,29 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
                     <div className="flex items-center gap-1.5 text-[10px] text-[#556170] font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
                         <span>Global</span>
                         <span className="opacity-40">/</span>
-                        <span>{currentGeo?.continent}</span>
+                        <span>América do Sul</span>
                         <span className="opacity-40">/</span>
-                        <span>{currentCountry?.flag} {currentCountry?.name}</span>
-                        {currentCityObj?.state && <>
-                            <span className="opacity-40">/</span>
-                            <span>{currentCityObj.state}</span>
-                        </>}
+                        <span>🇧🇷 Brasil</span>
+                        {selectedState && <><span className="opacity-40">/</span><span>{selectedState}</span></>}
                         <span className="opacity-40">/</span>
-                        <span className="text-[#C8A44A]">{currentCityObj?.name}</span>
+                        <span className="text-[#C8A44A]">{selectedCityName || 'Selecione um município'}</span>
                     </div>
                 </div>
                 {/* City tabs */}
                 <div className="container-custom py-2">
                     <div className="flex items-center gap-2">
-                        <div className="flex overflow-x-auto gap-1 scrollbar-hide -mx-1 px-1 flex-1 min-w-0">
-                            {ALL_CITIES.map((city) => (
-                                <button
-                                    key={city.key}
-                                    onClick={() => setSelectedCity(city.key)}
-                                    className={`shrink-0 px-3 sm:px-4 py-2 rounded-lg text-[11px] sm:text-xs font-bold uppercase tracking-[0.08em] transition-all duration-200 ${
-                                        selectedCity === city.key
-                                            ? 'bg-[#C8A44A] text-[#060D16] shadow-lg shadow-[#C8A44A]/20'
-                                            : 'bg-[#0B1928] text-[#556170] hover:text-white hover:bg-[#142438] border border-white/[0.05]'
-                                    }`}
-                                >
-                                    {city.name}
-                                </button>
-                            ))}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 flex-1">
+                            <select className="px-3 py-2 rounded-lg text-xs bg-[#0B1928] border border-white/[0.08] text-white" value={selectedState} onChange={(e) => { setSelectedState(e.target.value); setSelectedMunicipalityId('') }}>
+                                {geoData.states.map((state) => <option key={state.code} value={state.code}>{state.code} · {state.name}</option>)}
+                            </select>
+                            <select className="px-3 py-2 rounded-lg text-xs bg-[#0B1928] border border-white/[0.08] text-white" value={selectedMunicipalityId} onChange={(e) => setSelectedMunicipalityId(e.target.value)}>
+                                <option value="">Selecione município</option>
+                                {(geoData.municipalitiesByState[selectedState] || []).map((city) => <option key={city.id} value={String(city.id)}>{city.name}</option>)}
+                            </select>
+                            <select className="px-3 py-2 rounded-lg text-xs bg-[#0B1928] border border-white/[0.08] text-white" value={selectedNeighborhoodId} onChange={(e) => setSelectedNeighborhoodId(e.target.value)}>
+                                <option value="all">Todos os bairros</option>
+                                {neighborhoods.map((n) => <option key={n.id} value={n.id}>{n.neighborhood}</option>)}
+                            </select>
                         </div>
                         <button
                             onClick={handleRefresh}
@@ -329,11 +294,11 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
                     </div>
                     <h2 className="font-display text-xl sm:text-2xl font-bold text-white mb-6">
                         Panorama em{' '}
-                        <span className="text-[#C8A44A] italic">{currentCityObj?.name ?? selectedCity}</span>
+                        <span className="text-[#C8A44A] italic">{selectedCityName || 'município selecionado'}</span>
                     </h2>
-                    {usingFallback && (
+                    {usingNeighborhoodFallback && (
                         <div className="mb-5 inline-flex items-center gap-2 rounded-lg border border-[rgba(200,164,74,0.25)] bg-[rgba(200,164,74,0.08)] px-3 py-2 text-[11px] text-[#C8A44A]">
-                            Base nacional IMI ativa · Brasil &gt; Estado &gt; Município &gt; Bairros
+                            Dados de bairros em expansão para este município
                         </div>
                     )}
 
@@ -343,11 +308,11 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
                                 <NeighborhoodCardSkeleton key={i} index={i} />
                             ))}
                         </div>
-                    ) : neighborhoods.length === 0 ? (
-                        <EmptyState city={currentCityObj?.name ?? selectedCity} />
+                    ) : filteredNeighborhoods.length === 0 ? (
+                        <EmptyState city={selectedCityName || 'município selecionado'} />
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {neighborhoods.map((n, i) => (
+                            {filteredNeighborhoods.map((n, i) => (
                                 <NeighborhoodCard
                                     key={n.id}
                                     data={n}
@@ -364,7 +329,7 @@ export default function IntelligenceDashboard({ lang }: { lang: string }) {
 
             {/* ─── PRICE HEATMAP ────────────────────────────────────────── */}
             <div className="border-t border-white/[0.05]">
-                <PriceHeatmap neighborhoods={neighborhoods} cityAvgPrice={cityAvgPrice} loading={loading} />
+                <PriceHeatmap neighborhoods={filteredNeighborhoods} cityAvgPrice={cityAvgPrice} loading={loading} />
             </div>
 
             {/* ─── CTA ──────────────────────────────────────────────────── */}
