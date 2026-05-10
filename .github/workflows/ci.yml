@@ -16,7 +16,18 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npx tsc --noEmit
+      - name: TypeScript check
+        run: |
+          set +e
+          npx tsc --noEmit 2>&1 | tee /tmp/tsc_output.txt
+          TSC_EXIT=${PIPESTATUS[0]}
+          if [ -s /tmp/tsc_output.txt ]; then
+            echo "## TypeScript Errors" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/tsc_output.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          exit $TSC_EXIT
 
   test:
     runs-on: ubuntu-latest
