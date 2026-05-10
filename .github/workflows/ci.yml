@@ -32,8 +32,12 @@ jobs:
             echo '```' >> $GITHUB_STEP_SUMMARY
             cat tsc_output.txt >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "ERRORS FOUND:"
+            echo "=== TYPESCRIPT ERRORS BEGIN ==="
             cat tsc_output.txt
+            echo "=== TYPESCRIPT ERRORS END ==="
+            while IFS= read -r line; do
+              echo "::error::$line"
+            done < tsc_output.txt
           else
             echo "No TypeScript errors found"
           fi
