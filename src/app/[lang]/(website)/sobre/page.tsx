@@ -139,10 +139,10 @@ export default async function AboutPage({
     const lang = params.lang || 'pt'
 
     return (
-        <main className="bg-navy-950">
+        <main className="bg-[#0B1928]">
 
             {/* ── HERO ──────────────────────────────────────── */}
-            <section className="relative bg-navy-950 text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
+            <section className="relative bg-[#0B1928] text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-navy-800/5 -skew-x-12 translate-x-1/4" />
                 <div className="container-custom relative z-10 max-w-4xl">
                     <div className="flex items-center gap-3 mb-6">
@@ -186,9 +186,9 @@ export default async function AboutPage({
                                     loading="eager"
                                     decoding="sync"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/80 via-[#0D0F14]/10 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1928]/80 via-[#0B1928]/10 to-transparent" />
                                 <div className="absolute bottom-0 left-0 right-0 p-5">
-                                    <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-xl p-4">
+                                    <div className="bg-[#0B1928]/80 backdrop-blur-md border border-white/10 rounded-xl p-4">
                                         <p className="text-white font-bold text-sm">Iule Miranda</p>
                                         <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
                                             CRECI 17933 · CNAI 53290 · Perito Judicial
@@ -284,7 +284,7 @@ export default async function AboutPage({
                     </div>
                     <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {certificationImages.map((img) => (
-                            <div key={img.src} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0D0F14]">
+                            <div key={img.src} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0B1928]">
                                 <Image src={img.src} alt={img.alt} fill className="object-contain p-2" />
                             </div>
                         ))}
@@ -309,7 +309,7 @@ export default async function AboutPage({
                         {values.map((item) => (
                             <div
                                 key={item.title}
-                                className="p-8 rounded-2xl bg-navy-950 border border-white/[0.05] transition-all duration-300 group hover:border-[#C8A44A]/30 hover:shadow-[0_8px_32px_rgba(200,164,74,0.05)]"
+                                className="p-8 rounded-2xl bg-[#0d2035] border border-white/[0.05] transition-all duration-300 group hover:border-[#C8A44A]/30 hover:shadow-[0_8px_32px_rgba(200,164,74,0.05)]"
                             >
                                 <div className="w-12 h-12 bg-[#C8A44A]/10 text-[#C8A44A] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-[#C8A44A]/20">
                                     <item.icon className="w-5 h-5" strokeWidth={1.5} />
@@ -345,7 +345,7 @@ export default async function AboutPage({
                             return (
                                 <div
                                     key={s.label}
-                                    className="group bg-navy-950 border border-white/[0.05] hover:border-[#C8A44A]/25 rounded-2xl p-6 flex flex-col transition-all duration-300 hover:shadow-[0_8px_32px_rgba(200,164,74,0.06)]"
+                                    className="group bg-[#0d2035] border border-white/[0.05] hover:border-[#C8A44A]/25 rounded-2xl p-6 flex flex-col transition-all duration-300 hover:shadow-[0_8px_32px_rgba(200,164,74,0.06)]"
                                 >
                                     <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-105 bg-[#C8A44A]/10 border border-[#C8A44A]/20">
                                         <Icon className="w-6 h-6 text-[#C8A44A]" />
@@ -398,10 +398,10 @@ export default async function AboutPage({
                         {EBOOKS.map((book) => (
                             <article
                                 key={book.slug}
-                                className="group bg-navy-950 border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgba(200,164,74,0.08)] flex flex-col"
+                                className="group bg-[#0d2035] border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgba(200,164,74,0.08)] flex flex-col"
                             >
                                 {/* Portrait aspect ratio — shows the complete book cover */}
-                                <div className="relative bg-[#0D1117] overflow-hidden" style={{ aspectRatio: '3/4' }}>
+                                <div className="relative bg-[#0B1928] overflow-hidden" style={{ aspectRatio: '3/4' }}>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
                                         src={book.coverImage}
@@ -409,7 +409,7 @@ export default async function AboutPage({
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                                         loading="lazy"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0D1117]/20 to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B1928]/20 to-transparent" />
                                 </div>
 
                                 <div className="p-6 flex flex-col flex-1">
@@ -445,7 +445,7 @@ export default async function AboutPage({
             </section>
 
             {/* ── CTA ───────────────────────────────────────── */}
-            <section className="bg-navy-950 text-white py-20 md:py-28 text-center relative overflow-hidden">
+            <section className="bg-[#0B1928] text-white py-20 md:py-28 text-center relative overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
                     <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
@@ -458,7 +458,7 @@ export default async function AboutPage({
                         <Link
                             href={`/${lang}/contato`}
                             className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold rounded-lg transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden"
-                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                            style={{ background: '#0B1928', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                         >
                             <MessageCircle className="w-4 h-4" />
                             Entrar em Contato
