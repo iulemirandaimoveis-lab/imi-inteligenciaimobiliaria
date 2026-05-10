@@ -19,15 +19,21 @@ jobs:
       - name: TypeScript check
         run: |
           set +e
-          npx tsc --noEmit 2>&1 | tee /tmp/tsc_output.txt
+          npx tsc --noEmit 2>&1 | tee tsc_output.txt
           TSC_EXIT=${PIPESTATUS[0]}
-          if [ -s /tmp/tsc_output.txt ]; then
+          if [ -s tsc_output.txt ]; then
             echo "## TypeScript Errors" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            cat /tmp/tsc_output.txt >> $GITHUB_STEP_SUMMARY
+            cat tsc_output.txt >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
           fi
           exit $TSC_EXIT
+      - name: Upload tsc output
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsc-errors
+          path: tsc_output.txt
 
   test:
     runs-on: ubuntu-latest
