@@ -78,7 +78,7 @@ function formatPercent(v: number | null): string {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function IntelligenceDashboard({ lang }: { lang: string }) {
+export default function IntelligenceDashboard({ lang, initialLocation = [] }: { lang: string, initialLocation?: string[] }) {
     const [selectedCity, setSelectedCity] = useState(ALL_CITIES[0].key)
     const [neighborhoods, setNeighborhoods] = useState<NeighborhoodData[]>([])
     const [loading, setLoading] = useState(true)
