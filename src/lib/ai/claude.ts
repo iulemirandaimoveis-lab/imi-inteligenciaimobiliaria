@@ -98,6 +98,7 @@ export async function callClaude(params: ClaudeRequestParams): Promise<ClaudeRes
                 model,
                 max_tokens,
                 temperature,
+                stream: false,
                 system: systemParam,
                 messages: [{ role: 'user', content: params.prompt }],
             },
