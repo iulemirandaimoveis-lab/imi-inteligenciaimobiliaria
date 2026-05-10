@@ -16,16 +16,26 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
+      - name: Debug versions
+        run: |
+          node --version
+          npm --version
+          echo "TypeScript: $(./node_modules/.bin/tsc --version)"
       - name: TypeScript check
         run: |
           set +e
-          npx tsc --noEmit 2>&1 | tee tsc_output.txt
+          ./node_modules/.bin/tsc --noEmit 2>&1 | tee tsc_output.txt
           TSC_EXIT=${PIPESTATUS[0]}
+          echo "tsc exit code: $TSC_EXIT"
           if [ -s tsc_output.txt ]; then
             echo "## TypeScript Errors" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             cat tsc_output.txt >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "ERRORS FOUND:"
+            cat tsc_output.txt
+          else
+            echo "No TypeScript errors found"
           fi
           exit $TSC_EXIT
       - name: Upload tsc output
