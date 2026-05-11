@@ -34,7 +34,10 @@ export default function LoginPage() {
     useEffect(() => {
         const checkAuth = async () => {
             const { data: { user } } = await supabase.auth.getUser()
-            if (user) router.push('/backoffice/dashboard')
+            if (user) {
+                const dest = user.user_metadata?.setup_complete ? '/backoffice/dashboard' : '/backoffice/setup'
+                router.push(dest)
+            }
         }
         checkAuth()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,7 +54,8 @@ export default function LoginPage() {
                 return
             }
             if (data.session) {
-                router.push('/backoffice/dashboard')
+                const dest = data.user?.user_metadata?.setup_complete ? '/backoffice/dashboard' : '/backoffice/setup'
+                router.push(dest)
                 router.refresh()
             }
         } catch {

@@ -34,6 +34,12 @@ interface DeactivateModal {
   user: UserRow | null
   saving: boolean
 }
+interface CredentialsModal {
+  open: boolean
+  user: UserRow | null
+  tempPassword: string
+  loading: boolean
+}
 export default function UsuariosPage() {
   const router = useRouter()
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
@@ -68,6 +74,9 @@ export default function UsuariosPage() {
   })
   const [deleteModal, setDeleteModal] = useState<DeactivateModal>({
     open: false, user: null, saving: false,
+  })
+  const [credentialsModal, setCredentialsModal] = useState<CredentialsModal>({
+    open: false, user: null, tempPassword: '', loading: false,
   })
   async function loadUsers() {
     try {
@@ -200,6 +209,26 @@ export default function UsuariosPage() {
       toast.error((err instanceof Error ? err.message : 'Erro desconhecido'))
       setDeleteModal(m => ({ ...m, saving: false }))
     }
+  }
+  // ── Reset Access (gera senha temporária e exibe credenciais) ──
+  async function handleResetAccess(user: UserRow) {
+    setCredentialsModal({ open: false, user, tempPassword: '', loading: true })
+    try {
+      const res = await fetch('/api/admin/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user.id }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Erro ao resetar acesso')
+      setCredentialsModal({ open: true, user, tempPassword: json.temp_password, loading: false })
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao resetar acesso')
+      setCredentialsModal({ open: false, user: null, tempPassword: '', loading: false })
+    }
+  }
+  function copyToClipboard(text: string, label: string) {
+    navigator.clipboard.writeText(text).then(() => toast.success(`${label} copiado!`))
   }
   const filteredUsuarios = usuariosData.filter(user => {
     const matchesSearch =
@@ -394,29 +423,18 @@ export default function UsuariosPage() {
                             <Edit size={13} />
                             <span className="hidden sm:inline">Editar</span>
                           </button>
-                          {/* Resetar Senha */}
+                          {/* Resetar Acesso */}
                           <button
-                            onClick={async () => {
-                              if (!confirm(`Enviar link de redefinição de senha para ${user.email}?`)) return
-                              try {
-                                const res = await fetch('/api/backoffice/users', {
-                                  method: 'PATCH',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ id: user.id, action: 'reset_password' }),
-                                })
-                                const json = await res.json()
-                                if (!res.ok) throw new Error(json.error || 'Erro')
-                                toast.success(json.message || 'Link enviado com sucesso')
-                              } catch (err) {
-                                toast.error(err instanceof Error ? err.message : 'Erro ao resetar senha')
-                              }
-                            }}
-                            title="Enviar link de redefinição de senha"
-                            className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
+                            onClick={() => handleResetAccess(user)}
+                            disabled={credentialsModal.loading && credentialsModal.user?.id === user.id}
+                            title="Gerar nova senha temporária"
+                            className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110 disabled:opacity-60"
                             style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.25)', color: 'var(--gold, #C8A44A)' }}
                           >
-                            <KeyRound size={13} />
-                            <span className="hidden sm:inline">Resetar Senha</span>
+                            {credentialsModal.loading && credentialsModal.user?.id === user.id
+                              ? <Loader2 size={13} className="animate-spin" />
+                              : <KeyRound size={13} />}
+                            <span className="hidden sm:inline">Resetar Acesso</span>
                           </button>
                           {/* Ativo: Desativar | Inativo: Reativar + Excluir */}
                           {user.status === 'ativo' ? (
@@ -527,6 +545,61 @@ export default function UsuariosPage() {
                 {editModal.saving ? 'Salvando...' : 'Salvar'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* ── Credentials Modal ─────────────────────────────────────── */}
+      {credentialsModal.open && credentialsModal.user && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="w-full max-w-sm rounded-xl p-6 space-y-4" style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(200,164,74,0.12)', border: '1px solid rgba(200,164,74,0.25)' }}>
+                  <KeyRound size={16} style={{ color: 'var(--gold, #C8A44A)' }} />
+                </div>
+                <h2 className="font-semibold text-sm" style={{ color: T.text }}>Credenciais de Acesso</h2>
+              </div>
+              <button onClick={() => setCredentialsModal({ open: false, user: null, tempPassword: '', loading: false })} className="w-7 h-7 flex items-center justify-center rounded hover:opacity-70" style={{ color: T.textMuted }}>
+                <X size={14} />
+              </button>
+            </div>
+            <p className="text-xs" style={{ color: T.textMuted }}>
+              Compartilhe estas credenciais com <strong style={{ color: T.text }}>{credentialsModal.user.name}</strong> de forma segura (WhatsApp, presencial).
+            </p>
+            {/* Email */}
+            <div className="rounded-lg p-3 space-y-1" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>E-mail</span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-mono" style={{ color: T.text }}>{credentialsModal.user.email}</span>
+                <button onClick={() => copyToClipboard(credentialsModal.user!.email, 'E-mail')} className="shrink-0 text-xs px-2 py-1 rounded" style={{ background: 'rgba(72,101,129,0.2)', color: T.textMuted }}>Copiar</button>
+              </div>
+            </div>
+            {/* Senha */}
+            <div className="rounded-lg p-3 space-y-1" style={{ background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.2)' }}>
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--gold, #C8A44A)' }}>Senha Provisória</span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-lg font-mono font-bold tracking-widest" style={{ color: T.text }}>{credentialsModal.tempPassword}</span>
+                <button onClick={() => copyToClipboard(credentialsModal.tempPassword, 'Senha')} className="shrink-0 text-xs px-2 py-1 rounded" style={{ background: 'rgba(200,164,74,0.15)', color: 'var(--gold, #C8A44A)' }}>Copiar</button>
+              </div>
+            </div>
+            {/* Link */}
+            <div className="rounded-lg p-3 space-y-1" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>Link de Primeiro Acesso</span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs truncate" style={{ color: T.textMuted }}>/login/primeiro-acesso</span>
+                <button onClick={() => copyToClipboard(`${typeof window !== 'undefined' ? window.location.origin : ''}/login/primeiro-acesso`, 'Link')} className="shrink-0 text-xs px-2 py-1 rounded" style={{ background: 'rgba(72,101,129,0.2)', color: T.textMuted }}>Copiar</button>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const text = `Acesso IMI\nEmail: ${credentialsModal.user!.email}\nSenha: ${credentialsModal.tempPassword}\nLink: ${typeof window !== 'undefined' ? window.location.origin : ''}/login/primeiro-acesso`
+                copyToClipboard(text, 'Todas as credenciais')
+              }}
+              className="w-full h-10 rounded-lg text-sm font-semibold transition-all hover:brightness-110"
+              style={{ background: 'rgba(200,164,74,0.12)', border: '1px solid rgba(200,164,74,0.3)', color: 'var(--gold, #C8A44A)' }}
+            >
+              Copiar Tudo
+            </button>
           </div>
         </div>
       )}
