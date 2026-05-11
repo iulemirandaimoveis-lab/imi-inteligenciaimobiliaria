@@ -153,7 +153,7 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
         const extra = developments.slice(3, 6)
 
         return (
-            <section className="py-16 lg:py-24" style={{ background: 'var(--bg-base)' }}>
+            <section className="py-16 lg:py-24" style={{ background: '#0B1928' }}>
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
 
                     {/* Section header */}

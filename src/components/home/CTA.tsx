@@ -30,7 +30,7 @@ export default function CTA({ dict }: CTAProps) {
         setIsModalOpen(false)
     }
     return (
-        <section ref={sectionRef} className="py-24 relative overflow-hidden" style={{ background: 'var(--bg-base)' }}>
+        <section ref={sectionRef} className="py-24 relative overflow-hidden" style={{ background: '#0B1928' }}>
             {/* Parallax background glow */}
             <motion.div
                 className="absolute inset-0 pointer-events-none"

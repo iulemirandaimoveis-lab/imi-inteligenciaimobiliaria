@@ -101,7 +101,7 @@ export default function Services({ dict }: ServicesProps) {
                             <Link
                                 href={item.href}
                                 className="group relative block rounded-2xl p-7 border border-white/[0.06] overflow-hidden transition-all duration-500 hover:border-[#C8A44A]/30 hover:shadow-[0_0_40px_rgba(200,164,74,0.06)]"
-                                style={{ background: 'var(--bg-base)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
+                                style={{ background: '#0d2035', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
                             >
                                 {/* Corner glow on hover — now gold */}
                                 <div

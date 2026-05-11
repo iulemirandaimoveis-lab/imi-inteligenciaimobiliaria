@@ -76,7 +76,7 @@ export default function Hero({ dict }: HeroProps) {
   const handleCanPlay = useCallback(() => setVideoReady(true), [])
 
   return (
-    <section ref={sectionRef} className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--bg-base)', containIntrinsicSize: '0 100dvh', contentVisibility: 'auto' }}>
+    <section ref={sectionRef} className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: '#0B1928', containIntrinsicSize: '0 100dvh', contentVisibility: 'auto' }}>
       {/* Background video with parallax */}
       <motion.div className="absolute inset-0" style={{ y: bgY }}>
         {/* Static poster image shown immediately */}
@@ -103,7 +103,7 @@ export default function Hero({ dict }: HeroProps) {
         </video>
         {/* Dark overlay gradient — stronger on left for text, bottom for fade */}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(5,11,20,0.92) 0%, rgba(5,11,20,0.7) 40%, rgba(5,11,20,0.2) 70%, transparent 100%)' }} />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg-base) 0%, transparent 40%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0B1928 0%, transparent 40%)' }} />
       </motion.div>
 
       {/* Scroll-darkening overlay */}
