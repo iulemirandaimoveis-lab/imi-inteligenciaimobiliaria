@@ -21,7 +21,7 @@ export default async function HomePage({ params }: { params: { lang: 'pt' | 'en'
     const dict = await getDictionary(params.lang)
 
     return (
-        <div style={{ background: 'var(--bg-void)' }}>
+        <div style={{ background: '#0B1928' }}>
             <Hero dict={dict.Home} />
             <Services dict={dict.Home} />
             <Suspense fallback={<div style={{ minHeight: 400 }} />}>
