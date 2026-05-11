@@ -208,35 +208,83 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                     <div>
                         <SectionTitle label="Tour Virtual 360°" />
                         {shouldOpenTourExternally ? (
-                            <div className="relative w-full min-h-[220px] md:min-h-[280px] rounded-[14px] overflow-hidden border border-gray-100 shadow-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 flex flex-col justify-between">
-                                <div className="bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-[4px] inline-flex items-center gap-2.5 text-xs font-semibold w-fit">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                    Tour Interativo
+                            <div
+                                className="relative w-full rounded-[16px] overflow-hidden"
+                                style={{
+                                    background: 'linear-gradient(135deg, #0B1928 0%, #0f2438 50%, #0B1928 100%)',
+                                    border: '1px solid rgba(200,164,74,0.18)',
+                                    boxShadow: '0 8px 40px rgba(0,0,0,0.28)',
+                                }}
+                            >
+                                {/* Decorative grid overlay */}
+                                <div
+                                    className="absolute inset-0 pointer-events-none"
+                                    style={{
+                                        backgroundImage: 'linear-gradient(rgba(200,164,74,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(200,164,74,0.04) 1px, transparent 1px)',
+                                        backgroundSize: '32px 32px',
+                                    }}
+                                />
+                                {/* Gold accent line top */}
+                                <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
+
+                                <div className="relative p-7 md:p-10 flex flex-col md:flex-row md:items-center gap-7 md:gap-10">
+                                    {/* Left: icon + badge */}
+                                    <div className="flex-shrink-0">
+                                        <div
+                                            className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center"
+                                            style={{ background: 'rgba(200,164,74,0.10)', border: '1px solid rgba(200,164,74,0.22)' }}
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A44A" strokeWidth="1.5" width="32" height="32" aria-hidden="true">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    {/* Center: text */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full" style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)' }}>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                            <span className="text-emerald-400 text-[11px] font-bold uppercase tracking-widest">Tour Interativo</span>
+                                        </div>
+                                        <h3 className="text-white text-lg md:text-xl font-bold mb-1.5" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                                            Explore o imóvel em 360°
+                                        </h3>
+                                        <p className="text-white/55 text-sm leading-relaxed">
+                                            Navegue por todos os ambientes com total imersão — abre em uma página dedicada para a melhor experiência.
+                                        </p>
+                                    </div>
+
+                                    {/* Right: CTA */}
+                                    <div className="flex-shrink-0">
+                                        <a
+                                            href={development.images.virtualTour}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="group relative inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] overflow-hidden"
+                                            style={{ background: '#C8A44A', color: '#0B1928', boxShadow: '0 4px 20px rgba(200,164,74,0.35)' }}
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15" aria-hidden="true">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                            </svg>
+                                            Abrir Tour Virtual
+                                            <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200 rounded-xl" />
+                                        </a>
+                                    </div>
                                 </div>
-                                <div className="space-y-3">
-                                    <p className="text-white/85 text-sm md:text-base font-medium">
-                                        Este tour virtual abre em uma página dedicada para melhor experiência 360°.
-                                    </p>
-                                    <a
-                                        href={development.images.virtualTour}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center px-5 py-3 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition-colors"
-                                    >
-                                        Abrir Tour Virtual
-                                    </a>
-                                </div>
+
+                                {/* Gold accent line bottom */}
+                                <div className="absolute bottom-0 left-0 right-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,164,74,0.3), transparent)' }} />
                             </div>
                         ) : (
-                            <div className="relative w-full aspect-video md:h-[480px] rounded-[14px] overflow-hidden border border-gray-100 shadow-lg">
+                            <div className="relative w-full aspect-video md:h-[480px] rounded-[14px] overflow-hidden shadow-lg" style={{ border: '1px solid rgba(200,164,74,0.15)' }}>
                                 <iframe
                                     src={development.images.virtualTour}
                                     className="w-full h-full border-0"
                                     allowFullScreen
                                 />
-                                <div className="absolute top-4 left-4 bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-[4px] flex items-center gap-2.5 text-xs font-semibold">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                    Tour Interativo
+                                <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.10)' }}>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                    <span className="text-white text-[11px] font-bold uppercase tracking-widest">Tour Interativo</span>
                                 </div>
                             </div>
                         )}
