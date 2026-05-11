@@ -72,6 +72,11 @@ interface SharedProps {
   setMarket: (m: Market) => void
   listingType: ListingType
   setListingType: (lt: ListingType) => void
+  onArchive: (id: string) => void
+  onDelete: (id: string) => void
+  onBulkArchive: (ids: Set<string>, onDone: () => void) => void
+  onBulkPublish: (ids: Set<string>, onDone: () => void) => void
+  onBulkDelete: (ids: Set<string>, onDone: () => void) => void
 }
 // ═══════════════════════════════════════════════════════════════════════════════
 // DESKTOP SUB-COMPONENTS
@@ -168,6 +173,7 @@ function DesktopImoveisList(props: SharedProps) {
     compareIds, favorites, toggleCompare, clearCompare, toggleFavorite,
     fetchProperties, activeFiltersCount, market, setMarket,
     listingType, setListingType,
+    onArchive, onDelete, onBulkArchive, onBulkPublish, onBulkDelete,
   } = props
   const router = useRouter()
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
@@ -523,6 +529,8 @@ function DesktopImoveisList(props: SharedProps) {
                   bulkMode={bulkMode}
                   isSelected={selectedIds.has(p.id)}
                   onSelect={toggleSelect}
+                  onArchive={bulkMode ? undefined : onArchive}
+                  onDelete={bulkMode ? undefined : onDelete}
                 />
               ))}
             </div>
@@ -573,8 +581,24 @@ function DesktopImoveisList(props: SharedProps) {
           <div style={{ width: 1, height: 20, background: 'rgba(61,111,255,0.2)' }} />
           {/* Center: action buttons */}
           <div style={{ display: 'flex', gap: 8 }}>
-            <button className="imi-bulk-btn imi-bulk-btn-publish">Publicar</button>
-            <button className="imi-bulk-btn imi-bulk-btn-archive">Arquivar</button>
+            <button
+              className="imi-bulk-btn imi-bulk-btn-publish"
+              onClick={() => onBulkPublish(selectedIds, () => { clearSelection(); setBulkMode(false) })}
+            >
+              Publicar
+            </button>
+            <button
+              className="imi-bulk-btn imi-bulk-btn-archive"
+              onClick={() => onBulkArchive(selectedIds, () => { clearSelection(); setBulkMode(false) })}
+            >
+              Arquivar
+            </button>
+            <button
+              className="imi-bulk-btn imi-bulk-btn-delete"
+              onClick={() => onBulkDelete(selectedIds, () => { clearSelection(); setBulkMode(false) })}
+            >
+              Excluir
+            </button>
             <button className="imi-bulk-btn imi-bulk-btn-export" onClick={exportCSV}>Exportar CSV</button>
           </div>
           <div style={{ width: 1, height: 20, background: 'rgba(61,111,255,0.2)' }} />
@@ -1047,6 +1071,12 @@ function DesktopImoveisList(props: SharedProps) {
           color: var(--accent-400);
         }
         .imi-bulk-btn-export:hover { background: rgba(61,111,255,0.10); }
+        .imi-bulk-btn-delete {
+          background: rgba(224,107,107,0.10);
+          border: 1px solid rgba(224,107,107,0.35);
+          color: var(--error, #E06B6B);
+        }
+        .imi-bulk-btn-delete:hover { background: rgba(224,107,107,0.20); }
         /* ═══ COMPARE BAR ═══ */
         .imi-compare-bar {
           position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
@@ -1209,6 +1239,8 @@ function MobileImoveisList(props: SharedProps) {
     filters, setFilters, favorites,
     toggleFavorite, activeFiltersCount, sortField, setSortField, sortDir, setSortDir,
     properties, market, setMarket, listingType, setListingType,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onArchive: _onArchive, onDelete: _onDelete,
   } = props
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState('')
@@ -1448,6 +1480,86 @@ export default function ImoveisPage() {
       setLoading(false)
     }
   }, [])
+
+  const handleArchive = useCallback(async (id: string) => {
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('developments')
+        .update({ status: 'arquivado' })
+        .eq('id', id)
+      if (error) throw error
+      toast.success('Imóvel arquivado')
+      await fetchProperties()
+    } catch {
+      toast.error('Erro ao arquivar imóvel')
+    }
+  }, [fetchProperties])
+
+  const handleDelete = useCallback(async (id: string) => {
+    if (!confirm('Tem certeza que deseja excluir este imóvel? Esta ação não pode ser desfeita.')) return
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('developments')
+        .delete()
+        .eq('id', id)
+      if (error) throw error
+      toast.success('Imóvel excluído')
+      await fetchProperties()
+    } catch {
+      toast.error('Erro ao excluir imóvel')
+    }
+  }, [fetchProperties])
+
+  const handleBulkArchive = useCallback(async (ids: Set<string>, onDone: () => void) => {
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('developments')
+        .update({ status: 'arquivado' })
+        .in('id', Array.from(ids))
+      if (error) throw error
+      toast.success(`${ids.size} imóvel(s) arquivado(s)`)
+      onDone()
+      await fetchProperties()
+    } catch {
+      toast.error('Erro ao arquivar imóveis')
+    }
+  }, [fetchProperties])
+
+  const handleBulkPublish = useCallback(async (ids: Set<string>, onDone: () => void) => {
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('developments')
+        .update({ status: 'disponivel' })
+        .in('id', Array.from(ids))
+      if (error) throw error
+      toast.success(`${ids.size} imóvel(s) publicado(s)`)
+      onDone()
+      await fetchProperties()
+    } catch {
+      toast.error('Erro ao publicar imóveis')
+    }
+  }, [fetchProperties])
+
+  const handleBulkDelete = useCallback(async (ids: Set<string>, onDone: () => void) => {
+    if (!confirm(`Tem certeza que deseja excluir ${ids.size} imóvel(s)? Esta ação não pode ser desfeita.`)) return
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('developments')
+        .delete()
+        .in('id', Array.from(ids))
+      if (error) throw error
+      toast.success(`${ids.size} imóvel(s) excluído(s)`)
+      onDone()
+      await fetchProperties()
+    } catch {
+      toast.error('Erro ao excluir imóveis')
+    }
+  }, [fetchProperties])
   useEffect(() => { fetchProperties() }, [fetchProperties])
   const filtered = useMemo(() => {
     let list = [...properties]
@@ -1527,6 +1639,11 @@ export default function ImoveisPage() {
       return next
     })
   }, [])
+  const clearCompare = useCallback(() => {
+    setCompareIds(new Set())
+    try { localStorage.removeItem('imi_compare_ids') } catch {}
+  }, [])
+
   const sharedProps: SharedProps = {
     properties,
     filtered,
@@ -1542,10 +1659,7 @@ export default function ImoveisPage() {
     compareIds,
     favorites,
     toggleCompare,
-    clearCompare: useCallback(() => {
-      setCompareIds(new Set())
-      try { localStorage.removeItem('imi_compare_ids') } catch {}
-    }, []),
+    clearCompare,
     toggleFavorite,
     fetchProperties,
     activeFiltersCount,
@@ -1553,6 +1667,11 @@ export default function ImoveisPage() {
     setMarket,
     listingType,
     setListingType,
+    onArchive: handleArchive,
+    onDelete: handleDelete,
+    onBulkArchive: handleBulkArchive,
+    onBulkPublish: handleBulkPublish,
+    onBulkDelete: handleBulkDelete,
   }
   if (isMobile) return <MobileImoveisList {...sharedProps} />
   return <DesktopImoveisList {...sharedProps} />

@@ -49,6 +49,9 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
     const [gallery, setGallery] = useState<string[]>(initialData?.images?.gallery || [])
     const [videos, setVideos] = useState<string[]>(initialData?.images?.videos || [])
     const [floorPlans, setFloorPlans] = useState<string[]>(initialData?.images?.floorPlans || [])
+    const [heroVideo, setHeroVideo] = useState<string[]>(
+        initialData?.images?.heroVideo ? [initialData.images.heroVideo] : []
+    )
 
     // Update internal state if initialData changes (e.g. after save)
     useEffect(() => {
@@ -56,6 +59,7 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
             setGallery(initialData.images.gallery || [])
             setVideos(initialData.images.videos || [])
             setFloorPlans(initialData.images.floorPlans || [])
+            setHeroVideo(initialData.images.heroVideo ? [initialData.images.heroVideo] : [])
         }
     }, [initialData])
 
@@ -92,10 +96,11 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
 
         // Construct images object
         const images = {
-            main: gallery.length > 0 ? gallery[0] : '', // Default main image to first gallery image
+            main: gallery.length > 0 ? gallery[0] : '',
             gallery,
             videos,
-            floorPlans
+            floorPlans,
+            hero_video: heroVideo.length > 0 ? heroVideo[0] : null,
         }
 
         const apiData = {
@@ -265,6 +270,38 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                     <div className="space-y-10 animate-in fade-in slide-in-from-left-4 duration-300">
                         {initialData?.id ? (
                             <>
+                                {/* Vídeo Capa (hero) */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 mb-1">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-black text-imi-400 uppercase tracking-widest mb-1">Vídeo Capa (Loop)</p>
+                                            <p className="text-xs text-imi-400">Vídeo em loop exibido no hero da página do imóvel (MP4). Substitui a foto principal no destaque.</p>
+                                        </div>
+                                        {heroVideo.length > 0 && (
+                                            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-lg">
+                                                ✓ Ativo
+                                            </span>
+                                        )}
+                                    </div>
+                                    <MediaUploader
+                                        type="videos"
+                                        label=""
+                                        description="Vídeo MP4 em loop para o hero da página (máx 50MB). Recomendado: 1920×1080."
+                                        value={heroVideo}
+                                        onChange={setHeroVideo}
+                                        entityId={initialData.id}
+                                        entityType="development"
+                                        maxFiles={1}
+                                    />
+                                    {heroVideo.length > 0 && (
+                                        <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-700 text-xs rounded-lg border border-emerald-200">
+                                            <span className="font-bold">Vídeo capa ativo.</span> Será exibido em loop no hero da página deste imóvel.
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="border-t border-imi-100 my-6"></div>
+
                                 <div className="space-y-4">
                                     <MediaUploader
                                         type="gallery"
@@ -298,7 +335,7 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
 
                                 <MediaUploader
                                     type="videos"
-                                    label="Vídeos"
+                                    label="Vídeos Promocionais"
                                     description="Vídeos promocionais ou tour virtual (MP4)."
                                     value={videos}
                                     onChange={setVideos}
