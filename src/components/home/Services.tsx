@@ -57,7 +57,7 @@ export default function Services({ dict }: ServicesProps) {
     ]
 
     return (
-        <section ref={sectionRef} className="relative py-16 lg:py-20 overflow-hidden" style={{ background: 'var(--bg-void)' }}>
+        <section ref={sectionRef} className="relative py-16 lg:py-20 overflow-hidden" style={{ background: '#0B1928' }}>
             {/* Parallax gold accent line */}
             <motion.div
                 className="absolute top-0 left-0 right-0 h-[1px]"

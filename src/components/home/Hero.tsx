@@ -214,7 +214,7 @@ export default function Hero({ dict }: HeroProps) {
                       gap: 6,
                       padding: '12px 14px',
                       minHeight: 44,
-                      background: item.primary ? '#0A1624' : 'rgba(10,22,36,0.7)',
+                      background: item.primary ? '#0B1928' : 'rgba(11,25,40,0.7)',
                       backdropFilter: item.primary ? undefined : 'blur(12px)',
                       border: item.primary
                         ? '1px solid rgba(255,255,255,0.08)'
