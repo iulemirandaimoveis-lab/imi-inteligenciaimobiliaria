@@ -48,31 +48,31 @@
     text-anchor="end"
     dominant-baseline="auto">19</text>
 
-  <!-- ── IMI LOGO — exact match to website header ────────────────────── -->
-  <!-- "IMI" bold serif 28px white letter-spacing 2px -->
+  <!-- ── IMI LOGO — matches website header exactly when rendered inline ─── -->
+  <!-- Font: 'Playfair Display' (loaded by page CSS) → falls back to Georgia -->
   <text x="44" y="70"
-    font-family="Georgia, 'Times New Roman', serif"
+    font-family="'Playfair Display', 'Cormorant Garamond', Georgia, serif"
     font-size="28"
     font-weight="700"
     fill="#FFFFFF"
     letter-spacing="2"
     xml:space="preserve">IMI</text>
 
-  <!-- Gold vertical divider: 1.5px × 25px (header: 1px × 22px, scaled up) -->
-  <rect x="103" y="51" width="1.5" height="25" fill="#C8A44A"/>
+  <!-- Gold vertical divider: 1px × 22px (exact header proportions × 1.2 scale) -->
+  <rect x="104" y="52" width="1" height="22" fill="#C8A44A"/>
 
-  <!-- Tagline: INTELIGÊNCIA / IMOBILIÁRIA — 8px uppercase white 60% -->
-  <text x="114" y="62"
-    font-family="Arial, Helvetica, sans-serif"
-    font-size="8"
+  <!-- Tagline: INTELIGÊNCIA / IMOBILIÁRIA — 7px uppercase white 60% (exact header) -->
+  <text x="115" y="63"
+    font-family="'Geist Sans', Arial, Helvetica, sans-serif"
+    font-size="7"
     font-weight="600"
     fill="#FFFFFF"
     fill-opacity="0.60"
     letter-spacing="2.2"
     xml:space="preserve">INTELIGÊNCIA</text>
-  <text x="114" y="74"
-    font-family="Arial, Helvetica, sans-serif"
-    font-size="8"
+  <text x="115" y="74"
+    font-family="'Geist Sans', Arial, Helvetica, sans-serif"
+    font-size="7"
     font-weight="600"
     fill="#FFFFFF"
     fill-opacity="0.60"
