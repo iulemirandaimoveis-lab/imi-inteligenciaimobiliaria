@@ -12,6 +12,7 @@ import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import { MobileGlobalStyles, MobileAppBar } from '../../../mobile-ui'
+import { FloorPlanUpload } from '@/components/backoffice/imoveis/FloorPlanUpload'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -188,12 +189,13 @@ function UnitEditForm({
                 </Field>
 
                 {/* Price */}
-                <Field label="Valor Total (R$)" required hint="Somente números">
+                <Field label="Valor Total (R$)" required hint="Ex: 553019.79">
                     <input
                         style={inputStyle}
                         type="number"
                         min={0}
-                        placeholder="450000"
+                        step="0.01"
+                        placeholder="553019.79"
                         value={form.total_price}
                         onChange={set('total_price')}
                         required
@@ -267,15 +269,12 @@ function UnitEditForm({
                     />
                 </Field>
 
-                {/* Floor plan URL */}
+                {/* Floor plan upload */}
                 <div style={{ gridColumn: isMobile ? '1' : '1 / -1' }}>
-                    <Field label="URL da Planta" hint="Link direto para a imagem da planta desta unidade (JPEG, PNG ou PDF)">
-                        <input
-                            style={inputStyle}
-                            type="url"
-                            placeholder="https://..."
+                    <Field label="Planta da Unidade">
+                        <FloorPlanUpload
                             value={form.floor_plan_url}
-                            onChange={set('floor_plan_url')}
+                            onChange={url => setForm(prev => ({ ...prev, floor_plan_url: url }))}
                         />
                     </Field>
                 </div>

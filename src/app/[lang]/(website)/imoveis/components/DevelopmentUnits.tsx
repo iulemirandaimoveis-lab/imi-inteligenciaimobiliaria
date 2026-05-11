@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Fragment } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { formatCurrency as formatBRL } from '@/lib/utils';
 import { MessageCircle, Info, Loader2, LayoutTemplate, X, ZoomIn } from 'lucide-react';
@@ -167,10 +167,18 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                 .from('development_units')
                 .select('*')
                 .eq('development_id', propertyId)
-                .order('unit_name', { ascending: true });
+                .eq('status', 'available');
 
             if (!error && data) {
-                setUnits(data);
+                // Sort by tower name then by the trailing numeric portion of unit_name
+                const sorted = [...data].sort((a, b) => {
+                    const towerCmp = (a.tower || '').localeCompare(b.tower || '');
+                    if (towerCmp !== 0) return towerCmp;
+                    const numA = parseInt((a.unit_name || '').replace(/\D+/g, '') || '0', 10);
+                    const numB = parseInt((b.unit_name || '').replace(/\D+/g, '') || '0', 10);
+                    return numA - numB;
+                });
+                setUnits(sorted);
             }
             setIsLoading(false);
         }
@@ -241,50 +249,72 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                             </tr>
                         </thead>
                         <tbody>
-                            {unitsToShow.map((unit) => (
-                                <tr key={unit.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                                    <td className="p-4 font-bold text-gray-900 text-sm">{unit.unit_name}</td>
-                                    <td className="p-4">
-                                        <span className="text-[11px] font-bold py-0.5 px-2.5 bg-gray-50 border border-gray-100 rounded text-gray-400 uppercase tracking-wider">
-                                            {typologyLabel(unit.unit_type)}
-                                        </span>
-                                    </td>
-                                    <td className="p-4 text-gray-600 text-sm">{unit.area ? `${unit.area}m²` : '—'}</td>
-                                    <td className="p-4 text-right font-bold text-gray-900">
-                                        {(unit.price || unit.total_price) ? formatBRL(unit.price ?? unit.total_price) : 'Sob Consulta'}
-                                    </td>
-                                    <td className="p-4 pr-2 text-center">
-                                        <button
-                                            onClick={() => setFloorPlanUnit(unit)}
-                                            title="Ver planta"
-                                            className="relative inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97] border border-gray-200 text-gray-600 bg-white hover:bg-gray-50"
-                                            style={{ minHeight: 44 }}
-                                        >
-                                            <LayoutTemplate className="w-3.5 h-3.5" />
-                                            <span className="hidden lg:inline">Planta</span>
-                                        </button>
-                                    </td>
-                                    <td className="p-4 pl-2 text-center">
-                                        <button
-                                            onClick={() => handleWhatsApp(unit)}
-                                            className="relative inline-flex items-center gap-1.5 h-9 px-4 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97]"
-                                            style={{ background: '#0B1928', color: '#fff', minHeight: 44 }}
-                                        >
-                                            <MessageCircle className="w-3 h-3" />
-                                            Consultar
-                                            <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {unitsToShow.map((unit, idx) => {
+                                const prevTower = idx > 0 ? unitsToShow[idx - 1].tower : null;
+                                const showTowerHeader = unit.tower && unit.tower !== prevTower;
+                                return (
+                                    <Fragment key={unit.id}>
+                                        {showTowerHeader && (
+                                            <tr>
+                                                <td colSpan={6} className="px-4 pt-4 pb-2 bg-gray-50/60 border-b border-gray-100">
+                                                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400">
+                                                        {unit.tower}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        )}
+                                        <tr className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                                            <td className="p-4 font-bold text-gray-900 text-sm">{unit.unit_name}</td>
+                                            <td className="p-4">
+                                                <span className="text-[11px] font-bold py-0.5 px-2.5 bg-gray-50 border border-gray-100 rounded text-gray-400 uppercase tracking-wider">
+                                                    {typologyLabel(unit.unit_type)}
+                                                </span>
+                                            </td>
+                                            <td className="p-4 text-gray-600 text-sm">{unit.area ? `${unit.area}m²` : '—'}</td>
+                                            <td className="p-4 text-right font-bold text-gray-900">
+                                                {(unit.price || unit.total_price) ? formatBRL(unit.price ?? unit.total_price) : 'Sob Consulta'}
+                                            </td>
+                                            <td className="p-4 pr-2 text-center">
+                                                <button
+                                                    onClick={() => setFloorPlanUnit(unit)}
+                                                    title="Ver planta"
+                                                    className="relative inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97] border border-gray-200 text-gray-600 bg-white hover:bg-gray-50"
+                                                    style={{ minHeight: 44 }}
+                                                >
+                                                    <LayoutTemplate className="w-3.5 h-3.5" />
+                                                    <span className="hidden lg:inline">Planta</span>
+                                                </button>
+                                            </td>
+                                            <td className="p-4 pl-2 text-center">
+                                                <button
+                                                    onClick={() => handleWhatsApp(unit)}
+                                                    className="relative inline-flex items-center gap-1.5 h-9 px-4 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.97]"
+                                                    style={{ background: '#0B1928', color: '#fff', minHeight: 44 }}
+                                                >
+                                                    <MessageCircle className="w-3 h-3" />
+                                                    Consultar
+                                                    <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </Fragment>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
 
                 {/* Mobile Cards */}
                 <div className="md:hidden space-y-3">
-                    {unitsToShow.map((unit) => (
-                        <div key={unit.id} className="bg-white border border-gray-100 rounded-[10px] p-4">
+                    {unitsToShow.map((unit, idx) => {
+                        const prevTower = idx > 0 ? unitsToShow[idx - 1].tower : null;
+                        const showTowerHeader = unit.tower && unit.tower !== prevTower;
+                        return (
+                            <div key={unit.id}>
+                                {showTowerHeader && (
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400 px-1 pb-1 pt-3">{unit.tower}</p>
+                                )}
+                        <div className="bg-white border border-gray-100 rounded-[10px] p-4">
                             <div className="flex justify-between items-center mb-3">
                                 <span className="font-bold text-gray-900">Unidade {unit.unit_name}</span>
                                 <span className="text-[11px] font-bold px-2 py-0.5 bg-gray-50 text-gray-400 rounded-[3px] uppercase tracking-wider">
@@ -316,7 +346,9 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                                 </button>
                             </div>
                         </div>
-                    ))}
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {/* Show More */}

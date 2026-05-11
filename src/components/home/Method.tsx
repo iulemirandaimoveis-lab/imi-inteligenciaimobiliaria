@@ -46,7 +46,7 @@ export default function Method({ dict }: MethodProps) {
     const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.2, 0.9])
 
     return (
-        <section ref={sectionRef} className="relative py-20 lg:py-28 overflow-hidden" style={{ background: 'var(--bg-base)' }}>
+        <section ref={sectionRef} className="relative py-20 lg:py-28 overflow-hidden" style={{ background: '#0B1928' }}>
             {/* Dot grid texture with parallax */}
             <motion.div
                 className="absolute inset-0 opacity-[0.025]"
