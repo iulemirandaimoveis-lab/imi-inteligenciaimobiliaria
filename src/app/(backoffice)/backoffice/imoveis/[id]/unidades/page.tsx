@@ -827,11 +827,17 @@ export default function ImoveisUnidadesPage() {
             supabase
                 .from('development_units')
                 .select('*')
-                .eq('development_id', id)
-                .order('created_at', { ascending: true }),
+                .eq('development_id', id),
         ]).then(([{ data: dev }, { data: units }]) => {
             setDevelopment(dev)
-            setUnidades(units || [])
+            const sorted = (units || []).slice().sort((a, b) => {
+                const tc = (a.tower || '').localeCompare(b.tower || '')
+                if (tc !== 0) return tc
+                const na = parseInt((a.unit_name || '').replace(/\D+/g, '') || '0', 10)
+                const nb = parseInt((b.unit_name || '').replace(/\D+/g, '') || '0', 10)
+                return na - nb
+            })
+            setUnidades(sorted)
             setLoading(false)
         })
     }, [id])
