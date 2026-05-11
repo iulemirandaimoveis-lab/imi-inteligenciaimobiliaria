@@ -4,7 +4,7 @@ import Link from 'next/link'
 import {
     Target, Shield, Globe, TrendingUp,
     Linkedin, MessageCircle, Youtube, Instagram,
-    BookOpen, ExternalLink, ArrowRight,
+    ExternalLink, ArrowRight,
 } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -16,7 +16,6 @@ export const metadata: Metadata = {
     },
 }
 
-// ── TikTok icon (lucide doesn't have one) ─────────────────────
 function TikTokIcon({ className }: { className?: string }) {
     return (
         <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -25,7 +24,6 @@ function TikTokIcon({ className }: { className?: string }) {
     )
 }
 
-// ── Static data ────────────────────────────────────────────────
 const values = [
     {
         icon: Target,
@@ -62,8 +60,6 @@ const SOCIAL = [
         label: 'LinkedIn',
         handle: '/iule-miranda-imoveis',
         href: 'https://www.linkedin.com/in/iule-miranda-imoveis',
-        color: '#C8A44A',
-        colorBg: 'rgba(200,164,74,0.10)',
         description: 'Artigos técnicos sobre avaliação imobiliária, laudos NBR 14653, mercado de alto padrão e inteligência patrimonial.',
         cta: 'Seguir no LinkedIn',
     },
@@ -72,8 +68,6 @@ const SOCIAL = [
         label: 'YouTube',
         handle: '@iulemirandaimoveis',
         href: 'https://www.youtube.com/@iulemirandaimoveis',
-        color: '#C8A44A',
-        colorBg: 'rgba(200,164,74,0.10)',
         description: 'Vídeos educativos sobre avaliação de imóveis, análise de mercado, investimentos imobiliários no Brasil e exterior.',
         cta: 'Inscrever-se',
     },
@@ -82,8 +76,6 @@ const SOCIAL = [
         label: 'Instagram',
         handle: '@iulemirandaimoveis',
         href: 'https://www.instagram.com/iulemirandaimoveis',
-        color: '#C8A44A',
-        colorBg: 'rgba(200,164,74,0.10)',
         description: 'Bastidores de perícias judiciais, lançamentos premium, análises de mercado e conteúdo de inteligência imobiliária.',
         cta: 'Seguir no Instagram',
     },
@@ -92,10 +84,23 @@ const SOCIAL = [
         label: 'TikTok',
         handle: '@iulemirandaimoveis',
         href: 'https://www.tiktok.com/@iulemirandaimoveis',
-        color: '#C8A44A',
-        colorBg: 'rgba(200,164,74,0.10)',
         description: 'Dicas rápidas de avaliação imobiliária, análises de mercado em formato curto e conteúdo educativo.',
         cta: 'Seguir no TikTok',
+    },
+]
+
+const certificationImages = [
+    {
+        src: '/certificado-cnai.jpg',
+        alt: 'Certificado CRECI-PE de Avaliação de Imóveis e Perícias Judiciais',
+    },
+    {
+        src: '/certificado-act.jpg',
+        alt: 'Certificado ACT Institute — Ericksonian Hypnosis Training Level I',
+    },
+    {
+        src: '/Certificado-puc.jpg',
+        alt: 'Certificado PUCRS de extensão em Wealth Management e Family Office',
     },
 ]
 
@@ -106,6 +111,7 @@ const EBOOKS = [
         description: 'Tudo que você precisa saber sobre avaliações técnicas: metodologia, laudos, normas e como interpretar resultados.',
         slug: 'guia-avaliacao-nbr-14653',
         amazonUrl: null,
+        coverImage: '/guia-avaliacao-nbr-14653.png',
     },
     {
         title: 'Investindo em Dubai: Oportunidades para o Investidor Brasileiro',
@@ -113,6 +119,7 @@ const EBOOKS = [
         description: 'Como estruturar seu investimento imobiliário nos Emirados Árabes Unidos com segurança jurídica e rentabilidade.',
         slug: 'investindo-dubai-investidor-brasileiro',
         amazonUrl: null,
+        coverImage: '/investindo-em-dubai.png',
     },
     {
         title: 'Mercado Imobiliário de Alto Padrão: Recife e João Pessoa',
@@ -120,10 +127,10 @@ const EBOOKS = [
         description: 'Relatório completo de tendências, preços por bairro, oportunidades e perspectivas para o Nordeste.',
         slug: 'mercado-alto-padrao-recife-joao-pessoa',
         amazonUrl: null,
+        coverImage: '/mercado-alto-padrao.png',
     },
 ]
 
-// ── Page ──────────────────────────────────────────────────────
 export default async function AboutPage({
     params,
 }: {
@@ -132,19 +139,17 @@ export default async function AboutPage({
     const lang = params.lang || 'pt'
 
     return (
-        <main className="bg-navy-950">
+        <main className="bg-[#0B1928]">
 
             {/* ── HERO ──────────────────────────────────────── */}
-            <section className="relative bg-navy-950 text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
+            <section className="relative bg-[#0B1928] text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-navy-800/5 -skew-x-12 translate-x-1/4" />
                 <div className="container-custom relative z-10 max-w-4xl">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="w-12 h-px bg-[#C8A44A]" />
                         <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Quem Somos</span>
                     </div>
-                    <h1
-                        className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white"
-                    >
+                    <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
                         IMI – Inteligência <br /><span className="text-[#C8A44A] italic">Imobiliária</span>
                     </h1>
                     <div className="space-y-5 text-white/50 text-lg sm:text-xl font-light leading-relaxed max-w-3xl">
@@ -165,22 +170,34 @@ export default async function AboutPage({
             {/* ── FUNDADOR ──────────────────────────────────── */}
             <section className="py-16 md:py-24 border-b border-white/[0.05]">
                 <div className="container-custom">
-                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                        {/* Photo */}
-                        <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.05] max-w-sm mx-auto lg:max-w-none">
-                            <Image
-                                src="/about-profile.jpg"
-                                alt="Iule Miranda"
-                                fill
-                                className="object-cover object-top"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/60 via-transparent to-transparent" />
-                            <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4">
-                                <p className="text-white font-bold text-sm">Iule Miranda</p>
-                                <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
-                                    CRECI 17933 · CNAI 53290 · Perito Judicial
-                                </p>
+                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+                        {/* Photo — using plain <img> to bypass Next.js image optimizer */}
+                        <div className="relative max-w-sm mx-auto lg:max-w-none w-full">
+                            <div
+                                className="relative rounded-2xl overflow-hidden border border-white/[0.08] shadow-2xl"
+                                style={{ aspectRatio: '3/4' }}
+                            >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src="/about-profile.jpg"
+                                    alt="Iule Miranda — Avaliador Imobiliário e Perito Judicial"
+                                    className="w-full h-full object-cover object-top"
+                                    loading="eager"
+                                    decoding="sync"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1928]/80 via-[#0B1928]/10 to-transparent" />
+                                <div className="absolute bottom-0 left-0 right-0 p-5">
+                                    <div className="bg-[#0B1928]/80 backdrop-blur-md border border-white/10 rounded-xl p-4">
+                                        <p className="text-white font-bold text-sm">Iule Miranda</p>
+                                        <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
+                                            CRECI 17933 · CNAI 53290 · Perito Judicial
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
+                            <div className="absolute -bottom-3 -right-3 w-24 h-24 border border-[#C8A44A]/20 rounded-2xl -z-10" />
+                            <div className="absolute -top-3 -left-3 w-16 h-16 border border-[#C8A44A]/10 rounded-xl -z-10" />
                         </div>
 
                         {/* Bio */}
@@ -189,9 +206,7 @@ export default async function AboutPage({
                                 <div className="w-8 h-px bg-[#C8A44A]" />
                                 <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Identidade Profissional</span>
                             </div>
-                            <h2
-                                className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white mb-3"
-                            >
+                            <h2 className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white mb-3">
                                 Iule Miranda
                             </h2>
                             <p className="text-[#C8A44A] text-sm font-bold uppercase tracking-[0.15em] mb-6">
@@ -221,24 +236,58 @@ export default async function AboutPage({
                                 href="https://www.linkedin.com/in/iule-miranda-imoveis"
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-[13px] font-bold transition-all duration-200 hover:bg-[#C8A44A]/15"
                                 style={{
-                                    background: '#0A1624',
+                                    background: 'rgba(200,164,74,0.08)',
                                     color: '#C8A44A',
                                     border: '1px solid rgba(200,164,74,0.3)',
-                                    borderRadius: 6,
-                                    padding: '10px 20px',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: 8,
-                                    fontWeight: 600,
-                                    fontSize: 13,
-                                    textDecoration: 'none',
                                 }}
                             >
                                 <Linkedin className="w-4 h-4" strokeWidth={2} />
                                 Conectar no LinkedIn
                             </a>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── NÚMEROS ───────────────────────────────────── */}
+            <section className="py-14 md:py-20 border-b border-white/[0.05]">
+                <div className="container-custom">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+                        {stats.map((stat) => (
+                            <div key={stat.label} className="text-center">
+                                <div className="font-display text-4xl md:text-5xl font-bold text-white mb-2 tabular-nums">
+                                    {stat.number}
+                                </div>
+                                <div className="text-sm text-[#C8A44A] font-medium">{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── GALERIA DE CERTIFICADOS ─────────────────── */}
+            <section className="py-16 md:py-24 border-b border-white/[0.05]">
+                <div className="container-custom">
+                    <div className="mb-10">
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="w-8 h-px bg-[#C8A44A]" />
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Certificados</span>
+                        </div>
+                        <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-3">
+                            Formação e Atualização <span className="text-[#C8A44A] italic">Contínua</span>
+                        </h2>
+                        <p className="text-white/50 text-lg font-light max-w-3xl">
+                            Registros visuais das certificações apresentadas no perfil profissional.
+                        </p>
+                    </div>
+                    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {certificationImages.map((img) => (
+                            <div key={img.src} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0B1928]">
+                                <Image src={img.src} alt={img.alt} fill className="object-contain p-2" />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -252,9 +301,7 @@ export default async function AboutPage({
                             <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Princípios</span>
                             <div className="w-8 h-px bg-[#C8A44A]" />
                         </div>
-                        <h2
-                            className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
-                        >
+                        <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
                             Nossos Valores
                         </h2>
                     </div>
@@ -262,35 +309,15 @@ export default async function AboutPage({
                         {values.map((item) => (
                             <div
                                 key={item.title}
-                                className="p-8 rounded-2xl bg-navy-950 border border-white/[0.05] transition-all duration-300 group hover:border-[#C8A44A]/30"
+                                className="p-8 rounded-2xl bg-[#0d2035] border border-white/[0.05] transition-all duration-300 group hover:border-[#C8A44A]/30 hover:shadow-[0_8px_32px_rgba(200,164,74,0.05)]"
                             >
                                 <div className="w-12 h-12 bg-[#C8A44A]/10 text-[#C8A44A] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-[#C8A44A]/20">
                                     <item.icon className="w-5 h-5" strokeWidth={1.5} />
                                 </div>
-                                <h3
-                                    className="font-display text-xl font-bold text-white mb-3"
-                                >
+                                <h3 className="font-display text-xl font-bold text-white mb-3">
                                     {item.title}
                                 </h3>
                                 <p className="text-white/50 leading-relaxed text-sm">{item.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── NÚMEROS ───────────────────────────────────── */}
-            <section className="py-16 md:py-24 border-b border-white/[0.05]">
-                <div className="container-custom">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-                        {stats.map((stat) => (
-                            <div key={stat.label} className="text-center">
-                                <div
-                                    className="font-display text-4xl md:text-5xl font-bold text-white mb-2"
-                                >
-                                    {stat.number}
-                                </div>
-                                <div className="text-sm text-[#C8A44A] font-medium">{stat.label}</div>
                             </div>
                         ))}
                     </div>
@@ -305,9 +332,7 @@ export default async function AboutPage({
                             <div className="w-8 h-px bg-[#C8A44A]" />
                             <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Presença Digital</span>
                         </div>
-                        <h2
-                            className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
-                        >
+                        <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
                             Conteúdo que <span className="text-[#C8A44A] italic">Educa</span> e Inspira
                         </h2>
                         <p className="text-white/50 text-lg font-light max-w-2xl">
@@ -320,13 +345,10 @@ export default async function AboutPage({
                             return (
                                 <div
                                     key={s.label}
-                                    className="group bg-navy-950 border border-white/[0.05] hover:border-white/[0.12] rounded-2xl p-6 flex flex-col transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+                                    className="group bg-[#0d2035] border border-white/[0.05] hover:border-[#C8A44A]/25 rounded-2xl p-6 flex flex-col transition-all duration-300 hover:shadow-[0_8px_32px_rgba(200,164,74,0.06)]"
                                 >
-                                    <div
-                                        className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-105"
-                                        style={{ background: s.colorBg, border: `1px solid ${s.color}25` }}
-                                    >
-                                        <Icon className="w-6 h-6" style={{ color: s.color }} />
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-105 bg-[#C8A44A]/10 border border-[#C8A44A]/20">
+                                        <Icon className="w-6 h-6 text-[#C8A44A]" />
                                     </div>
                                     <p className="font-bold text-white text-[15px] mb-1">{s.label}</p>
                                     <p className="text-[#C8A44A] text-[11px] font-medium mb-3">{s.handle}</p>
@@ -335,12 +357,7 @@ export default async function AboutPage({
                                         href={s.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-center gap-2 h-9 rounded-[4px] text-[12px] font-bold transition-all duration-200"
-                                        style={{
-                                            background: s.colorBg,
-                                            color: s.color,
-                                            border: `1px solid ${s.color}30`,
-                                        }}
+                                        className="flex items-center justify-center gap-2 h-9 rounded-lg text-[12px] font-bold transition-all duration-200 bg-[#C8A44A]/10 text-[#C8A44A] border border-[#C8A44A]/25 hover:bg-[#C8A44A]/20"
                                     >
                                         {s.cta}
                                         <ExternalLink className="w-3 h-3" />
@@ -352,7 +369,7 @@ export default async function AboutPage({
                 </div>
             </section>
 
-            {/* ── EBOOKS ────────────────────────────────────── */}
+            {/* ── EBOOKS / BIBLIOTECA ───────────────────────── */}
             <section className="py-16 md:py-24 border-b border-white/[0.05]">
                 <div className="container-custom">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
@@ -361,9 +378,7 @@ export default async function AboutPage({
                                 <div className="w-8 h-px bg-[#C8A44A]" />
                                 <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[11px]">Publicações</span>
                             </div>
-                            <h2
-                                className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
-                            >
+                            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
                                 Biblioteca <span className="text-[#C8A44A] italic">IMI</span>
                             </h2>
                             <p className="text-white/50 text-lg font-light max-w-xl">
@@ -378,31 +393,35 @@ export default async function AboutPage({
                             <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
-                    <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {EBOOKS.map((book) => (
                             <article
                                 key={book.slug}
-                                className="group bg-navy-950 border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] flex flex-col"
+                                className="group bg-[#0d2035] border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgba(200,164,74,0.08)] flex flex-col"
                             >
-                                <div className="relative aspect-[3/2] bg-gradient-to-br from-[#1A1E2A] to-[#0D1117] flex items-center justify-center border-b border-white/[0.05]">
-                                    <div className="text-center p-6">
-                                        <BookOpen className="w-10 h-10 text-[#C8A44A] mx-auto mb-3" strokeWidth={1} />
-                                        <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em]">E-book IMI</p>
-                                    </div>
-                                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+                                {/* Portrait aspect ratio — shows the complete book cover */}
+                                <div className="relative bg-[#0B1928] overflow-hidden" style={{ aspectRatio: '3/4' }}>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={book.coverImage}
+                                        alt={`Capa do livro ${book.title}`}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                                        loading="lazy"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B1928]/20 to-transparent" />
                                 </div>
+
                                 <div className="p-6 flex flex-col flex-1">
                                     <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{book.subtitle}</p>
-                                    <h3
-                                        className="font-display text-white font-bold text-[15px] leading-snug mb-3 group-hover:text-[#C8A44A] transition-colors"
-                                    >
+                                    <h3 className="font-display text-white font-bold text-[15px] leading-snug mb-3 group-hover:text-[#C8A44A] transition-colors">
                                         {book.title}
                                     </h3>
                                     <p className="text-white/50 text-xs leading-relaxed flex-1 mb-5">{book.description}</p>
                                     <div className="flex gap-2.5">
                                         <Link
                                             href={`/${lang}/biblioteca/${book.slug}`}
-                                            className="flex-1 h-10 flex items-center justify-center rounded-[4px] bg-transparent border border-[#C8A44A]/14 text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-[#C8A44A]/10 transition-all"
+                                            className="flex-1 h-10 flex items-center justify-center rounded-lg bg-[#C8A44A]/10 border border-[#C8A44A]/20 text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-[#C8A44A]/20 transition-all"
                                         >
                                             Ver Livro
                                         </Link>
@@ -411,7 +430,7 @@ export default async function AboutPage({
                                                 href={book.amazonUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="w-10 h-10 flex items-center justify-center rounded-[4px] bg-amber-500/10 border border-[#FF9900]/20 text-[#FF9900] hover:bg-amber-500/20 transition-all"
+                                                className="w-10 h-10 flex items-center justify-center rounded-lg bg-amber-500/10 border border-[#FF9900]/20 text-[#FF9900] hover:bg-amber-500/20 transition-all"
                                                 title="Comprar na Amazon"
                                             >
                                                 <ExternalLink className="w-4 h-4" />
@@ -426,12 +445,10 @@ export default async function AboutPage({
             </section>
 
             {/* ── CTA ───────────────────────────────────────── */}
-            <section className="bg-navy-950 text-white py-20 md:py-28 text-center relative overflow-hidden">
+            <section className="bg-[#0B1928] text-white py-20 md:py-28 text-center relative overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
-                    <h2
-                        className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight"
-                    >
+                    <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
                         Vamos <span className="text-[#C8A44A] italic">Conversar?</span>
                     </h2>
                     <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
@@ -440,8 +457,8 @@ export default async function AboutPage({
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
                             href={`/${lang}/contato`}
-                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold rounded-[6px] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden"
-                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold rounded-lg transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden"
+                            style={{ background: '#0B1928', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                         >
                             <MessageCircle className="w-4 h-4" />
                             Entrar em Contato
@@ -451,7 +468,7 @@ export default async function AboutPage({
                             href="https://wa.me/5581997230455"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold border border-white/10 text-slate-300 hover:bg-white/[0.04] hover:text-white rounded-[4px] transition-all duration-300"
+                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold border border-white/10 text-slate-300 hover:bg-white/[0.04] hover:text-white rounded-lg transition-all duration-300"
                         >
                             WhatsApp Direto
                         </a>

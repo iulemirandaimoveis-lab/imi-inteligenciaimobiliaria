@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 const NAV_COLS = [
@@ -83,6 +84,15 @@ export default function Footer() {
 
                     {/* Logo + Description */}
                     <div>
+                        <div style={{ marginBottom: 20 }}>
+                            <Image
+                                src="/iule-miranda-badge.png"
+                                alt="Brasão profissional Iule Miranda"
+                                width={180}
+                                height={180}
+                                style={{ width: 'clamp(88px, 12vw, 132px)', height: 'auto' }}
+                            />
+                        </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
                             <span style={{
                                 fontFamily: "'Playfair Display', Georgia, serif",

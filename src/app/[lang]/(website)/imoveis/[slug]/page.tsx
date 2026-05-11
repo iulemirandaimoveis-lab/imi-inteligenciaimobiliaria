@@ -25,6 +25,9 @@ export const revalidate = 3600
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
+const SLUG_VIRTUAL_TOURS: Record<string, string> = {
+    'jazz-boulevard-garanhuns': 'https://tour.panoee.net/TORRE_SOUL_RESIDENCE',
+}
 
 export async function generateMetadata({ params }: { params: { slug: string, lang: string } }): Promise<Metadata> {
     // Server-side admin client — bypasses RLS for public page rendering
@@ -131,6 +134,9 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
 
     const development = mapDbPropertyToDevelopment(data)
+    if (!development.images.virtualTour && SLUG_VIRTUAL_TOURS[params.slug]) {
+        development.images.virtualTour = SLUG_VIRTUAL_TOURS[params.slug]
+    }
 
     // Fetch broker separately (resilient — won't break if brokers table is missing)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

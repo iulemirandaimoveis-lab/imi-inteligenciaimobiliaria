@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, ArrowRight, ShoppingCart, Clock, Filter, MessageCircle } from 'lucide-react'
@@ -242,6 +242,11 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
     const hasBookContent = bookSlugs.includes(ebook.slug)
     const pilarColor = ebook.pilar ? PILAR_COLORS[ebook.pilar] : null
     const pilarLabel = ebook.pilar ? PILAR_LABELS[ebook.pilar] : null
+    const svgCover = useMemo(() => `/books/covers/${ebook.slug}.svg`, [ebook.slug])
+    const fallbackCover = useMemo(() => `/books/covers/${ebook.slug}.webp`, [ebook.slug])
+    const initialCover = ebook.cover_image || svgCover
+    const [currentCover, setCurrentCover] = useState(initialCover)
+    const [useSvg, setUseSvg] = useState(!ebook.cover_image)
 
     return (
         <motion.div
@@ -267,14 +272,29 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
         >
             {/* Cover */}
             <div className="relative w-full aspect-[3/4] overflow-hidden" style={{ minHeight: 240 }}>
-                {ebook.cover_image ? (
-                    <Image
-                        src={ebook.cover_image}
-                        alt={ebook.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
+                {currentCover ? (
+                    useSvg ? (
+                        // SVG covers served from /public/books/covers/ — use <img> to avoid Next.js optimisation
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={currentCover}
+                            alt={ebook.title}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                            onError={() => {
+                                setCurrentCover(fallbackCover)
+                                setUseSvg(false)
+                            }}
+                        />
+                    ) : (
+                        <Image
+                            src={currentCover}
+                            alt={ebook.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            onError={() => setCurrentCover('')}
+                        />
+                    )
                 ) : (
                     <PlaceholderCover title={ebook.title} subtitle={ebook.subtitle} pilar={ebook.pilar} />
                 )}

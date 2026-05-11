@@ -65,6 +65,18 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
         return () => { document.body.style.overflow = ''; };
     }, [lightboxIndex]);
 
+    const virtualTourUrl = development.images.virtualTour || '';
+    const tourHost = (() => {
+        try {
+            return virtualTourUrl ? new URL(virtualTourUrl).hostname : '';
+        } catch {
+            return '';
+        }
+    })();
+    // Some providers (ex: tour.panoee.net) can block iframe embedding via X-Frame-Options/CSP.
+    // For those, prefer opening in a new tab instead of showing a blocked iframe.
+    const shouldOpenTourExternally = /(^|\.)tour\.panoee\.net$/i.test(tourHost);
+
     return (
         <>
             <div className="space-y-14">
@@ -195,17 +207,39 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                 {development.images.virtualTour && (
                     <div>
                         <SectionTitle label="Tour Virtual 360°" />
-                        <div className="relative w-full aspect-video md:h-[480px] rounded-[14px] overflow-hidden border border-gray-100 shadow-lg">
-                            <iframe
-                                src={development.images.virtualTour}
-                                className="w-full h-full border-0"
-                                allowFullScreen
-                            />
-                            <div className="absolute top-4 left-4 bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-[4px] flex items-center gap-2.5 text-xs font-semibold">
-                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                Tour Interativo
+                        {shouldOpenTourExternally ? (
+                            <div className="relative w-full min-h-[220px] md:min-h-[280px] rounded-[14px] overflow-hidden border border-gray-100 shadow-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 flex flex-col justify-between">
+                                <div className="bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-[4px] inline-flex items-center gap-2.5 text-xs font-semibold w-fit">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                    Tour Interativo
+                                </div>
+                                <div className="space-y-3">
+                                    <p className="text-white/85 text-sm md:text-base font-medium">
+                                        Este tour virtual abre em uma página dedicada para melhor experiência 360°.
+                                    </p>
+                                    <a
+                                        href={development.images.virtualTour}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center justify-center px-5 py-3 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition-colors"
+                                    >
+                                        Abrir Tour Virtual
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="relative w-full aspect-video md:h-[480px] rounded-[14px] overflow-hidden border border-gray-100 shadow-lg">
+                                <iframe
+                                    src={development.images.virtualTour}
+                                    className="w-full h-full border-0"
+                                    allowFullScreen
+                                />
+                                <div className="absolute top-4 left-4 bg-gray-900/80 backdrop-blur text-white px-4 py-2 rounded-[4px] flex items-center gap-2.5 text-xs font-semibold">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                    Tour Interativo
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

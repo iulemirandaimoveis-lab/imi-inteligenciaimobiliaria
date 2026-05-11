@@ -59,6 +59,7 @@ export default async function ImoveisPage({
     const saleDevelopments = (data || []).map(mapDbPropertyToDevelopment)
     const rentalDevelopments = (rentals || []).map(mapRentalToDevelopment)
     const allDevelopments = [...saleDevelopments, ...rentalDevelopments]
+        .filter((dev) => Boolean(dev.images?.main || (dev.images?.gallery?.length ?? 0) > 0))
     console.log(`[ImoveisPage] Fetched ${saleDevelopments.length} sales + ${rentalDevelopments.length} rentals`)
     return (
         <ImoveisClient

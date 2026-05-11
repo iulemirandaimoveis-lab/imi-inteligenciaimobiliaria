@@ -7,6 +7,7 @@ import { Building2, Banknote, TrendingUp, ShieldCheck, Clock, ChevronDown, Chevr
 import { ButtonPrimary } from '@/components/website/Buttons'
 import { formatCurrency } from '@/lib/utils'
 import LeadCaptureModal from '@/app/[lang]/(website)/imoveis/components/LeadCaptureModal'
+import SubsidySimulator from '@/app/[lang]/(website)/inteligencia/SubsidySimulator'
 
 const creditTypes = [
     {
@@ -154,6 +155,37 @@ export default function CreditPage() {
                                 </ul>
                             </motion.div>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+
+            {/* SIMULADOR DE SUBSÍDIO */}
+            <section className="py-10 md:py-16 border-t border-white/[0.05]">
+                <div className="container-custom">
+                    <div className="hidden md:grid md:grid-cols-2 gap-10 items-start">
+                        <div className="md:sticky md:top-24">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-px bg-[#334E68]" />
+                                <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[10px]">Motor de Decisão</span>
+                            </div>
+                            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
+                                Quanto você pode{' '}
+                                <span className="text-[#C8A44A] italic">receber de subsídio</span>?
+                            </h2>
+                            <p className="text-[#94A0B2] text-sm md:text-base font-light leading-relaxed mb-6 max-w-md">
+                                Descubra se você tem direito ao MCMV ou Habite Seguro, quanto de desconto
+                                no imóvel e como estruturar duas compras com subsídios separados.
+                            </p>
+                        </div>
+                        <SubsidySimulator lang="pt" />
+                    </div>
+                    <div className="md:hidden">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-px bg-[#334E68]" />
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[10px]">Motor de Decisão</span>
+                        </div>
+                        <SubsidySimulator lang="pt" />
                     </div>
                 </div>
             </section>

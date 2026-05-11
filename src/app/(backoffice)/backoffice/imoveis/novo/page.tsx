@@ -172,6 +172,7 @@ export default function NovoImovelPage() {
         gallery_images: imageUrls, image: imageUrls[0] || null,
         floor_plans: floorPlanUrls, brochure_url: brochureUrl,
         video_url: form.videoUrl, video_short_url: form.videoShort,
+        virtual_tour_url: form.virtualTourUrl || null,
       }
 
       const res = await fetch('/api/developments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })

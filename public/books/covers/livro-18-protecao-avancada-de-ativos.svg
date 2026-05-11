@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="800" viewBox="0 0 600 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg_livro_18_protecao_avancada_de_ativos" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#151008"/>
+      <stop offset="55%"  stop-color="#2A2210"/>
+      <stop offset="100%" stop-color="#100C06"/>
+    </linearGradient>
+    <linearGradient id="acc_livro_18_protecao_avancada_de_ativos" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#c9a040"/>
+      <stop offset="100%" stop-color="#c9a040" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="fade_livro_18_protecao_avancada_de_ativos" x1="0" y1="0.6" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#100C06" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#100C06" stop-opacity="0.85"/>
+    </linearGradient>
+    <radialGradient id="glow_livro_18_protecao_avancada_de_ativos" cx="85%" cy="18%" r="55%">
+      <stop offset="0%"   stop-color="#c9a040" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#c9a040" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2_livro_18_protecao_avancada_de_ativos" cx="10%" cy="82%" r="40%">
+      <stop offset="0%"   stop-color="#c9a040" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#c9a040" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="800" fill="url(#bg_livro_18_protecao_avancada_de_ativos)"/>
+  <rect width="600" height="800" fill="url(#glow_livro_18_protecao_avancada_de_ativos)"/>
+  <rect width="600" height="800" fill="url(#glow2_livro_18_protecao_avancada_de_ativos)"/>
+
+  <!-- Geometric accent — top-right corner lines -->
+  <rect x="597" y="0"  width="3" height="160" fill="#c9a040" opacity="0.18"/>
+  <rect x="586" y="20" width="2" height="100" fill="#c9a040" opacity="0.10"/>
+  <rect x="576" y="40" width="1.5" height="60" fill="#c9a040" opacity="0.06"/>
+
+  <!-- Subtle diagonal grid lines -->
+  <line x1="600" y1="0" x2="420" y2="300" stroke="#c9a040" stroke-width="0.5" opacity="0.05"/>
+  <line x1="600" y1="0" x2="320" y2="400" stroke="#c9a040" stroke-width="0.5" opacity="0.04"/>
+
+  <!-- Large watermark number -->
+  <text x="556" y="380"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="220"
+    font-weight="700"
+    fill="#c9a040"
+    opacity="0.04"
+    text-anchor="end"
+    dominant-baseline="auto">18</text>
+
+  <!-- ── IMI LOGO (exact header match) ─────────────────── -->
+  <!-- "IMI" serif bold 32px white letter-spacing 4 -->
+  <text x="44" y="85"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="34"
+    font-weight="700"
+    fill="#FFFFFF"
+    letter-spacing="4"
+    xml:space="preserve">IMI</text>
+
+  <!-- Gold vertical divider: 1.5px × 30px -->
+  <rect x="108" y="62" width="1.5" height="30" fill="#C8A44A"/>
+
+  <!-- INTELIGÊNCIA / IMOBILIÁRIA — 9px uppercase white/60% -->
+  <text x="119" y="74"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="9"
+    font-weight="600"
+    fill="#FFFFFF"
+    fill-opacity="0.60"
+    letter-spacing="2.5"
+    xml:space="preserve">INTELIGÊNCIA</text>
+  <text x="119" y="88"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="9"
+    font-weight="600"
+    fill="#FFFFFF"
+    fill-opacity="0.60"
+    letter-spacing="2.5"
+    xml:space="preserve">IMOBILIÁRIA</text>
+
+  <!-- Accent line below logo -->
+  <rect x="44" y="106" width="140" height="1.5" fill="url(#acc_livro_18_protecao_avancada_de_ativos)" rx="1"/>
+
+  <!-- Pilar category label -->
+  <text x="44" y="136"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="9.5"
+    font-weight="700"
+    fill="#c9a040"
+    letter-spacing="2.8"
+    opacity="0.90"
+    xml:space="preserve">PATRIMÔNIO</text>
+
+  <!-- Bottom fade overlay -->
+  <rect width="600" height="800" fill="url(#fade_livro_18_protecao_avancada_de_ativos)"/>
+
+  <!-- ── Book Title ──────────────────────────────────────── -->
+  <text x="44" y="629"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="30"
+    font-weight="700"
+    fill="#E8E4DC"
+    xml:space="preserve">Proteção Avançada de Ativos</text>
+
+  <!-- ── Subtitle ───────────────────────────────────────── -->
+  <text x="44" y="682"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12.5"
+    fill="#E8E4DC"
+    fill-opacity="0.42"
+    xml:space="preserve">Como Blindar Seu Patrimônio Imobiliário Contra os Riscos</text>
+
+  <!-- Bottom accent line -->
+  <rect x="44" y="714" width="512" height="1" fill="url(#acc_livro_18_protecao_avancada_de_ativos)" opacity="0.55"/>
+
+  <!-- Author -->
+  <text x="44" y="732"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    font-weight="600"
+    fill="#E8E4DC"
+    fill-opacity="0.45"
+    letter-spacing="0.8"
+    xml:space="preserve">Iule Miranda</text>
+</svg>
