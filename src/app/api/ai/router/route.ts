@@ -1,15 +1,10 @@
-// ============================================
-// SCRIPT 0 — API ROUTE: AI ROUTER UNIFICADO
-// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
-// ============================================
 /**
- * SALVAR EM: src/app/api/ai/router/route.ts
- *
- * Central de roteamento multi-modelo.
+ * src/app/api/ai/router/route.ts
+ * Central de roteamento multi-modelo com validação de entrada via Zod.
  * Suporta: Claude (Anthropic), GPT (OpenAI), Gemini (Google), Grok (xAI), Kling (video)
- * Cada task_type é mapeado para o modelo ideal com fallback automático.
  */
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { limiters } from '@/lib/rate-limit'
 export const runtime = 'nodejs'
@@ -46,6 +41,19 @@ export interface AIRouterRequest {
     platform?: 'instagram' | 'linkedin' | 'facebook' | 'youtube' | 'email' | 'blog'
     tenant_id?: string
 }
+
+// Zod schema for runtime validation
+const AIRouterSchema = z.object({
+    task_type: z.enum(['tema', 'roteiro', 'legenda', 'descricao', 'hashtags', 'email', 'imagem_prompt', 'imagem', 'video', 'analise_lead', 'custom']),
+    prompt: z.string().min(1, 'prompt não pode ser vazio').max(10_000, 'prompt muito longo (máx 10.000 chars)'),
+    context: z.string().max(20_000).optional(),
+    model_override: z.enum(['claude-sonnet', 'claude-haiku', 'gpt-4o', 'gpt-4o-mini', 'gemini-pro', 'gemini-flash', 'grok-2', 'kling']).optional(),
+    temperature: z.number().min(0).max(2).optional(),
+    max_tokens: z.number().int().min(1).max(4096).optional(),
+    aspect_ratio: z.enum(['1:1', '4:5', '9:16', '16:9']).optional(),
+    platform: z.enum(['instagram', 'linkedin', 'facebook', 'youtube', 'email', 'blog']).optional(),
+    tenant_id: z.string().optional(),
+})
 export interface AIRouterResponse {
     success: boolean
     result: string
@@ -63,7 +71,8 @@ const MODEL_ROUTING: Record<TaskType, { primary: AIModel; fallback: AIModel }> =
     tema: { primary: 'claude-haiku', fallback: 'gemini-flash' },
     roteiro: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
     legenda: { primary: 'gemini-flash', fallback: 'claude-haiku' },
-    descricao: { primary: 'claude-haiku', fallback: 'gemini-flash' },
+    // Descriptions are client-facing and drive conversions — Sonnet quality required
+    descricao: { primary: 'claude-sonnet', fallback: 'claude-haiku' },
     hashtags: { primary: 'gemini-flash', fallback: 'claude-haiku' },
     email: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
     imagem_prompt: { primary: 'claude-haiku', fallback: 'gemini-flash' },
@@ -295,10 +304,13 @@ export async function POST(request: NextRequest) {
         }
         const rl = await limiters.ai(user.id)
         if (!rl.success) return NextResponse.json({ error: 'Limite de requisições excedido. Aguarde 1 minuto.' }, { status: 429 })
-        const body: AIRouterRequest = await request.json()
-        if (!body.task_type || !body.prompt) {
-            return NextResponse.json({ error: 'task_type e prompt são obrigatórios' }, { status: 400 })
+        const raw = await request.json()
+        const parsed = AIRouterSchema.safeParse(raw)
+        if (!parsed.success) {
+            const issues = parsed.error.issues.map((i: { path: (string | number)[]; message: string }) => `${i.path.join('.')}: ${i.message}`).join('; ')
+            return NextResponse.json({ error: `Dados inválidos: ${issues}` }, { status: 400 })
         }
+        const body: AIRouterRequest = parsed.data
         const routing = MODEL_ROUTING[body.task_type]
         const model = body.model_override || routing.primary
         const temperature = Math.min(Math.max(body.temperature ?? 0.7, 0), 1.5)
