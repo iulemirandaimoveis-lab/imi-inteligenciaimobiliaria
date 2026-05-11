@@ -214,6 +214,7 @@ export async function PUT(request: Request) {
         const updates: Record<string, unknown> = {}
         if (name !== undefined) updates.name = name
         if (role !== undefined) updates.role = role
+        if (is_active !== undefined) updates.is_active = is_active
         updates.updated_at = new Date().toISOString()
         // Update profiles table
         await client.from('profiles').update(updates).eq('id', id)
@@ -236,14 +237,24 @@ export async function DELETE(request: Request) {
         const client = hasServiceKey ? supabaseAdmin : supabase
         const { data: callerRow } = await client.from('profiles').select('role').eq('id', user.id).single()
         const isAdmin = callerRow && ['ADMIN', 'admin', 'SUPER_ADMIN', 'super_admin', 'owner'].includes(callerRow.role)
-        if (!isAdmin) return NextResponse.json({ error: 'Apenas administradores podem desativar usuários' }, { status: 403 })
+        if (!isAdmin) return NextResponse.json({ error: 'Apenas administradores podem excluir usuários' }, { status: 403 })
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
+        const permanent = searchParams.get('permanent') === 'true'
         if (!id) return NextResponse.json({ error: 'ID do usuário é obrigatório' }, { status: 400 })
-        // Prevent self-deactivation
-        if (id === user.id) return NextResponse.json({ error: 'Não é possível desativar o próprio usuário' }, { status: 400 })
+        if (id === user.id) return NextResponse.json({ error: 'Não é possível excluir o próprio usuário' }, { status: 400 })
         if (!hasServiceKey) {
             return NextResponse.json({ error: 'Operação requer chave de serviço. Verifique as variáveis de ambiente do servidor.' }, { status: 500 })
+        }
+        if (permanent) {
+            // Hard delete: remove from auth, profiles and brokers
+            const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(id)
+            if (deleteError) {
+                return NextResponse.json({ error: `Erro ao excluir: ${deleteError.message}` }, { status: 500 })
+            }
+            await supabaseAdmin.from('brokers').delete().eq('user_id', id)
+            await supabaseAdmin.from('profiles').delete().eq('id', id)
+            return NextResponse.json({ success: true })
         }
         // Soft-delete: ban user via auth admin API
         const { error: banError } = await supabaseAdmin.auth.admin.updateUserById(id, {
@@ -252,7 +263,6 @@ export async function DELETE(request: Request) {
         if (banError) {
             return NextResponse.json({ error: `Erro ao desativar: ${banError.message}` }, { status: 500 })
         }
-        // Also update profiles.is_active
         await supabaseAdmin.from('profiles').update({ is_active: false, updated_at: new Date().toISOString() }).eq('id', id)
         return NextResponse.json({ success: true })
     } catch (error: unknown) {
