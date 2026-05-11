@@ -154,10 +154,9 @@ export default function ContactPage() {
                             <motion.div
                                 key={index}
                                 variants={slideUp}
-                                className="group relative p-6 rounded-2xl transition-all duration-300 hover:border-[#C8A44A]/20"
+                                className="group relative p-6 rounded-2xl transition-all duration-300 border border-[#C8A44A]/20 hover:border-white/[0.05]"
                                 style={{
                                     background: 'rgba(11,25,40,0.8)',
-                                    border: '1px solid rgba(255,255,255,0.05)',
                                 }}
                             >
                                 <div
