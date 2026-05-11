@@ -26,6 +26,7 @@ interface FormData {
     tower: string
     is_highlighted: boolean
     notes: string
+    floor_plan_url: string
 }
 
 const UNIT_TYPES = [
@@ -219,6 +220,19 @@ function UnitForm({ form, setForm, saving, onSubmit, onBack, devName, isMobile }
                         onChange={set('tower')}
                     />
                 </Field>
+
+                {/* Floor plan URL */}
+                <div style={{ gridColumn: isMobile ? '1' : '1 / -1' }}>
+                    <Field label="URL da Planta" hint="Link direto para a imagem da planta desta unidade (JPEG, PNG ou PDF)">
+                        <input
+                            style={inputStyle}
+                            type="url"
+                            placeholder="https://..."
+                            value={form.floor_plan_url}
+                            onChange={set('floor_plan_url')}
+                        />
+                    </Field>
+                </div>
 
                 {/* Notes */}
                 <div style={{ gridColumn: isMobile ? '1' : '1 / -1' }}>
@@ -414,6 +428,7 @@ export default function NovaUnidadePage() {
         tower: '',
         is_highlighted: false,
         notes: '',
+        floor_plan_url: '',
     })
 
     useEffect(() => {
@@ -453,6 +468,7 @@ export default function NovaUnidadePage() {
             tower: form.tower.trim() || null,
             is_highlighted: form.is_highlighted,
             notes: form.notes.trim() || null,
+            floor_plan_url: form.floor_plan_url.trim() || null,
         })
 
         setSaving(false)
