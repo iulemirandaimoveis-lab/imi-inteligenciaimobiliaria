@@ -151,10 +151,10 @@ export default async function AboutPage({
     const lang = params.lang || 'pt'
 
     return (
-        <main className="bg-navy-950">
+        <main className="bg-[#0B1928]">
 
             {/* ── HERO ──────────────────────────────────────── */}
-            <section className="relative bg-navy-950 text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
+            <section className="relative bg-[#0B1928] text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-navy-800/5 -skew-x-12 translate-x-1/4" />
                 <div className="container-custom relative z-10 max-w-4xl">
                     <div className="flex items-center gap-3 mb-6">
@@ -186,7 +186,7 @@ export default async function AboutPage({
                 <div className="container-custom">
                     <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                         {/* Photo */}
-                        <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.05] max-w-sm mx-auto lg:max-w-none bg-[#0D0F14]">
+                        <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.05] max-w-sm mx-auto lg:max-w-none bg-[#0B1928]">
                             <Image
                                 src="/about-profile.jpg"
                                 alt="Iule Miranda"
@@ -195,7 +195,7 @@ export default async function AboutPage({
                                 className="object-cover object-top"
                                 sizes="(max-width: 1024px) 100vw, 50vw"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/60 via-transparent to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1928]/60 via-transparent to-transparent" />
                             <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4">
                                 <p className="text-white font-bold text-sm">Iule Miranda</p>
                                 <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
@@ -243,7 +243,7 @@ export default async function AboutPage({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
-                                    background: '#0A1624',
+                                    background: '#0B1928',
                                     color: '#C8A44A',
                                     border: '1px solid rgba(200,164,74,0.3)',
                                     borderRadius: 6,
@@ -283,7 +283,7 @@ export default async function AboutPage({
                     </div>
                     <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {certificationImages.map((img) => (
-                            <div key={img.src} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0D0F14]">
+                            <div key={img.src} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0B1928]">
                                 <Image src={img.src} alt={img.alt} fill className="object-contain p-2" />
                             </div>
                         ))}
@@ -310,7 +310,7 @@ export default async function AboutPage({
                         {values.map((item) => (
                             <div
                                 key={item.title}
-                                className="p-8 rounded-2xl bg-navy-950 border border-white/[0.05] transition-all duration-300 group hover:border-[#C8A44A]/30"
+                                className="p-8 rounded-2xl bg-[#0B1928] border border-white/[0.05] transition-all duration-300 group hover:border-[#C8A44A]/30"
                             >
                                 <div className="w-12 h-12 bg-[#C8A44A]/10 text-[#C8A44A] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-[#C8A44A]/20">
                                     <item.icon className="w-5 h-5" strokeWidth={1.5} />
@@ -368,7 +368,7 @@ export default async function AboutPage({
                             return (
                                 <div
                                     key={s.label}
-                                    className="group bg-navy-950 border border-white/[0.05] hover:border-white/[0.12] rounded-2xl p-6 flex flex-col transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+                                    className="group bg-[#0B1928] border border-white/[0.05] hover:border-white/[0.12] rounded-2xl p-6 flex flex-col transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
                                 >
                                     <div
                                         className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-105"
@@ -430,9 +430,9 @@ export default async function AboutPage({
                         {EBOOKS.map((book) => (
                             <article
                                 key={book.slug}
-                                className="group bg-navy-950 border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] flex flex-col"
+                                className="group bg-[#0B1928] border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] flex flex-col"
                             >
-                                <div className="relative aspect-[3/2] bg-[#0D1117] border-b border-white/[0.05] overflow-hidden">
+                                <div className="relative aspect-[3/2] bg-[#0B1928] border-b border-white/[0.05] overflow-hidden">
                                     <Image
                                         src={book.coverImage}
                                         alt={`Capa do livro ${book.title}`}
@@ -440,7 +440,7 @@ export default async function AboutPage({
                                         className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
                                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0D1117]/35 to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B1928]/35 to-transparent" />
                                 </div>
                                 <div className="p-6 flex flex-col flex-1">
                                     <p className="text-[#C8A44A] text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{book.subtitle}</p>
@@ -477,7 +477,7 @@ export default async function AboutPage({
             </section>
 
             {/* ── CTA ───────────────────────────────────────── */}
-            <section className="bg-navy-950 text-white py-20 md:py-28 text-center relative overflow-hidden">
+            <section className="bg-[#0B1928] text-white py-20 md:py-28 text-center relative overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
                     <h2
@@ -492,7 +492,7 @@ export default async function AboutPage({
                         <Link
                             href={`/${lang}/contato`}
                             className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold rounded-[6px] transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden"
-                            style={{ background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                            style={{ background: '#0B1928', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                         >
                             <MessageCircle className="w-4 h-4" />
                             Entrar em Contato

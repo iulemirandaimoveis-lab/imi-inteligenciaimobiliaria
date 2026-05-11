@@ -109,7 +109,7 @@ export default function ContactPage() {
     ]
 
     return (
-        <main className="bg-[#0D0F14] min-h-screen">
+        <main className="bg-[#0B1928] min-h-screen">
             {/* HERO */}
             <section className="relative text-white pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden">
                 {/* Background glow */}
@@ -156,7 +156,7 @@ export default function ContactPage() {
                                 variants={slideUp}
                                 className="group relative p-6 rounded-2xl transition-all duration-300 hover:border-[#C8A44A]/20"
                                 style={{
-                                    background: 'rgba(20,20,32,0.8)',
+                                    background: 'rgba(11,25,40,0.8)',
                                     border: '1px solid rgba(255,255,255,0.05)',
                                 }}
                             >
@@ -198,7 +198,7 @@ export default function ContactPage() {
                             viewport={{ once: true }}
                             className="lg:col-span-3 rounded-2xl p-8 sm:p-10"
                             style={{
-                                background: 'rgba(20,20,32,0.6)',
+                                background: 'rgba(11,25,40,0.6)',
                                 border: '1px solid rgba(255,255,255,0.05)',
                             }}
                         >
@@ -289,7 +289,7 @@ export default function ContactPage() {
                                     disabled={isSubmitting}
                                     className="w-full h-13 py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 hover:opacity-90 disabled:opacity-50"
                                     style={{
-                                        background: '#0A1624',
+                                        background: '#0B1928',
                                         color: '#fff',
                                         border: '1px solid rgba(255,255,255,0.08)',
                                         position: 'relative',
@@ -330,7 +330,7 @@ export default function ContactPage() {
                                         key={i}
                                         className="rounded-xl overflow-hidden transition-all duration-200"
                                         style={{
-                                            background: openFaq === i ? 'rgba(200,164,74,0.04)' : 'rgba(20,20,32,0.5)',
+                                            background: openFaq === i ? 'rgba(200,164,74,0.04)' : 'rgba(11,25,40,0.5)',
                                             border: `1px solid ${openFaq === i ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.05)'}`,
                                         }}
                                     >

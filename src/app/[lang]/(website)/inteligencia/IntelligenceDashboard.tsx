@@ -188,7 +188,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
     const currentCityObj = currentCountry?.cities.find(ci => ci.key === selectedCity)
 
     return (
-        <main className="bg-[#060D16] min-h-screen">
+        <main className="bg-[#0B1928] min-h-screen">
 
             {/* ─── HERO ──────────────────────────────────────────────────── */}
             <section className="relative bg-[#0B1928] text-white pt-20 pb-10 md:pt-28 md:pb-16 overflow-hidden border-b border-white/[0.05]">
@@ -213,7 +213,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
             </section>
 
             {/* ─── GEO BREADCRUMB + CITY TABS ───────────────────────────── */}
-            <div className="sticky top-0 z-30 bg-[#060D16]/95 backdrop-blur-md border-b border-white/[0.05]">
+            <div className="sticky top-0 z-30 bg-[#0B1928]/95 backdrop-blur-md border-b border-white/[0.05]">
                 {/* Geo breadcrumb */}
                 <div className="container-custom pt-2.5 pb-0">
                     <div className="flex items-center gap-1.5 text-[10px] text-[#556170] font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
@@ -425,7 +425,7 @@ function NeighborhoodCard({ data, cityAvgPrice, index, expanded, onToggle }: {
                         { label: 'Liquidez', value: data.absorption_rate != null ? `${Number(data.absorption_rate).toFixed(1)}%` : '--' },
                         { label: 'Valorização 12m', value: data.price_trend_12m != null ? formatPercent(Number(data.price_trend_12m)) : '--' },
                     ].map(({ label, value }) => (
-                        <div key={label} className="bg-[#060D16] rounded-lg p-2 text-center">
+                        <div key={label} className="bg-[#0B1928] rounded-lg p-2 text-center">
                             <div className="text-xs font-bold text-white">{value}</div>
                             <div className="text-[8px] text-[#556170] mt-0.5">{label}</div>
                         </div>
@@ -472,7 +472,7 @@ function NeighborhoodCardSkeleton({ index }: { index: number }) {
             <div className="h-3 w-1/3 bg-white/[0.05] rounded mb-4" />
             <div className="h-6 w-1/2 bg-white/[0.05] rounded mb-3" />
             <div className="grid grid-cols-3 gap-1.5">
-                {[1, 2, 3].map(i => <div key={i} className="h-12 bg-[#060D16] rounded-lg" />)}
+                {[1, 2, 3].map(i => <div key={i} className="h-12 bg-[#0B1928] rounded-lg" />)}
             </div>
         </div>
     )
