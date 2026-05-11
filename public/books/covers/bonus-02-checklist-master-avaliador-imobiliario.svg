@@ -58,27 +58,6 @@
     letter-spacing="2"
     xml:space="preserve">IMI</text>
 
-  <!-- Gold vertical divider: 1px × 22px (exact header proportions × 1.2 scale) -->
-  <rect x="104" y="52" width="1" height="22" fill="#C8A44A"/>
-
-  <!-- Tagline: INTELIGÊNCIA / IMOBILIÁRIA — 7px uppercase white 60% (exact header) -->
-  <text x="115" y="63"
-    font-family="'Geist Sans', Arial, Helvetica, sans-serif"
-    font-size="7"
-    font-weight="600"
-    fill="#FFFFFF"
-    fill-opacity="0.60"
-    letter-spacing="2.2"
-    xml:space="preserve">INTELIGÊNCIA</text>
-  <text x="115" y="74"
-    font-family="'Geist Sans', Arial, Helvetica, sans-serif"
-    font-size="7"
-    font-weight="600"
-    fill="#FFFFFF"
-    fill-opacity="0.60"
-    letter-spacing="2.2"
-    xml:space="preserve">IMOBILIÁRIA</text>
-
   <!-- Accent line below logo -->
   <rect x="44" y="93" width="160" height="1.5" fill="url(#acc_bonus_02_checklist_master_avaliador_imobiliario)" rx="1"/>
 
