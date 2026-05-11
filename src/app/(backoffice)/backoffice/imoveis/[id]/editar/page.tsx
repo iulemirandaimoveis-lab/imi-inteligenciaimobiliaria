@@ -212,7 +212,7 @@ function BrokerTabContent({ formData, setFormData }: {
             <span className="text-sm" style={{ color: T.textDim }}>Carregando corretores...</span>
           </div>
         ) : (
-          <select value={formData.brokerId} onChange={e => handleSelect(e.target.value)} className={inp} style={inpStyle}>
+          <select value={formData.brokerId} onChange={(e: { target: { value: string } }) => handleSelect(e.target.value)} className={inp} style={inpStyle}>
             <option value="">Padrão do sistema (Iule Miranda)</option>
             {brokers.map((b: Broker) => (
               <option key={b.id} value={b.id}>
@@ -236,7 +236,7 @@ function BrokerTabContent({ formData, setFormData }: {
 
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>Nome exibido</label>
-            <input value={formData.brokerName} onChange={e => set('brokerName', e.target.value)}
+            <input value={formData.brokerName} onChange={(e: { target: { value: string } }) => set('brokerName', e.target.value)}
               placeholder="Nome do corretor" className={inp} style={inpStyle} />
           </div>
 
@@ -244,7 +244,7 @@ function BrokerTabContent({ formData, setFormData }: {
             <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
               <Phone size={11} className="inline mr-1" />WhatsApp / Telefone
             </label>
-            <input value={formData.brokerPhone} onChange={e => set('brokerPhone', e.target.value)}
+            <input value={formData.brokerPhone} onChange={(e: { target: { value: string } }) => set('brokerPhone', e.target.value)}
               placeholder="+5581999999999" className={inp} style={inpStyle} />
             <p className="text-[11px] mt-1" style={{ color: T.textDim }}>
               Todos os botões de WhatsApp desta página usarão este número.
@@ -253,13 +253,13 @@ function BrokerTabContent({ formData, setFormData }: {
 
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>CRECI</label>
-            <input value={formData.brokerCreci} onChange={e => set('brokerCreci', e.target.value)}
+            <input value={formData.brokerCreci} onChange={(e: { target: { value: string } }) => set('brokerCreci', e.target.value)}
               placeholder="Ex: 17933" className={inp} style={inpStyle} />
           </div>
 
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>URL da Foto</label>
-            <input value={formData.brokerAvatarUrl} onChange={e => set('brokerAvatarUrl', e.target.value)}
+            <input value={formData.brokerAvatarUrl} onChange={(e: { target: { value: string } }) => set('brokerAvatarUrl', e.target.value)}
               placeholder="https://..." className={inp} style={inpStyle} />
           </div>
 
