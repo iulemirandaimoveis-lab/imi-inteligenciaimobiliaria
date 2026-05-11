@@ -50,7 +50,7 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
     const soonCount = ebooks.filter(e => e.publication_status === 'em_breve').length
 
     return (
-        <main className="min-h-screen bg-navy-950">
+        <main className="min-h-screen bg-[#0B1928]">
             {/* ── Hero ─────────────────────────────────── */}
             <section className="relative overflow-hidden pt-28 pb-16 lg:pt-36 lg:pb-20">
                 <div
@@ -130,7 +130,7 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
             </section>
 
             {/* ── Filter Tabs ───────────────────────────── */}
-            <section className="sticky top-0 z-30 bg-navy-950/95 backdrop-blur-md border-b border-white/[0.05]">
+            <section className="sticky top-0 z-30 bg-[#0B1928]/95 backdrop-blur-md border-b border-white/[0.05]">
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
                     <div className="flex items-center gap-1.5 overflow-x-auto py-3 scrollbar-hide" role="tablist" aria-label="Filtrar por pilar">
                         {pilares.map(p => {
@@ -252,7 +252,7 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
             transition={{ delay: index * 0.04, duration: 0.4 }}
             className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
             style={{
-                background: '#0D1420',
+                background: '#0d2035',
                 border: '1px solid rgba(255,255,255,0.06)',
                 WebkitTapHighlightColor: 'transparent',
             }}
@@ -289,7 +289,7 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                 )}
 
                 {/* Bottom gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0D1420] via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0d2035] via-transparent to-transparent opacity-80" />
 
                 {/* Badges — stacked vertically to avoid overlap */}
                 <div className="absolute top-3 left-3 flex flex-col gap-1.5">

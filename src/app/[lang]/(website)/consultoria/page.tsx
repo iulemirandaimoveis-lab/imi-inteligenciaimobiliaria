@@ -28,7 +28,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
     const { lang } = params;
 
     return (
-        <div className="min-h-screen bg-navy-950">
+        <div className="min-h-screen bg-[#0B1928]">
             {/* Hero */}
             <HeroSection />
 
@@ -39,7 +39,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
             <LocationsSection />
 
             {/* Cidades de Consultoria */}
-            <section className="section-padding bg-navy-950">
+            <section className="section-padding bg-[#0B1928]">
                 <div className="container-custom">
                     <div className="text-center mb-16">
                         <span className="text-[#C8A44A] font-bold tracking-widest uppercase text-xs">Destinos de Investimento</span>
@@ -56,7 +56,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
                             <Link
                                 key={city.slug}
                                 href={`/${lang}/consultoria/${city.slug}`}
-                                className="group bg-navy-950 border border-white/[0.05] p-8 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] hover:border-navy-600/30 hover:-translate-y-1 transition-all duration-300"
+                                className="group bg-[#0B1928] border border-white/[0.05] p-8 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] hover:border-navy-600/30 hover:-translate-y-1 transition-all duration-300"
                             >
                                 <div className="flex items-center gap-3 mb-6">
                                     <span className="text-3xl">{city.flag}</span>
@@ -78,7 +78,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
             </section>
 
             {/* Simulador principal */}
-            <section className="section-padding bg-navy-950" id="simulator">
+            <section className="section-padding bg-[#0B1928]" id="simulator">
                 <div className="container-custom">
                     <div className="max-w-6xl mx-auto">
                         <div className="text-center mb-16">
@@ -97,7 +97,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
             </section>
 
             {/* Calculadoras avançadas */}
-            <section className="section-padding bg-navy-950">
+            <section className="section-padding bg-[#0B1928]">
                 <div className="container-custom">
                     <div className="max-w-6xl mx-auto space-y-20">
 
@@ -127,7 +127,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
             <QualificationCTA />
 
             {/* Disclaimer */}
-            <section className="py-12 bg-navy-950">
+            <section className="py-12 bg-[#0B1928]">
                 <div className="container-custom">
                     <div className="max-w-4xl mx-auto">
                         <LegalDisclaimer />
