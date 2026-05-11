@@ -17,6 +17,7 @@ import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
 import PropertyIntelligence from '../components/PropertyIntelligence'
 import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
+import { calcDetailedScores } from '@/features/properties/services/score.service'
 import { fmt } from '@/lib/format'
 import { POIGrid } from '@/components/imoveis/POIGrid'
 
@@ -138,6 +139,22 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         development.images.virtualTour = SLUG_VIRTUAL_TOURS[params.slug]
     }
 
+    // Compute real IMI scores for this property (used by DevelopmentCTA panel)
+    const imiPropertyData: IMIProperty = {
+        id: development.id,
+        name: development.name,
+        price: development.priceRange?.min || Number(data.price_from || data.price_min) || 0,
+        area: Number(data.area_from) || 0,
+        bedrooms: Number(data.bedrooms_from) || 0,
+        parking: Number(data.parking_from) || 0,
+        neighborhood: data.neighborhood || '',
+        city: data.city || 'Recife',
+        state: data.state || 'PE',
+        type: data.type || 'apartamento',
+        status: data.status_commercial || 'published',
+    }
+    const imiScores = calcDetailedScores(imiPropertyData)
+
     // Fetch broker separately (resilient — won't break if brokers table is missing)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let brokerData: Record<string, any> | null = null
@@ -254,10 +271,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
             {/* Key Facts Bar */}
             <div className="container-custom pt-4 pb-0">
-                <div style={{
-                    display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                    gap: 12, marginBottom: 24,
-                }}>
+                <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-5 gap-3 mb-6">
                     {[
                         { label: 'Quartos', value: development.specs.bedroomsRange, Icon: Bed },
                         { label: 'Banheiros', value: development.specs.bathroomsRange || '\u2014', Icon: Bath },
@@ -342,8 +356,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     </div>
 
                     {/* Sidebar — all viewports */}
-                    <aside className="lg:col-span-4 space-y-6">
-                        <DevelopmentCTA development={development} />
+                    <aside className="lg:col-span-4 order-first lg:order-none space-y-6">
+                        <DevelopmentCTA development={development} imiData={imiScores} />
                         <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             <RealtorCard broker={brokerData as any} propertyName={development.name} />
@@ -409,18 +423,18 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                             </div>
 
                             {/* Value Range Cards */}
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 28 }}>
-                                <div style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16, padding: '16px 14px', textAlign: 'center' as const }}>
-                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.2em', color: '#948F84', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Mínimo</p>
-                                    <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>{fmtShort(valorMin)}</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8, marginBottom: 28 }}>
+                                <div style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)', borderRadius: 14, padding: '12px 8px', textAlign: 'center' as const }}>
+                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.15em', color: '#948F84', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Mínimo</p>
+                                    <p style={{ fontSize: 16, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0, wordBreak: 'break-word' as const }}>{fmtShort(valorMin)}</p>
                                 </div>
-                                <div style={{ background: '#0B1928', borderRadius: 16, padding: '16px 14px', textAlign: 'center' as const }}>
-                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.2em', color: '#C8A44A', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Estimado</p>
-                                    <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>{fmtShort(valorEstimado)}</p>
+                                <div style={{ background: '#0B1928', borderRadius: 14, padding: '12px 8px', textAlign: 'center' as const }}>
+                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.15em', color: '#C8A44A', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Estimado</p>
+                                    <p style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0, wordBreak: 'break-word' as const }}>{fmtShort(valorEstimado)}</p>
                                 </div>
-                                <div style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16, padding: '16px 14px', textAlign: 'center' as const }}>
-                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.2em', color: '#948F84', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Máximo</p>
-                                    <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>{fmtShort(valorMax)}</p>
+                                <div style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)', borderRadius: 14, padding: '12px 8px', textAlign: 'center' as const }}>
+                                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.15em', color: '#948F84', margin: '0 0 6px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Máximo</p>
+                                    <p style={{ fontSize: 16, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0, wordBreak: 'break-word' as const }}>{fmtShort(valorMax)}</p>
                                 </div>
                             </div>
 

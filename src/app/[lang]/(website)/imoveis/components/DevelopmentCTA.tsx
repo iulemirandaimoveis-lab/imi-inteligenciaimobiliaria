@@ -8,8 +8,17 @@ import LeadCaptureModal from './LeadCaptureModal';
 
 const GOLD = '#C8A44A';
 
+interface IMIData {
+    imiScore: number;
+    location: number;
+    liquidity: number;
+    rentabilidade: number;
+    construtora: number;
+}
+
 interface DevelopmentCTAProps {
     development: Development;
+    imiData?: IMIData;
 }
 
 const formatPrice = (price: number) => {
@@ -20,7 +29,7 @@ const formatPrice = (price: number) => {
     return price.toLocaleString('pt-BR');
 };
 
-export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
+export default function DevelopmentCTA({ development, imiData }: DevelopmentCTAProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [ctaType, setCtaType] = useState<'info' | 'table' | 'imi'>('info');
     const [showIMIPreview, setShowIMIPreview] = useState(false);
@@ -167,10 +176,10 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                             {/* Score highlights */}
                             <div className="grid grid-cols-2 gap-2 mb-4">
                                 {[
-                                    { label: 'Localização', score: 92, icon: '📍' },
-                                    { label: 'Liquidez', score: 88, icon: '💧' },
-                                    { label: 'Rentabilidade', score: 85, icon: '📈' },
-                                    { label: 'Construtora', score: 90, icon: '🏗️' },
+                                    { label: 'Localização', score: imiData?.location ?? 72, icon: '📍' },
+                                    { label: 'Liquidez', score: imiData?.liquidity ?? 55, icon: '💧' },
+                                    { label: 'Rentabilidade', score: imiData?.rentabilidade ?? 55, icon: '📈' },
+                                    { label: 'Construtora', score: imiData?.construtora ?? 72, icon: '🏗️' },
                                 ].map(item => (
                                     <div key={item.label} className="p-3 rounded-xl" style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.2)' }}>
                                         <div className="flex items-center justify-between mb-1.5">
@@ -189,7 +198,7 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                             </div>
 
                             <p className="text-[11px] leading-relaxed mb-4" style={{ color: '#5A6577' }}>
-                                <strong style={{ color: '#0B1928' }}>IMI Score: 89/100</strong> — Empreendimento com alto potencial de valorização e liquidez acima da média para o mercado de Garanhuns.
+                                <strong style={{ color: '#0B1928' }}>IMI Score: {imiData?.imiScore ?? '—'}/100</strong> — Análise IMI baseada em dados do empreendimento e do mercado de {development.location.city}.
                             </p>
 
                             <button

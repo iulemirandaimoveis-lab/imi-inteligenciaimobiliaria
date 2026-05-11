@@ -53,7 +53,7 @@ export default function PropertyIntelligence({ property }: Props) {
             background: '#FFFFFF',
             border: '1px solid rgba(184,179,168,0.3)',
             borderRadius: 20,
-            padding: '32px 28px',
+            padding: 'clamp(16px, 4vw, 32px) clamp(14px, 4vw, 28px)',
             boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
         }}>
             {/* Header */}
@@ -143,12 +143,7 @@ export default function PropertyIntelligence({ property }: Props) {
             </div>
 
             {/* Metrics Grid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                gap: 12,
-                marginBottom: 24,
-            }}>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6">
                 {metrics.map((m, i) => (
                     <div key={i} style={{
                         background: '#F8F6F2',
