@@ -197,7 +197,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
     ]
 
     return (
-        <main className="bg-[#060D16] min-h-screen">
+        <main className="bg-[#0B1928] min-h-screen">
 
             {/* ─── HERO ──────────────────────────────────────────────────── */}
             <section className="relative bg-[#0B1928] text-white pt-20 pb-12 md:pt-28 md:pb-18 overflow-hidden border-b border-white/[0.05]">
@@ -209,7 +209,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                     style={{ backgroundImage: 'linear-gradient(rgba(200,164,74,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(200,164,74,0.4) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
                 {/* Bottom fade */}
                 <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
-                    style={{ backgroundImage: 'linear-gradient(to bottom, transparent, #060D16)' }} />
+                    style={{ backgroundImage: 'linear-gradient(to bottom, transparent, #0B1928)' }} />
 
                 <div className="container-custom relative z-10">
                     <div className="flex items-center gap-3 mb-5">
@@ -233,7 +233,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
             </section>
 
             {/* ─── STICKY SEARCH BAR ────────────────────────────────────── */}
-            <div className="sticky top-0 z-30 bg-[#060D16]/96 backdrop-blur-md border-b border-white/[0.06]">
+            <div className="sticky top-0 z-30 bg-[#0B1928]/95 backdrop-blur-md border-b border-white/[0.06]">
                 {/* Breadcrumb */}
                 <div className="container-custom pt-3 pb-0">
                     <nav aria-label="Localização" className="flex items-center gap-1 text-[10px] text-[#3D5166] font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
@@ -503,7 +503,7 @@ function NeighborhoodCard({ data, cityAvgPrice, index, expanded, onToggle }: {
                         { label: 'Liquidez', value: data.absorption_rate != null ? `${Number(data.absorption_rate).toFixed(1)}%` : '--' },
                         { label: 'Val. 12m', value: data.price_trend_12m != null ? formatPercent(Number(data.price_trend_12m)) : '--' },
                     ].map(({ label, value }) => (
-                        <div key={label} className="bg-[#060D16] rounded-lg p-2 text-center">
+                        <div key={label} className="bg-[#0B1928] rounded-lg p-2 text-center">
                             <div className="text-xs font-bold text-white">{value}</div>
                             <div className="text-[8px] text-[#3D5166] mt-0.5">{label}</div>
                         </div>
@@ -559,7 +559,7 @@ function NeighborhoodCardSkeleton({ index }: { index: number }) {
             <div className="h-3 w-1/3 bg-white/[0.04] rounded mb-4" />
             <div className="h-7 w-1/2 bg-white/[0.05] rounded mb-3" />
             <div className="grid grid-cols-3 gap-1.5">
-                {[1, 2, 3].map(i => <div key={i} className="h-12 bg-[#060D16] rounded-lg" />)}
+                {[1, 2, 3].map(i => <div key={i} className="h-12 bg-[#0B1928] rounded-lg" />)}
             </div>
         </div>
     )

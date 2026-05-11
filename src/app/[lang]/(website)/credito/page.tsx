@@ -85,7 +85,7 @@ export default function CreditPage() {
     const ltv = (loanAmount / propertyValue) * 100
 
     return (
-        <main className="bg-[#0D0F14] min-h-screen">
+        <main className="bg-[#0B1928] min-h-screen">
             {/* HERO */}
             <section className="relative bg-[#0B1928] overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
@@ -112,7 +112,7 @@ export default function CreditPage() {
                         </motion.div>
                     </motion.div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#0D0F14] to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#0B1928] to-transparent" />
             </section>
 
             {/* MODALIDADES */}
@@ -191,7 +191,7 @@ export default function CreditPage() {
             </section>
 
             {/* SEÇÃO CAIXA CONSÓRCIOS */}
-            <section className="section-padding bg-[#0D0F14] text-white relative overflow-hidden border-t border-white/[0.05]">
+            <section className="section-padding bg-[#0B1928] text-white relative overflow-hidden border-t border-white/[0.05]">
                 <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
                     <div className="absolute top-0 right-0 w-1/2 h-full bg-[#C8A44A] -skew-x-12 translate-x-1/2" />
                 </div>
@@ -281,7 +281,7 @@ export default function CreditPage() {
                             </p>
                         </div>
 
-                        <div className="bg-[#0D0F14] rounded-3xl p-8 md:p-12 border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+                        <div className="bg-[#0B1928] rounded-3xl p-8 md:p-12 border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                             <div className="grid lg:grid-cols-2 gap-16">
                                 <div className="space-y-10">
                                     {/* Valor do imóvel */}
@@ -396,7 +396,7 @@ export default function CreditPage() {
             </section>
 
             {/* POR QUE ESCOLHER IMI */}
-            <section className="section-padding bg-[#0D0F14]">
+            <section className="section-padding bg-[#0B1928]">
                 <div className="container-custom">
                     <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-16 text-center">
                         Diferenciais da Assessoria IMI
@@ -449,7 +449,7 @@ export default function CreditPage() {
 
                         <div className="space-y-4">
                             {faqs.map((faq, index) => (
-                                <div key={index} className="bg-[#0D0F14] rounded-2xl border border-white/[0.05] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+                                <div key={index} className="bg-[#0B1928] rounded-2xl border border-white/[0.05] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                                     <button
                                         onClick={() => setOpenFaq(openFaq === index ? null : index)}
                                         className="w-full px-8 py-6 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
@@ -481,7 +481,7 @@ export default function CreditPage() {
             </section>
 
             {/* CTA FINAL */}
-            <section className="bg-[#0D0F14] section-padding text-center relative overflow-hidden">
+            <section className="bg-[#0B1928] section-padding text-center relative overflow-hidden">
                 <div className="container-custom relative z-10">
                     <div className="max-w-4xl mx-auto bg-[#0B1928] text-white rounded-3xl md:rounded-[40px] p-10 md:p-16 lg:p-20 relative overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.3)] border border-[#21263A] border-b-4 border-b-[#C8A44A]">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#C8A44A]/10 rounded-full blur-3xl -mr-32 -mt-32" />
