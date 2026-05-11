@@ -9,10 +9,13 @@ import {
   Image as ImageIcon, Upload, Check, Calendar, Save,
   Loader2, AlertCircle, BedDouble, Bath, Car, Sparkles, Star,
   Play, FileText, X, CheckCircle, Globe, Eye, Zap, GripVertical,
-  Maximize,
+  Maximize, User, Phone, MessageCircle,
 } from 'lucide-react'
 import Image from 'next/image'
 import { uploadFile, uploadMultipleImages } from '@/lib/supabase-storage'
+import { createClient } from '@/lib/supabase/client'
+import { useBrokers } from '@/hooks/use-brokers'
+import type { Broker } from '@/hooks/use-brokers'
 import type { ImageUploadFileStatus } from '@/lib/supabase-storage'
 import UploadProgressPanel from '@/app/(backoffice)/components/ui/UploadProgressPanel'
 import { T } from '@/app/(backoffice)/lib/theme'
@@ -119,11 +122,219 @@ function ErrMsg({ msg }: { msg?: string }) {
   return <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--error, #f87171)' }}><AlertCircle size={11} />{msg}</p>
 }
 
+/* ── Broker / Responsável Tab ── */
+function BrokerTabContent({ formData, setFormData }: {
+  formData: FormData
+  setFormData: (value: FormData | ((prev: FormData) => FormData)) => void
+}) {
+  const { brokers, isLoading } = useBrokers()
+  const [saving, setSaving] = useState(false)
+  const inp = `w-full h-11 px-4 rounded-[6px] text-sm outline-none transition-all`
+  const inpStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
+
+  // When broker list loads and a broker is already linked, auto-fill card fields
+  useEffect(() => {
+    if (!formData.brokerId || formData.brokerName || isLoading) return
+    const found = brokers.find((b: Broker) => b.id === formData.brokerId)
+    if (!found) return
+    setFormData(p => ({
+      ...p,
+      brokerName: found.name,
+      brokerPhone: found.phone || '',
+      brokerCreci: found.creci || '',
+      brokerAvatarUrl: found.avatar_url || '',
+    }))
+  }, [brokers, isLoading, formData.brokerId, formData.brokerName, setFormData])
+
+  const handleSelect = (brokerId: string) => {
+    if (!brokerId) {
+      setFormData(p => ({ ...p, brokerId: '', brokerName: '', brokerPhone: '', brokerCreci: '', brokerAvatarUrl: '' }))
+      return
+    }
+    const broker = brokers.find((b: Broker) => b.id === brokerId)
+    if (!broker) return
+    setFormData(p => ({
+      ...p,
+      brokerId: broker.id,
+      brokerName: broker.name,
+      brokerPhone: broker.phone || '',
+      brokerCreci: broker.creci || '',
+      brokerAvatarUrl: broker.avatar_url || '',
+    }))
+  }
+
+  const set = (k: keyof FormData, v: string) => setFormData(p => ({ ...p, [k]: v }))
+
+  const handleSaveBroker = async () => {
+    if (!formData.brokerId) return
+    setSaving(true)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.from('brokers').update({
+        name: formData.brokerName || undefined,
+        phone: formData.brokerPhone || undefined,
+        creci: formData.brokerCreci || undefined,
+        avatar_url: formData.brokerAvatarUrl || undefined,
+        updated_at: new Date().toISOString(),
+      }).eq('id', formData.brokerId)
+      if (error) throw error
+      toast.success('Dados do corretor atualizados!')
+    } catch {
+      toast.error('Erro ao salvar dados do corretor')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const initials = formData.brokerName
+    ? formData.brokerName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+    : '?'
+  const firstName = formData.brokerName?.split(' ')[0] || 'Corretor'
+
+  return (
+    <div className="space-y-8">
+      {/* Section header */}
+      <div>
+        <h3 className="text-sm font-bold" style={{ color: T.text }}>Corretor Responsável</h3>
+        <p className="text-xs mt-1" style={{ color: T.textDim }}>
+          O corretor selecionado é exibido no card de contato da página pública do imóvel. Os dados do card podem ser editados abaixo.
+        </p>
+      </div>
+
+      {/* Broker selector */}
+      <div>
+        <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
+          <User size={11} className="inline mr-1" />Selecionar Corretor
+        </label>
+        {isLoading ? (
+          <div className="h-11 rounded-[6px] flex items-center px-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+            <Loader2 size={14} className="animate-spin mr-2" style={{ color: T.textDim }} />
+            <span className="text-sm" style={{ color: T.textDim }}>Carregando corretores...</span>
+          </div>
+        ) : (
+          <select value={formData.brokerId} onChange={e => handleSelect(e.target.value)} className={inp} style={inpStyle}>
+            <option value="">Padrão do sistema (Iule Miranda)</option>
+            {brokers.map((b: Broker) => (
+              <option key={b.id} value={b.id}>
+                {b.name}{b.creci ? ` — CRECI ${b.creci}` : ''}{b.status === 'inactive' ? ' (inativo)' : ''}
+              </option>
+            ))}
+          </select>
+        )}
+        {!formData.brokerId && (
+          <p className="text-[11px] mt-1.5" style={{ color: T.textDim }}>
+            Sem seleção: o card usará o responsável padrão cadastrado no sistema.
+          </p>
+        )}
+      </div>
+
+      {/* Editable fields + card preview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left: editable fields */}
+        <div className="space-y-4">
+          <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Dados do Card de Contato</h4>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>Nome exibido</label>
+            <input value={formData.brokerName} onChange={e => set('brokerName', e.target.value)}
+              placeholder="Nome do corretor" className={inp} style={inpStyle} />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
+              <Phone size={11} className="inline mr-1" />WhatsApp / Telefone
+            </label>
+            <input value={formData.brokerPhone} onChange={e => set('brokerPhone', e.target.value)}
+              placeholder="+5581999999999" className={inp} style={inpStyle} />
+            <p className="text-[11px] mt-1" style={{ color: T.textDim }}>
+              Todos os botões de WhatsApp desta página usarão este número.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>CRECI</label>
+            <input value={formData.brokerCreci} onChange={e => set('brokerCreci', e.target.value)}
+              placeholder="Ex: 17933" className={inp} style={inpStyle} />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>URL da Foto</label>
+            <input value={formData.brokerAvatarUrl} onChange={e => set('brokerAvatarUrl', e.target.value)}
+              placeholder="https://..." className={inp} style={inpStyle} />
+          </div>
+
+          {formData.brokerId && (
+            <button onClick={handleSaveBroker} disabled={saving}
+              className="h-10 px-5 rounded flex items-center gap-2 text-sm font-bold disabled:opacity-60 transition-all"
+              style={{ background: T.accent, color: T.text, border: 'none' }}>
+              {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+              {saving ? 'Salvando...' : 'Salvar dados do corretor'}
+            </button>
+          )}
+        </div>
+
+        {/* Right: card preview */}
+        <div>
+          <h4 className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: T.textMuted }}>Preview — Card do Site</h4>
+          <div className="rounded-2xl overflow-hidden max-w-xs"
+            style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+            {/* Header bar */}
+            <div className="px-5 py-3" style={{ background: '#F8F6F2', borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
+              <p className="text-[10px] font-bold tracking-widest uppercase" style={{ color: '#948F84' }}>Corretor Responsável</p>
+            </div>
+            <div className="p-5">
+              {/* Avatar + identity */}
+              <div className="flex flex-col items-center text-center gap-3 mb-4">
+                <div className="relative w-[72px] h-[72px] rounded-full overflow-hidden flex items-center justify-center flex-shrink-0"
+                  style={{ background: '#F0EDE5', boxShadow: '0 0 0 3px rgba(200,164,74,0.2)' }}>
+                  {formData.brokerAvatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={formData.brokerAvatarUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-lg font-bold" style={{ color: '#0B1928' }}>{initials}</span>
+                  )}
+                </div>
+                <div>
+                  <p className="text-[15px] font-bold" style={{ color: '#0B1928', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                    {formData.brokerName || 'Nome do Corretor'}
+                  </p>
+                  {formData.brokerCreci && (
+                    <p className="text-[11px] mt-0.5" style={{ color: '#948F84', fontFamily: 'monospace' }}>
+                      CRECI {formData.brokerCreci}
+                    </p>
+                  )}
+                  <p className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: '#B8B3A8' }}>
+                    Consultor Imobiliário
+                  </p>
+                </div>
+              </div>
+              {/* Phone */}
+              {formData.brokerPhone && (
+                <div className="flex items-center gap-2 mb-3 text-[12px]" style={{ color: '#2D3748' }}>
+                  <Phone size={12} style={{ color: '#C8A44A' }} />
+                  <span style={{ fontFamily: 'monospace' }}>{formData.brokerPhone}</span>
+                </div>
+              )}
+              {/* WhatsApp button */}
+              <div className="h-10 rounded-xl flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider"
+                style={{ background: '#0B1928', color: '#fff' }}>
+                <MessageCircle size={14} />
+                Falar com {firstName}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const TABS = [
   { id: 'basico',        label: 'Básico',           icon: Building2,  desc: 'Nome, tipo, status' },
   { id: 'detalhes',      label: 'Características',  icon: Home,       desc: 'Área, quartos, amenities' },
   { id: 'valores',       label: 'Valores',           icon: DollarSign, desc: 'Preço, disponibilidade' },
   { id: 'midia',         label: 'Mídia',             icon: ImageIcon,  desc: 'Fotos, vídeos, planta' },
+  { id: 'responsavel',   label: 'Responsável',       icon: User,       desc: 'Corretor, contato' },
 ] as const
 type TabId = typeof TABS[number]['id']
 
@@ -160,6 +371,8 @@ interface FormData {
   logo: File | null; existingLogo: string
   status: string; status_commercial: string; is_highlighted: boolean
   videoUrl: string; videoShort: string
+  brokerId: string; brokerName: string; brokerPhone: string
+  brokerCreci: string; brokerAvatarUrl: string
 }
 
 const INITIAL: FormData = {
@@ -172,6 +385,7 @@ const INITIAL: FormData = {
   existingFloorPlans: [], floorPlans: [], existingBrochure: '', brochure: null,
   logo: null, existingLogo: '', status: 'disponivel', status_commercial: 'draft',
   is_highlighted: false, videoUrl: '', videoShort: '',
+  brokerId: '', brokerName: '', brokerPhone: '', brokerCreci: '', brokerAvatarUrl: '',
 }
 
 /* ── Gallery Tab with Drag-and-Drop (Fotos + Vídeos + Plantas + Brochure) ── */
@@ -483,6 +697,7 @@ export default function EditarImovelPage() {
           logo: null, existingLogo: d.developers?.logo_url || '',
           status: d.status || 'disponivel', status_commercial: d.status_commercial || d.status_comercial || 'draft',
           is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '',
+          brokerId: d.broker_id || '', brokerName: '', brokerPhone: '', brokerCreci: '', brokerAvatarUrl: '',
         })
       } catch (_err: unknown) {
         toast.error('Erro ao carregar dados do empreendimento')
@@ -582,6 +797,7 @@ export default function EditarImovelPage() {
           image: allImages[0] || null,
           floor_plans: [...formData.existingFloorPlans, ...newFpUrls],
           brochure_url: brochureUrl, video_url: formData.videoUrl || null, video_short_url: formData.videoShort || null,
+          broker_id: formData.brokerId || null,
         }),
       })
       if (!res.ok) { let e; try { e = await res.json() } catch { e = {} }; throw new Error(e.error || 'Erro ao atualizar') }
@@ -996,6 +1212,11 @@ export default function EditarImovelPage() {
           {/* ── MÍDIA ── */}
           {activeTab === 'midia' && (
             <GalleryTabContent formData={formData} set={set} params={{ id: String(params.id) }} />
+          )}
+
+          {/* ── RESPONSÁVEL ── */}
+          {activeTab === 'responsavel' && (
+            <BrokerTabContent formData={formData} setFormData={setFormData} />
           )}
         </motion.div>
       </AnimatePresence>
