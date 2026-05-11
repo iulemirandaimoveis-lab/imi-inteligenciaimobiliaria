@@ -169,7 +169,7 @@ export default function Method({ dict }: MethodProps) {
                 >
                     <Link
                         href={`/${lang}/sobre`}
-                        className="inline-flex items-center gap-2.5 text-white border border-white/15 font-semibold px-7 py-3.5 min-h-[48px] rounded-xl transition-all duration-300 text-[13px] hover:border-[#C8A44A]/30 hover:shadow-[0_0_30px_rgba(200,164,74,0.08)]"
+                        className="inline-flex items-center gap-2.5 text-white border border-[#C8A44A]/30 shadow-[0_0_30px_rgba(200,164,74,0.08)] font-semibold px-7 py-3.5 min-h-[48px] rounded-xl transition-all duration-300 text-[13px] hover:border-white/15 hover:shadow-none"
                         style={{ fontFamily: 'var(--font-sans)' }}
                     >
                         {dict.method_cta}

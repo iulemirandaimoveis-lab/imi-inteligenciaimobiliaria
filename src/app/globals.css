@@ -369,9 +369,9 @@
   --bg-hover:     rgba(200,164,74,.06);
   --bg-active:    rgba(200,164,74,.10);
 
-  --border-subtle:  rgba(255,255,255,.05);
-  --border-default: rgba(200,164,74,.14);
-  --border-strong:  rgba(200,164,74,.20);
+  --border-subtle:  rgba(200,164,74,.15);
+  --border-default: rgba(200,164,74,.30);
+  --border-strong:  rgba(200,164,74,.45);
   --border-focus:   #C8A44A;
 
   --text-primary:   #E8E4DC;
@@ -2318,7 +2318,8 @@
 .backoffice-root textarea:hover,
 .backoffice-root .input:hover,
 .backoffice-root .inp:hover {
-  border-color: var(--border-gold-strong) !important;
+  border-color: rgba(200,164,74,.12) !important;
+  box-shadow: none !important;
 }
 
 .backoffice-root .toolbar-input:focus,
@@ -2327,8 +2328,8 @@
 .backoffice-root textarea:focus,
 .backoffice-root .input:focus,
 .backoffice-root .inp:focus {
-  border-color: var(--gold) !important;
-  box-shadow: var(--focus-ring) !important;
+  border-color: rgba(200,164,74,.12) !important;
+  box-shadow: none !important;
   background: color-mix(in srgb, var(--n2) 88%, var(--n5) 12%) !important;
 }
 

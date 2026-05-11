@@ -309,7 +309,7 @@ export default async function AboutPage({
                         {values.map((item) => (
                             <div
                                 key={item.title}
-                                className="p-8 rounded-2xl bg-[#0d2035] border border-white/[0.05] transition-all duration-300 group hover:border-[#C8A44A]/30 hover:shadow-[0_8px_32px_rgba(200,164,74,0.05)]"
+                                className="p-8 rounded-2xl bg-[#0d2035] border border-[#C8A44A]/30 shadow-[0_8px_32px_rgba(200,164,74,0.05)] transition-all duration-300 group hover:border-white/[0.05] hover:shadow-none"
                             >
                                 <div className="w-12 h-12 bg-[#C8A44A]/10 text-[#C8A44A] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-[#C8A44A]/20">
                                     <item.icon className="w-5 h-5" strokeWidth={1.5} />
@@ -345,7 +345,7 @@ export default async function AboutPage({
                             return (
                                 <div
                                     key={s.label}
-                                    className="group bg-[#0d2035] border border-white/[0.05] hover:border-[#C8A44A]/25 rounded-2xl p-6 flex flex-col transition-all duration-300 hover:shadow-[0_8px_32px_rgba(200,164,74,0.06)]"
+                                    className="group bg-[#0d2035] border border-[#C8A44A]/25 shadow-[0_8px_32px_rgba(200,164,74,0.06)] rounded-2xl p-6 flex flex-col transition-all duration-300 hover:border-white/[0.05] hover:shadow-none"
                                 >
                                     <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-105 bg-[#C8A44A]/10 border border-[#C8A44A]/20">
                                         <Icon className="w-6 h-6 text-[#C8A44A]" />
@@ -398,7 +398,7 @@ export default async function AboutPage({
                         {EBOOKS.map((book) => (
                             <article
                                 key={book.slug}
-                                className="group bg-[#0d2035] border border-white/[0.05] hover:border-[#C8A44A]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgba(200,164,74,0.08)] flex flex-col"
+                                className="group bg-[#0d2035] border border-[#C8A44A]/30 shadow-[0_12px_40px_rgba(200,164,74,0.08)] rounded-2xl overflow-hidden transition-all duration-300 hover:border-white/[0.05] hover:shadow-none flex flex-col"
                             >
                                 {/* Portrait aspect ratio — shows the complete book cover */}
                                 <div className="relative bg-[#0B1928] overflow-hidden" style={{ aspectRatio: '3/4' }}>

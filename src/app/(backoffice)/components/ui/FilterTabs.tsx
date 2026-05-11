@@ -44,7 +44,7 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
               fontFamily: 'var(--font-sans)',
               fontSize: '12px',
               fontWeight: isActive ? 600 : 500,
-              border: `1px solid ${isActive ? 'var(--platinum-400)' : 'var(--border-subtle)'}`,
+              border: `1px solid ${isActive ? 'var(--platinum-400)' : 'rgba(200,164,74,.25)'}`,
               background: isActive
                 ? 'rgba(61,111,255,0.10)'
                 : 'transparent',

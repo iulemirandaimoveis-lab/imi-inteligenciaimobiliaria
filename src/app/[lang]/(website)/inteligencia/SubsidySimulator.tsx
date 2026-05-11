@@ -100,7 +100,7 @@ function SelectField({ label, value, options, onChange }: {
       <label className="block text-[11px] font-bold uppercase tracking-[0.14em] text-[#94A0B2] mb-2">{label}</label>
       <select
         value={value} onChange={e => onChange(e.target.value)}
-        className="w-full bg-[#0F2035] border border-[rgba(255,255,255,0.06)] text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[rgba(200,164,74,0.4)] transition-colors cursor-pointer"
+        className="w-full bg-[#0F2035] border border-[rgba(200,164,74,0.4)] text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[rgba(255,255,255,0.06)] transition-colors cursor-pointer"
       >
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
@@ -362,7 +362,7 @@ function Step4({ strategy, form, lang }: { strategy: StrategyResult; form: FormS
 
       <a href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Fiz a simulação no site e quero entender melhor meu cenário. Renda: ${R$(form.income)}, Imóvel: ${R$(form.property_value)}, Subsídio estimado: ${R$(strategy.total_subsidy)}`)}`}
         target="_blank" rel="noopener noreferrer"
-        className="flex items-center justify-center w-full h-12 rounded-xl bg-[#0F2035] border border-[rgba(255,255,255,0.06)] text-white text-sm font-semibold hover:border-[rgba(200,164,74,0.25)] transition-colors">
+        className="flex items-center justify-center w-full h-12 rounded-xl bg-[#0F2035] border border-[rgba(200,164,74,0.25)] text-white text-sm font-semibold hover:border-[rgba(255,255,255,0.06)] transition-colors">
         Falar com Especialista
       </a>
     </div>

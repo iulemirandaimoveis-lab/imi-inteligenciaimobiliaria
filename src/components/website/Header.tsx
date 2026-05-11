@@ -362,7 +362,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                             title={l.label}
                                             className={`flex-1 h-9 flex items-center justify-center rounded-lg text-lg transition-all duration-150 ${lang === l.code
                                                 ? 'bg-white/[0.08] ring-2 ring-[#C8A44A]/50 ring-offset-1 ring-offset-[#0B1928]'
-                                                : 'bg-white/[0.03] border border-white/[0.06] hover:border-[#C8A44A]/30'
+                                                : 'bg-white/[0.03] border border-[#C8A44A]/30 hover:border-white/[0.06]'
                                                 }`}
                                         >
                                             {l.flag}
