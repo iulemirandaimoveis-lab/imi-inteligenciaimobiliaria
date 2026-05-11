@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, ArrowRight, ShoppingCart, Clock, Filter, MessageCircle } from 'lucide-react'
@@ -242,11 +242,33 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
     const hasBookContent = bookSlugs.includes(ebook.slug)
     const pilarColor = ebook.pilar ? PILAR_COLORS[ebook.pilar] : null
     const pilarLabel = ebook.pilar ? PILAR_LABELS[ebook.pilar] : null
-    const svgCover = useMemo(() => `/books/covers/${ebook.slug}.svg`, [ebook.slug])
-    const fallbackCover = useMemo(() => `/books/covers/${ebook.slug}.webp`, [ebook.slug])
-    const initialCover = ebook.cover_image || svgCover
-    const [currentCover, setCurrentCover] = useState(initialCover)
-    const [useSvg, setUseSvg] = useState(!ebook.cover_image)
+    const svgUrl = useMemo(() => `/books/covers/${ebook.slug}.svg`, [ebook.slug])
+
+    // Inline SVG: fetched client-side so page fonts (Playfair Display) render in the SVG text
+    const [svgHtml, setSvgHtml] = useState('')
+    const [svgLoaded, setSvgLoaded] = useState(false)
+
+    useEffect(() => {
+        if (ebook.cover_image) return
+        let cancelled = false
+        fetch(svgUrl)
+            .then(r => r.ok ? r.text() : Promise.reject())
+            .then(text => {
+                if (cancelled) return
+                // Strip XML declaration; make SVG fill its container
+                const html = text
+                    .replace(/<\?xml[^>]*?\?>\s*/s, '')
+                    .replace(/<svg(\s[^>]*)>/, (_: string, attrs: string) =>
+                        `<svg${attrs
+                            .replace(/width="[^"]*"/, 'width="100%"')
+                            .replace(/height="[^"]*"/, 'height="100%"')
+                        } style="position:absolute;inset:0;display:block">`)
+                setSvgHtml(html)
+                setSvgLoaded(true)
+            })
+            .catch(() => { /* fall through to PlaceholderCover */ })
+        return () => { cancelled = true }
+    }, [svgUrl, ebook.cover_image])
 
     return (
         <motion.div
@@ -272,29 +294,21 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
         >
             {/* Cover */}
             <div className="relative w-full aspect-[3/4] overflow-hidden" style={{ minHeight: 240 }}>
-                {currentCover ? (
-                    useSvg ? (
-                        // SVG covers served from /public/books/covers/ — use <img> to avoid Next.js optimisation
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            src={currentCover}
-                            alt={ebook.title}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                            onError={() => {
-                                setCurrentCover(fallbackCover)
-                                setUseSvg(false)
-                            }}
-                        />
-                    ) : (
-                        <Image
-                            src={currentCover}
-                            alt={ebook.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            onError={() => setCurrentCover('')}
-                        />
-                    )
+                {ebook.cover_image ? (
+                    <Image
+                        src={ebook.cover_image}
+                        alt={ebook.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                ) : svgLoaded ? (
+                    /* Inline SVG: Playfair Display from the page's CSS renders correctly */
+                    <div
+                        className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]"
+                        aria-hidden="true"
+                        dangerouslySetInnerHTML={{ __html: svgHtml }}
+                    />
                 ) : (
                     <PlaceholderCover title={ebook.title} subtitle={ebook.subtitle} pilar={ebook.pilar} />
                 )}
@@ -302,8 +316,8 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                 {/* Bottom gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0d2035] via-transparent to-transparent opacity-80" />
 
-                {/* Status badge — top-right, clear of the IMI logo at top-left */}
-                <div className="absolute top-3 right-3">
+                {/* Badges — top-right, stacked, clear of IMI logo at top-left */}
+                <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
                     {isAvailable ? (
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
                             style={{ color: '#34d399', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.25)' }}>
@@ -315,20 +329,19 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                             Em Breve
                         </span>
                     )}
+                    {pilarLabel && pilarColor && (
+                        <span
+                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm"
+                            style={{ color: pilarColor.text, background: pilarColor.bg, border: `1px solid ${pilarColor.border}` }}
+                        >
+                            {pilarLabel}
+                        </span>
+                    )}
                 </div>
             </div>
 
             {/* Content */}
             <div className="flex flex-col flex-1 p-5">
-                {/* Pilar badge — in content area, no overlap with cover */}
-                {pilarLabel && pilarColor && (
-                    <span
-                        className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full w-fit mb-2.5"
-                        style={{ color: pilarColor.text, background: pilarColor.bg, border: `1px solid ${pilarColor.border}` }}
-                    >
-                        {pilarLabel}
-                    </span>
-                )}
                 <h3 className="text-[15px] font-bold text-white leading-snug mb-1.5 group-hover:text-white/90 transition-colors"
                     style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                     {ebook.title}
@@ -345,7 +358,7 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                         <Link
                             href={`/${lang}/biblioteca/${ebook.slug}`}
                             className="flex items-center justify-center gap-2 w-full py-3 min-h-[44px] rounded-xl text-[13px] font-semibold transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
-                            style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)', color: '#0D1117' }}
+                            style={{ background: 'linear-gradient(135deg, #E8C840, #c9a040)', color: '#0D1117' }}
                         >
                             <BookOpen size={14} /> Ler Agora
                         </Link>
@@ -356,7 +369,7 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:opacity-90"
-                            style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)', color: '#0D1117' }}
+                            style={{ background: 'linear-gradient(135deg, #E8C840, #c9a040)', color: '#0D1117' }}
                         >
                             <ShoppingCart size={13} /> Adquirir na Amazon
                         </a>
