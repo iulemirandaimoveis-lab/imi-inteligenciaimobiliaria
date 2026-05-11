@@ -367,7 +367,7 @@ export default function CampanhasPage() {
             style={{
               width: '100%', height: '38px', paddingLeft: '34px', paddingRight: '14px',
               borderRadius: '10px', fontSize: '13px', color: 'var(--text-primary)',
-              background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
+              background: 'var(--bg-surface)', border: '1px solid rgba(200,164,74,.30)',
               outline: 'none', boxSizing: 'border-box',
             }}
           />
