@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="800" viewBox="0 0 600 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg_livro_20_como_montar_um_bpo_imobiliario" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0A1624"/>
+      <stop offset="55%"  stop-color="#152038"/>
+      <stop offset="100%" stop-color="#0A1420"/>
+    </linearGradient>
+    <linearGradient id="acc_livro_20_como_montar_um_bpo_imobiliario" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#E8C840"/>
+      <stop offset="100%" stop-color="#E8C840" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="fade_livro_20_como_montar_um_bpo_imobiliario" x1="0" y1="0.55" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0A1420" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0A1420" stop-opacity="0.92"/>
+    </linearGradient>
+    <radialGradient id="glow_livro_20_como_montar_um_bpo_imobiliario" cx="80%" cy="12%" r="65%">
+      <stop offset="0%"   stop-color="#E8C840" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#E8C840" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2_livro_20_como_montar_um_bpo_imobiliario" cx="15%" cy="88%" r="45%">
+      <stop offset="0%"   stop-color="#E8C840" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#E8C840" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="800" fill="url(#bg_livro_20_como_montar_um_bpo_imobiliario)"/>
+  <rect width="600" height="800" fill="url(#glow_livro_20_como_montar_um_bpo_imobiliario)"/>
+  <rect width="600" height="800" fill="url(#glow2_livro_20_como_montar_um_bpo_imobiliario)"/>
+
+  <!-- Geometric accent — top-right corner strips -->
+  <rect x="597" y="0"   width="3"   height="200" fill="#E8C840" opacity="0.22"/>
+  <rect x="587" y="18"  width="2"   height="130" fill="#E8C840" opacity="0.13"/>
+  <rect x="579" y="36"  width="1.5" height="80"  fill="#E8C840" opacity="0.07"/>
+
+  <!-- Subtle diagonal lines -->
+  <line x1="600" y1="0" x2="400" y2="320" stroke="#E8C840" stroke-width="0.6" opacity="0.04"/>
+  <line x1="600" y1="0" x2="300" y2="450" stroke="#E8C840" stroke-width="0.5" opacity="0.03"/>
+
+  <!-- Large watermark number (very subtle) -->
+  <text x="560" y="400"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="230"
+    font-weight="700"
+    fill="#E8C840"
+    opacity="0.038"
+    text-anchor="end"
+    dominant-baseline="auto">20</text>
+
+  <!-- ── IMI LOGO — exact match to website header ────────────────────── -->
+  <!-- "IMI" bold serif 28px white letter-spacing 2px -->
+  <text x="44" y="70"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="28"
+    font-weight="700"
+    fill="#FFFFFF"
+    letter-spacing="2"
+    xml:space="preserve">IMI</text>
+
+  <!-- Gold vertical divider: 1.5px × 25px (header: 1px × 22px, scaled up) -->
+  <rect x="103" y="51" width="1.5" height="25" fill="#C8A44A"/>
+
+  <!-- Tagline: INTELIGÊNCIA / IMOBILIÁRIA — 8px uppercase white 60% -->
+  <text x="114" y="62"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="8"
+    font-weight="600"
+    fill="#FFFFFF"
+    fill-opacity="0.60"
+    letter-spacing="2.2"
+    xml:space="preserve">INTELIGÊNCIA</text>
+  <text x="114" y="74"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="8"
+    font-weight="600"
+    fill="#FFFFFF"
+    fill-opacity="0.60"
+    letter-spacing="2.2"
+    xml:space="preserve">IMOBILIÁRIA</text>
+
+  <!-- Accent line below logo -->
+  <rect x="44" y="93" width="160" height="1.5" fill="url(#acc_livro_20_como_montar_um_bpo_imobiliario)" rx="1"/>
+
+  <!-- Bottom fade overlay -->
+  <rect width="600" height="800" fill="url(#fade_livro_20_como_montar_um_bpo_imobiliario)"/>
+
+  <!-- ── Book Title ───────────────────────────────────────────────────── -->
+  <text x="44" y="642"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="30"
+    font-weight="700"
+    fill="#E8E4DC"
+    xml:space="preserve">Como Montar um BPO Imobiliário</text>
+
+  <!-- ── Subtitle ─────────────────────────────────────────────────────── -->
+  <text x="44" y="678"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12.5"
+    fill="#E8E4DC"
+    fill-opacity="0.42"
+    xml:space="preserve">Do Zero à Operação Escalável</text>
+
+  <!-- Bottom accent line -->
+  <rect x="44" y="702" width="512" height="1" fill="url(#acc_livro_20_como_montar_um_bpo_imobiliario)" opacity="0.55"/>
+
+  <!-- Author -->
+  <text x="44" y="718"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    font-weight="600"
+    fill="#E8E4DC"
+    fill-opacity="0.45"
+    letter-spacing="0.8"
+    xml:space="preserve">Iule Miranda</text>
+</svg>

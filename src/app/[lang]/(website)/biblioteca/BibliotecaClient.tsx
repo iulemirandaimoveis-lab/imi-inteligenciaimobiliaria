@@ -242,8 +242,11 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
     const hasBookContent = bookSlugs.includes(ebook.slug)
     const pilarColor = ebook.pilar ? PILAR_COLORS[ebook.pilar] : null
     const pilarLabel = ebook.pilar ? PILAR_LABELS[ebook.pilar] : null
+    const svgCover = useMemo(() => `/books/covers/${ebook.slug}.svg`, [ebook.slug])
     const fallbackCover = useMemo(() => `/books/covers/${ebook.slug}.webp`, [ebook.slug])
-    const [currentCover, setCurrentCover] = useState(ebook.cover_image || fallbackCover)
+    const initialCover = ebook.cover_image || svgCover
+    const [currentCover, setCurrentCover] = useState(initialCover)
+    const [useSvg, setUseSvg] = useState(!ebook.cover_image)
 
     return (
         <motion.div
@@ -270,20 +273,28 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
             {/* Cover */}
             <div className="relative w-full aspect-[3/4] overflow-hidden" style={{ minHeight: 240 }}>
                 {currentCover ? (
-                    <Image
-                        src={currentCover}
-                        alt={ebook.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        onError={() => {
-                            if (currentCover !== fallbackCover) {
+                    useSvg ? (
+                        // SVG covers served from /public/books/covers/ — use <img> to avoid Next.js optimisation
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={currentCover}
+                            alt={ebook.title}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                            onError={() => {
                                 setCurrentCover(fallbackCover)
-                                return
-                            }
-                            setCurrentCover('')
-                        }}
-                    />
+                                setUseSvg(false)
+                            }}
+                        />
+                    ) : (
+                        <Image
+                            src={currentCover}
+                            alt={ebook.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            onError={() => setCurrentCover('')}
+                        />
+                    )
                 ) : (
                     <PlaceholderCover title={ebook.title} subtitle={ebook.subtitle} pilar={ebook.pilar} />
                 )}
@@ -291,25 +302,17 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                 {/* Bottom gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0d2035] via-transparent to-transparent opacity-80" />
 
-                {/* Badges — stacked vertically to avoid overlap */}
-                <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+                {/* Status badge — top-right, clear of the IMI logo at top-left */}
+                <div className="absolute top-3 right-3">
                     {isAvailable ? (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm w-fit"
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
                             style={{ color: '#34d399', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.25)' }}>
                             Disponível
                         </span>
                     ) : (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm w-fit"
-                            style={{ color: '#C8A44A', background: 'rgba(200,164,74,0.12)', border: '1px solid rgba(200,164,74,0.25)' }}>
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
+                            style={{ color: '#E8C840', background: 'rgba(232,200,64,0.12)', border: '1px solid rgba(232,200,64,0.25)' }}>
                             Em Breve
-                        </span>
-                    )}
-                    {pilarLabel && pilarColor && (
-                        <span
-                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm w-fit"
-                            style={{ color: pilarColor.text, background: pilarColor.bg, border: `1px solid ${pilarColor.border}` }}
-                        >
-                            {pilarLabel}
                         </span>
                     )}
                 </div>
@@ -317,6 +320,15 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
 
             {/* Content */}
             <div className="flex flex-col flex-1 p-5">
+                {/* Pilar badge — in content area, no overlap with cover */}
+                {pilarLabel && pilarColor && (
+                    <span
+                        className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full w-fit mb-2.5"
+                        style={{ color: pilarColor.text, background: pilarColor.bg, border: `1px solid ${pilarColor.border}` }}
+                    >
+                        {pilarLabel}
+                    </span>
+                )}
                 <h3 className="text-[15px] font-bold text-white leading-snug mb-1.5 group-hover:text-white/90 transition-colors"
                     style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                     {ebook.title}
