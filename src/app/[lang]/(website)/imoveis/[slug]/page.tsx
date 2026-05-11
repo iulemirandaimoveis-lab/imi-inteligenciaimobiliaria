@@ -138,6 +138,9 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     if (!development.images.virtualTour && SLUG_VIRTUAL_TOURS[params.slug]) {
         development.images.virtualTour = SLUG_VIRTUAL_TOURS[params.slug]
     }
+    // Override with separately-fetched developer data (more complete than join)
+    if (developerData?.logo_url) development.developerLogo = developerData.logo_url
+    if (developerData?.name) development.developer = developerData.name
 
     // Compute real IMI scores for this property (used by DevelopmentCTA panel)
     const imiPropertyData: IMIProperty = {

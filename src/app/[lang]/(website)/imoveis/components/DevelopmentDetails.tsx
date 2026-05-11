@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { Check, Sparkles, Building2, Waves, TreePine, Dumbbell, Droplets, Gamepad2, PartyPopper, Flame, Bike, Eye, Sofa, Shirt, Snowflake, Shield, CircleParking, Monitor, Sun } from 'lucide-react';
 import { Development } from '../types/development';
 import { slideUp, staggerContainer } from '@/lib/animations';
@@ -203,10 +204,20 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
             <motion.div variants={slideUp} className="mt-12 pt-10 border-t border-gray-100">
                 <div className="flex items-center gap-4 p-4 rounded-[10px]" style={{ background: 'rgba(11,25,40,0.03)', border: '1px solid rgba(11,25,40,0.06)' }}>
                     <div
-                        className="w-12 h-12 rounded-[4px] flex items-center justify-center flex-shrink-0"
-                        style={{ background: NAVY }}
+                        className="w-12 h-12 rounded-[4px] flex items-center justify-center flex-shrink-0 overflow-hidden"
+                        style={{ background: development.developerLogo ? '#fff' : NAVY, border: development.developerLogo ? '1px solid rgba(11,25,40,0.08)' : 'none' }}
                     >
-                        <Sparkles className="w-5 h-5" style={{ color: GOLD }} />
+                        {development.developerLogo ? (
+                            <Image
+                                src={development.developerLogo}
+                                alt={development.developer}
+                                width={48}
+                                height={48}
+                                className="w-full h-full object-contain p-1"
+                            />
+                        ) : (
+                            <Sparkles className="w-5 h-5" style={{ color: GOLD }} />
+                        )}
                     </div>
                     <div>
                         <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-gray-400 block mb-0.5" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Incorporação</span>
