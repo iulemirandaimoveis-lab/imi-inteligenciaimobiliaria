@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, ArrowRight, ShoppingCart, Clock, Filter, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ButtonPrimary, ButtonGhost } from '@/components/website/Buttons'
 import type { Ebook } from './page'
 
 interface Pilar {
@@ -216,20 +217,21 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
                             href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Gostaria%20de%20ser%20avisada(o)%20quando%20novos%20ebooks%20da%20IMI%20forem%20lan%C3%A7ados."
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02]"
-                            style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)', color: '#fff' }}
+                            className="inline-flex items-center gap-2 px-6 text-[11px] font-semibold uppercase tracking-[1px] transition-all duration-200 hover:brightness-110"
+                            style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)', color: '#fff', height: 52, borderRadius: 6 }}
                         >
-                            <MessageCircle size={16} /> Quero ser avisado via WhatsApp
+                            <MessageCircle size={15} /> Quero ser avisado via WhatsApp
                         </a>
-                        <a
+                        <ButtonGhost
                             href="https://wa.me/5581997230455"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white/70 transition-all duration-200 hover:text-white hover:scale-[1.02]"
-                            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+                            arrow
+                            dark
+                            strong
                         >
-                            Falar com especialista <ArrowRight size={14} />
-                        </a>
+                            Falar com especialista
+                        </ButtonGhost>
                     </div>
                 </div>
             </section>
@@ -355,38 +357,41 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
 
                 <div className="mt-auto pt-2 space-y-2">
                     {hasBookContent && (
-                        <Link
+                        <ButtonPrimary
                             href={`/${lang}/biblioteca/${ebook.slug}`}
-                            className="flex items-center justify-center gap-2 w-full py-3 min-h-[44px] rounded-xl text-[13px] font-semibold transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
-                            style={{ background: 'linear-gradient(135deg, #E8C840, #c9a040)', color: '#0D1117' }}
+                            icon={<BookOpen size={14} />}
+                            arrow={false}
+                            full
+                            size="sm"
                         >
-                            <BookOpen size={14} /> Ler Agora
-                        </Link>
+                            Ler Agora
+                        </ButtonPrimary>
                     )}
                     {!hasBookContent && isAvailable && (ebook.amazon_link || ebook.amazon_url) ? (
-                        <a
+                        <ButtonPrimary
                             href={ebook.amazon_link || ebook.amazon_url || '#'}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:opacity-90"
-                            style={{ background: 'linear-gradient(135deg, #E8C840, #c9a040)', color: '#0D1117' }}
+                            icon={<ShoppingCart size={13} />}
+                            arrow={false}
+                            full
+                            size="sm"
                         >
-                            <ShoppingCart size={13} /> Adquirir na Amazon
-                        </a>
+                            Adquirir na Amazon
+                        </ButtonPrimary>
                     ) : !hasBookContent ? (
-                        <a
+                        <ButtonGhost
                             href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Tenho%20interesse%20no%20ebook%20da%20IMI%20sobre%20esse%20tema."
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:brightness-110"
-                            style={{
-                                color: 'rgba(255,255,255,0.5)',
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                            }}
+                            icon={<MessageCircle size={13} />}
+                            arrow={false}
+                            full
+                            size="sm"
+                            dark
                         >
-                            <MessageCircle size={13} /> Avise-me quando sair
-                        </a>
+                            Avise-me quando sair
+                        </ButtonGhost>
                     ) : null}
                 </div>
             </div>
