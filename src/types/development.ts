@@ -33,6 +33,7 @@ export interface Development {
         gallery: string[]
         videos: string[]
         floorPlans: string[]
+        heroVideo?: string
     }
     video_url: string | null
     external_links: Record<string, string>

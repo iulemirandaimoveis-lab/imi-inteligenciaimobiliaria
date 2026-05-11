@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles, Camera, User } from 'lucide-react'
+import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles, Camera, User, Archive, Trash2 } from 'lucide-react'
 import { IMIScoreBadge } from './IMIScoreBadge'
 import { getMainImage } from '@/utils/propertyImages'
 import type { IMIProperty } from '../types'
@@ -33,6 +33,8 @@ interface PropertyCardProps {
   bulkMode?: boolean
   isSelected?: boolean
   onSelect?: (id: string) => void
+  onArchive?: (id: string) => void
+  onDelete?: (id: string) => void
 }
 
 export function PropertyCard({
@@ -47,6 +49,8 @@ export function PropertyCard({
   bulkMode = false,
   isSelected = false,
   onSelect,
+  onArchive,
+  onDelete,
 }: PropertyCardProps) {
   const [hovered, setHovered] = useState(false)
   const [imgError, setImgError] = useState(false)
@@ -233,6 +237,28 @@ export function PropertyCard({
             >
               <Sparkles size={11} style={{ color: '#9FAAB8' }} />
             </button>
+            {onArchive && (
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onArchive(p.id) }}
+                className="prop-action-btn"
+                title="Arquivar imóvel"
+                aria-label="Arquivar imóvel"
+                style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <Archive size={11} style={{ color: '#9FAAB8' }} />
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(p.id) }}
+                className="prop-action-btn"
+                title="Excluir imóvel"
+                aria-label="Excluir imóvel"
+                style={{ border: '1px solid rgba(224,107,107,0.35)' }}
+              >
+                <Trash2 size={11} style={{ color: '#E06B6B' }} />
+              </button>
+            )}
           </div>
         </div>
 

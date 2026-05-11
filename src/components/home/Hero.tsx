@@ -94,7 +94,7 @@ export default function Hero({ dict }: HeroProps) {
           muted
           loop
           playsInline
-          preload="none"
+          preload="auto"
           poster="/hero-bg.jpg"
           onCanPlay={handleCanPlay}
           className={`absolute inset-0 w-full h-full object-cover scale-110 transition-opacity duration-1000 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
