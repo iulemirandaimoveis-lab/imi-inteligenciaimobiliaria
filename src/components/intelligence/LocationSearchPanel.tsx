@@ -106,8 +106,8 @@ export function LocationSearchPanel({
             autoComplete="off"
             className={[
               'w-full h-9 pl-9 pr-9 rounded-lg text-sm text-white placeholder:text-[#3D5166]',
-              'bg-[#0B1928] border border-white/[0.08]',
-              'outline-none focus:border-[#C8A44A]/50 focus:ring-1 focus:ring-[#C8A44A]/20',
+              'bg-[#0B1928] border border-[#C8A44A]/50',
+              'outline-none focus:border-white/[0.08] focus:ring-0',
               'transition-all duration-200',
             ].join(' ')}
             aria-expanded={isSuggestionsOpen && !!query.trim()}
@@ -257,8 +257,8 @@ function SelectField({
         onChange={(e) => onChange(e.target.value)}
         className={[
           'w-full h-9 pl-3 pr-7 rounded-lg text-xs appearance-none',
-          'bg-[#0B1928] border border-white/[0.08]',
-          'outline-none focus:border-[#C8A44A]/50 focus:ring-1 focus:ring-[#C8A44A]/20',
+          'bg-[#0B1928] border border-[#C8A44A]/50',
+          'outline-none focus:border-white/[0.08] focus:ring-0',
           'transition-all duration-200',
           disabled
             ? 'text-[#3D5166] cursor-not-allowed opacity-50'

@@ -268,7 +268,7 @@ export default function IntelligenceDashboard({ lang, initialLocation = [] }: { 
                             onClick={handleRefresh}
                             disabled={refreshing}
                             title="Atualizar dados"
-                            className="shrink-0 w-9 h-9 mt-0.5 flex items-center justify-center rounded-lg bg-[#0B1928] text-[#556170] hover:text-[#C8A44A] border border-white/[0.06] hover:border-[#C8A44A]/30 transition-all duration-200 disabled:opacity-30"
+                            className="shrink-0 w-9 h-9 mt-0.5 flex items-center justify-center rounded-lg bg-[#0B1928] text-[#C8A44A] hover:text-[#556170] border border-[#C8A44A]/30 hover:border-white/[0.06] transition-all duration-200 disabled:opacity-30"
                         >
                             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
                         </button>

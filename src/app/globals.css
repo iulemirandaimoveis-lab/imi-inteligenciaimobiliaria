@@ -2318,7 +2318,8 @@
 .backoffice-root textarea:hover,
 .backoffice-root .input:hover,
 .backoffice-root .inp:hover {
-  border-color: var(--border-gold-strong) !important;
+  border-color: rgba(200,164,74,.12) !important;
+  box-shadow: none !important;
 }
 
 .backoffice-root .toolbar-input:focus,
@@ -2327,8 +2328,8 @@
 .backoffice-root textarea:focus,
 .backoffice-root .input:focus,
 .backoffice-root .inp:focus {
-  border-color: var(--gold) !important;
-  box-shadow: var(--focus-ring) !important;
+  border-color: rgba(200,164,74,.12) !important;
+  box-shadow: none !important;
   background: color-mix(in srgb, var(--n2) 88%, var(--n5) 12%) !important;
 }
 
