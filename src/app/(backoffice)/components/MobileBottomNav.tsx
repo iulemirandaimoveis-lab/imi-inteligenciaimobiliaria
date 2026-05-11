@@ -311,7 +311,7 @@ export function MobileBottomNav() {
                 className="lg:hidden fixed bottom-0 inset-x-0 z-40"
                 style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
-                {/* Nav container — DS3 standard radius (not pill-shaped) */}
+                {/* Nav container — gold border on the container, not on individual items */}
                 <div
                     className="mx-4 mb-3"
                     style={{
@@ -319,8 +319,8 @@ export function MobileBottomNav() {
                         background: 'var(--nav-bg)',
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
-                        border: '1px solid var(--border-default)',
-                        boxShadow: 'var(--shadow-lg)',
+                        border: '1.5px solid rgba(200,164,74,0.45)',
+                        boxShadow: '0 -2px 20px rgba(200,164,74,0.08), 0 8px 32px rgba(0,0,0,0.28)',
                         overflow: 'hidden',
                     }}
                 >
@@ -334,20 +334,32 @@ export function MobileBottomNav() {
                                 <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                        className="flex flex-col items-center justify-center w-full gap-0.5 relative"
                                         style={{
-                                            margin: '0 4px',
+                                            margin: '0 2px',
                                             height: 48,
                                             borderRadius: 8,
-                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                            background: active ? 'rgba(200,164,74,0.10)' : 'transparent',
+                                            transition: 'background 0.2s',
                                         }}
                                     >
+                                        {active && (
+                                            <span style={{
+                                                position: 'absolute',
+                                                top: 5,
+                                                left: '50%',
+                                                transform: 'translateX(-50%)',
+                                                width: 4,
+                                                height: 4,
+                                                borderRadius: '50%',
+                                                background: 'var(--accent-400)',
+                                                boxShadow: '0 0 6px rgba(200,164,74,0.7)',
+                                            }} />
+                                        )}
                                         <item.icon
-                                            size={active ? 22 : 20}
+                                            size={20}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)', marginTop: active ? 6 : 0 }}
                                         />
                                         <span
                                             className="text-[10px] font-semibold transition-colors duration-150"
@@ -370,20 +382,32 @@ export function MobileBottomNav() {
                                 <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                        className="flex flex-col items-center justify-center w-full gap-0.5 relative"
                                         style={{
-                                            margin: '0 4px',
+                                            margin: '0 2px',
                                             height: 48,
                                             borderRadius: 8,
-                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                            background: active ? 'rgba(200,164,74,0.10)' : 'transparent',
+                                            transition: 'background 0.2s',
                                         }}
                                     >
+                                        {active && (
+                                            <span style={{
+                                                position: 'absolute',
+                                                top: 5,
+                                                left: '50%',
+                                                transform: 'translateX(-50%)',
+                                                width: 4,
+                                                height: 4,
+                                                borderRadius: '50%',
+                                                background: 'var(--accent-400)',
+                                                boxShadow: '0 0 6px rgba(200,164,74,0.7)',
+                                            }} />
+                                        )}
                                         <item.icon
-                                            size={active ? 22 : 20}
+                                            size={20}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)', marginTop: active ? 6 : 0 }}
                                         />
                                         <span
                                             className="text-[10px] font-semibold transition-colors duration-150"
@@ -398,7 +422,7 @@ export function MobileBottomNav() {
 
                         <NavDivider />
 
-                        {/* Mais — center, inline, distinct background */}
+                        {/* Mais — center action button */}
                         <div className="flex-1 flex flex-col items-center justify-center gap-0.5">
                             <motion.button
                                 whileTap={{ scale: 0.88 }}
@@ -407,12 +431,11 @@ export function MobileBottomNav() {
                                 aria-expanded={open}
                                 className="flex items-center justify-center"
                                 style={{
-                                    width: 44,
-                                    height: 44,
-                                    borderRadius: 7,
-                                    background: open ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                    border: `1px solid ${open ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                    boxShadow: open ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 10,
+                                    background: open ? 'rgba(200,164,74,0.14)' : 'var(--bg-elevated)',
+                                    border: '1px solid var(--border-subtle)',
                                     transition: 'background 0.2s, border-color 0.2s',
                                 }}
                             >
@@ -425,7 +448,7 @@ export function MobileBottomNav() {
                                             exit={{ rotate: 45, opacity: 0 }}
                                             transition={{ duration: 0.18 }}
                                         >
-                                            <X size={20} color="var(--accent-400)" strokeWidth={2.5} />
+                                            <X size={18} color="var(--accent-400)" strokeWidth={2.5} />
                                         </motion.div>
                                     ) : (
                                         <motion.div
@@ -435,7 +458,7 @@ export function MobileBottomNav() {
                                             exit={{ scale: 0.7, opacity: 0 }}
                                             transition={{ duration: 0.18 }}
                                         >
-                                            <MoreHorizontal size={20} style={{ color: 'var(--text-tertiary)' }} strokeWidth={2} />
+                                            <MoreHorizontal size={18} style={{ color: 'var(--text-tertiary)' }} strokeWidth={2} />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -458,20 +481,32 @@ export function MobileBottomNav() {
                                 <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                        className="flex flex-col items-center justify-center w-full gap-0.5 relative"
                                         style={{
-                                            margin: '0 4px',
+                                            margin: '0 2px',
                                             height: 48,
                                             borderRadius: 8,
-                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                            background: active ? 'rgba(200,164,74,0.10)' : 'transparent',
+                                            transition: 'background 0.2s',
                                         }}
                                     >
+                                        {active && (
+                                            <span style={{
+                                                position: 'absolute',
+                                                top: 5,
+                                                left: '50%',
+                                                transform: 'translateX(-50%)',
+                                                width: 4,
+                                                height: 4,
+                                                borderRadius: '50%',
+                                                background: 'var(--accent-400)',
+                                                boxShadow: '0 0 6px rgba(200,164,74,0.7)',
+                                            }} />
+                                        )}
                                         <item.icon
-                                            size={active ? 22 : 20}
+                                            size={20}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)', marginTop: active ? 6 : 0 }}
                                         />
                                         <span
                                             className="text-[10px] font-semibold transition-colors duration-150"
@@ -494,20 +529,32 @@ export function MobileBottomNav() {
                                 <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                        className="flex flex-col items-center justify-center w-full gap-0.5 relative"
                                         style={{
-                                            margin: '0 4px',
+                                            margin: '0 2px',
                                             height: 48,
                                             borderRadius: 8,
-                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                            background: active ? 'rgba(200,164,74,0.10)' : 'transparent',
+                                            transition: 'background 0.2s',
                                         }}
                                     >
+                                        {active && (
+                                            <span style={{
+                                                position: 'absolute',
+                                                top: 5,
+                                                left: '50%',
+                                                transform: 'translateX(-50%)',
+                                                width: 4,
+                                                height: 4,
+                                                borderRadius: '50%',
+                                                background: 'var(--accent-400)',
+                                                boxShadow: '0 0 6px rgba(200,164,74,0.7)',
+                                            }} />
+                                        )}
                                         <item.icon
-                                            size={active ? 22 : 20}
+                                            size={20}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)', marginTop: active ? 6 : 0 }}
                                         />
                                         <span
                                             className="text-[10px] font-semibold transition-colors duration-150"
