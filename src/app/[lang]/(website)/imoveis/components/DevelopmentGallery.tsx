@@ -227,48 +227,48 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                 {/* Gold accent line top */}
                                 <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
 
-                                <div className="relative p-7 md:p-10 flex flex-col md:flex-row md:items-center gap-7 md:gap-10">
-                                    {/* Left: icon + badge */}
-                                    <div className="flex-shrink-0">
+                                <div className="relative p-5 sm:p-7 md:p-10">
+                                    {/* Top row: icon + badge (always horizontal) */}
+                                    <div className="flex items-center gap-4 mb-4">
                                         <div
-                                            className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center"
+                                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center flex-shrink-0"
                                             style={{ background: 'rgba(200,164,74,0.10)', border: '1px solid rgba(200,164,74,0.22)' }}
                                         >
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A44A" strokeWidth="1.5" width="32" height="32" aria-hidden="true">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A44A" strokeWidth="1.5" width="28" height="28" aria-hidden="true">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
                                             </svg>
                                         </div>
-                                    </div>
-
-                                    {/* Center: text */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full" style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)' }}>
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)' }}>
                                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                                             <span className="text-emerald-400 text-[11px] font-bold uppercase tracking-widest">Tour Interativo</span>
                                         </div>
-                                        <h3 className="text-white text-lg md:text-xl font-bold mb-1.5" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
-                                            Explore o imóvel em 360°
-                                        </h3>
-                                        <p className="text-white/55 text-sm leading-relaxed">
-                                            Navegue por todos os ambientes com total imersão — abre em uma página dedicada para a melhor experiência.
-                                        </p>
                                     </div>
 
-                                    {/* Right: CTA */}
-                                    <div className="flex-shrink-0">
-                                        <a
-                                            href={development.images.virtualTour}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="group relative inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] overflow-hidden"
-                                            style={{ background: '#C8A44A', color: '#0B1928', boxShadow: '0 4px 20px rgba(200,164,74,0.35)' }}
-                                        >
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15" aria-hidden="true">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                            </svg>
-                                            Abrir Tour Virtual
-                                            <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200 rounded-xl" />
-                                        </a>
+                                    {/* Text + button layout: stacked on mobile, row on sm+ */}
+                                    <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-white text-xl sm:text-2xl font-bold mb-2" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                                                Explore o imóvel em 360°
+                                            </h3>
+                                            <p className="text-white/55 text-sm leading-relaxed">
+                                                Navegue por todos os ambientes com total imersão — abre em uma página dedicada para a melhor experiência.
+                                            </p>
+                                        </div>
+                                        <div className="flex-shrink-0 w-full sm:w-auto">
+                                            <a
+                                                href={development.images.virtualTour}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="group relative flex sm:inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] overflow-hidden w-full sm:w-auto"
+                                                style={{ background: '#C8A44A', color: '#0B1928', boxShadow: '0 4px 20px rgba(200,164,74,0.35)' }}
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15" aria-hidden="true">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                </svg>
+                                                Abrir Tour Virtual
+                                                <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200 rounded-xl" />
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
 

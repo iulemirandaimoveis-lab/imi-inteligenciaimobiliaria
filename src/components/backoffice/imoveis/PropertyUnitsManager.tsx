@@ -88,8 +88,8 @@ export default function PropertyUnitsManager({ propertyId }: PropertyUnitsManage
                 )}
             </div>
 
-            <div className="bg-white rounded-2xl border border-imi-100 shadow-soft overflow-hidden">
-                <table className="w-full text-left border-collapse">
+            <div className="bg-white rounded-2xl border border-imi-100 shadow-soft overflow-x-auto">
+                <table className="w-full min-w-[700px] text-left border-collapse">
                     <thead>
                         <tr className="bg-imi-50 border-b border-imi-100">
                             <th className="px-6 py-4 text-[10px] font-black text-imi-400 uppercase tracking-widest">Unidade</th>
