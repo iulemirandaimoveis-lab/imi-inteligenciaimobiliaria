@@ -16,8 +16,10 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
     const hasVideos = development.images.videos && development.images.videos.length > 0;
     const hasFloorPlans = development.images.floorPlans && development.images.floorPlans.length > 0;
 
+    const [heroIndex, setHeroIndex] = useState(0);
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [heroTouchStart, setHeroTouchStart] = useState<number | null>(null);
     const thumbStripRef = useRef<HTMLDivElement>(null);
 
     const closeLightbox = useCallback(() => setLightboxIndex(null), []);
@@ -28,6 +30,14 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
 
     const nextImage = useCallback(() => {
         setLightboxIndex(i => i === null ? null : (i + 1) % allImages.length);
+    }, [allImages.length]);
+
+    const prevHero = useCallback(() => {
+        setHeroIndex((i: number) => (i - 1 + allImages.length) % allImages.length);
+    }, [allImages.length]);
+
+    const nextHero = useCallback(() => {
+        setHeroIndex((i: number) => (i + 1) % allImages.length);
     }, [allImages.length]);
 
     // Keyboard navigation
@@ -73,8 +83,6 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
             return '';
         }
     })();
-    // Some providers (ex: tour.panoee.net) can block iframe embedding via X-Frame-Options/CSP.
-    // For those, prefer opening in a new tab instead of showing a blocked iframe.
     const shouldOpenTourExternally = /(^|\.)tour\.panoee\.net$/i.test(tourHost);
 
     return (
@@ -86,59 +94,159 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
 
                     {hasImages ? (
                         <div className="space-y-3">
-                            {/* Hero image — full width */}
-                            <motion.button
-                                initial={{ opacity: 0, y: 12 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                onClick={() => setLightboxIndex(0)}
-                                className="relative w-full aspect-[16/10] rounded-[14px] overflow-hidden bg-gray-100 group block cursor-zoom-in"
-                                onTouchStart={e => setTouchStart(e.touches[0].clientX)}
-                                onTouchEnd={e => {
-                                    if (touchStart === null) return
-                                    const diff = touchStart - e.changedTouches[0].clientX
-                                    if (Math.abs(diff) > 50) {
-                                        e.preventDefault()
-                                        if (diff > 0) setLightboxIndex(Math.min(allImages.length - 1, 1))
-                                        else setLightboxIndex(allImages.length - 1)
-                                    }
-                                    setTouchStart(null)
-                                }}
-                            >
-                                <Image
-                                    src={allImages[0]}
-                                    alt={`${development.name} - Principal`}
-                                    fill
-                                    className="object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
-                                    sizes="(max-width: 1024px) 100vw, 66vw"
-                                    priority
-                                />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                                    <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-lg" size={32} />
+                            {/* Hero image — navigable carousel */}
+                            <div className="relative w-full aspect-[16/10] rounded-[14px] overflow-hidden bg-gray-100 group">
+                                <AnimatePresence mode="wait" initial={false}>
+                                    <motion.div
+                                        key={heroIndex}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.25 }}
+                                        className="absolute inset-0"
+                                        onTouchStart={(e: { touches: { clientX: number }[] }) => setHeroTouchStart(e.touches[0].clientX)}
+                                        onTouchEnd={(e: { changedTouches: { clientX: number }[] }) => {
+                                            if (heroTouchStart === null) return;
+                                            const diff = heroTouchStart - e.changedTouches[0].clientX;
+                                            if (Math.abs(diff) > 40) {
+                                                if (diff > 0) setHeroIndex((i: number) => (i + 1) % allImages.length);
+                                                else setHeroIndex((i: number) => (i - 1 + allImages.length) % allImages.length);
+                                            }
+                                            setHeroTouchStart(null);
+                                        }}
+                                    >
+                                        <Image
+                                            src={allImages[heroIndex]}
+                                            alt={`${development.name} - Foto ${heroIndex + 1}`}
+                                            fill
+                                            className="object-cover"
+                                            sizes="(max-width: 1024px) 100vw, 66vw"
+                                            priority={heroIndex === 0}
+                                        />
+                                    </motion.div>
+                                </AnimatePresence>
+
+                                {/* Dark overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+
+                                {/* Prev arrow */}
+                                {allImages.length > 1 && (
+                                    <button
+                                        onClick={e => { e.stopPropagation(); prevHero(); }}
+                                        aria-label="Foto anterior"
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95"
+                                        style={{
+                                            width: 48, height: 48,
+                                            background: 'rgba(0,0,0,0.65)',
+                                            border: '2px solid rgba(255,255,255,0.5)',
+                                            backdropFilter: 'blur(8px)',
+                                            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                                        }}
+                                    >
+                                        <ChevronLeft size={26} color="#fff" strokeWidth={2.5} />
+                                    </button>
+                                )}
+
+                                {/* Next arrow */}
+                                {allImages.length > 1 && (
+                                    <button
+                                        onClick={e => { e.stopPropagation(); nextHero(); }}
+                                        aria-label="Próxima foto"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95"
+                                        style={{
+                                            width: 48, height: 48,
+                                            background: 'rgba(0,0,0,0.65)',
+                                            border: '2px solid rgba(255,255,255,0.5)',
+                                            backdropFilter: 'blur(8px)',
+                                            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                                        }}
+                                    >
+                                        <ChevronRight size={26} color="#fff" strokeWidth={2.5} />
+                                    </button>
+                                )}
+
+                                {/* Bottom bar: counter + zoom button */}
+                                <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 pb-3 pt-6 pointer-events-none"
+                                    style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%)' }}>
+                                    {/* Dot indicators */}
+                                    {allImages.length > 1 && allImages.length <= 20 && (
+                                        <div className="flex gap-1.5 pointer-events-auto">
+                                            {allImages.map((_, i) => (
+                                                <button
+                                                    key={i}
+                                                    onClick={() => setHeroIndex(i)}
+                                                    aria-label={`Foto ${i + 1}`}
+                                                    style={{
+                                                        width: i === heroIndex ? 20 : 7,
+                                                        height: 7,
+                                                        borderRadius: 4,
+                                                        background: i === heroIndex ? '#C8A44A' : 'rgba(255,255,255,0.55)',
+                                                        transition: 'all 0.25s ease',
+                                                        border: 'none',
+                                                        padding: 0,
+                                                        cursor: 'pointer',
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* Counter */}
+                                    <div
+                                        className="pointer-events-auto ml-auto flex items-center gap-2 cursor-pointer"
+                                        onClick={() => setLightboxIndex(heroIndex)}
+                                    >
+                                        <span style={{
+                                            background: 'rgba(0,0,0,0.7)',
+                                            backdropFilter: 'blur(8px)',
+                                            borderRadius: 6,
+                                            padding: '5px 10px',
+                                            fontSize: 12,
+                                            fontWeight: 700,
+                                            color: '#fff',
+                                            fontFamily: "var(--fm, 'JetBrains Mono', monospace)",
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 6,
+                                        }}>
+                                            <ZoomIn size={13} />
+                                            {heroIndex + 1} / {allImages.length}
+                                        </span>
+                                    </div>
                                 </div>
-                                {/* Photo counter overlay */}
-                                <div style={{
-                                    position: 'absolute', bottom: 12, right: 12, zIndex: 10,
-                                    background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
-                                    borderRadius: 4, padding: '6px 12px',
-                                    fontSize: 11, fontWeight: 600, color: '#fff',
-                                    fontFamily: "var(--fm, 'JetBrains Mono', monospace)",
-                                }}>
-                                    1 / {allImages.length}
-                                </div>
-                            </motion.button>
+
+                                {/* Swipe hint — shown once on first render on mobile */}
+                                {allImages.length > 1 && (
+                                    <div className="absolute top-3 left-1/2 -translate-x-1/2 pointer-events-none sm:hidden">
+                                        <span style={{
+                                            background: 'rgba(0,0,0,0.55)',
+                                            backdropFilter: 'blur(6px)',
+                                            borderRadius: 20,
+                                            padding: '4px 12px',
+                                            fontSize: 11,
+                                            fontWeight: 600,
+                                            color: 'rgba(255,255,255,0.85)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 5,
+                                        }}>
+                                            ← deslize para navegar →
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
 
                             {/* Remaining images — 2-col grid */}
                             {allImages.length > 1 && (
                                 <div className="grid grid-cols-2 gap-3">
-                                    {allImages.slice(1).map((img, idx) => (
+                                    {allImages.slice(1, 9).map((img, idx) => (
                                         <motion.button
                                             key={idx}
                                             initial={{ opacity: 0, y: 12 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
                                             transition={{ delay: idx * 0.05 }}
-                                            onClick={() => setLightboxIndex(idx + 1)}
+                                            onClick={() => { setHeroIndex(idx + 1); setLightboxIndex(idx + 1); }}
                                             className="relative aspect-[16/10] rounded-[10px] overflow-hidden bg-gray-100 group cursor-zoom-in"
                                         >
                                             <Image
@@ -152,6 +260,12 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
                                                 <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-lg" size={22} />
                                             </div>
+                                            {/* Last thumbnail: show "ver todas" overlay */}
+                                            {idx === 7 && allImages.length > 9 && (
+                                                <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.55)' }}>
+                                                    <span className="text-white font-bold text-sm">+{allImages.length - 9} fotos</span>
+                                                </div>
+                                            )}
                                         </motion.button>
                                     ))}
                                 </div>
@@ -301,31 +415,50 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                         className="fixed inset-0 z-[9999] flex items-center justify-center"
-                        style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
+                        style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
                         onClick={closeLightbox}
                     >
                         {/* Close */}
                         <button
-                            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
+                            className="absolute top-4 right-4 w-12 h-12 flex items-center justify-center rounded-full text-white transition-colors z-10"
+                            style={{ background: 'rgba(255,255,255,0.15)', border: '2px solid rgba(255,255,255,0.4)' }}
                             onClick={closeLightbox}
                             aria-label="Fechar galeria"
                         >
-                            <X size={20} />
+                            <X size={22} />
                         </button>
 
                         {/* Counter */}
-                        <div className="absolute top-5 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium z-10 tabular-nums">
+                        <div
+                            className="absolute top-4 left-1/2 -translate-x-1/2 z-10 tabular-nums font-bold"
+                            style={{
+                                background: 'rgba(0,0,0,0.6)',
+                                border: '1.5px solid rgba(255,255,255,0.25)',
+                                borderRadius: 8,
+                                padding: '6px 16px',
+                                fontSize: 14,
+                                color: '#fff',
+                                backdropFilter: 'blur(8px)',
+                            }}
+                        >
                             {lightboxIndex + 1} / {allImages.length}
                         </div>
 
                         {/* Prev */}
                         {allImages.length > 1 && (
                             <button
-                                className="absolute left-3 sm:left-5 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
+                                className="absolute left-3 sm:left-5 z-10 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95"
+                                style={{
+                                    width: 56, height: 56,
+                                    background: 'rgba(0,0,0,0.7)',
+                                    border: '2.5px solid rgba(255,255,255,0.55)',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                                    backdropFilter: 'blur(8px)',
+                                }}
                                 onClick={e => { e.stopPropagation(); prevImage(); }}
                                 aria-label="Foto anterior"
                             >
-                                <ChevronLeft size={22} />
+                                <ChevronLeft size={30} color="#fff" strokeWidth={2.5} />
                             </button>
                         )}
 
@@ -341,13 +474,13 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                             onClick={e => e.stopPropagation()}
                             onTouchStart={e => setTouchStart(e.touches[0].clientX)}
                             onTouchEnd={e => {
-                                if (touchStart === null) return
-                                const diff = touchStart - e.changedTouches[0].clientX
-                                if (Math.abs(diff) > 50) {
-                                    if (diff > 0) nextImage()
-                                    else prevImage()
+                                if (touchStart === null) return;
+                                const diff = touchStart - e.changedTouches[0].clientX;
+                                if (Math.abs(diff) > 40) {
+                                    if (diff > 0) nextImage();
+                                    else prevImage();
                                 }
-                                setTouchStart(null)
+                                setTouchStart(null);
                             }}
                         >
                             <Image
@@ -363,19 +496,40 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                         {/* Next */}
                         {allImages.length > 1 && (
                             <button
-                                className="absolute right-3 sm:right-5 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
+                                className="absolute right-3 sm:right-5 z-10 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95"
+                                style={{
+                                    width: 56, height: 56,
+                                    background: 'rgba(0,0,0,0.7)',
+                                    border: '2.5px solid rgba(255,255,255,0.55)',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                                    backdropFilter: 'blur(8px)',
+                                }}
                                 onClick={e => { e.stopPropagation(); nextImage(); }}
                                 aria-label="Próxima foto"
                             >
-                                <ChevronRight size={22} />
+                                <ChevronRight size={30} color="#fff" strokeWidth={2.5} />
                             </button>
                         )}
+
+                        {/* Swipe hint for mobile */}
+                        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 sm:hidden pointer-events-none">
+                            <span style={{
+                                background: 'rgba(0,0,0,0.5)',
+                                borderRadius: 20,
+                                padding: '5px 14px',
+                                fontSize: 12,
+                                fontWeight: 600,
+                                color: 'rgba(255,255,255,0.7)',
+                            }}>
+                                ← deslize para navegar →
+                            </span>
+                        </div>
 
                         {/* Thumbnail strip */}
                         {allImages.length > 1 && (
                             <div
                                 className="absolute bottom-0 left-0 right-0 z-10 flex justify-center"
-                                style={{ paddingBottom: 16, paddingTop: 12, background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)' }}
+                                style={{ paddingBottom: 16, paddingTop: 12, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)' }}
                                 onClick={e => e.stopPropagation()}
                             >
                                 <div
@@ -390,10 +544,11 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                             aria-label={`Ir para imagem ${i + 1}`}
                                             className="relative flex-shrink-0 rounded-md overflow-hidden transition-all duration-200"
                                             style={{
-                                                width: 60,
-                                                height: 48,
-                                                border: i === lightboxIndex ? '2px solid #C8A44A' : '2px solid transparent',
-                                                opacity: i === lightboxIndex ? 1 : 0.5,
+                                                width: 64,
+                                                height: 52,
+                                                border: i === lightboxIndex ? '2.5px solid #C8A44A' : '2px solid rgba(255,255,255,0.2)',
+                                                opacity: i === lightboxIndex ? 1 : 0.55,
+                                                transform: i === lightboxIndex ? 'scale(1.08)' : 'scale(1)',
                                             }}
                                         >
                                             <Image
@@ -401,7 +556,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                                 alt={`Miniatura ${i + 1}`}
                                                 fill
                                                 className="object-cover"
-                                                sizes="60px"
+                                                sizes="64px"
                                             />
                                         </button>
                                     ))}
