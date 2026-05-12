@@ -23,6 +23,7 @@ jobs:
           echo "TypeScript: $(./node_modules/.bin/tsc --version)"
       - name: TypeScript check
         run: |
+          set +e
           ./node_modules/.bin/tsc --noEmit --incremental false 2>&1 | tee tsc_output.txt
           TSC_EXIT=${PIPESTATUS[0]}
           echo "tsc exit code: $TSC_EXIT"
