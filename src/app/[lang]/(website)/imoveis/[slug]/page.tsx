@@ -180,6 +180,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             avatar_url: null,
         }
     }
+    // Jazz Boulevard test campaign: redirect all WhatsApp contacts to the manager
+    const jazzWhatsapp = params.slug === 'jazz-boulevard-garanhuns' ? '558799668204' : null
+    if (jazzWhatsapp) {
+        brokerData = { ...brokerData, phone: `+${jazzWhatsapp}` }
+    }
 
     // Fetch similar properties (same city, different slug, max 4)
     const { data: similarRaw } = await supabaseAdmin
@@ -360,7 +365,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
                     {/* Sidebar — all viewports */}
                     <aside className="lg:col-span-4 order-first lg:order-none space-y-6">
-                        <DevelopmentCTA development={development} imiData={imiScores} />
+                        <DevelopmentCTA development={development} imiData={imiScores} {...(jazzWhatsapp && { whatsappPhone: jazzWhatsapp })} />
                         <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             <RealtorCard broker={brokerData as any} propertyName={development.name} />
@@ -569,7 +574,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </p>
                     </div>
                     <a
-                        href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
+                        href={`https://wa.me/${jazzWhatsapp ?? '5581997230455'}?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{

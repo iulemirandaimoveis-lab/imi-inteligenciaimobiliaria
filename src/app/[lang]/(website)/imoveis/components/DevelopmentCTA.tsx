@@ -19,6 +19,7 @@ interface IMIData {
 interface DevelopmentCTAProps {
     development: Development;
     imiData?: IMIData;
+    whatsappPhone?: string;
 }
 
 const formatPrice = (price: number) => {
@@ -29,7 +30,7 @@ const formatPrice = (price: number) => {
     return price.toLocaleString('pt-BR');
 };
 
-export default function DevelopmentCTA({ development, imiData }: DevelopmentCTAProps) {
+export default function DevelopmentCTA({ development, imiData, whatsappPhone }: DevelopmentCTAProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [ctaType, setCtaType] = useState<'info' | 'table' | 'imi'>('info');
     const [showIMIPreview, setShowIMIPreview] = useState(false);
@@ -50,7 +51,7 @@ export default function DevelopmentCTA({ development, imiData }: DevelopmentCTAP
             imi: `Olá! Gostaria de receber a Análise IMI completa do ${development.name}.`,
         };
         const message = encodeURIComponent(messages[ctaType]);
-        window.open(`https://wa.me/5581997230455?text=${message}`, '_blank');
+        window.open(`https://wa.me/${whatsappPhone ?? '5581997230455'}?text=${message}`, '_blank');
         setIsModalOpen(false);
     };
 
