@@ -147,7 +147,7 @@ export async function POST(request: Request) {
             // Sync to profiles
             const { error: profileError } = await supabaseAdmin
                 .from('profiles')
-                .upsert({ id: newUserId, email: normalizedEmail, name, role: validRole.toLowerCase() })
+                .upsert({ id: newUserId, email: normalizedEmail, name, role: validRole.toLowerCase(), must_reset_password: true })
             if (profileError) {
                 console.error('Profiles sync error:', profileError.message)
                 // Non-critical: user was created in auth, profile sync can be retried
