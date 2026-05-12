@@ -23,8 +23,7 @@ jobs:
           echo "TypeScript: $(./node_modules/.bin/tsc --version)"
       - name: TypeScript check
         run: |
-          set +e
-          ./node_modules/.bin/tsc --noEmit 2>&1 | tee tsc_output.txt
+          ./node_modules/.bin/tsc --noEmit --incremental false 2>&1 | tee tsc_output.txt
           TSC_EXIT=${PIPESTATUS[0]}
           echo "tsc exit code: $TSC_EXIT"
           if [ -s tsc_output.txt ]; then
@@ -42,6 +41,19 @@ jobs:
             echo "No TypeScript errors found"
           fi
           exit $TSC_EXIT
+      - name: Post errors as PR comment
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const errors = fs.existsSync('tsc_output.txt') ? fs.readFileSync('tsc_output.txt', 'utf8') : 'No tsc_output.txt found';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## TypeScript CI Errors\n\`\`\`\n${errors}\n\`\`\``
+            });
       - name: Upload tsc output
         if: failure()
         uses: actions/upload-artifact@v4
