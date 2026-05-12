@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 
 export interface FilterTab {
   id: string
@@ -18,6 +18,7 @@ interface FilterTabsProps {
 
 export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTabsProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [pressedId, setPressedId] = useState<string | null>(null)
 
   return (
     <div
@@ -33,10 +34,24 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
     >
       {tabs.map((tab) => {
         const isActive = tab.id === active
+        const isPressed = pressedId === tab.id
+
+        // Inverted border behavior: border lit by default, dims on press
+        const borderColor = isActive
+          ? 'var(--platinum-400)'
+          : isPressed
+            ? 'rgba(200,164,74,0.12)'
+            : 'rgba(200,164,74,0.45)'
+
         return (
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
+            onMouseDown={() => setPressedId(tab.id)}
+            onMouseUp={() => setPressedId(null)}
+            onMouseLeave={() => setPressedId(null)}
+            onTouchStart={() => setPressedId(tab.id)}
+            onTouchEnd={() => setPressedId(null)}
             className="flex-shrink-0 flex items-center gap-1.5"
             style={{
               padding: '6px 14px',
@@ -44,25 +59,18 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
               fontFamily: 'var(--font-sans)',
               fontSize: '12px',
               fontWeight: isActive ? 600 : 500,
-              border: `1px solid ${isActive ? 'var(--platinum-400)' : 'rgba(200,164,74,.25)'}`,
+              border: `1px solid ${borderColor}`,
               background: isActive
                 ? 'rgba(61,111,255,0.10)'
-                : 'transparent',
+                : isPressed
+                  ? 'rgba(200,164,74,0.04)'
+                  : 'transparent',
               color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)',
-              transition: 'all var(--dur-2, 200ms) var(--ease)',
+              transition: 'border-color var(--dur-2, 200ms) var(--ease), background var(--dur-2, 200ms) var(--ease)',
               whiteSpace: 'nowrap',
               cursor: 'pointer',
               minHeight: '32px',
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.background = 'var(--bg-hover)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.background = 'transparent'
-              }
+              opacity: isPressed && !isActive ? 0.75 : 1,
             }}
           >
             {tab.dotColor && (
@@ -74,7 +82,7 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
                   background: tab.dotColor,
                   display: 'inline-block',
                   flexShrink: 0,
-                  boxShadow: `0 0 5px ${tab.dotColor}`,
+                  boxShadow: isPressed ? 'none' : `0 0 5px ${tab.dotColor}`,
                 }}
               />
             )}

@@ -104,8 +104,8 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                         exit={{ opacity: 0 }}
                                         transition={{ duration: 0.25 }}
                                         className="absolute inset-0"
-                                        onTouchStart={(e: { touches: { clientX: number }[] }) => setHeroTouchStart(e.touches[0].clientX)}
-                                        onTouchEnd={(e: { changedTouches: { clientX: number }[] }) => {
+                                        onTouchStart={(e: React.TouchEvent<HTMLDivElement>) => setHeroTouchStart(e.touches[0].clientX)}
+                                        onTouchEnd={(e: React.TouchEvent<HTMLDivElement>) => {
                                             if (heroTouchStart === null) return;
                                             const diff = heroTouchStart - e.changedTouches[0].clientX;
                                             if (Math.abs(diff) > 40) {

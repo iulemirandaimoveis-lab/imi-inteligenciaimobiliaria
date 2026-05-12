@@ -698,22 +698,23 @@ function DesktopImoveisList(props: SharedProps) {
           display: flex; align-items: center; gap: 6px;
           padding: 9px 14px; border-radius: 6px;
           background: transparent;
-          border: 1px solid rgba(61,111,255,0.25);
+          border: 1px solid rgba(200,164,74,0.40);
           color: var(--accent-400);
           font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
           text-transform: uppercase;
           font-family: var(--font-outfit, sans-serif);
           cursor: pointer;
           white-space: nowrap;
-          transition: background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+          transition: all var(--dur-2) var(--ease);
           min-height: 36px;
         }
-        .imi-btn-ghost:hover { background: rgba(61,111,255,0.08); border-color: rgba(61,111,255,0.4); }
+        .imi-btn-ghost:hover { background: rgba(200,164,74,0.06); border-color: rgba(200,164,74,0.60); }
+        .imi-btn-ghost:active { border-color: rgba(200,164,74,0.12); opacity: 0.8; }
         .imi-btn-primary {
           display: flex; align-items: center; gap: 7px;
           padding: 9px 18px; border-radius: 6px;
-          background: var(--accent-400); border: none;
-          color: var(--bg-base);
+          background: var(--btn-primary-bg); border: none;
+          color: var(--btn-primary-text);
           font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
           text-transform: uppercase;
           font-family: var(--font-outfit, sans-serif);
@@ -721,8 +722,10 @@ function DesktopImoveisList(props: SharedProps) {
           box-shadow: var(--shadow-sm);
           white-space: nowrap;
           min-height: 36px;
+          transition: all var(--dur-2) var(--ease);
         }
-        .imi-btn-primary:hover { background: var(--platinum-400); }
+        .imi-btn-primary:hover { opacity: 0.9; }
+        .imi-btn-primary:active { transform: scale(0.97); }
         /* ═══ KPI STRIP ═══ */
         .imi-kpi-strip {
           display: flex; gap: 1px;
@@ -796,12 +799,14 @@ function DesktopImoveisList(props: SharedProps) {
           align-items: center; gap: 6px;
           padding: 0 12px; height: 36px; border-radius: 6px;
           background: var(--bg-surface, rgba(255,255,255,0.04));
-          border: 1px solid rgba(61,111,255,0.20);
+          border: 1px solid rgba(200,164,74,0.40);
           color: var(--text-secondary);
           font-size: 12px; font-family: var(--font-outfit, sans-serif);
           cursor: pointer; white-space: nowrap; flex-shrink: 0;
           min-height: 44px;
+          transition: all var(--dur-2) var(--ease);
         }
+        .imi-filter-btn:active { border-color: rgba(200,164,74,0.12); opacity: 0.8; }
         .imi-filter-badge {
           background: var(--accent-400); color: var(--bg-base);
           font-size: 11px; font-weight: 700; border-radius: 6px;
@@ -811,12 +816,15 @@ function DesktopImoveisList(props: SharedProps) {
           display: flex; align-items: center; gap: 6px;
           padding: 0 12px; height: 36px; border-radius: 6px;
           background: var(--bg-surface, rgba(255,255,255,0.04));
-          border: 1px solid rgba(61,111,255,0.18);
+          border: 1px solid rgba(200,164,74,0.38);
           color: var(--text-secondary);
           font-size: 11px; font-family: var(--font-outfit, sans-serif);
           cursor: pointer; white-space: nowrap;
           min-height: 36px;
+          transition: all var(--dur-2) var(--ease);
         }
+        .imi-sort-btn:hover { border-color: rgba(200,164,74,0.60); }
+        .imi-sort-btn:active { border-color: rgba(200,164,74,0.12); opacity: 0.8; }
         .imi-sort-label { /* hide on very small screens */ }
         .imi-dropdown {
           position: absolute; top: calc(100% + 4px); right: 0; z-index: 50;
@@ -836,28 +844,33 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-dropdown-item.active { background: rgba(61,111,255,0.08); color: var(--accent-400); }
         .imi-view-toggle {
           display: flex; border-radius: 6px; overflow: hidden;
-          border: 1px solid rgba(61,111,255,0.15); flex-shrink: 0;
+          border: 1px solid rgba(200,164,74,0.38); flex-shrink: 0;
         }
         .imi-view-btn {
           width: 36px; height: 36px;
           display: flex; align-items: center; justify-content: center;
           background: transparent; border: none;
-          border-right: 1px solid rgba(61,111,255,0.15);
+          border-right: 1px solid rgba(200,164,74,0.25);
           cursor: pointer;
-          color: var(--text-tertiary);
+          color: var(--text-secondary);
           min-height: 36px;
+          transition: all var(--dur-2) var(--ease);
         }
         .imi-view-btn:last-child { border-right: none; }
-        .imi-view-btn.active { background: rgba(61,111,255,0.12); color: var(--accent-400); }
+        .imi-view-btn:active { opacity: 0.6; }
+        .imi-view-btn.active { background: rgba(200,164,74,0.10); color: var(--accent-400); }
         .imi-refresh-btn {
           width: 36px; height: 36px;
           display: flex; align-items: center; justify-content: center;
           background: transparent;
-          border: 1px solid rgba(61,111,255,0.15);
+          border: 1px solid rgba(200,164,74,0.38);
           border-radius: 6px; cursor: pointer;
-          color: var(--text-tertiary);
+          color: var(--text-secondary);
           flex-shrink: 0;
+          transition: all var(--dur-2) var(--ease);
         }
+        .imi-refresh-btn:hover { border-color: rgba(200,164,74,0.60); }
+        .imi-refresh-btn:active { border-color: rgba(200,164,74,0.12); opacity: 0.8; }
         /* ═══ BODY ═══ */
         .imi-body {
           display: flex; flex: 1; min-height: 0;
@@ -1004,13 +1017,14 @@ function DesktopImoveisList(props: SharedProps) {
           width: 36px; height: 36px;
           display: flex; align-items: center; justify-content: center;
           background: transparent;
-          border: 1px solid rgba(61,111,255,0.25);
+          border: 1px solid rgba(200,164,74,0.40);
           border-radius: 6px; cursor: pointer;
-          color: rgba(61,111,255,0.6);
+          color: rgba(200,164,74,0.6);
           flex-shrink: 0;
           transition: all var(--dur-2) var(--ease);
         }
-        .imi-kbd-help-btn:hover { background: rgba(61,111,255,0.08); color: var(--accent-400); }
+        .imi-kbd-help-btn:hover { background: rgba(200,164,74,0.06); border-color: rgba(200,164,74,0.60); color: var(--accent-400); }
+        .imi-kbd-help-btn:active { border-color: rgba(200,164,74,0.12); opacity: 0.8; }
         .imi-kbd-panel {
           position: absolute; top: calc(100% + 8px); right: 0; z-index: 60;
           background: var(--bg-elevated);
@@ -1113,14 +1127,16 @@ function DesktopImoveisList(props: SharedProps) {
         .imi-chip {
           display: flex; align-items: center; gap: 5px;
           padding: 6px 12px; border-radius: 6px;
-          background: rgba(61,111,255,0.08);
-          border: 1px solid rgba(61,111,255,0.22);
+          background: rgba(200,164,74,0.06);
+          border: 1px solid rgba(200,164,74,0.38);
           color: var(--accent-400);
           font-size: 11px; font-weight: 500;
           font-family: var(--font-outfit, sans-serif);
           cursor: pointer; white-space: nowrap;
           min-height: 32px;
+          transition: all var(--dur-2) var(--ease);
         }
+        .imi-chip:active { border-color: rgba(200,164,74,0.12); opacity: 0.8; }
         /* ═══ ANIMATIONS ═══ */
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes skeletonPulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -1239,8 +1255,7 @@ function MobileImoveisList(props: SharedProps) {
     filters, setFilters, favorites,
     toggleFavorite, activeFiltersCount, sortField, setSortField, sortDir, setSortDir,
     properties, market, setMarket, listingType, setListingType,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onArchive: _onArchive, onDelete: _onDelete,
+    onArchive, onDelete,
   } = props
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState('')
@@ -1377,6 +1392,8 @@ function MobileImoveisList(props: SharedProps) {
               property={p}
               isFavorite={favorites.has(p.id)}
               onFavorite={() => toggleFavorite(p.id)}
+              onArchive={onArchive}
+              onDelete={onDelete}
               animationDelay={Math.min(i * 60, 300)}
             />
           ))

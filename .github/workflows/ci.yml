@@ -23,18 +23,16 @@ jobs:
           echo "TypeScript: $(./node_modules/.bin/tsc --version)"
       - name: TypeScript check
         run: |
-          set +e
-          ./node_modules/.bin/tsc --noEmit 2>&1 | tee tsc_output.txt
-          TSC_EXIT=${PIPESTATUS[0]}
+          ./node_modules/.bin/tsc --noEmit --incremental false > tsc_output.txt 2>&1
+          TSC_EXIT=$?
           echo "tsc exit code: $TSC_EXIT"
-          if [ -s tsc_output.txt ]; then
+          echo "tsc output bytes: $(wc -c < tsc_output.txt)"
+          cat tsc_output.txt
+          if [ $TSC_EXIT -ne 0 ]; then
             echo "## TypeScript Errors" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             cat tsc_output.txt >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "=== TYPESCRIPT ERRORS BEGIN ==="
-            cat tsc_output.txt
-            echo "=== TYPESCRIPT ERRORS END ==="
             while IFS= read -r line; do
               echo "::error::$line"
             done < tsc_output.txt
@@ -42,6 +40,20 @@ jobs:
             echo "No TypeScript errors found"
           fi
           exit $TSC_EXIT
+      - name: Post errors as PR comment
+        if: failure() && github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          {
+            echo "## TypeScript CI Errors"
+            echo ""
+            echo '```'
+            cat tsc_output.txt 2>/dev/null || echo "(no tsc_output.txt — tsc may have crashed silently)"
+            echo '```'
+          } > /tmp/comment.md
+          gh pr comment ${{ github.event.pull_request.number }} --body-file /tmp/comment.md
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Upload tsc output
         if: failure()
         uses: actions/upload-artifact@v4

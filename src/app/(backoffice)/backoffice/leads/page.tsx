@@ -10,6 +10,7 @@ import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTabs'
 import { MobileLeadCard } from '@/app/(backoffice)/components/ui/MobileLeadCard'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
+import { Btn } from '@/app/(backoffice)/components/ui/Btn'
 import { timeAgo } from '@/lib/format'
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -144,23 +145,18 @@ export default function LeadsPage() {
           live
           actions={
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <motion.button
-                whileTap={{ scale: 0.93 }}
+              <Btn
+                variant="ghost"
+                size="icon"
+                icon={<RefreshCw size={13} />}
                 onClick={() => fetchLeads(page, true)}
-                disabled={refreshing}
+                loading={refreshing}
                 title="Atualizar"
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  height: '36px', width: '36px', borderRadius: '10px',
-                  color: 'var(--text-secondary)',
-                  background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
-                  cursor: 'pointer',
-                }}
-              >
-                <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.93 }}
+              />
+              <Btn
+                variant="ghost"
+                size="sm"
+                icon={<Download size={13} />}
                 onClick={() => {
                   const a = document.createElement('a')
                   a.href = '/api/export?module=leads'
@@ -168,31 +164,17 @@ export default function LeadsPage() {
                   a.click()
                 }}
                 title="Exportar CSV"
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '36px', padding: '0 12px', borderRadius: '10px',
-                  fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)',
-                  background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
-                  cursor: 'pointer', whiteSpace: 'nowrap',
-                }}
               >
-                <Download size={13} /> CSV
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.93 }}
-                whileHover={{ scale: 1.02 }}
+                CSV
+              </Btn>
+              <Btn
+                variant="primary"
+                size="sm"
+                icon={<Plus size={14} />}
                 onClick={() => router.push('/backoffice/leads/novo')}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '36px', padding: '0 14px', borderRadius: '10px',
-                  fontSize: '12px', fontWeight: 700, color: 'var(--text-inverse)',
-                  background: 'var(--btn-primary-bg)',
-                  boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
-                  border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
-                }}
               >
-                <Plus size={14} /> Novo Lead
-              </motion.button>
+                Novo Lead
+              </Btn>
             </div>
           }
         />
@@ -326,19 +308,14 @@ export default function LeadsPage() {
                   : 'Capture seu primeiro lead para começar'}
               </p>
               {!search && (
-                <button
+                <Btn
+                  variant="primary"
+                  size="sm"
+                  icon={<Plus size={14} />}
                   onClick={() => router.push('/backoffice/leads/novo')}
-                  style={{
-                    position: 'relative', overflow: 'hidden',
-                    fontSize: '11px', fontWeight: 600, color: '#fff', letterSpacing: '1px', textTransform: 'uppercase',
-                    background: '#0A1624',
-                    border: '1px solid rgba(255,255,255,0.08)', padding: '8px 18px', borderRadius: '6px', cursor: 'pointer',
-                    fontFamily: "var(--fu, 'Outfit', sans-serif)",
-                  }}
                 >
-                  + Novo Lead
-                  <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
-                </button>
+                  Novo Lead
+                </Btn>
               )}
             </motion.div>
           ) : (
@@ -411,37 +388,27 @@ export default function LeadsPage() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
             padding: '16px 0',
           }}>
-            <button
+            <Btn
+              variant="ghost"
+              size="sm"
+              icon={<ChevronLeft size={14} />}
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page <= 1}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 4,
-                padding: '8px 12px', borderRadius: 8,
-                fontSize: 12, fontWeight: 600,
-                background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
-                color: page <= 1 ? 'var(--text-secondary)' : 'var(--text-primary)',
-                cursor: page <= 1 ? 'default' : 'pointer', opacity: page <= 1 ? 0.5 : 1,
-              }}
             >
-              <ChevronLeft size={14} /> Anterior
-            </button>
+              Anterior
+            </Btn>
             <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
               {page} / {totalPages}
             </span>
-            <button
+            <Btn
+              variant="ghost"
+              size="sm"
+              iconRight={<ChevronRight size={14} />}
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 4,
-                padding: '8px 12px', borderRadius: 8,
-                fontSize: 12, fontWeight: 600,
-                background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
-                color: page >= totalPages ? 'var(--text-secondary)' : 'var(--text-primary)',
-                cursor: page >= totalPages ? 'default' : 'pointer', opacity: page >= totalPages ? 0.5 : 1,
-              }}
             >
-              Próxima <ChevronRight size={14} />
-            </button>
+              Próxima
+            </Btn>
           </div>
         )}
       </motion.div>
