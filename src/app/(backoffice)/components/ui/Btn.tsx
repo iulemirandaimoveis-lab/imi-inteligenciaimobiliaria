@@ -207,6 +207,9 @@ export function Btn(props: BtnProps) {
   const onMouseLeave = useCallback(() => { setHovered(false); setPressed(false) }, [])
   const onMouseDown = useCallback(() => setPressed(true), [])
   const onMouseUp = useCallback(() => setPressed(false), [])
+  const onTouchStart = useCallback(() => setPressed(true), [])
+  const onTouchEnd = useCallback(() => setPressed(false), [])
+  const onTouchCancel = useCallback(() => setPressed(false), [])
   const onFocus = useCallback(() => setFocused(true), [])
   const onBlur = useCallback(() => setFocused(false), [])
 
@@ -238,6 +241,9 @@ export function Btn(props: BtnProps) {
     onMouseLeave,
     onMouseDown,
     onMouseUp,
+    onTouchStart,
+    onTouchEnd,
+    onTouchCancel,
     onFocus,
     onBlur,
   }
