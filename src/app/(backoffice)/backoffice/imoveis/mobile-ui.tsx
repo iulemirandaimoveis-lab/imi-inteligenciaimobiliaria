@@ -16,7 +16,7 @@ import Link from 'next/link'
 import {
   ArrowLeft, Building2, MapPin, Bed, Bath, Car, Ruler,
   Star, Sparkles, BarChart2, Scale, LayoutGrid, Briefcase,
-  SlidersHorizontal, X, Home, Camera,
+  SlidersHorizontal, X, Home, Camera, Archive, Trash2,
 } from 'lucide-react'
 import type { IMIProperty } from '@/features/properties/types'
 import { getMainImage } from '@/utils/propertyImages'
@@ -361,10 +361,12 @@ interface MobilePropertyCardProps {
   property: IMIProperty
   isFavorite?: boolean
   onFavorite?: () => void
+  onArchive?: (id: string) => void
+  onDelete?: (id: string) => void
   animationDelay?: number
 }
 
-export function MobilePropertyCard({ property, isFavorite, onFavorite, animationDelay = 0 }: MobilePropertyCardProps) {
+export function MobilePropertyCard({ property, isFavorite, onFavorite, onArchive, onDelete, animationDelay = 0 }: MobilePropertyCardProps) {
   const status = normalizeStatus(property.status)
   const statusCfg = STATUS_CONFIGS[status] ?? { label: status, color: T.text2 }
   const score = property.imi_score ?? 0
@@ -372,15 +374,18 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
   const imageUrl = getMainImage(property)
 
   return (
-    <Link
-      href={`/backoffice/imoveis/${property.id}`}
-      className="mob-card-link"
-      aria-label={`Ver detalhes de ${property.name}`}
-      style={{ animationDelay: `${animationDelay}ms` }}
+    <div
+      className="mob-prop-card-anim"
+      style={{ animationDelay: `${animationDelay}ms`, marginBottom: 14 }}
     >
+      <Link
+        href={`/backoffice/imoveis/${property.id}`}
+        className="mob-card-link"
+        aria-label={`Ver detalhes de ${property.name}`}
+      >
       <div
-        className="mob-card-inner mob-prop-card-anim"
-        style={{ animationDelay: `${animationDelay}ms`, borderRadius: 'var(--r-xl)', overflow: 'hidden', marginBottom: 14 }}
+        className="mob-card-inner"
+        style={{ animationDelay: `${animationDelay}ms`, borderRadius: 'var(--r-xl)', overflow: 'hidden' }}
       >
         {/* Image with full overlay */}
         <div style={{ position: 'relative', aspectRatio: '3/2', background: 'var(--bg-muted)' }}>
@@ -543,7 +548,65 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
           </div>
         </div>
       </div>
-    </Link>
+      </Link>
+
+      {/* Archive / Delete action strip */}
+      {(onArchive || onDelete) && (
+        <div style={{
+          display: 'flex', gap: 8,
+          padding: '8px 12px',
+          background: 'var(--bg-surface)',
+          border: '1px solid rgba(200,164,74,0.15)',
+          borderTop: 'none',
+          borderRadius: '0 0 var(--r-xl) var(--r-xl)',
+          marginTop: -2,
+        }}>
+          <div style={{ flex: 1 }} />
+          {onArchive && (
+            <button
+              onClick={e => { e.stopPropagation(); onArchive(property.id) }}
+              className="mob-btn-tap"
+              aria-label="Arquivar imóvel"
+              title="Arquivar"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                height: 36, padding: '0 12px', borderRadius: 6,
+                background: 'transparent',
+                border: '1px solid rgba(200,164,74,0.40)',
+                color: 'var(--text-secondary)',
+                fontFamily: 'var(--font-sans)',
+                fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                letterSpacing: '0.5px',
+              }}
+            >
+              <Archive size={13} />
+              Arquivar
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={e => { e.stopPropagation(); onDelete(property.id) }}
+              className="mob-btn-tap"
+              aria-label="Excluir imóvel"
+              title="Excluir"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                height: 36, padding: '0 12px', borderRadius: 6,
+                background: 'transparent',
+                border: '1px solid rgba(224,107,107,0.40)',
+                color: 'var(--error, #E06B6B)',
+                fontFamily: 'var(--font-sans)',
+                fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                letterSpacing: '0.5px',
+              }}
+            >
+              <Trash2 size={13} />
+              Excluir
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 

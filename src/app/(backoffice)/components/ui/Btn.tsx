@@ -51,6 +51,8 @@ interface VariantStyle {
   border: string
   hoverBackground: string
   hoverColor?: string
+  hoverBorder?: string
+  activeBorder?: string
   activeTransform?: string
 }
 
@@ -74,26 +76,33 @@ const VARIANT_STYLES: Record<string, VariantStyle> = {
   secondary: {
     background: 'var(--bg-muted)',
     color: 'var(--text-primary)',
-    border: '1px solid var(--border-default)',
+    border: '1px solid rgba(200,164,74,0.40)',
     hoverBackground: 'var(--bg-hover)',
+    hoverBorder: '1px solid rgba(200,164,74,0.60)',
+    activeBorder: '1px solid rgba(200,164,74,0.15)',
   },
   ghost: {
     background: 'transparent',
     color: 'var(--text-secondary)',
-    border: '1px solid transparent',
+    border: '1px solid rgba(200,164,74,0.35)',
     hoverBackground: 'var(--bg-hover)',
+    hoverBorder: '1px solid rgba(200,164,74,0.55)',
+    activeBorder: '1px solid rgba(200,164,74,0.10)',
   },
   danger: {
     background: 'var(--error-bg)',
     color: 'var(--error)',
-    border: '1px solid transparent',
+    border: '1px solid rgba(224,107,107,0.35)',
     hoverBackground: 'color-mix(in srgb, var(--error-bg) 80%, var(--error))',
+    activeBorder: '1px solid rgba(224,107,107,0.10)',
   },
   outline: {
     background: 'transparent',
     color: 'var(--text-primary)',
-    border: '1px solid var(--border-default)',
+    border: '1px solid rgba(200,164,74,0.40)',
     hoverBackground: 'var(--bg-hover)',
+    hoverBorder: '1px solid rgba(200,164,74,0.60)',
+    activeBorder: '1px solid rgba(200,164,74,0.12)',
   },
 }
 
@@ -133,6 +142,13 @@ function buildStyle(
 
   const isIcon = size === 'icon'
 
+  // Border: default lit, dims on press, brightens on hover
+  let border = v.border
+  if (!disabled) {
+    if (pressed && v.activeBorder) border = v.activeBorder
+    else if (hovered && v.hoverBorder) border = v.hoverBorder
+  }
+
   const style: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
@@ -145,13 +161,13 @@ function buildStyle(
     fontFamily: 'var(--font-sans)',
     lineHeight: 1,
     borderRadius: 'var(--r-md, 8px)',
-    border: v.border,
+    border,
     background: hovered && !disabled ? v.hoverBackground : v.background,
     color: hovered && v.hoverColor && !disabled ? v.hoverColor : v.color,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     boxShadow: !disabled ? (v as any).boxShadow : undefined,
     cursor: disabled ? 'default' : 'pointer',
-    opacity: disabled ? 0.5 : 1,
+    opacity: disabled ? 0.5 : pressed && !disabled ? 0.8 : 1,
     pointerEvents: disabled ? 'none' : undefined,
     transition: 'all 250ms var(--ease)',
     transform: pressed && v.activeTransform && !disabled ? v.activeTransform : undefined,
