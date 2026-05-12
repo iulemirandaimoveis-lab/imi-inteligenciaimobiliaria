@@ -23,18 +23,16 @@ jobs:
           echo "TypeScript: $(./node_modules/.bin/tsc --version)"
       - name: TypeScript check
         run: |
-          set +e
-          ./node_modules/.bin/tsc --noEmit --incremental false 2>&1 | tee tsc_output.txt
-          TSC_EXIT=${PIPESTATUS[0]}
+          ./node_modules/.bin/tsc --noEmit --incremental false > tsc_output.txt 2>&1
+          TSC_EXIT=$?
           echo "tsc exit code: $TSC_EXIT"
-          if [ -s tsc_output.txt ]; then
+          echo "tsc output bytes: $(wc -c < tsc_output.txt)"
+          cat tsc_output.txt
+          if [ $TSC_EXIT -ne 0 ]; then
             echo "## TypeScript Errors" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             cat tsc_output.txt >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "=== TYPESCRIPT ERRORS BEGIN ==="
-            cat tsc_output.txt
-            echo "=== TYPESCRIPT ERRORS END ==="
             while IFS= read -r line; do
               echo "::error::$line"
             done < tsc_output.txt
@@ -48,12 +46,15 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const errors = fs.existsSync('tsc_output.txt') ? fs.readFileSync('tsc_output.txt', 'utf8') : 'No tsc_output.txt found';
+            const raw = fs.existsSync('tsc_output.txt') ? fs.readFileSync('tsc_output.txt', 'utf8').trim() : '';
+            const body = raw
+              ? `## TypeScript CI Errors\n\`\`\`\n${raw}\n\`\`\``
+              : '## TypeScript CI Errors\n_tsc exited non-zero but produced no output — possible tsconfig or environment issue_';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `## TypeScript CI Errors\n\`\`\`\n${errors}\n\`\`\``
+              body
             });
       - name: Upload tsc output
         if: failure()
