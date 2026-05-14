@@ -1499,12 +1499,11 @@ export default function ImoveisPage() {
   const handleDelete = useCallback(async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir este imóvel? Esta ação não pode ser desfeita.')) return
     try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from('developments')
-        .delete()
-        .eq('id', id)
-      if (error) throw error
+      const res = await fetch(`/api/developments?id=${id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Falha ao excluir imóvel')
+      }
       toast.success('Imóvel excluído')
       await fetchProperties()
     } catch {
@@ -1547,12 +1546,13 @@ export default function ImoveisPage() {
   const handleBulkDelete = useCallback(async (ids: Set<string>, onDone: () => void) => {
     if (!confirm(`Tem certeza que deseja excluir ${ids.size} imóvel(s)? Esta ação não pode ser desfeita.`)) return
     try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from('developments')
-        .delete()
-        .in('id', Array.from(ids))
-      if (error) throw error
+      await Promise.all(Array.from(ids).map(async (id) => {
+        const res = await fetch(`/api/developments?id=${id}`, { method: 'DELETE' })
+        if (!res.ok) {
+          const data = await res.json().catch(() => null)
+          throw new Error(data?.error || `Falha ao excluir imóvel ${id}`)
+        }
+      }))
       toast.success(`${ids.size} imóvel(s) excluído(s)`)
       onDone()
       await fetchProperties()
