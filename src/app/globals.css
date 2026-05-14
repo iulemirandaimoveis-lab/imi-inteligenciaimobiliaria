@@ -305,6 +305,18 @@
   --ds6-surface: #0D1424;
   --ds6-elevated:#121B2E;
   --ds6-overlay: #1A2540;
+
+  /* ── Theme-aware Glass Surface (light) ── */
+  --glass-surface:        rgba(255,255,255,0.92);
+  --glass-surface-border: rgba(11,17,32,0.12);
+  --glass-surface-shadow: var(--shadow-md);
+  --glass-surface-inset:  none;
+  --glass-hover-border:   rgba(11,17,32,0.22);
+
+  /* ── Button tokens (light) ── */
+  --btn-primary-bg:    var(--imi-navy-900);
+  --btn-primary-hover: var(--imi-navy-800);
+  --btn-primary-text:  #FFFFFF;
 }
 
 .dark {
@@ -512,6 +524,13 @@
   --font-logo: var(--font-serif);
   --font-body: var(--font-sans);
   --font-mono: var(--font-mono);
+
+  /* ── Theme-aware Glass Surface (dark) ── */
+  --glass-surface:        rgba(14,28,48,.52);
+  --glass-surface-border: rgba(200,164,74,.12);
+  --glass-surface-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+  --glass-surface-inset:  inset 0 1px 0 rgba(255,255,255,.04);
+  --glass-hover-border:   rgba(200,164,74,.30);
 }
 
 /* ── Liquid Glass Utilities ─────────────────────────────────── */
@@ -1304,25 +1323,16 @@
 
   .btn-primary {
     @apply btn-md;
-    background: #102A43;
-    color: white;
+    background: var(--btn-primary-bg, #0B1120);
+    color: var(--btn-primary-text, #FFFFFF);
+    border: 1px solid transparent;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   }
 
-  .dark .btn-primary {
-    background: #FFFFFF;
-    color: #102A43;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
   .btn-primary:hover {
-    background: #16162A;
+    background: var(--btn-primary-hover, #101830);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
     transform: translateY(-1px);
-  }
-
-  .dark .btn-primary:hover {
-    background: #F3F4F6;
   }
 
   .btn-primary:active {

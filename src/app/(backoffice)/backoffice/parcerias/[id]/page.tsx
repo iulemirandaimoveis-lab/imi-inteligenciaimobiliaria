@@ -575,7 +575,7 @@ export default function PartnershipChatPage() {
                                 }}
                                 style={{
                                     padding: '10px 24px', borderRadius: T.radius.md,
-                                    background: T.gold, color: T.bg, border: 'none',
+                                    background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', border: 'none',
                                     fontSize: 13, fontWeight: 600, cursor: 'pointer',
                                 }}
                             >

@@ -123,10 +123,10 @@ export default function RentalsPage() {
               href="/backoffice/rentals/novo"
               className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all"
               style={{
-                background: T.gold,
-                color: '#0A1624',
+                background: 'var(--btn-primary-bg)',
+                color: 'var(--btn-primary-text)',
                 borderRadius: '4px',
-                border: 'none',
+                border: '1px solid transparent',
                 fontFamily: 'var(--font-sans)',
               }}
             >

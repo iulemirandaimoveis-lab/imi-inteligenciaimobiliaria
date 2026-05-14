@@ -514,10 +514,10 @@ export function DesktopSidebar() {
             className="hidden lg:flex flex-col h-screen fixed left-0 top-0 z-40"
             style={{
                 width: 240,
-                background: 'rgba(10,22,36,.92)',
+                background: 'var(--sidebar-bg)',
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
-                borderRight: '1px solid var(--border-subtle)',
+                borderRight: '1px solid var(--sidebar-border)',
             }}
         >
             {/* Logo — IMI Brand Identity v1.1 DARK */}

@@ -195,7 +195,7 @@ export default function IMIChecklist() {
   if (!loaded) return null
 
   return (
-    <div style={{ minHeight: "100vh", background: "#050B14", color: "#E8E6E1", fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text-primary)", fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
         * { box-sizing: border-box; }
@@ -215,7 +215,7 @@ export default function IMIChecklist() {
       `}</style>
 
       {/* Header */}
-      <div style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(5,11,20,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(200,164,74,0.12)" }}>
+      <div style={{ position: "sticky", top: 0, zIndex: 50, background: "var(--glass-surface)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--glass-surface-border)" }}>
         <div style={{ maxWidth: 800, margin: "0 auto", padding: "16px 20px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
             <div>

@@ -151,8 +151,8 @@ export default function AIVisionPage() {
                                 disabled={analyzing}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: 8,
-                                    background: analyzing ? T.borderLight : 'var(--gold, #C8A44A)',
-                                    color: analyzing ? T.textMuted : '#0B1120',
+                                    background: analyzing ? 'var(--bg-elevated)' : 'var(--btn-primary-bg)',
+                                    color: analyzing ? 'var(--text-secondary)' : 'var(--btn-primary-text)',
                                     border: 'none', borderRadius: 10,
                                     padding: '8px 18px', fontSize: 13, fontWeight: 700,
                                     cursor: analyzing ? 'wait' : 'pointer',

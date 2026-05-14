@@ -266,8 +266,8 @@ function AIInsightsModal({ property, onClose }: { property: IMIProperty; onClose
                 <Link href={`/backoffice/conteudo/criador?property=${property.id}`} style={{ flex: 1 }}>
                   <button style={{
                     width: '100%', padding: '9px 14px', borderRadius: 6,
-                    background: T.accent,
-                    border: 'none', color: T.textInverse,
+                    background: 'var(--btn-primary-bg)',
+                    border: 'none', color: 'var(--btn-primary-text)',
                     fontSize: 11, fontWeight: 700, letterSpacing: '1.5px',
                     textTransform: 'uppercase', fontFamily: T.font.ui,
                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -959,8 +959,8 @@ function SearchTab({ properties, loading }: { properties: IMIProperty[]; loading
             style={{
               display: 'flex', alignItems: 'center', gap: 5,
               padding: '6px 12px', borderRadius: 6,
-              background: T.accent,
-              border: 'none', color: T.textInverse,
+              background: 'var(--btn-primary-bg)',
+              border: 'none', color: 'var(--btn-primary-text)',
               fontSize: 11, fontWeight: 700,
               letterSpacing: 1, textTransform: 'uppercase',
               fontFamily: T.font.ui, cursor: 'pointer',

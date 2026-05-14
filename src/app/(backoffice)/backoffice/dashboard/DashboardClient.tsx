@@ -164,16 +164,16 @@ function ConversaoFonteWidget() {
             transition={{ delay: 0.52, duration: 0.35 }}
             className="rounded-[10px] overflow-hidden"
             style={{
-                background: 'rgba(14,28,48,.52)',
+                background: 'var(--glass-surface)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(200,164,74,.12)',
+                border: '1px solid var(--glass-surface-border)',
                 borderRadius: '10px',
-                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                boxShadow: 'var(--glass-surface-shadow)',
                 padding: '20px',
             }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.30)')}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.12)')}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--glass-hover-border)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--glass-surface-border)')}
         >
             <div className="flex items-center gap-2 mb-4">
                 <TrendingUp size={13} style={{ color: 'var(--success)' }} />
@@ -254,15 +254,15 @@ function ProximosCompromissosWidget() {
             transition={{ delay: 0.56, duration: 0.35 }}
             className="rounded-[10px] overflow-hidden"
             style={{
-                background: 'rgba(14,28,48,.52)',
+                background: 'var(--glass-surface)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(200,164,74,.12)',
+                border: '1px solid var(--glass-surface-border)',
                 borderRadius: '10px',
-                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                boxShadow: 'var(--glass-surface-shadow)',
             }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.30)')}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.12)')}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--glass-hover-border)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--glass-surface-border)')}
         >
             <div className="flex items-center justify-between px-4 py-3"
                 style={{ borderBottom: '1px solid var(--border-default)' }}>
@@ -370,16 +370,16 @@ function TopImoveisWidget() {
             transition={{ delay: 0.60, duration: 0.35 }}
             className="rounded-[10px] overflow-hidden"
             style={{
-                background: 'rgba(14,28,48,.52)',
+                background: 'var(--glass-surface)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(200,164,74,.12)',
+                border: '1px solid var(--glass-surface-border)',
                 borderRadius: '10px',
-                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                boxShadow: 'var(--glass-surface-shadow)',
                 padding: '20px',
             }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.30)')}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(200,164,74,.12)')}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--glass-hover-border)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--glass-surface-border)')}
         >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -475,12 +475,12 @@ function VelocidadeRespostaWidget() {
             transition={{ delay: 0.64, duration: 0.35 }}
             className="rounded-[10px] overflow-hidden"
             style={{
-                background: status ? status.bg : 'rgba(14,28,48,.52)',
+                background: status ? status.bg : 'var(--glass-surface)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                border: `1px solid ${status ? status.border : 'rgba(200,164,74,.12)'}`,
+                border: `1px solid ${status ? status.border : 'var(--glass-surface-border)'}`,
                 borderRadius: '10px',
-                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                boxShadow: 'var(--glass-surface-shadow)',
                 padding: '20px',
             }}
         >
@@ -761,12 +761,14 @@ export default function DashboardClient({
                     </div>
                     <motion.button
                         whileTap={{ scale: 0.95 }}
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.02, translateY: -1 }}
                         onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                        className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-[13px] font-semibold text-white flex-shrink-0"
+                        className="flex items-center gap-2 h-9 px-4 rounded-[6px] text-[13px] font-semibold flex-shrink-0 uppercase tracking-wide"
                         style={{
-                            background: T.accent,
-                            boxShadow: 'var(--shadow-md)',
+                            background: 'var(--btn-primary-bg)',
+                            color: 'var(--btn-primary-text)',
+                            border: '1px solid transparent',
+                            boxShadow: 'var(--shadow-sm)',
                         }}
                     >
                         <Plus size={14} />
@@ -821,12 +823,12 @@ export default function DashboardClient({
                 transition={{ delay: 0.08, duration: 0.35 }}
                 className="relative overflow-hidden rounded-[10px]"
                 style={{
-                    background: 'rgba(14,28,48,.52)',
+                    background: 'var(--glass-surface)',
                     backdropFilter: 'blur(20px)',
                     WebkitBackdropFilter: 'blur(20px)',
                     border: '1px solid var(--info-border, rgba(96,165,250,0.28))',
                     borderRadius: '10px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                    boxShadow: 'var(--glass-surface-shadow)',
                     padding: '20px',
                 }}
             >
@@ -995,12 +997,12 @@ export default function DashboardClient({
                     transition={{ delay: 0.22, duration: 0.35 }}
                     className="md:col-span-2 lg:col-span-2 rounded-[10px] overflow-hidden"
                     style={{
-                        background: 'rgba(14,28,48,.52)',
+                        background: 'var(--glass-surface)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(200,164,74,.12)',
+                        border: '1px solid var(--glass-surface-border)',
                         borderRadius: '10px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                        boxShadow: 'var(--glass-surface-shadow)',
                         padding: '20px',
                     }}
                 >
@@ -1014,12 +1016,12 @@ export default function DashboardClient({
                     transition={{ delay: 0.28, duration: 0.35 }}
                     className="rounded-[10px] overflow-hidden"
                     style={{
-                        background: 'rgba(14,28,48,.52)',
+                        background: 'var(--glass-surface)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(200,164,74,.12)',
+                        border: '1px solid var(--glass-surface-border)',
                         borderRadius: '10px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                        boxShadow: 'var(--glass-surface-shadow)',
                         padding: '20px',
                     }}
                 >
@@ -1071,12 +1073,12 @@ export default function DashboardClient({
                     transition={{ delay: 0.35, duration: 0.35 }}
                     className="rounded-[10px] overflow-hidden"
                     style={{
-                        background: 'rgba(14,28,48,.52)',
+                        background: 'var(--glass-surface)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(200,164,74,.12)',
+                        border: '1px solid var(--glass-surface-border)',
                         borderRadius: '10px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                        boxShadow: 'var(--glass-surface-shadow)',
                         padding: '20px',
                     }}
                 >
@@ -1118,12 +1120,12 @@ export default function DashboardClient({
                     transition={{ delay: 0.40, duration: 0.35 }}
                     className="rounded-[10px] overflow-hidden"
                     style={{
-                        background: 'rgba(14,28,48,.52)',
+                        background: 'var(--glass-surface)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(200,164,74,.12)',
+                        border: '1px solid var(--glass-surface-border)',
                         borderRadius: '10px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                        boxShadow: 'var(--glass-surface-shadow)',
                     }}
                 >
                     <div className="flex items-center justify-between px-4 py-3"
@@ -1184,12 +1186,12 @@ export default function DashboardClient({
                     transition={{ delay: 0.45, duration: 0.35 }}
                     className="rounded-[10px] overflow-hidden"
                     style={{
-                        background: 'rgba(14,28,48,.52)',
+                        background: 'var(--glass-surface)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(200,164,74,.12)',
+                        border: '1px solid var(--glass-surface-border)',
                         borderRadius: '10px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                        boxShadow: 'var(--glass-surface-shadow)',
                     }}
                 >
                     <div className="flex items-center justify-between px-4 py-3"
@@ -1323,12 +1325,12 @@ function HotLeadsWidget() {
             transition={{ delay: 0.38, duration: 0.35 }}
             className="rounded-[10px] overflow-hidden"
             style={{
-                background: 'rgba(14,28,48,.52)',
+                background: 'var(--glass-surface)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
                 border: '1px solid rgba(244,63,94,.20)',
                 borderRadius: '10px',
-                boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+                boxShadow: 'var(--glass-surface-shadow)',
             }}
         >
             <div className="flex items-center justify-between px-4 py-3"
