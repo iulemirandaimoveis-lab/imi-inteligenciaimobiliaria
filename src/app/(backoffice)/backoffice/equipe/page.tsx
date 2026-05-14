@@ -289,7 +289,7 @@ function TeamCard({
                                                 <div className="flex items-center gap-1">
                                                     <div
                                                         className="w-1.5 h-1.5 rounded-full"
-                                                        style={{ background: presenceMap.get(member.user_id) === 'online' ? '#4ADE80' : '#6B7280' }}
+                                                        style={{ background: (member.user_id ? presenceMap.get(member.user_id) : undefined) === 'online' ? '#4ADE80' : '#6B7280' }}
                                                     />
                                                     <button
                                                         onClick={() => onRemoveMember(team.id, member.id)}
