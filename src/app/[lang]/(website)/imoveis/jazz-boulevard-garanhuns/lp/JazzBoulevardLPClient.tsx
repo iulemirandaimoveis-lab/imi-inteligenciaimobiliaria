@@ -506,7 +506,7 @@ export default function JazzBoulevardLPClient() {
                   <YAxis tickFormatter={(v) => `${(v / 1e6).toFixed(1)}M`} tick={{ fill: '#ffffff44', fontSize: 10 }} />
                   <Tooltip
                     contentStyle={{ background: '#111827', border: `1px solid ${GOLD}33`, borderRadius: 12 }}
-                    formatter={(v: number) => [`R$ ${v.toLocaleString('pt-BR')}`, '']}
+                    formatter={(v: number | undefined) => [`R$ ${(v ?? 0).toLocaleString('pt-BR')}`, '']}
                   />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   <Line type="monotone" dataKey="patrimônio" stroke={GOLD} strokeWidth={2} dot={false} />
@@ -526,7 +526,7 @@ export default function JazzBoulevardLPClient() {
                   <YAxis tickFormatter={(v) => `${v}%`} tick={{ fill: '#ffffff44', fontSize: 10 }} />
                   <Tooltip
                     contentStyle={{ background: '#111827', border: `1px solid ${GOLD}33`, borderRadius: 12 }}
-                    formatter={(v: number) => [`${v}% a.a.`, 'Retorno']}
+                    formatter={(v: number | undefined) => [`${v ?? 0}% a.a.`, 'Retorno']}
                   />
                   <Bar
                     dataKey="retorno"
