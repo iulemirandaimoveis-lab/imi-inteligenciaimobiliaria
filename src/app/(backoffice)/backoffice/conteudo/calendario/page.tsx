@@ -171,7 +171,7 @@ export default function CalendarioPage() {
                         <button
                             onClick={() => router.push('/backoffice/conteudo/novo')}
                             className="bo-btn bo-btn-primary"
-                            style={{ background: T.accent, boxShadow: '0 0 16px rgba(96,165,250,0.28)' }}
+                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', boxShadow: 'var(--shadow-sm)' }}
                         >
                             <Plus size={16} />
                             Novo

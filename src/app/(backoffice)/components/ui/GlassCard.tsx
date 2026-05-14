@@ -23,19 +23,19 @@ export default function GlassCard({
     style,
 }: GlassCardProps) {
     const baseStyle: React.CSSProperties = {
-        background: 'rgba(14,28,48,.52)',
+        background: 'var(--glass-surface)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        border: '1px solid rgba(200,164,74,.12)',
+        border: '1px solid var(--glass-surface-border)',
         borderRadius: 16,
-        boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+        boxShadow: 'var(--glass-surface-shadow)',
         transition: 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         overflow: 'hidden',
         ...style,
     }
 
     if (variant === 'metric') {
-        baseStyle.borderColor = 'rgba(200, 164, 74, 0.25)'
+        baseStyle.borderColor = 'var(--glass-hover-border)'
     }
 
     if (glow) {
@@ -49,8 +49,8 @@ export default function GlassCard({
             onClick={onClick}
             whileHover={hover ? {
                 y: -2,
-                borderColor: 'rgba(200, 164, 74, 0.30)',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.3)',
+                borderColor: 'var(--glass-hover-border)',
+                boxShadow: 'var(--shadow-lg)',
             } : undefined}
             transition={{ duration: 0.2 }}
         >

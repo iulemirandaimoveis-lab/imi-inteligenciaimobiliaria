@@ -421,7 +421,7 @@ export default function EbookPage() {
                                         />
                                         <button onClick={addPonto}
                                             className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
-                                            style={{ background: T.accent, color: 'var(--text-inverse)' }}
+                                            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                                         >
                                             <Plus size={14} />
                                         </button>
@@ -450,7 +450,7 @@ export default function EbookPage() {
                                 onClick={() => setStep(1)}
                                 className="flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all"
                                 style={config.titulo
-                                    ? { background: T.accent, color: 'var(--text-inverse)' }
+                                    ? { background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }
                                     : { background: T.hover, color: T.textMuted, cursor: 'not-allowed' }
                                 }
                             >
@@ -492,7 +492,7 @@ export default function EbookPage() {
                                     whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                                     onClick={handleWrite}
                                     className="flex items-center gap-3 px-8 py-4 rounded-lg text-sm font-bold shadow-lg"
-                                    style={{ background: T.accent, color: 'var(--text-inverse)' }}
+                                    style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                                 >
                                     <Sparkles size={16} />
                                     Gerar eBook com IA
@@ -597,7 +597,7 @@ export default function EbookPage() {
                             <button disabled={!conteudo || writing} onClick={() => setStep(2)}
                                 className="flex items-center gap-2 px-6 py-2.5 rounded text-sm font-bold transition-all"
                                 style={conteudo && !writing
-                                    ? { background: T.accent, color: 'var(--text-inverse)' }
+                                    ? { background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }
                                     : { background: T.hover, color: T.textMuted, cursor: 'not-allowed' }
                                 }>
                                 Criar Capa <ChevronRight size={15} />
@@ -645,7 +645,7 @@ export default function EbookPage() {
                                         disabled={generating}
                                         onClick={handleGenerateCover}
                                         className="flex items-center justify-center gap-2 h-11 rounded-[6px] text-sm font-bold"
-                                        style={{ background: T.accent, color: 'var(--text-inverse)', opacity: generating ? 0.7 : 1 }}
+                                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', opacity: generating ? 0.7 : 1 }}
                                     >
                                         {generating ? <><Loader2 size={14} className="animate-spin" /> Gerando com DALL-E 3...</> : <><Sparkles size={14} /> Gerar Capa com IA</>}
                                     </motion.button>
@@ -716,7 +716,7 @@ export default function EbookPage() {
                                 <ChevronLeft size={14} /> Voltar
                             </button>
                             <button onClick={() => setStep(3)} className="flex items-center gap-2 px-6 py-2.5 rounded text-sm font-bold"
-                                style={{ background: T.accent, color: 'var(--text-inverse)' }}>
+                                style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
                                 Publicar <ChevronRight size={15} />
                             </button>
                         </div>
@@ -775,7 +775,7 @@ export default function EbookPage() {
                                             <div className="flex gap-2 mt-2">
                                                 <a href="/backoffice/inteligencia/ebooks"
                                                     className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold"
-                                                    style={{ background: T.accent, color: 'var(--text-inverse)' }}>
+                                                    style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>
                                                     <Globe size={12} /> Ver eBooks
                                                 </a>
                                                 <button onClick={() => { setSaved(false); setStep(0); setConfig(DEFAULT_CONFIG); setConteudo(''); setCapaUrl(null) }}
@@ -792,7 +792,7 @@ export default function EbookPage() {
                                                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                                                 onClick={handleSave} disabled={saving}
                                                 className="flex items-center justify-center gap-2 h-12 rounded-[6px] text-sm font-bold w-full shadow-lg"
-                                                style={{ background: T.accent, color: 'var(--text-inverse)', opacity: saving ? 0.7 : 1 }}
+                                                style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', opacity: saving ? 0.7 : 1 }}
                                             >
                                                 {saving ? <><Loader2 size={15} className="animate-spin" /> Salvando...</> : <><Save size={15} /> Salvar eBook no Catálogo</>}
                                             </motion.button>

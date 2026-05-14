@@ -316,7 +316,7 @@ export default function NovoConteudoPage() {
               onClick={salvarConteudo}
               disabled={!titulo || !corpo || salvo}
               className="flex items-center gap-2 h-10 px-5 text-white rounded-[6px] text-sm font-bold hover:brightness-110 disabled:opacity-50 transition-all flex-shrink-0"
-              style={{ background: T.accent }}
+              style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
             >
               {salvo ? <Check size={16} /> : <Save size={16} />}
               {salvo ? 'Salvo!' : 'Salvar'}
@@ -583,7 +583,7 @@ export default function NovoConteudoPage() {
                   <div className="relative">
                     <Loader2 size={48} className="animate-spin text-[var(--accent-400)]" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full" style={{ background: T.accent }} />
+                      <div className="w-2 h-2 rounded-full" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }} />
                     </div>
                   </div>
                   <div className="text-center">
@@ -603,7 +603,7 @@ export default function NovoConteudoPage() {
                     <button
                       onClick={() => aplicarSugestao(aiPanel.result)}
                       className="flex items-center gap-2 h-12 px-6 text-white rounded-lg text-sm hover:brightness-110 w-full sm:flex-1 justify-center shadow-lg transition-all"
-                      style={{ background: T.accent }}
+                      style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                       <Check size={18} />
                       Aplicar no Texto

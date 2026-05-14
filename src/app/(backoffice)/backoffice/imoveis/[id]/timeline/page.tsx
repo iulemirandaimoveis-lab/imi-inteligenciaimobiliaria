@@ -377,7 +377,7 @@ function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelin
                 actions={
                     <button
                         className="h-10 px-5 rounded-[6px] font-semibold text-sm flex items-center gap-2 text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        style={{ background: T.accent }}
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         <Plus size={16} />
                         Registrar Evento

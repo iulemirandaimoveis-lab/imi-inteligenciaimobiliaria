@@ -363,7 +363,7 @@ function NewPartnershipModal({
                         onClick={handleSubmit}
                         disabled={submitting || !message.trim() || loadingPrice}
                         className="h-9 px-5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 disabled:opacity-50"
-                        style={{ background: 'var(--gold, #C8A44A)', color: '#0B1928', cursor: submitting ? 'wait' : 'pointer' }}
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', cursor: submitting ? 'wait' : 'pointer' }}
                     >
                         {submitting ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
                         Enviar Proposta

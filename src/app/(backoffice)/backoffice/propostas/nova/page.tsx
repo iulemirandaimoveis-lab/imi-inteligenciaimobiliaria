@@ -687,8 +687,8 @@ export default function NovaPropostaPage() {
               disabled={saving || !form.buyer_name || !form.proposed_value}
               style={{
                 flex: 2, padding: '12px 20px', borderRadius: T.radius.md, cursor: 'pointer',
-                background: T.accent, border: 'none',
-                color: 'var(--text-inverse)', fontSize: 13, fontWeight: 700,
+                background: 'var(--btn-primary-bg)', border: 'none',
+                color: 'var(--btn-primary-text)', fontSize: 13, fontWeight: 700,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 opacity: saving ? 0.6 : 1,
                 transition: T.transition.fast,
@@ -772,8 +772,8 @@ export default function NovaPropostaPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
               padding: '8px 24px', borderRadius: T.radius.md, cursor: 'pointer',
-              background: T.accent, border: 'none',
-              color: 'var(--text-inverse)', fontSize: 13, fontWeight: 700,
+              background: 'var(--btn-primary-bg)', border: 'none',
+              color: 'var(--btn-primary-text)', fontSize: 13, fontWeight: 700,
               transition: T.transition.fast,
             }}
           >

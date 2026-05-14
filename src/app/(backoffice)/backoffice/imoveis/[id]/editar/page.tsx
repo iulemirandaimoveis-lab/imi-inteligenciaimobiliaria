@@ -266,7 +266,7 @@ function BrokerTabContent({ formData, setFormData }: {
           {formData.brokerId && (
             <button onClick={handleSaveBroker} disabled={saving}
               className="h-10 px-5 rounded flex items-center gap-2 text-sm font-bold disabled:opacity-60 transition-all"
-              style={{ background: T.accent, color: T.text, border: 'none' }}>
+              style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', border: 'none' }}>
               {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
               {saving ? 'Salvando...' : 'Salvar dados do corretor'}
             </button>
@@ -900,7 +900,7 @@ export default function EditarImovelPage() {
 
             <button onClick={handleSubmit} disabled={isSubmitting}
               className="h-9 px-5 rounded text-sm font-bold text-white flex items-center gap-2 disabled:opacity-60 transition-all"
-              style={{ background: isSubmitting ? T.textDim : T.accent }}>
+              style={{ background: isSubmitting ? 'var(--bg-elevated)' : 'var(--btn-primary-bg)', color: isSubmitting ? 'var(--text-secondary)' : 'var(--btn-primary-text)' }}>
               {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               {isSubmitting ? 'Salvando...' : 'Salvar'}
             </button>

@@ -112,7 +112,7 @@ export default function AutomacaoConteudoPage() {
                 actions={
                     <button
                         className="flex items-center gap-2 h-10 px-5 text-white rounded-[6px] font-semibold text-sm hover:brightness-110 transition-all flex-shrink-0"
-                        style={{ background: T.accent }}
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                     >
                         <Plus size={16} />
                         Novo Pipeline
