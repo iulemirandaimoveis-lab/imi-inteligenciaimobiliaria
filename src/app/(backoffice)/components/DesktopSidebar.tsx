@@ -233,6 +233,7 @@ const SECTIONS: NavSection[] = [
             {
                 label: 'Analytics', icon: BarChart2,
                 children: [
+                    { label: 'Website',      href: '/backoffice/website',         icon: Globe2 },
                     { label: 'Dashboard',    href: '/backoffice/tracking',        icon: BarChart2 },
                     { label: 'Links',        href: '/backoffice/tracking/links',  icon: Link2 },
                     { label: 'QR Codes',     href: '/backoffice/tracking/qr',     icon: QrCode },

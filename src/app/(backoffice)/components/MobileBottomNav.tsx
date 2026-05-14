@@ -13,7 +13,7 @@ import {
     QrCode, Sparkles, Building, Brain, LineChart, Wand2, BarChart3, Shield,
     UserPlus, CalendarPlus, ClipboardList,
     BookMarked, Inbox, MoreHorizontal,
-    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell, Handshake, MessageCircle, Key,
+    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell, Handshake, MessageCircle, Key, Globe2,
 } from 'lucide-react'
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
@@ -130,7 +130,8 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         items: [
             { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap        },
             { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen,  badge: 'NEW'   },
-            { name: 'Analytics',     href: '/backoffice/tracking',      icon: BarChart2, badge: 'NEW'   },
+            { name: 'Website',       href: '/backoffice/website',       icon: Globe2,    badge: 'NEW'   },
+            { name: 'Analytics',     href: '/backoffice/tracking',      icon: BarChart2                 },
             { name: 'Central IA',    href: '/backoffice/ia',            icon: Sparkles   },
             { name: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles   },
         ],

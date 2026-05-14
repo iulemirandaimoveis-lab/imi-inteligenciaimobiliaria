@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { limiters, getClientIP } from '@/lib/rate-limit'
+
 function parseUA(ua: string) {
     let deviceType = 'desktop'
     if (/mobile|android|iphone|ipod/i.test(ua)) deviceType = 'mobile'
@@ -20,9 +21,23 @@ function parseUA(ua: string) {
     else if (/linux/i.test(ua)) os = 'Linux'
     return { deviceType, browser, os }
 }
+
 function isBot(ua: string): boolean {
     return /bot|crawl|spider|slurp|bingpreview|mediapartners|facebookexternalhit|bytespider/i.test(ua)
 }
+
+// Extract geo from Vercel edge headers (populated automatically on Vercel deployments)
+function extractGeo(request: NextRequest) {
+    const country = request.headers.get('x-vercel-ip-country') || null
+    const region = request.headers.get('x-vercel-ip-country-region') || null
+    // City name is URL-encoded by Vercel
+    const cityRaw = request.headers.get('x-vercel-ip-city') || null
+    const city = cityRaw ? decodeURIComponent(cityRaw) : null
+    const latitude = request.headers.get('x-vercel-ip-latitude') || null
+    const longitude = request.headers.get('x-vercel-ip-longitude') || null
+    return { country, region, city, latitude, longitude }
+}
+
 export async function POST(request: NextRequest) {
     try {
         const ip = getClientIP(request)
@@ -45,6 +60,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: true, bot: true })
         }
         const { deviceType, browser, os } = parseUA(ua)
+        const { country, region, city, latitude, longitude } = extractGeo(request)
+
         // 1. Record page view
         await supabaseAdmin.from('page_views').insert({
             session_id: sessionId,
@@ -63,6 +80,9 @@ export async function POST(request: NextRequest) {
             development_slug: developmentSlug || null,
             duration_seconds: duration ? Number(duration) : 0,
             scroll_depth: scrollDepth ? Number(scrollDepth) : 0,
+            country,
+            region,
+            city,
         })
         // 2. Upsert session
         const { data: existingSession } = await supabaseAdmin
@@ -95,6 +115,11 @@ export async function POST(request: NextRequest) {
                 os,
                 ip_address: ip,
                 is_bot: false,
+                country,
+                region,
+                city,
+                latitude: latitude ? parseFloat(latitude) : null,
+                longitude: longitude ? parseFloat(longitude) : null,
             })
         }
         // 3. Hot lead detection — notify if visitor views 3+ property pages
