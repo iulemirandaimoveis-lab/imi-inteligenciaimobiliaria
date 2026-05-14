@@ -22,6 +22,8 @@ jobs:
           npm --version
           echo "TypeScript: $(./node_modules/.bin/tsc --version)"
       - name: TypeScript check
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
         run: |
           set +e
           ./node_modules/.bin/tsc --noEmit 2>&1 | tee tsc_output.txt
