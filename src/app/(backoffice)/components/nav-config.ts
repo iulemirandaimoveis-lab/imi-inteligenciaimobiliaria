@@ -44,7 +44,7 @@ export const SECTION_COLORS: Record<string, string> = {
     'Portfólio': '#D4A929',
     'Operação': '#4ECDC4',
     'Financeiro': '#84CC16',
-    'Inteligência': 'var(--info)',
+    'Inteligência': '#60A5FA',
     'Academy & Carreira': '#C8A44A',
     'Configurações': 'var(--text-tertiary)',
 }
@@ -179,7 +179,7 @@ export const SECTIONS: NavSection[] = [
             {
                 label: 'Rentals', icon: Key,
                 children: [
-                    { label: 'Dashboard',  href: '/backoffice/rentals',          icon: Key          },
+                    { label: 'Rentals',    href: '/backoffice/rentals',          icon: Key          },
                     { label: 'Calendário', href: '/backoffice/rentals/calendar', icon: CalendarDays },
                 ],
             },

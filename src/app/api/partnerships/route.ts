@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { createNotification } from '@/lib/notifications'
 import { z } from 'zod'
 
 // ---------------------------------------------------------------------------
@@ -330,6 +331,18 @@ export async function POST(request: NextRequest) {
         } catch (chatErr) {
             // Non-critical — partnership was created, chat creation can fail gracefully
             console.error('[partnerships/POST] Erro ao criar canal de chat:', chatErr)
+        }
+
+        // Notify the owner broker about the new partnership proposal
+        if (ownerUserId) {
+            createNotification({
+                userId: ownerUserId,
+                type: 'proposta_nova',
+                title: 'Nova Proposta de Parceria',
+                message: `${partnerName} propôs parceria para o imóvel "${property_name}"`,
+                url: `/backoffice/parcerias/${partnership.id}`,
+                data: { partnership_id: partnership.id },
+            }).catch(err => console.error('[partnerships/POST] Notification error:', err))
         }
 
         return NextResponse.json({ data: partnership }, { status: 201 })
