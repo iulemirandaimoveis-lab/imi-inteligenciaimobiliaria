@@ -90,19 +90,19 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         'Apartamento': 'apartamento', 'Casa': 'casa', 'Cobertura': 'apartamento',
         'Studio': 'apartamento', 'Loft': 'flat', 'Terreno': 'lote',
         'Comercial': 'comercial', 'Flat': 'flat', 'Penthouse': 'apartamento',
-        'Villa': 'casa', 'Empreendimento': 'apartamento',
+        'Villa': 'casa', 'Empreendimento': 'apartamento', 'Resort': 'resort',
     }
     const typeToEn: Record<string, string> = {
         'Apartamento': 'apartment', 'Casa': 'house', 'Cobertura': 'penthouse',
         'Studio': 'studio', 'Loft': 'studio', 'Terreno': 'land',
         'Comercial': 'commercial', 'Flat': 'apartment', 'Penthouse': 'penthouse',
-        'Villa': 'house', 'Empreendimento': 'apartment',
+        'Villa': 'house', 'Empreendimento': 'apartment', 'Resort': 'resort',
     }
     const typeToPropType: Record<string, string> = {
         'Apartamento': 'apartment', 'Casa': 'house', 'Cobertura': 'apartment',
         'Studio': 'apartment', 'Loft': 'apartment', 'Terreno': 'land',
         'Comercial': 'commercial', 'Flat': 'apartment', 'Penthouse': 'apartment',
-        'Villa': 'house', 'Empreendimento': 'mixed',
+        'Villa': 'house', 'Empreendimento': 'mixed', 'Resort': 'resort',
     }
     if (result.type && typeToTipo[result.type]) {
         // Form sends capitalized Portuguese, normalize to constraint values
