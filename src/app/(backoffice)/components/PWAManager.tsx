@@ -172,7 +172,7 @@ export default function PWAManager() {
         return
       }
 
-      toast.success('Notificações ativadas! Você receberá alertas de leads e eventos.')
+      toast.success('Notificações ativadas! Você receberá mensagens do Connect, parcerias e alertas de leads.')
     } catch (err) {
       console.error('[PWA] handleEnableNotifications error:', err)
       toast.error('Erro ao ativar notificações. Verifique as permissões do navegador.')
@@ -246,8 +246,8 @@ export default function PWAManager() {
         >
           <span className="text-sm flex-1" style={{ color: 'var(--text-primary)' }}>
             🔔{' '}
-            <span className="font-medium">Ativar notificações</span> para receber alertas de
-            leads e eventos em tempo real
+            <span className="font-medium">Ativar notificações</span> para receber mensagens do
+            Connect, propostas de parcerias e alertas de leads em tempo real
           </span>
           <button
             onClick={handleEnableNotifications}

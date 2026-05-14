@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     Users, Crown, Shield, User, Search, Plus,
@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '../../lib/theme'
+import { createClient } from '@/lib/supabase/client'
 import { useTeams, createTeam, deleteTeam, addMemberToTeam, removeMemberFromTeam, type Team, type TeamMember } from '@/hooks/use-teams'
 import { useBrokers, type Broker } from '@/hooks/use-brokers'
 
@@ -49,7 +50,7 @@ function Avatar({ name, size = 36, color }: { name: string; size?: number; color
 
 /* ─── TEAM CARD ───────────────────────────────────────────────── */
 function TeamCard({
-    team, index, onEdit, onDelete, onAddMember, onRemoveMember, allBrokers,
+    team, index, onEdit, onDelete, onAddMember, onRemoveMember, allBrokers, presenceMap,
 }: {
     team: Team
     index: number
@@ -58,6 +59,7 @@ function TeamCard({
     onAddMember: (teamId: string, brokerId: string) => Promise<void>
     onRemoveMember: (teamId: string, brokerId: string) => Promise<void>
     allBrokers: Broker[]
+    presenceMap: Map<string, string>
 }) {
     const [expanded, setExpanded] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
@@ -287,7 +289,7 @@ function TeamCard({
                                                 <div className="flex items-center gap-1">
                                                     <div
                                                         className="w-1.5 h-1.5 rounded-full"
-                                                        style={{ background: member.status === 'active' ? '#10B981' : '#6B7280' }}
+                                                        style={{ background: presenceMap.get(member.user_id) === 'online' ? '#4ADE80' : '#6B7280' }}
                                                     />
                                                     <button
                                                         onClick={() => onRemoveMember(team.id, member.id)}
@@ -322,9 +324,10 @@ function TeamCard({
 }
 
 /* ─── MEMBER CARD (flat list view) ────────────────────────────── */
-function MemberRow({ broker, index }: { broker: Broker; index: number }) {
+function MemberRow({ broker, index, presenceStatus }: { broker: Broker; index: number; presenceStatus?: string }) {
     const rc = ROLE_CFG[broker.role] || ROLE_CFG.broker
     const RoleIcon = rc.icon
+    const isOnline = presenceStatus === 'online'
 
     return (
         <motion.div
@@ -349,7 +352,7 @@ function MemberRow({ broker, index }: { broker: Broker; index: number }) {
             </div>
             <div className="flex items-center gap-1.5 flex-shrink-0">
                 <div className="w-2 h-2 rounded-full"
-                    style={{ background: broker.status === 'active' ? '#10B981' : '#6B7280' }} />
+                    style={{ background: isOnline ? '#4ADE80' : '#6B7280' }} />
                 <span className="text-[10px]" style={{ color: T.textDim }}>
                     {broker.status === 'active' ? 'Ativo' : 'Inativo'}
                 </span>
@@ -584,6 +587,19 @@ export default function EquipePage() {
     const { teams, isLoading: teamsLoading, mutate: mutateTeams } = useTeams(search)
     const { brokers, isLoading: brokersLoading, mutate: mutateBrokers } = useBrokers({ search, status: 'all' })
 
+    const [presenceMap, setPresenceMap] = useState<Map<string, string>>(new Map())
+
+    useEffect(() => {
+        const supabase = createClient()
+        supabase.from('user_presence').select('user_id,status').then(({ data }) => {
+            if (data) {
+                const map = new Map<string, string>()
+                data.forEach((p: { user_id: string; status: string }) => map.set(p.user_id, p.status))
+                setPresenceMap(map)
+            }
+        })
+    }, [])
+
     // KPI stats
     const totalMembers = useMemo(() => brokers.length, [brokers])
     const activeMembers = useMemo(() => brokers.filter(b => b.status === 'active').length, [brokers])
@@ -773,6 +789,7 @@ export default function EquipePage() {
                                     onAddMember={handleAddMember}
                                     onRemoveMember={handleRemoveMember}
                                     allBrokers={brokers}
+                                    presenceMap={presenceMap}
                                 />
                             ))}
                         </div>
@@ -810,7 +827,7 @@ export default function EquipePage() {
                             </p>
                             <div className="space-y-2">
                                 {filteredBrokers.map((broker, i) => (
-                                    <MemberRow key={broker.id} broker={broker} index={i} />
+                                    <MemberRow key={broker.id} broker={broker} index={i} presenceStatus={presenceMap.get(broker.user_id)} />
                                 ))}
                             </div>
                         </>

@@ -74,12 +74,12 @@ function NetflixItemCard({
                 style={{
                     borderRadius: 7,
                     background: active ? bg : 'var(--bg-elevated)',
-                    border: active ? `1.5px solid ${color}50` : '1px solid var(--border-subtle)',
-                    boxShadow: active ? `0 4px 14px ${color}30` : '0 1px 3px rgba(0,0,0,0.06)',
+                    border: active ? `1.5px solid ${color}50` : '1px solid var(--border-default)',
+                    boxShadow: active ? `0 4px 14px ${color}30` : '0 1px 4px rgba(0,0,0,0.08)',
                     position: 'relative',
                 }}
             >
-                <Icon size={20} style={{ color: active ? color : 'var(--text-secondary)' }} />
+                {Icon && <Icon size={20} style={{ color: active ? color : 'var(--text-primary)' }} />}
             </div>
             {badge !== undefined && <TileBadge badge={badge} />}
             <span
@@ -87,6 +87,7 @@ function NetflixItemCard({
                 style={{
                     color: active ? color : 'var(--text-secondary)',
                     fontFamily: 'var(--font-sans)',
+                    opacity: active ? 1 : 0.85,
                 }}
             >
                 {name}

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   Users, Building2, MessageSquare, Plus, ChevronRight,
   DollarSign, Handshake, X, Check, Clock, TrendingUp, Loader2,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { createClient } from '@/lib/supabase/client'
 import { usePartnerships, acceptPartnership, rejectPartnership, type Partnership } from '@/hooks/use-partnerships'
 import { useBrokers, type Broker } from '@/hooks/use-brokers'
 
@@ -242,7 +243,7 @@ function InviteCard({ partnership, onAction }: { partnership: Partnership; onAct
 }
 
 /* ─── Broker Row ─────────────────────────────────────────────────── */
-function BrokerRow({ broker, isLast }: { broker: Broker; isLast: boolean }) {
+function BrokerRow({ broker, isLast, presenceStatus }: { broker: Broker; isLast: boolean; presenceStatus?: string }) {
   const ROLE_LABELS: Record<string, string> = {
     broker: 'Corretor',
     broker_manager: 'Gerente',
@@ -251,6 +252,7 @@ function BrokerRow({ broker, isLast }: { broker: Broker; isLast: boolean }) {
   const color = colorForName(broker.name)
   const inits = initials(broker.name)
   const isActive = broker.status === 'active'
+  const isOnline = presenceStatus === 'online'
 
   return (
     <div style={{
@@ -267,7 +269,7 @@ function BrokerRow({ broker, isLast }: { broker: Broker; isLast: boolean }) {
         )}
         <div style={{
           position: 'absolute', bottom: 1, right: 1, width: 10, height: 10, borderRadius: '50%',
-          background: isActive ? 'var(--success)' : 'var(--text-tertiary)',
+          background: isOnline ? '#4ADE80' : 'var(--text-tertiary)',
           border: '2px solid var(--bg-elevated)',
         }} />
       </div>
@@ -327,6 +329,19 @@ export default function ColaboracaoPage() {
     usePartnerships({ status: 'proposed' })
   const { brokers, isLoading: loadingBrokers } = useBrokers({ status: 'active' })
 
+  const [presenceMap, setPresenceMap] = useState<Map<string, string>>(new Map())
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('user_presence').select('user_id,status').then(({ data }) => {
+      if (data) {
+        const map = new Map<string, string>()
+        data.forEach((p: { user_id: string; status: string }) => map.set(p.user_id, p.status))
+        setPresenceMap(map)
+      }
+    })
+  }, [])
+
   const allActiveDeals = [...activeDeals, ...negotiating, ...accepted]
   const activeBrokers = brokers.filter(b => b.status === 'active')
 
@@ -362,7 +377,7 @@ export default function ColaboracaoPage() {
             <Link href="/backoffice/parcerias">
               <button style={{
                 display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 6,
-                background: 'var(--btn-primary-bg, var(--accent-400))', border: 'none',
+                background: 'var(--accent-400)', border: 'none',
                 color: '#0B1120', fontSize: 12, fontWeight: 700, letterSpacing: 1,
                 textTransform: 'uppercase', fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer',
               }}>
@@ -469,7 +484,7 @@ export default function ColaboracaoPage() {
           ) : (
             <div style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(61,111,255,0.12)', borderRadius: 8, overflow: 'hidden' }}>
               {brokers.map((broker, i) => (
-                <BrokerRow key={broker.id} broker={broker} isLast={i === brokers.length - 1} />
+                <BrokerRow key={broker.id} broker={broker} isLast={i === brokers.length - 1} presenceStatus={presenceMap.get(broker.user_id)} />
               ))}
             </div>
           )}
