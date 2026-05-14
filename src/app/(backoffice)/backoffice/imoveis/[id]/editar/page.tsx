@@ -338,12 +338,13 @@ const TABS = [
 ] as const
 type TabId = typeof TABS[number]['id']
 
-const tiposImovel = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Terreno', 'Comercial', 'Empreendimento', 'Flat', 'Penthouse', 'Villa']
+const tiposImovel = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Terreno', 'Comercial', 'Empreendimento', 'Flat', 'Penthouse', 'Villa', 'Resort']
 const dbTypeToForm: Record<string, string> = {
   apartamento: 'Apartamento', apartment: 'Apartamento', casa: 'Casa', house: 'Casa',
   flat: 'Flat', lote: 'Terreno', land: 'Terreno', comercial: 'Comercial', commercial: 'Comercial',
-  resort: 'Villa', penthouse: 'Penthouse', studio: 'Studio', mixed: 'Empreendimento',
+  resort: 'Resort', penthouse: 'Penthouse', studio: 'Studio', mixed: 'Empreendimento', villa: 'Villa',
 }
+const knownStatuses = ['disponivel', 'em_negociacao', 'reservado', 'vendido', 'lancamento', 'arquivado']
 const featuresOptions = Array.from(new Set([
   'Piscina', 'Academia', 'Salão de festas', 'Churrasqueira', 'Playground', 'Quadra esportiva',
   'Sauna', 'Espaço gourmet', 'Coworking', 'Pet place', 'Brinquedoteca', 'Salão de jogos',
@@ -695,7 +696,7 @@ export default function EditarImovelPage() {
           existingFloorPlans: Array.isArray(d.floor_plans) ? d.floor_plans : [],
           floorPlans: [], existingBrochure: d.brochure_url || '', brochure: null,
           logo: null, existingLogo: d.developers?.logo_url || '',
-          status: d.status || 'disponivel', status_commercial: d.status_commercial || d.status_comercial || 'draft',
+          status: knownStatuses.includes(d.status) ? d.status : 'disponivel', status_commercial: d.status_commercial || d.status_comercial || 'draft',
           is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '',
           brokerId: d.broker_id || '', brokerName: '', brokerPhone: '', brokerCreci: '', brokerAvatarUrl: '',
         })
@@ -751,8 +752,11 @@ export default function EditarImovelPage() {
         newFiles.forEach((g, i) => {
           if (!r[i]?.error) newImageUrls.set(g.url, r[i].url)
         })
-        const failed = r.filter(x => x.error).length
-        if (failed > 0) toast.warning(`${failed} imagem(ns) falharam`)
+        const failedItems = r.filter(x => x.error)
+        if (failedItems.length > 0) {
+          const firstErr = failedItems[0].error
+          toast.warning(`${failedItems.length} imagem(ns) falharam${firstErr ? `: ${firstErr}` : ''}`)
+        }
       }
       // Build final image array in the exact user-defined order
       const allImages = formData.galleryItems
