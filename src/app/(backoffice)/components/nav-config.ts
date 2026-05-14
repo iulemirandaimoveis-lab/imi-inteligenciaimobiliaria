@@ -6,12 +6,13 @@ import {
     Target, FileStack, Layers, MessageCircle, Bot, Camera, Eye, Link2,
     GraduationCap, Award, Globe2, Trophy, Shield, Settings, Plug,
 } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import type { ComponentType } from 'react'
 
 export interface NavItem {
     label: string
     href?: string
-    icon: LucideIcon
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    icon: ComponentType<any>
     badge?: string | number
     children?: NavItem[]
 }
@@ -263,8 +264,10 @@ export const SECTIONS: NavSection[] = [
 ]
 
 /** Flatten a section's items into a simple list of hrefs for mobile tiles. */
-export function flattenSectionItems(items: NavItem[]): Array<{ label: string; href: string; icon: LucideIcon; badge?: string | number }> {
-    const result: Array<{ label: string; href: string; icon: LucideIcon; badge?: string | number }> = []
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function flattenSectionItems(items: NavItem[]): Array<{ label: string; href: string; icon: ComponentType<any>; badge?: string | number }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result: Array<{ label: string; href: string; icon: ComponentType<any>; badge?: string | number }> = []
     for (const item of items) {
         if (item.href) {
             result.push({ label: item.label, href: item.href, icon: item.icon, badge: item.badge })
