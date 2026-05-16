@@ -60,6 +60,7 @@ export const PROPERTY_TYPES = [
   { value: 'cobertura', label: 'Cobertura' },
   { value: 'comercial', label: 'Comercial' },
   { value: 'terreno', label: 'Terreno' },
+  { value: 'loteamento', label: 'Loteamento' },
   { value: 'studio', label: 'Studio' },
   { value: 'flat', label: 'Flat' },
   { value: 'duplex', label: 'Duplex' },
