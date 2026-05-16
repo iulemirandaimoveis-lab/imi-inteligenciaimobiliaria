@@ -282,13 +282,16 @@
   --imi-800: var(--imi-stone-800);
   --imi-900: var(--imi-stone-900);
 
-  /* Sidebar */
+  /* Sidebar — always dark bg regardless of theme */
   --sidebar-bg:          var(--imi-navy-800);
   --sidebar-border:      rgba(184,148,58,0.18);
   --sidebar-hover:       rgba(184,148,58,0.07);
   --sidebar-active:      rgba(184,148,58,0.14);
-  --sidebar-text:        var(--imi-navy-300);
+  --sidebar-text:        var(--imi-navy-100);
   --sidebar-text-active: #F0F2F8;
+
+  /* Missing alias used by some components */
+  --text-muted:          var(--text-tertiary);
 
   /* Legacy surface tokens */
   --surface-0: #FFFFFF;
@@ -475,6 +478,9 @@
   --sidebar-text:        #8E99AB;
   --sidebar-text-active: #E8E4DC;
 
+  /* Missing alias used by some components */
+  --text-muted:          var(--text-tertiary);
+
   --chart-grid:  rgba(255,255,255,0.05);
   --chart-label: #8E99AB;
 
@@ -567,7 +573,7 @@
   body {
     overflow-x: hidden;
     width: 100%;
-    max-width: 100vw;
+    max-width: 100%;
     position: relative;
     -webkit-overflow-scrolling: touch;
     /* Safe area for notch/hole-punch phones (Samsung S25 Ultra, iPhones) */
@@ -2831,7 +2837,7 @@ img, video, iframe, canvas, svg {
 ::-webkit-scrollbar-thumb { background: var(--gd, #A8842A); border-radius: 2px; }
 
 /* Prevent horizontal overflow on mobile */
-html, body { overflow-x: hidden; max-width: 100vw; }
+html, body { overflow-x: hidden; }
 
 /* Prevent iOS auto-zoom on input focus (triggers when font-size < 16px) */
 @media (max-width: 768px) {
