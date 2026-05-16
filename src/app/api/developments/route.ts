@@ -114,9 +114,12 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         // Already lowercase, ensure type/property_type are set
         // (editar form sends tipo directly)
     }
-    // Date handling
+    // Date handling — "YYYY-MM" from <input type="month"> is not a valid ISO date string in V8;
+    // append "-01" so new Date() parses correctly.
     if (result.delivery_date && typeof result.delivery_date === 'string' && !result.delivery_date.includes('T')) {
-        result.delivery_date = new Date(result.delivery_date).toISOString()
+        const dateStr = result.delivery_date.length === 7 ? result.delivery_date + '-01' : result.delivery_date
+        const date = new Date(dateStr)
+        result.delivery_date = isNaN(date.getTime()) ? null : date.toISOString()
     }
     // Array defaults
     if (result.features !== undefined && !Array.isArray(result.features)) {
