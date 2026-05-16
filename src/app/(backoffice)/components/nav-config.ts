@@ -47,7 +47,7 @@ export const SECTION_COLORS: Record<string, string> = {
     'Financeiro': '#84CC16',
     'Inteligência': '#60A5FA',
     'Academy & Carreira': '#C8A44A',
-    'Configurações': 'var(--text-tertiary)',
+    'Configurações': 'var(--sidebar-text)',
 }
 
 export const SECTION_BG_COLORS: Record<string, string> = {

@@ -8,7 +8,7 @@
 .backoffice-root {
   /* Mobile overflow guard */
   overflow-x: hidden;
-  max-width: 100vw;
+  max-width: 100%;
 
   /* Surface aliases — follow theme */
   --surface-0: var(--bo-surface);
@@ -301,7 +301,7 @@
   .backoffice-root main {
     overflow-x: hidden;
     width: 100%;
-    max-width: 100vw;
+    max-width: 100%;
   }
 
   .backoffice-root main > div {

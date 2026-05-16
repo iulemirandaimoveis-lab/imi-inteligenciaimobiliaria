@@ -78,7 +78,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     style={{
                         fontFamily: 'var(--font-sans)',
                         fontSize: 14,
-                        color: isParentActive || open ? 'var(--gold, #C8A44A)' : 'var(--text-secondary)',
+                        color: isParentActive || open ? 'var(--gold, #C8A44A)' : 'var(--sidebar-text)',
                         background: isParentActive || open ? 'rgba(200,164,74,.10)' : 'transparent',
                         fontWeight: isParentActive ? 600 : 500,
                     }}
@@ -107,7 +107,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                             className="ml-5 mt-0.5 space-y-0.5 pl-3 overflow-hidden"
-                            style={{ borderLeft: '1px solid var(--border-subtle)' }}
+                            style={{ borderLeft: '1px solid var(--sidebar-border)' }}
                         >
                             {item.children!.map((child, i) => (
                                 <motion.div
@@ -133,7 +133,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             style={{
                 fontFamily: 'var(--font-sans)',
                 fontSize: 13,
-                color: isActive ? 'var(--gold, #C8A44A)' : 'var(--text-secondary)',
+                color: isActive ? 'var(--gold, #C8A44A)' : 'var(--sidebar-text)',
                 background: isActive ? 'rgba(200,164,74,.10)' : 'transparent',
                 borderLeft: isActive ? '2px solid var(--gold, #C8A44A)' : '2px solid transparent',
                 fontWeight: isActive ? 600 : 400,
@@ -141,17 +141,19 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             onMouseEnter={(e) => {
                 if (!isActive) {
                     e.currentTarget.style.background = 'rgba(200,164,74,0.06)'
+                    e.currentTarget.style.color = 'var(--sidebar-text-active)'
                     e.currentTarget.style.transform = 'translateX(2px)'
                 }
             }}
             onMouseLeave={(e) => {
                 if (!isActive) {
                     e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = 'var(--sidebar-text)'
                     e.currentTarget.style.transform = 'translateX(0)'
                 }
             }}
         >
-            <item.icon size={16} className="flex-shrink-0" style={{ color: isActive ? 'var(--gold, #C8A44A)' : undefined }} />
+            <item.icon size={16} className="flex-shrink-0" style={{ color: isActive ? 'var(--gold, #C8A44A)' : 'var(--sidebar-text)' }} />
             <span className="flex-1">{item.label}</span>
             {item.badge && (
                 <span style={badgeStyle(item.badge)}>
@@ -176,7 +178,7 @@ function SectionComponent({ section }: { section: NavSection }) {
         })
     })
 
-    const sectionColor = SECTION_COLORS[section.label] || 'var(--text-tertiary)'
+    const sectionColor = SECTION_COLORS[section.label] || 'var(--sidebar-text)'
 
     return (
         <div className="mb-1.5">
@@ -197,8 +199,9 @@ function SectionComponent({ section }: { section: NavSection }) {
                         fontSize: 11,
                         fontWeight: 700,
                         letterSpacing: '0.10em',
-                        color: open ? 'var(--text-secondary)' : 'var(--text-tertiary)',
-                        transition: 'color 0.2s',
+                        color: 'var(--sidebar-text)',
+                        opacity: open ? 0.85 : 0.5,
+                        transition: 'color 0.2s, opacity 0.2s',
                     }}
                 >
                     {section.label}
@@ -207,9 +210,9 @@ function SectionComponent({ section }: { section: NavSection }) {
                     <motion.span
                         animate={{ rotate: open ? 180 : 0 }}
                         transition={{ duration: 0.2 }}
-                        style={{ opacity: 0.4, display: 'flex', flexShrink: 0 }}
+                        style={{ opacity: 0.5, display: 'flex', flexShrink: 0 }}
                     >
-                        <ChevronDown size={11} style={{ color: 'var(--text-tertiary)' }} />
+                        <ChevronDown size={11} style={{ color: 'var(--sidebar-text)' }} />
                     </motion.span>
                 )}
             </button>
