@@ -8,6 +8,7 @@ import DevelopmentDetails from '../components/DevelopmentDetails'
 import DevelopmentGallery from '../components/DevelopmentGallery'
 import DevelopmentLocation from '../components/DevelopmentLocation'
 import DevelopmentUnits from '../components/DevelopmentUnits'
+import SubdivisionLotMap from '../components/SubdivisionLotMap'
 import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -105,6 +106,14 @@ const ANCHOR_SECTIONS = [
     { id: 'localizacao', label: 'Localização' },
     { id: 'inteligencia', label: 'IMI Score' },
     { id: 'financiamento', label: 'Financiamento' },
+]
+
+const ANCHOR_SECTIONS_LOTEAMENTO = [
+    { id: 'detalhes', label: 'Detalhes' },
+    { id: 'mapa', label: 'Mapa de Lotes' },
+    { id: 'galeria', label: 'Galeria' },
+    { id: 'localizacao', label: 'Localização' },
+    { id: 'inteligencia', label: 'IMI Score' },
 ]
 
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
@@ -259,6 +268,9 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         { name: development.name, url: pageUrl },
     ])
 
+    const isLoteamento = data.type === 'loteamento'
+    const anchorSections = isLoteamento ? ANCHOR_SECTIONS_LOTEAMENTO : ANCHOR_SECTIONS
+
     return (
         <main className="pb-40 lg:pb-0" style={{ background: '#F7F5F2' }}>
             <script
@@ -304,7 +316,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             </div>
 
             {/* Anchor Navigation */}
-            <AnchorNav sections={ANCHOR_SECTIONS} />
+            <AnchorNav sections={anchorSections} />
 
             <div className="container-custom py-10 md:py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-14">
@@ -316,8 +328,16 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <section id="galeria">
                             <DevelopmentGallery development={development} />
                         </section>
-                        <section id="unidades">
-                            <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
+                        <section id={isLoteamento ? 'mapa' : 'unidades'}>
+                            {isLoteamento ? (
+                                <SubdivisionLotMap
+                                    developmentId={development.id}
+                                    developmentName={development.name}
+                                    whatsappPhone={jazzWhatsapp ?? (brokerData?.phone?.replace(/\D/g, '') ?? '5581997230455')}
+                                />
+                            ) : (
+                                <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
+                            )}
                         </section>
                         <section id="localizacao">
                             <DevelopmentLocation development={development} />
