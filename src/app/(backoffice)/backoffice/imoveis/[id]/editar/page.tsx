@@ -675,6 +675,41 @@ export default function EditarImovelPage() {
         try { d = JSON.parse(text) } catch { throw new Error('Resposta inválida do servidor') }
         const galleryImgs = Array.isArray(d.gallery_images) ? d.gallery_images :
           (Array.isArray(d.images) && typeof d.images[0] === 'string' ? d.images : [])
+
+        // Fetch broker data eagerly so the Responsável tab shows real data immediately
+        const supabase = createClient()
+        const brokerId = d.broker_id || ''
+        let brokerName = '', brokerPhone = '', brokerCreci = '', brokerAvatarUrl = ''
+        if (brokerId) {
+          const { data: broker } = await supabase
+            .from('brokers')
+            .select('name, phone, creci, avatar_url')
+            .eq('id', brokerId)
+            .maybeSingle()
+          if (broker) {
+            brokerName = broker.name || ''
+            brokerPhone = broker.phone || ''
+            brokerCreci = broker.creci || ''
+            brokerAvatarUrl = broker.avatar_url || ''
+          }
+        } else {
+          // No broker assigned — show logged-in user's broker profile as preview default
+          const { data: { user } } = await supabase.auth.getUser()
+          if (user) {
+            const { data: broker } = await supabase
+              .from('brokers')
+              .select('name, phone, creci, avatar_url')
+              .eq('user_id', user.id)
+              .maybeSingle()
+            if (broker) {
+              brokerName = broker.name || ''
+              brokerPhone = broker.phone || ''
+              brokerCreci = broker.creci || ''
+              brokerAvatarUrl = broker.avatar_url || ''
+            }
+          }
+        }
+
         setFormData({
           name: d.name || '', type: dbTypeToForm[d.tipo] || dbTypeToForm[d.property_type] || dbTypeToForm[d.type] || d.tipo || '',
           location: d.neighborhood || d.region || '', address: d.address || '',
@@ -698,7 +733,7 @@ export default function EditarImovelPage() {
           logo: null, existingLogo: d.developers?.logo_url || '',
           status: knownStatuses.includes(d.status) ? d.status : 'disponivel', status_commercial: d.status_commercial || d.status_comercial || 'draft',
           is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '',
-          brokerId: d.broker_id || '', brokerName: '', brokerPhone: '', brokerCreci: '', brokerAvatarUrl: '',
+          brokerId, brokerName, brokerPhone, brokerCreci, brokerAvatarUrl,
         })
       } catch (_err: unknown) {
         toast.error('Erro ao carregar dados do empreendimento')
@@ -795,7 +830,7 @@ export default function EditarImovelPage() {
           price_from: Number(formData.priceMin) || null, price_to: Number(formData.priceMax) || null,
           price_per_sqm: Number(formData.pricePerSqm) || null,
           units_count: Number(formData.totalUnits) || null, available_units: Number(formData.availableUnits) || null,
-          delivery_date: formData.deliveryDate ? new Date(formData.deliveryDate).toISOString() : null,
+          delivery_date: formData.deliveryDate ? (() => { const d = new Date(formData.deliveryDate + '-01'); return isNaN(d.getTime()) ? null : d.toISOString() })() : null,
           status: formData.status, status_commercial: formData.status_commercial,
           is_highlighted: formData.is_highlighted, gallery_images: allImages,
           image: allImages[0] || null,
