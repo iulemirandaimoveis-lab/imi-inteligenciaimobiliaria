@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ZodSchema } from 'zod'
+// ZodType<Output, Def, any> allows schemas with .default() where Input ≠ Output
+import { ZodType } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { rateLimit, getClientIP, limiters } from '@/lib/rate-limit'
 
@@ -17,7 +18,8 @@ export interface ApiHandlerOptions {
 }
 
 export function apiHandler<TBody = unknown>(
-  schema: ZodSchema<TBody> | null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema: ZodType<TBody, any, any> | null,
   handler: (req: NextRequest, body: TBody, ctx: ApiContext) => Promise<NextResponse>,
   options: ApiHandlerOptions = {}
 ) {

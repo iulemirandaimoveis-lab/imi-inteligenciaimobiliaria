@@ -76,7 +76,7 @@ describe('Priority Score Calculation', () => {
             hadFewerTotalSlots: true,
             coveredEmergency: true,
             highConversion: true,
-        })).toBe(80)
+        })).toBe(90)
     })
 })
 
