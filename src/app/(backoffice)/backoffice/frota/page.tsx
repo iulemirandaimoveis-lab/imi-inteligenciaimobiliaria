@@ -345,7 +345,7 @@ export default function FrotaPage() {
                         >
                             {tab.label}
                             {tab.count > 0 && (
-                                <span style={{ marginLeft: 6, padding: '1px 6px', borderRadius: 10, background: 'rgba(255,255,255,0.07)', fontSize: 10 }}>
+                                <span style={{ marginLeft: 6, padding: '1px 6px', borderRadius: 10, background: T.elevated, border: `1px solid ${T.border}`, fontSize: 10 }}>
                                     {tab.count}
                                 </span>
                             )}

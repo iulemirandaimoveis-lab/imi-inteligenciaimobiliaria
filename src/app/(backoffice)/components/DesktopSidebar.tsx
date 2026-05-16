@@ -278,7 +278,7 @@ export function DesktopSidebar() {
                         fontSize: 20,
                         fontWeight: 700,
                         letterSpacing: '2px',
-                        color: 'var(--text-primary)',
+                        color: 'var(--sidebar-text-active)',
                     }}
                 >
                     IMI
