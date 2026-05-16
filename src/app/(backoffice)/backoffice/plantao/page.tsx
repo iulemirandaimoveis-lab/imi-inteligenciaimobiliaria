@@ -411,7 +411,7 @@ export default function PlantaoPage() {
                                                                             style={{
                                                                                 padding: '4px 6px', borderRadius: 6, fontSize: 11,
                                                                                 background: isMySchedule(schedule)
-                                                                                    ? 'rgba(78,205,196,0.15)' : 'rgba(255,255,255,0.05)',
+                                                                                    ? 'rgba(78,205,196,0.15)' : T.elevated,
                                                                                 color: isMySchedule(schedule) ? '#4ECDC4' : T.textMuted,
                                                                                 border: isMySchedule(schedule)
                                                                                     ? '1px solid rgba(78,205,196,0.4)' : `1px solid ${T.border}`,
