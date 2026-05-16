@@ -5,6 +5,7 @@ import {
     Video, Zap, Brain, BookOpen, FileSignature, Briefcase, Banknote, TrendingDown,
     Target, FileStack, Layers, MessageCircle, Bot, Camera, Eye, Link2,
     GraduationCap, Award, Globe2, Trophy, Shield, Settings, Plug,
+    CalendarCheck2, Car, Fuel, AlertTriangle, ClipboardList,
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 
@@ -138,6 +139,27 @@ export const SECTIONS: NavSection[] = [
     {
         label: 'Operação',
         items: [
+            {
+                label: 'Plantão', icon: CalendarCheck2, badge: 'NEW',
+                children: [
+                    { label: 'Calendário',    href: '/backoffice/plantao',              icon: CalendarCheck2 },
+                    { label: 'Minha Escala',  href: '/backoffice/plantao/minha-escala', icon: ClipboardList  },
+                    { label: 'Disponibilidade', href: '/backoffice/plantao/disponibilidade', icon: CalendarDays },
+                    { label: 'Trocas',        href: '/backoffice/plantao/trocas',       icon: Handshake      },
+                    { label: 'Locais',        href: '/backoffice/plantao/locais',       icon: Building2      },
+                    { label: 'Relatório',     href: '/backoffice/plantao/relatorio',    icon: BarChart2      },
+                ],
+            },
+            {
+                label: 'Frota', icon: Car, badge: 'NEW',
+                children: [
+                    { label: 'Veículos',      href: '/backoffice/frota',               icon: Car          },
+                    { label: 'Meu Uso',       href: '/backoffice/frota/meu-uso',       icon: Key          },
+                    { label: 'Abastecimentos',href: '/backoffice/frota/abastecimentos', icon: Fuel         },
+                    { label: 'Manutenções',   href: '/backoffice/frota/manutencoes',   icon: AlertTriangle },
+                    { label: 'Relatório',     href: '/backoffice/frota/relatorio',     icon: BarChart2    },
+                ],
+            },
             {
                 label: 'Avaliações', icon: Scale,
                 children: [
