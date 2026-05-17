@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageCircle, X, MapPin, Ruler, DollarSign, Filter, ChevronDown, ChevronUp, BarChart2 } from 'lucide-react';
+import { MessageCircle, X, MapPin, Ruler, DollarSign, Filter, ChevronDown, ChevronUp, BarChart2, List, Map } from 'lucide-react';
+import SubdivisionPlanView, { PLAN_VIEW_IDS } from './SubdivisionPlanView';
 
 interface Lot {
   id: string;
@@ -357,6 +358,9 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   const [showFilters, setShowFilters] = useState(false);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [minArea, setMinArea] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'plan'>('list');
+
+  const hasPlanView = PLAN_VIEW_IDS.has(developmentId);
 
   useEffect(() => {
     const supabase = createClient();
@@ -401,10 +405,35 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
     const sold = lots.filter(l => l.status === 'VENDIDO').length;
     const negotiation = lots.filter(l => l.status === 'NEGOCIACAO').length;
     const owner = lots.filter(l => l.status === 'PROPRIETARIO').length;
-    const priceMin = Math.min(...lots.filter(l => l.price && l.status === 'DISPONIVEL').map(l => l.price!).filter(Boolean));
-    const priceMax = Math.max(...lots.filter(l => l.price).map(l => l.price!).filter(Boolean));
-    return { total, available, sold, negotiation, owner, priceMin: isFinite(priceMin) ? priceMin : 0, priceMax: isFinite(priceMax) ? priceMax : 0 };
+    const availLots = lots.filter(l => l.price && l.status === 'DISPONIVEL');
+    const priceMin = Math.min(...availLots.map(l => l.price!));
+    const priceMax = Math.max(...lots.filter(l => l.price).map(l => l.price!));
+    const areaMin = Math.min(...availLots.map(l => l.area_m2));
+    const areaMax = Math.max(...lots.map(l => l.area_m2));
+    return {
+      total, available, sold, negotiation, owner,
+      priceMin: isFinite(priceMin) ? priceMin : 0,
+      priceMax: isFinite(priceMax) ? priceMax : 0,
+      areaMin: isFinite(areaMin) ? areaMin : 0,
+      areaMax: isFinite(areaMax) ? areaMax : 0,
+    };
   }, [lots]);
+
+  // Dynamic filter breakpoints
+  const priceBreakpoints = useMemo(() => {
+    if (stats.priceMax <= 0) return [];
+    const range = stats.priceMax - stats.priceMin;
+    const step = Math.ceil(range / 4 / 5000) * 5000;
+    return [1, 2, 3, 4].map(i => Math.round((stats.priceMin + step * i) / 1000) * 1000);
+  }, [stats.priceMin, stats.priceMax]);
+
+  const areaBreakpoints = useMemo(() => {
+    if (stats.areaMax <= 0) return [];
+    const min = Math.floor(stats.areaMin / 50) * 50;
+    const max = Math.ceil(stats.areaMax / 50) * 50;
+    const step = Math.ceil((max - min) / 3 / 50) * 50;
+    return [1, 2, 3].map(i => min + step * i).filter(v => v < max);
+  }, [stats.areaMin, stats.areaMax]);
 
   const toggleQuadra = (q: string) => {
     setActiveQuadras(prev => {
@@ -441,25 +470,65 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             </h2>
           </div>
           <p style={{ fontSize: 14, color: '#948F84', margin: 0, lineHeight: 1.6 }}>
-            {stats.available} de {stats.total} lotes disponíveis em {quadras.size} quadras (A–Z)
+            {stats.available} de {stats.total} lotes disponíveis em {quadras.size} quadras
           </p>
         </div>
-        <button
-          onClick={() => setShowFilters(f => !f)}
-          className="flex items-center gap-2 h-10 px-4 rounded-xl border transition-colors"
-          style={{
-            borderColor: showFilters ? '#0B1928' : 'rgba(184,179,168,0.4)',
-            background: showFilters ? '#0B1928' : '#fff',
-            color: showFilters ? '#fff' : '#0B1928',
-            fontSize: 12, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)", letterSpacing: '0.08em', textTransform: 'uppercase',
-          }}
-        >
-          <Filter size={13} />
-          Filtros
-          {(filterStatus !== 'ALL' || maxPrice !== null || minArea !== null) && (
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#C8A44A', display: 'inline-block' }} />
+        <div className="flex items-center gap-2">
+          {/* View toggle — only when a plant image is available */}
+          {hasPlanView && (
+            <div
+              className="flex items-center rounded-xl p-1"
+              style={{ background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)' }}
+            >
+              <button
+                onClick={() => setViewMode('list')}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
+                style={{
+                  background: viewMode === 'list' ? '#fff' : 'transparent',
+                  color: viewMode === 'list' ? '#0B1928' : '#948F84',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  boxShadow: viewMode === 'list' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                }}
+              >
+                <List size={12} />
+                Lista
+              </button>
+              <button
+                onClick={() => setViewMode('plan')}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
+                style={{
+                  background: viewMode === 'plan' ? '#fff' : 'transparent',
+                  color: viewMode === 'plan' ? '#0B1928' : '#948F84',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  boxShadow: viewMode === 'plan' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                }}
+              >
+                <Map size={12} />
+                Planta
+              </button>
+            </div>
           )}
-        </button>
+          <button
+            onClick={() => setShowFilters(f => !f)}
+            className="flex items-center gap-2 h-10 px-4 rounded-xl border transition-colors"
+            style={{
+              borderColor: showFilters ? '#0B1928' : 'rgba(184,179,168,0.4)',
+              background: showFilters ? '#0B1928' : '#fff',
+              color: showFilters ? '#fff' : '#0B1928',
+              fontSize: 12, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)", letterSpacing: '0.08em', textTransform: 'uppercase',
+            }}
+          >
+            <Filter size={13} />
+            Filtros
+            {(filterStatus !== 'ALL' || maxPrice !== null || minArea !== null) && (
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#C8A44A', display: 'inline-block' }} />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ── Stats Bar ──────────────────────────────────────────────────────── */}
@@ -494,7 +563,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           <span style={{ fontSize: 13, fontWeight: 800, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
             {fmtBRL(stats.priceMin)} — {fmtBRL(stats.priceMax)}
           </span>
-          <span style={{ fontSize: 11, color: '#948F84' }}>· a partir de 160m²</span>
+          {stats.areaMin > 0 && <span style={{ fontSize: 11, color: '#948F84' }}>· a partir de {Math.round(stats.areaMin)}m²</span>}
         </div>
       )}
 
@@ -529,10 +598,9 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                     style={{ width: '100%', height: 40, borderRadius: 10, border: '1px solid rgba(184,179,168,0.4)', padding: '0 12px', fontSize: 13, color: '#0B1928', background: '#F8F6F2' }}
                   >
                     <option value="">Sem limite</option>
-                    <option value="25000">Até R$ 25 mil</option>
-                    <option value="35000">Até R$ 35 mil</option>
-                    <option value="45000">Até R$ 45 mil</option>
-                    <option value="60000">Até R$ 60 mil</option>
+                    {priceBreakpoints.map(p => (
+                      <option key={p} value={p}>Até {fmtBRL(p)}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -543,9 +611,9 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                     style={{ width: '100%', height: 40, borderRadius: 10, border: '1px solid rgba(184,179,168,0.4)', padding: '0 12px', fontSize: 13, color: '#0B1928', background: '#F8F6F2' }}
                   >
                     <option value="">Qualquer tamanho</option>
-                    <option value="160">160m² ou mais</option>
-                    <option value="200">200m² ou mais</option>
-                    <option value="250">250m² ou mais</option>
+                    {areaBreakpoints.map(a => (
+                      <option key={a} value={a}>{a}m² ou mais</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -572,41 +640,56 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         ))}
       </div>
 
+      {/* ── Plan View ────────────────────────────────────────────────────────── */}
+      {viewMode === 'plan' && (
+        <SubdivisionPlanView
+          lots={lots}
+          developmentId={developmentId}
+          developmentName={developmentName}
+          whatsappPhone={whatsappPhone}
+          onLotClick={setSelectedLot}
+        />
+      )}
+
       {/* ── Quadra List Controls ─────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-4">
-        <p style={{ fontSize: 12, color: '#948F84', fontWeight: 600 }}>
-          {filteredQuadras.size} quadra{filteredQuadras.size !== 1 ? 's' : ''} {filterStatus !== 'ALL' ? 'com filtro aplicado' : ''}
-        </p>
-        <div className="flex items-center gap-2">
-          <button onClick={expandAll} style={{ fontSize: 11, color: '#C8A44A', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer' }}>
-            Expandir todas
-          </button>
-          <span style={{ color: '#948F84' }}>·</span>
-          <button onClick={collapseAll} style={{ fontSize: 11, color: '#948F84', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
-            Recolher
-          </button>
-        </div>
-      </div>
+      {viewMode === 'list' && (
+        <>
+          <div className="flex items-center justify-between mb-4">
+            <p style={{ fontSize: 12, color: '#948F84', fontWeight: 600 }}>
+              {filteredQuadras.size} quadra{filteredQuadras.size !== 1 ? 's' : ''} {filterStatus !== 'ALL' ? 'com filtro aplicado' : ''}
+            </p>
+            <div className="flex items-center gap-2">
+              <button onClick={expandAll} style={{ fontSize: 11, color: '#C8A44A', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer' }}>
+                Expandir todas
+              </button>
+              <span style={{ color: '#948F84' }}>·</span>
+              <button onClick={collapseAll} style={{ fontSize: 11, color: '#948F84', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
+                Recolher
+              </button>
+            </div>
+          </div>
 
-      {/* ── Quadra Grid ─────────────────────────────────────────────────────── */}
-      <div className="space-y-3">
-        {[...filteredQuadras.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([quadra, qLots]) => (
-          <QuadraBlock
-            key={quadra}
-            quadra={quadra}
-            lots={qLots}
-            onLotClick={setSelectedLot}
-            isActive={activeQuadras.has(quadra)}
-            onToggle={() => toggleQuadra(quadra)}
-          />
-        ))}
-      </div>
+          {/* ── Quadra Grid ─────────────────────────────────────────────────────── */}
+          <div className="space-y-3">
+            {[...filteredQuadras.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([quadra, qLots]) => (
+              <QuadraBlock
+                key={quadra}
+                quadra={quadra}
+                lots={qLots}
+                onLotClick={setSelectedLot}
+                isActive={activeQuadras.has(quadra)}
+                onToggle={() => toggleQuadra(quadra)}
+              />
+            ))}
+          </div>
 
-      {filteredQuadras.size === 0 && (
-        <div style={{ textAlign: 'center', padding: '40px 20px', color: '#948F84' }}>
-          <MapPin size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
-          <p style={{ fontWeight: 600, margin: 0 }}>Nenhum lote encontrado com os filtros aplicados.</p>
-        </div>
+          {filteredQuadras.size === 0 && (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: '#948F84' }}>
+              <MapPin size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+              <p style={{ fontWeight: 600, margin: 0 }}>Nenhum lote encontrado com os filtros aplicados.</p>
+            </div>
+          )}
+        </>
       )}
 
       {/* ── CTA Strip ───────────────────────────────────────────────────────── */}
