@@ -22,6 +22,23 @@ interface SubdivisionLotMapProps {
   whatsappPhone?: string;
 }
 
+// ─── Payment conditions per development ──────────────────────────────────────
+const PAYMENT_CONDITIONS: Record<string, {
+  entrada: string;
+  parcelas: number;
+  parcelValue: string;
+  method: string;
+  seller: string;
+}> = {
+  '8b9f6835-1bd0-4850-80b0-aaef2223300d': {
+    entrada: '5% em até 2x',
+    parcelas: 150,
+    parcelValue: 'R$ 183,33',
+    method: 'Carnê',
+    seller: 'Mano Imóveis',
+  },
+};
+
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS = {
   DISPONIVEL:   { label: 'Disponível',  bg: '#16A34A', text: '#fff', light: '#DCFCE7', dark: '#166534' },
@@ -566,6 +583,39 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           {stats.areaMin > 0 && <span style={{ fontSize: 11, color: '#948F84' }}>· a partir de {Math.round(stats.areaMin)}m²</span>}
         </div>
       )}
+
+      {/* ── Payment Conditions ──────────────────────────────────────────────── */}
+      {PAYMENT_CONDITIONS[developmentId] && (() => {
+        const pc = PAYMENT_CONDITIONS[developmentId];
+        return (
+          <div style={{ background: '#0B1928', borderRadius: 16, padding: '18px 20px', marginBottom: 16 }}>
+            <div className="flex items-center gap-2 mb-3">
+              <div style={{ width: 20, height: 2, borderRadius: 1, background: '#C8A44A' }} />
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#C8A44A', textTransform: 'uppercase', letterSpacing: '0.2em', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                Condições de Pagamento
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 4px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Entrada</p>
+                <p style={{ fontSize: 14, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{pc.entrada}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 4px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Parcelas</p>
+                <p style={{ fontSize: 14, fontWeight: 800, color: '#C8A44A', margin: 0, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{pc.parcelas}× {pc.parcelValue}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 4px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Forma</p>
+                <p style={{ fontSize: 14, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{pc.method}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 4px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Direto com</p>
+                <p style={{ fontSize: 14, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{pc.seller}</p>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── Filter Panel ────────────────────────────────────────────────────── */}
       <AnimatePresence>
