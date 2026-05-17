@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS public.partner_agency_contracts (
   agency_id                    UUID NOT NULL REFERENCES public.partner_agencies(id) ON DELETE CASCADE,
 
   -- Dados do contratado (IMI / pessoa física hoje, CNPJ futuro)
-  contratado_nome              TEXT NOT NULL DEFAULT 'Jule Miranda da S. Bezerra',
+  contratado_nome              TEXT NOT NULL DEFAULT 'Iule Miranda da S. Bezerra',
   contratado_cpf               TEXT,
   contratado_cnpj              TEXT,               -- preenchido quando CNPJ da IMI for aberto
   contratado_creci             TEXT,
@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS public.notas_fiscais (
     CHECK (tipo IN ('servico', 'produto', 'misto')),
 
   -- Prestador (IMI)
-  prestador_nome               TEXT NOT NULL DEFAULT 'Jule Miranda da S. Bezerra',
+  prestador_nome               TEXT NOT NULL DEFAULT 'Iule Miranda da S. Bezerra',
   prestador_cpf                TEXT DEFAULT '048.986.523-90',
   prestador_cnpj               TEXT,               -- preenchido quando CNPJ for aberto
   prestador_creci              TEXT DEFAULT '17933',
@@ -265,7 +265,7 @@ CREATE POLICY "nf_write_admin" ON public.notas_fiscais
     EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin','super_admin','broker_manager'))
   );
 
--- ── 7. Seed: Contrato IMI × Mano Imóveis (pessoa física — Jule Miranda) ──────
+-- ── 7. Seed: Contrato IMI × Mano Imóveis (pessoa física — Iule Miranda) ──────
 
 INSERT INTO public.partner_agency_contracts (
   agency_id,
@@ -291,12 +291,12 @@ INSERT INTO public.partner_agency_contracts (
 )
 SELECT
   pa.id,
-  'Jule Miranda da S. Bezerra',
+  'Iule Miranda da S. Bezerra',
   '048.986.523-90',
   '17933',
   'Solteira',
   '(87) 98614-1487',
-  'jule.miranda.imoveis@email.com',
+  'iule.miranda.imoveis@email.com',
   'BTG',
   '819',
   '870658-4',
@@ -309,7 +309,7 @@ SELECT
   3,
   12,
   30,
-  'Contrato atual na pessoa física de Jule Miranda (CRECI 17933). '
+  'Contrato atual na pessoa física de Iule Miranda (CRECI 17933). '
   'Será aditado para pessoa jurídica assim que o CNPJ da IMI for aberto. '
   'Conforme Cláusula 5ª: repasse em 3 dias úteis após pagamento da construtora. '
   'NF deve ser emitida previamente; prazo de pagamento entre 12 e 30 dias após emissão da NF.'

@@ -12,6 +12,16 @@ Next.js application for Plataforma de inteligência imobiliária com análise de
 
 ---
 
+## Proprietário / Founder
+
+**Iule Miranda da S. Bezerra** — homem, fundador da IMI (Inteligência Imobiliária).
+- CPF: 048.986.523-90
+- CRECI-PE: 17933
+- Banco BTG · Ag. 819 · Conta 870658-4 · OP 020
+- ⚠️ O nome correto é **Iule** (não "Jule", não "Julie"). Sempre usar o nome exato e pronomes masculinos.
+
+---
+
 ## Session Start Protocol ⚡
 
 **MANDATORY** at start of each session:

@@ -257,7 +257,7 @@ export default function ImobiliáriasParceirasPage() {
                         >
                             <AlertCircle size={18} style={{ color: '#f59e0b', shrink: 0 }} className="shrink-0 mt-0.5" />
                             <div style={{ color: T.text }}>
-                                <strong>Contrato na pessoa física (atual)</strong> — Jule Miranda da S. Bezerra (CPF 048.986.523-90, CRECI-PE 17933).
+                                <strong>Contrato na pessoa física (atual)</strong> — Iule Miranda da S. Bezerra (CPF 048.986.523-90, CRECI-PE 17933).
                                 Assim que o CNPJ da IMI for aberto, o contrato será aditado para pessoa jurídica com os mesmos termos.
                             </div>
                         </div>
@@ -272,11 +272,11 @@ export default function ImobiliáriasParceirasPage() {
                                     <User size={15} /> Contratado (IMI)
                                 </h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                                    <Field label="Nome" value="Jule Miranda da S. Bezerra" />
+                                    <Field label="Nome" value="Iule Miranda da S. Bezerra" />
                                     <Field label="CPF" value="048.986.523-90" />
                                     <Field label="CRECI-PE" value="17933" />
                                     <Field label="Telefone" value="(87) 98614-1487" />
-                                    <Field label="E-mail" value="jule.miranda.imoveis@email.com" />
+                                    <Field label="E-mail" value="iule.miranda.imoveis@email.com" />
                                 </div>
                             </div>
 
