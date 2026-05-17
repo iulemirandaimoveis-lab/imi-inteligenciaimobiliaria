@@ -83,26 +83,34 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         result.status_commercial = ptToEn[result.status_comercial] || 'draft'
     }
     // Type normalization — form sends 'Apartamento', DB constraints expect lowercase
-    // tipo (PT): apartamento, casa, flat, lote, comercial, resort
-    // type (EN): apartment, house, penthouse, studio, land, commercial, resort
-    // property_type: apartment, house, commercial, land, mixed
+    // tipo (PT): apartamento, casa, flat, lote, comercial, resort, cobertura, studio, terreno, duplex, garden, sala
+    // type (EN): apartment, house, penthouse, studio, land, commercial, resort, villa, loft, flat, duplex, triplex, cobertura, garden, terreno, sala, loteamento
+    // property_type: apartment, house, commercial, land, mixed, penthouse, studio, resort, villa, loft, flat
     const typeToTipo: Record<string, string> = {
-        'Apartamento': 'apartamento', 'Casa': 'casa', 'Cobertura': 'apartamento',
-        'Studio': 'apartamento', 'Loft': 'flat', 'Terreno': 'lote',
+        'Apartamento': 'apartamento', 'Casa': 'casa', 'Cobertura': 'cobertura',
+        'Studio': 'studio', 'Loft': 'flat', 'Terreno': 'lote', 'Loteamento': 'lote',
         'Comercial': 'comercial', 'Flat': 'flat', 'Penthouse': 'apartamento',
         'Villa': 'casa', 'Empreendimento': 'apartamento', 'Resort': 'resort',
     }
     const typeToEn: Record<string, string> = {
         'Apartamento': 'apartment', 'Casa': 'house', 'Cobertura': 'penthouse',
-        'Studio': 'studio', 'Loft': 'studio', 'Terreno': 'land',
+        'Studio': 'studio', 'Loft': 'studio', 'Terreno': 'land', 'Loteamento': 'loteamento',
         'Comercial': 'commercial', 'Flat': 'apartment', 'Penthouse': 'penthouse',
         'Villa': 'house', 'Empreendimento': 'apartment', 'Resort': 'resort',
     }
     const typeToPropType: Record<string, string> = {
         'Apartamento': 'apartment', 'Casa': 'house', 'Cobertura': 'apartment',
-        'Studio': 'apartment', 'Loft': 'apartment', 'Terreno': 'land',
+        'Studio': 'apartment', 'Loft': 'apartment', 'Terreno': 'land', 'Loteamento': 'land',
         'Comercial': 'commercial', 'Flat': 'apartment', 'Penthouse': 'apartment',
         'Villa': 'house', 'Empreendimento': 'mixed', 'Resort': 'resort',
+    }
+    // Map raw DB tipo values that might be passed directly (lowercase)
+    const rawTipoToTipo: Record<string, string> = {
+        'loteamento': 'lote', 'terreno': 'terreno', 'duplex': 'duplex',
+        'garden': 'garden', 'sala': 'sala', 'cobertura': 'cobertura', 'studio': 'studio',
+    }
+    const rawTypeToType: Record<string, string> = {
+        'loteamento': 'loteamento',
     }
     if (result.type && typeToTipo[result.type]) {
         // Form sends capitalized Portuguese, normalize to constraint values
@@ -110,10 +118,19 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         result.tipo = typeToTipo[formType]
         result.type = typeToEn[formType]
         result.property_type = typeToPropType[formType]
-    } else if (result.tipo && !typeToTipo[result.tipo]) {
-        // Already lowercase, ensure type/property_type are set
-        // (editar form sends tipo directly)
+    } else if (result.tipo && rawTipoToTipo[result.tipo]) {
+        // Raw DB tipo value needs sanitization
+        result.tipo = rawTipoToTipo[result.tipo]
     }
+    // Sanitize tipo against constraint values — invalid values cause DB error
+    const validTipos = new Set(['apartamento', 'casa', 'flat', 'lote', 'comercial', 'resort', 'cobertura', 'studio', 'terreno', 'duplex', 'garden', 'sala'])
+    if (result.tipo && !validTipos.has(result.tipo)) result.tipo = null
+    // Sanitize type against constraint values
+    const validTypes = new Set(['apartment', 'house', 'penthouse', 'studio', 'land', 'commercial', 'resort', 'villa', 'loft', 'flat', 'duplex', 'triplex', 'cobertura', 'garden', 'terreno', 'sala', 'loteamento'])
+    if (result.type && !validTypes.has(result.type)) result.type = null
+    // Sanitize property_type against constraint values
+    const validPropTypes = new Set(['apartment', 'house', 'commercial', 'land', 'mixed', 'penthouse', 'studio', 'resort', 'villa', 'loft', 'flat'])
+    if (result.property_type && !validPropTypes.has(result.property_type)) result.property_type = null
     // Date handling — "YYYY-MM" from <input type="month"> is not a valid ISO date string in V8;
     // append "-01" so new Date() parses correctly.
     if (result.delivery_date && typeof result.delivery_date === 'string' && !result.delivery_date.includes('T')) {
@@ -287,16 +304,22 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
     if (normalized.type && !normalized.tipo) {
         const enToPt: Record<string, string> = {
             apartment: 'apartamento', house: 'casa', penthouse: 'apartamento',
-            studio: 'apartamento', land: 'lote', commercial: 'comercial',
-            resort: 'resort', flat: 'flat',
+            studio: 'studio', land: 'lote', commercial: 'comercial',
+            resort: 'resort', flat: 'flat', loteamento: 'lote',
+            villa: 'casa', duplex: 'duplex', triplex: 'duplex',
+            cobertura: 'cobertura', garden: 'garden', terreno: 'terreno', sala: 'sala',
         }
         const enToPropType: Record<string, string> = {
             apartment: 'apartment', house: 'house', penthouse: 'apartment',
             studio: 'apartment', land: 'land', commercial: 'commercial',
-            resort: 'mixed', flat: 'apartment',
+            resort: 'mixed', flat: 'apartment', loteamento: 'land',
+            villa: 'house', duplex: 'apartment', triplex: 'apartment',
+            cobertura: 'apartment', garden: 'apartment', terreno: 'land', sala: 'commercial',
         }
-        normalized.tipo = enToPt[normalized.type] || normalized.type
-        normalized.property_type = enToPropType[normalized.type] || normalized.type
+        const mappedTipo = enToPt[normalized.type]
+        const mappedPropType = enToPropType[normalized.type]
+        if (mappedTipo) normalized.tipo = mappedTipo
+        if (mappedPropType) normalized.property_type = mappedPropType
     } else if (normalized.tipo && !normalized.type) {
         const ptToEn: Record<string, string> = {
             apartamento: 'apartment', casa: 'house', flat: 'apartment',
