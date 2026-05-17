@@ -185,6 +185,7 @@ export const SECTIONS: NavSection[] = [
                     { label: 'Novo',        href: '/backoffice/contratos/novo', icon: FileSignature },
                 ],
             },
+            { label: 'Imob. Parceiras', href: '/backoffice/imobiliarias-parceiras', icon: Building2, badge: 'NEW' },
             {
                 label: 'Consultoria', icon: Briefcase,
                 children: [
