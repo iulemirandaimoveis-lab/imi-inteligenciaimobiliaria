@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { Check, Sparkles, Building2, Waves, TreePine, Dumbbell, Droplets, Gamepad2, PartyPopper, Flame, Bike, Eye, Sofa, Shirt, Snowflake, Shield, CircleParking, Monitor, Sun } from 'lucide-react';
 import { Development } from '../types/development';
 import { slideUp, staggerContainer } from '@/lib/animations';
@@ -203,22 +202,23 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
             {/* Developer — elevated card */}
             <motion.div variants={slideUp} className="mt-12 pt-10 border-t border-gray-100">
                 <div className="flex items-center gap-4 p-4 rounded-[10px]" style={{ background: 'rgba(11,25,40,0.03)', border: '1px solid rgba(11,25,40,0.06)' }}>
-                    <div
-                        className="w-12 h-12 rounded-[4px] flex items-center justify-center flex-shrink-0 overflow-hidden"
-                        style={{ background: development.developerLogo ? '#fff' : NAVY, border: development.developerLogo ? '1px solid rgba(11,25,40,0.08)' : 'none' }}
-                    >
-                        {development.developerLogo ? (
-                            <Image
+                    {development.developerLogo ? (
+                        <div className="flex-shrink-0">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
                                 src={development.developerLogo}
                                 alt={development.developer}
-                                width={48}
-                                height={48}
-                                className="w-full h-full object-contain p-1"
+                                style={{ height: 48, width: 'auto', maxWidth: 140, objectFit: 'contain' }}
                             />
-                        ) : (
+                        </div>
+                    ) : (
+                        <div
+                            className="w-12 h-12 rounded-[4px] flex items-center justify-center flex-shrink-0"
+                            style={{ background: NAVY }}
+                        >
                             <Sparkles className="w-5 h-5" style={{ color: GOLD }} />
-                        )}
-                    </div>
+                        </div>
+                    )}
                     <div>
                         <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-gray-400 block mb-0.5" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Incorporação</span>
                         <p className="text-gray-900 font-bold text-base">{development.developer}</p>
