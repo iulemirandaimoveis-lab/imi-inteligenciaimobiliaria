@@ -123,6 +123,7 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             brochure: dbProp.brochure_url,
             heroVideo: imagesJson.hero_video || undefined,
         },
+        propertyType: dbProp.type || undefined,
         units: [], // Units are loaded separately on detail view if needed
         tags: Array.isArray(dbProp.tags) ? dbProp.tags : [],
         order: dbProp.display_order || 0,
