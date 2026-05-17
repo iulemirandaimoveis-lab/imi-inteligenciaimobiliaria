@@ -5,7 +5,7 @@ import {
     Video, Zap, Brain, BookOpen, FileSignature, Briefcase, Banknote, TrendingDown,
     Target, FileStack, Layers, MessageCircle, Bot, Camera, Eye, Link2,
     GraduationCap, Award, Globe2, Trophy, Shield, Settings, Plug,
-    CalendarCheck2, Car, Fuel, AlertTriangle, ClipboardList,
+    CalendarCheck2, Car, Fuel, AlertTriangle, ClipboardList, Palette,
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 
@@ -127,11 +127,12 @@ export const SECTIONS: NavSection[] = [
             {
                 label: 'Conteúdo', icon: FileText,
                 children: [
-                    { label: 'Publicações', href: '/backoffice/conteudo',           icon: FileText   },
-                    { label: 'Criador IA',  href: '/backoffice/conteudo/criador',   icon: Wand2      },
-                    { label: 'eBook IA',    href: '/backoffice/conteudo/ebook',     icon: BookMarked },
-                    { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',     icon: Video      },
-                    { label: 'Automação',   href: '/backoffice/conteudo/automacao', icon: Zap        },
+                    { label: 'Publicações',   href: '/backoffice/conteudo',                icon: FileText   },
+                    { label: 'Design Studio', href: '/backoffice/conteudo/design',         icon: Palette, badge: 'NEW' },
+                    { label: 'Criador IA',    href: '/backoffice/conteudo/criador',        icon: Wand2      },
+                    { label: 'eBook IA',      href: '/backoffice/conteudo/ebook',          icon: BookMarked },
+                    { label: 'Vídeo IA',      href: '/backoffice/conteudo/video',          icon: Video      },
+                    { label: 'Automação',     href: '/backoffice/conteudo/automacao',      icon: Zap        },
                 ],
             },
         ],
