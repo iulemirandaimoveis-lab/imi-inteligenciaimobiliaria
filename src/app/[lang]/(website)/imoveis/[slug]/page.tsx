@@ -106,7 +106,6 @@ const ANCHOR_SECTIONS = [
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
     { id: 'inteligencia', label: 'IMI Score' },
-    { id: 'financiamento', label: 'Financiamento' },
 ]
 
 const ANCHOR_SECTIONS_LOTEAMENTO = [
@@ -324,7 +323,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     {/* Main content */}
                     <div className="lg:col-span-8 space-y-12 md:space-y-20">
                         <section id="detalhes">
-                            <DevelopmentDetails development={development} />
+                            <DevelopmentDetails
+                                development={development}
+                                financingEnabled={data.financing_enabled !== false}
+                                lang={params.lang}
+                            />
                         </section>
                         <section id="galeria">
                             <DevelopmentGallery development={development} />

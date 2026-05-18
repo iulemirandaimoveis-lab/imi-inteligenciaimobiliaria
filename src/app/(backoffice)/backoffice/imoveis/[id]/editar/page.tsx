@@ -9,7 +9,7 @@ import {
   Image as ImageIcon, Upload, Check, Calendar, Save,
   Loader2, AlertCircle, BedDouble, Bath, Car, Sparkles, Star,
   Play, FileText, X, CheckCircle, Globe, Eye, Zap, GripVertical,
-  Maximize, User, Phone, MessageCircle,
+  Maximize, User, Phone, MessageCircle, CreditCard,
 } from 'lucide-react'
 import Image from 'next/image'
 import { uploadFile, uploadMultipleImages } from '@/lib/supabase-storage'
@@ -378,6 +378,7 @@ interface FormData {
   videoFile: File | null; videoShortFile: File | null
   brokerId: string; brokerName: string; brokerPhone: string
   brokerCreci: string; brokerAvatarUrl: string
+  financingEnabled: boolean
 }
 
 const INITIAL: FormData = {
@@ -392,6 +393,7 @@ const INITIAL: FormData = {
   is_highlighted: false, videoUrl: '', videoShort: '',
   videoFile: null, videoShortFile: null,
   brokerId: '', brokerName: '', brokerPhone: '', brokerCreci: '', brokerAvatarUrl: '',
+  financingEnabled: true,
 }
 
 /* ── Gallery Tab with Drag-and-Drop (Fotos + Vídeos + Plantas + Brochure) ── */
@@ -812,6 +814,7 @@ export default function EditarImovelPage() {
           is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '',
           videoFile: null, videoShortFile: null,
           brokerId, brokerName, brokerPhone, brokerCreci, brokerAvatarUrl,
+          financingEnabled: d.financing_enabled !== false,
         })
       } catch (_err: unknown) {
         toast.error('Erro ao carregar dados do empreendimento')
@@ -927,7 +930,8 @@ export default function EditarImovelPage() {
           units_count: Number(formData.totalUnits) || null, available_units: Number(formData.availableUnits) || null,
           delivery_date: formData.deliveryDate ? (() => { const d = new Date(formData.deliveryDate + '-01'); return isNaN(d.getTime()) ? null : d.toISOString() })() : null,
           status: formData.status, status_commercial: formData.status_commercial,
-          is_highlighted: formData.is_highlighted, gallery_images: allImages,
+          is_highlighted: formData.is_highlighted, financing_enabled: formData.financingEnabled,
+          gallery_images: allImages,
           image: allImages[0] || null,
           floor_plans: [...formData.existingFloorPlans, ...newFpUrls],
           brochure_url: brochureUrl, video_url: finalVideoUrl, video_short_url: finalVideoShortUrl,
@@ -1216,6 +1220,25 @@ export default function EditarImovelPage() {
                         Destaque na página inicial
                       </p>
                       <p className="text-xs mt-0.5" style={{ color: T.textDim }}>Aparece na seção de imóveis em destaque</p>
+                    </div>
+                  </label>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <div onClick={() => set('financingEnabled', !formData.financingEnabled)}
+                      className="w-5 h-5 rounded flex items-center justify-center transition-all"
+                      style={{ background: formData.financingEnabled ? T.accent : T.elevated, border: `2px solid ${formData.financingEnabled ? T.accent : T.border}` }}>
+                      {formData.financingEnabled && <Check size={12} color="white" />}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium flex items-center gap-1.5" style={{ color: T.text }}>
+                        <CreditCard size={14} style={{ color: formData.financingEnabled ? T.accent : T.textDim }} />
+                        Aceita financiamento
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ color: T.textDim }}>
+                        Exibe botão de simulação de crédito na página pública do imóvel
+                      </p>
                     </div>
                   </label>
                 </div>
