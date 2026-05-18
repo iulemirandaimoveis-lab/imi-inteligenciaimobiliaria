@@ -1034,7 +1034,19 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
     );
   }
 
-  if (lots.length === 0) return null;
+  if (lots.length === 0 && !hasPlanView) return null;
+
+  if (lots.length === 0 && hasPlanView) {
+    return (
+      <SubdivisionPlanView
+        lots={[]}
+        developmentId={developmentId}
+        developmentName={developmentName}
+        whatsappPhone={whatsappPhone}
+        onLotClick={setSelectedLot}
+      />
+    );
+  }
 
   return (
     <>
