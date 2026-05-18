@@ -1064,8 +1064,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Rankings button */}
-          {hasRankings && (
+          {/* Rankings button — list mode only */}
+          {hasRankings && viewMode === 'list' && (
             <button
               onClick={() => setShowRankings((r: boolean) => !r)}
               className="flex items-center gap-2 h-10 px-3 rounded-xl border transition-colors"
@@ -1116,7 +1116,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
               </button>
             </div>
           )}
-          <button
+          {/* Filtros button — list mode only */}
+          {viewMode === 'list' && <button
             onClick={() => setShowFilters((f: boolean) => !f)}
             className="flex items-center gap-2 h-10 px-4 rounded-xl border transition-colors"
             style={{
@@ -1131,12 +1132,12 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             {(filterStatus !== 'ALL' || maxPrice !== null || minArea !== null || smartFilter !== 'ALL') && (
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#C8A44A', display: 'inline-block' }} />
             )}
-          </button>
+          </button>}
         </div>
       </div>
 
-      {/* ── Smart Filter Pills ──────────────────────────────────────────────── */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-4" style={{ scrollbarWidth: 'none' }}>
+      {/* ── Smart Filter Pills — list mode only ─────────────────────────────── */}
+      {viewMode === 'list' && <div className="flex gap-2 overflow-x-auto pb-2 mb-4" style={{ scrollbarWidth: 'none' }}>
         {SMART_FILTERS.map(sf => (
           <button
             key={sf.key}
@@ -1155,10 +1156,10 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             {sf.label}
           </button>
         ))}
-      </div>
+      </div>}
 
-      {/* ── Stats Bar ──────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      {/* ── Stats Bar — list mode only ─────────────────────────────────────── */}
+      {viewMode === 'list' && <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {([
           { label: 'Disponíveis', value: stats.available, color: '#16A34A', bg: '#DCFCE7', key: 'DISPONIVEL' },
           { label: 'Vendidos',    value: stats.sold,      color: '#DC2626', bg: '#FEE2E2', key: 'VENDIDO' },
@@ -1179,10 +1180,10 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             <p style={{ fontSize: 10, fontWeight: 700, color: filterStatus === item.key ? '#ffffffaa' : item.color, textTransform: 'uppercase', letterSpacing: '0.15em', margin: 0, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>{item.label}</p>
           </button>
         ))}
-      </div>
+      </div>}
 
-      {/* ── Price range info ────────────────────────────────────────────────── */}
-      {stats.priceMin > 0 && (
+      {/* ── Price range info — list mode only ──────────────────────────────── */}
+      {viewMode === 'list' && stats.priceMin > 0 && (
         <div style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.3)', borderRadius: 14, padding: '14px 16px', marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           <BarChart2 size={14} style={{ color: '#C8A44A', flexShrink: 0 }} />
           <span style={{ fontSize: 12, color: '#948F84', fontWeight: 600 }}>Lotes disponíveis:</span>
@@ -1193,8 +1194,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         </div>
       )}
 
-      {/* ── Payment Conditions ──────────────────────────────────────────────── */}
-      {PAYMENT_CONDITIONS[developmentId] && (() => {
+      {/* ── Payment Conditions — list mode only ────────────────────────────── */}
+      {viewMode === 'list' && PAYMENT_CONDITIONS[developmentId] && (() => {
         const pc = PAYMENT_CONDITIONS[developmentId];
         return (
           <div style={{ background: '#0B1928', borderRadius: 16, padding: '18px 20px', marginBottom: 16 }}>
@@ -1221,9 +1222,9 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         );
       })()}
 
-      {/* ── Filter Panel ────────────────────────────────────────────────────── */}
+      {/* ── Filter Panel — list mode only ───────────────────────────────────── */}
       <AnimatePresence>
-        {showFilters && (
+        {viewMode === 'list' && showFilters && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -1284,9 +1285,9 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         )}
       </AnimatePresence>
 
-      {/* ── Rankings Section ─────────────────────────────────────────────────── */}
+      {/* ── Rankings Section — list mode only ────────────────────────────────── */}
       <AnimatePresence>
-        {showRankings && hasRankings && (
+        {viewMode === 'list' && showRankings && hasRankings && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -1304,8 +1305,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         )}
       </AnimatePresence>
 
-      {/* ── Legend ──────────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-3 mb-5">
+      {/* ── Legend — list mode only ─────────────────────────────────────────── */}
+      {viewMode === 'list' && <div className="flex flex-wrap items-center gap-3 mb-5">
         {Object.entries(STATUS).map(([k, v]) => (
           <div key={k} className="flex items-center gap-1.5">
             <div style={{ width: 10, height: 10, borderRadius: 3, background: v.bg }} />
@@ -1316,7 +1317,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           <div style={{ width: 10, height: 10, borderRadius: 3, background: '#DBEAFE', border: '1.5px solid #2563EB' }} />
           <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600 }}>Em comparação</span>
         </div>
-      </div>
+      </div>}
 
       {/* ── Plan View ────────────────────────────────────────────────────────── */}
       {viewMode === 'plan' && (
