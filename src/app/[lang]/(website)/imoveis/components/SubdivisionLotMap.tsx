@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -199,7 +199,7 @@ function LotModal({
 }) {
   const cfg = STATUS[lot.status as StatusKey] ?? STATUS.DISPONIVEL;
   const isAvailable = lot.status === 'DISPONIVEL';
-  const score = useMemo(() => computeScore(lot, allLots), [lot, allLots]);
+  const score = useMemo(() => computeScore(lot, allLots), [lot, allLots]) as LotScore;
   const pricePerM2 = lot.price && lot.area_m2 > 0 ? lot.price / lot.area_m2 : null;
 
   useEffect(() => {
@@ -237,7 +237,7 @@ function LotModal({
         transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
         className="w-full sm:max-w-sm rounded-t-[24px] sm:rounded-[20px] overflow-hidden"
         style={{ background: '#fff', boxShadow: '0 32px 80px rgba(0,0,0,0.4)' }}
-        onClick={e => e.stopPropagation()}
+        onClick={(e: { stopPropagation: () => void }) => e.stopPropagation()}
       >
         {/* Status bar */}
         <div style={{ height: 4, background: cfg.bg }} />
@@ -408,7 +408,7 @@ function LotComparator({
   onRemove: (id: string) => void;
   onClose: () => void;
 }) {
-  const scores = useMemo(() => compareLots.map(l => computeScore(l, allLots)), [compareLots, allLots]);
+  const scores = useMemo(() => compareLots.map((l: Lot) => computeScore(l, allLots)), [compareLots, allLots]) as LotScore[];
 
   const rows = [
     { label: 'Quadra / Lote', render: (l: Lot) => `Q${l.quadra} — L${l.lot_number}` },
@@ -426,7 +426,7 @@ function LotComparator({
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4"
       style={{ background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(12px)' }}
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(e: { target: unknown; currentTarget: unknown }) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -435,7 +435,7 @@ function LotComparator({
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         className="w-full sm:max-w-2xl rounded-t-[24px] sm:rounded-[20px] overflow-hidden"
         style={{ background: '#fff', boxShadow: '0 32px 80px rgba(0,0,0,0.4)', maxHeight: '90vh', overflowY: 'auto' }}
-        onClick={e => e.stopPropagation()}
+        onClick={(e: { stopPropagation: () => void }) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-gray-100">
@@ -567,7 +567,7 @@ function RankingSection({
   whatsappPhone: string;
   developmentName: string;
 }) {
-  const rankings = useMemo(() => computeRankings(lots), [lots]);
+  const rankings = useMemo(() => computeRankings(lots), [lots]) as ReturnType<typeof computeRankings>;
   const [activeRanking, setActiveRanking] = useState<'bestValue' | 'bestLiving' | 'bestInvestment'>('bestValue');
 
   const tabs = [
@@ -576,7 +576,7 @@ function RankingSection({
     { key: 'bestInvestment' as const, label: 'Para Investir', icon: <TrendingUp size={12} />, color: '#2563EB' },
   ];
 
-  const items = rankings[activeRanking];
+  const items = rankings[activeRanking] as RankingItem[];
   if (items.length === 0) return null;
 
   const medals = ['🥇', '🥈', '🥉'];
@@ -672,15 +672,15 @@ function LotCell({ lot, onClick, isInCompare }: { lot: Lot; onClick: (lot: Lot) 
         overflow: 'hidden',
         padding: 2,
       }}
-      onMouseEnter={e => {
-        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.12)';
-        (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 4px 12px ${cfg.bg}44`;
-        (e.currentTarget as HTMLButtonElement).style.zIndex = '10';
+      onMouseEnter={(e: { currentTarget: HTMLButtonElement }) => {
+        e.currentTarget.style.transform = 'scale(1.12)';
+        e.currentTarget.style.boxShadow = `0 4px 12px ${cfg.bg}44`;
+        e.currentTarget.style.zIndex = '10';
       }}
-      onMouseLeave={e => {
-        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
-        (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
-        (e.currentTarget as HTMLButtonElement).style.zIndex = '1';
+      onMouseLeave={(e: { currentTarget: HTMLButtonElement }) => {
+        e.currentTarget.style.transform = 'scale(1)';
+        e.currentTarget.style.boxShadow = 'none';
+        e.currentTarget.style.zIndex = '1';
       }}
     >
       {lot.status === 'DISPONIVEL' && !isInCompare && (
@@ -888,7 +888,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           .order('quadra')
           .order('lot_number');
         if (error) console.error('[SubdivisionLotMap] fetch error:', error.message);
-        if (data) setLots(data.map(l => ({ ...l, area_m2: Number(l.area_m2) || 0 })) as Lot[]);
+        if (data) setLots(data.map((l: Record<string, unknown>) => ({ ...l, area_m2: Number(l.area_m2) || 0 })) as Lot[]);
       } catch (err) {
         console.error('[SubdivisionLotMap] unexpected error:', err);
       } finally {
@@ -900,22 +900,22 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
 
   const quadras = useMemo(() => {
     const map = new Map<string, Lot[]>();
-    for (const lot of lots) {
+    for (const lot of (lots as Lot[])) {
       if (!map.has(lot.quadra)) map.set(lot.quadra, []);
       map.get(lot.quadra)!.push(lot);
     }
     return map;
-  }, [lots]);
+  }, [lots]) as Map<string, Lot[]>;
 
   const filteredQuadras = useMemo(() => {
     const result = new Map<string, Lot[]>();
-    const availLots = lots.filter(l => l.price && l.area_m2 > 0);
+    const availLots = (lots as Lot[]).filter((l: Lot) => l.price && l.area_m2 > 0);
     const avgPricePerM2 = availLots.length > 0
-      ? availLots.reduce((s, l) => s + l.price! / l.area_m2, 0) / availLots.length
+      ? availLots.reduce((s: number, l: Lot) => s + l.price! / l.area_m2, 0) / availLots.length
       : 0;
 
     for (const [q, qLots] of quadras) {
-      const filtered = qLots.filter(l => {
+      const filtered = qLots.filter((l: Lot) => {
         // Status filter
         if (filterStatus !== 'ALL' && l.status !== filterStatus) return false;
         // Price filter
@@ -962,16 +962,17 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   }, [quadras, filterStatus, maxPrice, minArea, smartFilter, lots]);
 
   const stats = useMemo(() => {
-    const total = lots.length;
-    const available = lots.filter(l => l.status === 'DISPONIVEL').length;
-    const sold = lots.filter(l => l.status === 'VENDIDO').length;
-    const negotiation = lots.filter(l => l.status === 'NEGOCIACAO').length;
-    const owner = lots.filter(l => l.status === 'PROPRIETARIO').length;
-    const availLots = lots.filter(l => l.price && l.status === 'DISPONIVEL');
-    const priceMin = Math.min(...availLots.map(l => l.price!));
-    const priceMax = Math.max(...lots.filter(l => l.price).map(l => l.price!));
-    const areaMin = Math.min(...availLots.map(l => l.area_m2));
-    const areaMax = Math.max(...lots.map(l => l.area_m2));
+    const ls = lots as Lot[];
+    const total = ls.length;
+    const available = ls.filter((l: Lot) => l.status === 'DISPONIVEL').length;
+    const sold = ls.filter((l: Lot) => l.status === 'VENDIDO').length;
+    const negotiation = ls.filter((l: Lot) => l.status === 'NEGOCIACAO').length;
+    const owner = ls.filter((l: Lot) => l.status === 'PROPRIETARIO').length;
+    const availLots = ls.filter((l: Lot) => l.price && l.status === 'DISPONIVEL');
+    const priceMin = Math.min(...availLots.map((l: Lot) => l.price!));
+    const priceMax = Math.max(...ls.filter((l: Lot) => l.price).map((l: Lot) => l.price!));
+    const areaMin = Math.min(...availLots.map((l: Lot) => l.area_m2));
+    const areaMax = Math.max(...ls.map((l: Lot) => l.area_m2));
     return {
       total, available, sold, negotiation, owner,
       priceMin: isFinite(priceMin) ? priceMin : 0,
@@ -985,19 +986,19 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
     if (stats.priceMax <= 0) return [];
     const range = stats.priceMax - stats.priceMin;
     const step = Math.ceil(range / 4 / 5000) * 5000;
-    return [1, 2, 3, 4].map(i => Math.round((stats.priceMin + step * i) / 1000) * 1000);
-  }, [stats.priceMin, stats.priceMax]);
+    return [1, 2, 3, 4].map((i: number) => Math.round((stats.priceMin + step * i) / 1000) * 1000);
+  }, [stats.priceMin, stats.priceMax]) as number[];
 
   const areaBreakpoints = useMemo(() => {
     if (stats.areaMax <= 0) return [];
     const min = Math.floor(stats.areaMin / 50) * 50;
     const max = Math.ceil(stats.areaMax / 50) * 50;
     const step = Math.ceil((max - min) / 3 / 50) * 50;
-    return [1, 2, 3].map(i => min + step * i).filter(v => v < max);
-  }, [stats.areaMin, stats.areaMax]);
+    return [1, 2, 3].map((i: number) => min + step * i).filter((v: number) => v < max);
+  }, [stats.areaMin, stats.areaMax]) as number[];
 
   const toggleQuadra = (q: string) => {
-    setActiveQuadras(prev => {
+    setActiveQuadras((prev: Set<string>) => {
       const next = new Set(prev);
       if (next.has(q)) next.delete(q);
       else next.add(q);
@@ -1006,23 +1007,23 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   };
 
   const addToCompare = useCallback((lot: Lot) => {
-    setCompareLots(prev => {
-      if (prev.some(l => l.id === lot.id)) return prev.filter(l => l.id !== lot.id);
+    setCompareLots((prev: Lot[]) => {
+      if (prev.some((l: Lot) => l.id === lot.id)) return prev.filter((l: Lot) => l.id !== lot.id);
       if (prev.length >= 3) return prev;
       return [...prev, lot];
     });
   }, []);
 
   const removeFromCompare = useCallback((id: string) => {
-    setCompareLots(prev => prev.filter(l => l.id !== id));
+    setCompareLots((prev: Lot[]) => prev.filter((l: Lot) => l.id !== id));
   }, []);
 
-  const compareIds = useMemo(() => new Set(compareLots.map(l => l.id)), [compareLots]);
+  const compareIds = useMemo(() => new Set((compareLots as Lot[]).map((l: Lot) => l.id)), [compareLots]) as Set<string>;
 
   const expandAll = () => setActiveQuadras(new Set(quadras.keys()));
   const collapseAll = () => setActiveQuadras(new Set());
 
-  const hasRankings = useMemo(() => lots.filter(l => l.status === 'DISPONIVEL' && l.price).length >= 3, [lots]);
+  const hasRankings = useMemo(() => (lots as Lot[]).filter((l: Lot) => l.status === 'DISPONIVEL' && l.price).length >= 3, [lots]) as boolean;
 
   if (loading) {
     return (
@@ -1054,7 +1055,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           {/* Rankings button */}
           {hasRankings && (
             <button
-              onClick={() => setShowRankings(r => !r)}
+              onClick={() => setShowRankings((r: boolean) => !r)}
               className="flex items-center gap-2 h-10 px-3 rounded-xl border transition-colors"
               style={{
                 borderColor: showRankings ? '#C8A44A' : 'rgba(184,179,168,0.4)',
@@ -1104,7 +1105,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             </div>
           )}
           <button
-            onClick={() => setShowFilters(f => !f)}
+            onClick={() => setShowFilters((f: boolean) => !f)}
             className="flex items-center gap-2 h-10 px-4 rounded-xl border transition-colors"
             style={{
               borderColor: showFilters ? '#0B1928' : 'rgba(184,179,168,0.4)',
@@ -1154,7 +1155,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         ] as const).map(item => (
           <button
             key={item.key}
-            onClick={() => setFilterStatus(prev => prev === item.key ? 'ALL' : item.key)}
+            onClick={() => setFilterStatus((prev: string) => prev === item.key ? 'ALL' : item.key)}
             style={{
               background: filterStatus === item.key ? item.color : item.bg,
               borderRadius: 14, padding: '14px 16px', textAlign: 'left',
@@ -1224,7 +1225,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                   <label style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: 6, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Status</label>
                   <select
                     value={filterStatus}
-                    onChange={e => setFilterStatus(e.target.value)}
+                    onChange={(e: { target: { value: string } }) => setFilterStatus(e.target.value)}
                     style={{ width: '100%', height: 40, borderRadius: 10, border: '1px solid rgba(184,179,168,0.4)', padding: '0 12px', fontSize: 13, color: '#0B1928', background: '#F8F6F2' }}
                   >
                     <option value="ALL">Todos</option>
@@ -1235,7 +1236,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                   <label style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: 6, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Preço máx.</label>
                   <select
                     value={maxPrice ?? ''}
-                    onChange={e => setMaxPrice(e.target.value ? Number(e.target.value) : null)}
+                    onChange={(e: { target: { value: string } }) => setMaxPrice(e.target.value ? Number(e.target.value) : null)}
                     style={{ width: '100%', height: 40, borderRadius: 10, border: '1px solid rgba(184,179,168,0.4)', padding: '0 12px', fontSize: 13, color: '#0B1928', background: '#F8F6F2' }}
                   >
                     <option value="">Sem limite</option>
@@ -1248,7 +1249,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                   <label style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: 6, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Área mínima</label>
                   <select
                     value={minArea ?? ''}
-                    onChange={e => setMinArea(e.target.value ? Number(e.target.value) : null)}
+                    onChange={(e: { target: { value: string } }) => setMinArea(e.target.value ? Number(e.target.value) : null)}
                     style={{ width: '100%', height: 40, borderRadius: 10, border: '1px solid rgba(184,179,168,0.4)', padding: '0 12px', fontSize: 13, color: '#0B1928', background: '#F8F6F2' }}
                   >
                     <option value="">Qualquer tamanho</option>
