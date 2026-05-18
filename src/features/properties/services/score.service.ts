@@ -58,11 +58,12 @@ export function calcYieldEst(property: IMIProperty): number {
   const base = getYield(property.neighborhood ?? '')
   const typeBonus: Record<string, number> = {
     apartamento: 0, studio: 1.2, flat: 1.5, comercial: 0.8,
-    casa: -0.3, cobertura: -0.5, terreno: -2,
+    casa: -0.3, cobertura: -0.5, terreno: -2, loteamento: 0.5,
   }
   const type = (property.type ?? 'apartamento').toLowerCase()
   const bonus = typeBonus[type] ?? 0
-  const priceAdjust = property.price && property.price < 500_000 ? 0.4
+  const priceAdjust = property.price && property.price < 100_000 ? 1.2
+    : property.price && property.price < 500_000 ? 0.4
     : property.price && property.price < 800_000 ? 0.1
     : property.price && property.price > 2_000_000 ? -0.5 : 0
   return parseFloat((base + bonus + priceAdjust).toFixed(2))
