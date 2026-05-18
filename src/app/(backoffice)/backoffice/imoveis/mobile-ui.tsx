@@ -13,10 +13,11 @@
 import React, { useEffect, useRef, useState, useCallback, type ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   ArrowLeft, Building2, MapPin, Bed, Bath, Car, Ruler,
   Star, Sparkles, BarChart2, Scale, LayoutGrid, Briefcase,
-  SlidersHorizontal, X, Home, Camera,
+  SlidersHorizontal, X, Home, Camera, Trash2, Archive, Pencil, ExternalLink,
 } from 'lucide-react'
 import type { IMIProperty } from '@/features/properties/types'
 import { getMainImage } from '@/utils/propertyImages'
@@ -77,6 +78,11 @@ export function MobileGlobalStyles() {
       }
       .mob-btn-tap { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
       .mob-btn-tap:active { opacity: 0.72; transform: scale(0.96); }
+      .mob-card-pressing { transform: scale(0.96) !important; box-shadow: 0 0 0 2px rgba(184,148,58,0.5) !important; }
+      @keyframes actionSheetItemIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
       .mob-chip-tap { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
       .mob-chip-tap:active { opacity: 0.8; }
       .mob-prop-card-anim {
@@ -361,26 +367,69 @@ interface MobilePropertyCardProps {
   property: IMIProperty
   isFavorite?: boolean
   onFavorite?: () => void
+  onDelete?: () => void
+  onArchive?: () => void
   animationDelay?: number
 }
 
-export function MobilePropertyCard({ property, isFavorite, onFavorite, animationDelay = 0 }: MobilePropertyCardProps) {
+export function MobilePropertyCard({ property, isFavorite, onFavorite, onDelete, onArchive, animationDelay = 0 }: MobilePropertyCardProps) {
+  const router = useRouter()
   const status = normalizeStatus(property.status)
   const statusCfg = STATUS_CONFIGS[status] ?? { label: status, color: T.text2 }
   const score = property.imi_score ?? 0
   const scoreColor = getScoreStyle(score).color
   const imageUrl = getMainImage(property)
 
+  const [actionOpen, setActionOpen] = useState(false)
+  const [pressing, setPressing] = useState(false)
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const touchMoved = useRef(false)
+
+  const startLongPress = useCallback(() => {
+    touchMoved.current = false
+    setPressing(true)
+    longPressTimer.current = setTimeout(() => {
+      if (!touchMoved.current) {
+        setActionOpen(true)
+        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          navigator.vibrate(40)
+        }
+      }
+      setPressing(false)
+    }, 480)
+  }, [])
+
+  const cancelLongPress = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+    setPressing(false)
+  }, [])
+
+  const onTouchMove = useCallback(() => {
+    touchMoved.current = true
+    cancelLongPress()
+  }, [cancelLongPress])
+
   return (
-    <Link
-      href={`/backoffice/imoveis/${property.id}`}
-      className="mob-card-link"
-      aria-label={`Ver detalhes de ${property.name}`}
-      style={{ animationDelay: `${animationDelay}ms` }}
-    >
+    <>
       <div
-        className="mob-card-inner mob-prop-card-anim"
-        style={{ animationDelay: `${animationDelay}ms`, borderRadius: 'var(--r-xl)', overflow: 'hidden', marginBottom: 14 }}
+        onTouchStart={startLongPress}
+        onTouchEnd={cancelLongPress}
+        onTouchMove={onTouchMove}
+        onTouchCancel={cancelLongPress}
+        style={{ marginBottom: 14 }}
+      >
+      <Link
+        href={`/backoffice/imoveis/${property.id}`}
+        className="mob-card-link"
+        aria-label={`Ver detalhes de ${property.name}`}
+        style={{ animationDelay: `${animationDelay}ms` }}
+      >
+      <div
+        className={`mob-card-inner mob-prop-card-anim${pressing ? ' mob-card-pressing' : ''}`}
+        style={{ animationDelay: `${animationDelay}ms`, borderRadius: 'var(--r-xl)', overflow: 'hidden' }}
       >
         {/* Image with full overlay */}
         <div style={{ position: 'relative', aspectRatio: '3/2', background: 'var(--bg-muted)' }}>
@@ -544,6 +593,129 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
         </div>
       </div>
     </Link>
+      </div>
+
+      {/* ── Long-press Action Sheet ── */}
+      {actionOpen && (
+        <div
+          onClick={() => setActionOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 400,
+            background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'flex-end',
+            animation: 'overlayIn 150ms ease both',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: '100%',
+              background: 'var(--bg-elevated)',
+              borderRadius: '20px 20px 0 0',
+              borderTop: '1px solid rgba(184,148,58,0.22)',
+              boxShadow: '0 -8px 40px rgba(0,0,0,0.6)',
+              animation: 'sheetIn 320ms cubic-bezier(0.16,1,0.3,1) both',
+              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+            }}
+          >
+            {/* Handle */}
+            <div style={{ width: 36, height: 4, borderRadius: 6, background: 'rgba(255,255,255,0.15)', margin: '12px auto 0' }} />
+
+            {/* Property name header */}
+            <div style={{
+              padding: '14px 20px 12px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+            }}>
+              <div style={{ fontFamily: 'var(--font-serif)', fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>
+                {property.name}
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-tertiary)' }}>
+                Escolha uma ação
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ padding: '8px 0 16px' }}>
+              {/* Ver detalhes */}
+              <button
+                onClick={() => { setActionOpen(false); router.push(`/backoffice/imoveis/${property.id}`) }}
+                className="mob-btn-tap"
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                  padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer',
+                  animation: 'actionSheetItemIn 200ms ease both',
+                  animationDelay: '40ms',
+                }}
+              >
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(61,111,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ExternalLink size={17} style={{ color: 'var(--accent-400)' }} />
+                </div>
+                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 15, color: 'var(--text-primary)', fontWeight: 500 }}>Ver detalhes</span>
+              </button>
+
+              {/* Editar */}
+              <button
+                onClick={() => { setActionOpen(false); router.push(`/backoffice/imoveis/${property.id}/editar`) }}
+                className="mob-btn-tap"
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                  padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer',
+                  animation: 'actionSheetItemIn 200ms ease both',
+                  animationDelay: '80ms',
+                }}
+              >
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Pencil size={17} style={{ color: 'var(--text-secondary)' }} />
+                </div>
+                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 15, color: 'var(--text-primary)', fontWeight: 500 }}>Editar imóvel</span>
+              </button>
+
+              {/* Arquivar */}
+              {onArchive && (
+                <button
+                  onClick={() => { setActionOpen(false); onArchive() }}
+                  className="mob-btn-tap"
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                    padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer',
+                    animation: 'actionSheetItemIn 200ms ease both',
+                    animationDelay: '120ms',
+                  }}
+                >
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(184,148,58,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Archive size={17} style={{ color: T.gold }} />
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-sans)', fontSize: 15, color: 'var(--text-primary)', fontWeight: 500 }}>Arquivar imóvel</span>
+                </button>
+              )}
+
+              {/* Excluir */}
+              {onDelete && (
+                <>
+                  <div style={{ margin: '8px 20px', height: 1, background: 'rgba(255,255,255,0.06)' }} />
+                  <button
+                    onClick={() => { setActionOpen(false); onDelete() }}
+                    className="mob-btn-tap"
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                      padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer',
+                      animation: 'actionSheetItemIn 200ms ease both',
+                      animationDelay: '160ms',
+                    }}
+                  >
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(239,68,68,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Trash2 size={17} style={{ color: T.red }} />
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: 15, color: T.red, fontWeight: 500 }}>Excluir imóvel</span>
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
