@@ -26,11 +26,13 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'municipalityId inválido' }, { status: 400 })
       }
 
+      const cityName = searchParams.get('city') ?? undefined
+
       const response: IntelligenceLocationsResponse = {
         country: 'BR',
         states: [],
         municipalities: [],
-        neighborhoods: await getIntelligenceNeighborhoods(parsedMunicipalityId),
+        neighborhoods: await getIntelligenceNeighborhoods(parsedMunicipalityId, cityName),
       }
 
       return NextResponse.json(response)

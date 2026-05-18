@@ -40,18 +40,23 @@ export function useIntelligenceLocationSearch() {
     fetcher,
   )
 
-  const neighborhoodsRequest = useSWR<IntelligenceLocationsResponse>(
-    municipalityId ? `/api/intelligence/locations?country=BR&municipalityId=${municipalityId}` : null,
-    fetcher,
-  )
-
   const states = useMemo(() => statesRequest.data?.states ?? [], [statesRequest.data])
   const municipalities = useMemo(() => municipalitiesRequest.data?.municipalities ?? [], [municipalitiesRequest.data])
-  const neighborhoods = useMemo(() => neighborhoodsRequest.data?.neighborhoods ?? [], [neighborhoodsRequest.data])
+
+  // Compute selectedMunicipality before neighborhoodsRequest so we can use name in the URL key
   const selectedMunicipality = useMemo(
     () => municipalities.find((municipality) => municipality.id === municipalityId) ?? null,
     [municipalities, municipalityId],
   )
+
+  const neighborhoodsRequest = useSWR<IntelligenceLocationsResponse>(
+    (municipalityId && selectedMunicipality)
+      ? `/api/intelligence/locations?country=BR&municipalityId=${municipalityId}&city=${encodeURIComponent(selectedMunicipality.name)}`
+      : null,
+    fetcher,
+  )
+
+  const neighborhoods = useMemo(() => neighborhoodsRequest.data?.neighborhoods ?? [], [neighborhoodsRequest.data])
 
   const locationIndex = useMemo(
     () => createLocationIndex({ states, municipalities, neighborhoods, selectedMunicipality }),

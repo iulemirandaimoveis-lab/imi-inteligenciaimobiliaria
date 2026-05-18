@@ -3,6 +3,7 @@ import type {
   IntelligenceNeighborhood,
   IntelligenceState,
 } from '@/types/intelligence-location'
+import { BRAZIL_FALLBACK_CITIES } from '@/app/[lang]/(website)/inteligencia/brazilIntelligenceFallback'
 
 const IBGE_BASE_URL = 'https://servicodados.ibge.gov.br/api/v1/localidades'
 
@@ -65,6 +66,16 @@ export async function getIntelligenceMunicipalities(stateUf: string): Promise<In
   })))
 }
 
-export async function getIntelligenceNeighborhoods(_municipalityId: number): Promise<IntelligenceNeighborhood[]> {
-  return []
+export async function getIntelligenceNeighborhoods(_municipalityId: number, cityName?: string): Promise<IntelligenceNeighborhood[]> {
+  if (!cityName) return []
+
+  const cityData = BRAZIL_FALLBACK_CITIES.find(
+    (item) => item.city.toLowerCase() === cityName.toLowerCase()
+  )
+  if (!cityData) return []
+
+  return cityData.neighborhoods.map((item, index) => ({
+    id: `${cityData.state.toLowerCase()}-${cityData.city.toLowerCase().replace(/\s+/g, '-')}-${index}`,
+    name: item.neighborhood,
+  }))
 }
