@@ -40,34 +40,43 @@ const fmtBRL = (v: number) =>
 // Per-development plan configs
 export const PLAN_CONFIGS: Record<string, PlanConfig> = {
   // Loteamento Miguel Marques
+  // Plant: two diagonal parallelogram sections. Upper section (A-N) runs NW→SE;
+  // lower section (O-X) is the smaller block below-center.
   '8b9f6835-1bd0-4850-80b0-aaef2223300d': {
     imageUrl: '/images/maps/miguel-marques-plant.jpg',
     imageAspect: 2800 / 1981,
     quadraPositions: {
-      // Upper diagonal section (NW → SE), 14 quadras
-      A: { x: 12, y: 11 }, B: { x: 19, y: 13 }, C: { x: 26, y: 14 },
-      D: { x: 33, y: 16 }, E: { x: 40, y: 18 }, F: { x: 47, y: 19 },
-      G: { x: 54, y: 21 }, H: { x: 60, y: 24 }, I: { x: 65, y: 28 },
-      J: { x: 67, y: 34 }, K: { x: 62, y: 30 }, L: { x: 55, y: 26 },
-      M: { x: 48, y: 23 }, N: { x: 41, y: 28 },
-      // Lower diagonal section, 10 quadras
-      O: { x: 10, y: 55 }, P: { x: 17, y: 58 }, Q: { x: 24, y: 60 },
-      R: { x: 31, y: 63 }, S: { x: 38, y: 65 }, T: { x: 44, y: 68 },
-      U: { x: 49, y: 71 }, V: { x: 52, y: 74 }, W: { x: 48, y: 77 },
-      X: { x: 40, y: 73 },
+      // Upper section — columns run diagonally SW (bottom-left) → NE (top-right)
+      A: { x: 8,  y: 38 }, B: { x: 13, y: 33 }, C: { x: 18, y: 28 },
+      D: { x: 23, y: 23 }, E: { x: 29, y: 19 }, F: { x: 35, y: 16 },
+      G: { x: 41, y: 15 }, H: { x: 47, y: 16 }, I: { x: 53, y: 19 },
+      J: { x: 59, y: 23 }, K: { x: 64, y: 28 }, L: { x: 67, y: 34 },
+      M: { x: 64, y: 40 }, N: { x: 56, y: 35 },
+      // Lower section — columns run left → right, slightly diagonal
+      O: { x: 10, y: 61 }, P: { x: 16, y: 63 }, Q: { x: 22, y: 65 },
+      R: { x: 28, y: 67 }, S: { x: 34, y: 69 }, T: { x: 40, y: 71 },
+      U: { x: 46, y: 73 }, V: { x: 51, y: 75 }, W: { x: 48, y: 80 },
+      X: { x: 41, y: 78 },
     },
   },
   // Condomínio Alto Bellevue
+  // Plant: curved arc/horseshoe layout in the right 55% of the image.
+  // Quadras follow concentric road arcs from top-right curving to bottom-center.
   'ab7d1fc1-f069-4e3b-a515-8e1204c11247': {
     imageUrl: '/images/maps/alto-bellevue-plant.jpg',
     imageAspect: 3000 / 2120,
     quadraPositions: {
-      A: { x: 83, y: 13 }, B: { x: 88, y: 24 }, C: { x: 85, y: 35 },
-      D: { x: 79, y: 28 }, E: { x: 73, y: 19 }, F: { x: 77, y: 43 },
-      G: { x: 85, y: 51 }, H: { x: 65, y: 47 }, I: { x: 73, y: 57 },
-      J: { x: 67, y: 65 }, K: { x: 81, y: 63 }, L: { x: 59, y: 62 },
-      M: { x: 57, y: 73 }, N: { x: 68, y: 76 }, O: { x: 45, y: 72 },
-      P: { x: 38, y: 65 },
+      // Outer arc — top right, curving clockwise
+      A: { x: 76, y: 11 }, B: { x: 86, y: 20 }, C: { x: 91, y: 33 },
+      // Second arc layer
+      D: { x: 81, y: 26 }, E: { x: 72, y: 17 }, F: { x: 88, y: 45 },
+      // Mid arcs
+      G: { x: 87, y: 56 }, H: { x: 74, y: 46 }, I: { x: 78, y: 60 },
+      // Lower arcs
+      J: { x: 70, y: 68 }, K: { x: 84, y: 67 }, L: { x: 62, y: 64 },
+      // Bottom sweep
+      M: { x: 59, y: 75 }, N: { x: 71, y: 79 }, O: { x: 47, y: 74 },
+      P: { x: 40, y: 66 },
     },
   },
 };

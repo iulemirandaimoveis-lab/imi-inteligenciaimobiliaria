@@ -35,6 +35,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIdx, setLightboxIdx] = useState(0);
     const [copied, setCopied] = useState(false);
+    const [logoError, setLogoError] = useState(false);
 
     const openLightbox = (idx: number) => { setLightboxIdx(idx); setLightboxOpen(true); };
     const closeLightbox = useCallback(() => setLightboxOpen(false), []);
@@ -216,13 +217,14 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                     </span>
                                 </motion.div>
 
-                                {development.developerLogo && (
+                                {development.developerLogo && !logoError && (
                                     <motion.div variants={slideUp} className="relative w-28 h-10 md:w-36 md:h-12">
                                         <Image
                                             src={development.developerLogo}
                                             alt={development.developer}
                                             fill
                                             className="object-contain object-left sm:object-right filter brightness-0 invert opacity-60"
+                                            onError={() => setLogoError(true)}
                                         />
                                     </motion.div>
                                 )}

@@ -156,7 +156,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     const imiPropertyData: IMIProperty = {
         id: development.id,
         name: development.name,
-        price: development.priceRange?.min || Number(data.price_from || data.price_min) || 0,
+        price: development.priceRange?.min || Number(data.price_min || data.price_from) || 0,
         area: Number(data.area_from) || 0,
         bedrooms: Number(data.bedrooms_from) || 0,
         parking: Number(data.parking_from) || 0,
@@ -187,13 +187,28 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             email: 'iulemirandaimoveis@gmail.com',
             phone: '+5581997230455',
             creci: '17933',
-            avatar_url: null,
+            avatar_url: 'https://zocffccwjjyelwrgunhu.supabase.co/storage/v1/object/public/avatars/avatars/6a51365d-0433-4a0e-b585-3e6d6a6c28d7.jpg',
         }
     }
     // Jazz Boulevard test campaign: redirect all WhatsApp contacts to the manager
     const jazzWhatsapp = params.slug === 'jazz-boulevard-garanhuns' ? '558799668204' : null
     if (jazzWhatsapp) {
         brokerData = { ...brokerData, phone: `+${jazzWhatsapp}` }
+    }
+
+    // For loteamentos: override price with real minimum available lot price from subdivision_lots
+    if (data.type === 'loteamento') {
+        const { data: lotPrices } = await supabaseAdmin
+            .from('subdivision_lots')
+            .select('price')
+            .eq('development_id', development.id)
+            .eq('status', 'DISPONIVEL')
+            .not('price', 'is', null)
+            .order('price', { ascending: true })
+            .limit(1)
+        if (lotPrices && lotPrices.length > 0 && lotPrices[0].price) {
+            development.priceRange.min = Number(lotPrices[0].price)
+        }
     }
 
     // Fetch similar properties (same city, different slug, max 4)
@@ -363,19 +378,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                             )}
                         </section>
                         <section id="inteligencia">
-                            <PropertyIntelligence property={{
-                                id: development.id,
-                                name: development.name,
-                                price: development.priceRange?.min || Number(data.price_from || data.price_min) || 0,
-                                area: Number(data.area_from) || 0,
-                                bedrooms: Number(data.bedrooms_from) || 0,
-                                parking: Number(data.parking_from) || 0,
-                                neighborhood: data.neighborhood || '',
-                                city: data.city || 'Recife',
-                                state: data.state || 'PE',
-                                type: data.type || 'apartamento',
-                                status: data.status_commercial || 'published',
-                            } as IMIProperty} />
+                            <PropertyIntelligence property={imiPropertyData} />
                         </section>
                         <section id="inteligencia-bairro">
                             <NeighborhoodIntel
