@@ -364,22 +364,24 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
 
   useEffect(() => {
     const supabase = createClient();
-    supabase
-      .from('subdivision_lots')
-      .select('*')
-      .eq('development_id', developmentId)
-      .order('quadra')
-      .order('lot_number')
-      .then(({ data, error }) => {
+    const fetchLots = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('subdivision_lots')
+          .select('*')
+          .eq('development_id', developmentId)
+          .order('quadra')
+          .order('lot_number');
         if (error) console.error('[SubdivisionLotMap] fetch error:', error.message);
         // area_m2 comes as numeric string from Supabase; coerce to number to prevent runtime errors
         if (data) setLots(data.map(l => ({ ...l, area_m2: Number(l.area_m2) || 0 })) as Lot[]);
-        setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('[SubdivisionLotMap] unexpected error:', err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchLots();
   }, [developmentId]);
 
   const quadras = useMemo(() => {
