@@ -11,6 +11,8 @@ interface Lot {
   area_m2: number;
   price: number | null;
   status: string;
+  special_type?: string | null;
+  notes?: string | null;
 }
 
 interface QuadraPos {
@@ -60,23 +62,22 @@ export const PLAN_CONFIGS: Record<string, PlanConfig> = {
     },
   },
   // Condomínio Alto Bellevue
-  // Plant: curved arc/horseshoe layout in the right 55% of the image.
-  // Quadras follow concentric road arcs from top-right curving to bottom-center.
+  // Plant: curved arc/horseshoe layout. A–C are top-right arc; D–G are left+mid
+  // arcs; H–K are the inner upper-right ring; L–N are the lower sweep.
   'ab7d1fc1-f069-4e3b-a515-8e1204c11247': {
     imageUrl: '/images/maps/alto-bellevue-plant.jpg',
     imageAspect: 3000 / 2120,
     quadraPositions: {
-      // Outer arc — top right, curving clockwise
-      A: { x: 76, y: 11 }, B: { x: 86, y: 20 }, C: { x: 91, y: 33 },
-      // Second arc layer
-      D: { x: 81, y: 26 }, E: { x: 72, y: 17 }, F: { x: 88, y: 45 },
-      // Mid arcs
-      G: { x: 87, y: 56 }, H: { x: 74, y: 46 }, I: { x: 78, y: 60 },
-      // Lower arcs
-      J: { x: 70, y: 68 }, K: { x: 84, y: 67 }, L: { x: 62, y: 64 },
-      // Bottom sweep
-      M: { x: 59, y: 75 }, N: { x: 71, y: 79 }, O: { x: 47, y: 74 },
-      P: { x: 40, y: 66 },
+      // Upper-right arc (entrada side)
+      A: { x: 72, y: 18 }, B: { x: 82, y: 28 }, C: { x: 89, y: 42 },
+      // Left arc — outer rows
+      D: { x: 52, y: 22 }, E: { x: 62, y: 28 }, F: { x: 86, y: 56 },
+      // Mid inner arc
+      G: { x: 83, y: 64 }, H: { x: 68, y: 12 }, I: { x: 76, y: 42 },
+      // Lower sweep
+      J: { x: 72, y: 55 }, K: { x: 85, y: 72 }, L: { x: 62, y: 55 },
+      // Bottom center
+      M: { x: 57, y: 66 }, N: { x: 68, y: 74 },
     },
   },
 };
