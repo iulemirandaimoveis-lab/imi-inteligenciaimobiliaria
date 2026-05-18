@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageCircle, X, MapPin, Ruler, DollarSign, Filter, ChevronDown, ChevronUp, BarChart2, List, Map } from 'lucide-react';
+import { MessageCircle, X, MapPin, Ruler, DollarSign, Filter, ChevronDown, ChevronUp, BarChart2, List, Map as MapIcon } from 'lucide-react';
 import SubdivisionPlanView, { PLAN_VIEW_IDS } from './SubdivisionPlanView';
 
 interface Lot {
@@ -375,22 +375,30 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   const [showFilters, setShowFilters] = useState(false);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [minArea, setMinArea] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<'list' | 'plan'>('list');
-
+  // Default to plan view when a plant image exists — client sees the map immediately
   const hasPlanView = PLAN_VIEW_IDS.has(developmentId);
+  const [viewMode, setViewMode] = useState<'list' | 'plan'>(() => hasPlanView ? 'plan' : 'list');
 
   useEffect(() => {
     const supabase = createClient();
-    supabase
-      .from('subdivision_lots')
-      .select('*')
-      .eq('development_id', developmentId)
-      .order('quadra')
-      .order('lot_number')
-      .then(({ data }) => {
-        if (data) setLots(data as Lot[]);
+    const fetchLots = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('subdivision_lots')
+          .select('*')
+          .eq('development_id', developmentId)
+          .order('quadra')
+          .order('lot_number');
+        if (error) console.error('[SubdivisionLotMap] fetch error:', error.message);
+        // area_m2 comes as numeric string from Supabase; coerce to number to prevent runtime errors
+        if (data) setLots(data.map(l => ({ ...l, area_m2: Number(l.area_m2) || 0 })) as Lot[]);
+      } catch (err) {
+        console.error('[SubdivisionLotMap] unexpected error:', err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchLots();
   }, [developmentId]);
 
   const quadras = useMemo(() => {
@@ -524,7 +532,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
                 }}
               >
-                <Map size={12} />
+                <MapIcon size={12} />
                 Planta
               </button>
             </div>

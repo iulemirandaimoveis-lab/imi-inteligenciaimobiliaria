@@ -9,6 +9,7 @@ import DevelopmentGallery from '../components/DevelopmentGallery'
 import DevelopmentLocation from '../components/DevelopmentLocation'
 import DevelopmentUnits from '../components/DevelopmentUnits'
 import SubdivisionLotMap from '../components/SubdivisionLotMap'
+import SubdivisionErrorBoundary from '../components/SubdivisionErrorBoundary'
 import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -330,11 +331,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </section>
                         <section id={isLoteamento ? 'mapa' : 'unidades'}>
                             {isLoteamento ? (
-                                <SubdivisionLotMap
-                                    developmentId={development.id}
-                                    developmentName={development.name}
-                                    whatsappPhone={jazzWhatsapp ?? (brokerData?.phone?.replace(/\D/g, '') ?? '5581997230455')}
-                                />
+                                <SubdivisionErrorBoundary developmentName={development.name}>
+                                    <SubdivisionLotMap
+                                        developmentId={development.id}
+                                        developmentName={development.name}
+                                        whatsappPhone={jazzWhatsapp ?? (brokerData?.phone?.replace(/\D/g, '') ?? '5581997230455')}
+                                    />
+                                </SubdivisionErrorBoundary>
                             ) : (
                                 <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
                             )}
