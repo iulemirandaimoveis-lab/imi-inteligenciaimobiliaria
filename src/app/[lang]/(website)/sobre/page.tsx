@@ -54,6 +54,30 @@ const stats = [
     { number: '98%', label: 'Satisfação dos Clientes' },
 ]
 
+const certifications = [
+    {
+        title: 'Curso de Extensão — Wealth Management, Family Office e Gestão de Recursos de Terceiros',
+        institution: 'PUCRS — Escola de Negócios',
+        year: '2020',
+        hours: '10 horas',
+        image: '/certificados/pucrs-wealth-management.jpg',
+    },
+    {
+        title: 'Ericksonian Hypnosis Training — Level I',
+        institution: 'ACT Institute (ABH, IHA, ASCH, ISH, NBCCH)',
+        year: '2017',
+        hours: '36 horas',
+        image: '/certificados/act-ericksonian-level-1.jpg',
+    },
+    {
+        title: 'Avaliação de Imóveis e Perícias Judiciais',
+        institution: 'CRECI-PE — 7ª Região',
+        year: '2025',
+        hours: '24 horas',
+        image: '/certificados/creci-pe-avaliacao-pericias-judiciais.jpg',
+    },
+]
+
 const SOCIAL = [
     {
         icon: Linkedin,
@@ -246,6 +270,34 @@ export default async function AboutPage({
                                 <Linkedin className="w-4 h-4" strokeWidth={2} />
                                 Conectar no LinkedIn
                             </a>
+
+
+                            <div className="mt-10 rounded-2xl border border-[#C8A44A]/20 bg-[#C8A44A]/5 p-6">
+                                <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.2em] mb-5">
+                                    Certificações e Formação Complementar
+                                </p>
+                                <div className="space-y-4">
+                                    {certifications.map((cert) => (
+                                        <article key={cert.title} className="rounded-xl border border-white/10 bg-[#0D0F14]/60 overflow-hidden">
+                                            <a href={cert.image} target="_blank" rel="noopener noreferrer" className="block relative aspect-[16/10] border-b border-white/10">
+                                                <Image
+                                                    src={cert.image}
+                                                    alt={`Certificado: ${cert.title}`}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            </a>
+                                            <div className="p-4">
+                                                <p className="text-white text-sm font-semibold leading-snug">{cert.title}</p>
+                                                <p className="text-white/60 text-sm mt-1">{cert.institution}</p>
+                                                <p className="text-[#C8A44A] text-xs font-semibold uppercase tracking-[0.14em] mt-2">
+                                                    {cert.hours} · {cert.year}
+                                                </p>
+                                            </div>
+                                        </article>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
