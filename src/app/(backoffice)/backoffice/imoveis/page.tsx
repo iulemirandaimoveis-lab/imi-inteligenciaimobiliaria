@@ -1239,8 +1239,7 @@ function MobileImoveisList(props: SharedProps) {
     filters, setFilters, favorites,
     toggleFavorite, activeFiltersCount, sortField, setSortField, sortDir, setSortDir,
     properties, market, setMarket, listingType, setListingType,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onArchive: _onArchive, onDelete: _onDelete,
+    onArchive, onDelete,
   } = props
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState('')
@@ -1377,6 +1376,8 @@ function MobileImoveisList(props: SharedProps) {
               property={p}
               isFavorite={favorites.has(p.id)}
               onFavorite={() => toggleFavorite(p.id)}
+              onDelete={() => onDelete(p.id)}
+              onArchive={() => onArchive(p.id)}
               animationDelay={Math.min(i * 60, 300)}
             />
           ))
