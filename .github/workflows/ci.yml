@@ -9,7 +9,6 @@ on:
 
 env:
   SENTRYCLI_SKIP_DOWNLOAD: '1'
-  npm_config_cache: ~/.npm-v2
 
 jobs:
   typecheck:
@@ -20,7 +19,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - run: npm ci
       - name: Debug versions
         run: |
@@ -65,7 +63,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npx jest --passWithNoTests --forceExit --maxWorkers=2 src/__tests__
       - name: Intelligence engine unit tests
@@ -80,7 +77,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npm run lint
 
@@ -93,7 +89,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - run: npm ci
       - name: npm audit
         run: npm audit --audit-level=critical
@@ -109,7 +104,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - name: Cache Next.js build
         uses: actions/cache@v4
         with:
