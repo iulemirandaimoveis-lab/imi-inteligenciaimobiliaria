@@ -9,6 +9,7 @@ on:
 
 env:
   SENTRYCLI_SKIP_DOWNLOAD: '1'
+  npm_config_cache: ~/.npm-v2
 
 jobs:
   typecheck:
@@ -18,12 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-v2-${{ runner.os }}-
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: npm ci
       - name: Debug versions
         run: |
@@ -67,12 +64,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-v2-${{ runner.os }}-
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npx jest --passWithNoTests --forceExit --maxWorkers=2 src/__tests__
       - name: Intelligence engine unit tests
@@ -86,12 +79,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-v2-${{ runner.os }}-
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npm run lint
 
@@ -103,12 +92,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-v2-${{ runner.os }}-
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: npm ci
       - name: npm audit
         run: npm audit --audit-level=critical
@@ -123,12 +108,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-v2-${{ runner.os }}-
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Cache Next.js build
         uses: actions/cache@v4
         with:
@@ -137,6 +118,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
             ${{ runner.os }}-nextjs-
+        continue-on-error: true
       - run: npm ci
       - run: npx next build
         env:
