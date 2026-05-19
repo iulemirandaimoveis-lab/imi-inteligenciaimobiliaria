@@ -53,27 +53,32 @@ export const PLAN_CONFIGS: Record<string, PlanConfig> = {
   '8b9f6835-1bd0-4850-80b0-aaef2223300d': {
     imageUrl: '/images/maps/miguel-marques-plant.jpg',
     imageAspect: 2800 / 1981,
+    // Upper diagonal block (A–N): rows run lower-left → upper-right
+    // Lower diagonal block (O–X): rows run upper-left → lower-right
     quadraPositions: {
-      A: { x: 8,  y: 38 }, B: { x: 13, y: 33 }, C: { x: 18, y: 28 },
-      D: { x: 23, y: 23 }, E: { x: 29, y: 19 }, F: { x: 35, y: 16 },
-      G: { x: 41, y: 15 }, H: { x: 47, y: 16 }, I: { x: 53, y: 19 },
-      J: { x: 59, y: 23 }, K: { x: 64, y: 28 }, L: { x: 67, y: 34 },
-      M: { x: 64, y: 40 }, N: { x: 56, y: 35 },
-      O: { x: 10, y: 61 }, P: { x: 16, y: 63 }, Q: { x: 22, y: 65 },
-      R: { x: 28, y: 67 }, S: { x: 34, y: 69 }, T: { x: 40, y: 71 },
-      U: { x: 46, y: 73 }, V: { x: 51, y: 75 }, W: { x: 48, y: 80 },
-      X: { x: 41, y: 78 },
+      A: { x: 8,  y: 44 }, B: { x: 15, y: 38 }, C: { x: 22, y: 32 },
+      D: { x: 29, y: 26 }, E: { x: 37, y: 21 }, F: { x: 45, y: 16 },
+      G: { x: 53, y: 11 }, H: { x: 61, y: 8  }, I: { x: 67, y: 13 },
+      J: { x: 63, y: 20 }, K: { x: 55, y: 26 }, L: { x: 47, y: 31 },
+      M: { x: 39, y: 36 }, N: { x: 31, y: 41 },
+      O: { x: 22, y: 59 }, P: { x: 30, y: 64 }, Q: { x: 38, y: 69 },
+      R: { x: 46, y: 74 }, S: { x: 54, y: 79 }, T: { x: 59, y: 73 },
+      U: { x: 51, y: 68 }, V: { x: 43, y: 63 }, W: { x: 35, y: 77 },
+      X: { x: 27, y: 72 },
     },
   },
   'ab7d1fc1-f069-4e3b-a515-8e1204c11247': {
     imageUrl: '/images/maps/alto-bellevue-plant.jpg',
     imageAspect: 3000 / 2120,
+    // Fan/arc layout. Left ~33% of image is the title block.
+    // Development occupies x≈35–97%, y≈5–92%.
+    // Arc quadras: outer ring (top-right) → inner rings → lower area.
     quadraPositions: {
-      A: { x: 72, y: 18 }, B: { x: 82, y: 28 }, C: { x: 89, y: 42 },
-      D: { x: 52, y: 22 }, E: { x: 62, y: 28 }, F: { x: 86, y: 56 },
-      G: { x: 83, y: 64 }, H: { x: 68, y: 12 }, I: { x: 76, y: 42 },
-      J: { x: 72, y: 55 }, K: { x: 85, y: 72 }, L: { x: 62, y: 55 },
-      M: { x: 57, y: 66 }, N: { x: 68, y: 74 },
+      A: { x: 55, y: 9  }, B: { x: 65, y: 7  }, C: { x: 77, y: 10 },
+      D: { x: 85, y: 19 }, E: { x: 65, y: 24 }, F: { x: 89, y: 38 },
+      G: { x: 86, y: 53 }, H: { x: 51, y: 37 }, I: { x: 65, y: 45 },
+      J: { x: 76, y: 53 }, K: { x: 86, y: 68 }, L: { x: 51, y: 57 },
+      M: { x: 64, y: 70 }, N: { x: 46, y: 70 },
     },
   },
 };
@@ -389,26 +394,89 @@ export default function SubdivisionPlanView({
   const zoomOut = useCallback(() => setScale(s => clampScale(s / 1.3)), [clampScale]);
   const resetView = useCallback(() => { setScale(1); setOffset({ x: 0, y: 0 }); }, []);
 
-  // ─── Mouse events ──────────────────────────────────────────────────────────
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    const factor = e.deltaY > 0 ? 0.87 : 1.15;
-    const clientX = e.clientX;
-    const clientY = e.clientY;
-    setScale(prev => {
-      const next = clampScale(prev * factor);
-      if (!containerRef.current) return next;
-      const rect = containerRef.current.getBoundingClientRect();
-      const cx = clientX - rect.left - rect.width / 2;
-      const cy = clientY - rect.top - rect.height / 2;
-      setOffset(o => ({
-        x: cx - (next / prev) * (cx - o.x),
-        y: cy - (next / prev) * (cy - o.y),
-      }));
-      return next;
-    });
+  // ─── Native wheel listener (passive:false so e.preventDefault works) ────────
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const factor = e.deltaY > 0 ? 0.87 : 1.15;
+      setScale(prev => {
+        const next = clampScale(prev * factor);
+        if (!containerRef.current) return next;
+        const rect = containerRef.current.getBoundingClientRect();
+        const cx = e.clientX - rect.left - rect.width / 2;
+        const cy = e.clientY - rect.top - rect.height / 2;
+        setOffset(o => ({
+          x: cx - (next / prev) * (cx - o.x),
+          y: cy - (next / prev) * (cy - o.y),
+        }));
+        return next;
+      });
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
   }, [clampScale]);
 
+  // ─── Native touch listeners (passive:false so e.preventDefault works) ───────
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        lastTouchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, dist: 0 };
+      } else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        lastTouchRef.current = {
+          x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+          y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
+          dist: Math.sqrt(dx * dx + dy * dy),
+        };
+      }
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (!lastTouchRef.current) return;
+      if (e.touches.length === 1) {
+        const dx = e.touches[0].clientX - lastTouchRef.current.x;
+        const dy = e.touches[0].clientY - lastTouchRef.current.y;
+        setOffset(o => ({ x: o.x + dx, y: o.y + dy }));
+        lastTouchRef.current = { ...lastTouchRef.current, x: e.touches[0].clientX, y: e.touches[0].clientY };
+      } else if (e.touches.length === 2 && lastTouchRef.current.dist > 0) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const ratio = dist / lastTouchRef.current.dist;
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        setScale(prev => {
+          const next = clampScale(prev * ratio);
+          if (!containerRef.current) return next;
+          const rect = containerRef.current.getBoundingClientRect();
+          const cx = midX - rect.left - rect.width / 2;
+          const cy = midY - rect.top - rect.height / 2;
+          setOffset(o => ({
+            x: cx - (next / prev) * (cx - o.x),
+            y: cy - (next / prev) * (cy - o.y),
+          }));
+          return next;
+        });
+        lastTouchRef.current = { ...lastTouchRef.current, dist };
+      }
+    };
+    const onTouchEnd = () => { lastTouchRef.current = null; };
+    el.addEventListener('touchstart', onTouchStart, { passive: false });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd);
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [clampScale]);
+
+  // ─── Mouse events ──────────────────────────────────────────────────────────
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('[data-interactive]')) return;
     setIsDragging(true);
@@ -424,54 +492,6 @@ export default function SubdivisionPlanView({
   }, [isDragging]);
 
   const handleMouseUp = useCallback(() => setIsDragging(false), []);
-
-  // ─── Touch events ──────────────────────────────────────────────────────────
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 1) {
-      lastTouchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, dist: 0 };
-    } else if (e.touches.length === 2) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      lastTouchRef.current = {
-        x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
-        y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
-        dist: Math.sqrt(dx * dx + dy * dy),
-      };
-    }
-  }, []);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
-    if (!lastTouchRef.current) return;
-
-    if (e.touches.length === 1) {
-      const dx = e.touches[0].clientX - lastTouchRef.current.x;
-      const dy = e.touches[0].clientY - lastTouchRef.current.y;
-      setOffset(o => ({ x: o.x + dx, y: o.y + dy }));
-      lastTouchRef.current = { ...lastTouchRef.current, x: e.touches[0].clientX, y: e.touches[0].clientY };
-    } else if (e.touches.length === 2 && lastTouchRef.current.dist > 0) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const ratio = dist / lastTouchRef.current.dist;
-      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-
-      setScale(prev => {
-        const next = clampScale(prev * ratio);
-        if (!containerRef.current) return next;
-        const rect = containerRef.current.getBoundingClientRect();
-        const cx = midX - rect.left - rect.width / 2;
-        const cy = midY - rect.top - rect.height / 2;
-        setOffset(o => ({
-          x: cx - (next / prev) * (cx - o.x),
-          y: cy - (next / prev) * (cy - o.y),
-        }));
-        return next;
-      });
-      lastTouchRef.current = { ...lastTouchRef.current, dist };
-    }
-  }, []);
 
   // ─── Fullscreen ─────────────────────────────────────────────────────────────
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -510,7 +530,7 @@ export default function SubdivisionPlanView({
     { key: 'NEGOCIACAO', label: 'Negociação',   value: stats.negotiation, color: '#D97706' },
   ];
 
-  const containerHeight = isFullscreen ? '100vh' : 'clamp(380px, 58vw, 680px)';
+  const containerHeight = isFullscreen ? '100dvh' : 'clamp(360px, 62vh, 720px)';
 
   return (
     <div
@@ -611,15 +631,13 @@ export default function SubdivisionPlanView({
           overflow: 'hidden',
           cursor: isDragging ? 'grabbing' : 'grab',
           background: '#0D1F30',
+          touchAction: 'none',
+          userSelect: 'none',
         }}
-        onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={() => { lastTouchRef.current = null; }}
       >
         {/* Transformable layer */}
         <div
@@ -782,12 +800,13 @@ export default function SubdivisionPlanView({
           </div>
         </div>
 
-        {/* ── HINT TOOLTIP ── */}
+        {/* ── HINT TOOLTIP (desktop only) ── */}
         <div
+          className="hidden md:block"
           style={{ position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', zIndex: 10, pointerEvents: 'none' }}
         >
           <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.5)', background: 'rgba(11,25,40,0.85)', padding: '5px 14px', borderRadius: 99, whiteSpace: 'nowrap', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.07)', display: 'block' }}>
-            Arraste · Scroll zoom · Toque numa quadra
+            Arraste · Scroll zoom · Clique numa quadra
           </span>
         </div>
 
@@ -830,13 +849,16 @@ export default function SubdivisionPlanView({
         </button>
 
         {/* ── MOBILE FILTER CHIPS ── */}
-        <div className="md:hidden" style={{ position: 'absolute', top: 44, left: 8, right: 8, display: 'flex', gap: 5, zIndex: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div
+          className="md:hidden"
+          style={{ position: 'absolute', top: 10, left: 8, right: 8, display: 'flex', gap: 5, zIndex: 10, overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', paddingBottom: 2 }}
+        >
           {statusRows.slice(1).map(row => (
             <button
               key={row.key}
               data-interactive="true"
               onClick={() => setFilterStatus(prev => prev === row.key ? 'ALL' : row.key)}
-              style={{ fontSize: 9, fontWeight: 700, padding: '4px 10px', borderRadius: 99, background: filterStatus === row.key ? row.color : 'rgba(11,25,40,0.88)', color: '#fff', border: filterStatus === row.key ? 'none' : '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', backdropFilter: 'blur(8px)', boxShadow: filterStatus === row.key ? `0 0 10px ${row.color}66` : 'none' }}
+              style={{ fontSize: 9, fontWeight: 700, padding: '5px 12px', borderRadius: 99, background: filterStatus === row.key ? row.color : 'rgba(11,25,40,0.9)', color: '#fff', border: filterStatus === row.key ? 'none' : '1px solid rgba(255,255,255,0.18)', cursor: 'pointer', backdropFilter: 'blur(8px)', boxShadow: filterStatus === row.key ? `0 0 10px ${row.color}66` : 'none', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               {row.value} {row.label}
             </button>
@@ -899,7 +921,7 @@ export default function SubdivisionPlanView({
               borderRadius: '20px 20px 0 0',
               boxShadow: '0 -8px 40px rgba(0,0,0,0.5)',
               border: '1px solid rgba(255,255,255,0.08)',
-              maxHeight: '70%',
+              maxHeight: '60%',
               display: 'flex',
               flexDirection: 'column',
               overflow: 'hidden',
