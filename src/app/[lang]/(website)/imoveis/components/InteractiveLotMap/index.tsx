@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import {
   MessageCircle, X, Ruler, DollarSign, Filter, ZoomIn, ZoomOut,
-  Maximize2, RotateCcw, ChevronDown, MapPin, Sun, Map, ImageIcon,
+  Maximize2, RotateCcw, ChevronDown, MapPin, Sun, Map as MapTabIcon, ImageIcon,
 } from 'lucide-react';
 import { generateMapLayout, LOT_W } from './layout';
 import SubdivisionPlanView, { PLAN_VIEW_IDS } from '../SubdivisionPlanView';
@@ -832,7 +832,7 @@ export default function InteractiveLotMap({ developmentId, developmentName, what
           {hasPlanView && (
             <div style={{ display: 'flex', gap: 2, background: '#F0EDE5', borderRadius: 10, padding: 3 }}>
               {([
-                { key: 'map',  label: 'Mapa', icon: <Map size={12} /> },
+                { key: 'map',  label: 'Mapa', icon: <MapTabIcon size={12} /> },
                 { key: 'plan', label: 'Planta', icon: <ImageIcon size={12} /> },
               ] as const).map(tab => (
                 <button
