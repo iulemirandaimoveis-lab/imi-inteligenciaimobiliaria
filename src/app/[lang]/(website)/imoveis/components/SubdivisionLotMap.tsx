@@ -1043,7 +1043,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         developmentId={developmentId}
         developmentName={developmentName}
         whatsappPhone={whatsappPhone}
-        onLotClick={setSelectedLot}
+        onLotClick={(lot) => setSelectedLot(lot)}
       />
     );
   }
@@ -1297,7 +1297,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           >
             <RankingSection
               lots={lots}
-              onLotClick={setSelectedLot}
+              onLotClick={(lot) => setSelectedLot(lot)}
               whatsappPhone={whatsappPhone}
               developmentName={developmentName}
             />
@@ -1326,7 +1326,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           developmentId={developmentId}
           developmentName={developmentName}
           whatsappPhone={whatsappPhone}
-          onLotClick={setSelectedLot}
+          onLotClick={(lot) => setSelectedLot(lot)}
         />
       )}
 
@@ -1354,7 +1354,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                 key={quadra}
                 quadra={quadra}
                 lots={qLots}
-                onLotClick={setSelectedLot}
+                onLotClick={(lot) => setSelectedLot(lot)}
                 isActive={activeQuadras.has(quadra)}
                 onToggle={() => toggleQuadra(quadra)}
                 compareIds={compareIds}
