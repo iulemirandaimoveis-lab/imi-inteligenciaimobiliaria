@@ -16,8 +16,8 @@ interface Lot {
   area_m2: number;
   price: number | null;
   status: string;
-  special_type?: string | null;
-  notes?: string | null;
+  special_type: string | null;
+  notes: string | null;
 }
 
 interface QuadraPos { x: number; y: number }

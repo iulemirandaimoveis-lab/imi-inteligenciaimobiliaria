@@ -151,7 +151,7 @@ export default function ImobiliáriasParceirasPage() {
     ] as const
 
     return (
-        <div className="min-h-screen" style={{ background: T.background }}>
+        <div className="min-h-screen" style={{ background: T.base }}>
             <PageIntelHeader
                 moduleLabel="PARCEIROS"
                 title="Imobiliárias Parceiras"
@@ -255,7 +255,7 @@ export default function ImobiliáriasParceirasPage() {
                             className="flex gap-3 p-4 rounded-xl text-sm"
                             style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)' }}
                         >
-                            <AlertCircle size={18} style={{ color: '#f59e0b', shrink: 0 }} className="shrink-0 mt-0.5" />
+                            <AlertCircle size={18} style={{ color: '#f59e0b', flexShrink: 0 }} className="shrink-0 mt-0.5" />
                             <div style={{ color: T.text }}>
                                 <strong>Contrato na pessoa física (atual)</strong> — Jule Miranda da S. Bezerra (CPF 048.986.523-90, CRECI-PE 17933).
                                 Assim que o CNPJ da IMI for aberto, o contrato será aditado para pessoa jurídica com os mesmos termos.
@@ -264,7 +264,7 @@ export default function ImobiliáriasParceirasPage() {
 
                         <div
                             className="rounded-xl divide-y"
-                            style={{ background: T.surface, border: `1px solid ${T.border}`, divideColor: T.border }}
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
                         >
                             {/* Contratado */}
                             <div className="p-5">
