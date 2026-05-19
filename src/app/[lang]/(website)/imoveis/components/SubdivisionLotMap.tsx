@@ -410,6 +410,18 @@ function LotComparator({
 }) {
   const scores = useMemo(() => compareLots.map((l: Lot) => computeScore(l, allLots)), [compareLots, allLots]) as LotScore[];
 
+  // Index of the lot with the highest average IMI score (among available lots)
+  const bestIdx = useMemo(() => {
+    let best = -1;
+    let bestAvg = -1;
+    scores.forEach((s: LotScore, i: number) => {
+      if (compareLots[i].status !== 'DISPONIVEL') return;
+      const avg = (s.investment + s.living + s.costBenefit + s.liquidity) / 4;
+      if (avg > bestAvg) { bestAvg = avg; best = i; }
+    });
+    return best;
+  }, [scores, compareLots]) as number;
+
   const rows = [
     { label: 'Quadra / Lote', render: (l: Lot) => `Q${l.quadra} — L${l.lot_number}` },
     { label: 'Área', render: (l: Lot) => fmtM2(l.area_m2) },
@@ -470,7 +482,7 @@ function LotComparator({
                     Q{lot.quadra}–L{lot.lot_number}
                   </p>
                   <p style={{ fontSize: 10, color: '#948F84', margin: '2px 0 0' }}>{cfg.label}</p>
-                  {i === 0 && scores[0].costBenefit >= 70 && (
+                  {i === bestIdx && (
                     <span style={{ fontSize: 8, fontWeight: 800, padding: '2px 5px', borderRadius: 4, background: '#FEF3C7', color: '#92400E', display: 'block', marginTop: 3 }}>
                       RECOMENDADO
                     </span>
@@ -535,20 +547,23 @@ function LotComparator({
             })}
           </div>
 
-          {/* WhatsApp CTA for best lot */}
-          {compareLots.length > 0 && compareLots[0].status === 'DISPONIVEL' && (
-            <a
-              href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(
-                `Olá! Após comparar os lotes no ${developmentName}, tenho interesse no Lote ${compareLots[0].lot_number} da Quadra ${compareLots[0].quadra}. Gostaria de saber mais.`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, borderRadius: 14, background: '#C8A44A', color: '#0B1928', fontSize: 13, fontWeight: 800, textDecoration: 'none', marginTop: 12, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
-            >
-              <MessageCircle size={15} />
-              Tenho Interesse no Lote 1
-            </a>
-          )}
+          {/* WhatsApp CTA for best-scored available lot */}
+          {bestIdx >= 0 && (() => {
+            const best = compareLots[bestIdx];
+            return (
+              <a
+                href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(
+                  `Olá! Após comparar os lotes no ${developmentName}, tenho interesse no Lote ${best.lot_number} da Quadra ${best.quadra}. Gostaria de saber mais.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, borderRadius: 14, background: '#C8A44A', color: '#0B1928', fontSize: 13, fontWeight: 800, textDecoration: 'none', marginTop: 12, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+              >
+                <MessageCircle size={15} />
+                Tenho Interesse no Lote {best.lot_number} (Q{best.quadra})
+              </a>
+            );
+          })()}
         </div>
       </motion.div>
     </motion.div>
