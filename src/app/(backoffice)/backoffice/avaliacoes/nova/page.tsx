@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { T, inputStyle, cardStyle } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -7,9 +7,18 @@ import { toast } from 'sonner'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import {
   ArrowLeft, ArrowRight, Building2, MapPin, Search, Plus, Trash2,
-  FileText, Save, Loader2, DollarSign, Calculator, Eye, Check,
-  BarChart2, Download, Scale, ChevronDown
+  FileText, Save, Loader2, Eye, Check,
+  BarChart2, Download, Scale, ChevronDown, Camera, X, Image as ImageIcon
 } from 'lucide-react'
+
+interface PhotoUpload {
+  id: string
+  file: File
+  preview: string
+  caption: string
+  url?: string
+  uploading?: boolean
+}
 
 // ============================================================
 // TYPES
@@ -118,6 +127,10 @@ export default function NovaPTAMPage() {
   const [subjectArea, setSubjectArea] = useState('')
   const [showDevDropdown, setShowDevDropdown] = useState(false)
 
+  // Photos (part of step 1)
+  const [photos, setPhotos] = useState<PhotoUpload[]>([])
+  const photoInputRef = useRef<HTMLInputElement>(null)
+
   // Step 2: purpose
   const [purpose, setPurpose] = useState('Venda')
   const [requesterName, setRequesterName] = useState('')
@@ -223,10 +236,68 @@ export default function NovaPTAMPage() {
     if (step === 5) doCalculate()
   }, [step, doCalculate])
 
+  // Photo upload handlers
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    const newPhotos: PhotoUpload[] = files.slice(0, 10 - photos.length).map(file => ({
+      id: crypto.randomUUID(),
+      file,
+      preview: URL.createObjectURL(file),
+      caption: '',
+    }))
+    setPhotos(prev => [...prev, ...newPhotos])
+    if (e.target) e.target.value = ''
+  }
+
+  const removePhoto = (id: string) => {
+    setPhotos(prev => {
+      const photo = prev.find(p => p.id === id)
+      if (photo) URL.revokeObjectURL(photo.preview)
+      return prev.filter(p => p.id !== id)
+    })
+  }
+
+  const uploadPhotosToStorage = async (): Promise<{ url: string; name: string; caption: string }[]> => {
+    const supabase = createClient()
+    const uploaded: { url: string; name: string; caption: string }[] = []
+
+    for (const photo of photos) {
+      if (photo.url) {
+        uploaded.push({ url: photo.url, name: photo.file.name, caption: photo.caption })
+        continue
+      }
+      try {
+        setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, uploading: true } : p))
+        const ext = photo.file.name.split('.').pop() || 'jpg'
+        const path = `ptam-photos/${Date.now()}-${crypto.randomUUID().slice(0, 8)}.${ext}`
+        const { error } = await supabase.storage
+          .from('avaliacoes')
+          .upload(path, photo.file, { cacheControl: '3600', upsert: false })
+
+        if (error) {
+          console.warn('[PHOTO_UPLOAD]', error.message)
+          continue
+        }
+
+        const { data: { publicUrl } } = supabase.storage.from('avaliacoes').getPublicUrl(path)
+        setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, url: publicUrl, uploading: false } : p))
+        uploaded.push({ url: publicUrl, name: photo.file.name, caption: photo.caption })
+      } catch (err) {
+        console.warn('[PHOTO_UPLOAD_ERR]', err)
+        setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, uploading: false } : p))
+      }
+    }
+
+    return uploaded
+  }
+
   // Save everything to DB
   const saveToDatabase = async () => {
     setSaving(true)
     try {
+      // 0. Upload photos
+      const uploadedPhotos = photos.length > 0 ? await uploadPhotosToStorage() : []
+
       // 1. Create valuation
       const res1 = await fetch('/api/valuations', {
         method: 'POST',
@@ -236,6 +307,8 @@ export default function NovaPTAMPage() {
           purpose,
           requester_name: requesterName,
           method: 'comparative_direct',
+          subject_area_sqm: parseFloat(subjectArea) || null,
+          photos: uploadedPhotos,
         }),
       })
       const { data: val } = await res1.json()
@@ -402,7 +475,7 @@ export default function NovaPTAMPage() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12, marginBottom: 20 }}>
         <div>
           <label style={labelStyle}>Área do Imóvel (m²) *</label>
           <input
@@ -413,6 +486,97 @@ export default function NovaPTAMPage() {
             onChange={e => setSubjectArea(e.target.value)}
           />
         </div>
+      </div>
+
+      {/* Photo upload */}
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+          <label style={{ ...labelStyle, marginBottom: 0 }}>
+            <Camera size={14} style={{ marginRight: 4, verticalAlign: 'middle', color: T.gold }} />
+            Fotos do Imóvel ({photos.length}/10)
+          </label>
+          {photos.length < 10 && (
+            <button
+              type="button"
+              style={{ ...btnSecondary, padding: '6px 14px', fontSize: 12 }}
+              onClick={() => photoInputRef.current?.click()}
+            >
+              <Plus size={14} /> Adicionar
+            </button>
+          )}
+        </div>
+        <input
+          ref={photoInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handlePhotoSelect}
+        />
+        {photos.length === 0 ? (
+          <div
+            onClick={() => photoInputRef.current?.click()}
+            style={{
+              border: `2px dashed ${T.border}`,
+              borderRadius: 10,
+              padding: '20px 16px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              color: T.textMuted,
+              fontSize: 12,
+            }}
+          >
+            <ImageIcon size={28} style={{ opacity: 0.4, display: 'block', margin: '0 auto 8px' }} />
+            Clique para adicionar fotos do imóvel (opcional, máx. 10)
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: mobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+            gap: 8,
+          }}>
+            {photos.map(photo => (
+              <div key={photo.id} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', border: `1px solid ${T.border}` }}>
+                <img
+                  src={photo.preview}
+                  alt={photo.caption || photo.file.name}
+                  style={{ width: '100%', height: 90, objectFit: 'cover', display: 'block' }}
+                />
+                {photo.uploading && (
+                  <div style={{
+                    position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Loader2 size={20} style={{ color: T.gold }} className="animate-spin" />
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => removePhoto(photo.id)}
+                  style={{
+                    position: 'absolute', top: 4, right: 4,
+                    background: 'rgba(0,0,0,0.6)', border: 'none',
+                    borderRadius: '50%', width: 22, height: 22,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', color: '#fff',
+                  }}
+                >
+                  <X size={12} />
+                </button>
+                <input
+                  value={photo.caption}
+                  onChange={e => setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, caption: e.target.value } : p))}
+                  placeholder="Legenda..."
+                  style={{
+                    width: '100%', padding: '4px 6px', fontSize: 10,
+                    background: T.surfaceAlt, border: 'none', color: T.text,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -48,6 +48,9 @@ export async function POST(request: NextRequest) {
         requester_name: body.requester_name || null,
         method: body.method || 'comparative_direct',
         status: 'draft',
+        subject_area_sqm: body.subject_area_sqm ? Number(body.subject_area_sqm) : null,
+        subject_address: body.subject_address || null,
+        photos: body.photos || [],
       })
       .select()
       .single()
