@@ -60,6 +60,10 @@ const avaliacaoPostSchema = z.object({
     formaPagamento: z.string().optional(),
     status: z.string().optional(),
     comparaveis: z.any().optional(),
+    laudo_content: z.string().optional(),
+    laudo_ia: z.string().optional(),
+    area: z.any().optional(),
+    cliente: z.string().optional(),
 }).passthrough()
 
 // ─── Zod schema for PUT body ────────────────────────────────────────────────
@@ -127,7 +131,7 @@ export const POST = apiHandler(avaliacaoPostSchema, async (_request: NextRequest
         cidade: body.cidade || 'Recife',
         estado: body.estado || 'PE',
         cep: body.cep,
-        area_privativa: body.area_privativa || body.areaPrivativa ? Number(body.areaPrivativa || body.area_privativa) : null,
+        area_privativa: (body.area_privativa || body.areaPrivativa || body.area) ? Number(body.areaPrivativa || body.area_privativa || body.area) : null,
         area_total: body.area_total || body.areaTotal ? Number(body.areaTotal || body.area_total) : null,
         quartos: body.quartos ? Number(body.quartos) : null,
         banheiros: body.banheiros ? Number(body.banheiros) : null,
@@ -137,7 +141,8 @@ export const POST = apiHandler(avaliacaoPostSchema, async (_request: NextRequest
         padrao: body.padrao,
         estado_conservacao: body.estado_conservacao || body.estadoConservacao,
         caracteristicas: body.caracteristicas,
-        cliente_nome: body.cliente_nome || body.clienteNome,
+        cliente_nome: body.cliente_nome || body.clienteNome || body.cliente,
+        laudo_content: body.laudo_content || body.laudo_ia || null,
         cliente_email: body.cliente_email || body.clienteEmail,
         cliente_telefone: body.cliente_telefone || body.clienteTelefone,
         cliente_cpf_cnpj: body.cliente_cpf_cnpj || body.clienteCpfCnpj || body.clienteCPFCNPJ || body.cliente_documento || body.clienteDocumento,
