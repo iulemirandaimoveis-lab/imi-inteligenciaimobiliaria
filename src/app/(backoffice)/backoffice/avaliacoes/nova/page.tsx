@@ -977,7 +977,7 @@ export default function NovaPTAMPage() {
   // MAIN RENDER
   // ============================================================
   return (
-    <div style={{ minHeight: '100vh', padding: mobile ? '0 12px 80px' : '0 24px 40px' }}>
+    <div style={{ minHeight: '100vh', padding: mobile ? '0 12px 176px' : '0 24px 40px' }}>
       <PageIntelHeader
         moduleLabel="AVALIACAO"
         title="Novo PTAM"
@@ -1035,7 +1035,7 @@ export default function NovaPTAMPage() {
       {/* Navigation */}
       <div style={{
         display: 'flex', justifyContent: 'space-between', marginTop: 20,
-        ...(mobile ? { position: 'fixed', bottom: 0, left: 0, right: 0, padding: '12px 16px', background: T.surface, borderTop: `1px solid ${T.border}`, zIndex: 40 } : {}),
+        ...(mobile ? { position: 'fixed', bottom: 64, left: 0, right: 0, padding: '12px 16px', background: T.surface, borderTop: `1px solid ${T.border}`, zIndex: 50 } : {}),
       }}>
         <button
           style={{ ...btnSecondary, opacity: step === 1 ? 0.4 : 1 }}
