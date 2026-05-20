@@ -54,15 +54,18 @@ export const PLAN_CONFIGS: Record<string, PlanConfig> = {
     imageUrl: '/images/maps/miguel-marques-plant.jpg',
     imageAspect: 2800 / 1981,
     quadraPositions: {
-      A: { x: 8,  y: 38 }, B: { x: 13, y: 33 }, C: { x: 18, y: 28 },
-      D: { x: 23, y: 23 }, E: { x: 29, y: 19 }, F: { x: 35, y: 16 },
-      G: { x: 41, y: 15 }, H: { x: 47, y: 16 }, I: { x: 53, y: 19 },
-      J: { x: 59, y: 23 }, K: { x: 64, y: 28 }, L: { x: 67, y: 34 },
-      M: { x: 64, y: 40 }, N: { x: 56, y: 35 },
-      O: { x: 10, y: 61 }, P: { x: 16, y: 63 }, Q: { x: 22, y: 65 },
-      R: { x: 28, y: 67 }, S: { x: 34, y: 69 }, T: { x: 40, y: 71 },
-      U: { x: 46, y: 73 }, V: { x: 51, y: 75 }, W: { x: 48, y: 80 },
-      X: { x: 41, y: 78 },
+      // Upper sector — arc from west to east (A–N)
+      A: { x: 8,  y: 40 }, B: { x: 14, y: 34 }, C: { x: 20, y: 29 },
+      D: { x: 26, y: 24 }, E: { x: 32, y: 20 }, F: { x: 38, y: 17 },
+      G: { x: 44, y: 16 }, H: { x: 50, y: 17 }, I: { x: 56, y: 21 },
+      J: { x: 61, y: 26 }, K: { x: 65, y: 32 }, L: { x: 67, y: 38 },
+      M: { x: 63, y: 44 }, N: { x: 57, y: 38 },
+      // Lower sector — parallel rows (O–Z)
+      O: { x: 10, y: 60 }, P: { x: 16, y: 62 }, Q: { x: 22, y: 64 },
+      R: { x: 28, y: 66 }, S: { x: 34, y: 68 }, T: { x: 40, y: 70 },
+      U: { x: 46, y: 72 }, V: { x: 52, y: 74 },
+      W: { x: 49, y: 80 }, X: { x: 42, y: 78 },
+      Z: { x: 57, y: 79 },
     },
   },
   'ab7d1fc1-f069-4e3b-a515-8e1204c11247': {
