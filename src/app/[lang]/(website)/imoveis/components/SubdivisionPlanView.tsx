@@ -248,7 +248,10 @@ function LotDetailPanel({
           </a>
           <button
             onClick={() => {
-              const url = `${window.location.href}?quadra=${lot.quadra}&lote=${lot.lot_number}`;
+              const u = new URL(window.location.href);
+              u.searchParams.set('quadra', lot.quadra);
+              u.searchParams.set('lote', String(lot.lot_number));
+              const url = u.toString();
               navigator.share?.({ title: `Lote ${lot.lot_number} — Quadra ${lot.quadra}`, url }) ??
               navigator.clipboard?.writeText(url);
             }}
@@ -570,9 +573,11 @@ export default function SubdivisionPlanView({
     }
   }, [applyTransform]);
 
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     lastTouches.current = null;
-    startInertia();
+    if (e.touches.length === 0) {
+      startInertia();
+    }
     setTimeout(() => setDisplayScale(Math.round(transform.current.scale * 100)), 50);
   }, [startInertia]);
 
