@@ -6,10 +6,10 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeade
 import { toast } from 'sonner'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import {
-  ArrowLeft, ArrowRight, Building2, MapPin, Search, Plus, Trash2,
+  ArrowLeft, ArrowRight, Building2, MapPin, Plus, Trash2,
   FileText, Save, Loader2, Eye, Check,
   BarChart2, Download, Scale, ChevronDown, Camera, X, Image as ImageIcon,
-  User, Phone, Mail, Home, Calendar, Star,
+  User, Phone, Mail, Star,
 } from 'lucide-react'
 
 // ── Types ──────────────────────────────────────────────────
@@ -57,17 +57,9 @@ interface CalcResult {
   confidence_grade: 'I' | 'II' | 'III'
 }
 
-interface Development {
-  id: string
-  name: string
-  address?: string
-  location?: string
-  neighborhood?: string
-}
-
 // ── Constants ──────────────────────────────────────────────
 const PROPERTY_TYPES = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Sala Comercial', 'Loja', 'Galpão/Armazém', 'Terreno/Lote', 'Hotel/Pousada', 'Outro']
-const PURPOSES = ['Venda', 'Financiamento', 'Judicial', 'Inventário', 'Doação', 'Garantia', 'Locação', 'Desapropriação']
+const PURPOSES = ['Peritagem Judicial', 'Inventário', 'Compra e Venda', 'Financiamento Imobiliário', 'Locação', 'Garantia', 'Desapropriação', 'Doação', 'Seguro', 'Outro']
 const STANDARDS = ['Baixo', 'Normal', 'Alto', 'Luxo']
 const CONSERVATION = ['Novo', 'Entre Novo e Regular', 'Regular', 'Entre Regular e Reparos Simples', 'Reparos Simples', 'Reparos Importantes']
 const SOURCES = ['OLX', 'ZAP Imóveis', 'Viva Real', 'Imovelweb', 'Quinto Andar', 'Imobiliária Local', 'Prefeitura', 'Outro']
@@ -110,12 +102,7 @@ export default function NovaPTAMPage() {
   const [avaliacaoId, setAvaliacaoId] = useState<string | null>(null)
 
   // Step 1: property
-  const [developments, setDevelopments] = useState<Development[]>([])
-  const [devSearch, setDevSearch] = useState('')
-  const [selectedDev, setSelectedDev] = useState<Development | null>(null)
-  const [showDevDropdown, setShowDevDropdown] = useState(false)
-  const [useManualAddress, setUseManualAddress] = useState(false)
-  const [manualAddress, setManualAddress] = useState('')
+  const [endereco, setEndereco] = useState('')
   const [bairro, setBairro] = useState('')
   const [cidade, setCidade] = useState('Recife')
   const [estado, setEstado] = useState('PE')
@@ -132,7 +119,7 @@ export default function NovaPTAMPage() {
   const photoInputRef = useRef<HTMLInputElement>(null)
 
   // Step 2: evaluation info
-  const [finalidade, setFinalidade] = useState('Venda')
+  const [finalidade, setFinalidade] = useState('Peritagem Judicial')
   const [clienteNome, setClienteNome] = useState('')
   const [clienteEmail, setClienteEmail] = useState('')
   const [clienteTelefone, setClienteTelefone] = useState('')
@@ -147,29 +134,17 @@ export default function NovaPTAMPage() {
   // Step 5: results
   const [calcResult, setCalcResult] = useState<CalcResult | null>(null)
 
-  // Load developments for autocomplete
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.from('developments').select('id, name, address, location, neighborhood')
-      .order('name').limit(300)
-      .then(({ data }) => { if (data) setDevelopments(data as Development[]) })
-  }, [])
-
-  const filteredDevs = developments.filter(d =>
-    d.name.toLowerCase().includes(devSearch.toLowerCase())
-  ).slice(0, 20)
-
   // Navigation
   const canNext = useCallback((): boolean => {
     switch (step) {
-      case 1: return !!(useManualAddress ? manualAddress.trim() : selectedDev) && parseFloat(areaPrivativa) > 0
+      case 1: return !!endereco.trim() && parseFloat(areaPrivativa) > 0
       case 2: return !!finalidade
       case 3: return comparables.length >= 3
       case 4: return comparables.length >= 3
       case 5: return !!calcResult
       default: return true
     }
-  }, [step, selectedDev, useManualAddress, manualAddress, areaPrivativa, finalidade, comparables, calcResult])
+  }, [step, endereco, areaPrivativa, finalidade, comparables, calcResult])
 
   const goNext = () => { if (step < 6 && canNext()) setStep((step + 1) as Step) }
   const goPrev = () => { if (step > 1) setStep((step - 1) as Step) }
@@ -294,17 +269,13 @@ export default function NovaPTAMPage() {
       const valorMin = Math.round(estimatedValue * 0.85)
       const valorMax = Math.round(estimatedValue * 1.15)
 
-      const enderecoFinal = useManualAddress
-        ? manualAddress
-        : (selectedDev?.name || '')
-
       const res = await fetch('/api/avaliacoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tipo_imovel: tipoImovel,
-          endereco: enderecoFinal,
-          bairro: bairro || selectedDev?.neighborhood || '',
+          endereco,
+          bairro,
           cidade: cidade,
           estado: estado,
           area_privativa: area || null,
@@ -385,77 +356,10 @@ export default function NovaPTAMPage() {
       <div style={card}>
         {sectionTitle('Imóvel Avaliando', <Building2 size={20} />)}
 
-        {/* Toggle: Development or Manual */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-          <button
-            style={{ ...(!useManualAddress ? btnPrimary : btnSecondary), padding: '7px 16px', fontSize: 12 }}
-            onClick={() => setUseManualAddress(false)}
-          >
-            <Search size={13} /> Buscar Empreendimento
-          </button>
-          <button
-            style={{ ...(useManualAddress ? btnPrimary : btnSecondary), padding: '7px 16px', fontSize: 12 }}
-            onClick={() => setUseManualAddress(true)}
-          >
-            <Home size={13} /> Endereço Livre
-          </button>
+        <div style={{ marginBottom: 16 }}>
+          <label style={labelStyle}>Endereço Completo *</label>
+          <input style={inputStyle} placeholder="Rua, número, complemento..." value={endereco} onChange={e => setEndereco(e.target.value)} />
         </div>
-
-        {!useManualAddress ? (
-          <div style={{ position: 'relative', marginBottom: 16 }}>
-            <label style={labelStyle}>Empreendimento</label>
-            <div style={{ position: 'relative' }}>
-              <Search size={16} style={{ position: 'absolute', left: 12, top: 12, color: T.textMuted }} />
-              <input
-                style={{ ...inputStyle, paddingLeft: 36 }}
-                placeholder="Digite o nome do empreendimento..."
-                value={selectedDev ? selectedDev.name : devSearch}
-                onChange={e => { setDevSearch(e.target.value); setSelectedDev(null); setShowDevDropdown(true) }}
-                onFocus={() => setShowDevDropdown(true)}
-              />
-              {selectedDev && (
-                <button onClick={() => { setSelectedDev(null); setDevSearch('') }}
-                  style={{ position: 'absolute', right: 10, top: 10, background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer' }}>
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-            {showDevDropdown && !selectedDev && filteredDevs.length > 0 && (
-              <div style={{
-                position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
-                background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8,
-                maxHeight: 220, overflowY: 'auto',
-              }}>
-                {filteredDevs.map(d => (
-                  <button key={d.id}
-                    onClick={() => {
-                      setSelectedDev(d); setShowDevDropdown(false); setDevSearch('')
-                      if (d.neighborhood) setBairro(d.neighborhood)
-                    }}
-                    style={{
-                      display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px',
-                      background: 'transparent', border: 'none', color: T.text, cursor: 'pointer',
-                      borderBottom: `1px solid ${T.borderLight}`, fontSize: 13,
-                    }}>
-                    <strong>{d.name}</strong>
-                    <br /><span style={{ fontSize: 11, color: T.textMuted }}>{d.address || d.location || d.neighborhood || ''}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-            {selectedDev && (
-              <div style={{ padding: 10, background: T.accentBg, borderRadius: 8, marginTop: 8, border: `1px solid ${T.border}` }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{selectedDev.name}</div>
-                <div style={{ fontSize: 11, color: T.textMuted }}>{selectedDev.address || selectedDev.location || ''}</div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>Endereço Completo *</label>
-            <input style={inputStyle} placeholder="Rua, número, complemento..." value={manualAddress} onChange={e => setManualAddress(e.target.value)} />
-          </div>
-        )}
 
         <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12, marginBottom: 16 }}>
           <div>
