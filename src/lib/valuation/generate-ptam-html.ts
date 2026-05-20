@@ -12,9 +12,24 @@ export function generatePTAMHtml(params: {
   comparables: Record<string, unknown>[]
   result: ValuationResult
   evaluatorName: string
+  evaluatorCRECI?: string
+  evaluatorPhone?: string
+  evaluatorEmail?: string
+  evaluatorCompany?: string
   photos?: PhotoItem[]
+  valorMinimo?: number
+  valorMaximo?: number
 }): string {
-  const { valuation, development, comparables, result, evaluatorName, photos = [] } = params
+  const {
+    valuation, development, comparables, result, photos = [],
+    evaluatorName,
+    evaluatorCRECI,
+    evaluatorPhone,
+    evaluatorEmail,
+    evaluatorCompany,
+    valorMinimo,
+    valorMaximo,
+  } = params
 
   const fmt = (v: number) =>
     v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -407,7 +422,9 @@ export function generatePTAMHtml(params: {
   <div class="cover-bottom">
     <div class="cover-bottom-left">
       <strong>${evaluatorName}</strong>
-      Avaliador Responsável
+      ${evaluatorCompany ? `<span>${evaluatorCompany}</span><br>` : ''}
+      ${evaluatorCRECI ? `CRECI ${evaluatorCRECI}` : ''}
+      ${evaluatorPhone ? ` · ${evaluatorPhone}` : ''}
     </div>
     <div class="cover-norm">
       <span>Conforme NBR 14653-1 e NBR 14653-2</span>
@@ -434,7 +451,10 @@ export function generatePTAMHtml(params: {
     <div class="info-item"><span class="label">Finalidade:</span><span class="value">${purposeLabel}</span></div>
     <div class="info-item"><span class="label">Metodologia:</span><span class="value">${methodLabel}</span></div>
     <div class="info-item"><span class="label">Solicitante:</span><span class="value">${(valuation.requester_name as string) || 'N/A'}</span></div>
-    <div class="info-item"><span class="label">Avaliador:</span><span class="value">${evaluatorName}</span></div>
+    <div class="info-item"><span class="label">Avaliador:</span><span class="value">${evaluatorName}${evaluatorCRECI ? ` · CRECI ${evaluatorCRECI}` : ''}</span></div>
+    ${evaluatorCompany ? `<div class="info-item"><span class="label">Empresa:</span><span class="value">${evaluatorCompany}</span></div>` : ''}
+    ${evaluatorPhone ? `<div class="info-item"><span class="label">Telefone:</span><span class="value">${evaluatorPhone}</span></div>` : ''}
+    ${evaluatorEmail ? `<div class="info-item"><span class="label">E-mail:</span><span class="value">${evaluatorEmail}</span></div>` : ''}
     <div class="info-item"><span class="label">Norma Aplicada:</span><span class="value">NBR 14653-1 e NBR 14653-2</span></div>
     <div class="info-item"><span class="label">Resolução:</span><span class="value">COFECI 1.066/2007</span></div>
   </div>
@@ -510,6 +530,23 @@ export function generatePTAMHtml(params: {
     </div>
     <div class="grade-badge">Grau ${result.confidence_grade} — NBR 14653</div>
   </div>
+  ${(valorMinimo || valorMaximo) ? `
+  <table style="max-width:500px;margin:0 auto 20px">
+    <thead>
+      <tr>
+        <th>Mínimo</th>
+        <th style="background:#1a3a5c;color:#C8A44A">Avaliado</th>
+        <th>Máximo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>${fmtBRL(valorMinimo ?? result.estimated_value * 0.85)}</td>
+        <td><strong>${fmtBRL(result.estimated_value)}</strong></td>
+        <td>${fmtBRL(valorMaximo ?? result.estimated_value * 1.15)}</td>
+      </tr>
+    </tbody>
+  </table>` : ''}
 
   <h3 data-num="6">Ressalvas e Limitações</h3>
   <p>Este parecer foi elaborado com base em dados disponíveis no mercado na data de referência, utilizando o Método ${methodLabel}. Os valores apresentados representam a melhor estimativa de valor de mercado nas condições observadas, não tendo sido consideradas eventuais pendências jurídicas, fiscais ou ambientais. O presente documento não substitui laudo de vistoria técnica estrutural.</p>
@@ -522,13 +559,16 @@ export function generatePTAMHtml(params: {
     <div>
       <div class="signature-line">
         ${evaluatorName}<br>
-        <small>Avaliador Responsável</small>
+        ${evaluatorCRECI ? `<small>CRECI ${evaluatorCRECI}</small><br>` : ''}
+        ${evaluatorCompany ? `<small>${evaluatorCompany}</small><br>` : ''}
+        ${evaluatorPhone ? `<small>${evaluatorPhone}</small><br>` : ''}
+        ${evaluatorEmail ? `<small>${evaluatorEmail}</small>` : ''}
       </div>
     </div>
     <div>
       <div class="signature-line">
         ${today}<br>
-        <small>Data e Assinatura Digital</small>
+        <small>Data de Emissão</small>
       </div>
     </div>
   </div>
