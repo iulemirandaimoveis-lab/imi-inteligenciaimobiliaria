@@ -8,8 +8,12 @@ import { useIsMobile } from '@/hooks/use-is-mobile'
 import {
   ArrowLeft, ArrowRight, Building2, MapPin, Search, Plus, Trash2,
   FileText, Save, Loader2, Eye, Check,
-  BarChart2, Download, Scale, ChevronDown, Camera, X, Image as ImageIcon
+  BarChart2, Download, Scale, ChevronDown, Camera, X, Image as ImageIcon,
+  User, Phone, Mail, Home, Calendar, Star,
 } from 'lucide-react'
+
+// ── Types ──────────────────────────────────────────────────
+type Step = 1 | 2 | 3 | 4 | 5 | 6
 
 interface PhotoUpload {
   id: string
@@ -19,11 +23,6 @@ interface PhotoUpload {
   url?: string
   uploading?: boolean
 }
-
-// ============================================================
-// TYPES
-// ============================================================
-type Step = 1 | 2 | 3 | 4 | 5 | 6
 
 interface ComparableEntry {
   id?: string
@@ -38,7 +37,6 @@ interface ComparableEntry {
   asking_price: string
   source: string
   source_url: string
-  // factors
   offer_factor: number
   area_factor: number
   location_factor: number
@@ -46,7 +44,6 @@ interface ComparableEntry {
   floor_factor: number
   parking_factor: number
   extra_factor: number
-  // computed
   price_per_sqm?: number
   homogenized_price_per_sqm?: number
 }
@@ -58,7 +55,6 @@ interface CalcResult {
   coefficient_of_variation: number
   estimated_value: number
   confidence_grade: 'I' | 'II' | 'III'
-  comparables: Array<{ homogenized_price_per_sqm: number }>
 }
 
 interface Development {
@@ -66,19 +62,21 @@ interface Development {
   name: string
   address?: string
   location?: string
+  neighborhood?: string
 }
 
-// ============================================================
-// CONSTANTS
-// ============================================================
-const PURPOSES = ['Venda', 'Financiamento', 'Judicial', 'Inventário', 'Doação', 'Garantia']
-const SOURCES = ['OLX', 'ZAP Imóveis', 'Viva Real', 'Imovelweb', 'Quinto Andar', 'Imobiliária', 'Outro']
+// ── Constants ──────────────────────────────────────────────
+const PROPERTY_TYPES = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Sala Comercial', 'Loja', 'Galpão/Armazém', 'Terreno/Lote', 'Hotel/Pousada', 'Outro']
+const PURPOSES = ['Venda', 'Financiamento', 'Judicial', 'Inventário', 'Doação', 'Garantia', 'Locação', 'Desapropriação']
+const STANDARDS = ['Baixo', 'Normal', 'Alto', 'Luxo']
+const CONSERVATION = ['Novo', 'Entre Novo e Regular', 'Regular', 'Entre Regular e Reparos Simples', 'Reparos Simples', 'Reparos Importantes']
+const SOURCES = ['OLX', 'ZAP Imóveis', 'Viva Real', 'Imovelweb', 'Quinto Andar', 'Imobiliária Local', 'Prefeitura', 'Outro']
 const STEPS: { num: Step; label: string; icon: React.ReactNode }[] = [
   { num: 1, label: 'Imóvel', icon: <Building2 size={16} /> },
-  { num: 2, label: 'Finalidade', icon: <FileText size={16} /> },
+  { num: 2, label: 'Avaliação', icon: <FileText size={16} /> },
   { num: 3, label: 'Comparandos', icon: <MapPin size={16} /> },
   { num: 4, label: 'Fatores', icon: <Scale size={16} /> },
-  { num: 5, label: 'Revisão', icon: <BarChart2 size={16} /> },
+  { num: 5, label: 'Resultado', icon: <BarChart2 size={16} /> },
   { num: 6, label: 'Gerar', icon: <Download size={16} /> },
 ]
 
@@ -90,50 +88,56 @@ const emptyComparable = (): ComparableEntry => ({
   age_factor: 1.0, floor_factor: 1.0, parking_factor: 1.0, extra_factor: 1.0,
 })
 
-// ============================================================
-// HELPERS
-// ============================================================
+// ── Helpers ────────────────────────────────────────────────
 const fmt = (v: number) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const fmtBRL = (v: number) => 'R$ ' + fmt(v)
-
-function computePricePerSqm(c: ComparableEntry): number {
+const computePricePerSqm = (c: ComparableEntry) => {
   const area = parseFloat(c.area_sqm) || 0
   const price = parseFloat(c.asking_price) || 0
   return area > 0 ? price / area : 0
 }
+const computeHomogenized = (c: ComparableEntry) =>
+  computePricePerSqm(c) * c.offer_factor * c.area_factor * c.location_factor *
+  c.age_factor * c.floor_factor * c.parking_factor * c.extra_factor
 
-function computeHomogenized(c: ComparableEntry): number {
-  const ppsm = computePricePerSqm(c)
-  return ppsm * c.offer_factor * c.area_factor * c.location_factor
-    * c.age_factor * c.floor_factor * c.parking_factor * c.extra_factor
-}
-
-// ============================================================
-// COMPONENT
-// ============================================================
+// ── Component ──────────────────────────────────────────────
 export default function NovaPTAMPage() {
   const mobile = useIsMobile()
 
   // Wizard state
   const [step, setStep] = useState<Step>(1)
   const [saving, setSaving] = useState(false)
-  const [calculating, setCalculating] = useState(false)
-  const [valuationId, setValuationId] = useState<string | null>(null)
+  const [avaliacaoId, setAvaliacaoId] = useState<string | null>(null)
 
   // Step 1: property
   const [developments, setDevelopments] = useState<Development[]>([])
   const [devSearch, setDevSearch] = useState('')
   const [selectedDev, setSelectedDev] = useState<Development | null>(null)
-  const [subjectArea, setSubjectArea] = useState('')
   const [showDevDropdown, setShowDevDropdown] = useState(false)
-
-  // Photos (part of step 1)
+  const [useManualAddress, setUseManualAddress] = useState(false)
+  const [manualAddress, setManualAddress] = useState('')
+  const [bairro, setBairro] = useState('')
+  const [cidade, setCidade] = useState('Recife')
+  const [estado, setEstado] = useState('PE')
+  const [tipoImovel, setTipoImovel] = useState('Apartamento')
+  const [areaPrivativa, setAreaPrivativa] = useState('')
+  const [quartos, setQuartos] = useState('')
+  const [banheiros, setBanheiros] = useState('')
+  const [vagas, setVagas] = useState('')
+  const [andar, setAndar] = useState('')
+  const [anoConst, setAnoConst] = useState('')
+  const [padrao, setPadrao] = useState('Normal')
+  const [conservacao, setConservacao] = useState('Regular')
   const [photos, setPhotos] = useState<PhotoUpload[]>([])
   const photoInputRef = useRef<HTMLInputElement>(null)
 
-  // Step 2: purpose
-  const [purpose, setPurpose] = useState('Venda')
-  const [requesterName, setRequesterName] = useState('')
+  // Step 2: evaluation info
+  const [finalidade, setFinalidade] = useState('Venda')
+  const [clienteNome, setClienteNome] = useState('')
+  const [clienteEmail, setClienteEmail] = useState('')
+  const [clienteTelefone, setClienteTelefone] = useState('')
+  const [honorarios, setHonorarios] = useState('')
+  const [observacoes, setObservacoes] = useState('')
 
   // Step 3: comparables
   const [comparables, setComparables] = useState<ComparableEntry[]>([])
@@ -143,57 +147,51 @@ export default function NovaPTAMPage() {
   // Step 5: results
   const [calcResult, setCalcResult] = useState<CalcResult | null>(null)
 
-  // Fetch developments
+  // Load developments for autocomplete
   useEffect(() => {
     const supabase = createClient()
-    supabase.from('developments').select('id, name, address, location')
-      .order('name').limit(200)
-      .then(({ data }) => {
-        if (data) setDevelopments(data as Development[])
-      })
+    supabase.from('developments').select('id, name, address, location, neighborhood')
+      .order('name').limit(300)
+      .then(({ data }) => { if (data) setDevelopments(data as Development[]) })
   }, [])
 
   const filteredDevs = developments.filter(d =>
     d.name.toLowerCase().includes(devSearch.toLowerCase())
-  )
+  ).slice(0, 20)
 
   // Navigation
   const canNext = useCallback((): boolean => {
     switch (step) {
-      case 1: return !!selectedDev && parseFloat(subjectArea) > 0
-      case 2: return !!purpose
+      case 1: return !!(useManualAddress ? manualAddress.trim() : selectedDev) && parseFloat(areaPrivativa) > 0
+      case 2: return !!finalidade
       case 3: return comparables.length >= 3
       case 4: return comparables.length >= 3
       case 5: return !!calcResult
       default: return true
     }
-  }, [step, selectedDev, subjectArea, purpose, comparables, calcResult])
+  }, [step, selectedDev, useManualAddress, manualAddress, areaPrivativa, finalidade, comparables, calcResult])
 
-  const goNext = () => { if (step < 6) setStep((step + 1) as Step) }
+  const goNext = () => { if (step < 6 && canNext()) setStep((step + 1) as Step) }
   const goPrev = () => { if (step > 1) setStep((step - 1) as Step) }
 
-  // Add comparable
+  // Comparable operations
   const addComparable = () => {
     if (!newComp.address || !newComp.area_sqm || !newComp.asking_price) {
       toast.error('Preencha endereço, área e preço')
       return
     }
-    const entry = {
+    setComparables(prev => [...prev, {
       ...newComp,
       price_per_sqm: computePricePerSqm(newComp),
       homogenized_price_per_sqm: computeHomogenized(newComp),
-    }
-    setComparables(prev => [...prev, entry])
+    }])
     setNewComp(emptyComparable())
     setShowAddForm(false)
     toast.success('Comparando adicionado')
   }
 
-  const removeComparable = (idx: number) => {
-    setComparables(prev => prev.filter((_, i) => i !== idx))
-  }
+  const removeComparable = (idx: number) => setComparables(prev => prev.filter((_, i) => i !== idx))
 
-  // Update factor on a comparable
   const updateFactor = (idx: number, field: keyof ComparableEntry, val: number) => {
     setComparables(prev => prev.map((c, i) => {
       if (i !== idx) return c
@@ -203,47 +201,38 @@ export default function NovaPTAMPage() {
     }))
   }
 
-  // Calculate (client-side for preview, then save via API)
+  // Calculate
   const doCalculate = useCallback(() => {
-    const values = comparables.map(c => computeHomogenized(c))
+    const values = comparables.map(c => computeHomogenized(c)).filter(v => v > 0)
     if (values.length === 0) return
     const avg = values.reduce((a, b) => a + b, 0) / values.length
     const sorted = [...values].sort((a, b) => a - b)
-    const median = sorted.length % 2 === 0
+    const med = sorted.length % 2 === 0
       ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
       : sorted[Math.floor(sorted.length / 2)]
-    const variance = values.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / (values.length - 1)
+    const variance = values.reduce((s, v) => s + (v - avg) ** 2, 0) / Math.max(values.length - 1, 1)
     const std = Math.sqrt(variance)
-    const cv = (std / avg) * 100
+    const cv = avg > 0 ? (std / avg) * 100 : 0
     let grade: 'I' | 'II' | 'III' = 'I'
     if (comparables.length >= 5 && cv <= 30) grade = 'II'
     if (comparables.length >= 6 && cv <= 25) grade = 'III'
-
-    const area = parseFloat(subjectArea) || 0
     setCalcResult({
       average_price_per_sqm: avg,
-      median_price_per_sqm: median,
+      median_price_per_sqm: med,
       std_deviation: std,
       coefficient_of_variation: cv,
-      estimated_value: avg * area,
+      estimated_value: avg * (parseFloat(areaPrivativa) || 0),
       confidence_grade: grade,
-      comparables: values.map(v => ({ homogenized_price_per_sqm: v })),
     })
-  }, [comparables, subjectArea])
+  }, [comparables, areaPrivativa])
 
-  // Trigger calc when entering step 5
-  useEffect(() => {
-    if (step === 5) doCalculate()
-  }, [step, doCalculate])
+  useEffect(() => { if (step === 5) doCalculate() }, [step, doCalculate])
 
-  // Photo upload handlers
+  // Photo handlers
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     const newPhotos: PhotoUpload[] = files.slice(0, 10 - photos.length).map(file => ({
-      id: crypto.randomUUID(),
-      file,
-      preview: URL.createObjectURL(file),
-      caption: '',
+      id: crypto.randomUUID(), file, preview: URL.createObjectURL(file), caption: '',
     }))
     setPhotos(prev => [...prev, ...newPhotos])
     if (e.target) e.target.value = ''
@@ -251,328 +240,330 @@ export default function NovaPTAMPage() {
 
   const removePhoto = (id: string) => {
     setPhotos(prev => {
-      const photo = prev.find(p => p.id === id)
-      if (photo) URL.revokeObjectURL(photo.preview)
-      return prev.filter(p => p.id !== id)
+      const p = prev.find(ph => ph.id === id)
+      if (p) URL.revokeObjectURL(p.preview)
+      return prev.filter(ph => ph.id !== id)
     })
   }
 
-  const uploadPhotosToStorage = async (): Promise<{ url: string; name: string; caption: string }[]> => {
+  const uploadPhotos = async () => {
     const supabase = createClient()
     const uploaded: { url: string; name: string; caption: string }[] = []
-
     for (const photo of photos) {
-      if (photo.url) {
-        uploaded.push({ url: photo.url, name: photo.file.name, caption: photo.caption })
-        continue
-      }
+      if (photo.url) { uploaded.push({ url: photo.url, name: photo.file.name, caption: photo.caption }); continue }
       try {
         setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, uploading: true } : p))
         const ext = photo.file.name.split('.').pop() || 'jpg'
-        const path = `ptam-photos/${Date.now()}-${crypto.randomUUID().slice(0, 8)}.${ext}`
-        const { error } = await supabase.storage
-          .from('avaliacoes')
-          .upload(path, photo.file, { cacheControl: '3600', upsert: false })
-
-        if (error) {
-          console.warn('[PHOTO_UPLOAD]', error.message)
-          continue
-        }
-
+        const path = `ptam/${Date.now()}-${crypto.randomUUID().slice(0, 8)}.${ext}`
+        const { error } = await supabase.storage.from('avaliacoes').upload(path, photo.file, { cacheControl: '3600', upsert: false })
+        if (error) { console.warn('[PHOTO]', error.message); continue }
         const { data: { publicUrl } } = supabase.storage.from('avaliacoes').getPublicUrl(path)
         setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, url: publicUrl, uploading: false } : p))
         uploaded.push({ url: publicUrl, name: photo.file.name, caption: photo.caption })
-      } catch (err) {
-        console.warn('[PHOTO_UPLOAD_ERR]', err)
+      } catch {
         setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, uploading: false } : p))
       }
     }
-
     return uploaded
   }
 
-  // Save everything to DB
+  // Save to avaliacoes table
   const saveToDatabase = async () => {
     setSaving(true)
     try {
-      // 0. Upload photos
-      const uploadedPhotos = photos.length > 0 ? await uploadPhotosToStorage() : []
+      const uploadedPhotos = photos.length > 0 ? await uploadPhotos() : []
+      const area = parseFloat(areaPrivativa) || 0
+      const comparaveisData = comparables.map(c => ({
+        address: c.address, neighborhood: c.neighborhood, city: c.city, state: c.state,
+        area_sqm: parseFloat(c.area_sqm) || 0,
+        bedrooms: parseInt(c.bedrooms) || 0,
+        bathrooms: parseInt(c.bathrooms) || 0,
+        parking_spots: parseInt(c.parking_spots) || 0,
+        asking_price: parseFloat(c.asking_price) || 0,
+        source: c.source, source_url: c.source_url,
+        offer_factor: c.offer_factor, area_factor: c.area_factor,
+        location_factor: c.location_factor, age_factor: c.age_factor,
+        floor_factor: c.floor_factor, parking_factor: c.parking_factor,
+        extra_factor: c.extra_factor,
+        price_per_sqm: computePricePerSqm(c),
+        homogenized_price_per_sqm: computeHomogenized(c),
+      }))
 
-      // 1. Create valuation
-      const res1 = await fetch('/api/valuations', {
+      const estimatedValue = calcResult?.estimated_value || 0
+      const avgM2 = calcResult?.average_price_per_sqm || 0
+      const valorMin = Math.round(estimatedValue * 0.85)
+      const valorMax = Math.round(estimatedValue * 1.15)
+
+      const enderecoFinal = useManualAddress
+        ? manualAddress
+        : (selectedDev?.name || '')
+
+      const res = await fetch('/api/avaliacoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          development_id: selectedDev?.id || null,
-          purpose,
-          requester_name: requesterName,
-          method: 'comparative_direct',
-          subject_area_sqm: parseFloat(subjectArea) || null,
-          photos: uploadedPhotos,
+          tipo_imovel: tipoImovel,
+          endereco: enderecoFinal,
+          bairro: bairro || selectedDev?.neighborhood || '',
+          cidade: cidade,
+          estado: estado,
+          area_privativa: area || null,
+          quartos: quartos ? parseInt(quartos) : null,
+          banheiros: banheiros ? parseInt(banheiros) : null,
+          vagas: vagas ? parseInt(vagas) : null,
+          andar: andar || null,
+          ano_construcao: anoConst || null,
+          padrao,
+          estado_conservacao: conservacao,
+          finalidade,
+          metodologia: 'Comparativo Direto de Dados de Mercado',
+          cliente_nome: clienteNome || null,
+          cliente_email: clienteEmail || null,
+          cliente_telefone: clienteTelefone || null,
+          honorarios: honorarios ? parseFloat(honorarios) : null,
+          observacoes: observacoes || null,
+          comparaveis: comparaveisData,
+          valor_estimado: estimatedValue || null,
+          valor_m2: avgM2 || null,
+          valor_minimo: valorMin || null,
+          valor_maximo: valorMax || null,
+          grau_fundamentacao: calcResult?.confidence_grade || null,
+          resultado_motor: calcResult || null,
+          fotos_laudo: uploadedPhotos,
+          status: 'em_andamento',
         }),
       })
-      const { data: val } = await res1.json()
-      if (!val?.id) throw new Error('Falha ao criar avaliação')
-      setValuationId(val.id)
 
-      // 2. Add comparables
-      for (const c of comparables) {
-        await fetch(`/api/valuations/${val.id}/comparables`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address: c.address,
-            neighborhood: c.neighborhood,
-            city: c.city,
-            state: c.state,
-            area_sqm: parseFloat(c.area_sqm) || 0,
-            bedrooms: parseInt(c.bedrooms) || 0,
-            bathrooms: parseInt(c.bathrooms) || 0,
-            parking_spots: parseInt(c.parking_spots) || 0,
-            asking_price: parseFloat(c.asking_price) || 0,
-            source: c.source,
-            source_url: c.source_url,
-            offer_factor: c.offer_factor,
-            area_factor: c.area_factor,
-            location_factor: c.location_factor,
-            age_factor: c.age_factor,
-            floor_factor: c.floor_factor,
-            parking_factor: c.parking_factor,
-            extra_factor: c.extra_factor,
-          }),
-        })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Falha ao salvar avaliação')
       }
 
-      // 3. Calculate
-      setCalculating(true)
-      const res3 = await fetch(`/api/valuations/${val.id}/calculate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject_area_sqm: parseFloat(subjectArea) }),
-      })
-      const { data: result } = await res3.json()
-      if (result) setCalcResult(result)
-      setCalculating(false)
-
-      toast.success('PTAM salvo com sucesso!')
+      const { data } = await res.json()
+      if (!data?.id) throw new Error('ID não retornado')
+      setAvaliacaoId(data.id)
+      toast.success('Avaliação salva com sucesso!')
     } catch (err) {
       console.error('[SAVE]', err)
-      toast.error('Erro ao salvar')
+      toast.error(err instanceof Error ? err.message : 'Erro ao salvar')
     } finally {
       setSaving(false)
     }
   }
 
-  // Preview HTML
-  const openPreview = () => {
-    const id = valuationId
-    if (id) {
-      window.open(`/api/valuations/${id}/export?format=html`, '_blank')
-    } else {
-      toast.error('Salve a avaliação primeiro')
-    }
+  const openPTAM = () => {
+    if (avaliacaoId) window.open(`/api/avaliacoes/${avaliacaoId}/export`, '_blank')
+    else toast.error('Salve a avaliação primeiro')
   }
 
-  // ============================================================
-  // STYLES
-  // ============================================================
+  // ── Styles ─────────────────────────────────────────────
   const btnPrimary: React.CSSProperties = {
     background: `linear-gradient(135deg, ${T.gold}, #D4B86A)`,
-    color: '#050B14',
-    border: 'none',
-    borderRadius: 10,
-    padding: '10px 24px',
-    fontWeight: 600,
-    fontSize: 14,
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 8,
+    color: '#050B14', border: 'none', borderRadius: 10, padding: '10px 24px',
+    fontWeight: 600, fontSize: 14, cursor: 'pointer',
+    display: 'inline-flex', alignItems: 'center', gap: 8,
   }
   const btnSecondary: React.CSSProperties = {
-    background: 'transparent',
-    color: T.text,
-    border: `1px solid ${T.border}`,
-    borderRadius: 10,
-    padding: '10px 24px',
-    fontWeight: 500,
-    fontSize: 14,
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 8,
+    background: 'transparent', color: T.text,
+    border: `1px solid ${T.border}`, borderRadius: 10, padding: '10px 24px',
+    fontWeight: 500, fontSize: 14, cursor: 'pointer',
+    display: 'inline-flex', alignItems: 'center', gap: 8,
   }
   const labelStyle: React.CSSProperties = {
     fontSize: 12, color: T.textMuted, marginBottom: 4, display: 'block', fontWeight: 500,
   }
-  const sectionCard: React.CSSProperties = {
-    ...cardStyle,
-    padding: mobile ? 16 : 24,
-    marginBottom: 16,
-  }
+  const card: React.CSSProperties = { ...cardStyle, padding: mobile ? 16 : 24, marginBottom: 16 }
+  const sectionTitle = (text: string, icon: React.ReactNode) => (
+    <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <span style={{ color: T.gold }}>{icon}</span> {text}
+    </h3>
+  )
 
-  // ============================================================
-  // RENDER STEPS
-  // ============================================================
-
+  // ── Step 1: Property ───────────────────────────────────
   const renderStep1 = () => (
-    <div style={sectionCard}>
-      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
-        <Building2 size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
-        Imóvel Avaliando
-      </h3>
+    <div>
+      <div style={card}>
+        {sectionTitle('Imóvel Avaliando', <Building2 size={20} />)}
 
-      {/* Development search */}
-      <div style={{ position: 'relative', marginBottom: 16 }}>
-        <label style={labelStyle}>Empreendimento</label>
-        <div style={{ position: 'relative' }}>
-          <Search size={16} style={{ position: 'absolute', left: 12, top: 12, color: T.textMuted }} />
-          <input
-            style={{ ...inputStyle, paddingLeft: 36 }}
-            placeholder="Buscar empreendimento..."
-            value={selectedDev ? selectedDev.name : devSearch}
-            onChange={e => { setDevSearch(e.target.value); setSelectedDev(null); setShowDevDropdown(true) }}
-            onFocus={() => setShowDevDropdown(true)}
-          />
-          {selectedDev && (
-            <button
-              onClick={() => { setSelectedDev(null); setDevSearch('') }}
-              style={{ position: 'absolute', right: 10, top: 10, background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer' }}
-            >
-              <Trash2 size={14} />
-            </button>
-          )}
+        {/* Toggle: Development or Manual */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <button
+            style={{ ...(!useManualAddress ? btnPrimary : btnSecondary), padding: '7px 16px', fontSize: 12 }}
+            onClick={() => setUseManualAddress(false)}
+          >
+            <Search size={13} /> Buscar Empreendimento
+          </button>
+          <button
+            style={{ ...(useManualAddress ? btnPrimary : btnSecondary), padding: '7px 16px', fontSize: 12 }}
+            onClick={() => setUseManualAddress(true)}
+          >
+            <Home size={13} /> Endereço Livre
+          </button>
         </div>
-        {showDevDropdown && !selectedDev && filteredDevs.length > 0 && (
-          <div style={{
-            position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
-            background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8,
-            maxHeight: 200, overflowY: 'auto',
-          }}>
-            {filteredDevs.slice(0, 20).map(d => (
-              <button
-                key={d.id}
-                onClick={() => { setSelectedDev(d); setShowDevDropdown(false); setDevSearch('') }}
-                style={{
-                  display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px',
-                  background: 'transparent', border: 'none', color: T.text, cursor: 'pointer',
-                  borderBottom: `1px solid ${T.borderLight}`, fontSize: 13,
-                }}
-              >
-                <strong>{d.name}</strong>
-                <br />
-                <span style={{ fontSize: 11, color: T.textMuted }}>{d.address || d.location || ''}</span>
-              </button>
-            ))}
+
+        {!useManualAddress ? (
+          <div style={{ position: 'relative', marginBottom: 16 }}>
+            <label style={labelStyle}>Empreendimento</label>
+            <div style={{ position: 'relative' }}>
+              <Search size={16} style={{ position: 'absolute', left: 12, top: 12, color: T.textMuted }} />
+              <input
+                style={{ ...inputStyle, paddingLeft: 36 }}
+                placeholder="Digite o nome do empreendimento..."
+                value={selectedDev ? selectedDev.name : devSearch}
+                onChange={e => { setDevSearch(e.target.value); setSelectedDev(null); setShowDevDropdown(true) }}
+                onFocus={() => setShowDevDropdown(true)}
+              />
+              {selectedDev && (
+                <button onClick={() => { setSelectedDev(null); setDevSearch('') }}
+                  style={{ position: 'absolute', right: 10, top: 10, background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer' }}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+            {showDevDropdown && !selectedDev && filteredDevs.length > 0 && (
+              <div style={{
+                position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
+                background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8,
+                maxHeight: 220, overflowY: 'auto',
+              }}>
+                {filteredDevs.map(d => (
+                  <button key={d.id}
+                    onClick={() => {
+                      setSelectedDev(d); setShowDevDropdown(false); setDevSearch('')
+                      if (d.neighborhood) setBairro(d.neighborhood)
+                    }}
+                    style={{
+                      display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px',
+                      background: 'transparent', border: 'none', color: T.text, cursor: 'pointer',
+                      borderBottom: `1px solid ${T.borderLight}`, fontSize: 13,
+                    }}>
+                    <strong>{d.name}</strong>
+                    <br /><span style={{ fontSize: 11, color: T.textMuted }}>{d.address || d.location || d.neighborhood || ''}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {selectedDev && (
+              <div style={{ padding: 10, background: T.accentBg, borderRadius: 8, marginTop: 8, border: `1px solid ${T.border}` }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{selectedDev.name}</div>
+                <div style={{ fontSize: 11, color: T.textMuted }}>{selectedDev.address || selectedDev.location || ''}</div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Endereço Completo *</label>
+            <input style={inputStyle} placeholder="Rua, número, complemento..." value={manualAddress} onChange={e => setManualAddress(e.target.value)} />
           </div>
         )}
-      </div>
 
-      {selectedDev && (
-        <div style={{ padding: 12, background: T.accentBg, borderRadius: 8, marginBottom: 16, border: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{selectedDev.name}</div>
-          <div style={{ fontSize: 12, color: T.textMuted }}>{selectedDev.address || selectedDev.location || ''}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12, marginBottom: 16 }}>
+          <div>
+            <label style={labelStyle}>Bairro</label>
+            <input style={inputStyle} placeholder="Bairro..." value={bairro} onChange={e => setBairro(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}>Cidade</label>
+            <input style={inputStyle} placeholder="Cidade..." value={cidade} onChange={e => setCidade(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}>Estado (UF)</label>
+            <input style={inputStyle} maxLength={2} placeholder="PE" value={estado} onChange={e => setEstado(e.target.value.toUpperCase())} />
+          </div>
+          <div>
+            <label style={labelStyle}>Tipo de Imóvel</label>
+            <div style={{ position: 'relative' }}>
+              <select value={tipoImovel} onChange={e => setTipoImovel(e.target.value)} style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }}>
+                {PROPERTY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+              <ChevronDown size={16} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
+            </div>
+          </div>
         </div>
-      )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12, marginBottom: 20 }}>
-        <div>
-          <label style={labelStyle}>Área do Imóvel (m²) *</label>
-          <input
-            style={inputStyle}
-            type="number"
-            placeholder="Ex: 85"
-            value={subjectArea}
-            onChange={e => setSubjectArea(e.target.value)}
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+          <div>
+            <label style={labelStyle}>Área Privativa (m²) *</label>
+            <input style={inputStyle} type="number" placeholder="85" value={areaPrivativa} onChange={e => setAreaPrivativa(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}>Quartos</label>
+            <input style={inputStyle} type="number" placeholder="2" value={quartos} onChange={e => setQuartos(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}>Banheiros</label>
+            <input style={inputStyle} type="number" placeholder="1" value={banheiros} onChange={e => setBanheiros(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}>Vagas</label>
+            <input style={inputStyle} type="number" placeholder="1" value={vagas} onChange={e => setVagas(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}>Andar</label>
+            <input style={inputStyle} placeholder="Ex: 5" value={andar} onChange={e => setAndar(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}>Ano de Construção</label>
+            <input style={inputStyle} type="number" placeholder="2010" value={anoConst} onChange={e => setAnoConst(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}>Padrão</label>
+            <div style={{ position: 'relative' }}>
+              <select value={padrao} onChange={e => setPadrao(e.target.value)} style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }}>
+                {STANDARDS.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <ChevronDown size={16} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
+            </div>
+          </div>
+          <div>
+            <label style={labelStyle}>Estado de Conservação</label>
+            <div style={{ position: 'relative' }}>
+              <select value={conservacao} onChange={e => setConservacao(e.target.value)} style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }}>
+                {CONSERVATION.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <ChevronDown size={16} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Photo upload */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <label style={{ ...labelStyle, marginBottom: 0 }}>
-            <Camera size={14} style={{ marginRight: 4, verticalAlign: 'middle', color: T.gold }} />
-            Fotos do Imóvel ({photos.length}/10)
-          </label>
+      <div style={card}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <h4 style={{ color: T.text, fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Camera size={16} style={{ color: T.gold }} /> Fotos ({photos.length}/10)
+          </h4>
           {photos.length < 10 && (
-            <button
-              type="button"
-              style={{ ...btnSecondary, padding: '6px 14px', fontSize: 12 }}
-              onClick={() => photoInputRef.current?.click()}
-            >
-              <Plus size={14} /> Adicionar
+            <button style={{ ...btnSecondary, padding: '6px 14px', fontSize: 12 }} onClick={() => photoInputRef.current?.click()}>
+              <Plus size={13} /> Adicionar
             </button>
           )}
         </div>
-        <input
-          ref={photoInputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          style={{ display: 'none' }}
-          onChange={handlePhotoSelect}
-        />
+        <input ref={photoInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handlePhotoSelect} />
         {photos.length === 0 ? (
-          <div
-            onClick={() => photoInputRef.current?.click()}
-            style={{
-              border: `2px dashed ${T.border}`,
-              borderRadius: 10,
-              padding: '20px 16px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              color: T.textMuted,
-              fontSize: 12,
-            }}
-          >
-            <ImageIcon size={28} style={{ opacity: 0.4, display: 'block', margin: '0 auto 8px' }} />
+          <div onClick={() => photoInputRef.current?.click()} style={{
+            border: `2px dashed ${T.border}`, borderRadius: 10, padding: '24px 16px',
+            textAlign: 'center', cursor: 'pointer', color: T.textMuted, fontSize: 12,
+          }}>
+            <ImageIcon size={28} style={{ opacity: 0.35, display: 'block', margin: '0 auto 8px' }} />
             Clique para adicionar fotos do imóvel (opcional, máx. 10)
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: mobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-            gap: 8,
-          }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)', gap: 8 }}>
             {photos.map(photo => (
               <div key={photo.id} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', border: `1px solid ${T.border}` }}>
-                <img
-                  src={photo.preview}
-                  alt={photo.caption || photo.file.name}
-                  style={{ width: '100%', height: 90, objectFit: 'cover', display: 'block' }}
-                />
+                <img src={photo.preview} alt="" style={{ width: '100%', height: 80, objectFit: 'cover', display: 'block' }} />
                 {photo.uploading && (
-                  <div style={{
-                    position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <Loader2 size={20} style={{ color: T.gold }} className="animate-spin" />
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Loader2 size={18} style={{ color: T.gold }} className="animate-spin" />
                   </div>
                 )}
-                <button
-                  type="button"
-                  onClick={() => removePhoto(photo.id)}
-                  style={{
-                    position: 'absolute', top: 4, right: 4,
-                    background: 'rgba(0,0,0,0.6)', border: 'none',
-                    borderRadius: '50%', width: 22, height: 22,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', color: '#fff',
-                  }}
-                >
-                  <X size={12} />
-                </button>
-                <input
-                  value={photo.caption}
-                  onChange={e => setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, caption: e.target.value } : p))}
-                  placeholder="Legenda..."
-                  style={{
-                    width: '100%', padding: '4px 6px', fontSize: 10,
-                    background: T.surfaceAlt, border: 'none', color: T.text,
-                    outline: 'none',
-                  }}
-                />
+                <button onClick={() => removePhoto(photo.id)} style={{
+                  position: 'absolute', top: 3, right: 3, background: 'rgba(0,0,0,0.65)', border: 'none',
+                  borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff',
+                }}><X size={11} /></button>
+                <input value={photo.caption} onChange={e => setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, caption: e.target.value } : p))}
+                  placeholder="Legenda..." style={{ width: '100%', padding: '3px 5px', fontSize: 9, background: T.surfaceAlt, border: 'none', color: T.text, outline: 'none' }} />
               </div>
             ))}
           </div>
@@ -581,210 +572,172 @@ export default function NovaPTAMPage() {
     </div>
   )
 
+  // ── Step 2: Evaluation ─────────────────────────────────
   const renderStep2 = () => (
-    <div style={sectionCard}>
-      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
-        <FileText size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
-        Finalidade da Avaliação
-      </h3>
-
-      <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 16 }}>
-        <div>
-          <label style={labelStyle}>Finalidade *</label>
-          <div style={{ position: 'relative' }}>
-            <select
-              value={purpose}
-              onChange={e => setPurpose(e.target.value)}
-              style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }}
-            >
-              {PURPOSES.map(p => <option key={p} value={p}>{p}</option>)}
-            </select>
-            <ChevronDown size={16} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
+    <div>
+      <div style={card}>
+        {sectionTitle('Finalidade e Solicitante', <FileText size={20} />)}
+        <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+          <div>
+            <label style={labelStyle}>Finalidade *</label>
+            <div style={{ position: 'relative' }}>
+              <select value={finalidade} onChange={e => setFinalidade(e.target.value)} style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }}>
+                {PURPOSES.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <ChevronDown size={16} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
+            </div>
+          </div>
+          <div>
+            <label style={labelStyle}>Honorários (R$)</label>
+            <input style={inputStyle} type="number" placeholder="800,00" value={honorarios} onChange={e => setHonorarios(e.target.value)} />
           </div>
         </div>
-        <div>
-          <label style={labelStyle}>Nome do Solicitante</label>
-          <input
-            style={inputStyle}
-            placeholder="Nome do solicitante..."
-            value={requesterName}
-            onChange={e => setRequesterName(e.target.value)}
-          />
+      </div>
+
+      <div style={card}>
+        {sectionTitle('Dados do Solicitante / Cliente', <User size={20} />)}
+        <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+          <div style={{ gridColumn: mobile ? undefined : 'span 2' }}>
+            <label style={labelStyle}>Nome do Solicitante</label>
+            <input style={inputStyle} placeholder="Nome completo..." value={clienteNome} onChange={e => setClienteNome(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}><Mail size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />E-mail</label>
+            <input style={inputStyle} type="email" placeholder="email@exemplo.com" value={clienteEmail} onChange={e => setClienteEmail(e.target.value)} />
+          </div>
+          <div>
+            <label style={labelStyle}><Phone size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />Telefone</label>
+            <input style={inputStyle} placeholder="(81) 9 9999-9999" value={clienteTelefone} onChange={e => setClienteTelefone(e.target.value)} />
+          </div>
+          <div style={{ gridColumn: mobile ? undefined : 'span 2' }}>
+            <label style={labelStyle}>Observações</label>
+            <textarea style={{ ...inputStyle, height: 80, resize: 'vertical' } as React.CSSProperties} placeholder="Observações relevantes..." value={observacoes} onChange={e => setObservacoes(e.target.value)} />
+          </div>
         </div>
       </div>
     </div>
   )
 
+  // ── Step 3: Comparables ────────────────────────────────
   const renderStep3 = () => (
-    <div style={sectionCard}>
-      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
-        <MapPin size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
-        Comparandos ({comparables.length})
-      </h3>
+    <div style={card}>
+      {sectionTitle(`Pesquisa de Mercado (${comparables.length} elemento${comparables.length !== 1 ? 's' : ''})`, <MapPin size={20} />)}
 
       {comparables.length < 3 && (
-        <div style={{ padding: 12, background: 'rgba(200,164,74,0.08)', borderRadius: 8, marginBottom: 16, fontSize: 13, color: T.textGold }}>
-          Mínimo de 3 comparandos necessários. Atualmente: {comparables.length}
+        <div style={{ padding: 10, background: 'rgba(200,164,74,0.08)', borderRadius: 8, marginBottom: 14, fontSize: 12, color: T.textGold, border: `1px solid rgba(200,164,74,0.2)` }}>
+          Mínimo de 3 comparandos para o Método Comparativo (NBR 14653-2)
         </div>
       )}
 
-      {/* List existing */}
       {comparables.map((c, i) => (
         <div key={i} style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: 12, background: T.surfaceAlt, borderRadius: 8, marginBottom: 8,
-          border: `1px solid ${T.borderLight}`,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+          padding: 12, background: T.surfaceAlt, borderRadius: 8, marginBottom: 8, border: `1px solid ${T.borderLight}`,
         }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>
-              #{i + 1} - {c.address}{c.neighborhood ? `, ${c.neighborhood}` : ''}
-            </div>
-            <div style={{ fontSize: 12, color: T.textMuted, marginTop: 2 }}>
-              {c.area_sqm} m² | {fmtBRL(parseFloat(c.asking_price) || 0)} | {fmt(computePricePerSqm(c))} R$/m²
-              {c.source ? ` | ${c.source}` : ''}
+            <div style={{ fontSize: 12, fontWeight: 600, color: T.text }}>#{i + 1} — {c.address}{c.neighborhood ? `, ${c.neighborhood}` : ''}</div>
+            <div style={{ fontSize: 11, color: T.textMuted, marginTop: 3 }}>
+              {c.area_sqm}m² · {fmtBRL(parseFloat(c.asking_price) || 0)} · {fmt(computePricePerSqm(c))} R$/m²
+              {c.homogenized_price_per_sqm ? ` · Hom: ${fmt(c.homogenized_price_per_sqm)} R$/m²` : ''}
+              {c.source ? ` · ${c.source}` : ''}
             </div>
           </div>
-          <button onClick={() => removeComparable(i)} style={{ background: 'none', border: 'none', color: T.error, cursor: 'pointer', padding: 8 }}>
-            <Trash2 size={16} />
+          <button onClick={() => removeComparable(i)} style={{ background: 'none', border: 'none', color: T.error, cursor: 'pointer', padding: '4px 8px', flexShrink: 0 }}>
+            <Trash2 size={15} />
           </button>
         </div>
       ))}
 
-      {/* Add form */}
       {showAddForm ? (
         <div style={{ padding: 16, background: T.surfaceAlt, borderRadius: 10, border: `1px solid ${T.border}`, marginTop: 12 }}>
-          <h4 style={{ color: T.textGold, fontSize: 14, marginBottom: 12 }}>Novo Comparando</h4>
+          <h4 style={{ color: T.textGold, fontSize: 13, marginBottom: 12, fontWeight: 600 }}>Novo Comparando</h4>
           <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 10 }}>
-            <div>
-              <label style={labelStyle}>Endereço *</label>
-              <input style={inputStyle} placeholder="Rua..." value={newComp.address} onChange={e => setNewComp({ ...newComp, address: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Bairro</label>
-              <input style={inputStyle} placeholder="Bairro..." value={newComp.neighborhood} onChange={e => setNewComp({ ...newComp, neighborhood: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Cidade</label>
-              <input style={inputStyle} placeholder="Cidade..." value={newComp.city} onChange={e => setNewComp({ ...newComp, city: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Estado</label>
-              <input style={inputStyle} placeholder="UF" maxLength={2} value={newComp.state} onChange={e => setNewComp({ ...newComp, state: e.target.value.toUpperCase() })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Área (m²) *</label>
-              <input style={inputStyle} type="number" placeholder="85" value={newComp.area_sqm} onChange={e => setNewComp({ ...newComp, area_sqm: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Preço Pedido (R$) *</label>
-              <input style={inputStyle} type="number" placeholder="450000" value={newComp.asking_price} onChange={e => setNewComp({ ...newComp, asking_price: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Quartos</label>
-              <input style={inputStyle} type="number" placeholder="2" value={newComp.bedrooms} onChange={e => setNewComp({ ...newComp, bedrooms: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Banheiros</label>
-              <input style={inputStyle} type="number" placeholder="1" value={newComp.bathrooms} onChange={e => setNewComp({ ...newComp, bathrooms: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Vagas</label>
-              <input style={inputStyle} type="number" placeholder="1" value={newComp.parking_spots} onChange={e => setNewComp({ ...newComp, parking_spots: e.target.value })} />
-            </div>
+            {[
+              { label: 'Endereço *', key: 'address', placeholder: 'Rua, número...' },
+              { label: 'Bairro', key: 'neighborhood', placeholder: 'Bairro...' },
+              { label: 'Cidade', key: 'city', placeholder: 'Cidade...' },
+              { label: 'Estado', key: 'state', placeholder: 'UF', maxLen: 2, upper: true },
+              { label: 'Área (m²) *', key: 'area_sqm', type: 'number', placeholder: '85' },
+              { label: 'Preço Pedido (R$) *', key: 'asking_price', type: 'number', placeholder: '450000' },
+              { label: 'Quartos', key: 'bedrooms', type: 'number', placeholder: '2' },
+              { label: 'Vagas', key: 'parking_spots', type: 'number', placeholder: '1' },
+            ].map(({ label, key, type, placeholder, maxLen, upper }) => (
+              <div key={key}>
+                <label style={labelStyle}>{label}</label>
+                <input
+                  style={inputStyle} type={type} placeholder={placeholder}
+                  maxLength={maxLen}
+                  value={(newComp as Record<string, unknown>)[key] as string}
+                  onChange={e => setNewComp({ ...newComp, [key]: upper ? e.target.value.toUpperCase() : e.target.value })}
+                />
+              </div>
+            ))}
             <div>
               <label style={labelStyle}>Fonte</label>
               <div style={{ position: 'relative' }}>
-                <select style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }} value={newComp.source} onChange={e => setNewComp({ ...newComp, source: e.target.value })}>
+                <select value={newComp.source} onChange={e => setNewComp({ ...newComp, source: e.target.value })} style={{ ...inputStyle, appearance: 'none', paddingRight: 32 }}>
                   <option value="">Selecionar...</option>
                   {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <ChevronDown size={16} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
+                <ChevronDown size={15} style={{ position: 'absolute', right: 12, top: 12, color: T.textMuted, pointerEvents: 'none' }} />
               </div>
             </div>
-            <div style={{ gridColumn: mobile ? undefined : 'span 2' }}>
+            <div>
               <label style={labelStyle}>URL da Fonte</label>
               <input style={inputStyle} placeholder="https://..." value={newComp.source_url} onChange={e => setNewComp({ ...newComp, source_url: e.target.value })} />
             </div>
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-            <button style={btnPrimary} onClick={addComparable}><Plus size={16} /> Adicionar</button>
-            <button style={btnSecondary} onClick={() => setShowAddForm(false)}>Cancelar</button>
+            <button style={btnPrimary} onClick={addComparable}><Plus size={15} /> Adicionar</button>
+            <button style={btnSecondary} onClick={() => { setShowAddForm(false); setNewComp(emptyComparable()) }}>Cancelar</button>
           </div>
         </div>
       ) : (
         <button
-          style={{ ...btnSecondary, marginTop: 12, width: '100%', justifyContent: 'center' }}
+          style={{ ...btnSecondary, marginTop: 10, width: '100%', justifyContent: 'center' }}
           onClick={() => setShowAddForm(true)}
         >
-          <Plus size={16} /> Adicionar Comparando
+          <Plus size={15} /> Adicionar Comparando
         </button>
       )}
     </div>
   )
 
+  // ── Step 4: Factors ────────────────────────────────────
   const renderStep4 = () => (
-    <div style={sectionCard}>
-      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
-        <Scale size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
-        Fatores de Homogeneização
-      </h3>
+    <div style={card}>
+      {sectionTitle('Fatores de Homogeneização', <Scale size={20} />)}
       <p style={{ fontSize: 12, color: T.textMuted, marginBottom: 16 }}>
-        Ajuste os fatores conforme NBR 14653-2. Valores entre 0.50 e 1.50.
+        Ajuste conforme NBR 14653-2. Valores entre 0,50 e 1,50.
       </p>
-
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
           <thead>
             <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-              <th style={{ padding: '8px 6px', textAlign: 'left', color: T.textGold, fontSize: 11 }}>#</th>
-              <th style={{ padding: '8px 6px', textAlign: 'left', color: T.textGold, fontSize: 11 }}>Endereço</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>R$/m²</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Oferta</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Área</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Local.</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Idade</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Pav.</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Vagas</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Extra</th>
-              <th style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontSize: 11 }}>Hom. R$/m²</th>
+              {['#', 'Endereço', 'R$/m²', 'Oferta', 'Área', 'Local.', 'Idade', 'Pav.', 'Vagas', 'Extra', 'Hom. R$/m²'].map(h => (
+                <th key={h} style={{ padding: '8px 5px', textAlign: h === 'Endereço' ? 'left' : 'center', color: T.textGold, fontSize: 10, fontWeight: 600 }}>{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {comparables.map((c, i) => {
               const factorInput = (field: keyof ComparableEntry) => (
                 <input
-                  type="number"
-                  step="0.01"
-                  min="0.5"
-                  max="1.5"
+                  type="number" step="0.01" min="0.5" max="1.5"
                   value={c[field] as number}
                   onChange={e => updateFactor(i, field, parseFloat(e.target.value) || 1)}
-                  style={{
-                    ...inputStyle,
-                    width: 60,
-                    padding: '4px 6px',
-                    fontSize: 12,
-                    textAlign: 'center',
-                  }}
+                  style={{ ...inputStyle, width: 58, padding: '3px 4px', fontSize: 11, textAlign: 'center' }}
                 />
               )
               return (
                 <tr key={i} style={{ borderBottom: `1px solid ${T.borderLight}` }}>
-                  <td style={{ padding: '8px 6px', color: T.textMuted }}>{i + 1}</td>
-                  <td style={{ padding: '8px 6px', color: T.text, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {c.address}
-                  </td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center', color: T.text }}>{fmt(computePricePerSqm(c))}</td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('offer_factor')}</td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('area_factor')}</td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('location_factor')}</td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('age_factor')}</td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('floor_factor')}</td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('parking_factor')}</td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center' }}>{factorInput('extra_factor')}</td>
-                  <td style={{ padding: '8px 6px', textAlign: 'center', color: T.textGold, fontWeight: 600 }}>
-                    {fmt(computeHomogenized(c))}
-                  </td>
+                  <td style={{ padding: '7px 5px', color: T.textMuted, fontSize: 11 }}>{i + 1}</td>
+                  <td style={{ padding: '7px 5px', color: T.text, maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 11 }}>{c.address}</td>
+                  <td style={{ padding: '7px 5px', textAlign: 'center', color: T.text, fontSize: 11 }}>{fmt(computePricePerSqm(c))}</td>
+                  {(['offer_factor', 'area_factor', 'location_factor', 'age_factor', 'floor_factor', 'parking_factor', 'extra_factor'] as (keyof ComparableEntry)[]).map(f => (
+                    <td key={f} style={{ padding: '4px 3px', textAlign: 'center' }}>{factorInput(f)}</td>
+                  ))}
+                  <td style={{ padding: '7px 5px', textAlign: 'center', color: T.textGold, fontWeight: 700, fontSize: 11 }}>{fmt(computeHomogenized(c))}</td>
                 </tr>
               )
             })}
@@ -794,115 +747,109 @@ export default function NovaPTAMPage() {
     </div>
   )
 
+  // ── Step 5: Results ────────────────────────────────────
   const renderStep5 = () => {
-    if (!calcResult) return <div style={sectionCard}><p style={{ color: T.textMuted }}>Calculando...</p></div>
-
-    const cv = calcResult.coefficient_of_variation
+    if (!calcResult) return <div style={card}><Loader2 size={20} className="animate-spin" style={{ color: T.gold }} /></div>
+    const { coefficient_of_variation: cv, confidence_grade: grade, estimated_value, average_price_per_sqm } = calcResult
     const cvColor = cv <= 25 ? T.success : cv <= 30 ? T.warning : T.error
-    const gradeColor = calcResult.confidence_grade === 'III' ? T.success
-      : calcResult.confidence_grade === 'II' ? T.warning : T.error
+    const gradeColor = grade === 'III' ? T.success : grade === 'II' ? T.warning : T.error
+    const lower = estimated_value * 0.85
+    const upper = estimated_value * 1.15
+    const range = upper - lower
+    const midPct = range > 0 ? Math.max(5, Math.min(95, ((estimated_value - lower) / range) * 100)) : 50
 
     return (
       <div>
-        <div style={sectionCard}>
-          <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
-            <BarChart2 size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
-            Resultado da Análise
-          </h3>
-
-          {/* Stats grid */}
+        <div style={card}>
+          {sectionTitle('Resultado da Análise', <BarChart2 size={20} />)}
           <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr 1fr' : 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
             {[
-              { label: 'Média R$/m²', value: fmt(calcResult.average_price_per_sqm), color: T.textGold },
+              { label: 'Média R$/m²', value: fmt(average_price_per_sqm), color: T.textGold },
               { label: 'Mediana R$/m²', value: fmt(calcResult.median_price_per_sqm), color: T.text },
               { label: 'Desvio Padrão', value: fmt(calcResult.std_deviation), color: T.text },
-              { label: 'CV%', value: fmt(calcResult.coefficient_of_variation) + '%', color: cvColor },
+              { label: 'CV%', value: fmt(cv) + '%', color: cvColor },
               { label: 'Elementos', value: String(comparables.length), color: T.text },
-              { label: 'Grau', value: calcResult.confidence_grade, color: gradeColor },
+              { label: 'Grau NBR', value: grade, color: gradeColor },
             ].map((s, i) => (
               <div key={i} style={{ padding: 14, background: T.surfaceAlt, borderRadius: 10, textAlign: 'center', border: `1px solid ${T.borderLight}` }}>
                 <div style={{ fontSize: 22, fontWeight: 700, color: s.color, fontFamily: T.font.display }}>{s.value}</div>
-                <div style={{ fontSize: 11, color: T.textMuted, marginTop: 2 }}>{s.label}</div>
+                <div style={{ fontSize: 10, color: T.textMuted, marginTop: 2 }}>{s.label}</div>
               </div>
             ))}
           </div>
 
-          {/* Estimated value */}
-          <div style={{
-            padding: 24, background: 'linear-gradient(135deg, #050B14, #0d2240)',
-            borderRadius: 12, textAlign: 'center', border: `2px solid ${T.gold}`,
-          }}>
-            <div style={{ fontSize: 12, color: T.textMuted }}>Valor de Mercado Estimado</div>
-            <div style={{ fontSize: 32, fontWeight: 700, color: T.gold, fontFamily: T.font.display, margin: '8px 0' }}>
-              {fmtBRL(calcResult.estimated_value)}
+          {/* Estimated value hero */}
+          <div style={{ padding: 24, background: 'linear-gradient(135deg, #050B14, #0d2240)', borderRadius: 12, textAlign: 'center', border: `2px solid ${T.gold}` }}>
+            <div style={{ fontSize: 11, color: T.textMuted, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 6 }}>Valor de Mercado Estimado</div>
+            <div style={{ fontSize: 34, fontWeight: 700, color: T.gold, fontFamily: T.font.display, margin: '6px 0' }}>
+              {fmtBRL(estimated_value)}
             </div>
             <div style={{ fontSize: 12, color: T.textMuted }}>
-              {fmtBRL(calcResult.average_price_per_sqm)}/m² x {subjectArea} m²
+              {fmtBRL(average_price_per_sqm)}/m² × {areaPrivativa} m²
             </div>
-            <span style={{
-              display: 'inline-block', marginTop: 12,
-              background: T.gold, color: '#050B14',
-              padding: '4px 16px', borderRadius: 20,
-              fontWeight: 700, fontSize: 13,
-            }}>
-              Grau {calcResult.confidence_grade} - NBR 14653
+            <span style={{ display: 'inline-block', marginTop: 10, background: T.gold, color: '#050B14', padding: '4px 18px', borderRadius: 20, fontWeight: 700, fontSize: 12 }}>
+              Grau {grade} · NBR 14653-2
             </span>
           </div>
         </div>
 
-        {/* Confidence interval */}
-        <div style={sectionCard}>
-          <h4 style={{ color: T.text, fontSize: 14, marginBottom: 12 }}>Intervalo de Confiança (80%)</h4>
-          {(() => {
-            const lower = calcResult.estimated_value * 0.85
-            const upper = calcResult.estimated_value * 1.15
-            const range = upper - lower
-            const midPct = ((calcResult.estimated_value - lower) / range) * 100
-            return (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: T.textMuted, marginBottom: 4 }}>
-                  <span>{fmtBRL(lower)}</span>
-                  <span style={{ color: T.textGold, fontWeight: 600 }}>{fmtBRL(calcResult.estimated_value)}</span>
-                  <span>{fmtBRL(upper)}</span>
-                </div>
-                <div style={{ height: 8, background: T.surfaceAlt, borderRadius: 4, position: 'relative' }}>
-                  <div style={{
-                    position: 'absolute', left: 0, top: 0, bottom: 0,
-                    width: '100%', borderRadius: 4,
-                    background: `linear-gradient(90deg, ${T.error}, ${T.warning}, ${T.success}, ${T.warning}, ${T.error})`,
-                    opacity: 0.3,
-                  }} />
-                  <div style={{
-                    position: 'absolute', top: -3, width: 14, height: 14,
-                    borderRadius: '50%', background: T.gold, border: '2px solid #fff',
-                    left: `calc(${midPct}% - 7px)`,
-                  }} />
-                </div>
+        {/* Confidence interval bar */}
+        <div style={card}>
+          <h4 style={{ color: T.text, fontSize: 13, marginBottom: 14, fontWeight: 600 }}>Intervalo de Confiança</h4>
+          <div className="pt-12 relative mb-1">
+            <div style={{ position: 'relative', paddingTop: 48, marginBottom: 4 }}>
+              <div style={{ position: 'absolute', top: 0, left: `${midPct}%`, transform: 'translateX(-50%)', textAlign: 'center' }}>
+                <p style={{ fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', color: T.success }}>{fmtBRL(estimated_value)}</p>
+                <p style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>Estimado</p>
+                <div style={{ width: 1, height: 12, background: 'rgba(16,185,129,0.4)', margin: '0 auto' }} />
               </div>
-            )
-          })()}
+              <div style={{ height: 10, background: T.surfaceAlt, borderRadius: 5, position: 'relative', overflow: 'visible' }}>
+                <div style={{
+                  position: 'absolute', inset: 0, borderRadius: 5,
+                  background: 'linear-gradient(90deg, var(--error, #ef4444)30, var(--warning, #f59e0b)60, var(--success, #10b981))',
+                  opacity: 0.3,
+                }} />
+                <div style={{
+                  position: 'absolute', top: '50%', transform: 'translate(-50%, -50%)',
+                  left: `${midPct}%`, width: 16, height: 16, borderRadius: '50%',
+                  background: 'white', border: '2.5px solid #10b981', boxShadow: '0 2px 8px rgba(16,185,129,0.4)', zIndex: 2,
+                }} />
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 12 }}>
+            <div>
+              <p style={{ fontWeight: 600, color: T.text }}>{fmtBRL(lower)}</p>
+              <p style={{ fontSize: 10, color: T.textMuted }}>Mínimo (−15%)</p>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <p style={{ fontWeight: 600, color: T.text }}>{fmtBRL(upper)}</p>
+              <p style={{ fontSize: 10, color: T.textMuted }}>Máximo (+15%)</p>
+            </div>
+          </div>
         </div>
 
-        {/* Comparables summary */}
-        <div style={sectionCard}>
-          <h4 style={{ color: T.text, fontSize: 14, marginBottom: 12 }}>Resumo dos Comparandos</h4>
+        {/* Comparables summary table */}
+        <div style={card}>
+          <h4 style={{ color: T.text, fontSize: 13, marginBottom: 12, fontWeight: 600 }}>Elementos Amostrais</h4>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
               <thead>
                 <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                  <th style={{ padding: 6, textAlign: 'left', color: T.textGold }}>#</th>
-                  <th style={{ padding: 6, textAlign: 'left', color: T.textGold }}>Endereço</th>
-                  <th style={{ padding: 6, textAlign: 'right', color: T.textGold }}>R$/m²</th>
-                  <th style={{ padding: 6, textAlign: 'right', color: T.textGold }}>Hom. R$/m²</th>
+                  {['#', 'Endereço', 'Área', 'Preço', 'R$/m²', 'R$/m² Hom.'].map(h => (
+                    <th key={h} style={{ padding: '6px 6px', textAlign: h === 'Endereço' ? 'left' : 'center', color: T.textGold, fontSize: 10 }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {comparables.map((c, i) => (
                   <tr key={i} style={{ borderBottom: `1px solid ${T.borderLight}` }}>
-                    <td style={{ padding: 6, color: T.textMuted }}>{i + 1}</td>
-                    <td style={{ padding: 6, color: T.text }}>{c.address}</td>
-                    <td style={{ padding: 6, textAlign: 'right', color: T.text }}>{fmt(computePricePerSqm(c))}</td>
-                    <td style={{ padding: 6, textAlign: 'right', color: T.textGold, fontWeight: 600 }}>{fmt(computeHomogenized(c))}</td>
+                    <td style={{ padding: '6px 6px', color: T.textMuted }}>{i + 1}</td>
+                    <td style={{ padding: '6px 6px', color: T.text }}>{c.address}{c.neighborhood ? `, ${c.neighborhood}` : ''}</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'center', color: T.textMuted }}>{c.area_sqm}m²</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'center', color: T.text }}>{fmtBRL(parseFloat(c.asking_price) || 0)}</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'center', color: T.text }}>{fmt(computePricePerSqm(c))}</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'center', color: T.textGold, fontWeight: 700 }}>{fmt(computeHomogenized(c))}</td>
                   </tr>
                 ))}
               </tbody>
@@ -913,75 +860,92 @@ export default function NovaPTAMPage() {
     )
   }
 
+  // ── Step 6: Generate ───────────────────────────────────
   const renderStep6 = () => (
-    <div style={sectionCard}>
-      <h3 style={{ color: T.text, fontSize: 18, marginBottom: 16, fontFamily: T.font.display }}>
-        <Download size={20} style={{ marginRight: 8, verticalAlign: 'middle', color: T.gold }} />
-        Gerar PTAM
-      </h3>
+    <div style={card}>
+      {sectionTitle('Gerar PTAM', <Download size={20} />)}
 
-      {!valuationId ? (
+      {!avaliacaoId ? (
         <div>
-          <p style={{ color: T.textMuted, fontSize: 13, marginBottom: 16 }}>
-            Salve a avaliação no banco de dados para gerar o parecer técnico.
+          <p style={{ color: T.textMuted, fontSize: 13, marginBottom: 20, lineHeight: 1.6 }}>
+            Salve a avaliação para gerar o Parecer Técnico de Avaliação Mercadológica (PTAM) em conformidade com a NBR 14653 e Resolução COFECI 1.066/2007.
           </p>
+
+          {calcResult && (
+            <div style={{ padding: 16, background: T.surfaceAlt, borderRadius: 10, marginBottom: 20, border: `1px solid ${T.borderLight}` }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, textAlign: 'center' }}>
+                <div>
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>Valor Estimado</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: T.gold, fontFamily: T.font.display }}>{fmtBRL(calcResult.estimated_value)}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>R$/m²</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: T.text, fontFamily: T.font.display }}>{fmt(calcResult.average_price_per_sqm)}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>Grau NBR</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: calcResult.confidence_grade === 'III' ? T.success : calcResult.confidence_grade === 'II' ? T.warning : T.error }}>{calcResult.confidence_grade}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <button
-            style={{ ...btnPrimary, width: '100%', justifyContent: 'center', opacity: saving ? 0.6 : 1 }}
+            style={{ ...btnPrimary, width: '100%', justifyContent: 'center', opacity: saving ? 0.6 : 1, fontSize: 15, padding: '13px 24px' }}
             onClick={saveToDatabase}
             disabled={saving}
           >
-            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-            {saving ? 'Salvando...' : 'Salvar Avaliação'}
+            {saving ? <><Loader2 size={16} className="animate-spin" /> Salvando...</> : <><Save size={16} /> Salvar Avaliação</>}
           </button>
         </div>
       ) : (
         <div>
-          <div style={{ padding: 14, background: T.accentBg, borderRadius: 8, marginBottom: 16, border: `1px solid ${T.border}` }}>
+          <div style={{ padding: 16, background: 'rgba(16,185,129,0.08)', borderRadius: 10, marginBottom: 20, border: '1px solid rgba(16,185,129,0.25)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Check size={18} style={{ color: T.success }} />
-              <span style={{ color: T.text, fontSize: 13, fontWeight: 600 }}>Avaliação salva com sucesso!</span>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Check size={16} style={{ color: T.success }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>Avaliação salva com sucesso!</div>
+                <div style={{ fontSize: 11, color: T.textMuted, fontFamily: 'monospace', marginTop: 2 }}>{avaliacaoId}</div>
+              </div>
             </div>
-            <div style={{ fontSize: 11, color: T.textMuted, marginTop: 4 }}>ID: {valuationId}</div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', gap: 12 }}>
-            <button style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }} onClick={openPreview}>
-              <Eye size={16} /> Visualizar PTAM
+          <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', gap: 10 }}>
+            <button style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }} onClick={openPTAM}>
+              <Eye size={15} /> Visualizar PTAM
             </button>
             <button
               style={{ ...btnSecondary, flex: 1, justifyContent: 'center' }}
               onClick={() => {
-                const link = document.createElement('a')
-                link.href = `/api/valuations/${valuationId}/export?format=html`
-                link.download = `PTAM-${valuationId}.html`
-                link.click()
+                const a = document.createElement('a')
+                a.href = `/api/avaliacoes/${avaliacaoId}/export`
+                a.download = `PTAM-${avaliacaoId.slice(0, 8).toUpperCase()}.html`
+                a.click()
               }}
             >
-              <Download size={16} /> Download HTML
+              <Download size={15} /> Download HTML
+            </button>
+            <button
+              style={{ ...btnSecondary, flex: 1, justifyContent: 'center' }}
+              onClick={() => window.open(`/backoffice/avaliacoes/${avaliacaoId}`, '_blank')}
+            >
+              <Star size={15} /> Ver Detalhes
             </button>
           </div>
-
-          {calcResult && (
-            <div style={{ marginTop: 20, padding: 16, background: T.surfaceAlt, borderRadius: 10, textAlign: 'center', border: `1px solid ${T.borderLight}` }}>
-              <div style={{ fontSize: 12, color: T.textMuted }}>Valor Final</div>
-              <div style={{ fontSize: 28, fontWeight: 700, color: T.gold, fontFamily: T.font.display }}>{fmtBRL(calcResult.estimated_value)}</div>
-              <div style={{ fontSize: 12, color: T.textMuted }}>Grau {calcResult.confidence_grade}</div>
-            </div>
-          )}
         </div>
       )}
     </div>
   )
 
-  // ============================================================
-  // MAIN RENDER
-  // ============================================================
+  // ── Main Render ────────────────────────────────────────
   return (
-    <div style={{ minHeight: '100vh', padding: mobile ? '0 12px 176px' : '0 24px 40px' }}>
+    <div style={{ minHeight: '100vh', padding: mobile ? '0 12px 180px' : '0 24px 40px' }}>
       <PageIntelHeader
         moduleLabel="AVALIACAO"
         title="Novo PTAM"
-        subtitle="Parecer Técnico de Avaliação Mercadológica - NBR 14653"
+        subtitle="Parecer Técnico de Avaliação Mercadológica · NBR 14653"
         breadcrumbs={[
           { label: 'Backoffice', href: '/backoffice' },
           { label: 'Avaliações', href: '/backoffice/avaliacoes' },
@@ -990,41 +954,31 @@ export default function NovaPTAMPage() {
       />
 
       {/* Step indicator */}
-      <div style={{
-        display: 'flex', gap: mobile ? 2 : 4, marginBottom: 24,
-        overflowX: 'auto', paddingBottom: 4,
-      }}>
+      <div style={{ display: 'flex', gap: mobile ? 2 : 4, marginBottom: 24, overflowX: 'auto', paddingBottom: 4 }}>
         {STEPS.map(s => {
           const active = s.num === step
           const done = s.num < step
           return (
-            <button
-              key={s.num}
-              onClick={() => {
-                if (s.num <= step || done) setStep(s.num)
-              }}
+            <button key={s.num}
+              onClick={() => { if (s.num <= step || done) setStep(s.num) }}
               style={{
-                flex: mobile ? undefined : 1,
-                minWidth: mobile ? 48 : undefined,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                padding: mobile ? '8px 10px' : '10px 14px',
-                borderRadius: 8,
+                flex: mobile ? undefined : 1, minWidth: mobile ? 48 : undefined,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+                padding: mobile ? '8px 10px' : '10px 14px', borderRadius: 8,
                 border: active ? `1px solid ${T.gold}` : `1px solid ${T.borderLight}`,
                 background: active ? T.accentBg : done ? 'rgba(34,197,94,0.06)' : 'transparent',
                 color: active ? T.gold : done ? T.success : T.textMuted,
                 cursor: s.num <= step ? 'pointer' : 'default',
-                fontSize: 12, fontWeight: active ? 600 : 400,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {done ? <Check size={14} /> : s.icon}
+                fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
+              }}>
+              {done ? <Check size={13} /> : s.icon}
               {!mobile && <span>{s.label}</span>}
             </button>
           )
         })}
       </div>
 
-      {/* Step content */}
+      {/* Content */}
       {step === 1 && renderStep1()}
       {step === 2 && renderStep2()}
       {step === 3 && renderStep3()}
@@ -1037,23 +991,14 @@ export default function NovaPTAMPage() {
         display: 'flex', justifyContent: 'space-between', marginTop: 20,
         ...(mobile ? { position: 'fixed', bottom: 64, left: 0, right: 0, padding: '12px 16px', background: T.surface, borderTop: `1px solid ${T.border}`, zIndex: 50 } : {}),
       }}>
-        <button
-          style={{ ...btnSecondary, opacity: step === 1 ? 0.4 : 1 }}
-          onClick={goPrev}
-          disabled={step === 1}
-        >
-          <ArrowLeft size={16} /> Voltar
+        <button style={{ ...btnSecondary, opacity: step === 1 ? 0.4 : 1 }} onClick={goPrev} disabled={step === 1}>
+          <ArrowLeft size={15} /> Voltar
         </button>
-
-        {step < 6 ? (
-          <button
-            style={{ ...btnPrimary, opacity: canNext() ? 1 : 0.4 }}
-            onClick={goNext}
-            disabled={!canNext()}
-          >
-            Próximo <ArrowRight size={16} />
+        {step < 6 && (
+          <button style={{ ...btnPrimary, opacity: canNext() ? 1 : 0.4 }} onClick={goNext} disabled={!canNext()}>
+            Próximo <ArrowRight size={15} />
           </button>
-        ) : null}
+        )}
       </div>
     </div>
   )

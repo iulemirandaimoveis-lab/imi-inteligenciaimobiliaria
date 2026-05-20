@@ -185,13 +185,11 @@ export default function AvaliacaoDetalhesPage() {
                             style={{ color: sc.text, background: sc.bg }}>
                             {sc.label}
                         </span>
-                        {data.laudo_url && (
-                            <a href={data.laudo_url} target="_blank" rel="noopener noreferrer"
-                                className="h-10 px-4 rounded-[6px] flex items-center gap-2 text-sm font-medium hover:opacity-80"
-                                style={{ border: `1px solid ${T.border}`, color: T.text }}>
-                                <Download size={16} /> PDF
-                            </a>
-                        )}
+                        <a href={`/api/avaliacoes/${params.id}/export`} target="_blank" rel="noopener noreferrer"
+                            className="h-10 px-4 rounded-[6px] flex items-center gap-2 text-sm font-medium hover:opacity-80"
+                            style={{ border: `1px solid ${T.border}`, color: T.text }}>
+                            <Download size={16} /> PTAM
+                        </a>
                         <button onClick={() => setShowDeleteConfirm(true)}
                             className="h-10 px-3 rounded-[6px] text-sm font-medium hover:bg-red-500/20"
                             style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--error)' }}>
