@@ -41,7 +41,7 @@ const PAYMENT_CONDITIONS: Record<string, {
     parcelas: 60,
     parcelValue: 'a partir de R$ 290',
     method: 'Cartão / Boleto',
-    seller: 'Mi Gestão',
+    seller: 'Mano Imóveis',
   },
   'ab7d1fc1-f069-4e3b-a515-8e1204c11247': {
     entrada: '20% de entrada',
