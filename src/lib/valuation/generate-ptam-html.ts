@@ -19,6 +19,18 @@ export function generatePTAMHtml(params: {
   photos?: PhotoItem[]
   valorMinimo?: number
   valorMaximo?: number
+  liquidez?: 'alta' | 'media' | 'baixa'
+  depreciacao?: {
+    idade_real: number
+    vida_util: number
+    idade_percentual: number
+    estado_conservacao: string
+    coeficiente_ross: number
+    coeficiente_heidecke: number
+    depreciacao_total: number
+    valor_depreciado: number
+    valor_residual: number
+  }
 }): string {
   const {
     valuation, development, comparables, result, photos = [],
@@ -29,13 +41,15 @@ export function generatePTAMHtml(params: {
     evaluatorCompany,
     valorMinimo,
     valorMaximo,
+    liquidez,
+    depreciacao,
   } = params
 
   const fmt = (v: number) =>
     v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const fmtBRL = (v: number) =>
-    'R$ ' + fmt(v)
+    'R$ ' + fmt(v)
 
   const purposeLabel = (valuation.purpose as string) || 'Venda'
   const methodLabel = (valuation.method as string) === 'comparative_direct'
@@ -57,6 +71,10 @@ export function generatePTAMHtml(params: {
 
   const protocolo = (valuation.protocolo as string) || (valuation.id as string)?.slice(0, 8).toUpperCase() || 'IMI-0001'
 
+  const anoConstrucao = depreciacao
+    ? (new Date().getFullYear() - depreciacao.idade_real)
+    : null
+
   const comparableRows = comparables.map((c, i) => `
     <tr>
       <td>${i + 1}</td>
@@ -76,7 +94,7 @@ export function generatePTAMHtml(params: {
   `).join('')
 
   const photoGallerySection = photos.length > 0 ? `
-  <h3>7. Registro Fotográfico</h3>
+  <h3>Registro Fotográfico</h3>
   <p>Imagens do imóvel avaliando registradas na data da vistoria.</p>
   <div class="photo-grid">
     ${photos.map((p, i) => `
@@ -88,7 +106,122 @@ export function generatePTAMHtml(params: {
   </div>
   ` : ''
 
-  const sectionOffset = photos.length > 0 ? 1 : 0
+  // ── Methodology justification per method ──────────────────────────────────
+  const methodJustification = (() => {
+    const m = (valuation.method as string) || 'comparative_direct'
+    if (m === 'comparative_direct') {
+      return `O <strong>Método Comparativo Direto de Dados de Mercado</strong> é o método padrão preconizado pela <em>NBR 14653-2</em> para imóveis residenciais e comerciais urbanos com mercado ativo. Sua aplicação baseia-se na análise de uma amostra de imóveis com características similares ao avaliando, coletados na região de influência, aos quais se aplicam fatores de homogeneização que eliminam as diferenças atributivas (área, localização, estado de conservação, padrão construtivo, etc.). A adequação do método é confirmada pela disponibilidade de ${comparables.length} elemento${comparables.length !== 1 ? 's' : ''} comparativo${comparables.length !== 1 ? 's' : ''}, suficiente${comparables.length !== 1 ? 's' : ''} para conferir representatividade estatística à amostra (<em>NBR 14653-1, seção 8.2</em>).`
+    }
+    if (m === 'income' || m === 'renda') {
+      return `O <strong>Método da Capitalização da Renda</strong> é indicado pela <em>NBR 14653-1 e NBR 14653-4</em> para imóveis geradores de renda (lajes corporativas, galpões logísticos, imóveis para locação). O valor do imóvel é obtido pela capitalização da renda líquida esperada a uma taxa de desconto compatível com o risco do ativo imobiliário. O método é aplicável quando existe histórico de locação ou dados de mercado suficientes para estimar a renda potencial com consistência.`
+    }
+    if (m === 'cost' || m === 'custo') {
+      return `O <strong>Método Evolutivo (Custo de Reprodução)</strong>, normatizado pela <em>NBR 14653-2 e NBR 14653-7</em>, é empregado quando não há mercado comparativo ativo ou quando o imóvel possui características singulares. O valor é obtido pela soma do valor do terreno (determinado por comparação) ao custo de reprodução das benfeitorias, deduzida a depreciação física e funcional. Referências de custo unitário básico seguem a tabela CUB-SINDUSCON vigente.`
+    }
+    return `A metodologia aplicada segue os preceitos da <em>NBR 14653-1</em> (Parte Geral) e da respectiva parte específica, garantindo a conformidade técnica do parecer com as normas da ABNT e com a <em>Resolução COFECI 1.066/2007</em>.`
+  })()
+
+  // ── Three scenarios ───────────────────────────────────────────────────────
+  const conservador = result.estimated_value * 0.85
+  const realista    = result.estimated_value
+  const agressivo   = result.estimated_value * 1.12
+
+  const scenariosSection = `
+  <div class="scenarios-grid">
+    <div class="scenario-card scenario-blue">
+      <div class="scenario-label">Cenário Conservador</div>
+      <div class="scenario-desc">−15% sobre o valor estimado · Condições de mercado desfavoráveis ou desvalorização localizada</div>
+      <div class="scenario-value">${fmtBRL(conservador)}</div>
+    </div>
+    <div class="scenario-card scenario-green">
+      <div class="scenario-label">Cenário Realista</div>
+      <div class="scenario-desc">Valor estimado de mercado · Condições normais de oferta e demanda</div>
+      <div class="scenario-value">${fmtBRL(realista)}</div>
+    </div>
+    <div class="scenario-card scenario-gold">
+      <div class="scenario-label">Cenário Agressivo</div>
+      <div class="scenario-desc">+12% sobre o valor estimado · Aquecimento de mercado ou atributos de valorização</div>
+      <div class="scenario-value">${fmtBRL(agressivo)}</div>
+    </div>
+  </div>`
+
+  // ── Liquidez section ──────────────────────────────────────────────────────
+  const liquidezSection = liquidez ? (() => {
+    const discountMap: Record<'alta' | 'media' | 'baixa', number> = { alta: 0.10, media: 0.20, baixa: 0.30 }
+    const labelMap: Record<'alta' | 'media' | 'baixa', string>   = { alta: 'Alta', media: 'Média', baixa: 'Baixa' }
+    const colorMap: Record<'alta' | 'media' | 'baixa', string>   = { alta: '#1a6b3c', media: '#7a5a00', baixa: '#8b1a1a' }
+    const descMap: Record<'alta' | 'media' | 'baixa', string>    = {
+      alta:  'Imóvel com boa liquidez de mercado — absorção esperada em prazo curto (até 90 dias)',
+      media: 'Imóvel com liquidez moderada — absorção estimada entre 90 e 180 dias',
+      baixa: 'Imóvel com liquidez reduzida — absorção estimada acima de 180 dias',
+    }
+    const desc    = discountMap[liquidez]
+    const descPct = (desc * 100).toFixed(0)
+    const valorLiqForc = result.estimated_value * (1 - desc)
+    return `
+    <div class="liquidez-box" style="border-left: 4px solid ${colorMap[liquidez]}">
+      <div class="liquidez-header">
+        <span class="liquidez-badge" style="background:${colorMap[liquidez]}">Liquidez ${labelMap[liquidez]}</span>
+        <span class="liquidez-sub">Fator de Desconto: ${descPct}%</span>
+      </div>
+      <p style="margin:10px 0 12px">${descMap[liquidez]}</p>
+      <table style="max-width:480px">
+        <thead>
+          <tr>
+            <th>Valor de Mercado</th>
+            <th>Desconto (${descPct}%)</th>
+            <th>Valor de Liquidação Forçada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${fmtBRL(result.estimated_value)}</td>
+            <td style="color:#c0392b">−${fmtBRL(result.estimated_value * desc)}</td>
+            <td><strong>${fmtBRL(valorLiqForc)}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>`
+  })() : ''
+
+  // ── Ross-Heidecke section ─────────────────────────────────────────────────
+  const rossHeideckeSection = depreciacao ? `
+    <table style="max-width:100%">
+      <thead>
+        <tr>
+          <th>Ano Construção</th>
+          <th>Idade Real (anos)</th>
+          <th>Vida Útil (anos)</th>
+          <th>% Consumida</th>
+          <th>Estado Conservação</th>
+          <th>Coef. Ross</th>
+          <th>Coef. Heidecke</th>
+          <th>Depreciação Total (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>${anoConstrucao ?? 'N/A'}</td>
+          <td>${depreciacao.idade_real}</td>
+          <td>${depreciacao.vida_util}</td>
+          <td>${fmt(depreciacao.idade_percentual)}%</td>
+          <td>${depreciacao.estado_conservacao}</td>
+          <td>${fmt(depreciacao.coeficiente_ross)}</td>
+          <td>${fmt(depreciacao.coeficiente_heidecke)}</td>
+          <td><strong>${fmt(depreciacao.depreciacao_total)}%</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-grid" style="margin-top:12px">
+      <div class="info-item"><span class="label">Valor Antes da Depreciação:</span><span class="value">${fmtBRL(depreciacao.valor_depreciado + depreciacao.valor_residual)}</span></div>
+      <div class="info-item"><span class="label">Depreciação Apurada:</span><span class="value" style="color:#c0392b">−${fmtBRL(depreciacao.valor_depreciado)}</span></div>
+      <div class="info-item"><span class="label">Valor Residual (pós-dep.):</span><span class="value"><strong>${fmtBRL(depreciacao.valor_residual)}</strong></span></div>
+      <div class="info-item"><span class="label">Método:</span><span class="value">Ross-Heidecke · NBR 14653-2, Anexo A</span></div>
+    </div>` : ''
+
+  // ── Dynamic section numbering ─────────────────────────────────────────────
+  let sectionNum = 5 // sections 1-4 fixed: Identificação, Metodologia, Pesquisa, Tratamento, Resultado
+  const nextSec = () => ++sectionNum
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -315,6 +448,126 @@ export function generatePTAMHtml(params: {
     margin-top: 10px;
   }
 
+  /* ── THREE SCENARIOS ── */
+  .scenarios-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .scenario-card {
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+    border: 1px solid transparent;
+  }
+  .scenario-label {
+    font-weight: 700;
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .scenario-desc {
+    font-size: 8pt;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    opacity: 0.85;
+  }
+  .scenario-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 16pt;
+    font-weight: 700;
+  }
+  .scenario-blue {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    color: #1e3a5f;
+  }
+  .scenario-blue .scenario-label { color: #1d4ed8; }
+  .scenario-blue .scenario-value { color: #1d4ed8; }
+  .scenario-green {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #14532d;
+  }
+  .scenario-green .scenario-label { color: #15803d; }
+  .scenario-green .scenario-value { color: #15803d; }
+  .scenario-gold {
+    background: #fef9c3;
+    border-color: #eab308;
+    color: #713f12;
+  }
+  .scenario-gold .scenario-label { color: #92400e; }
+  .scenario-gold .scenario-value { color: #92400e; }
+
+  /* ── LIQUIDEZ ── */
+  .liquidez-box {
+    background: #f9f8f4;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    border: 1px solid #e8e4dc;
+  }
+  .liquidez-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .liquidez-badge {
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 16px;
+    font-size: 9pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .liquidez-sub {
+    font-size: 9.5pt;
+    color: #4a4a6a;
+    font-weight: 600;
+  }
+
+  /* ── METHODOLOGY JUSTIFICATION ── */
+  .method-justify {
+    background: #f0f4ff;
+    border-left: 4px solid var(--navy);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 10pt;
+    color: #1a1a2e;
+    line-height: 1.7;
+  }
+
+  /* ── COMMERCIAL EXPLANATION ── */
+  .commercial-box {
+    background: linear-gradient(135deg, #fdf8ef, #fef4d8);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .commercial-box .commercial-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 12pt;
+    color: var(--navy);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .commercial-box p {
+    font-size: 10.5pt;
+    color: #2a2a3e;
+    line-height: 1.7;
+  }
+  .commercial-box .highlight-value {
+    font-family: 'Playfair Display', serif;
+    color: #92400e;
+    font-weight: 700;
+  }
+
   /* ── PHOTO GALLERY ── */
   .photo-grid {
     display: grid;
@@ -374,6 +627,8 @@ export function generatePTAMHtml(params: {
     .info-grid { page-break-inside: avoid; }
     .signature-area { page-break-before: always; }
     .photo-grid { page-break-inside: avoid; }
+    .scenarios-grid { page-break-inside: avoid; }
+    .commercial-box { page-break-inside: avoid; }
     @page { margin: 1.5cm 2cm; size: A4; }
     @page :first { margin: 0; }
   }
@@ -458,6 +713,7 @@ export function generatePTAMHtml(params: {
     <div class="info-item"><span class="label">Norma Aplicada:</span><span class="value">NBR 14653-1 e NBR 14653-2</span></div>
     <div class="info-item"><span class="label">Resolução:</span><span class="value">COFECI 1.066/2007</span></div>
   </div>
+  <div class="method-justify">${methodJustification}</div>
 
   <h3 data-num="3">Pesquisa de Mercado e Homogeneização</h3>
   <p>Foram coletados <strong>${comparables.length}</strong> elementos comparativos na região do imóvel avaliando, conforme tabela abaixo. Os fatores de homogeneização foram aplicados de acordo com a NBR 14653-2, utilizando o método dos fatores de valorização/desvalorização.</p>
@@ -526,7 +782,7 @@ export function generatePTAMHtml(params: {
     <div class="result-label">Valor de Mercado Estimado</div>
     <div class="value">${fmtBRL(result.estimated_value)}</div>
     <div style="font-size:10pt;color:var(--text-muted)">
-      Valor unitário: ${fmtBRL(result.average_price_per_sqm)}/m² &times; ${subjectArea} m²
+      Valor unitário: ${fmtBRL(result.average_price_per_sqm)}/m² &times; ${subjectArea} m²
     </div>
     <div class="grade-badge">Grau ${result.confidence_grade} — NBR 14653</div>
   </div>
@@ -548,13 +804,40 @@ export function generatePTAMHtml(params: {
     </tbody>
   </table>` : ''}
 
-  <h3 data-num="6">Ressalvas e Limitações</h3>
+  <h3 data-num="${nextSec()}">Cenários de Valor</h3>
+  <p style="margin-bottom:14px">Projeção de valor em três cenários de mercado, calculados a partir do valor estimado base, para apoio à tomada de decisão.</p>
+  ${scenariosSection}
+
+  ${liquidez ? `<h3 data-num="${nextSec()}">Análise de Liquidez</h3>
+  <p style="margin-bottom:12px">Avaliação do potencial de absorção do imóvel pelo mercado e estimativa do valor de liquidação forçada, conforme critérios de desconto praticados pelo mercado e referências da NBR 14653-1, seção 8.8.</p>
+  ${liquidezSection}` : ''}
+
+  ${depreciacao ? `<h3 data-num="${nextSec()}">Depreciação Física — Método Ross-Heidecke</h3>
+  <p style="margin-bottom:12px">Cálculo da depreciação física das benfeitorias pelo método Ross-Heidecke, conforme NBR 14653-2 (Anexo A), considerando a idade real, a vida útil estimada e o estado de conservação do imóvel.</p>
+  ${rossHeideckeSection}` : ''}
+
+  <h3 data-num="${nextSec()}">Ressalvas e Limitações</h3>
   <p>Este parecer foi elaborado com base em dados disponíveis no mercado na data de referência, utilizando o Método ${methodLabel}. Os valores apresentados representam a melhor estimativa de valor de mercado nas condições observadas, não tendo sido consideradas eventuais pendências jurídicas, fiscais ou ambientais. O presente documento não substitui laudo de vistoria técnica estrutural.</p>
   <p style="margin-top:10px">O avaliador declara inexistência de vínculo com as partes envolvidas e confirma a ausência de conflito de interesses na elaboração do presente parecer, em conformidade com o Código de Ética dos Corretores de Imóveis e com a Resolução COFECI 1.066/2007.</p>
 
-  ${photoGallerySection ? photoGallerySection.replace('<h3>', `<h3 data-num="${6 + sectionOffset}">`) : ''}
+  ${photos.length > 0 ? `<h3 data-num="${nextSec()}">Registro Fotográfico</h3>
+  <p>Imagens do imóvel avaliando registradas na data da vistoria.</p>
+  <div class="photo-grid">
+    ${photos.map((p, i) => `
+      <div class="photo-item">
+        <img src="${p.url}" alt="${p.caption || p.name || 'Foto ' + (i + 1)}" />
+        <div class="photo-caption">${p.caption || p.name || 'Foto ' + (i + 1)}</div>
+      </div>
+    `).join('')}
+  </div>` : ''}
 
-  <h3 data-num="${7 + sectionOffset}">Assinaturas</h3>
+  <h3 data-num="${nextSec()}">Para o Solicitante</h3>
+  <div class="commercial-box">
+    <div class="commercial-title">Resumo da Avaliação em Linguagem Acessível</div>
+    <p>O imóvel avaliado possui valor de mercado estimado em <span class="highlight-value">${fmtBRL(result.estimated_value)}</span>, conforme metodologia NBR 14653. Este valor representa o preço mais provável pelo qual o imóvel seria negociado, em condições normais de mercado, entre partes independentes e bem informadas, sem pressões de qualquer natureza — podendo variar entre <strong>${fmtBRL(conservador)}</strong> (cenário conservador) e <strong>${fmtBRL(agressivo)}</strong> (cenário de valorização), a depender das condições de negociação e do comportamento do mercado local na data da transação.</p>
+  </div>
+
+  <h3 data-num="${nextSec()}">Assinaturas</h3>
   <div class="signature-area signatures">
     <div>
       <div class="signature-line">

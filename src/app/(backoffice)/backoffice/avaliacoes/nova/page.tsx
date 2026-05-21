@@ -9,8 +9,10 @@ import {
   ArrowLeft, ArrowRight, Building2, MapPin, Search, Plus, Trash2,
   FileText, Save, Loader2, Eye, Check,
   BarChart2, Download, Scale, ChevronDown, Camera, X, Image as ImageIcon,
-  User, Phone, Mail, Home, Calendar, Star,
+  User, Phone, Mail, Home, Calendar, Star, TrendingUp, TrendingDown, Minus,
 } from 'lucide-react'
+import { MethodRecommender } from '@/components/backoffice/avaliacoes/MethodRecommender'
+import type { MetodoId } from '@/features/avaliacoes/services/method-recommender'
 
 // ── Types ──────────────────────────────────────────────────
 type Step = 1 | 2 | 3 | 4 | 5 | 6
@@ -131,13 +133,21 @@ export default function NovaPTAMPage() {
   const [photos, setPhotos] = useState<PhotoUpload[]>([])
   const photoInputRef = useRef<HTMLInputElement>(null)
 
-  // Step 2: evaluation info
+  // Step 2: evaluation info + method
   const [finalidade, setFinalidade] = useState('Venda')
   const [clienteNome, setClienteNome] = useState('')
   const [clienteEmail, setClienteEmail] = useState('')
   const [clienteTelefone, setClienteTelefone] = useState('')
   const [honorarios, setHonorarios] = useState('')
   const [observacoes, setObservacoes] = useState('')
+  const [metodoId, setMetodoId] = useState<MetodoId | null>(null)
+  const [metodoNome, setMetodoNome] = useState('')
+  // Cenários (step 5)
+  const [cenarios, setCenarios] = useState<{
+    conservador: { valor: number; variacao_pct: number; descricao: string }
+    realista:    { valor: number; variacao_pct: number; descricao: string }
+    agressivo:   { valor: number; variacao_pct: number; descricao: string }
+  } | null>(null)
 
   // Step 3: comparables
   const [comparables, setComparables] = useState<ComparableEntry[]>([])
@@ -216,13 +226,20 @@ export default function NovaPTAMPage() {
     let grade: 'I' | 'II' | 'III' = 'I'
     if (comparables.length >= 5 && cv <= 30) grade = 'II'
     if (comparables.length >= 6 && cv <= 25) grade = 'III'
+    const estimatedValue = avg * (parseFloat(areaPrivativa) || 0)
     setCalcResult({
       average_price_per_sqm: avg,
       median_price_per_sqm: med,
       std_deviation: std,
       coefficient_of_variation: cv,
-      estimated_value: avg * (parseFloat(areaPrivativa) || 0),
+      estimated_value: estimatedValue,
       confidence_grade: grade,
+    })
+    // Calculate cenários
+    setCenarios({
+      conservador: { valor: Math.round(estimatedValue * 0.85), variacao_pct: -15, descricao: 'Cenário pessimista — mercado em retração' },
+      realista:    { valor: Math.round(estimatedValue),        variacao_pct: 0,   descricao: 'Valor de mercado calculado' },
+      agressivo:   { valor: Math.round(estimatedValue * 1.12), variacao_pct: 12,  descricao: 'Cenário otimista — mercado em valorização' },
     })
   }, [comparables, areaPrivativa])
 
@@ -316,7 +333,11 @@ export default function NovaPTAMPage() {
           padrao,
           estado_conservacao: conservacao,
           finalidade,
-          metodologia: 'Comparativo Direto de Dados de Mercado',
+          metodologia: metodoNome || 'Comparativo Direto de Dados de Mercado',
+          metodo_principal: metodoId || 'comparativo',
+          valor_conservador: cenarios?.conservador.valor || null,
+          valor_realista: cenarios?.realista.valor || null,
+          valor_agressivo: cenarios?.agressivo.valor || null,
           cliente_nome: clienteNome || null,
           cliente_email: clienteEmail || null,
           cliente_telefone: clienteTelefone || null,
@@ -577,7 +598,7 @@ export default function NovaPTAMPage() {
     <div>
       <div style={card}>
         {sectionTitle('Finalidade e Solicitante', <FileText size={20} />)}
-        <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 12, marginBottom: 16 }}>
           <div>
             <label style={labelStyle}>Finalidade *</label>
             <div style={{ position: 'relative' }}>
@@ -592,6 +613,19 @@ export default function NovaPTAMPage() {
             <input style={inputStyle} type="number" placeholder="800,00" value={honorarios} onChange={e => setHonorarios(e.target.value)} />
           </div>
         </div>
+
+        {/* Método recomendado */}
+        {tipoImovel && finalidade && (
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Metodologia Avaliatória</label>
+            <MethodRecommender
+              tipoImovel={tipoImovel}
+              finalidade={finalidade}
+              selectedMethodId={metodoId}
+              onSelectMethod={(id, nome) => { setMetodoId(id); setMetodoNome(nome) }}
+            />
+          </div>
+        )}
       </div>
 
       <div style={card}>
@@ -828,6 +862,56 @@ export default function NovaPTAMPage() {
             </div>
           </div>
         </div>
+
+        {/* Cenários */}
+        {cenarios && (
+          <div style={card}>
+            <h4 style={{ color: T.text, fontSize: 13, marginBottom: 14, fontWeight: 600 }}>Cenários de Valor</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(3, 1fr)', gap: 10 }}>
+              {[
+                {
+                  label: 'Conservador', icon: <TrendingDown size={16} />,
+                  color: '#3B82F6', bg: 'rgba(59,130,246,0.08)',
+                  valor: cenarios.conservador.valor,
+                  variacao: cenarios.conservador.variacao_pct,
+                  desc: cenarios.conservador.descricao,
+                },
+                {
+                  label: 'Realista', icon: <Minus size={16} />,
+                  color: T.gold, bg: 'rgba(200,164,74,0.08)',
+                  valor: cenarios.realista.valor,
+                  variacao: cenarios.realista.variacao_pct,
+                  desc: cenarios.realista.descricao,
+                },
+                {
+                  label: 'Agressivo', icon: <TrendingUp size={16} />,
+                  color: 'var(--success)', bg: 'rgba(16,185,129,0.08)',
+                  valor: cenarios.agressivo.valor,
+                  variacao: cenarios.agressivo.variacao_pct,
+                  desc: cenarios.agressivo.descricao,
+                },
+              ].map(c => (
+                <div key={c.label} style={{
+                  padding: 14, borderRadius: 10, textAlign: 'center',
+                  background: c.bg,
+                  border: `1px solid ${c.color}30`,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
+                    <span style={{ color: c.color }}>{c.icon}</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: c.color }}>{c.label}</span>
+                    <span style={{ fontSize: 10, color: c.color, opacity: 0.8 }}>
+                      {c.variacao === 0 ? '' : c.variacao > 0 ? `+${c.variacao}%` : `${c.variacao}%`}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: c.color, fontFamily: T.font.display }}>
+                    {fmtBRL(c.valor)}
+                  </div>
+                  <div style={{ fontSize: 10, color: T.textMuted, marginTop: 4, lineHeight: 1.4 }}>{c.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Comparables summary table */}
         <div style={card}>
