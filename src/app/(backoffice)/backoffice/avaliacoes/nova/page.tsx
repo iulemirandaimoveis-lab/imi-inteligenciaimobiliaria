@@ -48,58 +48,60 @@ interface Development {
 }
 
 // ── Option data ────────────────────────────────────────────
+type LucideIcon = React.FC<{ size?: number; style?: React.CSSProperties }>
+
 interface FinalidadeOpt {
-  id: string; label: string; desc: string; valor: string; icon: React.ReactNode
+  id: string; label: string; desc: string; valor: string; Icon: LucideIcon
 }
 interface TipoBemOpt {
-  id: string; label: string; desc: string; icon: React.ReactNode
+  id: string; label: string; desc: string; Icon: LucideIcon
 }
 
 const FINALIDADE_OPTIONS: FinalidadeOpt[] = [
-  { id: 'venda',         label: 'Vender imóvel',       desc: 'Preço justo de mercado para venda',       valor: 'Venda',           icon: <TrendingUp size={20} /> },
-  { id: 'locacao',       label: 'Alugar imóvel',        desc: 'Valor mensal de locação',                 valor: 'Locação',         icon: <Key size={20} /> },
-  { id: 'captacao',      label: 'Captar imóvel',        desc: 'Avaliar para carteira de imóveis',        valor: 'Venda',           icon: <Search size={20} /> },
-  { id: 'ptam',          label: 'PTAM',                 desc: 'Parecer técnico formal NBR 14653',        valor: 'Venda',           icon: <FileText size={20} /> },
-  { id: 'judicial',      label: 'Judicial',             desc: 'Perícia para processos judiciais',        valor: 'Judicial',        icon: <Scale size={20} /> },
-  { id: 'inventario',    label: 'Inventário',           desc: 'Partilha de bens e herança',              valor: 'Inventário',      icon: <FolderOpen size={20} /> },
-  { id: 'garantia',      label: 'Garantia',             desc: 'Crédito imobiliário e financiamento',     valor: 'Garantia',        icon: <Shield size={20} /> },
-  { id: 'liquidacao',    label: 'Liquidação forçada',   desc: 'Venda compulsória com desconto',          valor: 'Garantia',        icon: <AlertTriangle size={20} /> },
-  { id: 'desapropriacao',label: 'Desapropriação',       desc: 'Indenização por interesse público',       valor: 'Desapropriação',  icon: <Landmark size={20} /> },
-  { id: 'servidao',      label: 'Servidão',             desc: 'Passagem ou direito real de uso',         valor: 'Servidão',        icon: <MapPin size={20} /> },
-  { id: 'incorporacao',  label: 'Incorporação',         desc: 'Viabilidade de empreendimento imob.',     valor: 'Incorporação',    icon: <Building2 size={20} /> },
-  { id: 'permuta',       label: 'Permuta',              desc: 'Troca de imóveis equivalentes',           valor: 'Permuta',         icon: <ArrowRight size={20} /> },
-  { id: 'fundo_comercio',label: 'Fundo de comércio',    desc: 'Goodwill e valor de ponto comercial',     valor: 'Locação',         icon: <ShoppingBag size={20} /> },
-  { id: 'valuation',     label: 'Valuation/Empresa',    desc: 'Avaliação de negócio em operação',        valor: 'Venda',           icon: <BarChart2 size={20} /> },
-  { id: 'outro',         label: 'Outro',                desc: 'Finalidade específica não listada',       valor: 'Venda',           icon: <HelpCircle size={20} /> },
+  { id: 'venda',         label: 'Vender imóvel',       desc: 'Preço justo de mercado para venda',       valor: 'Venda',           Icon: TrendingUp },
+  { id: 'locacao',       label: 'Alugar imóvel',        desc: 'Valor mensal de locação',                 valor: 'Locação',         Icon: Key },
+  { id: 'captacao',      label: 'Captar imóvel',        desc: 'Avaliar para carteira de imóveis',        valor: 'Venda',           Icon: Search },
+  { id: 'ptam',          label: 'PTAM',                 desc: 'Parecer técnico formal NBR 14653',        valor: 'Venda',           Icon: FileText },
+  { id: 'judicial',      label: 'Judicial',             desc: 'Perícia para processos judiciais',        valor: 'Judicial',        Icon: Scale },
+  { id: 'inventario',    label: 'Inventário',           desc: 'Partilha de bens e herança',              valor: 'Inventário',      Icon: FolderOpen },
+  { id: 'garantia',      label: 'Garantia',             desc: 'Crédito imobiliário e financiamento',     valor: 'Garantia',        Icon: Shield },
+  { id: 'liquidacao',    label: 'Liquidação forçada',   desc: 'Venda compulsória com desconto',          valor: 'Garantia',        Icon: AlertTriangle },
+  { id: 'desapropriacao',label: 'Desapropriação',       desc: 'Indenização por interesse público',       valor: 'Desapropriação',  Icon: Landmark },
+  { id: 'servidao',      label: 'Servidão',             desc: 'Passagem ou direito real de uso',         valor: 'Servidão',        Icon: MapPin },
+  { id: 'incorporacao',  label: 'Incorporação',         desc: 'Viabilidade de empreendimento imob.',     valor: 'Incorporação',    Icon: Building2 },
+  { id: 'permuta',       label: 'Permuta',              desc: 'Troca de imóveis equivalentes',           valor: 'Permuta',         Icon: ArrowRight },
+  { id: 'fundo_comercio',label: 'Fundo de comércio',    desc: 'Goodwill e valor de ponto comercial',     valor: 'Locação',         Icon: ShoppingBag },
+  { id: 'valuation',     label: 'Valuation/Empresa',    desc: 'Avaliação de negócio em operação',        valor: 'Venda',           Icon: BarChart2 },
+  { id: 'outro',         label: 'Outro',                desc: 'Finalidade específica não listada',       valor: 'Venda',           Icon: HelpCircle },
 ]
 
 const TIPO_BEM_OPTIONS: TipoBemOpt[] = [
-  { id: 'Apartamento',         label: 'Apartamento',         desc: 'Unidade em condomínio vertical',        icon: <Building2 size={20} /> },
-  { id: 'Casa',                label: 'Casa',                desc: 'Residência horizontal',                 icon: <Home size={20} /> },
-  { id: 'Terreno/Lote',        label: 'Terreno urbano',      desc: 'Lote em área urbana consolidada',       icon: <MapPin size={20} /> },
-  { id: 'Gleba',               label: 'Gleba',               desc: 'Terreno sem parcelamento',              icon: <MapPin size={20} /> },
-  { id: 'Imóvel Rural',        label: 'Imóvel rural',        desc: 'Fazenda, sítio ou chácara',             icon: <MapPin size={20} /> },
-  { id: 'Sala Comercial',      label: 'Sala comercial',      desc: 'Escritório ou sala corporativa',        icon: <Briefcase size={20} /> },
-  { id: 'Loja',                label: 'Loja',                desc: 'Loja de rua ou galeria',                icon: <ShoppingBag size={20} /> },
-  { id: 'Galpão/Armazém',      label: 'Galpão / Industrial', desc: 'Galpão, fábrica ou armazém',            icon: <Factory size={20} /> },
-  { id: 'Shopping/Loja em Mall',label: 'Loja em shopping',  desc: 'Unidade em centro comercial',           icon: <ShoppingBag size={20} /> },
-  { id: 'Posto de Combustível', label: 'Posto combustível',  desc: 'Posto e instalações',                   icon: <Briefcase size={20} /> },
-  { id: 'Hotel/Pousada',        label: 'Hotel / Pousada',    desc: 'Imóvel de uso hoteleiro',               icon: <Building2 size={20} /> },
-  { id: 'Cobertura',            label: 'Cobertura',          desc: 'Cobertura com área descoberta',         icon: <Building2 size={20} /> },
-  { id: 'Imóvel inacabado',     label: 'Inacabado',          desc: 'Obra em andamento',                     icon: <Building2 size={20} /> },
-  { id: 'Imóvel mobiliado',     label: 'Mobiliado',          desc: 'Com móveis e benfeitorias',             icon: <Home size={20} /> },
-  { id: 'Empresa',              label: 'Empresa / Carteira', desc: 'Negócio ou carteira de locações',       icon: <BarChart2 size={20} /> },
-  { id: 'Outro',                label: 'Outro',              desc: 'Bem específico não listado',            icon: <HelpCircle size={20} /> },
+  { id: 'Apartamento',         label: 'Apartamento',         desc: 'Unidade em condomínio vertical',        Icon: Building2 },
+  { id: 'Casa',                label: 'Casa',                desc: 'Residência horizontal',                 Icon: Home },
+  { id: 'Terreno/Lote',        label: 'Terreno urbano',      desc: 'Lote em área urbana consolidada',       Icon: MapPin },
+  { id: 'Gleba',               label: 'Gleba',               desc: 'Terreno sem parcelamento',              Icon: MapPin },
+  { id: 'Imóvel Rural',        label: 'Imóvel rural',        desc: 'Fazenda, sítio ou chácara',             Icon: MapPin },
+  { id: 'Sala Comercial',      label: 'Sala comercial',      desc: 'Escritório ou sala corporativa',        Icon: Briefcase },
+  { id: 'Loja',                label: 'Loja',                desc: 'Loja de rua ou galeria',                Icon: ShoppingBag },
+  { id: 'Galpão/Armazém',      label: 'Galpão / Industrial', desc: 'Galpão, fábrica ou armazém',            Icon: Factory },
+  { id: 'Shopping/Loja em Mall',label: 'Loja em shopping',  desc: 'Unidade em centro comercial',           Icon: ShoppingBag },
+  { id: 'Posto de Combustível', label: 'Posto combustível',  desc: 'Posto e instalações',                   Icon: Briefcase },
+  { id: 'Hotel/Pousada',        label: 'Hotel / Pousada',    desc: 'Imóvel de uso hoteleiro',               Icon: Building2 },
+  { id: 'Cobertura',            label: 'Cobertura',          desc: 'Cobertura com área descoberta',         Icon: Building2 },
+  { id: 'Imóvel inacabado',     label: 'Inacabado',          desc: 'Obra em andamento',                     Icon: Building2 },
+  { id: 'Imóvel mobiliado',     label: 'Mobiliado',          desc: 'Com móveis e benfeitorias',             Icon: Home },
+  { id: 'Empresa',              label: 'Empresa / Carteira', desc: 'Negócio ou carteira de locações',       Icon: BarChart2 },
+  { id: 'Outro',                label: 'Outro',              desc: 'Bem específico não listado',            Icon: HelpCircle },
 ]
 
-const STEPS: { num: Step; label: string; icon: React.ReactNode }[] = [
-  { num: 1, label: 'Finalidade', icon: <FileText size={15} /> },
-  { num: 2, label: 'Tipo de Bem', icon: <Building2 size={15} /> },
-  { num: 3, label: 'Método', icon: <Brain size={15} /> },
-  { num: 4, label: 'Imóvel', icon: <Home size={15} /> },
-  { num: 5, label: 'Dados', icon: <BarChart2 size={15} /> },
-  { num: 6, label: 'Resultado', icon: <TrendingUp size={15} /> },
-  { num: 7, label: 'Gerar', icon: <Download size={15} /> },
+const STEPS: { num: Step; label: string; Icon: LucideIcon }[] = [
+  { num: 1, label: 'Finalidade', Icon: FileText },
+  { num: 2, label: 'Tipo de Bem', Icon: Building2 },
+  { num: 3, label: 'Método', Icon: Brain },
+  { num: 4, label: 'Imóvel', Icon: Home },
+  { num: 5, label: 'Dados', Icon: BarChart2 },
+  { num: 6, label: 'Resultado', Icon: TrendingUp },
+  { num: 7, label: 'Gerar', Icon: Download },
 ]
 
 const STANDARDS = ['Baixo', 'Normal', 'Alto', 'Luxo']
@@ -537,7 +539,7 @@ export default function NovaPTAMPage() {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ color: selected ? T.gold : T.textMuted }}>{opt.icon}</span>
+                  <span style={{ color: selected ? T.gold : T.textMuted }}><opt.Icon size={20} /></span>
                   {selected && <Check size={14} style={{ color: T.gold, marginLeft: 'auto' }} />}
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: selected ? T.text : T.text, lineHeight: 1.3 }}>
@@ -578,7 +580,7 @@ export default function NovaPTAMPage() {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ color: selected ? T.gold : T.textMuted }}>{opt.icon}</span>
+                  <span style={{ color: selected ? T.gold : T.textMuted }}><opt.Icon size={20} /></span>
                   {selected && <Check size={12} style={{ color: T.gold, marginLeft: 'auto' }} />}
                 </div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: T.text, lineHeight: 1.3 }}>{opt.label}</div>
@@ -1370,7 +1372,7 @@ export default function NovaPTAMPage() {
                 cursor: s.num <= step ? 'pointer' : 'default',
                 fontSize: 11, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
               }}>
-              {done ? <Check size={12} /> : s.icon}
+              {done ? <Check size={12} /> : <s.Icon size={15} />}
               {!mobile && <span>{s.label}</span>}
             </button>
           )
