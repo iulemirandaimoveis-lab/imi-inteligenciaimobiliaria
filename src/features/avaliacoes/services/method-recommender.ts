@@ -42,6 +42,7 @@ export type MetodoId =
   | 'ross_heidecke'
   | 'fundo_comercio'
   | 'ponto_comercial'
+  | 'bdi'
 
 interface RecommenderInput {
   tipo_imovel: string
@@ -65,6 +66,7 @@ export const METODO_LABELS: Record<MetodoId, string> = {
   ross_heidecke:       'Ross-Heidecke (Depreciação)',
   fundo_comercio:      'Fundo de Comércio',
   ponto_comercial:     'Ponto Comercial',
+  bdi:                 'BDI (Benefícios e Despesas Indiretas)',
 }
 
 /** Dados necessários por método */
@@ -132,6 +134,11 @@ const DADOS_POR_METODO: Record<MetodoId, string[]> = {
     'Aluguel de mercado da região',
     'Faturamento estimado pelo ponto',
     'Comparáveis de pontos comerciais',
+  ],
+  bdi: [
+    'Custo direto de construção (R$)',
+    'BDI (%) — tipicamente 20-30%',
+    'Tipo de obra e nível de complexidade',
   ],
 }
 
@@ -428,6 +435,14 @@ export function explicarMetodoParaCorretor(metodoId: MetodoId): {
       exemplo:
         'Ponto com aluguel mensal de R$ 5.000 × 12 ÷ 8% = R$ 750.000 de valor de ponto.',
       tempo_estimado: '20-30 minutos com pesquisa de aluguéis na região',
+    },
+    bdi: {
+      titulo: 'BDI (Benefícios e Despesas Indiretas)',
+      explicacao_simples:
+        'Aplica um percentual sobre o custo direto de construção para cobrir despesas indiretas (administração, seguros, impostos, lucro). Simples e rápido para obras.',
+      exemplo:
+        'Custo direto R$ 200.000 × BDI 25% = R$ 250.000 custo total da obra.',
+      tempo_estimado: '5-10 minutos com orçamento da obra',
     },
   }
 
