@@ -13,6 +13,7 @@ import {
   AlertTriangle, Landmark, ShoppingBag, Briefcase, Factory, HelpCircle,
   FolderOpen, Brain,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { MethodRecommender } from '@/components/backoffice/avaliacoes/MethodRecommender'
 import type { MetodoId } from '@/features/avaliacoes/services/method-recommender'
 
@@ -48,8 +49,6 @@ interface Development {
 }
 
 // ── Option data ────────────────────────────────────────────
-type LucideIcon = React.FC<{ size?: number; style?: React.CSSProperties }>
-
 interface FinalidadeOpt {
   id: string; label: string; desc: string; valor: string; Icon: LucideIcon
 }
@@ -1093,7 +1092,7 @@ export default function NovaPTAMPage() {
                 <div key={key}>
                   <label style={labelStyle}>{label}</label>
                   <input style={inputStyle} type={type} placeholder={placeholder} maxLength={maxLen}
-                    value={(newComp as Record<string, unknown>)[key] as string}
+                    value={(newComp as unknown as Record<string, unknown>)[key] as string}
                     onChange={e => setNewComp({ ...newComp, [key]: upper ? e.target.value.toUpperCase() : e.target.value })} />
                 </div>
               ))}
