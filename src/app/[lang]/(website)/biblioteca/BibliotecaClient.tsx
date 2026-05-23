@@ -243,7 +243,6 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
     const isAvailable = ebook.publication_status === 'publicado'
     const hasBookContent = bookSlugs.includes(ebook.slug)
     const pilarColor = ebook.pilar ? PILAR_COLORS[ebook.pilar] : null
-    const pilarLabel = ebook.pilar ? PILAR_LABELS[ebook.pilar] : null
     const svgUrl = useMemo(() => `/books/covers/${ebook.slug}.svg`, [ebook.slug])
 
     // Inline SVG: fetched client-side so page fonts (Playfair Display) render in the SVG text
@@ -318,8 +317,8 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                 {/* Bottom gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0d2035] via-transparent to-transparent opacity-80" />
 
-                {/* Badges — top-right, stacked, clear of IMI logo at top-left */}
-                <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
+                {/* Status badge — top-right */}
+                <div className="absolute top-3 right-3">
                     {isAvailable ? (
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
                             style={{ color: '#34d399', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.25)' }}>
@@ -329,14 +328,6 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
                             style={{ color: '#E8C840', background: 'rgba(232,200,64,0.12)', border: '1px solid rgba(232,200,64,0.25)' }}>
                             Em Breve
-                        </span>
-                    )}
-                    {pilarLabel && pilarColor && (
-                        <span
-                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm"
-                            style={{ color: pilarColor.text, background: pilarColor.bg, border: `1px solid ${pilarColor.border}` }}
-                        >
-                            {pilarLabel}
                         </span>
                     )}
                 </div>
