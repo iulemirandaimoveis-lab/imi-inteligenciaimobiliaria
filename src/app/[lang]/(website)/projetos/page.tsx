@@ -62,6 +62,30 @@ const PROJETOS = [
         contato: false,
     },
     {
+        id: 'miguel-marques',
+        nome: 'Loteamento Miguel Marques',
+        subtitulo: 'Escolha seu lote. Decida seu futuro.',
+        tipo: 'Loteamento Residencial',
+        status: 'lancamento',
+        statusLabel: 'Em Comercialização',
+        localizacao: 'Pernambuco — PE',
+        mercado: 'Brasil',
+        destaque: false,
+        vgv: 'R$ 35M',
+        unidades: '853 lotes',
+        area: '180.000 m²',
+        conceito: 'Loteamento residencial de alto padrão com mais de 800 lotes, lago natural, infraestrutura completa e mapa interativo de disponibilidade.',
+        diferenciais: [
+            'Mapa interativo com disponibilidade em tempo real',
+            'Lotes frente ao lago — Quadra Z premium',
+            'Infraestrutura completa: água, esgoto, energia',
+            '54% dos lotes ainda disponíveis para aquisição',
+        ],
+        cor: 'from-[#1A2B1A] to-[#2A3D2A]',
+        acento: '#7EA87A',
+        contato: false,
+    },
+    {
         id: 'villa-jardins',
         nome: 'Villa Jardins',
         subtitulo: 'Condomínio fechado com qualidade de vida real.',
@@ -279,10 +303,10 @@ export default async function ProjetosWebsitePage({
                                             ))}
                                         </div>
                                         <Link
-                                            href={`/${lang}/contato`}
+                                            href={p.id === 'miguel-marques' ? `/${lang}/projetos/miguel-marques` : `/${lang}/contato`}
                                             className="flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-[#334E68] hover:text-[#C8A44A] transition-all group-hover:border-gray-300"
                                         >
-                                            Solicitar informações <ArrowRight size={13} />
+                                            {p.id === 'miguel-marques' ? 'Ver mapa interativo' : 'Solicitar informações'} <ArrowRight size={13} />
                                         </Link>
                                     </div>
                                 </div>
