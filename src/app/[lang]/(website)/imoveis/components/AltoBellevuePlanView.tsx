@@ -6,7 +6,7 @@ import React, {
 import { AnimatePresence, motion, useMotionValue, useTransform } from 'framer-motion';
 import {
   X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, ChevronLeft,
-  Ruler, DollarSign, Maximize2, Minimize2, GripHorizontal,
+  Ruler, DollarSign, Maximize2, Minimize2,
   Share2, Calendar, Filter,
 } from 'lucide-react';
 
@@ -74,11 +74,11 @@ type FilterKey = 'ALL' | StatusKey;
 const STATUS: Record<StatusKey, {
   label: string; fill: string; stroke: string; textColor: string; badgeBg: string;
 }> = {
-  DISPONIVEL:   { label: 'Disponível',   fill: 'rgba(52,211,153,0.06)',  stroke: '#34D399', textColor: '#34D399', badgeBg: 'rgba(22,163,74,0.12)' },
-  VENDIDO:      { label: 'Vendido',      fill: 'rgba(100,116,139,0.05)', stroke: '#64748B', textColor: '#94A3B8', badgeBg: 'rgba(71,85,105,0.12)' },
-  NEGOCIACAO:   { label: 'Negociação',   fill: 'rgba(251,191,36,0.06)',  stroke: '#FBBF24', textColor: '#FBBF24', badgeBg: 'rgba(245,158,11,0.12)' },
-  PROPRIETARIO: { label: 'Proprietário', fill: 'rgba(96,165,250,0.06)',  stroke: '#60A5FA', textColor: '#60A5FA', badgeBg: 'rgba(59,130,246,0.12)' },
-  IGREJA:       { label: 'Igreja',       fill: 'rgba(167,139,250,0.06)', stroke: '#A78BFA', textColor: '#A78BFA', badgeBg: 'rgba(124,58,237,0.12)' },
+  DISPONIVEL:   { label: 'Disponível',   fill: 'rgba(34,197,94,0.12)',   stroke: '#22C55E', textColor: '#22C55E', badgeBg: 'rgba(34,197,94,0.10)'  },
+  VENDIDO:      { label: 'Vendido',      fill: 'rgba(71,85,105,0.08)',   stroke: '#475569', textColor: '#94A3B8', badgeBg: 'rgba(71,85,105,0.10)'  },
+  NEGOCIACAO:   { label: 'Negociação',   fill: 'rgba(234,179,8,0.12)',   stroke: '#EAB308', textColor: '#EAB308', badgeBg: 'rgba(234,179,8,0.10)'  },
+  PROPRIETARIO: { label: 'Proprietário', fill: 'rgba(59,130,246,0.10)',  stroke: '#3B82F6', textColor: '#60A5FA', badgeBg: 'rgba(59,130,246,0.10)' },
+  IGREJA:       { label: 'Igreja',       fill: 'rgba(167,139,250,0.10)', stroke: '#A78BFA', textColor: '#A78BFA', badgeBg: 'rgba(167,139,250,0.10)' },
 };
 
 const DEFAULT_STATUS = STATUS.DISPONIVEL;
@@ -113,11 +113,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [660, 81],
     primaryAxis: -6,
-    grid: { cols: 11, cellW: 11, cellH: 8, gap: 1.5 },
+    grid: { cols: 15, cellW: 9, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [660, 64], roadBearing: -6,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra próxima à entrada principal, arco superior',
+      notes: 'Quadra próxima à entrada principal, arco superior — 45 lotes',
     },
   },
 
@@ -129,11 +129,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [742, 134],
     primaryAxis: -2,
-    grid: { cols: 14, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 13, cellW: 11, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [742, 112], roadBearing: -2,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra superior direita, 28 lotes em 2 fileiras',
+      notes: 'Quadra superior direita — 25 lotes',
     },
   },
 
@@ -145,11 +145,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [528, 160],
     primaryAxis: -5,
-    grid: { cols: 13, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 13, cellW: 11, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [528, 132], roadBearing: -5,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra centro-superior, 26 lotes',
+      notes: 'Quadra centro-superior — 25 lotes',
     },
   },
 
@@ -161,11 +161,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [626, 205],
     primaryAxis: -2,
-    grid: { cols: 13, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 14, cellW: 10, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [626, 174], roadBearing: -2,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra centro, 25 lotes',
+      notes: 'Quadra centro — 38 lotes',
     },
   },
 
@@ -177,11 +177,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [814, 222],
     primaryAxis: 18,
-    grid: { cols: 13, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 10, cellW: 11, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [814, 172], roadBearing: 18,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra direita, 25 lotes, arco diagonal',
+      notes: 'Quadra direita — 19 lotes, arco diagonal',
     },
   },
 
@@ -193,11 +193,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [730, 306],
     primaryAxis: 15,
-    grid: { cols: 12, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 9, cellW: 10, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [730, 256], roadBearing: 15,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra centro-direita superior, 24 lotes',
+      notes: 'Quadra centro-direita superior — 16 lotes',
     },
   },
 
@@ -210,11 +210,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [866, 348],
     primaryAxis: 35,
-    grid: { cols: 11, cellW: 9, cellH: 8, gap: 1.5 },
+    grid: { cols: 7, cellW: 11, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [866, 282], roadBearing: 35,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra extrema direita, ângulo íngreme, 22 lotes',
+      notes: 'Quadra extrema direita, ângulo íngreme — 13 lotes',
     },
   },
 
@@ -227,11 +227,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [840, 452],
     primaryAxis: 32,
-    grid: { cols: 12, cellW: 9, cellH: 8, gap: 1.5 },
+    grid: { cols: 12, cellW: 10, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [840, 382], roadBearing: 32,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra direita-centro, 24 lotes',
+      notes: 'Quadra direita-centro — 27 lotes',
     },
   },
 
@@ -243,11 +243,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [688, 398],
     primaryAxis: 8,
-    grid: { cols: 9, cellW: 11, cellH: 8, gap: 1.5 },
+    grid: { cols: 12, cellW: 10, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [688, 356], roadBearing: 8,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra centro-direita inferior, 18 lotes',
+      notes: 'Quadra centro-direita inferior — 24 lotes',
     },
   },
 
@@ -259,11 +259,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [584, 412],
     primaryAxis: 0,
-    grid: { cols: 13, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 12, cellW: 10, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [584, 372], roadBearing: 0,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra centro-esquerda inferior, 25 lotes',
+      notes: 'Quadra centro-esquerda inferior — 24 lotes',
     },
   },
 
@@ -275,11 +275,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [376, 540],
     primaryAxis: -3,
-    grid: { cols: 12, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 3, cellW: 12, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [376, 504], roadBearing: -3,
       visualConfidence: 'low', lastCalibrated: '2026-05-28',
-      notes: 'Quadra esquerda-inferior, ~24 lotes',
+      notes: 'Quadra esquerda-inferior — 3 lotes',
     },
   },
 
@@ -291,11 +291,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [254, 545],
     primaryAxis: 0,
-    grid: { cols: 8, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 7, cellW: 11, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [254, 508], roadBearing: 0,
       visualConfidence: 'low', lastCalibrated: '2026-05-28',
-      notes: 'Quadra extrema esquerda, ~16 lotes',
+      notes: 'Quadra extrema esquerda — 13 lotes',
     },
   },
 
@@ -307,11 +307,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [798, 592],
     primaryAxis: 44,
-    grid: { cols: 10, cellW: 9, cellH: 8, gap: 1.5 },
+    grid: { cols: 11, cellW: 9, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [798, 534], roadBearing: 44,
       visualConfidence: 'low', lastCalibrated: '2026-05-28',
-      notes: 'Quadra inferior-direita, ângulo muito íngreme, 20 lotes',
+      notes: 'Quadra inferior-direita, ângulo muito íngreme — 21 lotes',
     },
   },
 
@@ -323,11 +323,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [784, 530],
     primaryAxis: 40,
-    grid: { cols: 10, cellW: 9, cellH: 8, gap: 1.5 },
+    grid: { cols: 12, cellW: 9, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [784, 468], roadBearing: 40,
       visualConfidence: 'low', lastCalibrated: '2026-05-28',
-      notes: 'Quadra inferior-direita, 20 lotes',
+      notes: 'Quadra inferior-direita — 32 lotes',
     },
   },
 
@@ -340,11 +340,11 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     ],
     centroid: [544, 498],
     primaryAxis: -5,
-    grid: { cols: 14, cellW: 10, cellH: 8, gap: 1.5 },
+    grid: { cols: 13, cellW: 10, cellH: 8, gap: 1.5 },
     calibration: {
       plantLabel: [544, 458], roadBearing: -5,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra centro-inferior larga, 28 lotes',
+      notes: 'Quadra centro-inferior larga — 27 lotes',
     },
   },
 
@@ -361,7 +361,7 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     calibration: {
       plantLabel: [650, 516], roadBearing: 4,
       visualConfidence: 'medium', lastCalibrated: '2026-05-28',
-      notes: 'Quadra inferior centro-direita, 24 lotes',
+      notes: 'Quadra inferior centro-direita — 31 lotes',
     },
   },
 };
@@ -461,6 +461,46 @@ function SVGDefs() {
   );
 }
 
+// ─── RoadSketch ───────────────────────────────────────────────────────────────
+
+function RoadSketch() {
+  return (
+    <g style={{ pointerEvents: 'none' }} opacity={0.72}>
+      {/* Road surface paths — dark cartographic style */}
+      <g stroke="rgba(255,255,255,0.06)" fill="none" strokeLinecap="round">
+        {/* Outer perimeter arc */}
+        <path d="M 820,95 C 870,100 920,180 930,300 C 940,420 900,540 840,620 C 780,700 700,720 600,700 C 500,680 400,650 330,600 C 260,550 210,510 200,490"
+          stroke="rgba(30,48,70,0.7)" strokeWidth={14} fill="none" />
+        {/* Inner ring 1 */}
+        <path d="M 740,130 C 790,140 840,220 850,340 C 860,440 820,540 760,610"
+          stroke="rgba(30,48,70,0.6)" strokeWidth={10} fill="none" />
+        {/* Inner ring 2 */}
+        <path d="M 640,160 C 680,165 720,240 730,360 C 735,440 700,520 660,580"
+          stroke="rgba(30,48,70,0.55)" strokeWidth={9} fill="none" />
+        {/* Alameda dos Flamboyants */}
+        <path d="M 280,540 L 480,460"
+          stroke="rgba(30,48,70,0.5)" strokeWidth={8} fill="none" />
+        {/* Avenida dos Ipês */}
+        <path d="M 440,620 L 640,540"
+          stroke="rgba(30,48,70,0.5)" strokeWidth={8} fill="none" />
+        {/* Avenida dos Jasmineiros */}
+        <path d="M 440,680 L 610,640"
+          stroke="rgba(30,48,70,0.45)" strokeWidth={7} fill="none" />
+        {/* Radial access roads */}
+        <path d="M 820,95 L 800,110" stroke="rgba(30,48,70,0.5)" strokeWidth={7} />
+        <path d="M 840,620 L 830,640" stroke="rgba(30,48,70,0.5)" strokeWidth={7} />
+      </g>
+      {/* Center-line gold accents — very subtle */}
+      <g stroke="rgba(200,164,74,0.10)" fill="none" strokeLinecap="round" strokeDasharray="4 8">
+        <path d="M 820,95 C 870,100 920,180 930,300 C 940,420 900,540 840,620 C 780,700 700,720 600,700 C 500,680 400,650 330,600 C 260,550 210,510 200,490"
+          strokeWidth={1} />
+        <path d="M 280,540 L 480,460" strokeWidth={1} />
+        <path d="M 440,620 L 640,540" strokeWidth={1} />
+      </g>
+    </g>
+  );
+}
+
 // ─── FloatingTooltip ──────────────────────────────────────────────────────────
 
 const FloatingTooltip = memo(function FloatingTooltip({
@@ -549,20 +589,29 @@ const LotCell = memo(function LotCell({
       <rect
         x={shape.x} y={shape.y}
         width={shape.w} height={shape.h}
-        rx={2}
-        fill={isSelected ? st.stroke : st.fill}
-        stroke={st.stroke}
-        strokeWidth={isSelected ? 1.5 : 0.8}
+        rx={1.5}
+        fill={isSelected ? 'rgba(200,164,74,0.3)' : st.fill}
+        stroke={isSelected ? '#C8A44A' : st.stroke}
+        strokeWidth={isSelected ? 1.0 : lot.status === 'VENDIDO' ? 0.5 : 0.6}
         style={{ filter: isSelected ? 'url(#ab-lot-highlight)' : undefined }}
       />
+      {/* Corner triangle indicator for available lots */}
+      {lot.status === 'DISPONIVEL' && !isSelected && (
+        <polygon
+          points={`${(shape.x ?? 0) + (shape.w ?? 0) - 3},${shape.y ?? 0} ${(shape.x ?? 0) + (shape.w ?? 0)},${shape.y ?? 0} ${(shape.x ?? 0) + (shape.w ?? 0)},${(shape.y ?? 0) + 3}`}
+          fill={st.stroke}
+          opacity={0.7}
+          style={{ pointerEvents: 'none' }}
+        />
+      )}
       {(shape.w ?? 0) >= 9 && (
         <text
           x={(shape.x ?? 0) + (shape.w ?? 0) / 2}
           y={(shape.y ?? 0) + (shape.h ?? 0) / 2}
           textAnchor="middle"
           dominantBaseline="central"
-          fill={isSelected ? '#0A1A2E' : '#fff'}
-          fontSize={5.5}
+          fill={isSelected ? '#0A1A2E' : 'rgba(255,255,255,0.9)'}
+          fontSize={4.5}
           fontWeight="800"
           fontFamily="'JetBrains Mono', monospace"
           style={{ pointerEvents: 'none', userSelect: 'none' }}
@@ -648,14 +697,14 @@ const QuadraTile = memo(function QuadraTile({
   const pts = polygonToString(geom.polygon);
   const [cx, cy] = geom.centroid;
 
-  const fillOpacity = isSelected ? 0.13 : hovered ? 0.08 : 0.0;
-  const strokeWidth = isSelected ? 1.6 : hovered ? 1.2 : 0.8;
+  const fillOpacity = isSelected ? 0.08 : hovered ? 0.04 : 0.0;
+  const strokeWidth = isSelected ? 1.5 : hovered ? 1.1 : 0.7;
   const strokeColor = isSelected
-    ? st.stroke
+    ? '#C8A44A'
     : hovered
     ? st.stroke
-    : dominantStatus === 'DISPONIVEL' ? 'rgba(52,211,153,0.45)' : 'rgba(255,255,255,0.22)';
-  const strokeOpacity = isSelected ? 1 : hovered ? 0.85 : 1;
+    : dominantStatus === 'DISPONIVEL' ? 'rgba(200,164,74,0.35)' : 'rgba(255,255,255,0.15)';
+  const strokeOpacity = isSelected ? 1 : hovered ? 0.9 : 1;
 
   return (
     <g
@@ -680,7 +729,7 @@ const QuadraTile = memo(function QuadraTile({
       {/* Quadra polygon — near-transparent fill, map stays dominant */}
       <polygon
         points={pts}
-        fill={st.stroke}
+        fill={isSelected ? '#C8A44A' : st.stroke}
         fillOpacity={fillOpacity}
         stroke="none"
         style={{ transition: 'fill-opacity 0.2s ease' }}
@@ -711,8 +760,8 @@ const QuadraTile = memo(function QuadraTile({
         x={cx} y={cy}
         textAnchor="middle"
         dominantBaseline="central"
-        fill={isSelected ? st.stroke : hovered ? 'rgba(240,237,232,0.9)' : 'rgba(240,237,232,0.55)'}
-        fontSize={isSelected ? 11 : 9}
+        fill={isSelected ? '#C8A44A' : hovered ? 'rgba(240,237,232,0.9)' : 'rgba(240,237,232,0.55)'}
+        fontSize={isSelected ? 12 : 9}
         fontWeight="700"
         fontFamily="'JetBrains Mono', monospace"
         letterSpacing="0.12em"
@@ -742,12 +791,21 @@ const QuadraTile = memo(function QuadraTile({
 
 // ─── Lot Detail Panel content ─────────────────────────────────────────────────
 
+const PAYMENT_CONDITIONS = [
+  { label: 'À vista',    discount: 0.20, entrada: 1.0,  parcelas: 0,   suffix: '20% desconto' },
+  { label: '12 meses',   discount: 0.15, entrada: 0.10, parcelas: 12,  suffix: '15% desconto' },
+  { label: '36 meses',   discount: 0.08, entrada: 0.10, parcelas: 36,  suffix: '8% desconto'  },
+  { label: '60 meses',   discount: 0.05, entrada: 0.10, parcelas: 60,  suffix: '5% desconto'  },
+  { label: '120 meses',  discount: 0,    entrada: 0.10, parcelas: 120, suffix: 'INCC/IPCA+0,5%/m' },
+];
+
 function LotDetailContent({
   lot, developmentName, whatsappPhone, onBack, onClose,
 }: {
   lot: Lot; developmentName: string; whatsappPhone: string;
   onBack: () => void; onClose: () => void;
 }) {
+  const [showPayment, setShowPayment] = useState(false);
   const st = getStatus(lot.status);
   const isAvail = lot.status === 'DISPONIVEL';
   const pricePerM2 = lot.price && lot.area_m2 > 0 ? Math.round(lot.price / lot.area_m2) : null;
@@ -820,6 +878,46 @@ function LotDetailContent({
           <div style={{ background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.14)', borderRadius: 10, padding: '10px 14px', marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 11, color: 'rgba(240,237,232,0.38)', fontWeight: 600 }}>Preço / m²</span>
             <span style={{ fontSize: 14, fontWeight: 800, color: '#C8A44A', fontFamily: "'JetBrains Mono', monospace" }}>{fmtBRL(pricePerM2)}/m²</span>
+          </div>
+        )}
+
+        {/* Payment conditions collapsible */}
+        {isAvail && lot.price && (
+          <div style={{ marginBottom: 12 }}>
+            <button
+              onClick={() => setShowPayment(p => !p)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.14)', borderRadius: 10, padding: '9px 12px', cursor: 'pointer', color: '#C8A44A', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}
+            >
+              <span>Condições de Pagamento</span>
+              <span style={{ fontSize: 13 }}>{showPayment ? '▲' : '▼'}</span>
+            </button>
+            {showPayment && (
+              <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '0 0 10px 10px', border: '1px solid rgba(200,164,74,0.1)', borderTop: 'none', padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+                {PAYMENT_CONDITIONS.map(pc => {
+                  const discounted = lot.price! * (1 - pc.discount);
+                  const entradaAmt = discounted * pc.entrada;
+                  const parcelaAmt = pc.parcelas > 0 ? (discounted - entradaAmt) / pc.parcelas : null;
+                  return (
+                    <div key={pc.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: 7, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div>
+                        <p style={{ fontSize: 10, fontWeight: 700, color: '#F0EDE8', margin: 0 }}>{pc.label}</p>
+                        <p style={{ fontSize: 8.5, color: 'rgba(240,237,232,0.35)', margin: '2px 0 0' }}>{pc.suffix}</p>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: 10, fontWeight: 800, color: '#C8A44A', margin: 0, fontFamily: "'JetBrains Mono', monospace" }}>
+                          {pc.parcelas === 0 ? fmtBRL(discounted) : fmtBRL(entradaAmt) + ' entrada'}
+                        </p>
+                        {parcelaAmt && (
+                          <p style={{ fontSize: 8.5, color: 'rgba(240,237,232,0.4)', margin: '2px 0 0', fontFamily: "'JetBrains Mono', monospace" }}>
+                            + {pc.parcelas}× {fmtBRL(parcelaAmt)}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -1453,7 +1551,7 @@ export default function AltoBellevuePlanView({
                   preserveAspectRatio="xMidYMid meet"
                   onLoad={() => setImageLoaded(true)}
                   onError={() => setImageError(true)}
-                  style={{ imageRendering: 'auto' }}
+                  style={{ imageRendering: 'crisp-edges' }}
                 />
               ) : (
                 <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="#0D1F30" />
@@ -1461,6 +1559,9 @@ export default function AltoBellevuePlanView({
 
               {/* Layer 1b: vignette depth overlay */}
               <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-vignette)" style={{ pointerEvents: 'none' }} />
+
+              {/* Layer 1c: road sketch — architectural dark map */}
+              <RoadSketch />
 
               {/* Layer 2: quadra polygons */}
               {Object.entries(QUADRA_DATA).map(([quadra, geom]) => {
@@ -1637,7 +1738,7 @@ export default function AltoBellevuePlanView({
           <motion.div
             className="md:hidden"
             initial={{ y: '100%' }}
-            animate={{ y: sheetState === 'full' ? '18%' : sheetState === 'half' ? '50%' : '82%' }}
+            animate={{ y: sheetState === 'full' ? '10%' : sheetState === 'half' ? '52%' : 'calc(100% - 72px)' }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 36, stiffness: 400 }}
             style={{
@@ -1654,7 +1755,7 @@ export default function AltoBellevuePlanView({
             {/* Drag handle area — cycles sheet states */}
             <div
               data-interactive="true"
-              style={{ padding: '12px 0 6px', display: 'flex', justifyContent: 'center', cursor: 'ns-resize', flexShrink: 0 }}
+              style={{ padding: '10px 0 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'ns-resize', flexShrink: 0 }}
               onClick={() => {
                 setSheetState(prev =>
                   prev === 'full' ? 'half' :
@@ -1666,7 +1767,7 @@ export default function AltoBellevuePlanView({
                 }
               }}
             >
-              <GripHorizontal size={22} style={{ color: 'rgba(240,237,232,0.15)' }} />
+              <div style={{ width: 36, height: 4, borderRadius: 99, background: 'rgba(240,237,232,0.18)' }} />
             </div>
 
             <div style={{ position: 'absolute', inset: '44px 0 0', overflow: 'hidden' }}>
