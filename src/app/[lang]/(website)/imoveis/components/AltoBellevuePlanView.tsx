@@ -74,11 +74,11 @@ type FilterKey = 'ALL' | StatusKey;
 const STATUS: Record<StatusKey, {
   label: string; fill: string; stroke: string; textColor: string; badgeBg: string;
 }> = {
-  DISPONIVEL:   { label: 'Disponível',   fill: 'rgba(22,163,74,0.28)',  stroke: '#34D399', textColor: '#34D399', badgeBg: 'rgba(22,163,74,0.18)' },
-  VENDIDO:      { label: 'Vendido',      fill: 'rgba(71,85,105,0.22)', stroke: '#94A3B8', textColor: '#94A3B8', badgeBg: 'rgba(71,85,105,0.18)' },
-  NEGOCIACAO:   { label: 'Negociação',   fill: 'rgba(245,158,11,0.28)', stroke: '#FBBF24', textColor: '#FBBF24', badgeBg: 'rgba(245,158,11,0.18)' },
-  PROPRIETARIO: { label: 'Proprietário', fill: 'rgba(59,130,246,0.26)', stroke: '#60A5FA', textColor: '#60A5FA', badgeBg: 'rgba(59,130,246,0.18)' },
-  IGREJA:       { label: 'Igreja',       fill: 'rgba(124,58,237,0.26)', stroke: '#A78BFA', textColor: '#A78BFA', badgeBg: 'rgba(124,58,237,0.18)' },
+  DISPONIVEL:   { label: 'Disponível',   fill: 'rgba(52,211,153,0.06)',  stroke: '#34D399', textColor: '#34D399', badgeBg: 'rgba(22,163,74,0.12)' },
+  VENDIDO:      { label: 'Vendido',      fill: 'rgba(100,116,139,0.05)', stroke: '#64748B', textColor: '#94A3B8', badgeBg: 'rgba(71,85,105,0.12)' },
+  NEGOCIACAO:   { label: 'Negociação',   fill: 'rgba(251,191,36,0.06)',  stroke: '#FBBF24', textColor: '#FBBF24', badgeBg: 'rgba(245,158,11,0.12)' },
+  PROPRIETARIO: { label: 'Proprietário', fill: 'rgba(96,165,250,0.06)',  stroke: '#60A5FA', textColor: '#60A5FA', badgeBg: 'rgba(59,130,246,0.12)' },
+  IGREJA:       { label: 'Igreja',       fill: 'rgba(167,139,250,0.06)', stroke: '#A78BFA', textColor: '#A78BFA', badgeBg: 'rgba(124,58,237,0.12)' },
 };
 
 const DEFAULT_STATUS = STATUS.DISPONIVEL;
@@ -91,7 +91,7 @@ const SVG_H = 707;   // 1000 × (2122/3000)
 const IMAGE_URL = '/images/maps/alto-bellevue-plant.jpg';
 const MIN_SCALE = 0.3;
 const MAX_SCALE = 12;
-const LOT_ZOOM_THRESHOLD = 115; // displayScale % — show individual lots above this
+const LOT_ZOOM_THRESHOLD = 95; // displayScale % — show individual lots above this
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
@@ -436,26 +436,26 @@ function normalizeWheelDelta(e: WheelEvent): number {
 function SVGDefs() {
   return (
     <defs>
-      {/* Glow for selected quadra */}
-      <filter id="ab-quadra-glow" x="-50%" y="-50%" width="200%" height="200%" colorInterpolationFilters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="glow" />
+      {/* Precision glow for selected quadra — tight, not blurry */}
+      <filter id="ab-quadra-glow" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
+        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 12 -5" result="glow" />
         <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
       </filter>
-      {/* Soft drop shadow for lot cells */}
-      <filter id="ab-lot-highlight" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+      {/* Lot highlight — minimal shadow */}
+      <filter id="ab-lot-highlight" x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
         <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
       </filter>
-      {/* Vignette radial gradient for depth */}
+      {/* Vignette — subtle depth, preserves map readability */}
       <radialGradient id="ab-vignette" cx="50%" cy="50%" r="70%" gradientUnits="userSpaceOnUse" fx="50%" fy="50%">
-        <stop offset="40%" stopColor="transparent" stopOpacity="0" />
-        <stop offset="100%" stopColor="#050D18" stopOpacity="0.55" />
+        <stop offset="50%" stopColor="transparent" stopOpacity="0" />
+        <stop offset="100%" stopColor="#050D18" stopOpacity="0.18" />
       </radialGradient>
-      {/* Stroke gradient for premium quadra borders */}
+      {/* Stroke gradient for architectural borders */}
       <linearGradient id="ab-road-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
-        <stop offset="100%" stopColor="rgba(255,255,255,0.15)" />
+        <stop offset="0%" stopColor="rgba(255,255,255,0.45)" />
+        <stop offset="100%" stopColor="rgba(255,255,255,0.12)" />
       </linearGradient>
     </defs>
   );
@@ -648,9 +648,14 @@ const QuadraTile = memo(function QuadraTile({
   const pts = polygonToString(geom.polygon);
   const [cx, cy] = geom.centroid;
 
-  const fillOpacity = isSelected ? 0.52 : hovered ? 0.42 : 0.22;
-  const strokeWidth = isSelected ? 2 : hovered ? 1.6 : 1.1;
-  const strokeOpacity = isSelected ? 1 : hovered ? 0.92 : 0.58;
+  const fillOpacity = isSelected ? 0.13 : hovered ? 0.08 : 0.0;
+  const strokeWidth = isSelected ? 1.6 : hovered ? 1.2 : 0.8;
+  const strokeColor = isSelected
+    ? st.stroke
+    : hovered
+    ? st.stroke
+    : dominantStatus === 'DISPONIVEL' ? 'rgba(52,211,153,0.45)' : 'rgba(255,255,255,0.22)';
+  const strokeOpacity = isSelected ? 1 : hovered ? 0.85 : 1;
 
   return (
     <g
@@ -660,82 +665,76 @@ const QuadraTile = memo(function QuadraTile({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Selection glow ring — behind polygon */}
+      {/* Selection glow — precision, tight */}
       {isSelected && (
         <polygon
           points={pts}
           fill="none"
           stroke={st.stroke}
-          strokeWidth={14}
-          strokeOpacity={0.14}
+          strokeWidth={6}
+          strokeOpacity={0.18}
           style={{ filter: 'url(#ab-quadra-glow)' }}
         />
       )}
 
-      {/* Quadra polygon — base fill */}
+      {/* Quadra polygon — near-transparent fill, map stays dominant */}
       <polygon
         points={pts}
-        fill={st.fill.replace(/[\d.]+\)$/, `${fillOpacity})`)}
+        fill={st.stroke}
+        fillOpacity={fillOpacity}
         stroke="none"
+        style={{ transition: 'fill-opacity 0.2s ease' }}
       />
-      {/* Quadra polygon — premium border */}
+      {/* Quadra polygon — architectural border */}
       <polygon
         points={pts}
         fill="none"
-        stroke={isSelected ? st.stroke : (hovered ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.32)')}
+        stroke={strokeColor}
         strokeWidth={strokeWidth}
         strokeOpacity={strokeOpacity}
         style={{
-          transition: 'stroke-opacity 0.18s ease, stroke-width 0.18s ease',
-          filter: (isSelected || hovered) ? 'url(#ab-quadra-glow)' : undefined,
+          transition: 'stroke 0.18s ease, stroke-width 0.18s ease, stroke-opacity 0.18s ease',
         }}
       />
-      {/* Inner white highlight line — cartographic depth */}
+      {/* Inner highlight — very subtle, cartographic depth */}
       {!isSelected && (
         <polygon
           points={pts}
           fill="none"
-          stroke="rgba(255,255,255,0.12)"
-          strokeWidth={0.6}
+          stroke="rgba(255,255,255,0.07)"
+          strokeWidth={0.5}
         />
       )}
 
-      {/* Quadra letter — always horizontal */}
+      {/* Quadra letter — architectural, restrained */}
       <text
-        x={cx} y={cy - 5}
+        x={cx} y={cy}
         textAnchor="middle"
         dominantBaseline="central"
-        fill="#F0EDE8"
-        fontSize={13}
-        fontWeight="800"
+        fill={isSelected ? st.stroke : hovered ? 'rgba(240,237,232,0.9)' : 'rgba(240,237,232,0.55)'}
+        fontSize={isSelected ? 11 : 9}
+        fontWeight="700"
         fontFamily="'JetBrains Mono', monospace"
-        style={{ pointerEvents: 'none', userSelect: 'none', textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}
+        letterSpacing="0.12em"
+        style={{ pointerEvents: 'none', userSelect: 'none', transition: 'fill 0.18s ease, font-size 0.18s ease' }}
       >
         {quadra}
       </text>
 
-      {/* Lot count badge */}
-      {displayCount > 0 && (
-        <g transform={`translate(${cx + 10}, ${cy - 16})`}>
-          <circle r={9} fill={dominantStatus === 'DISPONIVEL' ? '#16A34A' : st.stroke} opacity={0.92}
-            style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.7))' }} />
-          <text
-            textAnchor="middle" dominantBaseline="central"
-            fill="#fff" fontSize={7} fontWeight="900"
-            fontFamily="'JetBrains Mono', monospace"
-            style={{ pointerEvents: 'none', userSelect: 'none' }}
-          >
-            {displayCount > 99 ? '99+' : displayCount}
-          </text>
-        </g>
-      )}
-
-      {/* Selection pulse ring */}
-      {isSelected && (
-        <circle cx={cx} cy={cy} r={20} fill="none" stroke={st.stroke} strokeWidth={1} strokeOpacity={0.5}>
-          <animate attributeName="r" from="18" to="34" dur="2s" repeatCount="indefinite" />
-          <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
-        </circle>
+      {/* Available count — subtle text, not a badge */}
+      {displayCount > 0 && (isSelected || hovered) && (
+        <text
+          x={cx} y={cy + 11}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill={dominantStatus === 'DISPONIVEL' ? '#34D399' : st.stroke}
+          fontSize={6.5}
+          fontWeight="600"
+          fontFamily="'JetBrains Mono', monospace"
+          style={{ pointerEvents: 'none', userSelect: 'none' }}
+        >
+          {displayCount} disp.
+        </text>
       )}
     </g>
   );
@@ -1062,11 +1061,11 @@ export default function AltoBellevuePlanView({
       const cW = el.offsetWidth, cH = el.offsetHeight;
       if (cW && cH) {
         const { minX, maxX, minY, maxY } = QUADRA_BOUNDS;
-        const PAD = 1.20;
+        const PAD = 1.05;
         const bboxW = (maxX - minX) * PAD, bboxH = (maxY - minY) * PAD;
         const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
         const s0 = Math.min(cW / SVG_W, cH / SVG_H);
-        const sc = clampScale(Math.min(cW * 0.90 / (bboxW * s0), cH * 0.90 / (bboxH * s0)));
+        const sc = clampScale(Math.min(cW * 0.96 / (bboxW * s0), cH * 0.96 / (bboxH * s0)));
         transform.current = { scale: sc, tx: -((cx - SVG_W/2)*s0)*sc, ty: -((cy - SVG_H/2)*s0)*sc };
         applyTransform();
         setDisplayScale(Math.round(sc * 100));
@@ -1253,15 +1252,15 @@ export default function AltoBellevuePlanView({
       didInitFit.current = true;
 
       const { minX, maxX, minY, maxY } = QUADRA_BOUNDS;
-      const PAD = 1.20;
+      const PAD = 1.05;
       const bboxW = (maxX - minX) * PAD;
       const bboxH = (maxY - minY) * PAD;
       const cx = (minX + maxX) / 2;
       const cy = (minY + maxY) / 2;
       const s0 = Math.min(cW / SVG_W, cH / SVG_H);
       const initScale = clampScale(Math.min(
-        (cW * 0.90) / (bboxW * s0),
-        (cH * 0.90) / (bboxH * s0),
+        (cW * 0.96) / (bboxW * s0),
+        (cH * 0.96) / (bboxH * s0),
       ));
       const tx = -((cx - SVG_W / 2) * s0) * initScale;
       const ty = -((cy - SVG_H / 2) * s0) * initScale;
@@ -1319,7 +1318,7 @@ export default function AltoBellevuePlanView({
   }, []);
 
   // ── Layout ─────────────────────────────────────────────────────────────────
-  const containerH = isFullscreen ? '100svh' : 'clamp(560px, 72vw, 820px)';
+  const containerH = isFullscreen ? '100svh' : 'clamp(580px, 80vw, 920px)';
   const showLots = displayScale >= LOT_ZOOM_THRESHOLD || selectedQuadra !== null;
 
   const filterRows: { key: FilterKey; label: string; value: number; color: string }[] = [
