@@ -89,9 +89,9 @@ const getStatus = (key: string) => STATUS[key as StatusKey] ?? DEFAULT_STATUS;
 const SVG_W = 1000;
 const SVG_H = 707;   // 1000 × (2122/3000)
 const IMAGE_URL = '/images/maps/alto-bellevue-plant.jpg';
-const MIN_SCALE = 0.35;
-const MAX_SCALE = 10;
-const LOT_ZOOM_THRESHOLD = 200; // displayScale % — show individual lots above this
+const MIN_SCALE = 0.3;
+const MAX_SCALE = 12;
+const LOT_ZOOM_THRESHOLD = 115; // displayScale % — show individual lots above this
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
@@ -267,6 +267,38 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
     },
   },
 
+  // ─── O — lower-left, ~0° ──────────────────────────────────────────────────
+  O: {
+    polygon: [
+      [292,498],[356,490],[416,490],[452,504],[462,524],[462,558],
+      [456,574],[428,584],[376,586],[320,582],[288,566],[280,544],[282,518],
+    ],
+    centroid: [376, 540],
+    primaryAxis: -3,
+    grid: { cols: 12, cellW: 10, cellH: 8, gap: 1.5 },
+    calibration: {
+      plantLabel: [376, 504], roadBearing: -3,
+      visualConfidence: 'low', lastCalibrated: '2026-05-28',
+      notes: 'Quadra esquerda-inferior, ~24 lotes',
+    },
+  },
+
+  // ─── P — far left, ~0° ────────────────────────────────────────────────────
+  P: {
+    polygon: [
+      [210,506],[278,498],[296,504],[300,524],[298,552],[288,574],
+      [266,586],[238,586],[216,572],[206,550],[208,524],
+    ],
+    centroid: [254, 545],
+    primaryAxis: 0,
+    grid: { cols: 8, cellW: 10, cellH: 8, gap: 1.5 },
+    calibration: {
+      plantLabel: [254, 508], roadBearing: 0,
+      visualConfidence: 'low', lastCalibrated: '2026-05-28',
+      notes: 'Quadra extrema esquerda, ~16 lotes',
+    },
+  },
+
   // ─── G — lower right, ~44° steep ───────────────────────────────────────────
   G: {
     polygon: [
@@ -334,6 +366,17 @@ const QUADRA_DATA: Record<string, QuadraGeometry> = {
   },
 };
 
+// ─── Quadra bounds — used for smart initial fit ───────────────────────────────
+const QUADRA_BOUNDS = (() => {
+  const allPts = Object.values(QUADRA_DATA).flatMap(g => g.polygon);
+  const xs = allPts.map(([x]) => x);
+  const ys = allPts.map(([, y]) => y);
+  return {
+    minX: Math.min(...xs), maxX: Math.max(...xs),
+    minY: Math.min(...ys), maxY: Math.max(...ys),
+  };
+})();
+
 // ─── Lot Shape Resolver — Mode A (Smart Grid) ─────────────────────────────────
 // This function is the ONLY place that knows how to compute a lot's shape.
 // Swap it with a GIS-polygon resolver (Mode B) without touching the rendering engine.
@@ -393,15 +436,27 @@ function normalizeWheelDelta(e: WheelEvent): number {
 function SVGDefs() {
   return (
     <defs>
-      <filter id="ab-quadra-glow" x="-40%" y="-40%" width="180%" height="180%" colorInterpolationFilters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 14 -7" result="glow" />
+      {/* Glow for selected quadra */}
+      <filter id="ab-quadra-glow" x="-50%" y="-50%" width="200%" height="200%" colorInterpolationFilters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="glow" />
         <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
       </filter>
+      {/* Soft drop shadow for lot cells */}
       <filter id="ab-lot-highlight" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
         <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
       </filter>
+      {/* Vignette radial gradient for depth */}
+      <radialGradient id="ab-vignette" cx="50%" cy="50%" r="70%" gradientUnits="userSpaceOnUse" fx="50%" fy="50%">
+        <stop offset="40%" stopColor="transparent" stopOpacity="0" />
+        <stop offset="100%" stopColor="#050D18" stopOpacity="0.55" />
+      </radialGradient>
+      {/* Stroke gradient for premium quadra borders */}
+      <linearGradient id="ab-road-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
+        <stop offset="100%" stopColor="rgba(255,255,255,0.15)" />
+      </linearGradient>
     </defs>
   );
 }
@@ -593,9 +648,9 @@ const QuadraTile = memo(function QuadraTile({
   const pts = polygonToString(geom.polygon);
   const [cx, cy] = geom.centroid;
 
-  const fillOpacity = isSelected ? 0.55 : hovered ? 0.45 : 0.28;
-  const strokeWidth = isSelected ? 1.8 : hovered ? 1.4 : 1;
-  const strokeOpacity = isSelected ? 1 : hovered ? 0.9 : 0.65;
+  const fillOpacity = isSelected ? 0.52 : hovered ? 0.42 : 0.22;
+  const strokeWidth = isSelected ? 2 : hovered ? 1.6 : 1.1;
+  const strokeOpacity = isSelected ? 1 : hovered ? 0.92 : 0.58;
 
   return (
     <g
@@ -611,24 +666,39 @@ const QuadraTile = memo(function QuadraTile({
           points={pts}
           fill="none"
           stroke={st.stroke}
-          strokeWidth={12}
-          strokeOpacity={0.12}
+          strokeWidth={14}
+          strokeOpacity={0.14}
           style={{ filter: 'url(#ab-quadra-glow)' }}
         />
       )}
 
-      {/* Quadra polygon */}
+      {/* Quadra polygon — base fill */}
       <polygon
         points={pts}
         fill={st.fill.replace(/[\d.]+\)$/, `${fillOpacity})`)}
-        stroke={st.stroke}
+        stroke="none"
+      />
+      {/* Quadra polygon — premium border */}
+      <polygon
+        points={pts}
+        fill="none"
+        stroke={isSelected ? st.stroke : (hovered ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.32)')}
         strokeWidth={strokeWidth}
         strokeOpacity={strokeOpacity}
         style={{
-          transition: 'fill-opacity 0.2s ease, stroke-opacity 0.2s ease',
+          transition: 'stroke-opacity 0.18s ease, stroke-width 0.18s ease',
           filter: (isSelected || hovered) ? 'url(#ab-quadra-glow)' : undefined,
         }}
       />
+      {/* Inner white highlight line — cartographic depth */}
+      {!isSelected && (
+        <polygon
+          points={pts}
+          fill="none"
+          stroke="rgba(255,255,255,0.12)"
+          strokeWidth={0.6}
+        />
+      )}
 
       {/* Quadra letter — always horizontal */}
       <text
@@ -986,8 +1056,24 @@ export default function AltoBellevuePlanView({
   const zoomIn  = useCallback(() => { const r = containerRef.current?.getBoundingClientRect(); if (r) zoomAt(1.3, r.left + r.width/2, r.top + r.height/2); }, [zoomAt]);
   const zoomOut = useCallback(() => { const r = containerRef.current?.getBoundingClientRect(); if (r) zoomAt(1/1.3, r.left + r.width/2, r.top + r.height/2); }, [zoomAt]);
   const resetView = useCallback(() => {
+    const el = containerRef.current;
+    velocity.current = { x: 0, y: 0 };
+    if (el) {
+      const cW = el.offsetWidth, cH = el.offsetHeight;
+      if (cW && cH) {
+        const { minX, maxX, minY, maxY } = QUADRA_BOUNDS;
+        const PAD = 1.20;
+        const bboxW = (maxX - minX) * PAD, bboxH = (maxY - minY) * PAD;
+        const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+        const s0 = Math.min(cW / SVG_W, cH / SVG_H);
+        const sc = clampScale(Math.min(cW * 0.90 / (bboxW * s0), cH * 0.90 / (bboxH * s0)));
+        transform.current = { scale: sc, tx: -((cx - SVG_W/2)*s0)*sc, ty: -((cy - SVG_H/2)*s0)*sc };
+        applyTransform();
+        setDisplayScale(Math.round(sc * 100));
+        return;
+      }
+    }
     transform.current = { scale: 1, tx: 0, ty: 0 };
-    velocity.current  = { x: 0, y: 0 };
     applyTransform();
     setDisplayScale(100);
   }, [applyTransform]);
@@ -1153,6 +1239,44 @@ export default function AltoBellevuePlanView({
 
   useLayoutEffect(() => { applyTransform(); }, [applyTransform]);
 
+  // ── Smart initial fit — zoom/pan to show only the subdivision area ─────────
+  const didInitFit = useRef(false);
+  useEffect(() => {
+    if (didInitFit.current) return;
+    const el = containerRef.current;
+    if (!el) return;
+
+    const doFit = () => {
+      const cW = el.offsetWidth;
+      const cH = el.offsetHeight;
+      if (!cW || !cH) return false;
+      didInitFit.current = true;
+
+      const { minX, maxX, minY, maxY } = QUADRA_BOUNDS;
+      const PAD = 1.20;
+      const bboxW = (maxX - minX) * PAD;
+      const bboxH = (maxY - minY) * PAD;
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+      const s0 = Math.min(cW / SVG_W, cH / SVG_H);
+      const initScale = clampScale(Math.min(
+        (cW * 0.90) / (bboxW * s0),
+        (cH * 0.90) / (bboxH * s0),
+      ));
+      const tx = -((cx - SVG_W / 2) * s0) * initScale;
+      const ty = -((cy - SVG_H / 2) * s0) * initScale;
+      transform.current = { scale: initScale, tx, ty };
+      applyTransform();
+      setDisplayScale(Math.round(initScale * 100));
+      return true;
+    };
+
+    if (!doFit()) {
+      const id = requestAnimationFrame(() => { doFit(); });
+      return () => cancelAnimationFrame(id);
+    }
+  }, [applyTransform]);
+
   // Preload image
   useEffect(() => {
     const img = new Image();
@@ -1195,7 +1319,7 @@ export default function AltoBellevuePlanView({
   }, []);
 
   // ── Layout ─────────────────────────────────────────────────────────────────
-  const containerH = isFullscreen ? '100vh' : 'clamp(480px, 62vw, 720px)';
+  const containerH = isFullscreen ? '100svh' : 'clamp(560px, 72vw, 820px)';
   const showLots = displayScale >= LOT_ZOOM_THRESHOLD || selectedQuadra !== null;
 
   const filterRows: { key: FilterKey; label: string; value: number; color: string }[] = [
@@ -1336,6 +1460,9 @@ export default function AltoBellevuePlanView({
                 <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="#0D1F30" />
               )}
 
+              {/* Layer 1b: vignette depth overlay */}
+              <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-vignette)" style={{ pointerEvents: 'none' }} />
+
               {/* Layer 2: quadra polygons */}
               {Object.entries(QUADRA_DATA).map(([quadra, geom]) => {
                 const qLots = quadraMap.get(quadra);
@@ -1390,9 +1517,9 @@ export default function AltoBellevuePlanView({
         </div>
 
         {/* ── HINT ───────────────────────────────────────────────────────── */}
-        <div style={{ position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)', zIndex: 12, pointerEvents: 'none' }}>
-          <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(240,237,232,0.5)', background: 'rgba(8,18,29,0.88)', padding: '5px 16px', borderRadius: 99, whiteSpace: 'nowrap', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.06)', display: 'block', letterSpacing: '0.06em' }}>
-            Arraste · Pinça · Toque numa quadra
+        <div style={{ position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', zIndex: 12, pointerEvents: 'none' }}>
+          <span style={{ fontSize: 9.5, fontWeight: 600, color: 'rgba(240,237,232,0.42)', background: 'rgba(5,12,20,0.82)', padding: '4px 14px', borderRadius: 99, whiteSpace: 'nowrap', backdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.05)', display: 'block', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Toque numa quadra para explorar
           </span>
         </div>
 
