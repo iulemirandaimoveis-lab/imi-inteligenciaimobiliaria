@@ -10,6 +10,9 @@ import {
   CheckCircle2, Circle, ArrowRight, Zap,
 } from 'lucide-react';
 import SubdivisionPlanView, { PLAN_VIEW_IDS } from './SubdivisionPlanView';
+import AltoBellevuePlanView from './AltoBellevuePlanView';
+
+const AB_DEV_ID = 'ab7d1fc1-f069-4e3b-a515-8e1204c11247';
 
 interface Lot {
   id: string;
@@ -1321,13 +1324,21 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
 
       {/* ── Plan View ────────────────────────────────────────────────────────── */}
       {viewMode === 'plan' && (
-        <SubdivisionPlanView
-          lots={lots}
-          developmentId={developmentId}
-          developmentName={developmentName}
-          whatsappPhone={whatsappPhone}
-          onLotClick={(lot) => setSelectedLot(lot)}
-        />
+        developmentId === AB_DEV_ID
+          ? <AltoBellevuePlanView
+              lots={lots}
+              developmentId={developmentId}
+              developmentName={developmentName}
+              whatsappPhone={whatsappPhone}
+              onLotClick={(lot) => setSelectedLot(lot)}
+            />
+          : <SubdivisionPlanView
+              lots={lots}
+              developmentId={developmentId}
+              developmentName={developmentName}
+              whatsappPhone={whatsappPhone}
+              onLotClick={(lot) => setSelectedLot(lot)}
+            />
       )}
 
       {/* ── Quadra List Controls ─────────────────────────────────────────────── */}
