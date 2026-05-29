@@ -4,13 +4,13 @@ import { useState, useRef, useEffect, type CSSProperties, type ReactNode, type E
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
     MapPin, BedDouble, Maximize2, Building2, Phone,
-    CheckCircle2, Loader2, ChevronRight, Play, Pause,
+    CheckCircle2, Loader2, ChevronRight,
     TrendingUp, Home, Car, ShoppingBag, GraduationCap,
     Hospital, ChevronDown, Star,
     Shield, Zap, Award, BarChart2,
 } from 'lucide-react'
 import {
-    AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, ReferenceLine
+    AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip
 } from 'recharts'
 import { toast } from 'sonner'
 
@@ -260,7 +260,7 @@ function ValorizationSection({ basePrice, accent }: { basePrice: number; accent:
                     <YAxis hide />
                     <Tooltip
                         contentStyle={{ background: '#1a1a1a', border: `1px solid ${accent.dimmed}`, borderRadius: '8px', fontSize: '12px' }}
-                        formatter={(v: number) => [formatPriceFull(v), 'Valor estimado']}
+                        formatter={(v) => [formatPriceFull(Number(v)), 'Valor estimado']}
                         labelStyle={{ color: '#aaa' }}
                     />
                     <Area
