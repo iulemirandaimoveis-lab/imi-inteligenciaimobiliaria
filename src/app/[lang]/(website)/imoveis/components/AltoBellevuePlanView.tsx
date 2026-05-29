@@ -6,7 +6,7 @@ import React, {
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   X, ZoomIn, ZoomOut, RotateCcw, MessageCircle,
-  ShoppingCart, Trash2, Send, Layers, ChevronDown,
+  ShoppingCart, Trash2, Send, Layers, ChevronDown, ChevronUp,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -68,6 +68,18 @@ function usePlanLots() {
   }, []);
 
   return { planLots, loading };
+}
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return isMobile;
 }
 
 // ─── Merge DB lots with plan polygons ─────────────────────────────────────────
@@ -200,7 +212,8 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}
-      className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-72 bg-[#0F1923]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-30"
+      className="absolute bottom-0 left-0 right-0 md:bottom-4 md:left-auto md:right-4 md:w-72 md:rounded-2xl bg-[#0F1923]/98 backdrop-blur-xl border-t md:border border-white/10 rounded-t-2xl shadow-2xl overflow-hidden z-30"
+      style={{ maxHeight: '70vh', overflowY: 'auto' }}
     >
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         <div>
@@ -292,6 +305,7 @@ interface Props {
 
 export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }: Props) {
   const { planLots, loading } = usePlanLots();
+  const isMobile = useIsMobile();
   const mergedLots = useMemo(() => mergeLots(lots, planLots), [lots, planLots]);
 
   // Pan/zoom state
@@ -319,7 +333,8 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
   }, [mergedLots, filterStatus]);
 
   const lotsWithPoly = useMemo(() => mergedLots.filter(l => l.has_polygon), [mergedLots]);
-  const lotsNoPrice = useMemo(() => lotsWithPoly.filter(l => !l.price), [lotsWithPoly]);
+  const lotsNoPrice = useMemo(() => lotsWithPoly.filter(l => !l.price && l.status === 'DISPONIVEL'), [lotsWithPoly]);
+  const lotsDisponiveis = useMemo(() => mergedLots.filter(l => l.status === 'DISPONIVEL'), [mergedLots]);
 
   // Zoom
   const doZoom = useCallback((factor: number, cx = SVG_W / 2, cy = SVG_H / 2) => {
@@ -585,27 +600,36 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
           </button>
         </div>
 
-        {/* Stats bar */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-3 text-xs text-slate-500 z-20">
-          <span className="bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
-            <span className="text-white">{lotsWithPoly.length}</span> lotes mapeados
-          </span>
-          {lotsNoPrice.length > 0 && (
+        {/* Stats bar — hidden on mobile when lot panel is open */}
+        {!(isMobile && selectedLot && !showCart) && (
+          <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs text-slate-500 z-20">
             <span className="bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
-              <span className="text-amber-400">{lotsNoPrice.length}</span> sem preço
+              <span className="text-emerald-400 font-semibold">{lotsDisponiveis.length}</span> disponíveis
             </span>
-          )}
-        </div>
+            {lotsWithPoly.length > 0 && (
+              <span className="hidden sm:inline bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
+                <span className="text-white">{lotsWithPoly.length}</span> mapeados
+              </span>
+            )}
+            {lotsNoPrice.length > 0 && (
+              <span className="bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
+                <span className="text-amber-400">{lotsNoPrice.length}</span> sem preço
+              </span>
+            )}
+          </div>
+        )}
 
-        {/* Legend */}
-        <div className="absolute bottom-3 right-3 flex items-center gap-2 z-20">
-          {(['DISPONIVEL', 'VENDIDO', 'NEGOCIACAO'] as const).map(k => (
-            <div key={k} className="flex items-center gap-1 text-xs text-slate-400">
-              <div className="w-2.5 h-2.5 rounded-sm" style={{ background: STATUS[k].fill, border: `1px solid ${STATUS[k].stroke}` }}/>
-              <span className="hidden sm:inline">{STATUS[k].label}</span>
-            </div>
-          ))}
-        </div>
+        {/* Legend — hidden on mobile when lot panel is open */}
+        {!(isMobile && selectedLot && !showCart) && (
+          <div className="absolute bottom-3 right-3 flex items-center gap-2 z-20">
+            {(['DISPONIVEL', 'VENDIDO', 'NEGOCIACAO'] as const).map(k => (
+              <div key={k} className="flex items-center gap-1 text-xs text-slate-400">
+                <div className="w-2.5 h-2.5 rounded-sm" style={{ background: STATUS[k].fill, border: `1px solid ${STATUS[k].stroke}` }}/>
+                <span className="hidden sm:inline">{STATUS[k].label}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Loading */}
         {loading && (
@@ -628,13 +652,12 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
         </AnimatePresence>
       </div>
 
-      {/* Cart sidebar */}
+      {/* Cart — sidebar on desktop, bottom sheet on mobile */}
       <AnimatePresence>
-        {showCart && (
+        {showCart && !isMobile && (
           <motion.div
             initial={{ width: 0, opacity: 0 }} animate={{ width: 300, opacity: 1 }} exit={{ width: 0, opacity: 0 }}
             className="border-l border-white/10 bg-[#0A1828] overflow-hidden flex-shrink-0"
-            style={{ maxWidth: '85vw' }}
           >
             <div className="flex items-center justify-between p-4 border-b border-white/10">
               <span className="text-sm font-semibold text-white">Proposta de Compra</span>
@@ -643,6 +666,40 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
               </button>
             </div>
             <div className="h-[calc(100%-49px)] overflow-hidden">
+              <CartPanel
+                cart={cart}
+                whatsapp={whatsappPhone || WHATSAPP_NUMBER}
+                onRemove={removeFromCart}
+                onClear={() => setCart([])}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cart — mobile bottom sheet */}
+      <AnimatePresence>
+        {showCart && isMobile && (
+          <motion.div
+            initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="absolute bottom-0 left-0 right-0 bg-[#0A1828] border-t border-white/10 rounded-t-2xl z-40 flex flex-col"
+            style={{ maxHeight: '80vh' }}
+          >
+            {/* Drag handle */}
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-white/20"/>
+            </div>
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <ShoppingCart size={15} className="text-emerald-400"/>
+                <span className="text-sm font-semibold text-white">Proposta de Compra</span>
+              </div>
+              <button onClick={() => setShowCart(false)} className="text-slate-500 hover:text-white p-1">
+                <ChevronDown size={18}/>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
               <CartPanel
                 cart={cart}
                 whatsapp={whatsappPhone || WHATSAPP_NUMBER}
