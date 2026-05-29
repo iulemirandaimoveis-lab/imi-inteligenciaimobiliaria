@@ -393,3 +393,1080 @@ const QuadraTile = memo(function QuadraTile({ quadra, geom, lots, filterKey, isS
     </g>
   );
 });
+
+// ─── Score Bar ────────────────────────────────────────────────────────────────
+function ScoreBar({ value, color = '#C8A44A' }: { value: number; color?: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{ width: `${value}%`, height: '100%', background: color, borderRadius: 2,
+          transition: 'width 0.6s cubic-bezier(0.34,1.56,0.64,1)' }} />
+      </div>
+      <span style={{ fontSize: 10, color: 'rgba(240,237,232,0.5)', fontFamily: "'JetBrains Mono',monospace", minWidth: 24 }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+// ─── Spatial Intelligence Panel ───────────────────────────────────────────────
+function SpatialIntelligencePanel({
+  lot, intel, onClose, onWhatsApp,
+}: {
+  lot: Lot; intel: LotIntelligence; onClose: () => void; onWhatsApp: (msg: string) => void;
+}) {
+  const [showPayment, setShowPayment] = React.useState(false);
+  const [showInvestment, setShowInvestment] = React.useState(false);
+  const status = STATUS[lot.status];
+
+  const waMsg = encodeURIComponent(
+    `Olá! Tenho interesse no Lote ${lot.number} da Quadra ${lot.quadra} do Alto Bellevue.\n` +
+    (lot.area ? `Área: ${fmtM2(lot.area)}\n` : '') +
+    (lot.price ? `Valor: ${fmtBRL(lot.price)}\n` : '') +
+    `IMI Score: ${intel.imiScore}/100`
+  );
+
+  return (
+    <div style={{ height: '100%', overflowY: 'auto', padding: '0 0 24px',
+      scrollbarWidth: 'thin', scrollbarColor: 'rgba(200,164,74,0.3) transparent' }}>
+      {/* Header */}
+      <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)',
+        position: 'sticky', top: 0, background: 'rgba(10,15,28,0.97)', backdropFilter: 'blur(12px)', zIndex: 2 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+          <div>
+            <div style={{ fontSize: 10, color: 'rgba(200,164,74,0.7)', fontFamily: "'JetBrains Mono',monospace",
+              letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>
+              IMI SPATIAL INTELLIGENCE
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#F0EDE8', letterSpacing: '-0.02em' }}>
+              Lote {lot.number} · Quadra {lot.quadra}
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 8, padding: '6px 8px', cursor: 'pointer', color: 'rgba(240,237,232,0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <X size={14} />
+          </button>
+        </div>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px',
+          borderRadius: 20, background: `${status.fill}`, border: `1px solid ${status.stroke}`,
+          fontSize: 10, fontWeight: 600, color: status.stroke, letterSpacing: '0.08em' }}>
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: status.stroke }} />
+          {status.label.toUpperCase()}
+        </span>
+      </div>
+
+      {/* Primary metrics */}
+      <div style={{ padding: '16px 20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10,
+        borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        {lot.area && (
+          <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '12px 14px',
+            border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div style={{ fontSize: 9, color: 'rgba(200,164,74,0.6)', fontFamily: "'JetBrains Mono',monospace",
+              letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>ÁREA</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#F0EDE8' }}>{fmtM2(lot.area)}</div>
+          </div>
+        )}
+        {lot.price && (
+          <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '12px 14px',
+            border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div style={{ fontSize: 9, color: 'rgba(200,164,74,0.6)', fontFamily: "'JetBrains Mono',monospace",
+              letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>VALOR</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#C8A44A' }}>{fmtBRL(lot.price)}</div>
+            {lot.area && lot.price && (
+              <div style={{ fontSize: 9, color: 'rgba(240,237,232,0.4)', marginTop: 2 }}>
+                {fmtBRL(Math.round(lot.price / lot.area))}/m²
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* IMI Score Ring */}
+      <div style={{ padding: '20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ fontSize: 9, color: 'rgba(200,164,74,0.6)', fontFamily: "'JetBrains Mono',monospace",
+          letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 14 }}>IMI SCORE™</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <IMIScoreRing score={intel.imiScore} size={80} />
+          <div style={{ flex: 1 }}>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10,
+                color: 'rgba(240,237,232,0.5)', marginBottom: 4, fontFamily: "'JetBrains Mono',monospace" }}>
+                <span>Solar</span><span style={{ color: 'rgba(234,179,8,0.8)' }}>{intel.solarScore}</span>
+              </div>
+              <ScoreBar value={intel.solarScore} color="#EAB308" />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10,
+                color: 'rgba(240,237,232,0.5)', marginBottom: 4, fontFamily: "'JetBrains Mono',monospace" }}>
+                <span>Vista</span><span style={{ color: 'rgba(59,130,246,0.9)' }}>{intel.viewScore}</span>
+              </div>
+              <ScoreBar value={intel.viewScore} color="#3B82F6" />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10,
+                color: 'rgba(240,237,232,0.5)', marginBottom: 4, fontFamily: "'JetBrains Mono',monospace" }}>
+                <span>Privacidade</span><span style={{ color: 'rgba(167,139,250,0.9)' }}>{intel.privacyScore}</span>
+              </div>
+              <ScoreBar value={intel.privacyScore} color="#A78BFA" />
+            </div>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10,
+                color: 'rgba(240,237,232,0.5)', marginBottom: 4, fontFamily: "'JetBrains Mono',monospace" }}>
+                <span>Apreciação</span><span style={{ color: 'rgba(34,197,94,0.9)' }}>{intel.appreciationScore}</span>
+              </div>
+              <ScoreBar value={intel.appreciationScore} color="#22C55E" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Spatial data */}
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ fontSize: 9, color: 'rgba(200,164,74,0.6)', fontFamily: "'JetBrains Mono',monospace",
+          letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 12 }}>DADOS ESPACIAIS</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          {[
+            { label: 'Altitude Est.', value: `~${intel.estimatedAltitude}m` },
+            { label: 'Orientação', value: intel.solarOrientation },
+            { label: 'Luz Manhã', value: intel.morningLight },
+            { label: 'Luz Tarde', value: intel.afternoonLight },
+            { label: 'Verde Próx.', value: `${intel.greenProximity}m` },
+            { label: 'Clube', value: `${intel.clubDistance}m` },
+          ].map(({ label, value }) => (
+            <div key={label} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 8, padding: '8px 10px',
+              border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ fontSize: 8, color: 'rgba(200,164,74,0.5)', fontFamily: "'JetBrains Mono',monospace",
+                letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 3 }}>{label}</div>
+              <div style={{ fontSize: 11, color: '#F0EDE8', fontWeight: 600 }}>{value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Investment Intelligence (collapsible) */}
+      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <button onClick={() => setShowInvestment(v => !v)}
+          style={{ width: '100%', padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(240,237,232,0.7)' }}>
+          <span style={{ fontSize: 9, fontFamily: "'JetBrains Mono',monospace", letterSpacing: '0.15em',
+            textTransform: 'uppercase', color: 'rgba(200,164,74,0.6)' }}>INTELIGÊNCIA DE INVESTIMENTO</span>
+          <ChevronDown size={14} style={{ transform: showInvestment ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+        </button>
+        {showInvestment && (
+          <div style={{ padding: '0 20px 16px' }}>
+            {[
+              { label: 'Score Liquidez', value: `${intel.liquidityScore}/100`, color: '#22C55E' },
+              { label: 'Score Apreciação', value: `${intel.appreciationScore}/100`, color: '#C8A44A' },
+              { label: 'Índice IMI Quadra', value: `${intel.imiScore}/100`, color: '#C8A44A' },
+              { label: 'Região Premium', value: intel.appreciationScore > 75 ? 'Sim' : 'Moderado', color: intel.appreciationScore > 75 ? '#22C55E' : '#EAB308' },
+            ].map(({ label, value, color }) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <span style={{ fontSize: 11, color: 'rgba(240,237,232,0.5)', fontFamily: "'JetBrains Mono',monospace" }}>{label}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color }}>{value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Payment conditions (collapsible) */}
+      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <button onClick={() => setShowPayment(v => !v)}
+          style={{ width: '100%', padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: 9, fontFamily: "'JetBrains Mono',monospace", letterSpacing: '0.15em',
+            textTransform: 'uppercase', color: 'rgba(200,164,74,0.6)' }}>CONDIÇÕES DE PAGAMENTO</span>
+          <ChevronDown size={14} style={{ color: 'rgba(240,237,232,0.4)', transform: showPayment ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+        </button>
+        {showPayment && lot.price && (
+          <div style={{ padding: '0 20px 16px' }}>
+            {PAYMENT_CONDITIONS.map(cond => {
+              const downAmt = lot.price! * cond.downPct;
+              const discountedPrice = lot.price! * (1 - cond.discount);
+              const remaining = discountedPrice - downAmt;
+              const installmentAmt = cond.months > 0 ? remaining / cond.months : 0;
+              return (
+                <div key={cond.label} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 10, padding: '12px',
+                  marginBottom: 8, border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#C8A44A', fontFamily: "'JetBrains Mono',monospace" }}>{cond.label}</span>
+                    {cond.discount > 0 && (
+                      <span style={{ fontSize: 9, background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.4)',
+                        borderRadius: 4, padding: '2px 6px', color: '#22C55E', fontFamily: "'JetBrains Mono',monospace" }}>
+                        -{Math.round(cond.discount * 100)}% DESC
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                    {cond.downPct > 0 && (
+                      <div>
+                        <div style={{ fontSize: 8, color: 'rgba(200,164,74,0.5)', fontFamily: "'JetBrains Mono',monospace",
+                          textTransform: 'uppercase', marginBottom: 2 }}>ENTRADA</div>
+                        <div style={{ fontSize: 11, color: '#F0EDE8' }}>{fmtBRL(downAmt)}</div>
+                      </div>
+                    )}
+                    {installmentAmt > 0 && (
+                      <div>
+                        <div style={{ fontSize: 8, color: 'rgba(200,164,74,0.5)', fontFamily: "'JetBrains Mono',monospace",
+                          textTransform: 'uppercase', marginBottom: 2 }}>PARCELA</div>
+                        <div style={{ fontSize: 11, color: '#F0EDE8' }}>{fmtBRL(Math.round(installmentAmt))}/mês</div>
+                      </div>
+                    )}
+                    <div style={{ gridColumn: '1/-1' }}>
+                      <div style={{ fontSize: 8, color: 'rgba(200,164,74,0.5)', fontFamily: "'JetBrains Mono',monospace",
+                        textTransform: 'uppercase', marginBottom: 2 }}>TOTAL</div>
+                      <div style={{ fontSize: 11, color: '#22C55E', fontWeight: 600 }}>{fmtBRL(Math.round(discountedPrice))}</div>
+                    </div>
+                  </div>
+                  {cond.note && (
+                    <div style={{ marginTop: 6, fontSize: 9, color: 'rgba(240,237,232,0.3)',
+                      fontFamily: "'JetBrains Mono',monospace" }}>{cond.note}</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {showPayment && !lot.price && (
+          <div style={{ padding: '0 20px 16px', fontSize: 11, color: 'rgba(240,237,232,0.4)' }}>
+            Consulte-nos para condições personalizadas.
+          </div>
+        )}
+      </div>
+
+      {/* CTAs */}
+      <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {lot.status === 'DISPONIVEL' && (
+          <a href={`https://wa.me/5581997230455?text=${waMsg}`} target="_blank" rel="noopener noreferrer"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              background: 'linear-gradient(135deg,#22C55E,#16A34A)', borderRadius: 12, padding: '13px',
+              color: '#fff', fontWeight: 700, fontSize: 13, textDecoration: 'none',
+              boxShadow: '0 4px 16px rgba(34,197,94,0.3)', letterSpacing: '0.02em' }}>
+            <MessageCircle size={16} /> Reservar via WhatsApp
+          </a>
+        )}
+        <a href={`https://wa.me/5581997230455?text=${encodeURIComponent('Quero saber mais sobre o Alto Bellevue')}`}
+          target="_blank" rel="noopener noreferrer"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: 12, padding: '11px', color: 'rgba(240,237,232,0.7)', fontWeight: 600,
+            fontSize: 12, textDecoration: 'none', letterSpacing: '0.02em' }}>
+          <MessageCircle size={14} /> Falar com Especialista
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ─── Quadra Panel Content ─────────────────────────────────────────────────────
+function QuadraPanelContent({
+  quadra, lots, filterKey, onLotClick,
+}: {
+  quadra: string; lots: Lot[]; filterKey: FilterKey; onLotClick: (lot: Lot) => void;
+}) {
+  const filtered = filterKey === 'ALL' ? lots : lots.filter(l => l.status === filterKey);
+  const availCount = lots.filter(l => l.status === 'DISPONIVEL').length;
+  const totalCount = lots.length;
+  const qdata = QUADRA_DATA.find(q => q.quadra === quadra);
+  const qi = QUADRA_INTELLIGENCE[quadra as keyof typeof QUADRA_INTELLIGENCE];
+
+  return (
+    <div style={{ height: '100%', overflowY: 'auto', padding: '0 0 24px',
+      scrollbarWidth: 'thin', scrollbarColor: 'rgba(200,164,74,0.3) transparent' }}>
+      <div style={{ padding: '20px 20px 14px', borderBottom: '1px solid rgba(255,255,255,0.06)',
+        position: 'sticky', top: 0, background: 'rgba(10,15,28,0.97)', backdropFilter: 'blur(12px)', zIndex: 2 }}>
+        <div style={{ fontSize: 9, color: 'rgba(200,164,74,0.6)', fontFamily: "'JetBrains Mono',monospace",
+          letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>QUADRA</div>
+        <div style={{ fontSize: 22, fontWeight: 700, color: '#F0EDE8', letterSpacing: '-0.02em', marginBottom: 8 }}>
+          {quadra}
+        </div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 10, color: '#22C55E', background: 'rgba(34,197,94,0.12)',
+            border: '1px solid rgba(34,197,94,0.3)', borderRadius: 6, padding: '2px 8px',
+            fontFamily: "'JetBrains Mono',monospace" }}>{availCount} disponíveis</span>
+          <span style={{ fontSize: 10, color: 'rgba(240,237,232,0.4)', background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6, padding: '2px 8px',
+            fontFamily: "'JetBrains Mono',monospace" }}>{totalCount} lotes</span>
+          {qi && (
+            <span style={{ fontSize: 10, color: '#C8A44A', background: 'rgba(200,164,74,0.1)',
+              border: '1px solid rgba(200,164,74,0.25)', borderRadius: 6, padding: '2px 8px',
+              fontFamily: "'JetBrains Mono',monospace" }}>IMI {qi.solarScore}</span>
+          )}
+        </div>
+        {qdata && (
+          <div style={{ marginTop: 8, fontSize: 9, color: 'rgba(240,237,232,0.35)',
+            fontFamily: "'JetBrains Mono',monospace" }}>
+            {qdata.totalLots} lotes · {qdata.lotArea}m² · {qdata.config}
+          </div>
+        )}
+      </div>
+
+      {/* Lot cards grid */}
+      <div style={{ padding: '14px 16px',
+        display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6 }}>
+        {filtered.map(lot => {
+          const s = STATUS[lot.status];
+          const li = computeLotIntelligence(lot, QUADRA_INTELLIGENCE[quadra as keyof typeof QUADRA_INTELLIGENCE]);
+          const isDisp = lot.status === 'DISPONIVEL';
+          return (
+            <button key={lot.id || lot.number} onClick={() => onLotClick(lot)}
+              style={{ background: isDisp ? 'rgba(34,197,94,0.07)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${isDisp ? 'rgba(34,197,94,0.25)' : 'rgba(255,255,255,0.07)'}`,
+                borderRadius: 8, padding: '8px 6px', cursor: isDisp ? 'pointer' : 'default',
+                textAlign: 'left', transition: 'all 0.15s' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: isDisp ? '#22C55E' : 'rgba(240,237,232,0.35)',
+                fontFamily: "'JetBrains Mono',monospace", marginBottom: 3 }}>#{lot.number}</div>
+              {lot.area && (
+                <div style={{ fontSize: 9, color: 'rgba(240,237,232,0.5)',
+                  fontFamily: "'JetBrains Mono',monospace", marginBottom: 2 }}>{fmtM2(lot.area)}</div>
+              )}
+              {lot.price && isDisp && (
+                <div style={{ fontSize: 9, color: '#C8A44A', fontFamily: "'JetBrains Mono',monospace" }}>
+                  {fmtBRL(lot.price)}
+                </div>
+              )}
+              {/* IMI dots */}
+              <div style={{ display: 'flex', gap: 2, marginTop: 4 }}>
+                {[0,1,2,3,4].map(i => (
+                  <div key={i} style={{ width: 4, height: 4, borderRadius: '50%',
+                    background: i < Math.round(li.imiScore / 20) ? '#C8A44A' : 'rgba(255,255,255,0.1)' }} />
+                ))}
+              </div>
+              {!isDisp && (
+                <div style={{ fontSize: 8, color: s.stroke, fontFamily: "'JetBrains Mono',monospace",
+                  marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+      {filtered.length === 0 && (
+        <div style={{ padding: '32px 20px', textAlign: 'center', color: 'rgba(240,237,232,0.3)',
+          fontSize: 12, fontFamily: "'JetBrains Mono',monospace" }}>
+          Nenhum lote com esse filtro
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── MiniMap ──────────────────────────────────────────────────────────────────
+const MiniMap = React.memo(function MiniMap({
+  quadras, lots, transform, viewportW, viewportH, svgW, svgH, onNavigate,
+}: {
+  quadras: typeof QUADRA_DATA;
+  lots: Lot[];
+  transform: { x: number; y: number; scale: number };
+  viewportW: number; viewportH: number;
+  svgW: number; svgH: number;
+  onNavigate: (x: number, y: number) => void;
+}) {
+  const MM_W = 148, MM_H = 106;
+  const scaleX = MM_W / svgW, scaleY = MM_H / svgH;
+
+  // Viewport rect in minimap coords
+  const vpW = (viewportW / transform.scale) * scaleX;
+  const vpH = (viewportH / transform.scale) * scaleY;
+  const vpX = (-transform.x / transform.scale) * scaleX;
+  const vpY = (-transform.y / transform.scale) * scaleY;
+
+  const handleClick = (e: React.MouseEvent<SVGSVGElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nx = (e.clientX - rect.left) / MM_W; // normalized
+    const ny = (e.clientY - rect.top) / MM_H;
+    onNavigate(nx, ny);
+  };
+
+  return (
+    <div style={{ position: 'absolute', bottom: 60, right: 12, zIndex: 30,
+      background: 'rgba(10,15,28,0.9)', border: '1px solid rgba(200,164,74,0.2)',
+      borderRadius: 8, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+      <svg width={MM_W} height={MM_H} style={{ display: 'block', cursor: 'crosshair' }} onClick={handleClick}>
+        <image href="/images/maps/alto-bellevue-plant.jpg" x={0} y={0} width={MM_W} height={MM_H}
+          preserveAspectRatio="xMidYMid slice" opacity={0.5} />
+        {quadras.map(q => {
+          const qLots = lots.filter(l => l.quadra === q.quadra);
+          const hasAvail = qLots.some(l => l.status === 'DISPONIVEL');
+          return (
+            <polygon key={q.quadra}
+              points={q.geometry.polygon.map(([px, py]) => `${px * scaleX},${py * scaleY}`).join(' ')}
+              fill="none"
+              stroke={hasAvail ? 'rgba(34,197,94,0.5)' : 'rgba(100,116,139,0.3)'}
+              strokeWidth={0.8}
+            />
+          );
+        })}
+        {/* Viewport rect */}
+        <rect x={vpX} y={vpY} width={Math.max(4, vpW)} height={Math.max(4, vpH)}
+          fill="rgba(200,164,74,0.1)" stroke="#C8A44A" strokeWidth={1}
+          rx={1} style={{ pointerEvents: 'none' }} />
+      </svg>
+    </div>
+  );
+});
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+export interface AltoBellevuePlanViewProps {
+  lots?: Lot[];
+  lang?: string;
+}
+
+export default function AltoBellevuePlanView({ lots: lotsProp = [], lang: _lang }: AltoBellevuePlanViewProps) {
+  // ── State ──────────────────────────────────────────────────────────────────
+  const [selectedQuadra, setSelectedQuadra] = React.useState<string | null>(null);
+  const [selectedLot, setSelectedLot] = React.useState<Lot | null>(null);
+  const [filterKey, setFilterKey] = React.useState<FilterKey>('ALL');
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [sheetState, setSheetState] = React.useState<SheetState>('hidden');
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [heatmapMode, setHeatmapMode] = React.useState<HeatmapMode>('none');
+  const [showMiniMap, setShowMiniMap] = React.useState(true);
+  const [viewportSize, setViewportSize] = React.useState({ w: 0, h: 0 });
+  const [transformState, setTransformState] = React.useState({ x: 0, y: 0, scale: 1 });
+
+  // ── Refs ───────────────────────────────────────────────────────────────────
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const svgRef = React.useRef<SVGSVGElement>(null);
+  const transformRef = React.useRef({ x: 0, y: 0, scale: 1 });
+  const velRef = React.useRef({ x: 0, y: 0 });
+  const rafRef = React.useRef<number>(0);
+  const isDraggingRef = React.useRef(false);
+  const lastPointerRef = React.useRef({ x: 0, y: 0 });
+  const touchStartRef = React.useRef<{ x: number; y: number; scale: number; dist: number } | null>(null);
+  const lastTapRef = React.useRef<number>(0);
+  const animatingRef = React.useRef(false);
+
+  // ── Derived data ───────────────────────────────────────────────────────────
+  const lots = React.useMemo(() => {
+    if (lotsProp.length > 0) return lotsProp;
+    // Generate demo data
+    const demo: Lot[] = [];
+    QUADRA_DATA.forEach(q => {
+      for (let i = 1; i <= q.totalLots; i++) {
+        const rand = Math.random();
+        const status: StatusKey = rand < 0.45 ? 'DISPONIVEL' : rand < 0.75 ? 'VENDIDO' : rand < 0.88 ? 'NEGOCIACAO' : rand < 0.95 ? 'PROPRIETARIO' : 'IGREJA';
+        demo.push({
+          id: `${q.quadra}-${i}`,
+          quadra: q.quadra,
+          number: i,
+          status,
+          area: q.lotArea + Math.floor((Math.random() - 0.5) * 20),
+          price: status === 'DISPONIVEL' ? Math.round((q.lotArea * (280 + Math.random() * 80)) / 1000) * 1000 : undefined,
+        });
+      }
+    });
+    return demo;
+  }, [lotsProp]);
+
+  const stats = React.useMemo(() => {
+    const total = lots.length;
+    const disponivel = lots.filter(l => l.status === 'DISPONIVEL').length;
+    const vendido = lots.filter(l => l.status === 'VENDIDO').length;
+    const negociacao = lots.filter(l => l.status === 'NEGOCIACAO').length;
+    return { total, disponivel, vendido, negociacao };
+  }, [lots]);
+
+  const filterRows = React.useMemo((): Array<{ key: FilterKey; label: string; count: number; color: string }> => [
+    { key: 'ALL', label: 'Todos', count: lots.length, color: '#F0EDE8' },
+    { key: 'DISPONIVEL', label: 'Disponível', count: stats.disponivel, color: '#22C55E' },
+    { key: 'VENDIDO', label: 'Vendido', count: stats.vendido, color: '#475569' },
+    { key: 'NEGOCIACAO', label: 'Negociação', count: stats.negociacao, color: '#EAB308' },
+  ], [lots, stats]);
+
+  // ── Layout effect ──────────────────────────────────────────────────────────
+  React.useLayoutEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setViewportSize({ w: window.innerWidth, h: window.innerHeight });
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // ── Apply transform ────────────────────────────────────────────────────────
+  const applyTransform = React.useCallback(() => {
+    if (!svgRef.current) return;
+    const { x, y, scale } = transformRef.current;
+    svgRef.current.style.transform = `translate(${x}px,${y}px) scale(${scale})`;
+    setTransformState({ x, y, scale });
+  }, []);
+
+  // ── Animation engine ───────────────────────────────────────────────────────
+  const animateTo = React.useCallback((
+    targetX: number, targetY: number, targetScale: number, duration = 600
+  ) => {
+    const start = performance.now();
+    const from = { ...transformRef.current };
+    animatingRef.current = true;
+
+    const ease = (t: number) => 1 - Math.pow(1 - t, 4); // ease-out-quart
+
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      const e = ease(t);
+      transformRef.current = {
+        x: from.x + (targetX - from.x) * e,
+        y: from.y + (targetY - from.y) * e,
+        scale: from.scale + (targetScale - from.scale) * e,
+      };
+      applyTransform();
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        animatingRef.current = false;
+      }
+    };
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(tick);
+  }, [applyTransform]);
+
+  const flyToQuadra = React.useCallback((quadra: string) => {
+    const q = QUADRA_DATA.find(q => q.quadra === quadra);
+    if (!q || !containerRef.current) return;
+    const [cx, cy] = q.geometry.centroid;
+    const cRect = containerRef.current.getBoundingClientRect();
+    const targetScale = Math.min(3.5, Math.max(2, cRect.width / 200));
+    const targetX = cRect.width / 2 - cx * targetScale;
+    const targetY = cRect.height / 2 - cy * targetScale;
+    animateTo(targetX, targetY, targetScale);
+  }, [animateTo]);
+
+  const flyToLot = React.useCallback((lot: Lot) => {
+    if (!containerRef.current) return;
+    const q = QUADRA_DATA.find(q => q.quadra === lot.quadra);
+    if (!q) return;
+    const [cx, cy] = q.geometry.centroid;
+    const cRect = containerRef.current.getBoundingClientRect();
+    const targetScale = 6;
+    const targetX = cRect.width / 2 - cx * targetScale;
+    const targetY = cRect.height / 2 - cy * targetScale;
+    animateTo(targetX, targetY, targetScale);
+  }, [animateTo]);
+
+  const resetView = React.useCallback(() => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const scale = Math.min(rect.width / SVG_W, rect.height / SVG_H) * 0.9;
+    const x = (rect.width - SVG_W * scale) / 2;
+    const y = (rect.height - SVG_H * scale) / 2;
+    animateTo(x, y, scale);
+  }, [animateTo]);
+
+  // ── Initial fit ────────────────────────────────────────────────────────────
+  React.useEffect(() => {
+    setTimeout(resetView, 100);
+  }, [resetView]);
+
+  // ── Pan handlers ───────────────────────────────────────────────────────────
+  const onPointerDown = React.useCallback((e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest('[data-interactive]')) return;
+    isDraggingRef.current = true;
+    lastPointerRef.current = { x: e.clientX, y: e.clientY };
+    velRef.current = { x: 0, y: 0 };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  }, []);
+
+  const onPointerMove = React.useCallback((e: React.PointerEvent) => {
+    if (!isDraggingRef.current) return;
+    const dx = e.clientX - lastPointerRef.current.x;
+    const dy = e.clientY - lastPointerRef.current.y;
+    velRef.current = { x: dx, y: dy };
+    transformRef.current.x += dx;
+    transformRef.current.y += dy;
+    lastPointerRef.current = { x: e.clientX, y: e.clientY };
+    applyTransform();
+  }, [applyTransform]);
+
+  const onPointerUp = React.useCallback(() => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    // Inertia
+    const inertia = () => {
+      velRef.current.x *= 0.88;
+      velRef.current.y *= 0.88;
+      if (Math.abs(velRef.current.x) < 0.3 && Math.abs(velRef.current.y) < 0.3) return;
+      transformRef.current.x += velRef.current.x;
+      transformRef.current.y += velRef.current.y;
+      applyTransform();
+      rafRef.current = requestAnimationFrame(inertia);
+    };
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(inertia);
+  }, [applyTransform]);
+
+  // ── Wheel zoom ────────────────────────────────────────────────────────────
+  const onWheel = React.useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = normalizeWheelDelta(e as unknown as WheelEvent);
+    const factor = 1 - delta * 0.001;
+    const rect = containerRef.current!.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const newScale = elasticClamp(transformRef.current.scale * factor, MIN_SCALE, MAX_SCALE);
+    const scaleDiff = newScale / transformRef.current.scale;
+    transformRef.current.x = mx - (mx - transformRef.current.x) * scaleDiff;
+    transformRef.current.y = my - (my - transformRef.current.y) * scaleDiff;
+    transformRef.current.scale = newScale;
+    applyTransform();
+  }, [applyTransform]);
+
+  // ── Touch handlers ────────────────────────────────────────────────────────
+  const onTouchStart = React.useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[1].clientX - e.touches[0].clientX;
+      const dy = e.touches[1].clientY - e.touches[0].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      touchStartRef.current = {
+        x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+        y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
+        scale: transformRef.current.scale,
+        dist,
+      };
+    } else if (e.touches.length === 1) {
+      const now = Date.now();
+      if (now - lastTapRef.current < 280) {
+        // Double tap zoom
+        const rect = containerRef.current!.getBoundingClientRect();
+        const mx = e.touches[0].clientX - rect.left;
+        const my = e.touches[0].clientY - rect.top;
+        const newScale = transformRef.current.scale > 2 ? 1 : 3;
+        const newX = mx - (mx - transformRef.current.x) * (newScale / transformRef.current.scale);
+        const newY = my - (my - transformRef.current.y) * (newScale / transformRef.current.scale);
+        animateTo(newX, newY, newScale, 300);
+      }
+      lastTapRef.current = now;
+      lastPointerRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      velRef.current = { x: 0, y: 0 };
+    }
+  }, [animateTo]);
+
+  const onTouchMove = React.useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
+    if (e.touches.length === 2 && touchStartRef.current) {
+      const dx = e.touches[1].clientX - e.touches[0].clientX;
+      const dy = e.touches[1].clientY - e.touches[0].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const scaleFactor = dist / touchStartRef.current.dist;
+      const newScale = elasticClamp(touchStartRef.current.scale * scaleFactor, MIN_SCALE, MAX_SCALE);
+      const rect = containerRef.current!.getBoundingClientRect();
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+      const scaleDiff = newScale / transformRef.current.scale;
+      transformRef.current.x = cx - (cx - transformRef.current.x) * scaleDiff;
+      transformRef.current.y = cy - (cy - transformRef.current.y) * scaleDiff;
+      transformRef.current.scale = newScale;
+      applyTransform();
+    } else if (e.touches.length === 1) {
+      const dx = e.touches[0].clientX - lastPointerRef.current.x;
+      const dy = e.touches[0].clientY - lastPointerRef.current.y;
+      velRef.current = { x: dx, y: dy };
+      transformRef.current.x += dx;
+      transformRef.current.y += dy;
+      lastPointerRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      applyTransform();
+    }
+  }, [applyTransform]);
+
+  const onTouchEnd = React.useCallback(() => {
+    touchStartRef.current = null;
+    const inertia = () => {
+      velRef.current.x *= 0.88;
+      velRef.current.y *= 0.88;
+      if (Math.abs(velRef.current.x) < 0.3 && Math.abs(velRef.current.y) < 0.3) return;
+      transformRef.current.x += velRef.current.x;
+      transformRef.current.y += velRef.current.y;
+      applyTransform();
+      rafRef.current = requestAnimationFrame(inertia);
+    };
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(inertia);
+  }, [applyTransform]);
+
+  // ── Quadra click ──────────────────────────────────────────────────────────
+  const handleQuadraClick = React.useCallback((quadra: string) => {
+    setSelectedQuadra(quadra);
+    setSelectedLot(null);
+    flyToQuadra(quadra);
+    if (isMobile) setSheetState('half');
+  }, [flyToQuadra, isMobile]);
+
+  const handleLotClick = React.useCallback((lot: Lot) => {
+    setSelectedLot(lot);
+    flyToLot(lot);
+    if (isMobile) setSheetState('full');
+  }, [flyToLot, isMobile]);
+
+  const handleClose = React.useCallback(() => {
+    setSelectedLot(null);
+    setSelectedQuadra(null);
+    if (isMobile) setSheetState('hidden');
+  }, [isMobile]);
+
+  // ── Fullscreen ────────────────────────────────────────────────────────────
+  const toggleFullscreen = React.useCallback(() => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen?.();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen?.();
+      setIsFullscreen(false);
+    }
+  }, []);
+
+  // ── MiniMap navigate ──────────────────────────────────────────────────────
+  const handleMiniMapNavigate = React.useCallback((nx: number, ny: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const svgX = nx * SVG_W;
+    const svgY = ny * SVG_H;
+    const newX = rect.width / 2 - svgX * transformRef.current.scale;
+    const newY = rect.height / 2 - svgY * transformRef.current.scale;
+    animateTo(newX, newY, transformRef.current.scale, 300);
+  }, [animateTo]);
+
+  // ── Sheet heights ─────────────────────────────────────────────────────────
+  const sheetHeights: Record<SheetState, string> = {
+    hidden: '0px',
+    peek: '80px',
+    half: '52vh',
+    full: '90vh',
+  };
+
+  // ── Quadra lots ───────────────────────────────────────────────────────────
+  const selectedQuadraLots = React.useMemo(() =>
+    selectedQuadra ? lots.filter(l => l.quadra === selectedQuadra) : [],
+    [selectedQuadra, lots]
+  );
+
+  const selectedLotIntel = React.useMemo(() => {
+    if (!selectedLot) return null;
+    const qi = QUADRA_INTELLIGENCE[selectedLot.quadra as keyof typeof QUADRA_INTELLIGENCE];
+    return computeLotIntelligence(selectedLot, qi);
+  }, [selectedLot]);
+
+  // ── Panel content ─────────────────────────────────────────────────────────
+  const panelContent = selectedLot && selectedLotIntel ? (
+    <SpatialIntelligencePanel lot={selectedLot} intel={selectedLotIntel} onClose={handleClose}
+      onWhatsApp={() => {}} />
+  ) : selectedQuadra ? (
+    <QuadraPanelContent quadra={selectedQuadra} lots={selectedQuadraLots} filterKey={filterKey}
+      onLotClick={handleLotClick} />
+  ) : null;
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
+    <div ref={containerRef}
+      style={{ position: 'relative', width: '100%', height: isFullscreen ? '100vh' : '100svh',
+        background: '#080D1A', overflow: 'hidden', userSelect: 'none', touchAction: 'none',
+        fontFamily: "'Inter',sans-serif" }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerLeave={onPointerUp}
+      onWheel={onWheel}>
+
+      {/* SVG Canvas */}
+      <svg ref={svgRef}
+        width={SVG_W} height={SVG_H}
+        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+        style={{ position: 'absolute', top: 0, left: 0, transformOrigin: '0 0',
+          willChange: 'transform' }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}>
+
+        <SVGDefs />
+
+        {/* Background plant image */}
+        <image href={IMAGE_URL} x={0} y={0} width={SVG_W} height={SVG_H}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ imageRendering: 'crisp-edges' }} />
+
+        {/* Vignette */}
+        <rect x={0} y={0} width={SVG_W} height={SVG_H} fill="url(#ab-vignette)" style={{ pointerEvents: 'none' }} />
+
+        {/* Heatmap layer */}
+        {heatmapMode !== 'none' && (
+          <HeatmapLayer quadras={QUADRA_DATA} lots={lots} mode={heatmapMode} />
+        )}
+
+        {/* Quadra tiles */}
+        {QUADRA_DATA.map(q => {
+          const qLots = lots.filter(l => l.quadra === q.quadra);
+          return (
+            <QuadraTile key={q.quadra} quadra={q.quadra} geom={q.geometry} lots={qLots}
+              isSelected={selectedQuadra === q.quadra} filterKey={filterKey} onClick={handleQuadraClick} />
+          );
+        })}
+
+        {/* Lot grids — only when zoomed in enough */}
+        {transformState.scale >= LOT_ZOOM_THRESHOLD / SVG_W && QUADRA_DATA.map(q => {
+          const qLots = lots.filter(l => l.quadra === q.quadra);
+          return (
+            <LotGrid key={q.quadra} quadra={q.quadra} qdata={q} lots={qLots}
+              selectedLotId={selectedLot?.id ?? null} filterKey={filterKey}
+              onLotClick={handleLotClick} />
+          );
+        })}
+      </svg>
+
+      {/* Top controls */}
+      <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 30, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {[
+          { icon: <ZoomIn size={14}/>, action: () => { const s = Math.min(MAX_SCALE, transformRef.current.scale * 1.35); const rect = containerRef.current!.getBoundingClientRect(); animateTo(rect.width/2 - (rect.width/2 - transformRef.current.x) * (s/transformRef.current.scale), rect.height/2 - (rect.height/2 - transformRef.current.y) * (s/transformRef.current.scale), s, 250); }, title: 'Zoom In' },
+          { icon: <ZoomOut size={14}/>, action: () => { const s = Math.max(MIN_SCALE, transformRef.current.scale / 1.35); const rect = containerRef.current!.getBoundingClientRect(); animateTo(rect.width/2 - (rect.width/2 - transformRef.current.x) * (s/transformRef.current.scale), rect.height/2 - (rect.height/2 - transformRef.current.y) * (s/transformRef.current.scale), s, 250); }, title: 'Zoom Out' },
+          { icon: <RotateCcw size={14}/>, action: resetView, title: 'Reset View' },
+          { icon: isFullscreen ? <Minimize2 size={14}/> : <Maximize2 size={14}/>, action: toggleFullscreen, title: 'Fullscreen' },
+        ].map((btn, i) => (
+          <button key={i} onClick={btn.action} title={btn.title}
+            style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(10,15,28,0.8)',
+              border: '1px solid rgba(200,164,74,0.2)', cursor: 'pointer', color: 'rgba(240,237,232,0.7)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(8px)', transition: 'all 0.15s' }}>
+            {btn.icon}
+          </button>
+        ))}
+      </div>
+
+      {/* IMI badge */}
+      <div style={{ position: 'absolute', top: 12, left: isMobile ? 12 : 276, zIndex: 30,
+        background: 'rgba(10,15,28,0.85)', border: '1px solid rgba(200,164,74,0.25)',
+        borderRadius: 10, padding: '8px 12px', backdropFilter: 'blur(10px)' }}>
+        <div style={{ fontSize: 8, color: 'rgba(200,164,74,0.6)', fontFamily: "'JetBrains Mono',monospace",
+          letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 2 }}>IMI SPATIAL INTELLIGENCE</div>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#22C55E', fontFamily: "'JetBrains Mono',monospace" }}>{stats.disponivel}</div>
+            <div style={{ fontSize: 8, color: 'rgba(240,237,232,0.4)' }}>disp.</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'rgba(240,237,232,0.5)', fontFamily: "'JetBrains Mono',monospace" }}>{stats.vendido}</div>
+            <div style={{ fontSize: 8, color: 'rgba(240,237,232,0.4)' }}>vendidos</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#C8A44A', fontFamily: "'JetBrains Mono',monospace" }}>{stats.total}</div>
+            <div style={{ fontSize: 8, color: 'rgba(240,237,232,0.4)' }}>total</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop left sidebar */}
+      {!isMobile && (
+        <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 260, zIndex: 25,
+          background: 'rgba(8,13,26,0.92)', borderRight: '1px solid rgba(200,164,74,0.12)',
+          backdropFilter: 'blur(16px)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+          {/* Sidebar header */}
+          <div style={{ padding: '20px 16px 14px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ fontSize: 8, color: 'rgba(200,164,74,0.55)', fontFamily: "'JetBrains Mono',monospace",
+              letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>ALTO BELLEVUE</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#F0EDE8', letterSpacing: '-0.01em', marginBottom: 2 }}>
+              Loteamento Premium
+            </div>
+            <div style={{ fontSize: 10, color: 'rgba(240,237,232,0.35)' }}>Garanhuns · Pernambuco</div>
+          </div>
+
+          {/* Heatmap controls */}
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ fontSize: 8, color: 'rgba(200,164,74,0.55)', fontFamily: "'JetBrains Mono',monospace",
+              letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 8 }}>CAMADAS</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {([
+                ['none', 'Padrão', <Layers key="l" size={11}/>],
+                ['pricePerM2', 'Preço/m²', <DollarSign key="d" size={11}/>],
+                ['solar', 'Solar', <Sun key="s" size={11}/>],
+                ['imiScore', 'IMI Score', <TrendingUp key="t" size={11}/>],
+              ] as [HeatmapMode, string, React.ReactNode][]).map(([mode, label, icon]) => (
+                <button key={mode} onClick={() => setHeatmapMode(mode)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 8px',
+                    background: heatmapMode === mode ? 'rgba(200,164,74,0.12)' : 'transparent',
+                    border: `1px solid ${heatmapMode === mode ? 'rgba(200,164,74,0.3)' : 'rgba(255,255,255,0.05)'}`,
+                    borderRadius: 6, cursor: 'pointer',
+                    color: heatmapMode === mode ? '#C8A44A' : 'rgba(240,237,232,0.5)',
+                    fontSize: 11, fontFamily: "'JetBrains Mono',monospace", transition: 'all 0.15s' }}>
+                  {icon} {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Filters */}
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ fontSize: 8, color: 'rgba(200,164,74,0.55)', fontFamily: "'JetBrains Mono',monospace",
+              letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 8 }}>FILTRAR</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {filterRows.map(row => (
+                <button key={row.key} onClick={() => setFilterKey(row.key)}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '7px 8px', background: filterKey === row.key ? 'rgba(200,164,74,0.08)' : 'transparent',
+                    border: `1px solid ${filterKey === row.key ? 'rgba(200,164,74,0.25)' : 'rgba(255,255,255,0.05)'}`,
+                    borderRadius: 6, cursor: 'pointer', transition: 'all 0.15s' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {row.key !== 'ALL' && (
+                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: row.color }} />
+                    )}
+                    <span style={{ fontSize: 11, color: filterKey === row.key ? '#F0EDE8' : 'rgba(240,237,232,0.5)',
+                      fontFamily: "'JetBrains Mono',monospace" }}>{row.label}</span>
+                  </div>
+                  <span style={{ fontSize: 10, color: filterKey === row.key ? '#C8A44A' : 'rgba(240,237,232,0.3)',
+                    fontFamily: "'JetBrains Mono',monospace" }}>{row.count}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Panel area */}
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <AnimatePresence mode="wait">
+              {panelContent && (
+                <motion.div key={selectedLot?.id ?? selectedQuadra ?? 'panel'}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ height: '100%' }}>
+                  {panelContent}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Footer CTA */}
+          <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <a href={`https://wa.me/5581997230455?text=${encodeURIComponent('Quero conhecer o Alto Bellevue')}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                background: 'linear-gradient(135deg,#22C55E,#16A34A)', borderRadius: 10, padding: '11px',
+                color: '#fff', fontWeight: 700, fontSize: 12, textDecoration: 'none',
+                boxShadow: '0 4px 16px rgba(34,197,94,0.25)' }}>
+              <MessageCircle size={14} /> WhatsApp
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop right panel */}
+      {!isMobile && panelContent && (
+        <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 340, zIndex: 25,
+          background: 'rgba(8,13,26,0.92)', borderLeft: '1px solid rgba(200,164,74,0.12)',
+          backdropFilter: 'blur(16px)' }}>
+          <AnimatePresence mode="wait">
+            <motion.div key={selectedLot?.id ?? selectedQuadra ?? 'rpanel'}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.2 }}
+              style={{ height: '100%' }}>
+              {panelContent}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* Mobile bottom sheet */}
+      {isMobile && (
+        <>
+          {/* Peek bar */}
+          {sheetState === 'hidden' && selectedQuadra && (
+            <button onClick={() => setSheetState('peek')}
+              style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)',
+                zIndex: 35, background: 'rgba(10,15,28,0.9)', border: '1px solid rgba(200,164,74,0.25)',
+                borderRadius: 24, padding: '10px 20px', color: '#C8A44A', fontWeight: 700, fontSize: 13,
+                cursor: 'pointer', backdropFilter: 'blur(12px)' }}>
+              Quadra {selectedQuadra}
+            </button>
+          )}
+
+          <motion.div
+            style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 40,
+              background: 'rgba(8,13,26,0.97)', borderRadius: '20px 20px 0 0',
+              borderTop: '1px solid rgba(200,164,74,0.2)',
+              boxShadow: '0 -8px 40px rgba(0,0,0,0.6)', overflow: 'hidden' }}
+            animate={{ height: sheetHeights[sheetState] }}
+            transition={{ type: 'spring', damping: 28, stiffness: 300 }}>
+
+            {/* Drag handle */}
+            <div style={{ padding: '10px 0 4px', display: 'flex', justifyContent: 'center',
+              cursor: 'pointer' }}
+              onClick={() => {
+                setSheetState(prev =>
+                  prev === 'hidden' ? 'peek' :
+                  prev === 'peek' ? 'half' :
+                  prev === 'half' ? 'full' : 'hidden'
+                );
+              }}>
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.2)' }} />
+            </div>
+
+            {/* Sheet header */}
+            <div style={{ padding: '4px 16px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#F0EDE8' }}>
+                {selectedLot ? `Lote ${selectedLot.number}` : selectedQuadra ? `Quadra ${selectedQuadra}` : 'Alto Bellevue'}
+              </div>
+              {sheetState !== 'hidden' && (
+                <button onClick={handleClose}
+                  style={{ background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: 6,
+                    padding: '4px 6px', cursor: 'pointer', color: 'rgba(240,237,232,0.5)',
+                    display: 'flex', alignItems: 'center' }}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Filters strip */}
+            {!selectedQuadra && !selectedLot && (
+              <div style={{ padding: '0 12px 8px', display: 'flex', gap: 6, overflowX: 'auto',
+                scrollbarWidth: 'none' }}>
+                {filterRows.map(row => (
+                  <button key={row.key} onClick={() => setFilterKey(row.key)}
+                    style={{ flexShrink: 0, padding: '5px 10px',
+                      background: filterKey === row.key ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.05)',
+                      border: `1px solid ${filterKey === row.key ? 'rgba(200,164,74,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                      borderRadius: 20, color: filterKey === row.key ? '#C8A44A' : 'rgba(240,237,232,0.5)',
+                      fontSize: 11, cursor: 'pointer', fontFamily: "'JetBrains Mono',monospace",
+                      whiteSpace: 'nowrap' }}>
+                    {row.label} {row.count}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Panel content */}
+            <div style={{ height: 'calc(100% - 80px)', overflow: 'hidden' }}>
+              {panelContent}
+            </div>
+          </motion.div>
+        </>
+      )}
+
+      {/* MiniMap */}
+      {showMiniMap && !isMobile && (
+        <MiniMap quadras={QUADRA_DATA} lots={lots} transform={transformState}
+          viewportW={viewportSize.w} viewportH={viewportSize.h}
+          svgW={SVG_W} svgH={SVG_H}
+          onNavigate={handleMiniMapNavigate} />
+      )}
+
+      {/* CSS keyframes */}
+      <style>{`
+        @keyframes lotPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.55; }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(200,164,74,0.3); border-radius: 2px; }
+      `}</style>
+    </div>
+  );
+}
