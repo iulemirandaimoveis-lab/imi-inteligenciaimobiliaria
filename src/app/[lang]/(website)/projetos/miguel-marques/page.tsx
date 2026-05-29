@@ -1,7 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Waves, Trees, Zap } from 'lucide-react'
-import MasterplanSection from './components/MasterplanSection'
+import dynamic from 'next/dynamic'
+
+const SubdivisionLotMap = dynamic(
+  () => import('../../imoveis/components/SubdivisionLotMap'),
+  { ssr: false },
+)
+
+const DEVELOPMENT_ID = '8b9f6835-1bd0-4850-80b0-aaef2223300d'
+const WHATSAPP = '5581997230455'
 
 export const metadata: Metadata = {
   title: 'Loteamento Miguel Marques | IMI — Inteligência Imobiliária',
@@ -106,8 +114,11 @@ export default async function MiguelMarquesPage({
           </h1>
 
           {/* Subtitle */}
-          <p className="text-white/50 text-lg sm:text-xl font-light max-w-xl leading-relaxed mb-16">
+          <p className="text-white/50 text-lg sm:text-xl font-light max-w-xl leading-relaxed mb-4">
             Escolha o seu lote. Cada metro quadrado, uma decisão de vida.
+          </p>
+          <p className="text-white/35 text-base font-light max-w-md leading-relaxed mb-16">
+            Lotes com lago natural, infraestrutura completa e condições especiais de pagamento.
           </p>
 
           {/* Stats */}
@@ -140,8 +151,27 @@ export default async function MiguelMarquesPage({
         </div>
       </section>
 
-      {/* ── Masterplan (filters + SVG map + panel) ──────── */}
-      <MasterplanSection />
+      {/* ── Interactive Lot Map ──────────────────────────── */}
+      <section className="bg-[#F5F0EA] px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
+            <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.3em] mb-3">
+              Mapa do Loteamento
+            </p>
+            <h2
+              className="text-2xl lg:text-3xl font-bold text-[#0D1410] leading-tight"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Escolha o seu lote
+            </h2>
+          </div>
+          <SubdivisionLotMap
+            developmentId={DEVELOPMENT_ID}
+            developmentName="Loteamento Miguel Marques"
+            whatsappPhone={WHATSAPP}
+          />
+        </div>
+      </section>
 
       {/* ── Info cards ───────────────────────────────────── */}
       <section className="bg-white py-20 lg:py-28">
@@ -179,6 +209,28 @@ export default async function MiguelMarquesPage({
                 </div>
               )
             })}
+          </div>
+
+          {/* Price range strip */}
+          <div className="mt-12 p-6 rounded-2xl bg-[#0D1410] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.2em] mb-1">
+                Preços
+              </p>
+              <p className="text-white text-xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                A partir de R$ 18.000
+              </p>
+              <p className="text-white/40 text-xs mt-1">Lotes a partir de 114 m² · Garanhuns, PE</p>
+            </div>
+            <a
+              href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Olá! Tenho interesse em um lote no Loteamento Miguel Marques. Gostaria de saber mais sobre preços e condições.')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm whitespace-nowrap"
+              style={{ background: '#C8A44A', color: '#0D1410' }}
+            >
+              Consultar disponibilidade
+            </a>
           </div>
         </div>
       </section>
