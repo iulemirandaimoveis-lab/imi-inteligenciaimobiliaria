@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Loteamento Miguel Marques — Escolha Seu Lote',
     description:
-      'Mapa interativo com disponibilidade em tempo real. 54% dos lotes ainda disponíveis.',
+      'Mapa interativo com disponibilidade em tempo real. 150 de 183 lotes disponíveis.',
   },
 }
 
@@ -39,7 +39,7 @@ const INFO_CARDS = [
     icon: Waves,
     title: 'Condições Especiais',
     description:
-      'Parcele o sinal em até 2x. Vencimento das parcelas a partir do dia 05. Aceita cartão com as condições da máquina.',
+      'Entrada de R$ 1.450 (5%) em 1+1. Parcele em até 150x a partir de R$ 183. Carnê direto com Mano Imóveis.',
   },
 ]
 
@@ -124,8 +124,8 @@ export default async function MiguelMarquesPage({
           {/* Stats */}
           <div className="grid grid-cols-3 gap-0 max-w-md">
             {[
-              { n: '853', label: 'Lotes' },
-              { n: '54%', label: 'Disponíveis' },
+              { n: '183', label: 'Lotes' },
+              { n: '82%', label: 'Disponíveis' },
               { n: '23', label: 'Quadras' },
             ].map((stat, i) => (
               <div
