@@ -40,10 +40,10 @@ const PAYMENT_CONDITIONS: Record<string, {
   seller: string;
 }> = {
   '8b9f6835-1bd0-4850-80b0-aaef2223300d': {
-    entrada: '1+1 (1 lote) / 1+2 (2+ lotes)',
-    parcelas: 60,
-    parcelValue: 'a partir de R$ 290',
-    method: 'Cartão / Boleto',
+    entrada: '1+1 — R$ 1.450 (5%)',
+    parcelas: 150,
+    parcelValue: 'a partir de R$ 183',
+    method: 'Carnê',
     seller: 'Mano Imóveis',
   },
   'ab7d1fc1-f069-4e3b-a515-8e1204c11247': {
