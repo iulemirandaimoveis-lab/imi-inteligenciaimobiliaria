@@ -1039,7 +1039,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
 
   if (lots.length === 0 && !hasPlanView) return null;
 
-  if (lots.length === 0 && hasPlanView) {
+  // Alto Bellevue sources polygon data from JSON (not Supabase), so always render its plan view
+  if (lots.length === 0 && hasPlanView && developmentId !== AB_DEV_ID) {
     return (
       <SubdivisionPlanView
         lots={[]}
