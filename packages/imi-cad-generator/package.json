@@ -1,0 +1,19 @@
+{
+  "name": "@imi/cad-generator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IMI CAD Generator — Text-to-CAD engine for real estate modeling",
+  "license": "UNLICENSED",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.74.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
