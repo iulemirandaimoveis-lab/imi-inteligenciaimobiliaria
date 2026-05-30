@@ -65,5 +65,36 @@ Next.js application for Plataforma de inteligência imobiliária com análise de
 
 ---
 
-**Last Updated**: 2026-05-10
+---
+
+## SigMap — Localização de Código com IA
+
+**Antes de alterar qualquer código**, use SigMap para localizar os arquivos relevantes:
+
+```bash
+# Mapear toda a codebase
+npm run ai:map
+
+# Localizar arquivos por pergunta
+npm run ai:ask "Where is authentication handled?"
+npm run ai:ask "Where are API routes defined?"
+npm run ai:ask "Where are database models or schemas defined?"
+npm run ai:ask "Where are external integrations handled?"
+```
+
+O contexto gerado fica em `.context/query-context.md` — inclua-o na conversa antes de pedir alterações.
+
+**Regras para agentes de IA neste projeto:**
+- Sempre explicar **quais arquivos** serão alterados e **por quê** antes de qualquer mudança
+- Nunca fazer alterações amplas sem um plano explícito e aprovado
+- Preservar a arquitetura existente (App Router, Supabase RLS, server/client split)
+- Não alterar autenticação, billing ou banco de dados sem aprovação explícita
+- Nunca commitar `.env.local` ou qualquer arquivo com secrets
+- Priorizar segurança e testes antes de features
+
+**Guia completo**: `docs/ai-context.md`
+
+---
+
+**Last Updated**: 2026-05-30
 **Optimized with**: [Claude Token Optimizer](https://github.com/nadimtuhin/claude-token-optimizer)
