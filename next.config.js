@@ -26,8 +26,22 @@ const withPWA = require('next-pwa')({
 })
 const { withSentryConfig } = require('@sentry/nextjs')
 
+const path = require('path')
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    webpack(config) {
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            '@imi/cad-generator': path.resolve(__dirname, 'packages/imi-cad-generator/src/index.ts'),
+            '@imi/scene-adapter': path.resolve(__dirname, 'packages/imi-scene-adapter/src/index.ts'),
+            '@imi/property-metadata': path.resolve(__dirname, 'packages/imi-property-metadata/src/index.ts'),
+            '@imi/domain': path.resolve(__dirname, 'packages/imi-domain/src/index.ts'),
+            '@imi/crm-adapter': path.resolve(__dirname, 'packages/imi-crm-adapter/src/index.ts'),
+            '@imi/templates': path.resolve(__dirname, 'templates/index.ts'),
+        }
+        return config
+    },
     eslint: {
         ignoreDuringBuilds: true, // TODO: fix ESLint errors then set to false
     },
