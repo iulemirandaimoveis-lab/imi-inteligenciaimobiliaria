@@ -144,11 +144,16 @@ function PaymentSimulator({ totalPrice, accent }: { totalPrice: number; accent: 
     const reforcoAnual = Math.round(remaining * 0.25 / 3)
     const chaves = totalPrice - entrada - (parcelasMensais * months) - (reforcoAnual * 3)
 
+    const parcelasTotal = parcelasMensais * months
+    const reforcoTotal = reforcoAnual * 3
+    const pctOf = (v: number) => Math.round(v / totalPrice * 100)
+    const pctParcelas = pctOf(parcelasTotal)
+    const pctReforco = pctOf(reforcoTotal)
     const segments = [
         { label: 'Entrada', value: entrada, pct: entradaPct, color: accent.color },
-        { label: 'Parcelas', value: parcelasMensais * months, pct: 55, color: `${accent.color}aa` },
-        { label: 'Reforços', value: reforcoAnual * 3, pct: 25, color: `${accent.color}66` },
-        { label: 'Chaves', value: Math.max(chaves, 0), pct: Math.max(100 - entradaPct - 55 - 25, 0), color: '#333' },
+        { label: 'Parcelas', value: parcelasTotal, pct: pctParcelas, color: `${accent.color}aa` },
+        { label: 'Reforços', value: reforcoTotal, pct: pctReforco, color: `${accent.color}66` },
+        { label: 'Chaves', value: Math.max(chaves, 0), pct: Math.max(100 - entradaPct - pctParcelas - pctReforco, 0), color: '#333' },
     ]
 
     return (
@@ -483,13 +488,13 @@ function LeadForm({ dev, code, accent }: { dev: Development; code: string; accen
                     email: email.trim() || undefined,
                     interest: dev.type || 'empreendimento',
                     development_id: dev.id,
+                    financing_status: financing || undefined,
+                    purchase_timeline: timeline || undefined,
                     attribution: {
                         source: 'landing_page',
                         medium: 'lp',
                         campaign: code,
                         shortCode: code,
-                        financing_status: financing,
-                        purchase_timeline: timeline,
                     },
                 }),
             })
