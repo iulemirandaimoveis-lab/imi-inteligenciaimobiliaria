@@ -44,3 +44,6 @@ export type {
   CreateInspectionInput,
   AddIssueInput,
 } from './schema'
+
+export { MatterportProvider, createMatterportProvider } from './adapters/matterport'
+export { LumaProvider, createLumaProvider } from './adapters/luma'

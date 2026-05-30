@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, BedDouble, Bath, Car, Maximize2, MessageCircle } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { ArrowLeft, BedDouble, Bath, Car, Maximize2, MessageCircle, Layers } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { AVAILABILITY_COLORS } from '@/lib/imi-domain/types'
+
+const TourViewer = dynamic(() => import('./TourViewer').then(m => m.TourViewer), { ssr: false })
 
 interface Props {
   params: Promise<{ lang: string; slug: string; id: string }>
@@ -37,17 +40,36 @@ export default async function UnidadePage({ params }: Props) {
 
   if (!unit) notFound()
 
-  const { data: dev } = await supabase
-    .from('developments')
-    .select('name, slug')
-    .eq('id', unit.development_id)
-    .single()
+  const [devResult, twinResult] = await Promise.all([
+    supabase
+      .from('developments')
+      .select('name, slug')
+      .eq('id', unit.development_id)
+      .single(),
+    supabase
+      .from('property_twins')
+      .select('id, provider, external_id, panorama_urls, mesh_url, measurements')
+      .eq('property_id', id)
+      .eq('status', 'ready')
+      .not('published_at', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ])
+
+  const dev = devResult.data
+  const twin = twinResult.data
 
   const cfg = AVAILABILITY_COLORS[unit.status as keyof typeof AVAILABILITY_COLORS] ?? AVAILABILITY_COLORS.available
   const isAvailable = unit.status === 'available' || unit.status === 'launching'
   const WHATSAPP = '5581997230455'
   const waMsg = encodeURIComponent(
     `Olá! Tenho interesse na unidade ${unit.code} do ${dev?.name ?? slug}. Gostaria de mais informações.`
+  )
+
+  const hasTour = !!twin && (
+    !!twin.external_id ||
+    (Array.isArray(twin.panorama_urls) && twin.panorama_urls.length > 0)
   )
 
   return (
@@ -113,6 +135,30 @@ export default async function UnidadePage({ params }: Props) {
             </div>
           ))}
         </div>
+
+        {/* Tour 3D */}
+        {hasTour && (
+          <div style={{ background: '#fff', borderRadius: 20, padding: 24, border: '1px solid rgba(184,179,168,0.3)', marginBottom: 24 }}>
+            <div className="flex items-center gap-2 mb-4">
+              <Layers size={15} style={{ color: '#C8A44A' }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                Tour Digital
+              </span>
+              <span style={{
+                fontSize: 9, fontWeight: 800, background: '#C8A44A', color: '#fff',
+                padding: '2px 7px', borderRadius: 99, textTransform: 'uppercase', letterSpacing: '0.1em',
+              }}>
+                {twin!.provider}
+              </span>
+            </div>
+            <TourViewer
+              provider={twin!.provider}
+              externalId={twin!.external_id ?? undefined}
+              panoramaUrls={(twin!.panorama_urls as string[]) ?? []}
+              meshUrl={twin!.mesh_url ?? undefined}
+            />
+          </div>
+        )}
 
         {/* CTA */}
         {isAvailable && (
