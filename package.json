@@ -11,7 +11,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "deploy": "bash deploy.sh",
-    "deploy:prod": "bash deploy.sh"
+    "deploy:prod": "bash deploy.sh",
+    "ai:map": "npx sigmap",
+    "ai:ask": "npx sigmap ask"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.74.0",

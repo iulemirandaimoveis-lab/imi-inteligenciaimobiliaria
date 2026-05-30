@@ -56,5 +56,8 @@ public/worker-*.js.map
 .aiox/
 .ai/
 
+# SigMap ephemeral query context (regenerated per query)
+.context/
+
 # Backups
 backups/
