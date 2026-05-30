@@ -212,8 +212,8 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}
-      className="absolute bottom-0 left-0 right-0 md:bottom-4 md:left-auto md:right-4 md:w-72 md:rounded-2xl bg-[#0F1923]/98 backdrop-blur-xl border-t md:border border-white/10 rounded-t-2xl shadow-2xl overflow-hidden z-30"
-      style={{ maxHeight: '70vh', overflowY: 'auto' }}
+      className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-4 md:left-auto md:right-4 md:w-72 md:rounded-2xl bg-[#0F1923]/98 backdrop-blur-xl border-t md:border border-white/10 rounded-t-2xl shadow-2xl overflow-hidden z-[160] md:z-30"
+      style={{ maxHeight: '72vh', overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         <div>
@@ -683,8 +683,8 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
           <motion.div
             initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="absolute bottom-0 left-0 right-0 bg-[#0A1828] border-t border-white/10 rounded-t-2xl z-40 flex flex-col"
-            style={{ maxHeight: '80vh' }}
+            className="fixed bottom-0 left-0 right-0 bg-[#0A1828] border-t border-white/10 rounded-t-2xl z-[160] flex flex-col"
+            style={{ maxHeight: '80vh', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-1">

@@ -980,13 +980,14 @@ export default function SubdivisionPlanView({
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 34, stiffness: 390 }}
             style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 20,
+              position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 160,
               background: '#0F2035',
               borderRadius: '22px 22px 0 0',
               boxShadow: '0 -10px 48px rgba(0,0,0,0.55)',
               border: '1px solid rgba(255,255,255,0.08)',
               borderBottomWidth: 0,
-              maxHeight: '72%',
+              maxHeight: '72vh',
+              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
               display: 'flex', flexDirection: 'column', overflow: 'hidden',
             }}
           >
