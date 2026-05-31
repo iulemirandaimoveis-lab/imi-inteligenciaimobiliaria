@@ -185,11 +185,10 @@ const CartPanel = memo(function CartPanel({ cart, whatsapp, onRemove, onClear }:
           <div className="p-3 pt-0">
             <button
               onClick={sendWhatsApp}
-              className="w-full bg-[#25D366] hover:bg-[#1ebe5b] text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 text-sm transition-colors"
+              className="w-full bg-[#25D366] hover:bg-[#22c55e] active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all shadow-lg shadow-green-500/20"
             >
               <MessageCircle size={16}/>
-              Enviar Proposta
-              <Send size={14}/>
+              Enviar Proposta no WhatsApp
             </button>
           </div>
         </>
@@ -208,88 +207,127 @@ interface LotInfoProps {
 
 function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: LotInfoProps) {
   const st = getStatus(lot.status);
+  const priceVista = lot.price ? lot.price * 0.80 : null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}
-      className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-4 md:left-auto md:right-4 md:w-72 md:rounded-2xl bg-[#0F1923]/98 backdrop-blur-xl border-t md:border border-white/10 rounded-t-[20px] shadow-2xl overflow-hidden z-[150] md:z-30"
-      style={{ maxHeight: '65vh', overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
-    >
-      <div className="flex items-center justify-between p-4 border-b border-white/10">
-        <div>
-          <div className="font-bold text-white text-base">Quadra {lot.quadra} · Lote {lot.lot_number}</div>
-          <span
-            className="text-xs px-2 py-0.5 rounded-full mt-1 inline-block"
-            style={{ background: st.fill, color: st.text, border: `1px solid ${st.stroke}` }}
-          >
-            {st.label}
-          </span>
+    <>
+      {/* Backdrop para fechar no mobile */}
+      <div
+        className="fixed inset-0 z-[149] md:hidden"
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }}
+        transition={{ type: 'spring', damping: 32, stiffness: 320 }}
+        className="fixed bottom-0 left-0 right-0 md:bottom-6 md:left-auto md:right-6 md:w-[340px] md:rounded-2xl bg-[#0A1520]/98 backdrop-blur-2xl border-t md:border border-white/8 rounded-t-[24px] shadow-2xl z-[150]"
+        style={{ maxHeight: '78vh', display: 'flex', flexDirection: 'column', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
+        {/* Drag handle — mobile only */}
+        <div className="md:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
+          <div className="w-10 h-1 rounded-full bg-white/20"/>
         </div>
-        <button onClick={onClose} className="text-slate-500 hover:text-white">
-          <X size={18}/>
-        </button>
-      </div>
 
-      <div className="p-4 space-y-3">
-        {lot.area_m2 && (
-          <div className="flex justify-between">
-            <span className="text-slate-400 text-sm">Área</span>
-            <span className="text-white font-semibold text-sm">{fmtM2(lot.area_m2)}</span>
+        {/* Header */}
+        <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-white/8 flex-shrink-0">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-widest mb-1.5"
+              style={{ color: st.text }}>
+              {st.label}
+            </div>
+            <div className="font-bold text-white text-lg leading-tight">
+              Quadra {lot.quadra} · Lote {lot.lot_number}
+            </div>
           </div>
-        )}
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/12 text-slate-400 hover:text-white flex items-center justify-center transition-all flex-shrink-0 mt-0.5"
+          >
+            <X size={15}/>
+          </button>
+        </div>
 
-        {lot.price ? (
-          <>
-            <div className="flex justify-between">
-              <span className="text-slate-400 text-sm">Preço à vista</span>
-              <span className="text-emerald-400 font-bold">{fmtBRL(lot.price * 0.80)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400 text-sm">Tabela</span>
-              <span className="text-white font-semibold text-sm">{fmtBRL(lot.price)}</span>
-            </div>
-            {lot.area_m2 && (
-              <div className="flex justify-between">
-                <span className="text-slate-400 text-sm">R$/m²</span>
-                <span className="text-slate-300 text-sm">{fmtBRL(lot.price / lot.area_m2)}/m²</span>
+        {/* Content — scrollable */}
+        <div className="flex-1 overflow-y-auto overscroll-contain">
+          <div className="px-5 py-4 space-y-4">
+            {/* Price hero */}
+            {lot.price ? (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
+                  <div className="text-[10px] text-emerald-400/70 font-semibold uppercase tracking-wider mb-1">À vista</div>
+                  <div className="text-emerald-400 font-bold text-base">{fmtBRL(priceVista!)}</div>
+                  <div className="text-emerald-400/50 text-[10px] mt-0.5">20% desconto</div>
+                </div>
+                <div className="bg-white/4 border border-white/8 rounded-xl p-3">
+                  <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-1">Tabela</div>
+                  <div className="text-white font-bold text-base">{fmtBRL(lot.price)}</div>
+                  {lot.area_m2 && (
+                    <div className="text-slate-500 text-[10px] mt-0.5">{fmtBRL(lot.price / lot.area_m2)}/m²</div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white/4 border border-white/8 rounded-xl p-4 text-center text-slate-500 text-sm">
+                Preço sob consulta
               </div>
             )}
 
-            <div className="bg-white/5 rounded-xl p-3 space-y-1.5">
-              <div className="text-xs text-slate-500 mb-2">Condições de pagamento</div>
-              {PAYMENT_CONDITIONS.map((c, i) => (
-                <div key={i} className="flex justify-between text-xs">
-                  <span className="text-slate-400">{c.label}</span>
-                  <span className={i === 0 ? 'text-emerald-400 font-semibold' : 'text-slate-300'}>{fmtBRL(c.calc(lot.price!))}</span>
-                </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          <div className="text-slate-500 text-sm italic">Preço sob consulta</div>
-        )}
-      </div>
+            {/* Área */}
+            {lot.area_m2 && (
+              <div className="flex items-center justify-between py-2 border-b border-white/5">
+                <span className="text-slate-400 text-sm">Área do lote</span>
+                <span className="text-white font-semibold">{fmtM2(lot.area_m2)}</span>
+              </div>
+            )}
 
-      {lot.status === 'DISPONIVEL' && (
-        <div className="p-4 pt-0">
-          {inCart ? (
-            <button
-              onClick={onRemoveFromCart}
-              className="w-full border border-red-500/40 text-red-400 hover:bg-red-500/10 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-            >
-              <X size={14}/> Remover da proposta
-            </button>
-          ) : (
-            <button
-              onClick={onAddToCart}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-white py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-colors"
-            >
-              <ShoppingCart size={14}/> Adicionar à proposta
-            </button>
-          )}
+            {/* Payment conditions */}
+            {lot.price && (
+              <div className="space-y-1.5">
+                <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Condições de pagamento</div>
+                {PAYMENT_CONDITIONS.map((c, i) => (
+                  <div
+                    key={i}
+                    className={`flex justify-between items-center px-3 py-2 rounded-lg text-xs ${
+                      i === 0
+                        ? 'bg-emerald-500/10 border border-emerald-500/20'
+                        : 'bg-white/3 border border-white/5'
+                    }`}
+                  >
+                    <div>
+                      <span className={i === 0 ? 'text-emerald-300 font-semibold' : 'text-slate-300'}>{c.label}</span>
+                      <span className="text-slate-600 ml-1.5">{c.desc}</span>
+                    </div>
+                    <span className={i === 0 ? 'text-emerald-400 font-bold' : 'text-slate-300 font-medium'}>
+                      {fmtBRL(c.calc(lot.price!))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </motion.div>
+
+        {/* CTA */}
+        {lot.status === 'DISPONIVEL' && (
+          <div className="px-5 py-4 border-t border-white/8 flex-shrink-0" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}>
+            {inCart ? (
+              <button
+                onClick={onRemoveFromCart}
+                className="w-full border border-red-500/30 text-red-400 hover:bg-red-500/10 py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+              >
+                <X size={14}/> Remover da proposta
+              </button>
+            ) : (
+              <button
+                onClick={onAddToCart}
+                className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-white py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20"
+              >
+                <ShoppingCart size={15}/> Adicionar à proposta
+              </button>
+            )}
+          </div>
+        )}
+      </motion.div>
+    </>
   );
 }
 
@@ -425,7 +463,7 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
   const showScale = transform.scale >= 2.5;
 
   return (
-    <div className="relative w-full h-full flex bg-[#070E16] overflow-hidden select-none" style={{ minHeight: 480 }}>
+    <div className="relative w-full h-full flex bg-[#070E16] overflow-hidden select-none" style={{ minHeight: '100%' }}>
 
       {/* Map SVG */}
       <div
@@ -544,35 +582,38 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
 
         {/* Controls */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
-          <button onClick={() => doZoom(1.3)} className="w-8 h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10">
-            <ZoomIn size={14}/>
+          <button onClick={() => doZoom(1.3)} className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform">
+            <ZoomIn size={15}/>
           </button>
-          <button onClick={() => doZoom(0.77)} className="w-8 h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10">
-            <ZoomOut size={14}/>
+          <button onClick={() => doZoom(0.77)} className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform">
+            <ZoomOut size={15}/>
           </button>
-          <button onClick={resetView} className="w-8 h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10">
+          <button onClick={resetView} className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform">
             <RotateCcw size={14}/>
           </button>
         </div>
 
         {/* Filter bar */}
-        <div className="absolute top-3 right-3 flex items-center gap-1.5 md:gap-2 z-20 max-w-[calc(100%-56px)] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 md:gap-2 z-20 max-w-[calc(100%-52px)]">
           <div className="relative">
             <button
               onClick={() => setShowFilters(f => !f)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0A1828]/90 border border-white/10 rounded-lg text-slate-300 text-xs hover:bg-white/10"
+              className="flex items-center gap-1.5 h-9 md:h-8 px-3 bg-[#0A1828]/90 border border-white/10 rounded-lg text-slate-300 text-xs hover:bg-white/10 transition-colors"
             >
-              <Layers size={12}/> {filterStatus === 'ALL' ? 'Todos' : STATUS[filterStatus as StatusKey]?.label}
+              <Layers size={12}/> <span className="hidden sm:inline">{filterStatus === 'ALL' ? 'Todos' : STATUS[filterStatus as StatusKey]?.label}</span>
               <ChevronDown size={10}/>
             </button>
             {showFilters && (
-              <div className="absolute right-0 top-full mt-1 bg-[#0A1828] border border-white/10 rounded-xl shadow-xl overflow-hidden min-w-32 z-30">
+              <div className="absolute right-0 top-full mt-1 bg-[#0A1828] border border-white/10 rounded-xl shadow-2xl overflow-hidden min-w-36 z-30">
                 {(['ALL', ...Object.keys(STATUS)] as const).map(k => (
                   <button
                     key={k}
                     onClick={() => { setFilterStatus(k as 'ALL' | StatusKey); setShowFilters(false); }}
-                    className={`w-full px-3 py-2 text-left text-xs hover:bg-white/5 ${filterStatus === k ? 'text-emerald-400' : 'text-slate-300'}`}
+                    className={`w-full px-4 py-2.5 text-left text-xs hover:bg-white/5 transition-colors flex items-center gap-2 ${filterStatus === k ? 'text-emerald-400' : 'text-slate-300'}`}
                   >
+                    {k !== 'ALL' && (
+                      <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ background: STATUS[k as StatusKey].fill, border: `1px solid ${STATUS[k as StatusKey].stroke}` }}/>
+                    )}
                     {k === 'ALL' ? 'Todos os lotes' : STATUS[k as StatusKey].label}
                   </button>
                 ))}
@@ -582,18 +623,19 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
 
           <button
             onClick={() => setShowImage(s => !s)}
-            className={`px-3 py-1.5 border rounded-lg text-xs transition-colors ${showImage ? 'bg-slate-600/40 border-slate-500/40 text-slate-300' : 'bg-white/5 border-white/10 text-slate-500'}`}
+            className={`h-9 md:h-8 px-3 border rounded-lg text-xs transition-colors ${showImage ? 'bg-slate-600/40 border-slate-500/40 text-slate-300' : 'bg-white/5 border-white/10 text-slate-500'}`}
           >
             Planta
           </button>
 
           <button
             onClick={() => { setShowCart(s => !s); setSelectedLot(null); }}
-            className="relative flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs hover:bg-emerald-500/30"
+            className="relative flex items-center gap-1.5 h-9 md:h-8 px-3 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs hover:bg-emerald-500/30 transition-colors"
           >
-            <ShoppingCart size={12}/> Proposta
+            <ShoppingCart size={13}/>
+            <span className="hidden sm:inline font-medium">Proposta</span>
             {cart.length > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-emerald-500 text-white rounded-full text-[9px] flex items-center justify-center font-bold">
+              <span className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 w-5 h-5 bg-emerald-500 text-white rounded-full text-[9px] flex items-center justify-center font-bold leading-none">
                 {cart.length}
               </span>
             )}
