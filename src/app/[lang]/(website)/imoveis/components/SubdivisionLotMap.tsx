@@ -182,6 +182,20 @@ const fmtBRL = (v: number) =>
 const fmtM2 = (v: number) =>
   `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(v)} m²`;
 
+// ─── AB price entry type ──────────────────────────────────────────────────────
+interface ABPriceEntry {
+  quadra: string;
+  lote: string;
+  area_m2: number;
+  preco_lote: number;
+  preco_vista: number;
+  entrada: number;
+  p12_total: number; p12_parcela: number;
+  p36_total: number; p36_parcela: number;
+  p60_total: number; p60_parcela: number;
+  p120_total: number; p120_parcela: number;
+}
+
 // ─── Lot Detail Modal ─────────────────────────────────────────────────────────
 function LotModal({
   lot,
@@ -191,6 +205,7 @@ function LotModal({
   onAddToCompare,
   isInCompare,
   allLots,
+  abPrice,
 }: {
   lot: Lot;
   developmentName: string;
@@ -199,6 +214,7 @@ function LotModal({
   onAddToCompare: (lot: Lot) => void;
   isInCompare: boolean;
   allLots: Lot[];
+  abPrice?: ABPriceEntry;
 }) {
   const cfg = STATUS[lot.status as StatusKey] ?? STATUS.DISPONIVEL;
   const isAvailable = lot.status === 'DISPONIVEL';
@@ -334,6 +350,47 @@ function LotModal({
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Payment plan breakdown — Alto Bellevue */}
+        {abPrice && isAvailable && (
+          <div className="px-5 pb-3">
+            <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 8px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+              Formas de Pagamento
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              {[
+                { label: 'À Vista', desc: '20% desconto', total: abPrice.preco_vista, parcela: null, highlight: true },
+                { label: '12×', desc: `Entrada ${fmtBRL(abPrice.entrada)}`, total: abPrice.p12_total, parcela: abPrice.p12_parcela, highlight: false },
+                { label: '36×', desc: `Entrada ${fmtBRL(abPrice.entrada)}`, total: abPrice.p36_total, parcela: abPrice.p36_parcela, highlight: false },
+                { label: '60×', desc: `Entrada ${fmtBRL(abPrice.entrada)}`, total: abPrice.p60_total, parcela: abPrice.p60_parcela, highlight: false },
+                { label: '120×', desc: `Entrada ${fmtBRL(abPrice.entrada)}`, total: abPrice.p120_total, parcela: abPrice.p120_parcela, highlight: false },
+              ].map(plan => (
+                <div key={plan.label} style={{ background: plan.highlight ? '#0B1928' : '#F8F6F2', borderRadius: 10, padding: '10px 12px' }}>
+                  <p style={{ fontSize: 9, fontWeight: 700, color: plan.highlight ? '#C8A44A' : '#948F84', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 2px', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                    {plan.label}
+                  </p>
+                  {plan.parcela ? (
+                    <>
+                      <p style={{ fontSize: 13, fontWeight: 800, color: plan.highlight ? '#fff' : '#0B1928', margin: 0, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", lineHeight: 1.2 }}>
+                        {fmtBRL(plan.parcela)}/mês
+                      </p>
+                      <p style={{ fontSize: 9, color: plan.highlight ? 'rgba(255,255,255,0.4)' : '#948F84', margin: '2px 0 0', fontWeight: 500 }}>
+                        Total {fmtBRL(plan.total)}
+                      </p>
+                    </>
+                  ) : (
+                    <p style={{ fontSize: 13, fontWeight: 800, color: plan.highlight ? '#C8A44A' : '#0B1928', margin: 0, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
+                      {fmtBRL(plan.total)}
+                    </p>
+                  )}
+                  <p style={{ fontSize: 8, color: plan.highlight ? 'rgba(255,255,255,0.35)' : '#B8B3A8', margin: '1px 0 0', fontWeight: 500 }}>
+                    {plan.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -879,6 +936,21 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
 
   const hasPlanView = PLAN_VIEW_IDS.has(developmentId);
   const [viewMode, setViewMode] = useState<'list' | 'plan'>(() => hasPlanView ? 'plan' : 'list');
+  const [abPricesMap, setAbPricesMap] = useState<Map<string, ABPriceEntry>>(new Map());
+
+  useEffect(() => {
+    if (developmentId !== AB_DEV_ID) return;
+    fetch('/data/alto-bellevue-prices.json')
+      .then(r => r.json())
+      .then((data: ABPriceEntry[]) => {
+        const map = new Map<string, ABPriceEntry>();
+        for (const entry of data) {
+          map.set(`${entry.quadra}-${String(parseInt(entry.lote, 10))}`, entry);
+        }
+        setAbPricesMap(map);
+      })
+      .catch(() => {/* prices unavailable */});
+  }, [developmentId]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -1426,6 +1498,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             onAddToCompare={addToCompare}
             isInCompare={compareIds.has(selectedLot.id)}
             allLots={lots}
+            abPrice={abPricesMap.get(`${selectedLot.quadra}-${selectedLot.lot_number}`) ?? undefined}
           />
         )}
       </AnimatePresence>
