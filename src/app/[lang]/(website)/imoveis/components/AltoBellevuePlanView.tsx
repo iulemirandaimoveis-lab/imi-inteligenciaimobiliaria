@@ -212,8 +212,8 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}
-      className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-4 md:left-auto md:right-4 md:w-72 md:rounded-2xl bg-[#0F1923]/98 backdrop-blur-xl border-t md:border border-white/10 rounded-t-2xl shadow-2xl overflow-hidden z-[160] md:z-30"
-      style={{ maxHeight: '72vh', overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-4 md:left-auto md:right-4 md:w-72 md:rounded-2xl bg-[#0F1923]/98 backdrop-blur-xl border-t md:border border-white/10 rounded-t-[20px] shadow-2xl overflow-hidden z-[150] md:z-30"
+      style={{ maxHeight: '65vh', overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
     >
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         <div>
@@ -556,7 +556,7 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
         </div>
 
         {/* Filter bar */}
-        <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 md:gap-2 z-20 max-w-[calc(100%-56px)] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
           <div className="relative">
             <button
               onClick={() => setShowFilters(f => !f)}
@@ -680,34 +680,47 @@ export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }
       {/* Cart — mobile bottom sheet */}
       <AnimatePresence>
         {showCart && isMobile && (
-          <motion.div
-            initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-[#0A1828] border-t border-white/10 rounded-t-2xl z-[160] flex flex-col"
-            style={{ maxHeight: '80vh', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-          >
-            {/* Drag handle */}
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full bg-white/20"/>
-            </div>
-            <div className="flex items-center justify-between px-4 pb-3 border-b border-white/10">
-              <div className="flex items-center gap-2">
-                <ShoppingCart size={15} className="text-emerald-400"/>
-                <span className="text-sm font-semibold text-white">Proposta de Compra</span>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[155]"
+              style={{ background: 'rgba(0,0,0,0.5)' }}
+              onClick={() => setShowCart(false)}
+            />
+            <motion.div
+              initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+              className="fixed left-0 right-0 bg-[#0A1828] border-t border-white/10 rounded-t-[20px] z-[160] flex flex-col"
+              style={{ bottom: 0, maxHeight: '75vh', paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
+            >
+              {/* Drag handle */}
+              <div className="flex justify-center pt-2.5 pb-1 flex-shrink-0">
+                <div className="w-8 h-1 rounded-full bg-white/25"/>
               </div>
-              <button onClick={() => setShowCart(false)} className="text-slate-500 hover:text-white p-1">
-                <ChevronDown size={18}/>
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              <CartPanel
-                cart={cart}
-                whatsapp={whatsappPhone || WHATSAPP_NUMBER}
-                onRemove={removeFromCart}
-                onClear={() => setCart([])}
-              />
-            </div>
-          </motion.div>
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
+                <div className="flex items-center gap-2">
+                  <ShoppingCart size={15} className="text-emerald-400"/>
+                  <span className="text-sm font-semibold text-white">Proposta de Compra</span>
+                  {cart.length > 0 && (
+                    <span className="text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+                      {cart.length} lote{cart.length !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </div>
+                <button onClick={() => setShowCart(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 text-slate-400 hover:text-white">
+                  <ChevronDown size={16}/>
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto min-h-0">
+                <CartPanel
+                  cart={cart}
+                  whatsapp={whatsappPhone || WHATSAPP_NUMBER}
+                  onRemove={removeFromCart}
+                  onClear={() => setCart([])}
+                />
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
