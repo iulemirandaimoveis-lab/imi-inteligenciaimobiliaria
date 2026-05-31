@@ -417,7 +417,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             <div className="fixed left-0 right-0 z-[140] lg:hidden"
                 style={{
                     bottom: 0,
-                    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
                     background: 'rgba(255,255,255,0.97)',
                     backdropFilter: 'blur(12px)',
                     WebkitBackdropFilter: 'blur(12px)',
