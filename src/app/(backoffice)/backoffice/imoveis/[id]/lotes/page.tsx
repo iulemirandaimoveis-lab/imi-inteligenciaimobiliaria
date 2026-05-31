@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
   ArrowLeft, ChevronDown, ChevronUp, Edit2, Check, X,
-  Search, Download, MapPin, BarChart2, Loader2,
+  Search, Download, Upload, MapPin, BarChart2, Loader2, AlertTriangle, FileSpreadsheet,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
@@ -331,6 +331,10 @@ export default function LotesPage() {
   const [openQuadras, setOpenQuadras] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('ALL')
+  const [showImport, setShowImport] = useState(false)
+  const [importPreview, setImportPreview] = useState<Array<Partial<Lot>> | null>(null)
+  const [importError, setImportError] = useState<string | null>(null)
+  const [importing, setImporting] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -388,6 +392,114 @@ export default function LotesPage() {
   const toggleQuadra = (q: string) =>
     setOpenQuadras(prev => { const n = new Set(prev); n.has(q) ? n.delete(q) : n.add(q); return n })
 
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setImportError(null)
+    setImportPreview(null)
+
+    try {
+      let rows: string[][] = []
+
+      if (file.name.endsWith('.csv')) {
+        const text = await file.text()
+        rows = text.split(/\r?\n/).filter(Boolean).map(line =>
+          line.split(',').map(v => v.replace(/^"|"$/g, '').trim())
+        )
+      } else if (file.name.match(/\.xlsx?$/)) {
+        const XLSX = await import('xlsx')
+        const buffer = await file.arrayBuffer()
+        const wb = XLSX.read(buffer, { type: 'array' })
+        const ws = wb.Sheets[wb.SheetNames[0]]
+        rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as string[][]
+      } else {
+        setImportError('Formato não suportado. Use CSV (.csv) ou Excel (.xlsx, .xls).')
+        return
+      }
+
+      if (rows.length < 2) { setImportError('Arquivo vazio ou sem dados.'); return }
+
+      const header = rows[0].map(h => h.toLowerCase().trim())
+      const colIdx = {
+        quadra: header.findIndex(h => h.includes('quadra')),
+        lote: header.findIndex(h => h.includes('lote') || h === 'lot'),
+        area: header.findIndex(h => h.includes('área') || h.includes('area') || h.includes('m²') || h.includes('m2')),
+        valor: header.findIndex(h => h.includes('valor') || h.includes('preço') || h.includes('price')),
+        status: header.findIndex(h => h.includes('status')),
+        tipo: header.findIndex(h => h.includes('tipo') || h.includes('type')),
+        notas: header.findIndex(h => h.includes('nota') || h.includes('observ')),
+      }
+
+      if (colIdx.quadra < 0 || colIdx.lote < 0) {
+        setImportError('Colunas obrigatórias não encontradas. O arquivo precisa ter colunas "Quadra" e "Lote".')
+        return
+      }
+
+      const parsed: Array<Partial<Lot>> = []
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i]
+        if (!row[colIdx.quadra] && !row[colIdx.lote]) continue
+        const statusRaw = (row[colIdx.status] ?? '').toUpperCase().trim()
+        const statusMap: Record<string, string> = {
+          'DISPONÍVEL': 'DISPONIVEL', 'DISPONIVEL': 'DISPONIVEL', 'DISPONÍVEIS': 'DISPONIVEL',
+          'VENDIDO': 'VENDIDO', 'VENDIDA': 'VENDIDO',
+          'NEGOCIACAO': 'NEGOCIACAO', 'NEGOCIAÇÃO': 'NEGOCIACAO',
+          'PROPRIETARIO': 'PROPRIETARIO', 'PROPRIETÁRIO': 'PROPRIETARIO',
+          'IGREJA': 'IGREJA',
+        }
+        parsed.push({
+          quadra: (row[colIdx.quadra] ?? '').toString().trim().toUpperCase(),
+          lot_number: parseInt(row[colIdx.lote] ?? '0', 10) || 0,
+          area_m2: colIdx.area >= 0 ? parseFloat((row[colIdx.area] ?? '').toString().replace(',', '.')) || 0 : 0,
+          price: colIdx.valor >= 0 && row[colIdx.valor] ? parseFloat((row[colIdx.valor] ?? '').toString().replace(/[^\d,.]/g, '').replace(',', '.')) || null : null,
+          status: statusMap[statusRaw] ?? 'DISPONIVEL',
+          special_type: colIdx.tipo >= 0 ? (row[colIdx.tipo] ?? '').toString().trim().toUpperCase() || null : null,
+          notes: colIdx.notas >= 0 ? (row[colIdx.notas] ?? '').toString().trim() || null : null,
+        })
+      }
+
+      setImportPreview(parsed.slice(0, 200))
+    } catch (err) {
+      setImportError('Erro ao ler o arquivo: ' + (err instanceof Error ? err.message : 'desconhecido'))
+    }
+    e.target.value = ''
+  }
+
+  const handleImportConfirm = async () => {
+    if (!importPreview || importPreview.length === 0) return
+    setImporting(true)
+    const supabase = createClient()
+
+    try {
+      let updated = 0
+      for (const row of importPreview) {
+        if (!row.quadra || !row.lot_number) continue
+        const existing = lots.find(l => l.quadra === row.quadra && l.lot_number === row.lot_number)
+        if (!existing) continue
+        const patch: Partial<Lot> = {}
+        if (row.status && row.status !== existing.status) patch.status = row.status
+        if (row.price !== undefined && row.price !== existing.price) patch.price = row.price
+        if (row.notes !== undefined && row.notes !== existing.notes) patch.notes = row.notes
+        if (row.special_type !== undefined && row.special_type !== existing.special_type) patch.special_type = row.special_type
+        if (Object.keys(patch).length > 0) {
+          await supabase.from('subdivision_lots').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', existing.id)
+          updated++
+        }
+      }
+      setLots(prev => prev.map(l => {
+        const match = importPreview.find(r => r.quadra === l.quadra && r.lot_number === l.lot_number)
+        if (!match) return l
+        return { ...l, ...match, id: l.id } as Lot
+      }))
+      toast.success(`${updated} lote${updated !== 1 ? 's' : ''} atualizado${updated !== 1 ? 's' : ''} com sucesso!`)
+      setShowImport(false)
+      setImportPreview(null)
+    } catch (err) {
+      toast.error('Erro na importação: ' + (err instanceof Error ? err.message : 'desconhecido'))
+    }
+    setImporting(false)
+  }
+
   const handleExport = () => {
     const rows = [['Quadra', 'Lote', 'Área (m²)', 'Valor', 'Status', 'Tipo', 'Notas']]
     for (const l of lots) {
@@ -443,16 +555,24 @@ export default function LotesPage() {
             {stats.total} lotes · {quadrasMap.size} quadras · {stats.disponivel} disponíveis
           </p>
         </div>
-        <button
-          onClick={handleExport}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, height: 38, padding: '0 16px', borderRadius: 8, border: `1px solid ${T.border}`, background: 'transparent', color: T.textMuted, fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', letterSpacing: '1px', textTransform: 'uppercase' }}
-        >
-          <Download size={13} /> Exportar CSV
-        </button>
+        <div style={{ display: 'flex', gap: 8 }} data-tour="lotes-actions">
+          <button
+            onClick={() => setShowImport(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, height: 38, padding: '0 14px', borderRadius: 8, border: `1px solid ${T.border}`, background: 'rgba(200,164,74,0.08)', color: 'var(--gold, var(--accent-400))', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', letterSpacing: '1px', textTransform: 'uppercase' }}
+          >
+            <Upload size={13} /> Importar
+          </button>
+          <button
+            onClick={handleExport}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, height: 38, padding: '0 14px', borderRadius: 8, border: `1px solid ${T.border}`, background: 'transparent', color: T.textMuted, fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', letterSpacing: '1px', textTransform: 'uppercase' }}
+          >
+            <Download size={13} /> Exportar
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, padding: isMobile ? '16px' : '0 0 20px' }}>
+      <div data-tour="lotes-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, padding: isMobile ? '16px' : '0 0 20px' }}>
         {([
           { key: 'DISPONIVEL',   label: 'Disponíveis',   value: stats.disponivel,   color: '#16A34A', bg: 'rgba(22,163,74,0.12)' },
           { key: 'VENDIDO',      label: 'Vendidos',      value: stats.vendido,      color: '#DC2626', bg: 'rgba(220,38,38,0.1)' },
@@ -504,7 +624,7 @@ export default function LotesPage() {
       </div>
 
       {/* Quadras */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: isMobile ? '0 16px' : undefined }}>
+      <div data-tour="lotes-quadras" style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: isMobile ? '0 16px' : undefined }}>
         {[...quadrasMap.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([quadra, qLots]) => (
           <QuadraBlock
             key={quadra}
@@ -545,6 +665,16 @@ export default function LotesPage() {
             onClose={() => setEditingLot(null)}
           />
         )}
+        {showImport && (
+          <ImportModal
+            preview={importPreview}
+            error={importError}
+            importing={importing}
+            onFileSelect={handleFileSelect}
+            onConfirm={handleImportConfirm}
+            onClose={() => { setShowImport(false); setImportPreview(null); setImportError(null) }}
+          />
+        )}
       </div>
     )
   }
@@ -559,6 +689,149 @@ export default function LotesPage() {
           onClose={() => setEditingLot(null)}
         />
       )}
+      {showImport && (
+        <ImportModal
+          preview={importPreview}
+          error={importError}
+          importing={importing}
+          onFileSelect={handleFileSelect}
+          onConfirm={handleImportConfirm}
+          onClose={() => { setShowImport(false); setImportPreview(null); setImportError(null) }}
+        />
+      )}
+    </div>
+  )
+}
+
+// ─── Import Modal ─────────────────────────────────────────────────────────────
+
+function ImportModal({
+  preview, error, importing, onFileSelect, onConfirm, onClose,
+}: {
+  preview: Array<Partial<Lot>> | null
+  error: string | null
+  importing: boolean
+  onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onConfirm: () => void
+  onClose: () => void
+}) {
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+      onClick={e => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 16, padding: 24, width: '100%', maxWidth: 560, boxShadow: '0 24px 64px rgba(0,0,0,0.5)', maxHeight: '85vh', overflow: 'auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div>
+            <p style={{ ...EYEBROW, marginBottom: 2 }}>Importar Lotes</p>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: T.text, margin: 0, fontFamily: 'var(--font-outfit, sans-serif)' }}>
+              Atualizar via arquivo
+            </h3>
+          </div>
+          <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: `1px solid ${T.border}`, color: T.textDim, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <X size={14} />
+          </button>
+        </div>
+
+        {/* File formats info */}
+        <div style={{ background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.2)', borderRadius: 10, padding: '12px 14px', marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+            <FileSpreadsheet size={14} style={{ color: 'var(--gold, var(--accent-400))', flexShrink: 0, marginTop: 1 }} />
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--gold, var(--accent-400))', margin: '0 0 4px', fontFamily: 'var(--font-outfit, sans-serif)' }}>Formatos suportados</p>
+              <p style={{ fontSize: 11, color: T.textDim, margin: 0, lineHeight: 1.5 }}>
+                <strong style={{ color: T.textMuted }}>CSV (.csv)</strong> e <strong style={{ color: T.textMuted }}>Excel (.xlsx, .xls)</strong><br />
+                Colunas: <code style={{ fontSize: 10, background: 'rgba(255,255,255,0.06)', padding: '1px 4px', borderRadius: 3 }}>Quadra, Lote, Área (m²), Valor, Status, Tipo, Notas</code>
+              </p>
+              <p style={{ fontSize: 10, color: T.textDim, margin: '6px 0 0', opacity: 0.7 }}>
+                Apenas lotes existentes serão atualizados. Use "Exportar" para obter o modelo correto.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* File picker */}
+        {!preview && (
+          <label
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, height: 120, borderRadius: 12, border: `2px dashed ${T.border}`, cursor: 'pointer', transition: 'border-color 0.15s', background: 'rgba(255,255,255,0.02)' }}
+            onDragOver={e => e.preventDefault()}
+          >
+            <Upload size={24} style={{ color: T.textDim }} />
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: T.text, margin: 0 }}>Arraste o arquivo ou clique para selecionar</p>
+              <p style={{ fontSize: 11, color: T.textDim, margin: '3px 0 0' }}>CSV ou Excel — máximo 10 MB</p>
+            </div>
+            <input type="file" accept=".csv,.xlsx,.xls" onChange={onFileSelect} style={{ display: 'none' }} />
+          </label>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.2)', borderRadius: 10, padding: '10px 12px', marginBottom: 12 }}>
+            <AlertTriangle size={14} style={{ color: '#DC2626', flexShrink: 0, marginTop: 1 }} />
+            <p style={{ fontSize: 12, color: '#DC2626', margin: 0 }}>{error}</p>
+          </div>
+        )}
+
+        {/* Preview */}
+        {preview && preview.length > 0 && (
+          <div>
+            <p style={{ fontSize: 12, color: T.textDim, marginBottom: 8 }}>
+              <strong style={{ color: T.text }}>{preview.length}</strong> lotes encontrados no arquivo. Confirme para atualizar os lotes existentes.
+            </p>
+            <div style={{ border: `1px solid ${T.border}`, borderRadius: 10, overflow: 'hidden', maxHeight: 240, overflowY: 'auto', marginBottom: 16 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead>
+                  <tr style={{ background: 'rgba(255,255,255,0.04)' }}>
+                    {['Quadra', 'Lote', 'Área', 'Valor', 'Status'].map(h => (
+                      <th key={h} style={{ padding: '6px 10px', textAlign: 'left', ...EYEBROW, fontSize: '8px', borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {preview.slice(0, 30).map((row, i) => (
+                    <tr key={i} style={{ borderBottom: `1px solid ${T.border}22` }}>
+                      <td style={{ padding: '5px 10px', color: T.text, fontWeight: 700 }}>{row.quadra}</td>
+                      <td style={{ padding: '5px 10px', ...MONO, color: T.text }}>{row.lot_number}</td>
+                      <td style={{ padding: '5px 10px', color: T.textMuted }}>{row.area_m2 ? `${row.area_m2} m²` : '—'}</td>
+                      <td style={{ padding: '5px 10px', ...MONO, color: T.textMuted }}>{row.price ? fmtBRL(row.price) : '—'}</td>
+                      <td style={{ padding: '5px 10px' }}>
+                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: STATUS_CFG[row.status ?? 'DISPONIVEL']?.bg ?? '#fff', color: STATUS_CFG[row.status ?? 'DISPONIVEL']?.color ?? '#000' }}>
+                          {STATUS_CFG[row.status ?? 'DISPONIVEL']?.label ?? row.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {preview.length > 30 && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '6px 10px', textAlign: 'center', color: T.textDim, fontSize: 10, fontStyle: 'italic' }}>
+                        +{preview.length - 30} mais…
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => { onClose(); }}
+                style={{ flex: 1, height: 42, borderRadius: 8, border: `1px solid ${T.border}`, background: 'transparent', color: T.textMuted, fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-outfit, sans-serif)', cursor: 'pointer', letterSpacing: '1px', textTransform: 'uppercase' }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={onConfirm}
+                disabled={importing}
+                style={{ flex: 2, height: 42, borderRadius: 8, border: 'none', background: 'var(--gold, var(--accent-400))', color: '#0B1928', fontSize: 12, fontWeight: 800, fontFamily: 'var(--font-outfit, sans-serif)', cursor: importing ? 'not-allowed' : 'pointer', letterSpacing: '1px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, opacity: importing ? 0.7 : 1 }}
+              >
+                {importing ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Check size={14} />}
+                {importing ? 'Importando...' : 'Confirmar Importação'}
+              </button>
+            </div>
+          </div>
+        )}
+        <style suppressHydrationWarning>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+      </div>
     </div>
   )
 }

@@ -356,6 +356,38 @@ export const ONBOARDING_TIPS: ContextualTip[] = [
         position: 'bottom',
         order: 1,
     },
+
+    // ── Lotes ──────────────────────────────────────────────────
+    {
+        id: 'lotes-stats',
+        module: 'imoveis',
+        route: '/backoffice/imoveis',
+        targetSelector: '[data-tour="lotes-stats"]',
+        title: 'Status dos Lotes',
+        description: 'Clique em qualquer card para filtrar a tabela por status — disponíveis, vendidos, em negociação ou proprietários.',
+        position: 'bottom',
+        order: 3,
+    },
+    {
+        id: 'lotes-actions',
+        module: 'imoveis',
+        route: '/backoffice/imoveis',
+        targetSelector: '[data-tour="lotes-actions"]',
+        title: 'Importar e Exportar Lotes',
+        description: 'Importe uma planilha CSV ou Excel (.xlsx) com colunas Quadra, Lote, Área, Valor e Status para atualizar lotes em lote. Exporte para fazer edições externas.',
+        position: 'bottom',
+        order: 4,
+    },
+    {
+        id: 'lotes-quadras',
+        module: 'imoveis',
+        route: '/backoffice/imoveis',
+        targetSelector: '[data-tour="lotes-quadras"]',
+        title: 'Quadras e Lotes',
+        description: 'Clique numa quadra para expandir e ver os lotes. Clique no ícone de edição (✏️) em qualquer lote para alterar status, preço e notas individualmente.',
+        position: 'top',
+        order: 5,
+    },
 ]
 
 // ── Module metadata ──────────────────────────────────────────

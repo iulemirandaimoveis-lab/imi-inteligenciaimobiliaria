@@ -973,50 +973,61 @@ export default function SubdivisionPlanView({
       {/* ── MOBILE BOTTOM SHEET ──────────────────────────────────────────────── */}
       <AnimatePresence>
         {selectedQuadra && (
-          <motion.div
-            className="md:hidden"
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 34, stiffness: 390 }}
-            style={{
-              position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 160,
-              background: '#0F2035',
-              borderRadius: '22px 22px 0 0',
-              boxShadow: '0 -10px 48px rgba(0,0,0,0.55)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderBottomWidth: 0,
-              maxHeight: '72vh',
-              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-              display: 'flex', flexDirection: 'column', overflow: 'hidden',
-            }}
-          >
-            <div
-              data-interactive="true"
-              style={{ padding: '10px 0 4px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}
+          <>
+            <motion.div
+              className="md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ position: 'fixed', inset: 0, zIndex: 155, background: 'rgba(0,0,0,0.5)' }}
+              onClick={closePanel}
+            />
+            <motion.div
+              className="md:hidden"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 34, stiffness: 390 }}
+              style={{
+                position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 160,
+                background: '#0F2035',
+                borderRadius: '22px 22px 0 0',
+                boxShadow: '0 -10px 48px rgba(0,0,0,0.55)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderBottomWidth: 0,
+                maxHeight: '72vh',
+                paddingBottom: 'env(safe-area-inset-bottom, 16px)',
+                display: 'flex', flexDirection: 'column', overflow: 'hidden',
+              }}
             >
-              <GripHorizontal size={20} style={{ color: 'rgba(255,255,255,0.18)' }} />
-            </div>
-            <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
-              {selectedLot ? (
-                <LotDetailPanel
-                  lot={selectedLot} developmentName={developmentName}
-                  whatsappPhone={whatsappPhone}
-                  onBack={() => setSelectedLot(null)} onClose={closePanel}
-                />
-              ) : quadraStats.has(selectedQuadra) ? (
-                <QuadraPanel
-                  quadra={selectedQuadra}
-                  lots={quadraStats.get(selectedQuadra)!.lots}
-                  developmentName={developmentName}
-                  whatsappPhone={whatsappPhone}
-                  filterStatus={filterStatus}
-                  onClose={closePanel}
-                  onLotSelect={handleLotSelect}
-                />
-              ) : null}
-            </div>
-          </motion.div>
+              <div
+                data-interactive="true"
+                style={{ padding: '10px 0 4px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}
+              >
+                <GripHorizontal size={20} style={{ color: 'rgba(255,255,255,0.18)' }} />
+              </div>
+              <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
+                {selectedLot ? (
+                  <LotDetailPanel
+                    lot={selectedLot} developmentName={developmentName}
+                    whatsappPhone={whatsappPhone}
+                    onBack={() => setSelectedLot(null)} onClose={closePanel}
+                  />
+                ) : quadraStats.has(selectedQuadra) ? (
+                  <QuadraPanel
+                    quadra={selectedQuadra}
+                    lots={quadraStats.get(selectedQuadra)!.lots}
+                    developmentName={developmentName}
+                    whatsappPhone={whatsappPhone}
+                    filterStatus={filterStatus}
+                    onClose={closePanel}
+                    onLotSelect={handleLotSelect}
+                  />
+                ) : null}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>

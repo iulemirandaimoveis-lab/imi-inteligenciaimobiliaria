@@ -1331,14 +1331,12 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
               developmentId={developmentId}
               developmentName={developmentName}
               whatsappPhone={whatsappPhone}
-              onLotClick={(lot) => setSelectedLot(lot)}
             />
           : <SubdivisionPlanView
               lots={lots}
               developmentId={developmentId}
               developmentName={developmentName}
               whatsappPhone={whatsappPhone}
-              onLotClick={(lot) => setSelectedLot(lot)}
             />
       )}
 
