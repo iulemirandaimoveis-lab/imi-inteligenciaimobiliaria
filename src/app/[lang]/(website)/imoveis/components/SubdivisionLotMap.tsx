@@ -1091,7 +1091,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
               style={{ background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)' }}
             >
               <button
-                onClick={() => setViewMode('list')}
+                onClick={() => { setViewMode('list'); setSelectedLot(null); }}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
                 style={{
                   background: viewMode === 'list' ? '#fff' : 'transparent',
@@ -1105,7 +1105,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                 Lista
               </button>
               <button
-                onClick={() => setViewMode('plan')}
+                onClick={() => { setViewMode('plan'); setSelectedLot(null); }}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
                 style={{
                   background: viewMode === 'plan' ? '#fff' : 'transparent',
@@ -1325,19 +1325,21 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
 
       {/* ── Plan View ────────────────────────────────────────────────────────── */}
       {viewMode === 'plan' && (
-        developmentId === AB_DEV_ID
-          ? <AltoBellevuePlanView
-              lots={lots}
-              developmentId={developmentId}
-              developmentName={developmentName}
-              whatsappPhone={whatsappPhone}
-            />
-          : <SubdivisionPlanView
-              lots={lots}
-              developmentId={developmentId}
-              developmentName={developmentName}
-              whatsappPhone={whatsappPhone}
-            />
+        <div className="rounded-2xl overflow-hidden w-full" style={{ height: 'clamp(500px, 72vh, 780px)' }}>
+          {developmentId === AB_DEV_ID
+            ? <AltoBellevuePlanView
+                lots={lots}
+                developmentId={developmentId}
+                developmentName={developmentName}
+                whatsappPhone={whatsappPhone}
+              />
+            : <SubdivisionPlanView
+                lots={lots}
+                developmentId={developmentId}
+                developmentName={developmentName}
+                whatsappPhone={whatsappPhone}
+              />}
+        </div>
       )}
 
       {/* ── Quadra List Controls ─────────────────────────────────────────────── */}
