@@ -124,9 +124,9 @@ export default async function MiguelMarquesPage({
           {/* Stats */}
           <div className="grid grid-cols-3 gap-0 max-w-md">
             {[
-              { n: '183', label: 'Lotes' },
-              { n: '82%', label: 'Disponíveis' },
+              { n: '800+', label: 'Lotes' },
               { n: '23', label: 'Quadras' },
+              { n: 'Lago', label: 'Natural' },
             ].map((stat, i) => (
               <div
                 key={stat.label}
