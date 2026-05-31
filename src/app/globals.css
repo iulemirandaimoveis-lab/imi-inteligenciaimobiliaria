@@ -1154,11 +1154,13 @@
   }
 
   /* Hide scrollbar */
-  .scrollbar-none {
+  .scrollbar-none,
+  .no-scrollbar {
     scrollbar-width: none;
   }
 
-  .scrollbar-none::-webkit-scrollbar {
+  .scrollbar-none::-webkit-scrollbar,
+  .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
 }

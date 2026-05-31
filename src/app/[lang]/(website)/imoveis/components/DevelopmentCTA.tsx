@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Development } from '../types/development';
-import { MessageCircle, FileText, Building2, MapPin, Calendar, Download, Shield, Star, BarChart3, ChevronDown, ChevronUp } from 'lucide-react';
+import { MessageCircle, FileText, Building2, MapPin, Calendar, Download, Shield, Star, BarChart3, ChevronDown, ChevronUp, TrendingUp, Droplets } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import LeadCaptureModal from './LeadCaptureModal';
 
@@ -177,15 +177,15 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone }: 
                             {/* Score highlights */}
                             <div className="grid grid-cols-2 gap-2 mb-4">
                                 {[
-                                    { label: 'Localização', score: imiData?.location ?? 72, icon: '📍' },
-                                    { label: 'Liquidez', score: imiData?.liquidity ?? 55, icon: '💧' },
-                                    { label: 'Rentabilidade', score: imiData?.rentabilidade ?? 55, icon: '📈' },
-                                    { label: 'Construtora', score: imiData?.construtora ?? 72, icon: '🏗️' },
+                                    { label: 'Localização', score: imiData?.location ?? 72, Icon: MapPin },
+                                    { label: 'Liquidez', score: imiData?.liquidity ?? 55, Icon: Droplets },
+                                    { label: 'Rentabilidade', score: imiData?.rentabilidade ?? 55, Icon: TrendingUp },
+                                    { label: 'Construtora', score: imiData?.construtora ?? 72, Icon: Building2 },
                                 ].map(item => (
                                     <div key={item.label} className="p-3 rounded-xl" style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.2)' }}>
                                         <div className="flex items-center justify-between mb-1.5">
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#948F84' }}>{item.label}</span>
-                                            <span className="text-[10px]">{item.icon}</span>
+                                            <item.Icon size={11} style={{ color: '#948F84', opacity: 0.7 }} />
                                         </div>
                                         <div className="flex items-end gap-1.5">
                                             <span className="text-xl font-bold" style={{ color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{item.score}</span>

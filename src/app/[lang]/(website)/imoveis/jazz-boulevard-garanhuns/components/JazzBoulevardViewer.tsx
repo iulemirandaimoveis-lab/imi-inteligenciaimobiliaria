@@ -66,62 +66,73 @@ export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }:
         <AvailabilityLegend />
       </div>
 
-      {/* Tower Selector */}
-      <div className="flex items-center gap-2 mb-6">
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
-          Torre
-        </span>
-        {JAZZ_TOWERS.map(tower => (
-          <button
-            key={tower}
-            onClick={() => handleTowerChange(tower)}
-            className="flex items-center gap-2 h-10 px-5 rounded-xl transition-all font-bold"
-            style={{
-              background: selectedTower === tower ? '#0B1928' : '#F8F6F2',
-              color: selectedTower === tower ? '#fff' : '#948F84',
-              border: selectedTower === tower ? 'none' : '1px solid rgba(184,179,168,0.3)',
-              fontSize: 14,
-              fontFamily: "var(--fu, 'Outfit', sans-serif)",
-            }}
-          >
-            <Building2 size={14} />
-            Torre {tower}
-          </button>
-        ))}
-      </div>
+      {/* Tower + Plan Selectors row */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 mb-6">
+        {/* Tower */}
+        <div className="flex items-center gap-1.5">
+          <span style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+            Torre
+          </span>
+          <div className="flex gap-1">
+            {JAZZ_TOWERS.map(tower => (
+              <button
+                key={tower}
+                onClick={() => handleTowerChange(tower)}
+                className="flex items-center gap-1.5 rounded-lg transition-all font-bold"
+                style={{
+                  height: 32, padding: '0 12px',
+                  background: selectedTower === tower ? '#0B1928' : '#F8F6F2',
+                  color: selectedTower === tower ? '#fff' : '#948F84',
+                  border: selectedTower === tower ? 'none' : '1px solid rgba(184,179,168,0.3)',
+                  fontSize: 13,
+                  fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                }}
+              >
+                <Building2 size={12} />
+                {tower}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* Plan Filter */}
-      <div className="flex items-center gap-2 mb-6 flex-wrap">
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
-          Planta
-        </span>
-        <button
-          onClick={() => setSelectedPlan(null)}
-          className="px-3 h-8 rounded-lg text-xs font-bold transition-all"
-          style={{
-            background: selectedPlan === null ? '#0B1928' : '#F8F6F2',
-            color: selectedPlan === null ? '#fff' : '#948F84',
-            border: '1px solid rgba(184,179,168,0.3)',
-            fontFamily: "var(--fu, 'Outfit', sans-serif)",
-          }}
-        >
-          Todas
-        </button>
-        {(Object.keys(JAZZ_PLANS) as JazzPlanType[]).map(plan => (
-          <button
-            key={plan}
-            onClick={() => setSelectedPlan(p => p === plan ? null : plan)}
-            className="px-3 h-8 rounded-lg text-xs font-bold transition-all"
-            style={{
-              background: selectedPlan === plan ? '#C8A44A' : '#F8F6F2',
-              color: selectedPlan === plan ? '#0B1928' : '#948F84',
-              border: '1px solid rgba(184,179,168,0.3)',
-              fontFamily: "var(--fu, 'Outfit', sans-serif)",
-            }}
-          >
-            {plan}
-          </button>
-        ))}
+        {/* Plan filter — horizontal scroll */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1 min-w-0">
+          <span style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)", flexShrink: 0 }}>
+            Planta
+          </span>
+          <div className="flex gap-1 overflow-x-auto no-scrollbar">
+            <button
+              onClick={() => setSelectedPlan(null)}
+              className="rounded-lg text-xs font-bold transition-all flex-shrink-0"
+              style={{
+                height: 28, padding: '0 10px',
+                background: selectedPlan === null ? '#0B1928' : '#F8F6F2',
+                color: selectedPlan === null ? '#fff' : '#948F84',
+                border: '1px solid rgba(184,179,168,0.3)',
+                fontFamily: "var(--fu, 'Outfit', sans-serif)",
+              }}
+            >
+              Todas
+            </button>
+            {(Object.keys(JAZZ_PLANS) as JazzPlanType[]).map(plan => (
+              <button
+                key={plan}
+                onClick={() => setSelectedPlan(p => p === plan ? null : plan)}
+                className="rounded-lg text-xs font-bold transition-all flex-shrink-0"
+                style={{
+                  height: 28, padding: '0 10px',
+                  background: selectedPlan === plan ? '#C8A44A' : '#F8F6F2',
+                  color: selectedPlan === plan ? '#0B1928' : '#948F84',
+                  border: '1px solid rgba(184,179,168,0.3)',
+                  fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {plan}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Main grid: floor selector + units */}

@@ -136,7 +136,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                         {/* Mobile: single hero with swipe indicator */}
                         <button
                             onClick={() => openLightbox(0)}
-                            className="md:hidden relative w-full aspect-[16/10] overflow-hidden"
+                            className="md:hidden relative w-full overflow-hidden"
+                            style={{ aspectRatio: '16/9' }}
                         >
                             {development.images.heroVideo ? (
                                 <video
@@ -187,8 +188,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                 )}
 
                 {/* ── Content overlay ── */}
-                <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 md:pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.95) 0%, rgba(5,11,20,0.7) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.1) 100%)' }}>
-                    <div className="container-custom pb-8 md:pb-12 pt-6 md:pt-32 md:pointer-events-auto">
+                <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 md:pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.97) 0%, rgba(5,11,20,0.75) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.05) 100%)' }}>
+                    <div className="container-custom pb-6 md:pb-12 pt-5 md:pt-32 md:pointer-events-auto">
                         <motion.div
                             initial="hidden"
                             animate="visible"
@@ -233,7 +234,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             {/* Title */}
                             <motion.h1
                                 variants={slideUp}
-                                className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-5 leading-[1.08] tracking-tight"
+                                className="text-[28px] sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-4 leading-[1.07] tracking-tight"
                                 style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
                             >
                                 {development.name}
