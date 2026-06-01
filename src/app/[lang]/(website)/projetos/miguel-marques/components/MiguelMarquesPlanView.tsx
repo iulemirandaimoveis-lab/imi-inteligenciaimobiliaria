@@ -218,38 +218,38 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 24 }}
         transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-        className="fixed bottom-0 left-0 right-0 md:bottom-6 md:left-auto md:right-6 md:w-[340px] md:rounded-2xl bg-[#0A1520]/98 backdrop-blur-2xl border-t md:border border-white/8 rounded-t-[24px] shadow-2xl z-[150]"
+        className="fixed bottom-0 left-0 right-0 md:bottom-6 md:left-auto md:right-6 md:w-[360px] md:rounded-2xl rounded-t-[24px] shadow-2xl z-[150]"
         style={{
-          maxHeight: '78vh',
+          maxHeight: '82vh',
           display: 'flex',
           flexDirection: 'column',
+          background: '#fff',
+          border: '1px solid rgba(0,0,0,0.08)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
         {/* Drag handle — mobile only */}
         <div className="md:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full bg-white/20" />
+          <div className="w-10 h-1 rounded-full bg-gray-200" />
         </div>
 
         {/* Header */}
-        <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-white/8 flex-shrink-0">
+        <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-gray-100 flex-shrink-0">
           <div>
-            <div
-              className="text-[11px] font-bold uppercase tracking-widest mb-1.5"
-              style={{ color: st.text }}
+            <span
+              className="inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-2"
+              style={{ background: `${st.stroke}18`, color: st.text }}
             >
               {st.label}
-              {lot.isLakefront && (
-                <span className="ml-2 text-blue-400">• Beira-lago</span>
-              )}
-            </div>
-            <div className="font-bold text-white text-lg leading-tight">
+              {lot.isLakefront && <span className="ml-1.5 text-blue-500">· Beira-lago</span>}
+            </span>
+            <div className="font-bold text-[#0B1928] text-lg leading-tight">
               Quadra {lot.quadra} · Lote {lot.lote}
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/12 text-slate-400 hover:text-white flex items-center justify-center transition-all flex-shrink-0 mt-0.5"
+            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-400 hover:text-gray-600 flex items-center justify-center transition-all flex-shrink-0 mt-0.5"
           >
             <X size={15} />
           </button>
@@ -260,51 +260,45 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
           <div className="px-5 py-4 space-y-4">
             {/* Price hero */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
-                <div className="text-[10px] text-emerald-400/70 font-semibold uppercase tracking-wider mb-1">
-                  À vista
-                </div>
-                <div className="text-emerald-400 font-bold text-base">{fmtBRL(priceVista)}</div>
-                <div className="text-emerald-400/50 text-[10px] mt-0.5">20% desconto</div>
+              <div style={{ background: '#F0FDF4', border: '1.5px solid #86EFAC', borderRadius: 14, padding: '14px 16px' }}>
+                <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#16A34A' }}>À VISTA</div>
+                <div className="font-bold text-lg leading-tight" style={{ color: '#15803D' }}>{fmtBRL(priceVista)}</div>
+                <div className="text-[11px] mt-1 font-medium" style={{ color: '#4ADE80' }}>20% desconto</div>
               </div>
-              <div className="bg-white/4 border border-white/8 rounded-xl p-3">
-                <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-1">
-                  Tabela
-                </div>
-                <div className="text-white font-bold text-base">{fmtBRL(lot.valor)}</div>
-                <div className="text-slate-500 text-[10px] mt-0.5">
+              <div style={{ background: '#F8F6F2', border: '1.5px solid #E5E0D8', borderRadius: 14, padding: '14px 16px' }}>
+                <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#948F84' }}>TABELA</div>
+                <div className="font-bold text-lg leading-tight" style={{ color: '#0B1928' }}>{fmtBRL(lot.valor)}</div>
+                <div className="text-[11px] mt-1" style={{ color: '#948F84' }}>
                   {fmtBRL(lot.valor / lot.metragem)}/m²
                 </div>
               </div>
             </div>
 
             {/* Área */}
-            <div className="flex items-center justify-between py-2 border-b border-white/5">
-              <span className="text-slate-400 text-sm">Área do lote</span>
-              <span className="text-white font-semibold">{fmtM2(lot.metragem)}</span>
+            <div className="flex items-center justify-between py-2 border-b border-gray-100">
+              <span style={{ color: '#948F84', fontSize: 14 }}>Área do lote</span>
+              <span style={{ color: '#0B1928', fontWeight: 700, fontSize: 14 }}>{fmtM2(lot.metragem)}</span>
             </div>
 
             {/* Payment conditions */}
             <div className="space-y-1.5">
-              <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
-                Condições de pagamento
+              <div style={{ fontSize: 10, color: '#948F84', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                Condições de Pagamento
               </div>
               {PAYMENT_CONDITIONS.map((c, i) => (
                 <div
                   key={i}
-                  className={`flex justify-between items-center px-3 py-2 rounded-lg text-xs ${
-                    i === 0
-                      ? 'bg-emerald-500/10 border border-emerald-500/20'
-                      : 'bg-white/3 border border-white/5'
-                  }`}
+                  className="flex justify-between items-center px-3 py-2.5 rounded-xl"
+                  style={i === 0
+                    ? { background: '#F0FDF4', border: '1.5px solid #86EFAC' }
+                    : { background: '#F8F6F2', border: '1px solid #E5E0D8' }
+                  }
                 >
                   <div>
-                    <span className={i === 0 ? 'text-emerald-300 font-semibold' : 'text-slate-300'}>
-                      {c.label}
-                    </span>
-                    <span className="text-slate-600 ml-1.5">{c.desc}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#15803D' : '#0B1928' }}>{c.label}</span>
+                    <span style={{ fontSize: 11, color: '#948F84', marginLeft: 6 }}>{c.desc}</span>
                   </div>
-                  <span className={i === 0 ? 'text-emerald-400 font-bold' : 'text-slate-300 font-medium'}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#15803D' : '#0B1928' }}>
                     {fmtBRL(c.calc(lot.valor))}
                   </span>
                 </div>
@@ -316,20 +310,22 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
         {/* CTA */}
         {lot.status === 'disponivel' && (
           <div
-            className="px-5 py-4 border-t border-white/8 flex-shrink-0"
+            className="px-5 py-4 border-t border-gray-100 flex-shrink-0"
             style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}
           >
             {inCart ? (
               <button
                 onClick={onRemoveFromCart}
-                className="w-full border border-red-500/30 text-red-400 hover:bg-red-500/10 py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+                className="w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+                style={{ border: '1.5px solid #FCA5A5', color: '#DC2626', background: '#FFF1F1' }}
               >
                 <X size={14} /> Remover da proposta
               </button>
             ) : (
               <button
                 onClick={onAddToCart}
-                className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-white py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20"
+                className="w-full active:scale-[0.98] text-white py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
+                style={{ background: '#16A34A', boxShadow: '0 4px 14px rgba(22,163,74,0.3)' }}
               >
                 <ShoppingCart size={15} /> Adicionar à proposta
               </button>
@@ -340,7 +336,7 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
         {/* WhatsApp direct CTA for non-available lots */}
         {lot.status === 'negociacao' && (
           <div
-            className="px-5 py-4 border-t border-white/8 flex-shrink-0"
+            className="px-5 py-4 border-t border-gray-100 flex-shrink-0"
             style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}
           >
             <button
@@ -348,7 +344,8 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
                 const msg = `Olá! Tenho interesse no Lote ${lot.lote} da Quadra ${lot.quadra} do *Miguel Marques* (${fmtM2(lot.metragem)}). Pode me informar sobre a disponibilidade?`
                 window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
               }}
-              className="w-full bg-[#25D366] hover:bg-[#22c55e] active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all"
+              className="w-full active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all"
+              style={{ background: '#25D366', boxShadow: '0 4px 14px rgba(37,211,102,0.3)' }}
             >
               <MessageCircle size={16} /> Consultar via WhatsApp
             </button>
