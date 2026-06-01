@@ -3,12 +3,11 @@ import Link from 'next/link'
 import { ArrowLeft, Waves, Trees, Zap } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
-const SubdivisionLotMap = dynamic(
-  () => import('../../imoveis/components/SubdivisionLotMap'),
+const MasterplanSection = dynamic(
+  () => import('./components/MasterplanSection'),
   { ssr: false },
 )
 
-const DEVELOPMENT_ID = '8b9f6835-1bd0-4850-80b0-aaef2223300d'
 const WHATSAPP = '5581997230455'
 
 export const metadata: Metadata = {
@@ -152,26 +151,7 @@ export default async function MiguelMarquesPage({
       </section>
 
       {/* ── Interactive Lot Map ──────────────────────────── */}
-      <section className="bg-[#F5F0EA] px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.3em] mb-3">
-              Mapa do Loteamento
-            </p>
-            <h2
-              className="text-2xl lg:text-3xl font-bold text-[#0D1410] leading-tight"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-            >
-              Escolha o seu lote
-            </h2>
-          </div>
-          <SubdivisionLotMap
-            developmentId={DEVELOPMENT_ID}
-            developmentName="Loteamento Miguel Marques"
-            whatsappPhone={WHATSAPP}
-          />
-        </div>
-      </section>
+      <MasterplanSection />
 
       {/* ── Info cards ───────────────────────────────────── */}
       <section className="bg-white py-20 lg:py-28">
