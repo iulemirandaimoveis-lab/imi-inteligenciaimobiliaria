@@ -66,11 +66,11 @@ export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }:
         <AvailabilityLegend />
       </div>
 
-      {/* Tower + Plan Selectors row */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 mb-6">
-        {/* Tower */}
-        <div className="flex items-center gap-1.5">
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+      {/* Tower + Plan Selectors — two clean rows on mobile */}
+      <div className="flex flex-col gap-2.5 mb-6">
+        {/* Torre row */}
+        <div className="flex items-center gap-2">
+          <span style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)", flexShrink: 0, minWidth: 44 }}>
             Torre
           </span>
           <div className="flex gap-1">
@@ -78,12 +78,12 @@ export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }:
               <button
                 key={tower}
                 onClick={() => handleTowerChange(tower)}
-                className="flex items-center gap-1.5 rounded-lg transition-all font-bold"
+                className="flex items-center gap-1.5 rounded-lg transition-all font-bold flex-shrink-0"
                 style={{
                   height: 32, padding: '0 12px',
                   background: selectedTower === tower ? '#0B1928' : '#F8F6F2',
                   color: selectedTower === tower ? '#fff' : '#948F84',
-                  border: selectedTower === tower ? 'none' : '1px solid rgba(184,179,168,0.3)',
+                  border: selectedTower === tower ? '1.5px solid #0B1928' : '1px solid rgba(184,179,168,0.3)',
                   fontSize: 13,
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
                 }}
@@ -95,12 +95,12 @@ export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }:
           </div>
         </div>
 
-        {/* Plan filter — horizontal scroll */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1 min-w-0">
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)", flexShrink: 0 }}>
+        {/* Planta row — label pinned left, buttons scroll right */}
+        <div className="flex items-center gap-2 min-w-0">
+          <span style={{ fontSize: 10, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)", flexShrink: 0, minWidth: 44 }}>
             Planta
           </span>
-          <div className="flex gap-1 overflow-x-auto no-scrollbar">
+          <div className="flex gap-1 overflow-x-auto no-scrollbar flex-1 pb-0.5">
             <button
               onClick={() => setSelectedPlan(null)}
               className="rounded-lg text-xs font-bold transition-all flex-shrink-0"
@@ -108,8 +108,9 @@ export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }:
                 height: 28, padding: '0 10px',
                 background: selectedPlan === null ? '#0B1928' : '#F8F6F2',
                 color: selectedPlan === null ? '#fff' : '#948F84',
-                border: '1px solid rgba(184,179,168,0.3)',
+                border: selectedPlan === null ? '1.5px solid #0B1928' : '1px solid rgba(184,179,168,0.3)',
                 fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                whiteSpace: 'nowrap',
               }}
             >
               Todas
@@ -123,7 +124,7 @@ export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }:
                   height: 28, padding: '0 10px',
                   background: selectedPlan === plan ? '#C8A44A' : '#F8F6F2',
                   color: selectedPlan === plan ? '#0B1928' : '#948F84',
-                  border: '1px solid rgba(184,179,168,0.3)',
+                  border: selectedPlan === plan ? '1.5px solid #C8A44A' : '1px solid rgba(184,179,168,0.3)',
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
                   whiteSpace: 'nowrap',
                 }}
@@ -135,10 +136,10 @@ export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }:
         </div>
       </div>
 
-      {/* Main grid: floor selector + units */}
-      <div className="flex gap-4">
+      {/* Main grid: floor selector + units — stacked on mobile, side-by-side on sm+ */}
+      <div className="flex flex-col sm:flex-row gap-4">
         {/* Floor column */}
-        <div className="flex-shrink-0">
+        <div className="sm:flex-shrink-0">
           <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
             Andar
           </p>

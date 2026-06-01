@@ -1127,29 +1127,33 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   return (
     <>
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0B1928', margin: 0, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
-              Mapa de Disponibilidade
-            </h2>
+      <div className="flex flex-col mb-6 gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-3 mb-1.5">
+              <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0B1928', margin: 0, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                Mapa de Disponibilidade
+              </h2>
+            </div>
+            <p style={{ fontSize: 13, color: '#948F84', margin: 0, lineHeight: 1.5 }}>
+              {stats.available} de {stats.total} lotes disponíveis em {quadras.size} quadras
+            </p>
           </div>
-          <p style={{ fontSize: 14, color: '#948F84', margin: 0, lineHeight: 1.6 }}>
-            {stats.available} de {stats.total} lotes disponíveis em {quadras.size} quadras
-          </p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Action buttons — horizontal scroll on mobile, no wrap */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
           {/* Rankings button — list mode only */}
           {hasRankings && viewMode === 'list' && (
             <button
               onClick={() => setShowRankings((r: boolean) => !r)}
-              className="flex items-center gap-2 h-10 px-3 rounded-xl border transition-colors"
+              className="flex items-center gap-2 h-10 px-3 rounded-xl border transition-colors flex-shrink-0"
               style={{
                 borderColor: showRankings ? '#C8A44A' : 'rgba(184,179,168,0.4)',
                 background: showRankings ? '#FEF3C7' : '#fff',
                 color: showRankings ? '#92400E' : '#0B1928',
                 fontSize: 12, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                whiteSpace: 'nowrap',
               }}
             >
               <Trophy size={13} />
@@ -1159,7 +1163,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           {/* View toggle */}
           {hasPlanView && (
             <div
-              className="flex items-center rounded-xl p-1"
+              className="flex items-center rounded-xl p-1 flex-shrink-0"
               style={{ background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)' }}
             >
               <button
@@ -1171,6 +1175,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                   fontSize: 11, fontWeight: 700,
                   boxShadow: viewMode === 'list' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                  whiteSpace: 'nowrap',
                 }}
               >
                 <List size={12} />
@@ -1185,6 +1190,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                   fontSize: 11, fontWeight: 700,
                   boxShadow: viewMode === 'plan' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                  whiteSpace: 'nowrap',
                 }}
               >
                 <MapIcon size={12} />
@@ -1193,22 +1199,25 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             </div>
           )}
           {/* Filtros button — list mode only */}
-          {viewMode === 'list' && <button
-            onClick={() => setShowFilters((f: boolean) => !f)}
-            className="flex items-center gap-2 h-10 px-4 rounded-xl border transition-colors"
-            style={{
-              borderColor: showFilters ? '#0B1928' : 'rgba(184,179,168,0.4)',
-              background: showFilters ? '#0B1928' : '#fff',
-              color: showFilters ? '#fff' : '#0B1928',
-              fontSize: 12, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)", letterSpacing: '0.08em', textTransform: 'uppercase',
-            }}
-          >
-            <Filter size={13} />
-            Filtros
-            {(filterStatus !== 'ALL' || maxPrice !== null || minArea !== null || smartFilter !== 'ALL') && (
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#C8A44A', display: 'inline-block' }} />
-            )}
-          </button>}
+          {viewMode === 'list' && (
+            <button
+              onClick={() => setShowFilters((f: boolean) => !f)}
+              className="flex items-center gap-2 h-10 px-4 rounded-xl border transition-colors flex-shrink-0"
+              style={{
+                borderColor: showFilters ? '#0B1928' : 'rgba(184,179,168,0.4)',
+                background: showFilters ? '#0B1928' : '#fff',
+                color: showFilters ? '#fff' : '#0B1928',
+                fontSize: 12, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)", letterSpacing: '0.08em', textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Filter size={13} />
+              Filtros
+              {(filterStatus !== 'ALL' || maxPrice !== null || minArea !== null || smartFilter !== 'ALL') && (
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#C8A44A', display: 'inline-block' }} />
+              )}
+            </button>
+          )}
         </div>
       </div>
 

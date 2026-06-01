@@ -17,9 +17,10 @@ export default function FloorSelector({ floors, selectedFloor, units, onFloorSel
     units.filter(u => u.floor === floor).length
 
   return (
+    // Mobile: horizontal scroll row | sm+: vertical column (reversed = top floor on top)
     <div
-      className="flex flex-col-reverse gap-1 overflow-y-auto"
-      style={{ maxHeight: 480, scrollbarWidth: 'thin' }}
+      className="flex flex-row gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:flex-col-reverse sm:overflow-y-auto sm:overflow-x-hidden sm:pb-0 sm:max-h-[480px]"
+      style={{ scrollbarWidth: 'thin' }}
     >
       {floors.map(floor => {
         const avail = availableByFloor(floor)
@@ -32,10 +33,10 @@ export default function FloorSelector({ floors, selectedFloor, units, onFloorSel
           <button
             key={floor}
             onClick={() => onFloorSelect(floor)}
-            className="relative flex items-center gap-2 rounded-lg transition-all text-left"
+            className="relative flex items-center gap-2 rounded-lg transition-all text-left flex-shrink-0"
             style={{
               background: isSelected ? '#0B1928' : '#F8F6F2',
-              border: isSelected ? 'none' : '1px solid rgba(184,179,168,0.3)',
+              border: isSelected ? '1.5px solid #0B1928' : '1px solid rgba(184,179,168,0.3)',
               minWidth: 60,
               padding: '6px 8px',
             }}
