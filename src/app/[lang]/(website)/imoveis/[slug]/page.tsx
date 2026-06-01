@@ -305,7 +305,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
             {/* Key Facts Bar */}
             <div className="container-custom pt-4 pb-0">
-                <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-5 gap-3 mb-6">
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 sm:grid sm:grid-cols-4 xl:grid-cols-5 sm:gap-3">
                     {[
                         { label: 'Quartos', value: development.specs.bedroomsRange, Icon: Bed },
                         { label: 'Banheiros', value: development.specs.bathroomsRange || '\u2014', Icon: Bath },
@@ -314,16 +314,20 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, Icon: Calendar }] : []),
                     ].map((item, i) => (
                         <div key={i} role="group" aria-label={`${item.value} ${item.label.toLowerCase()}`} style={{
-                            background: '#FFFFFF', padding: '16px 12px', textAlign: 'center' as const,
-                            border: '1px solid rgba(184,179,168,0.3)', borderRadius: 16,
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                            background: '#FFFFFF',
+                            padding: '12px 10px',
+                            textAlign: 'center' as const,
+                            border: '1px solid rgba(184,179,168,0.3)',
+                            borderRadius: 14,
+                            boxShadow: '0 1px 6px rgba(0,0,0,0.04)',
+                            flexShrink: 0,
+                            minWidth: 70,
                         }}>
-                            <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F0EDE5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
-                                <item.Icon size={16} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.7 }} />
+                            <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F0EDE5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px' }}>
+                                <item.Icon size={14} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.7 }} />
                             </div>
-                            <p style={{ fontSize: 17, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '0 0 2px' }}>{item.value}</p>
-                            <p style={{ fontSize: 10, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>{item.label}</p>
+                            <p style={{ fontSize: 15, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '0 0 2px', whiteSpace: 'nowrap' as const }}>{item.value}</p>
+                            <p style={{ fontSize: 9, color: '#948F84', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>{item.label}</p>
                         </div>
                     ))}
                 </div>
@@ -412,18 +416,21 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             {/* Sticky Mobile CTA — always visible */}
             <div className="fixed left-0 right-0 z-[140] lg:hidden"
                 style={{
-                    bottom: 'env(safe-area-inset-bottom, 0px)',
-                    background: '#FFFFFF',
-                    borderTop: '1px solid rgba(184,179,168,0.3)',
-                    padding: '12px 16px',
-                    boxShadow: '0 -4px 24px rgba(0,0,0,0.1)',
+                    bottom: 0,
+                    background: 'rgba(255,255,255,0.97)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    borderTop: '1px solid rgba(184,179,168,0.25)',
+                    padding: '10px 16px',
+                    paddingBottom: 'calc(10px + env(safe-area-inset-bottom, 0px))',
+                    boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
                 }}>
                 {/* Gold accent line at top */}
-                <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
+                <div style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 1.5, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                 <div className="flex items-center gap-3 max-w-lg mx-auto">
                     <div className="flex-1 min-w-0">
-                        <p style={{ fontSize: 10, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>A partir de</p>
-                        <p style={{ fontSize: 20, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
+                        <p style={{ fontSize: 9, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '0 0 1px' }}>A partir de</p>
+                        <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0, lineHeight: 1.2 }}>
                             {development.priceRange.min > 0 ? `R$ ${development.priceRange.min >= 1000000 ? `${(development.priceRange.min / 1000000).toFixed(1).replace(/\.0$/, '')}M` : development.priceRange.min.toLocaleString('pt-BR')}` : 'Consulte'}
                         </p>
                     </div>
@@ -435,28 +442,29 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                             position: 'relative',
                             background: '#0B1928',
                             color: '#FFFFFF',
-                            borderRadius: 12,
-                            padding: '0 20px',
-                            height: 48,
+                            borderRadius: 10,
+                            padding: '0 18px',
+                            height: 44,
                             fontWeight: 700,
                             fontSize: 11,
-                            letterSpacing: '0.08em',
+                            letterSpacing: '0.07em',
                             textTransform: 'uppercase' as const,
                             border: 'none',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: 8,
+                            gap: 7,
                             whiteSpace: 'nowrap',
                             textDecoration: 'none',
                             fontFamily: "var(--fu, 'Outfit', sans-serif)",
                             overflow: 'hidden',
+                            flexShrink: 0,
                         }}
                     >
-                        <MessageCircle size={14} />
+                        <MessageCircle size={13} />
                         Falar com Especialista
-                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
+                        <span style={{ position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 1.5, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                     </a>
                 </div>
             </div>
