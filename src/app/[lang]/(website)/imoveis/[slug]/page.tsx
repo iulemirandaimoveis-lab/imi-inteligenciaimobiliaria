@@ -8,8 +8,9 @@ import DevelopmentDetails from '../components/DevelopmentDetails'
 import DevelopmentGallery from '../components/DevelopmentGallery'
 import DevelopmentLocation from '../components/DevelopmentLocation'
 import DevelopmentUnits from '../components/DevelopmentUnits'
-import SubdivisionLotMap from '../components/SubdivisionLotMap'
+import dynamic from 'next/dynamic'
 import SubdivisionErrorBoundary from '../components/SubdivisionErrorBoundary'
+const InteractiveLotMap = dynamic(() => import('@/components/maps/InteractiveLotMap'), { ssr: false })
 import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -361,12 +362,18 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         <section id={isLoteamento ? 'mapa' : 'unidades'}>
                             {isLoteamento ? (
                                 <SubdivisionErrorBoundary developmentName={development.name}>
-                                    <SubdivisionLotMap
-                                        developmentId={development.id}
-                                        developmentName={development.name}
-                                        whatsappPhone={whatsappContact}
-                                        paymentConditions={commercialConfig?.payment_conditions as { entrada: string; parcelas: number; parcelValue: string; method: string; seller: string } | null}
-                                    />
+                                    <div className="scroll-mt-32">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
+                                            <h2 className="text-xl text-gray-900 font-bold tracking-tight" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                                                Planta de Lotes
+                                            </h2>
+                                        </div>
+                                        <InteractiveLotMap
+                                            developmentId={development.id}
+                                            galleryImages={development.images.gallery.slice(0, 4)}
+                                        />
+                                    </div>
                                 </SubdivisionErrorBoundary>
                             ) : (
                                 <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
