@@ -43,13 +43,22 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Parse initial viewBox
-  const [vbParts] = useState(() => {
-    const parts = initialViewBox.split(' ').map(Number);
-    return { x: parts[0], y: parts[1], w: parts[2], h: parts[3] };
-  });
+  // Parse viewBox — updates when JSON loads (initialViewBox starts as default "0 0 1200 900")
+  const parseVb = (s: string) => {
+    const [x, y, w, h] = s.split(' ').map(Number);
+    return { x, y, w, h };
+  };
+  const [vbParts, setVbParts] = useState(() => parseVb(initialViewBox));
+  const [vb, setVb] = useState<ViewBox>(() => parseVb(initialViewBox));
 
-  const [vb, setVb] = useState<ViewBox>({ x: vbParts.x, y: vbParts.y, w: vbParts.w, h: vbParts.h });
+  // Sync viewBox when JSON data arrives
+  useEffect(() => {
+    if (initialViewBox && initialViewBox !== '0 0 1200 900') {
+      const parsed = parseVb(initialViewBox);
+      setVbParts(parsed);
+      setVb(parsed);
+    }
+  }, [initialViewBox]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [showAmenities, setShowAmenities] = useState(true);
@@ -65,6 +74,7 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
 
   // Current zoom scale (ratio of original width to current viewbox width)
   const scale = vbParts.w / vb.w;
+
 
   // ─── Zoom ─────────────────────────────────────────────────────────────────
   const zoom = useCallback((factor: number, pivotX?: number, pivotY?: number) => {
@@ -170,7 +180,7 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
         {['todos', 'disponiveis', ...quadras].map(f => (
           <button
             key={f}
-            onClick={() => setActiveFilter(f)}
+            onClick={() => { setActiveFilter(f); setSelectedLot(null); }}
             className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
               activeFilter === f
                 ? 'bg-[#1a2332] text-white'
@@ -186,7 +196,7 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
       <div
         ref={containerRef}
         className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-[#1a2332]"
-        style={{ height: isMobile ? '65vw' : 'clamp(420px, 55vh, 680px)' }}
+        style={{ height: isMobile ? '90vw' : 'clamp(560px, 68vh, 820px)' }}
       >
         {/* Loading overlay */}
         {isLoading && (
@@ -219,7 +229,7 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
             </pattern>
           </defs>
-          <rect width={vbParts.w} height={vbParts.h} fill="url(#grid)" />
+          <rect x={vbParts.x} y={vbParts.y} width={vbParts.w} height={vbParts.h} fill="url(#grid)" />
 
           {/* Lots */}
           <g className="lots-layer">
@@ -353,12 +363,11 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
         {/* ─── Legend & Stats bar (bottom) ─── */}
         <div className="absolute bottom-0 left-0 right-0 bg-[#1a2332]/90 backdrop-blur-sm flex items-center justify-between px-4 py-2 z-10">
           <div className="flex items-center gap-4">
-            {stats && (
-              <>
-                <StatChip label="disponíveis" value={stats.disponiveis} color="#22c55e" />
-                <StatChip label="mapeados" value={stats.mapeados} color="#C8A44A" />
-                <StatChip label="sem preço" value={stats.semPreco} color="#6b7280" />
-              </>
+            {/* Show live-filtered counts */}
+            <StatChip label="visíveis" value={lots.length} color="#C8A44A" />
+            <StatChip label="disponíveis" value={lots.filter(l => l.status === 'disponivel').length} color="#22c55e" />
+            {lots.some(l => l.status === 'vendido') && (
+              <StatChip label="vendidos" value={lots.filter(l => l.status === 'vendido').length} color="#ef4444" />
             )}
           </div>
           {showLegend && (

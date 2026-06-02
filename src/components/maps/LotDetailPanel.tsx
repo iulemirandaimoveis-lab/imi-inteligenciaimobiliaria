@@ -141,16 +141,30 @@ export default function LotDetailPanel({ lot, onClose, isMobile }: LotDetailPane
           </div>
         </>
       ) : lot.status === 'disponivel' ? (
-        <div className="mb-6 py-8 text-center bg-gray-50 rounded-xl">
-          <p className="text-gray-400 text-sm">Preço sob consulta</p>
-        </div>
+        <>
+          {/* Area always visible */}
+          <div className="mb-4 px-3 py-2.5 bg-gray-50 rounded-lg">
+            <p className="text-[11px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Área do lote</p>
+            <p className="text-base font-bold text-gray-800">{lot.area > 0 ? `${lot.area} m²` : '—'}</p>
+          </div>
+          <div className="mb-6 py-6 text-center bg-amber-50 rounded-xl border border-amber-100">
+            <p className="text-amber-700 font-semibold text-sm">Preço sob consulta</p>
+            <p className="text-amber-500 text-xs mt-1">Fale com nosso especialista para obter os valores</p>
+          </div>
+        </>
       ) : (
-        <div className="mb-6 py-8 text-center bg-gray-50 rounded-xl">
-          <p className="text-gray-500 font-semibold text-sm">
-            {lot.status === 'vendido' ? 'Este lote já foi vendido.' : 'Este lote está em processo de negociação.'}
-          </p>
-          <p className="text-gray-400 text-xs mt-1">Consulte outros lotes disponíveis.</p>
-        </div>
+        <>
+          <div className="mb-4 px-3 py-2.5 bg-gray-50 rounded-lg">
+            <p className="text-[11px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Área do lote</p>
+            <p className="text-base font-bold text-gray-800">{lot.area > 0 ? `${lot.area} m²` : '—'}</p>
+          </div>
+          <div className="mb-6 py-6 text-center bg-gray-50 rounded-xl">
+            <p className="text-gray-500 font-semibold text-sm">
+              {lot.status === 'vendido' ? 'Este lote já foi vendido.' : 'Este lote está em processo de negociação.'}
+            </p>
+            <p className="text-gray-400 text-xs mt-1">Consulte outros lotes disponíveis.</p>
+          </div>
+        </>
       )}
 
       {/* CTAs */}
