@@ -25,35 +25,20 @@ interface Lot {
   notes: string | null;
 }
 
-interface SubdivisionLotMapProps {
-  developmentId: string;
-  developmentName: string;
-  whatsappPhone?: string;
-}
-
-// ─── Payment conditions per development ──────────────────────────────────────
-const PAYMENT_CONDITIONS: Record<string, {
+interface PaymentConditions {
   entrada: string;
   parcelas: number;
   parcelValue: string;
   method: string;
   seller: string;
-}> = {
-  '8b9f6835-1bd0-4850-80b0-aaef2223300d': {
-    entrada: '1+1 — R$ 1.450 (5%)',
-    parcelas: 150,
-    parcelValue: 'a partir de R$ 183',
-    method: 'Carnê',
-    seller: 'Mano Imóveis',
-  },
-  'ab7d1fc1-f069-4e3b-a515-8e1204c11247': {
-    entrada: '20% de entrada',
-    parcelas: 120,
-    parcelValue: 'a partir de R$ 1.800',
-    method: 'Financiamento / Direto',
-    seller: 'Alto Bellevue',
-  },
-};
+}
+
+interface SubdivisionLotMapProps {
+  developmentId: string;
+  developmentName: string;
+  whatsappPhone?: string;
+  paymentConditions?: PaymentConditions | null;
+}
 
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS = {
@@ -920,7 +905,7 @@ function CompareBar({
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581997230455' }: SubdivisionLotMapProps) {
+export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581997230455', paymentConditions }: SubdivisionLotMapProps) {
   const [lots, setLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
@@ -1280,8 +1265,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
       )}
 
       {/* ── Payment Conditions — list mode only ────────────────────────────── */}
-      {viewMode === 'list' && PAYMENT_CONDITIONS[developmentId] && (() => {
-        const pc = PAYMENT_CONDITIONS[developmentId];
+      {viewMode === 'list' && paymentConditions && (() => {
+        const pc = paymentConditions;
         return (
           <div style={{ background: '#0B1928', borderRadius: 16, padding: '18px 20px', marginBottom: 16 }}>
             <div className="flex items-center gap-2 mb-3">

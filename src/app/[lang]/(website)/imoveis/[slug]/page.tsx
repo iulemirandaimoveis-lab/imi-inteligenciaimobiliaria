@@ -27,9 +27,6 @@ export const revalidate = 3600
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
-const SLUG_VIRTUAL_TOURS: Record<string, string> = {
-    'jazz-boulevard-garanhuns': 'https://tour.panoee.net/TORRE_SOUL_RESIDENCE',
-}
 
 export async function generateMetadata({ params }: { params: { slug: string, lang: string } }): Promise<Metadata> {
     // Server-side admin client — bypasses RLS for public page rendering
@@ -143,9 +140,19 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
 
     const development = mapDbPropertyToDevelopment(data)
-    if (!development.images.virtualTour && SLUG_VIRTUAL_TOURS[params.slug]) {
-        development.images.virtualTour = SLUG_VIRTUAL_TOURS[params.slug]
+
+    // Fetch commercial config (WhatsApp contact, virtual tour URL, payment conditions)
+    const { data: commercialConfig } = await supabaseAdmin
+        .from('development_commercial_config')
+        .select('whatsapp_contact, virtual_tour_url, payment_conditions')
+        .eq('development_id', development.id)
+        .maybeSingle()
+
+    // Override virtual tour URL from DB config if not already present in development data
+    if (!development.images.virtualTour && commercialConfig?.virtual_tour_url) {
+        development.images.virtualTour = commercialConfig.virtual_tour_url
     }
+
     // Override with separately-fetched developer data (more complete than join)
     if (developerData?.logo_url) development.developerLogo = developerData.logo_url
     if (developerData?.name) development.developer = developerData.name
@@ -188,11 +195,12 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             avatar_url: 'https://zocffccwjjyelwrgunhu.supabase.co/storage/v1/object/public/avatars/avatars/6a51365d-0433-4a0e-b585-3e6d6a6c28d7.jpg',
         }
     }
-    // Jazz Boulevard test campaign: redirect all WhatsApp contacts to the manager
-    const jazzWhatsapp = params.slug === 'jazz-boulevard-garanhuns' ? '558799668204' : null
-    if (jazzWhatsapp) {
-        brokerData = { ...brokerData, phone: `+${jazzWhatsapp}` }
+    // Override WhatsApp contact from DB config (previously hardcoded per slug in source code)
+    const commercialWhatsapp = commercialConfig?.whatsapp_contact ?? null
+    if (commercialWhatsapp) {
+        brokerData = { ...brokerData, phone: `+${commercialWhatsapp}` }
     }
+    const whatsappContact = commercialWhatsapp ?? brokerData?.phone?.replace(/\D/g, '') ?? '5581997230455'
 
     // For loteamentos: override price with real minimum available lot price from subdivision_lots
     if (data.type === 'loteamento') {
@@ -356,7 +364,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                     <SubdivisionLotMap
                                         developmentId={development.id}
                                         developmentName={development.name}
-                                        whatsappPhone={jazzWhatsapp ?? (brokerData?.phone?.replace(/\D/g, '') ?? '5581997230455')}
+                                        whatsappPhone={whatsappContact}
+                                        paymentConditions={commercialConfig?.payment_conditions as { entrada: string; parcelas: number; parcelValue: string; method: string; seller: string } | null}
                                     />
                                 </SubdivisionErrorBoundary>
                             ) : (
@@ -402,7 +411,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
                     {/* Sidebar — desktop only */}
                     <aside className="lg:col-span-4 space-y-6">
-                        <DevelopmentCTA development={development} imiData={imiScores} {...(jazzWhatsapp && { whatsappPhone: jazzWhatsapp })} />
+                        <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
                     </aside>
                 </div>
             </div>
@@ -435,7 +444,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </p>
                     </div>
                     <a
-                        href={`https://wa.me/${jazzWhatsapp ?? '5581997230455'}?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
+                        href={`https://wa.me/${whatsappContact}?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
