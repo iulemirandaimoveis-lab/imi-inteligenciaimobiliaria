@@ -1,13 +1,16 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { Building2, ChevronRight } from 'lucide-react'
-import { type IMIProperty, AVAILABILITY_COLORS } from '@/lib/imi-domain/types'
+import { type IMIProperty, type AvailabilityStatus, AVAILABILITY_COLORS } from '@/lib/imi-domain/types'
+import { createClient } from '@/lib/supabase/client'
 import { buildJazzUnits, JAZZ_FLOORS, JAZZ_TOWERS, type JazzPlanType, JAZZ_PLANS } from '../data/jazzUnits'
 import FloorSelector from './FloorSelector'
 import UnitGrid from './UnitGrid'
 import UnitDetailPanel from './UnitDetailPanel'
 import AvailabilityLegend from './AvailabilityLegend'
+
+const JAZZ_DEV_SLUG = 'jazz-boulevard'
 
 interface Props {
   whatsappPhone?: string
@@ -18,8 +21,41 @@ export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }:
   const [selectedFloor, setSelectedFloor] = useState(1)
   const [selectedUnit, setSelectedUnit] = useState<IMIProperty | null>(null)
   const [selectedPlan, setSelectedPlan] = useState<JazzPlanType | null>(null)
+  const [dbStatuses, setDbStatuses] = useState<Record<string, AvailabilityStatus>>({})
 
-  const allUnits = useMemo(() => buildJazzUnits(selectedTower), [selectedTower])
+  useEffect(() => {
+    const supabase = createClient()
+    async function fetchStatuses() {
+      const { data: devData } = await supabase
+        .from('developments')
+        .select('id')
+        .eq('slug', JAZZ_DEV_SLUG)
+        .single()
+      if (!devData?.id) return
+
+      const { data: units } = await supabase
+        .from('imi_properties')
+        .select('code, status')
+        .eq('development_id', devData.id)
+      if (!units) return
+
+      const map: Record<string, AvailabilityStatus> = {}
+      for (const u of units) {
+        map[u.code] = u.status as AvailabilityStatus
+      }
+      setDbStatuses(map)
+    }
+    fetchStatuses()
+  }, [])
+
+  const allUnits = useMemo(() => {
+    const units = buildJazzUnits(selectedTower)
+    if (Object.keys(dbStatuses).length === 0) return units
+    return units.map(u => ({
+      ...u,
+      status: dbStatuses[u.code] ?? u.status,
+    }))
+  }, [selectedTower, dbStatuses])
 
   const floorUnits = useMemo(
     () => allUnits.filter(u => u.floor === selectedFloor),
