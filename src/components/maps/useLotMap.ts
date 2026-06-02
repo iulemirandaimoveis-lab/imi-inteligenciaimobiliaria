@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 export type LotStatus = 'disponivel' | 'vendido' | 'negociacao';
@@ -115,13 +115,16 @@ export function useLotMap(developmentId: string): UseLotMapResult {
       });
   }, [staticData, developmentId]);
 
-  const quadras = Array.from(new Set(lots.map(l => l.quadra))).sort();
+  const quadras = useMemo(
+    () => Array.from(new Set(lots.map(l => l.quadra))).sort(),
+    [lots],
+  );
 
-  const filteredLots = useCallback(() => {
+  const filteredLots = useMemo(() => {
     if (activeFilter === 'todos') return lots;
     if (activeFilter === 'disponiveis') return lots.filter(l => l.status === 'disponivel');
     return lots.filter(l => l.quadra === activeFilter);
-  }, [lots, activeFilter])();
+  }, [lots, activeFilter]);
 
   return {
     lots: filteredLots,

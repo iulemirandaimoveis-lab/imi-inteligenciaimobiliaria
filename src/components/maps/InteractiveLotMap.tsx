@@ -1,10 +1,15 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect, WheelEvent } from 'react';
-import { ZoomIn, ZoomOut, RotateCcw, MapPin, Layers } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, MapPin } from 'lucide-react';
 import { useLotMap, type LotMapEntry } from './useLotMap';
 import AmenityLayer from './AmenityLayer';
 import LotDetailPanel from './LotDetailPanel';
+
+function parseVb(s: string): { x: number; y: number; w: number; h: number } {
+  const [x, y, w, h] = s.split(' ').map(Number);
+  return { x, y, w, h };
+}
 
 const LOT_COLORS: Record<string, { fill: string; stroke: string }> = {
   disponivel:  { fill: '#22c55e', stroke: '#16a34a' },
@@ -44,10 +49,6 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Parse viewBox — updates when JSON loads (initialViewBox starts as default "0 0 1200 900")
-  const parseVb = (s: string) => {
-    const [x, y, w, h] = s.split(' ').map(Number);
-    return { x, y, w, h };
-  };
   const [vbParts, setVbParts] = useState(() => parseVb(initialViewBox));
   const [vb, setVb] = useState<ViewBox>(() => parseVb(initialViewBox));
 
