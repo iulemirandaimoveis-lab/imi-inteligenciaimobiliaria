@@ -24,9 +24,9 @@ interface ConstrutorasClientProps {
 
 export default function ConstrutorasClient({ developers, lang }: ConstrutorasClientProps) {
     return (
-        <main style={{ background: '#050B14', fontFamily: "'Outfit', system-ui, sans-serif" }} className="min-h-screen">
+        <main style={{ background: '#0B1928', fontFamily: "'Outfit', system-ui, sans-serif" }} className="min-h-screen">
             {/* Hero */}
-            <section className="text-white pt-24 pb-20 md:pt-32 md:pb-28 relative overflow-hidden" style={{ background: '#0A1624' }}>
+            <section className="text-white pt-24 pb-20 md:pt-32 md:pb-28 relative overflow-hidden" style={{ background: '#0B1928' }}>
                 {/* Subtle radial glow */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] opacity-[0.06] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(200,164,74,0.5), transparent 70%)' }} />
                 <div className="container-custom relative z-10">
@@ -161,7 +161,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                                             href={`/${lang}/imoveis?construtora=${dev.slug}`}
                                             className="flex-1 flex justify-center items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] h-11 rounded-lg text-white no-underline relative overflow-hidden"
                                             style={{
-                                                background: '#0A1624',
+                                                background: '#0B1928',
                                                 border: '1px solid rgba(255,255,255,0.08)',
                                                 transition: 'all 0.25s cubic-bezier(.16,1,.3,1)',
                                             }}
@@ -170,7 +170,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                                                 e.currentTarget.style.borderColor = 'rgba(200,164,74,0.20)';
                                             }}
                                             onMouseLeave={e => {
-                                                e.currentTarget.style.background = '#0A1624';
+                                                e.currentTarget.style.background = '#0B1928';
                                                 e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
                                             }}
                                         >
@@ -218,7 +218,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
             </section>
 
             {/* CTA */}
-            <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: '#0A1624', borderTop: '1px solid rgba(200,164,74,0.08)' }}>
+            <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: '#0B1928', borderTop: '1px solid rgba(200,164,74,0.08)' }}>
                 {/* Gold radial glow */}
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] opacity-[0.04] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(200,164,74,0.8), transparent 70%)' }} />
                 <div className="container-custom text-center relative z-10">
@@ -239,7 +239,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-2 h-14 px-8 w-full sm:w-auto text-[11px] font-semibold uppercase tracking-[0.15em] text-white rounded-lg relative overflow-hidden hover:-translate-y-1 transition-all duration-300"
                             style={{
-                                background: '#0A1624',
+                                background: '#0B1928',
                                 border: '1px solid rgba(200,164,74,0.20)',
                                 boxShadow: '0 0 14px rgba(200,164,74,0.08)',
                             }}

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, ArrowRight, ShoppingCart, Clock, Filter, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ButtonPrimary, ButtonGhost } from '@/components/website/Buttons'
 import type { Ebook } from './page'
 
 interface Pilar {
@@ -50,7 +51,7 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
     const soonCount = ebooks.filter(e => e.publication_status === 'em_breve').length
 
     return (
-        <main className="min-h-screen bg-navy-950">
+        <main className="min-h-screen bg-[#0B1928]">
             {/* ── Hero ─────────────────────────────────── */}
             <section className="relative overflow-hidden pt-28 pb-16 lg:pt-36 lg:pb-20">
                 <div
@@ -130,7 +131,7 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
             </section>
 
             {/* ── Filter Tabs ───────────────────────────── */}
-            <section className="sticky top-0 z-30 bg-navy-950/95 backdrop-blur-md border-b border-white/[0.05]">
+            <section className="sticky top-0 z-30 bg-[#0B1928]/95 backdrop-blur-md border-b border-white/[0.05]">
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
                     <div className="flex items-center gap-1.5 overflow-x-auto py-3 scrollbar-hide" role="tablist" aria-label="Filtrar por pilar">
                         {pilares.map(p => {
@@ -216,20 +217,21 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
                             href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Gostaria%20de%20ser%20avisada(o)%20quando%20novos%20ebooks%20da%20IMI%20forem%20lan%C3%A7ados."
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02]"
-                            style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)', color: '#fff' }}
+                            className="inline-flex items-center gap-2 px-6 text-[11px] font-semibold uppercase tracking-[1px] transition-all duration-200 hover:brightness-110"
+                            style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)', color: '#fff', height: 52, borderRadius: 6 }}
                         >
-                            <MessageCircle size={16} /> Quero ser avisado via WhatsApp
+                            <MessageCircle size={15} /> Quero ser avisado via WhatsApp
                         </a>
-                        <a
+                        <ButtonGhost
                             href="https://wa.me/5581997230455"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white/70 transition-all duration-200 hover:text-white hover:scale-[1.02]"
-                            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+                            arrow
+                            dark
+                            strong
                         >
-                            Falar com especialista <ArrowRight size={14} />
-                        </a>
+                            Falar com especialista
+                        </ButtonGhost>
                     </div>
                 </div>
             </section>
@@ -242,6 +244,33 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
     const hasBookContent = bookSlugs.includes(ebook.slug)
     const pilarColor = ebook.pilar ? PILAR_COLORS[ebook.pilar] : null
     const pilarLabel = ebook.pilar ? PILAR_LABELS[ebook.pilar] : null
+    const svgUrl = useMemo(() => `/books/covers/${ebook.slug}.svg`, [ebook.slug])
+
+    // Inline SVG: fetched client-side so page fonts (Playfair Display) render in the SVG text
+    const [svgHtml, setSvgHtml] = useState('')
+    const [svgLoaded, setSvgLoaded] = useState(false)
+
+    useEffect(() => {
+        if (ebook.cover_image) return
+        let cancelled = false
+        fetch(svgUrl)
+            .then(r => r.ok ? r.text() : Promise.reject())
+            .then(text => {
+                if (cancelled) return
+                // Strip XML declaration; make SVG fill its container
+                const html = text
+                    .replace(/<\?xml[^>]*?\?>\s*/s, '')
+                    .replace(/<svg(\s[^>]*)>/, (_: string, attrs: string) =>
+                        `<svg${attrs
+                            .replace(/width="[^"]*"/, 'width="100%"')
+                            .replace(/height="[^"]*"/, 'height="100%"')
+                        } style="position:absolute;inset:0;display:block">`)
+                setSvgHtml(html)
+                setSvgLoaded(true)
+            })
+            .catch(() => { /* fall through to PlaceholderCover */ })
+        return () => { cancelled = true }
+    }, [svgUrl, ebook.cover_image])
 
     return (
         <motion.div
@@ -250,7 +279,7 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
             transition={{ delay: index * 0.04, duration: 0.4 }}
             className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
             style={{
-                background: '#0D1420',
+                background: '#0d2035',
                 border: '1px solid rgba(255,255,255,0.06)',
                 WebkitTapHighlightColor: 'transparent',
             }}
@@ -275,29 +304,36 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
+                ) : svgLoaded ? (
+                    /* Inline SVG: Playfair Display from the page's CSS renders correctly */
+                    <div
+                        className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]"
+                        aria-hidden="true"
+                        dangerouslySetInnerHTML={{ __html: svgHtml }}
+                    />
                 ) : (
                     <PlaceholderCover title={ebook.title} subtitle={ebook.subtitle} pilar={ebook.pilar} />
                 )}
 
                 {/* Bottom gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0D1420] via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0d2035] via-transparent to-transparent opacity-80" />
 
-                {/* Badges — stacked vertically to avoid overlap */}
-                <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+                {/* Badges — top-right, stacked, clear of IMI logo at top-left */}
+                <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
                     {isAvailable ? (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm w-fit"
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
                             style={{ color: '#34d399', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.25)' }}>
                             Disponível
                         </span>
                     ) : (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm w-fit"
-                            style={{ color: '#C8A44A', background: 'rgba(200,164,74,0.12)', border: '1px solid rgba(200,164,74,0.25)' }}>
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-sm"
+                            style={{ color: '#E8C840', background: 'rgba(232,200,64,0.12)', border: '1px solid rgba(232,200,64,0.25)' }}>
                             Em Breve
                         </span>
                     )}
                     {pilarLabel && pilarColor && (
                         <span
-                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm w-fit"
+                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm"
                             style={{ color: pilarColor.text, background: pilarColor.bg, border: `1px solid ${pilarColor.border}` }}
                         >
                             {pilarLabel}
@@ -321,38 +357,41 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
 
                 <div className="mt-auto pt-2 space-y-2">
                     {hasBookContent && (
-                        <Link
+                        <ButtonPrimary
                             href={`/${lang}/biblioteca/${ebook.slug}`}
-                            className="flex items-center justify-center gap-2 w-full py-3 min-h-[44px] rounded-xl text-[13px] font-semibold transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
-                            style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)', color: '#0D1117' }}
+                            icon={<BookOpen size={14} />}
+                            arrow={false}
+                            full
+                            size="sm"
                         >
-                            <BookOpen size={14} /> Ler Agora
-                        </Link>
+                            Ler Agora
+                        </ButtonPrimary>
                     )}
                     {!hasBookContent && isAvailable && (ebook.amazon_link || ebook.amazon_url) ? (
-                        <a
+                        <ButtonPrimary
                             href={ebook.amazon_link || ebook.amazon_url || '#'}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:opacity-90"
-                            style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)', color: '#0D1117' }}
+                            icon={<ShoppingCart size={13} />}
+                            arrow={false}
+                            full
+                            size="sm"
                         >
-                            <ShoppingCart size={13} /> Adquirir na Amazon
-                        </a>
+                            Adquirir na Amazon
+                        </ButtonPrimary>
                     ) : !hasBookContent ? (
-                        <a
+                        <ButtonGhost
                             href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Tenho%20interesse%20no%20ebook%20da%20IMI%20sobre%20esse%20tema."
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-all duration-200 hover:brightness-110"
-                            style={{
-                                color: 'rgba(255,255,255,0.5)',
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                            }}
+                            icon={<MessageCircle size={13} />}
+                            arrow={false}
+                            full
+                            size="sm"
+                            dark
                         >
-                            <MessageCircle size={13} /> Avise-me quando sair
-                        </a>
+                            Avise-me quando sair
+                        </ButtonGhost>
                     ) : null}
                 </div>
             </div>

@@ -42,7 +42,7 @@ function getPriceLabel(price: number | null, avg: number | null): string {
     if (price == null || avg == null) return ''
     const ratio = price / avg
     if (ratio < 0.85) return 'Oportunidade'
-    if (ratio <= 1.15) return 'Na Media'
+    if (ratio <= 1.15) return 'Na Média'
     return 'Premium'
 }
 
@@ -118,11 +118,11 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
                 <div className="container-custom">
                     <SectionHeader />
                     <div className="flex flex-col items-center justify-center py-16 text-center">
-                        <div className="w-12 h-12 rounded-full bg-[#0B1928] flex items-center justify-center mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-[#0B1928] border border-white/[0.06] flex items-center justify-center mb-4">
                             <span className="text-2xl text-[#334E68]">&#x2205;</span>
                         </div>
-                        <p className="text-[#9CA3AF] text-sm font-light max-w-sm">
-                            Nenhum dado de precos disponivel para exibir no mapa. Selecione outra cidade ou aguarde a atualizacao dos dados.
+                        <p className="text-[#556170] text-sm font-light max-w-sm">
+                            Nenhum dado de preços disponível para exibir no mapa. Selecione outra cidade ou aguarde a atualização dos dados.
                         </p>
                     </div>
                 </div>
@@ -147,11 +147,11 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
 
                 {/* Legend */}
                 <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-8">
-                    <LegendItem color="#10B981" label="Abaixo da media (oportunidade)" />
-                    <LegendItem color={GOLD} label="Na media da cidade" />
-                    <LegendItem color="#EF4444" label="Acima da media (premium)" />
-                    <span className="text-[10px] text-[#9CA3AF] ml-auto hidden sm:block">
-                        Tamanho = estoque disponivel
+                    <LegendItem color="#10B981" label="Abaixo da média (oportunidade)" />
+                    <LegendItem color={GOLD} label="Na média da cidade" />
+                    <LegendItem color="#EF4444" label="Acima da média (premium)" />
+                    <span className="text-[10px] text-[#556170] ml-auto hidden sm:block">
+                        Tamanho = estoque disponível
                     </span>
                 </div>
 
@@ -191,7 +191,7 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
                                     >
                                         {formatPrice(n.median_price_sqm)}
                                     </span>
-                                    <span className="text-[9px] text-[#9CA3AF] mt-0.5">R$/m2</span>
+                                    <span className="text-[9px] text-[#556170] mt-0.5">R$/m²</span>
                                 </div>
 
                                 {/* Name */}
@@ -215,8 +215,8 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
 
                                 {/* Inventory */}
                                 {n.inventory_count != null && (
-                                    <span className="text-[10px] text-[#9CA3AF] mt-1.5">
-                                        {n.inventory_count} imoveis
+                                    <span className="text-[10px] text-[#556170] mt-1.5">
+                                        {n.inventory_count} imóveis
                                     </span>
                                 )}
                             </div>
@@ -240,11 +240,11 @@ function SectionHeader() {
                 </span>
             </div>
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
-                Comparativo Visual de <span className="text-[#C8A44A] italic">Precos por Bairro</span>
+                Comparativo Visual de <span className="text-[#C8A44A] italic">Preços por Bairro</span>
             </h2>
-            <p className="text-[#9CA3AF] text-sm mt-2 max-w-xl font-light">
-                Cada bolha representa um bairro. O tamanho reflete o estoque e a cor indica a faixa de preco
-                em relacao a media da cidade.
+            <p className="text-[#7A8FA6] text-sm mt-2 max-w-xl font-light">
+                Cada bolha representa um bairro. O tamanho reflete o estoque e a cor indica a faixa de preço
+                em relação à média da cidade.
             </p>
         </div>
     )

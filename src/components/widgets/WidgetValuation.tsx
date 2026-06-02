@@ -4,13 +4,48 @@ import { useState } from 'react'
 
 const fmtBRL = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
 
+const BRAZIL_LOCATION_TREE: Record<string, Record<string, string[]>> = {
+    'AC': { 'Rio Branco': ['Bosque', 'Estação Experimental', 'Vila Ivonete'] },
+    'AL': { 'Maceió': ['Ponta Verde', 'Jatiúca', 'Farol'] },
+    'AP': { 'Macapá': ['Trem', 'Santa Rita', 'Central'] },
+    'AM': { 'Manaus': ['Adrianópolis', 'Ponta Negra', 'Flores'] },
+    'BA': { 'Salvador': ['Barra', 'Pituba', 'Rio Vermelho'] },
+    'CE': { 'Fortaleza': ['Meireles', 'Aldeota', 'Cocó'] },
+    'DF': { 'Brasília': ['Asa Sul', 'Asa Norte', 'Lago Sul'] },
+    'ES': { 'Vitória': ['Praia do Canto', 'Jardim da Penha', 'Mata da Praia'] },
+    'GO': { 'Goiânia': ['Setor Bueno', 'Marista', 'Jardim Goiás'] },
+    'MA': { 'São Luís': ['Ponta d Areia', 'Calhau', 'Renascença'] },
+    'MT': { 'Cuiabá': ['Goiabeiras', 'Duque de Caxias', 'Araés'] },
+    'MS': { 'Campo Grande': ['Jardim dos Estados', 'Chácara Cachoeira', 'Vila Nasser'] },
+    'MG': { 'Belo Horizonte': ['Savassi', 'Lourdes', 'Funcionários'] },
+    'PA': { 'Belém': ['Umarizal', 'Nazaré', 'Batista Campos'] },
+    'PB': { 'João Pessoa': ['Tambaú', 'Manaíra', 'Cabo Branco'] },
+    'PR': { 'Curitiba': ['Batel', 'Água Verde', 'Bigorrilho'] },
+    'PE': { 'Recife': ['Boa Viagem', 'Espinheiro', 'Graças'] },
+    'PI': { 'Teresina': ['Jóquei', 'Ininga', 'Fátima'] },
+    'RJ': { 'Rio de Janeiro': ['Leblon', 'Ipanema', 'Barra da Tijuca'] },
+    'RN': { 'Natal': ['Ponta Negra', 'Petrópolis', 'Tirol'] },
+    'RS': { 'Porto Alegre': ['Moinhos de Vento', 'Bela Vista', 'Petrópolis'] },
+    'RO': { 'Porto Velho': ['Caiari', 'Embratel', 'Nova Porto Velho'] },
+    'RR': { 'Boa Vista': ['Caçari', 'Centro', 'Paraviana'] },
+    'SC': { 'Florianópolis': ['Centro', 'Agronômica', 'Jurerê'] },
+    'SP': { 'São Paulo': ['Itaim Bibi', 'Moema', 'Vila Mariana'] },
+    'SE': { 'Aracaju': ['Atalaia', 'Jardins', '13 de Julho'] },
+    'TO': { 'Palmas': ['Plano Diretor Sul', 'Plano Diretor Norte', 'Taquaralto'] },
+}
+
 export function WidgetValuation() {
     const [area, setArea] = useState(120)
     const [rooms, setRooms] = useState(3)
     const [parking, setParking] = useState(2)
     const [tipo, setTipo] = useState('Apartamento')
-    const [bairro, setBairro] = useState('Boa Viagem, Recife')
+    const [estado, setEstado] = useState('PE')
+    const [municipio, setMunicipio] = useState('Recife')
+    const [bairro, setBairro] = useState('Boa Viagem')
     const [result, setResult] = useState<{ total: number; low: number; high: number; m2: number } | null>(null)
+    const estados = Object.keys(BRAZIL_LOCATION_TREE)
+    const municipios = Object.keys(BRAZIL_LOCATION_TREE[estado] ?? {})
+    const bairros = BRAZIL_LOCATION_TREE[estado]?.[municipio] ?? []
 
     function estimate() {
         let base = 9800
@@ -26,8 +61,30 @@ export function WidgetValuation() {
             {/* inputs */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    <label style={S.label}>Endereço / Bairro</label>
-                    <input style={S.input} value={bairro} onChange={e => setBairro(e.target.value)} placeholder="Ex: Boa Viagem, Recife" />
+                    <label style={S.label}>Brasil &gt; Estados &gt; Municípios &gt; Bairros</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                        <select style={S.input} value={estado} onChange={e => {
+                            const uf = e.target.value
+                            const nextMunicipios = Object.keys(BRAZIL_LOCATION_TREE[uf] ?? {})
+                            const nextMunicipio = nextMunicipios[0] ?? ''
+                            const nextBairro = BRAZIL_LOCATION_TREE[uf]?.[nextMunicipio]?.[0] ?? ''
+                            setEstado(uf)
+                            setMunicipio(nextMunicipio)
+                            setBairro(nextBairro)
+                        }}>
+                            {estados.map(uf => <option key={uf} value={uf}>{uf}</option>)}
+                        </select>
+                        <select style={S.input} value={municipio} onChange={e => {
+                            const city = e.target.value
+                            setMunicipio(city)
+                            setBairro(BRAZIL_LOCATION_TREE[estado]?.[city]?.[0] ?? '')
+                        }}>
+                            {municipios.map(city => <option key={city} value={city}>{city}</option>)}
+                        </select>
+                        <select style={{ ...S.input, gridColumn: 'span 2' }} value={bairro} onChange={e => setBairro(e.target.value)}>
+                            {bairros.map(region => <option key={region} value={region}>{region}</option>)}
+                        </select>
+                    </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                     <label style={S.label}>Área (m²)</label>

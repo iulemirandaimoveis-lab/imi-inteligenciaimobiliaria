@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { CheckSquare, Square, Trash2, Eye, EyeOff, Star, StarOff, Layers } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import { createClient } from '@/lib/supabase/client'
 
 interface BulkActionsProps {
     selectedIds: string[]
@@ -20,7 +19,6 @@ export default function BulkActions({
     totalCount,
     onActionComplete,
 }: BulkActionsProps) {
-    const supabase = createClient()
     const [isProcessing, setIsProcessing] = useState(false)
 
     if (selectedIds.length === 0) {
@@ -40,12 +38,13 @@ export default function BulkActions({
         )
     }
 
-    async function handleBulkAction(action: 'activate' | 'deactivate' | 'feature' | 'unfeature' | 'delete') {
+    async function handleBulkAction(action: 'activate' | 'deactivate' | 'feature' | 'unfeature' | 'archive' | 'delete') {
         const confirmMessages = {
             activate: `Deseja ativar ${selectedIds.length} imóveis selecionados?`,
             deactivate: `Deseja desativar ${selectedIds.length} imóveis selecionados?`,
             feature: `Transformar ${selectedIds.length} imóveis em destaque comercial?`,
             unfeature: `Remover status de destaque de ${selectedIds.length} imóveis?`,
+            archive: `Arquivar ${selectedIds.length} imóveis selecionados?`,
             delete: `⚠️ ALERTA: Esta ação excluirá permanentemente ${selectedIds.length} registros. Esta operação é IRREVERSÍVEL. Confirmar?`,
         }
 
@@ -55,36 +54,48 @@ export default function BulkActions({
 
         try {
             if (action === 'delete') {
-                const { error } = await supabase
-                    .from('developments')
-                    .delete()
-                    .in('id', selectedIds)
+                await Promise.all(selectedIds.map(async (id) => {
+                    const response = await fetch(`/api/developments?id=${id}`, { method: 'DELETE' })
+                    if (!response.ok) {
+                        const data = await response.json().catch(() => null)
+                        throw new Error(data?.error || `Falha ao excluir imóvel ${id}`)
+                    }
+                }))
+            } else if (action === 'activate' || action === 'deactivate' || action === 'archive') {
+                const statusMap = {
+                    activate: 'disponivel',
+                    deactivate: 'arquivado',
+                    archive: 'arquivado',
+                } as const
 
-                if (error) throw error
+                const status = statusMap[action]
+                await Promise.all(selectedIds.map(async (id) => {
+                    const response = await fetch('/api/developments', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, status }),
+                    })
+                    if (!response.ok) {
+                        const data = await response.json().catch(() => null)
+                        throw new Error(data?.error || `Falha ao atualizar status do imóvel ${id}`)
+                    }
+                }))
             } else {
-                const updates: Record<string, unknown> = {}
-
-                switch (action) {
-                    case 'activate':
-                        updates.status = 'active'
-                        break
-                    case 'deactivate':
-                        updates.status = 'inactive'
-                        break
-                    case 'feature':
-                        updates.featured = true
-                        break
-                    case 'unfeature':
-                        updates.featured = false
-                        break
+                const updates: Record<string, unknown> = {
+                    is_highlighted: action === 'feature',
                 }
 
-                const { error } = await supabase
-                    .from('developments')
-                    .update(updates)
-                    .in('id', selectedIds)
-
-                if (error) throw error
+                await Promise.all(selectedIds.map(async (id) => {
+                    const response = await fetch('/api/developments', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, ...updates }),
+                    })
+                    if (!response.ok) {
+                        const data = await response.json().catch(() => null)
+                        throw new Error(data?.error || `Falha ao atualizar imóvel ${id}`)
+                    }
+                }))
             }
 
             onClearSelection()
@@ -148,6 +159,17 @@ export default function BulkActions({
                     >
                         <Star className="w-3.5 h-3.5" />
                         Destacar
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleBulkAction('archive')}
+                        disabled={isProcessing}
+                        className="bg-imi-800 border-imi-700 text-white text-[10px] h-9 px-3 hover:bg-imi-700"
+                    >
+                        <Square className="w-3.5 h-3.5" />
+                        Arquivar
                     </Button>
 
                     <Button

@@ -50,10 +50,14 @@ public/worker-*.js.map
 
 # AI agent configs (not project docs)
 .claude/squads/
+.claude/worktrees/
 .agent/
 .agents/
 .aiox/
 .ai/
+
+# SigMap ephemeral query context (regenerated per query)
+.context/
 
 # Backups
 backups/

@@ -86,12 +86,12 @@ function getInitials(name: string) {
 
 /* ── styles ───────────────────────────────────────────────── */
 const card: React.CSSProperties = {
-  background: 'rgba(14,28,48,.52)',
+  background: 'var(--glass-surface)',
   backdropFilter: 'blur(20px)',
   WebkitBackdropFilter: 'blur(20px)',
-  border: `1px solid ${T.border}`,
+  border: '1px solid var(--glass-surface-border)',
   borderRadius: T.radius.lg,
-  boxShadow: '0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04)',
+  boxShadow: 'var(--glass-surface-shadow)',
 }
 
 const goldGradient = 'linear-gradient(135deg, #C8A44A 0%, #D4B86A 50%, #C8A44A 100%)'

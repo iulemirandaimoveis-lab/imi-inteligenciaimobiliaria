@@ -2,176 +2,63 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import {
-    LayoutDashboard, Building2, Users, X, Sun,
-    FileText, Briefcase, BookOpen, Settings,
-    MessageSquare, Banknote, FolderOpen,
-    Scale, CreditCard, FileStack, Layers, Target, Zap, FileSignature,
-    Megaphone, BarChart2, Plug, TrendingUp, TrendingDown, CalendarDays,
-    QrCode, Sparkles, Building, Brain, LineChart, Wand2, BarChart3, Shield,
-    UserPlus, CalendarPlus, ClipboardList,
-    BookMarked, Inbox, MoreHorizontal,
-    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell, Handshake, MessageCircle, Key,
+    X, MoreHorizontal, Bell, Sun,
+    Building2, Users, UserPlus, ClipboardList, CalendarPlus, BookMarked,
+    FileSignature, MessageCircle,
 } from 'lucide-react'
+import { SECTIONS, SECTION_COLORS, SECTION_BG_COLORS, flattenSectionItems } from './nav-config'
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
 const BOTTOM_ITEMS = [
-    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,            color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
-    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,      color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
-    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,          color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))' },
-    { name: 'Connect', href: '/backoffice/connect',   icon: MessageCircle,  color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))'  },
+    { name: 'Hoje',    href: '/backoffice/hoje',    icon: Sun,           color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))' },
+    { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2,                             color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))' },
+    { name: 'Leads',   href: '/backoffice/leads',   icon: Users,                                 color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))' },
+    { name: 'Connect', href: '/backoffice/connect', icon: MessageCircle,                         color: 'var(--nav-active)', bg: 'var(--g10, rgba(200,164,74,.10))' },
 ]
 
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
-    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--accent-400)', iconBg: 'rgba(200,164,74,0.14)'  },
-    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: 'var(--info)',              iconBg: 'rgba(96,165,250,0.14)'  },
-    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--platinum-400)',              iconBg: 'rgba(167,139,250,0.14)' },
-    { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus, color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },
-    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: 'var(--success)',              iconBg: 'rgba(52,211,153,0.14)'  },
-    { label: 'Novo Contrato',  subtitle: 'Registrar contrato',       href: '/backoffice/contratos/novo',  icon: FileSignature,color: '#F87171',              iconBg: 'rgba(248,113,113,0.14)' },
+    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,     color: 'var(--accent-400)',   iconBg: 'rgba(200,164,74,0.14)'  },
+    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,      color: 'var(--info)',          iconBg: 'rgba(96,165,250,0.14)'  },
+    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList, color: 'var(--platinum-400)', iconBg: 'rgba(167,139,250,0.14)' },
+    { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus,  color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },
+    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,    color: 'var(--success)',       iconBg: 'rgba(52,211,153,0.14)'  },
+    { label: 'Novo Contrato',  subtitle: 'Registrar contrato',       href: '/backoffice/contratos/novo',  icon: FileSignature, color: '#F87171',              iconBg: 'rgba(248,113,113,0.14)' },
 ]
 
-// Badge values: 'NEW' | 'BREVE' | undefined
-type NavItemBadge = 'NEW' | 'BREVE'
-interface GroupItem { name: string; href: string; icon: React.ElementType; badge?: NavItemBadge }
-
-// Full nav groups — horizontal Netflix-style rows
-const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem[] }> = [
-    {
-        label: 'Visão Executiva', color: '#6B9EC4', bg: 'rgba(107,158,196,0.12)',
-        items: [
-            { name: 'Dashboard',    href: '/backoffice/dashboard',            icon: LayoutDashboard, badge: 'NEW'   },
-            { name: 'Metas',        href: '/backoffice/financeiro/metas',     icon: Target },
-            { name: 'Relatórios',   href: '/backoffice/relatorios',           icon: FileStack,       badge: 'NEW'   },
-            { name: 'Global Intel', href: '/backoffice/relatorios/executivo', icon: Brain },
-        ],
-    },
-    {
-        label: 'Captação', color: 'var(--warning)', bg: 'rgba(232,168,124,0.12)',
-        items: [
-            { name: 'Leads',         href: '/backoffice/leads',            icon: Users,         badge: 'NEW'   },
-            { name: 'Inbox IA',      href: '/backoffice/leads/inbox',      icon: Inbox },
-            { name: 'Comportamento', href: '/backoffice/leads/behavior',   icon: BarChart3 },
-            { name: 'Campanhas',     href: '/backoffice/campanhas',        icon: Megaphone,     badge: 'NEW'   },
-            { name: 'Ads',           href: '/backoffice/campanhas/ads',    icon: BarChart2 },
-            { name: 'QR Tracking',   href: '/backoffice/tracking/qr',      icon: QrCode,        badge: 'NEW'   },
-        ],
-    },
-    {
-        label: 'Conversão', color: 'var(--success)', bg: 'var(--success-bg)',
-        items: [
-            { name: 'Parcerias', href: '/backoffice/parcerias',        icon: Handshake,   badge: 'NEW' },
-            { name: 'Chat Equipe', href: '/backoffice/connect',       icon: MessageSquare, badge: 'NEW' },
-            { name: 'Pipeline',  href: '/backoffice/leads/pipeline',   icon: TrendingUp },
-            { name: 'Simulações',href: '/backoffice/credito/simulador',icon: CreditCard },
-            { name: 'Agenda',    href: '/backoffice/agenda',           icon: CalendarDays },
-        ],
-    },
-    {
-        label: 'Portfólio', color: '#D4A929', bg: 'rgba(212,169,41,0.12)',
-        items: [
-            { name: 'Imóveis',      href: '/backoffice/imoveis',            icon: Building2,  badge: 'NEW'   },
-            { name: 'Explorer',     href: '/backoffice/imoveis/explorer',   icon: Search,     badge: 'NEW'   },
-            { name: 'Construtoras', href: '/backoffice/construtoras',       icon: Building,   badge: 'NEW'   },
-            { name: 'Projetos',     href: '/backoffice/projetos',           icon: FolderOpen, badge: 'NEW'   },
-            { name: 'Publicações',  href: '/backoffice/conteudo',           icon: FileText   },
-            { name: 'Criador IA',   href: '/backoffice/conteudo/criador',   icon: Wand2      },
-            { name: 'eBook IA',     href: '/backoffice/conteudo/ebook',     icon: BookMarked },
-            { name: 'Vídeo IA',     href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },
-            { name: 'Automação',    href: '/backoffice/conteudo/automacao', icon: Zap        },
-        ],
-    },
-    {
-        label: 'Inteligência', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)',
-        items: [
-            { name: 'Biblioteca',  href: '/backoffice/biblioteca',                icon: BookOpen, badge: 'NEW' },
-            { name: 'eBooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen  },
-            { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack,   badge: 'NEW' },
-            { name: 'Indicadores', href: '/backoffice/inteligencia/indicadores',  icon: LineChart },
-            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain,       badge: 'NEW' },
-            { name: 'Widgets',     href: '/backoffice/inteligencia/widgets',      icon: LayoutGrid,  badge: 'NEW' },
-            { name: 'AI Chat',     href: '/backoffice/ai-chat',                  icon: MessageCircle, badge: 'NEW' },
-            { name: 'Agentes IA',  href: '/backoffice/ia/agentes',               icon: Bot,         badge: 'NEW' },
-        ],
-    },
-    {
-        label: 'Operação', color: '#4ECDC4', bg: 'rgba(78,205,196,0.12)',
-        items: [
-            { name: 'Avaliações',     href: '/backoffice/avaliacoes',                  icon: Scale,        badge: 'NEW'   },
-            { name: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova',             icon: Scale         },
-            { name: 'Email + Hon.',   href: '/backoffice/avaliacoes/email-honorarios', icon: Scale         },
-            { name: 'NBR',            href: '/backoffice/avaliacoes/exercicios',       icon: BookOpen      },
-            { name: 'Contratos',      href: '/backoffice/contratos',                   icon: FileSignature },
-            { name: 'Novo Contrato',  href: '/backoffice/contratos/novo',              icon: FileSignature },
-            { name: 'Consultoria',    href: '/backoffice/consultorias',                icon: Briefcase     },
-            { name: 'Nova Consult.',  href: '/backoffice/consultorias/nova',           icon: Briefcase     },
-            { name: 'Crédito',        href: '/backoffice/credito',                     icon: CreditCard    },
-            { name: 'Rentals',        href: '/backoffice/rentals',                    icon: Key, badge: 'NEW' as NavItemBadge },
-            { name: 'Calendário',     href: '/backoffice/rentals/calendar',           icon: CalendarDays  },
-        ],
-    },
-    {
-        label: 'Financeiro', color: '#84CC16', bg: 'rgba(132,204,22,0.10)',
-        items: [
-            { name: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote,    badge: 'NEW'   },
-            { name: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp  },
-            { name: 'A Pagar',     href: '/backoffice/financeiro/pagar',   icon: TrendingDown },
-            { name: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target      },
-            { name: 'BPO',         href: '/backoffice/bpo',               icon: Briefcase,   badge: 'NEW' as NavItemBadge },
-            { name: 'DRE',         href: '/backoffice/bpo/dre',           icon: FileText     },
-            { name: 'Conciliação', href: '/backoffice/bpo/conciliacao',   icon: Scale        },
-        ],
-    },
-    {
-        label: 'Crescimento', color: 'var(--platinum-400)', bg: 'rgba(167,139,250,0.12)',
-        items: [
-            { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap        },
-            { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen,  badge: 'NEW'   },
-            { name: 'Analytics',     href: '/backoffice/tracking',      icon: BarChart2, badge: 'NEW'   },
-            { name: 'Central IA',    href: '/backoffice/ia',            icon: Sparkles   },
-            { name: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles   },
-        ],
-    },
-    {
-        label: 'Configurações', color: 'var(--text-tertiary)', bg: 'rgba(148,163,184,0.10)',
-        items: [
-            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building     },
-            { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,       badge: 'NEW'   },
-            { name: 'Usuários',     href: '/backoffice/settings/usuarios',   icon: UserCog,     badge: 'NEW'   },
-            { name: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
-            { name: 'Settings',     href: '/backoffice/settings',            icon: Settings  },
-            { name: 'Corretores',   href: '/backoffice/settings/corretores', icon: Users     },
-            { name: 'Permissões',   href: '/backoffice/settings/permissoes', icon: Shield    },
-            { name: 'Logs',         href: '/backoffice/settings/logs',       icon: ScrollText },
-            { name: 'Config. IA',   href: '/backoffice/settings/ia',         icon: Brain     },
-        ],
-    },
-]
+// Derive mobile groups from the shared nav config — always in sync with desktop
+const GROUPS = SECTIONS.map(section => ({
+    label: section.label,
+    color: SECTION_COLORS[section.label] || 'var(--text-tertiary)',
+    bg: SECTION_BG_COLORS[section.label] || 'rgba(148,163,184,0.10)',
+    items: flattenSectionItems(section.items),
+}))
 
 // ── Netflix tile badge ─────────────────────────────────────────────
-function TileBadge({ badge }: { badge: string }) {
+function TileBadge({ badge }: { badge: string | number }) {
     const isNew = badge === 'NEW'
+    const isIA = badge === 'IA'
     return (
         <span style={{
             position: 'absolute',
             top: 2,
-            right: isNew ? 2 : -2,
+            right: isNew || isIA ? 2 : -2,
             fontSize: isNew ? 8 : 7,
             fontWeight: 700,
-            padding: isNew ? '2px 5px' : '2px 4px',
+            padding: isNew || isIA ? '2px 5px' : '2px 4px',
             borderRadius: 7,
             letterSpacing: '0.05em',
-            background: isNew ? '#2D8F5C' : 'rgba(148,163,184,0.20)',
-            color: isNew ? '#fff' : 'var(--text-tertiary)',
+            background: isNew ? '#2D8F5C' : isIA ? 'var(--accent-400)' : 'rgba(148,163,184,0.20)',
+            color: isNew || isIA ? '#fff' : 'var(--text-tertiary)',
             lineHeight: 1.2,
             pointerEvents: 'none',
             whiteSpace: 'nowrap',
-            boxShadow: isNew ? '0 1px 4px rgba(45,143,92,0.3)' : 'none',
+            boxShadow: isNew ? '0 1px 4px rgba(45,143,92,0.3)' : isIA ? '0 1px 4px rgba(61,111,255,0.25)' : 'none',
         }}>
-            {isNew ? 'NOVO' : 'BREVE'}
+            {isNew ? 'NOVO' : isIA ? 'IA' : 'BREVE'}
         </span>
     )
 }
@@ -179,7 +66,7 @@ function TileBadge({ badge }: { badge: string }) {
 // ── Netflix tile card ──────────────────────────────────────────────
 function NetflixItemCard({
     name, icon: Icon, color, bg, active, badge,
-}: { name: string; icon: React.ElementType; color: string; bg: string; active: boolean; badge?: string }) {
+}: { name: string; icon: React.ElementType; color: string; bg: string; active: boolean; badge?: string | number }) {
     return (
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[68px]" style={{ position: 'relative' }}>
             <div
@@ -187,19 +74,20 @@ function NetflixItemCard({
                 style={{
                     borderRadius: 7,
                     background: active ? bg : 'var(--bg-elevated)',
-                    border: active ? `1.5px solid ${color}50` : '1px solid var(--border-subtle)',
-                    boxShadow: active ? `0 4px 14px ${color}30` : '0 1px 3px rgba(0,0,0,0.06)',
+                    border: active ? `1.5px solid ${color}50` : '1px solid var(--border-default)',
+                    boxShadow: active ? `0 4px 14px ${color}30` : '0 1px 4px rgba(0,0,0,0.08)',
                     position: 'relative',
                 }}
             >
-                <Icon size={20} style={{ color: active ? color : 'var(--text-secondary)' }} />
+                {Icon && <Icon size={20} style={{ color: active ? color : 'var(--text-primary)' }} />}
             </div>
-            {badge && <TileBadge badge={badge} />}
+            {badge !== undefined && <TileBadge badge={badge} />}
             <span
                 className="text-[10px] font-semibold text-center leading-tight w-full"
                 style={{
                     color: active ? color : 'var(--text-secondary)',
                     fontFamily: 'var(--font-sans)',
+                    opacity: active ? 1 : 0.85,
                 }}
             >
                 {name}
@@ -212,7 +100,6 @@ function NetflixItemCard({
 function NetflixRowLabel({ color, label }: { color: string; label: string }) {
     return (
         <div className="flex items-center gap-2.5 px-4 mb-2.5">
-            {/* Colored indicator */}
             <div
                 className="flex-shrink-0"
                 style={{ width: 3, height: 16, borderRadius: 7, background: color, boxShadow: `0 0 8px ${color}40` }}
@@ -238,7 +125,6 @@ function NetflixRow({ children }: { children: React.ReactNode }) {
             >
                 {children}
             </div>
-            {/* Right fade hint — matches sheet bg */}
             <div
                 className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none"
                 style={{ background: 'linear-gradient(to left, var(--bg-surface) 10%, transparent)' }}
@@ -261,6 +147,50 @@ function NavDivider() {
     )
 }
 
+// ── Bottom bar tab item ────────────────────────────────────────────
+function BottomTab({ item, active }: { item: typeof BOTTOM_ITEMS[number]; active: boolean }) {
+    return (
+        <Link href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
+            <motion.div
+                whileTap={{ scale: 0.85 }}
+                className="flex flex-col items-center justify-center w-full gap-0.5 relative"
+                style={{
+                    margin: '0 2px',
+                    height: 48,
+                    borderRadius: 8,
+                    background: active ? 'rgba(200,164,74,0.10)' : 'transparent',
+                    transition: 'background 0.2s',
+                }}
+            >
+                {active && (
+                    <span style={{
+                        position: 'absolute',
+                        top: 5,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: 4,
+                        height: 4,
+                        borderRadius: '50%',
+                        background: 'var(--accent-400)',
+                        boxShadow: '0 0 6px rgba(200,164,74,0.7)',
+                    }} />
+                )}
+                <item.icon
+                    size={20}
+                    className="transition-colors duration-150"
+                    style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)', marginTop: active ? 6 : 0 }}
+                />
+                <span
+                    className="text-[10px] font-semibold transition-colors duration-150"
+                    style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
+                >
+                    {item.name}
+                </span>
+            </motion.div>
+        </Link>
+    )
+}
+
 // ── Main component ─────────────────────────────────────────────────
 export function MobileBottomNav() {
     const pathname = usePathname()
@@ -274,9 +204,7 @@ export function MobileBottomNav() {
     useEffect(() => {
         if (typeof visualViewport === 'undefined') return
         const vv = visualViewport!
-        const onResize = () => {
-            setKeyboardOpen(vv.height < window.innerHeight * 0.75)
-        }
+        const onResize = () => { setKeyboardOpen(vv.height < window.innerHeight * 0.75) }
         vv.addEventListener('resize', onResize)
         return () => vv.removeEventListener('resize', onResize)
     }, [])
@@ -288,9 +216,7 @@ export function MobileBottomNav() {
     }, [open])
 
     // Close on navigation
-    useEffect(() => {
-        setOpen(false)
-    }, [pathname])
+    useEffect(() => { setOpen(false) }, [pathname])
 
     // Fetch live stats when menu opens
     useEffect(() => {
@@ -311,7 +237,6 @@ export function MobileBottomNav() {
                 className="lg:hidden fixed bottom-0 inset-x-0 z-40"
                 style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
-                {/* Nav container — DS3 standard radius (not pill-shaped) */}
                 <div
                     className="mx-4 mb-3"
                     style={{
@@ -319,86 +244,22 @@ export function MobileBottomNav() {
                         background: 'var(--nav-bg)',
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
-                        border: '1px solid var(--border-default)',
-                        boxShadow: 'var(--shadow-lg)',
+                        border: '1.5px solid rgba(200,164,74,0.45)',
+                        boxShadow: '0 -2px 20px rgba(200,164,74,0.08), 0 8px 32px rgba(0,0,0,0.28)',
                         overflow: 'hidden',
                     }}
                 >
                     <div className="flex items-center h-16 px-2">
 
-                        {/* Hoje */}
-                        {(() => {
-                            const item = BOTTOM_ITEMS[0]
-                            const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
-                            return (
-                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
-                                    <motion.div
-                                        whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
-                                        style={{
-                                            margin: '0 4px',
-                                            height: 48,
-                                            borderRadius: 8,
-                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
-                                        }}
-                                    >
-                                        <item.icon
-                                            size={active ? 22 : 20}
-                                            className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
-                                        />
-                                        <span
-                                            className="text-[10px] font-semibold transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
-                                        >
-                                            {item.name}
-                                        </span>
-                                    </motion.div>
-                                </Link>
-                            )
-                        })()}
+                        <BottomTab item={BOTTOM_ITEMS[0]} active={!open && (pathname === BOTTOM_ITEMS[0].href || pathname?.startsWith(BOTTOM_ITEMS[0].href + '/'))} />
 
                         <NavDivider />
 
-                        {/* Imóveis */}
-                        {(() => {
-                            const item = BOTTOM_ITEMS[1]
-                            const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
-                            return (
-                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
-                                    <motion.div
-                                        whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
-                                        style={{
-                                            margin: '0 4px',
-                                            height: 48,
-                                            borderRadius: 8,
-                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
-                                        }}
-                                    >
-                                        <item.icon
-                                            size={active ? 22 : 20}
-                                            className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
-                                        />
-                                        <span
-                                            className="text-[10px] font-semibold transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
-                                        >
-                                            {item.name}
-                                        </span>
-                                    </motion.div>
-                                </Link>
-                            )
-                        })()}
+                        <BottomTab item={BOTTOM_ITEMS[1]} active={!open && (pathname === BOTTOM_ITEMS[1].href || pathname?.startsWith(BOTTOM_ITEMS[1].href + '/'))} />
 
                         <NavDivider />
 
-                        {/* Mais — center, inline, distinct background */}
+                        {/* Mais — center action button */}
                         <div className="flex-1 flex flex-col items-center justify-center gap-0.5">
                             <motion.button
                                 whileTap={{ scale: 0.88 }}
@@ -407,12 +268,11 @@ export function MobileBottomNav() {
                                 aria-expanded={open}
                                 className="flex items-center justify-center"
                                 style={{
-                                    width: 44,
-                                    height: 44,
-                                    borderRadius: 7,
-                                    background: open ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                    border: `1px solid ${open ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                    boxShadow: open ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 10,
+                                    background: open ? 'rgba(200,164,74,0.14)' : 'var(--bg-elevated)',
+                                    border: '1px solid var(--border-subtle)',
                                     transition: 'background 0.2s, border-color 0.2s',
                                 }}
                             >
@@ -425,7 +285,7 @@ export function MobileBottomNav() {
                                             exit={{ rotate: 45, opacity: 0 }}
                                             transition={{ duration: 0.18 }}
                                         >
-                                            <X size={20} color="var(--accent-400)" strokeWidth={2.5} />
+                                            <X size={18} color="var(--accent-400)" strokeWidth={2.5} />
                                         </motion.div>
                                     ) : (
                                         <motion.div
@@ -435,7 +295,7 @@ export function MobileBottomNav() {
                                             exit={{ scale: 0.7, opacity: 0 }}
                                             transition={{ duration: 0.18 }}
                                         >
-                                            <MoreHorizontal size={20} style={{ color: 'var(--text-tertiary)' }} strokeWidth={2} />
+                                            <MoreHorizontal size={18} style={{ color: 'var(--text-tertiary)' }} strokeWidth={2} />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -450,75 +310,11 @@ export function MobileBottomNav() {
 
                         <NavDivider />
 
-                        {/* Leads */}
-                        {(() => {
-                            const item = BOTTOM_ITEMS[2]
-                            const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
-                            return (
-                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
-                                    <motion.div
-                                        whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
-                                        style={{
-                                            margin: '0 4px',
-                                            height: 48,
-                                            borderRadius: 8,
-                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
-                                        }}
-                                    >
-                                        <item.icon
-                                            size={active ? 22 : 20}
-                                            className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
-                                        />
-                                        <span
-                                            className="text-[10px] font-semibold transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
-                                        >
-                                            {item.name}
-                                        </span>
-                                    </motion.div>
-                                </Link>
-                            )
-                        })()}
+                        <BottomTab item={BOTTOM_ITEMS[2]} active={!open && (pathname === BOTTOM_ITEMS[2].href || pathname?.startsWith(BOTTOM_ITEMS[2].href + '/'))} />
 
                         <NavDivider />
 
-                        {/* Connect */}
-                        {(() => {
-                            const item = BOTTOM_ITEMS[3]
-                            const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
-                            return (
-                                <Link key={item.href} href={item.href} className="flex-1 relative" aria-label={`Navegar para ${item.name}`}>
-                                    <motion.div
-                                        whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
-                                        style={{
-                                            margin: '0 4px',
-                                            height: 48,
-                                            borderRadius: 8,
-                                            background: active ? 'rgba(200,164,74,0.10)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${active ? 'var(--border-gold-strong)' : 'var(--border-gold)'}`,
-                                            boxShadow: active ? 'inset 0 0 0 1px rgba(200,164,74,0.24)' : 'inset 0 0 0 1px rgba(200,164,74,0.10)',
-                                        }}
-                                    >
-                                        <item.icon
-                                            size={active ? 22 : 20}
-                                            className="transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
-                                        />
-                                        <span
-                                            className="text-[10px] font-semibold transition-colors duration-150"
-                                            style={{ color: active ? 'var(--accent-400)' : 'var(--nav-inactive)' }}
-                                        >
-                                            {item.name}
-                                        </span>
-                                    </motion.div>
-                                </Link>
-                            )
-                        })()}
+                        <BottomTab item={BOTTOM_ITEMS[3]} active={!open && (pathname === BOTTOM_ITEMS[3].href || pathname?.startsWith(BOTTOM_ITEMS[3].href + '/'))} />
 
                     </div>
                 </div>
@@ -551,9 +347,7 @@ export function MobileBottomNav() {
                             dragConstraints={{ top: 0 }}
                             dragElastic={{ top: 0, bottom: 0.35 }}
                             onDragEnd={(_, info) => {
-                                if (info.offset.y > 100 || info.velocity.y > 400) {
-                                    setOpen(false)
-                                }
+                                if (info.offset.y > 100 || info.velocity.y > 400) setOpen(false)
                             }}
                             initial={{ y: '100%' }}
                             animate={{ y: 0 }}
@@ -579,14 +373,12 @@ export function MobileBottomNav() {
                                 className="flex-shrink-0 touch-none cursor-grab active:cursor-grabbing"
                                 onPointerDown={e => dragControls.start(e)}
                             >
-                                {/* Drag handle */}
                                 <div className="flex justify-center pt-3 pb-0">
                                     <div
                                         className="w-9 h-[3px]"
                                         style={{ borderRadius: 'var(--r-full)', background: 'var(--border-strong)' }}
                                     />
                                 </div>
-                                {/* Brand row */}
                                 <div
                                     className="flex items-center justify-between px-4 pt-3 pb-3"
                                     style={{ borderBottom: '1px solid var(--border-subtle)' }}
@@ -614,7 +406,6 @@ export function MobileBottomNav() {
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        {/* Notification bell */}
                                         <Link
                                             href="/backoffice/notificacoes"
                                             onClick={() => setOpen(false)}
@@ -628,10 +419,6 @@ export function MobileBottomNav() {
                                             }}
                                         >
                                             <Bell size={14} style={{ color: 'var(--text-tertiary)' }} />
-                                            <span
-                                                className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 text-[10px] font-bold text-white flex items-center justify-center rounded-full"
-                                                style={{ background: '#FF3B30', border: '2px solid var(--bg-surface)', padding: '0 3px', lineHeight: 1 }}
-                                            />
                                         </Link>
                                         <button
                                             onClick={() => setOpen(false)}
@@ -668,14 +455,11 @@ export function MobileBottomNav() {
                                             { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--accent-400)', bg: 'rgba(200,164,74,0.12)' },
                                             { label: 'Imóveis', value: stats.imoveis, color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
                                             { label: 'Leads', value: stats.leads, color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
-                                        ].map((w, i) => (
+                                        ].map(w => (
                                             <div
                                                 key={w.label}
                                                 className="flex-1 rounded-md px-3 py-2.5"
-                                                style={{
-                                                    background: w.bg,
-                                                    border: `1px solid ${w.color}20`,
-                                                }}
+                                                style={{ background: w.bg, border: `1px solid ${w.color}20` }}
                                             >
                                                 <p className="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--text-tertiary)' }}>
                                                     {w.label}
@@ -688,14 +472,13 @@ export function MobileBottomNav() {
                                     </div>
                                 </motion.div>
 
-                                {/* Quick Create — premium 2-column launcher */}
+                                {/* ── Quick Create ── */}
                                 <motion.div
                                     className="pt-3 px-4"
                                     initial={{ opacity: 0, y: 12 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.05, duration: 0.28 }}
                                 >
-                                    {/* Section label */}
                                     <div className="flex items-center gap-2.5 mb-3">
                                         <div style={{ width: 4, height: 12, borderRadius: 7, background: 'var(--accent-400)', flexShrink: 0 }} />
                                         <span style={{
@@ -710,7 +493,6 @@ export function MobileBottomNav() {
                                         <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
                                     </div>
 
-                                    {/* 2-column grid — gap-2 + px-2 fit Samsung S25 Ultra (412px) */}
                                     <div className="grid grid-cols-2 gap-2 w-full">
                                         {QUICK_CREATE.map((item, i) => (
                                             <motion.div
@@ -731,22 +513,7 @@ export function MobileBottomNav() {
                                                             border: '1px solid var(--border-subtle)',
                                                             transition: 'border-color 0.15s, box-shadow 0.15s',
                                                         }}
-                                                        onHoverStart={e => {
-                                                            const el = (e.target as HTMLElement).closest('[data-quick-card]') as HTMLElement | null
-                                                            if (el) {
-                                                                el.style.borderColor = 'rgba(200,164,74,0.45)'
-                                                                el.style.boxShadow = '0 2px 10px rgba(200,164,74,0.10)'
-                                                            }
-                                                        }}
-                                                        onHoverEnd={e => {
-                                                            const el = (e.target as HTMLElement).closest('[data-quick-card]') as HTMLElement | null
-                                                            if (el) {
-                                                                el.style.borderColor = ''
-                                                                el.style.boxShadow = ''
-                                                            }
-                                                        }}
                                                     >
-                                                        {/* Colored icon box */}
                                                         <div
                                                             className="flex-shrink-0 flex items-center justify-center"
                                                             style={{
@@ -758,8 +525,6 @@ export function MobileBottomNav() {
                                                         >
                                                             <item.icon size={14} style={{ color: item.color }} />
                                                         </div>
-
-                                                        {/* Text — truncated to prevent overflow on narrow screens */}
                                                         <div className="flex-1 min-w-0 overflow-hidden">
                                                             <p className="text-[11px] font-semibold leading-tight truncate"
                                                                 style={{ color: 'var(--text-primary)' }}>
@@ -777,7 +542,7 @@ export function MobileBottomNav() {
                                     </div>
                                 </motion.div>
 
-                                {/* ── GROUPS as Netflix horizontal rows ── */}
+                                {/* ── All sections as Netflix horizontal rows ── */}
                                 {GROUPS.map((group, gi) => (
                                     <motion.div
                                         key={group.label}
@@ -794,7 +559,7 @@ export function MobileBottomNav() {
                                                     <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
                                                         <motion.div whileTap={{ scale: 0.88 }}>
                                                             <NetflixItemCard
-                                                                name={item.name}
+                                                                name={item.label}
                                                                 icon={item.icon}
                                                                 color={group.color}
                                                                 bg={group.bg}

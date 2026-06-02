@@ -109,6 +109,21 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
     const area = dev.specs.areaRange !== '—' ? dev.specs.areaRange : null;
     const locationStr = [dev.location.neighborhood, dev.location.city].filter(Boolean).join(', ');
     const [isHovered, setIsHovered] = useState(false);
+    const [shareCopied, setShareCopied] = useState(false);
+
+    const handleShare = (e: import('react').MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const url = `${window.location.origin}/${lang}/imoveis/${dev.slug}`;
+        if (navigator.share) {
+            navigator.share({ title: dev.name, text: dev.shortDescription || dev.name, url }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(url).then(() => {
+                setShareCopied(true);
+                setTimeout(() => setShareCopied(false), 2000);
+            });
+        }
+    };
 
     // IMI Score
     const parseMin = (s?: string) => parseInt(String(s || '0').replace(/[^\d]/g, '')) || 0;
@@ -127,10 +142,10 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
 
     return (
         <motion.article
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.5, delay: (index % 6) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, margin: '0px' }}
+            transition={{ duration: 0.3, delay: (index % 6) * 0.04, ease: [0.22, 1, 0.36, 1] }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className="group relative bg-white overflow-hidden flex flex-col cursor-pointer"
@@ -220,25 +235,23 @@ function PropertyCard({ dev, lang, index = 0 }: { dev: Development; lang: string
                         transition: 'all 0.3s ease',
                     }}
                 >
-                    {[Heart, Share2].map((Icon, i) => (
-                        <button
-                            key={i}
-                            onClick={e => e.preventDefault()}
-                            aria-label={i === 0 ? 'Favoritar' : 'Compartilhar'}
-                            className="w-[44px] h-[44px] sm:w-[34px] sm:h-[34px] rounded-full flex items-center justify-center cursor-pointer border-none active:scale-[0.92]"
-                            style={{
-                                background: 'rgba(255,255,255,0.85)',
-                                backdropFilter: 'blur(8px)',
-                                color: '#5A6577',
-                                transition: 'all 0.2s ease',
-                                WebkitTapHighlightColor: 'transparent',
-                            }}
-                            onMouseEnter={e => { (e.target as HTMLElement).style.background = '#fff'; (e.target as HTMLElement).style.transform = 'scale(1.1)'; }}
-                            onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.85)'; (e.target as HTMLElement).style.transform = 'scale(1)'; }}
-                        >
-                            <Icon size={15} />
-                        </button>
-                    ))}
+                    <button
+                        onClick={e => e.preventDefault()}
+                        aria-label="Favoritar"
+                        className="w-[44px] h-[44px] sm:w-[34px] sm:h-[34px] rounded-full flex items-center justify-center cursor-pointer border-none active:scale-[0.92]"
+                        style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', color: '#5A6577', transition: 'all 0.2s ease', WebkitTapHighlightColor: 'transparent' }}
+                    >
+                        <Heart size={15} />
+                    </button>
+                    <button
+                        onClick={handleShare}
+                        aria-label={shareCopied ? 'Link copiado!' : 'Compartilhar'}
+                        title={shareCopied ? 'Link copiado!' : 'Compartilhar'}
+                        className="w-[44px] h-[44px] sm:w-[34px] sm:h-[34px] rounded-full flex items-center justify-center cursor-pointer border-none active:scale-[0.92]"
+                        style={{ background: shareCopied ? '#C8A44A' : 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', color: shareCopied ? '#fff' : '#5A6577', transition: 'all 0.2s ease', WebkitTapHighlightColor: 'transparent' }}
+                    >
+                        <Share2 size={15} />
+                    </button>
                 </div>
 
                 {/* Property type chip — bottom right */}
@@ -1046,12 +1059,12 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
                 {/* Search + Filters — brand kit panel */}
                 <div
-                    className="p-5 mb-6"
+                    className="px-5 pt-5 pb-5 mb-5"
                     style={{
                         borderRadius: R.panel,
                         background: CARD_BG,
                         border: `2px solid ${BORDER}`,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)',
                     }}
                 >
                     {/* Category tabs — brand kit Lbtn style */}
@@ -1060,7 +1073,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <button
                                 key={tab.value}
                                 onClick={() => setFilters(f => ({ ...f, listingCategory: tab.value }))}
-                                className="h-10 px-5 text-[11px] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all duration-200"
+                                className="h-9 px-4 text-[11px] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all duration-200"
                                 style={{
                                     borderRadius: R.btn,
                                     background: filters.listingCategory === tab.value ? NAVY : 'transparent',
@@ -1075,132 +1088,135 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     </div>
 
                     {/* Search row — brand kit Linp style */}
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="flex-1 flex items-center gap-3 px-4 h-[48px] transition-all duration-300"
+                    <div className="flex items-center gap-2.5 mb-4">
+                        <div className="flex-1 flex items-center gap-3 px-4 h-[44px] transition-all duration-300"
                             style={{ borderRadius: R.btn, background: PAGE_BG, border: `2px solid ${BORDER}` }}
-                            onFocus={e => { e.currentTarget.style.borderColor = NAVY; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(11,25,40,0.08)'; }}
+                            onFocus={e => { e.currentTarget.style.borderColor = NAVY; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(11,25,40,0.07)'; }}
                             onBlur={e => { e.currentTarget.style.borderColor = BORDER; e.currentTarget.style.boxShadow = 'none'; }}
                         >
-                            <Search size={16} style={{ color: TEXT_MUTED, flexShrink: 0 }} />
+                            <Search size={15} style={{ color: TEXT_MUTED, flexShrink: 0 }} />
                             <input
                                 type="text"
                                 placeholder="Buscar por nome, bairro, cidade ou tipo…"
                                 value={filters.search}
                                 onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
                                 className="flex-1 bg-transparent border-none outline-none text-sm font-medium"
-                                style={{ color: TEXT_PRIMARY, fontFamily: "'Outfit', system-ui, sans-serif" }}
+                                style={{ color: TEXT_PRIMARY }}
                             />
                             {filters.search && (
                                 <button onClick={() => setFilters(f => ({ ...f, search: '' }))}
                                     className="bg-none border-none cursor-pointer flex p-1 transition-colors" style={{ color: TEXT_MUTED, borderRadius: R.btn }}>
-                                    <X size={15} />
+                                    <X size={14} />
                                 </button>
                             )}
                         </div>
                         <button
                             onClick={() => {/* already filtering live */ }}
-                            className="h-[48px] px-7 text-[11px] font-bold tracking-[0.1em] uppercase text-white cursor-pointer flex-shrink-0 transition-all duration-300 flex items-center gap-2"
-                            style={{ borderRadius: R.btn, background: NAVY, border: 'none', boxShadow: '0 2px 8px rgba(11,25,40,0.2)' }}>
-                            <Search size={14} /> Buscar
+                            className="h-[44px] px-6 text-[11px] font-bold tracking-[0.1em] uppercase text-white cursor-pointer flex-shrink-0 transition-all duration-200 flex items-center gap-2 hover:opacity-90"
+                            style={{ borderRadius: R.btn, background: NAVY, border: 'none', boxShadow: '0 2px 8px rgba(11,25,40,0.18)' }}>
+                            <Search size={13} /> Buscar
                         </button>
                     </div>
 
-                    {/* Filter controls — brand kit Lbtn-sec chips */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                        {/* Tipo */}
-                        {['Apto', 'Casa', 'Flat', 'Cobertura', 'Garden'].map(t => {
-                            const val = t.toLowerCase();
-                            const active = filters.type.includes(val);
-                            return (
-                                <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
-                                    className="flex items-center gap-1.5 h-[36px] px-4 text-[11px] font-semibold cursor-pointer transition-all duration-300"
+                    {/* Filter controls — structured with group labels */}
+                    <div className="space-y-2.5">
+                        {/* Row 1: Tipo + Quartos */}
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[9px] font-bold tracking-[0.14em] uppercase flex items-center gap-1 whitespace-nowrap" style={{ color: TEXT_MUTED }}>
+                                <Home size={10} style={{ color: TEXT_MUTED }} /> Tipo
+                            </span>
+                            {['Apto', 'Casa', 'Flat', 'Cobertura', 'Garden'].map(t => {
+                                const val = t.toLowerCase();
+                                const active = filters.type.includes(val);
+                                return (
+                                    <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
+                                        className="h-[34px] px-3.5 text-[11px] font-semibold cursor-pointer transition-all duration-200"
+                                        style={{
+                                            borderRadius: R.btn,
+                                            background: active ? NAVY : CARD_BG,
+                                            color: active ? '#fff' : TEXT_SUB,
+                                            border: `2px solid ${active ? NAVY : BORDER}`,
+                                        }}>
+                                        {t}
+                                    </button>
+                                );
+                            })}
+
+                            <div className="w-px h-5 mx-0.5" style={{ background: BORDER_LIGHT }} />
+
+                            <span className="text-[9px] font-bold tracking-[0.14em] uppercase flex items-center gap-1 whitespace-nowrap" style={{ color: TEXT_MUTED }}>
+                                <Bed size={10} style={{ color: TEXT_MUTED }} /> Quartos
+                            </span>
+                            {[null, 1, 2, 3, 4].map(n => (
+                                <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: f.bedrooms === n ? null : n }))}
+                                    className="h-[34px] px-3.5 text-[11px] font-semibold cursor-pointer transition-all duration-200"
                                     style={{
                                         borderRadius: R.btn,
-                                        background: active ? NAVY : CARD_BG,
-                                        color: active ? '#fff' : TEXT_SUB,
-                                        border: `2px solid ${active ? NAVY : BORDER}`,
+                                        background: filters.bedrooms === n ? NAVY : CARD_BG,
+                                        color: filters.bedrooms === n ? '#fff' : TEXT_SUB,
+                                        border: `2px solid ${filters.bedrooms === n ? NAVY : BORDER}`,
                                     }}>
-                                    <Home size={12} style={{ color: active ? 'rgba(255,255,255,0.7)' : TEXT_MUTED }} />
-                                    {t}
+                                    {n === null ? 'Todos' : `${n}+`}
                                 </button>
-                            );
-                        })}
-
-                        {/* Separator */}
-                        <div className="w-px h-6" style={{ background: BORDER_LIGHT }} />
-
-                        {/* Quartos */}
-                        {[null, 1, 2, 3, 4].map(n => (
-                            <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: f.bedrooms === n ? null : n }))}
-                                className="flex items-center gap-1.5 h-[36px] px-3.5 text-[11px] font-semibold cursor-pointer transition-all duration-300"
-                                style={{
-                                    borderRadius: R.btn,
-                                    background: filters.bedrooms === n ? NAVY : CARD_BG,
-                                    color: filters.bedrooms === n ? '#fff' : TEXT_SUB,
-                                    border: `2px solid ${filters.bedrooms === n ? NAVY : BORDER}`,
-                                }}>
-                                {n === null ? <><Bed size={12} style={{ color: TEXT_MUTED }} /> Quartos</> : `${n}+`}
-                            </button>
-                        ))}
-
-                        {/* Separator */}
-                        <div className="w-px h-6" style={{ background: BORDER_LIGHT }} />
-
-                        {/* Price range inline */}
-                        <div className="flex items-center gap-1.5 h-[36px] px-3" style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG }}>
-                            <DollarSign size={12} style={{ color: TEXT_MUTED }} />
-                            <input type="number" placeholder="Mín" value={filters.priceRange[0] > 0 ? filters.priceRange[0] : ''}
-                                onChange={e => setFilters(f => ({ ...f, priceRange: [Number(e.target.value) || 0, f.priceRange[1]] }))}
-                                className="w-[70px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
-                            <span className="text-[11px]" style={{ color: BORDER }}>—</span>
-                            <input type="number" placeholder="Máx" value={filters.priceRange[1] < 10000000 ? filters.priceRange[1] : ''}
-                                onChange={e => setFilters(f => ({ ...f, priceRange: [f.priceRange[0], Number(e.target.value) || 10000000] }))}
-                                className="w-[70px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
+                            ))}
                         </div>
 
-                        {/* Area range inline */}
-                        <div className="flex items-center gap-1.5 h-[36px] px-3" style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG }}>
-                            <Ruler size={12} style={{ color: TEXT_MUTED }} />
-                            <input type="number" placeholder="m² mín" value={filters.areaRange[0] > 0 ? filters.areaRange[0] : ''}
-                                onChange={e => setFilters(f => ({ ...f, areaRange: [Number(e.target.value) || 0, f.areaRange[1]] }))}
-                                className="w-[55px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
-                            <span className="text-[11px]" style={{ color: BORDER }}>—</span>
-                            <input type="number" placeholder="máx" value={filters.areaRange[1] < 500 ? filters.areaRange[1] : ''}
-                                onChange={e => setFilters(f => ({ ...f, areaRange: [f.areaRange[0], Number(e.target.value) || 500] }))}
-                                className="w-[55px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
-                        </div>
+                        {/* Row 2: Price + Area + Clear */}
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <div className="flex items-center gap-1.5 h-[34px] px-3" style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG }}>
+                                <DollarSign size={11} style={{ color: TEXT_MUTED }} />
+                                <input type="number" placeholder="Min" value={filters.priceRange[0] > 0 ? filters.priceRange[0] : ''}
+                                    onChange={e => setFilters(f => ({ ...f, priceRange: [Number(e.target.value) || 0, f.priceRange[1]] }))}
+                                    className="w-[65px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
+                                <span className="text-[11px]" style={{ color: BORDER }}>—</span>
+                                <input type="number" placeholder="Máx" value={filters.priceRange[1] < 10000000 ? filters.priceRange[1] : ''}
+                                    onChange={e => setFilters(f => ({ ...f, priceRange: [f.priceRange[0], Number(e.target.value) || 10000000] }))}
+                                    className="w-[65px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
+                            </div>
 
-                        {activeFilterCount > 0 && (
-                            <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                                className="h-[36px] px-3 text-[11px] font-semibold cursor-pointer hover:bg-red-100 transition-all flex items-center gap-1"
-                                style={{ borderRadius: R.btn, border: '2px solid #FECACA', background: '#FEF2F2', color: '#B91C1C' }}>
-                                <X size={12} /> Limpar
-                            </button>
-                        )}
+                            <div className="flex items-center gap-1.5 h-[34px] px-3" style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG }}>
+                                <Ruler size={11} style={{ color: TEXT_MUTED }} />
+                                <input type="number" placeholder="m² mín" value={filters.areaRange[0] > 0 ? filters.areaRange[0] : ''}
+                                    onChange={e => setFilters(f => ({ ...f, areaRange: [Number(e.target.value) || 0, f.areaRange[1]] }))}
+                                    className="w-[52px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
+                                <span className="text-[11px]" style={{ color: BORDER }}>—</span>
+                                <input type="number" placeholder="máx" value={filters.areaRange[1] < 500 ? filters.areaRange[1] : ''}
+                                    onChange={e => setFilters(f => ({ ...f, areaRange: [f.areaRange[0], Number(e.target.value) || 500] }))}
+                                    className="w-[52px] bg-transparent border-none outline-none text-[12px] font-medium" style={{ color: TEXT_BODY }} />
+                            </div>
+
+                            {activeFilterCount > 0 && (
+                                <button onClick={() => setFilters(DEFAULT_FILTERS)}
+                                    className="h-[34px] px-3 text-[11px] font-semibold cursor-pointer hover:bg-red-100 transition-all flex items-center gap-1.5"
+                                    style={{ borderRadius: R.btn, border: '2px solid #FECACA', background: '#FEF2F2', color: '#B91C1C' }}>
+                                    <X size={11} /> Limpar filtros
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
 
                 {/* Results toolbar */}
                 <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                        <span className="text-[22px] text-[#0B1928] font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                    <div className="flex items-center gap-2.5">
+                        <span className="text-[20px] font-bold tabular-nums" style={{ color: TEXT_PRIMARY, fontFamily: "'JetBrains Mono', monospace", letterSpacing: '-0.04em' }}>
                             {filteredDevelopments.length}
                         </span>
-                        <span className="text-sm text-[#948F84] font-medium">
+                        <span className="text-[13px] font-medium" style={{ color: TEXT_MUTED }}>
                             imóveis encontrados
                         </span>
                         {activeFilterCount > 0 && (
-                            <span className="text-[10px] text-[#0B1928] font-bold bg-[#F0EDE8] border border-[#E2E0DB] rounded-full px-2.5 py-0.5">
+                            <span className="text-[10px] font-bold px-2.5 py-1" style={{ color: NAVY, background: '#E8EDF5', borderRadius: 20 }}>
                                 {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''}
                             </span>
                         )}
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* Sort — brand kit Linp */}
+                        {/* Sort */}
                         <select
                             value={filters.sort}
                             onChange={e => setFilters(f => ({ ...f, sort: e.target.value as FilterState['sort'] }))}
-                            className="px-4 py-2.5 text-[12px] font-medium cursor-pointer outline-none appearance-none pr-8 transition-all duration-300"
+                            className="h-[36px] px-3.5 text-[12px] font-medium cursor-pointer outline-none appearance-none pr-8 transition-all duration-200"
                             style={{
                                 borderRadius: R.btn,
                                 background: PAGE_BG,
@@ -1208,26 +1224,26 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 color: TEXT_BODY,
                                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23948F84' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
                                 backgroundRepeat: 'no-repeat',
-                                backgroundPosition: 'right 12px center',
+                                backgroundPosition: 'right 10px center',
                             }}>
                             <option value="relevant">Relevância</option>
                             <option value="newest">Mais Recentes</option>
                             <option value="price-asc">Menor Preço</option>
                             <option value="price-desc">Maior Preço</option>
                         </select>
-                        {/* View toggle — brand kit */}
-                        <div className="flex p-1" style={{ background: CARD_BG, border: `2px solid ${BORDER}`, borderRadius: R.btn + 2 }}>
+                        {/* View toggle */}
+                        <div className="flex p-[3px]" style={{ background: CARD_BG, border: `2px solid ${BORDER}`, borderRadius: R.btn + 2 }}>
                             {([['grid', Grid3X3, 'Grade'], ['map', Map, 'Mapa']] as [string, typeof Grid3X3, string][]).map(([mode, Icon, lbl]) => (
                                 <button key={mode}
                                     onClick={() => { setViewMode(mode as 'grid' | 'map'); if (mode === 'map') setSelectedId(null); }}
-                                    className="flex items-center gap-1.5 h-8 px-4 text-[11px] font-bold tracking-[0.05em] uppercase cursor-pointer transition-all duration-300"
+                                    className="flex items-center gap-1.5 h-[30px] px-3.5 text-[11px] font-bold tracking-[0.05em] uppercase cursor-pointer transition-all duration-200"
                                     style={{
                                         borderRadius: R.btn,
                                         background: viewMode === mode ? NAVY : 'transparent',
                                         color: viewMode === mode ? '#fff' : TEXT_SUB,
-                                        boxShadow: viewMode === mode ? '0 2px 8px rgba(11,25,40,0.2)' : 'none',
+                                        boxShadow: viewMode === mode ? '0 1px 6px rgba(11,25,40,0.18)' : 'none',
                                     }}>
-                                    <Icon size={13} />
+                                    <Icon size={12} />
                                     {lbl}
                                 </button>
                             ))}
@@ -1310,11 +1326,11 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <div ref={sentinelRef} className="flex justify-center mt-10">
                                 <button
                                     onClick={() => setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, filteredDevelopments.length))}
-                                    className="flex items-center gap-2 h-11 px-7 text-[11px] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all"
+                                    className="flex items-center gap-2 h-[38px] px-6 text-[11px] font-bold tracking-[0.08em] uppercase cursor-pointer transition-all hover:border-[#948F84]"
                                     style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_SUB }}>
-                                    <ChevronDown size={16} />
+                                    <ChevronDown size={14} />
                                     Carregar mais
-                                    <span className="text-xs opacity-60">({visibleCount} de {filteredDevelopments.length})</span>
+                                    <span className="text-[10px] opacity-50 font-normal">({visibleCount} de {filteredDevelopments.length})</span>
                                 </button>
                             </div>
                         )}

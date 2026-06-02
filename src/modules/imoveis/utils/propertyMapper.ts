@@ -76,7 +76,7 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
 
     // Developer Logic
     // If returned from join, use developers object. Otherwise check for flat fields.
-    const developerName = dbProp.developers?.name || dbProp.developer_name || 'IMI - Inteligência Imobiliária';
+    const developerName = dbProp.developers?.name || dbProp.developer_name || dbProp.developer || 'IMI - Inteligência Imobiliária';
     const developerLogo = dbProp.developers?.logo_url || dbProp.developers?.logo || dbProp.developer_logo || null;
 
     return {
@@ -120,8 +120,10 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             videos: videos,
             floorPlans: floorPlans,
             virtualTour: dbProp.virtual_tour_url,
-            brochure: dbProp.brochure_url
+            brochure: dbProp.brochure_url,
+            heroVideo: imagesJson.hero_video || undefined,
         },
+        propertyType: dbProp.type || undefined,
         units: [], // Units are loaded separately on detail view if needed
         tags: Array.isArray(dbProp.tags) ? dbProp.tags : [],
         order: dbProp.display_order || 0,

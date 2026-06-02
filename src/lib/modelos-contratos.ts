@@ -280,6 +280,40 @@ export const MODELOS_CONTRATOS: ModeloContrato[] = [
 
   // ════════ PARCERIA ════════
   {
+    id: 'corretagem-parceira', categoria: 'parceria', popular: true,
+    nome: 'Prestação de Serviços — Imobiliária Parceira', nome_en: 'Real Estate Brokerage Services Agreement',
+    descricao: 'Contrato de prestação de serviços de corretagem entre corretor e imobiliária parceira. Conforme modelo Mano Imóveis: comissão por empreendimento, repasse em 3 dias úteis após pagamento da construtora, NF prévia obrigatória.',
+    jurisdicao: 'BR', idiomas: ['pt'], icon: 'Building2', cor: '#E8A87C',
+    tags: ['corretagem', 'imobiliária parceira', 'comissão', 'repasse', 'NF'],
+    campos: [
+      // CONTRATANTE (imobiliária)
+      { key: 'contratante_razao_social', label: 'Razão social da imobiliária', tipo: 'text', required: true, section: 'objeto', width: 'full', placeholder: 'Ex: Severino José Alves Paes Imóveis Eirelle' },
+      { key: 'contratante_cnpj', label: 'CNPJ', tipo: 'text', required: true, section: 'objeto', width: 'half', placeholder: '00.000.000/0001-00' },
+      { key: 'contratante_endereco', label: 'Endereço da imobiliária', tipo: 'text', required: true, section: 'objeto', width: 'full' },
+      { key: 'contratante_representante', label: 'Representante legal', tipo: 'text', required: true, section: 'objeto', width: 'full' },
+      // CONTRATADO (corretor/IMI)
+      { key: 'corretor_nome', label: 'Nome do corretor / empresa', tipo: 'text', required: true, section: 'objeto', width: 'full' },
+      { key: 'corretor_cpf_cnpj', label: 'CPF / CNPJ do corretor', tipo: 'text', required: true, section: 'objeto', width: 'half' },
+      { key: 'corretor_creci', label: 'CRECI', tipo: 'text', required: true, section: 'objeto', width: 'half' },
+      { key: 'corretor_estado_civil', label: 'Estado civil', tipo: 'text', required: false, section: 'objeto', width: 'third' },
+      { key: 'corretor_email', label: 'E-mail', tipo: 'text', required: false, section: 'objeto', width: 'half' },
+      { key: 'corretor_telefone', label: 'Telefone / WhatsApp', tipo: 'text', required: false, section: 'objeto', width: 'half' },
+      // DADOS BANCÁRIOS
+      { key: 'banco_nome', label: 'Banco', tipo: 'text', required: true, section: 'valores', width: 'third' },
+      { key: 'banco_agencia', label: 'Agência', tipo: 'text', required: true, section: 'valores', width: 'third' },
+      { key: 'banco_conta', label: 'Conta', tipo: 'text', required: true, section: 'valores', width: 'third' },
+      // COMISSÃO
+      { key: 'prazo_repasse_dias_uteis', label: 'Prazo de repasse (dias úteis após pagamento)', tipo: 'number', required: true, section: 'valores', width: 'half', placeholder: '3' },
+      { key: 'prazo_pagamento_min', label: 'Prazo mínimo pagamento (dias após NF)', tipo: 'number', required: true, section: 'valores', width: 'half', placeholder: '12' },
+      { key: 'prazo_pagamento_max', label: 'Prazo máximo pagamento (dias após NF)', tipo: 'number', required: true, section: 'valores', width: 'half', placeholder: '30' },
+      // VIGÊNCIA
+      { key: 'prazo_contrato', label: 'Vigência', tipo: 'select', required: true, section: 'prazos', opcoes: ['Prazo indeterminado', 'Determinado — preencha abaixo'], width: 'full' },
+      { key: 'foro', label: 'Foro de eleição', tipo: 'text', required: true, section: 'prazos', width: 'full', placeholder: 'Ex: Comarca de Garanhuns/PE' },
+      { key: 'peculiaridades', label: 'Cláusulas especiais / observações', tipo: 'textarea', required: false, section: 'condicoes', width: 'full' },
+    ],
+  },
+
+  {
     id: 'parceria-corretores', categoria: 'parceria', popular: true,
     nome: 'Parceria entre Corretores', nome_en: 'Co-brokerage Agreement',
     descricao: 'Split de comissão para co-corretagem. Define responsabilidades, lead, atendimento e confidencialidade.',

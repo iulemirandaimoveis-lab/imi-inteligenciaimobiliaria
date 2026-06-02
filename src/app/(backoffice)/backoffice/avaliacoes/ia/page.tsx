@@ -118,7 +118,11 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
             const content = data.content || ''
             setAiContent(content)
             setEditableContent(content)
-            setAiMeta({ tokens: data.tokens, model: data.model })
+            const tokensObj = data.tokens as { input?: number; output?: number } | number | undefined
+            const totalTokens = typeof tokensObj === 'object' && tokensObj !== null
+                ? (tokensObj.input || 0) + (tokensObj.output || 0)
+                : (typeof tokensObj === 'number' ? tokensObj : 0)
+            setAiMeta({ tokens: totalTokens, model: data.model })
             setCurrentStep(3)
         } catch (e: unknown) {
             toast.error('Erro ao analisar: ' + (e instanceof Error ? e.message : String(e)))
@@ -135,15 +139,25 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    tipo: propertyForm.type,
-                    endereco: propertyForm.address,
-                    cliente: propertyForm.clientName,
-                    area: propertyForm.area ? parseFloat(propertyForm.area) : null,
-                    laudo_ia: content,
+                    tipo_imovel: propertyForm.type,
+                    endereco: propertyForm.address || 'N/A',
+                    bairro: 'N/A',
+                    finalidade: 'Venda',
+                    cliente_nome: propertyForm.clientName || undefined,
+                    cliente_cpf_cnpj: propertyForm.clientCpf || undefined,
+                    area_privativa: propertyForm.area ? parseFloat(propertyForm.area) : null,
+                    quartos: propertyForm.bedrooms ? parseInt(propertyForm.bedrooms) : null,
+                    banheiros: propertyForm.bathrooms ? parseInt(propertyForm.bathrooms) : null,
+                    vagas: propertyForm.parking ? parseInt(propertyForm.parking) : null,
+                    andar: propertyForm.floor || undefined,
+                    laudo_content: content,
                     status: 'rascunho',
                 }),
             })
-            if (!res.ok) throw new Error('Erro ao salvar')
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}))
+                throw new Error(err.error || 'Erro ao salvar')
+            }
             toast.success('Laudo salvo com sucesso!')
             router.push('/backoffice/avaliacoes')
         } catch (e: unknown) {

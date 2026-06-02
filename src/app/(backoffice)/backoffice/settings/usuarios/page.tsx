@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit, MoreVertical,
-  X, Loader2, UserX, KeyRound, Lock,
+  X, Loader2, UserX, KeyRound, Lock, UserCheck, Trash2,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -34,6 +34,12 @@ interface DeactivateModal {
   user: UserRow | null
   saving: boolean
 }
+interface CredentialsModal {
+  open: boolean
+  user: UserRow | null
+  tempPassword: string
+  loading: boolean
+}
 export default function UsuariosPage() {
   const router = useRouter()
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
@@ -62,6 +68,15 @@ export default function UsuariosPage() {
   })
   const [deactivateModal, setDeactivateModal] = useState<DeactivateModal>({
     open: false, user: null, saving: false,
+  })
+  const [reactivateModal, setReactivateModal] = useState<DeactivateModal>({
+    open: false, user: null, saving: false,
+  })
+  const [deleteModal, setDeleteModal] = useState<DeactivateModal>({
+    open: false, user: null, saving: false,
+  })
+  const [credentialsModal, setCredentialsModal] = useState<CredentialsModal>({
+    open: false, user: null, tempPassword: '', loading: false,
   })
   async function loadUsers() {
     try {
@@ -148,6 +163,72 @@ export default function UsuariosPage() {
       toast.error((err instanceof Error ? err.message : 'Erro desconhecido'))
       setDeactivateModal(m => ({ ...m, saving: false }))
     }
+  }
+  // ── Reactivate handlers ────────────────────────────────────────
+  function openReactivate(user: UserRow) {
+    setReactivateModal({ open: true, user, saving: false })
+  }
+  async function handleReactivate() {
+    if (!reactivateModal.user) return
+    setReactivateModal(m => ({ ...m, saving: true }))
+    try {
+      const res = await fetch('/api/backoffice/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: reactivateModal.user.id, is_active: true }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao reativar')
+      toast.success(`Usuário "${reactivateModal.user.name}" reativado com sucesso`)
+      setReactivateModal({ open: false, user: null, saving: false })
+      setLoading(true)
+      await loadUsers()
+    } catch (err: unknown) {
+      toast.error((err instanceof Error ? err.message : 'Erro desconhecido'))
+      setReactivateModal(m => ({ ...m, saving: false }))
+    }
+  }
+  // ── Permanent delete handlers ──────────────────────────────────
+  function openDelete(user: UserRow) {
+    setDeleteModal({ open: true, user, saving: false })
+  }
+  async function handleDelete() {
+    if (!deleteModal.user) return
+    setDeleteModal(m => ({ ...m, saving: true }))
+    try {
+      const res = await fetch(`/api/backoffice/users?id=${deleteModal.user.id}&permanent=true`, {
+        method: 'DELETE',
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao excluir')
+      toast.success(`Usuário "${deleteModal.user.name}" excluído permanentemente`)
+      setDeleteModal({ open: false, user: null, saving: false })
+      setLoading(true)
+      await loadUsers()
+    } catch (err: unknown) {
+      toast.error((err instanceof Error ? err.message : 'Erro desconhecido'))
+      setDeleteModal(m => ({ ...m, saving: false }))
+    }
+  }
+  // ── Reset Access (gera senha temporária e exibe credenciais) ──
+  async function handleResetAccess(user: UserRow) {
+    setCredentialsModal({ open: false, user, tempPassword: '', loading: true })
+    try {
+      const res = await fetch('/api/admin/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user.id }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Erro ao resetar acesso')
+      setCredentialsModal({ open: true, user, tempPassword: json.temp_password, loading: false })
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao resetar acesso')
+      setCredentialsModal({ open: false, user: null, tempPassword: '', loading: false })
+    }
+  }
+  function copyToClipboard(text: string, label: string) {
+    navigator.clipboard.writeText(text).then(() => toast.success(`${label} copiado!`))
   }
   const filteredUsuarios = usuariosData.filter(user => {
     const matchesSearch =
@@ -342,32 +423,21 @@ export default function UsuariosPage() {
                             <Edit size={13} />
                             <span className="hidden sm:inline">Editar</span>
                           </button>
-                          {/* Resetar Senha */}
+                          {/* Resetar Acesso */}
                           <button
-                            onClick={async () => {
-                              if (!confirm(`Enviar link de redefinição de senha para ${user.email}?`)) return
-                              try {
-                                const res = await fetch('/api/backoffice/users', {
-                                  method: 'PATCH',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ id: user.id, action: 'reset_password' }),
-                                })
-                                const json = await res.json()
-                                if (!res.ok) throw new Error(json.error || 'Erro')
-                                toast.success(json.message || 'Link enviado com sucesso')
-                              } catch (err) {
-                                toast.error(err instanceof Error ? err.message : 'Erro ao resetar senha')
-                              }
-                            }}
-                            title="Enviar link de redefinição de senha"
-                            className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
+                            onClick={() => handleResetAccess(user)}
+                            disabled={credentialsModal.loading && credentialsModal.user?.id === user.id}
+                            title="Gerar nova senha temporária"
+                            className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110 disabled:opacity-60"
                             style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.25)', color: 'var(--gold, #C8A44A)' }}
                           >
-                            <KeyRound size={13} />
-                            <span className="hidden sm:inline">Resetar Senha</span>
+                            {credentialsModal.loading && credentialsModal.user?.id === user.id
+                              ? <Loader2 size={13} className="animate-spin" />
+                              : <KeyRound size={13} />}
+                            <span className="hidden sm:inline">Resetar Acesso</span>
                           </button>
-                          {/* Desativar */}
-                          {user.status === 'ativo' && (
+                          {/* Ativo: Desativar | Inativo: Reativar + Excluir */}
+                          {user.status === 'ativo' ? (
                             <button
                               onClick={() => openDeactivate(user)}
                               title="Desativar usuário"
@@ -377,6 +447,27 @@ export default function UsuariosPage() {
                               <UserX size={13} />
                               <span className="hidden sm:inline">Desativar</span>
                             </button>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => openReactivate(user)}
+                                title="Reativar usuário"
+                                className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
+                                style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.25)', color: 'var(--success)' }}
+                              >
+                                <UserCheck size={13} />
+                                <span className="hidden sm:inline">Reativar</span>
+                              </button>
+                              <button
+                                onClick={() => openDelete(user)}
+                                title="Excluir usuário permanentemente"
+                                className="flex items-center gap-1.5 h-9 px-3 rounded-[6px] text-xs font-medium transition-all hover:brightness-110"
+                                style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.2)', color: 'var(--error)' }}
+                              >
+                                <Trash2 size={13} />
+                                <span className="hidden sm:inline">Excluir</span>
+                              </button>
+                            </>
                           )}
                         </div>
                       </div>
@@ -457,6 +548,61 @@ export default function UsuariosPage() {
           </div>
         </div>
       )}
+      {/* ── Credentials Modal ─────────────────────────────────────── */}
+      {credentialsModal.open && credentialsModal.user && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="w-full max-w-sm rounded-xl p-6 space-y-4" style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(200,164,74,0.12)', border: '1px solid rgba(200,164,74,0.25)' }}>
+                  <KeyRound size={16} style={{ color: 'var(--gold, #C8A44A)' }} />
+                </div>
+                <h2 className="font-semibold text-sm" style={{ color: T.text }}>Credenciais de Acesso</h2>
+              </div>
+              <button onClick={() => setCredentialsModal({ open: false, user: null, tempPassword: '', loading: false })} className="w-7 h-7 flex items-center justify-center rounded hover:opacity-70" style={{ color: T.textMuted }}>
+                <X size={14} />
+              </button>
+            </div>
+            <p className="text-xs" style={{ color: T.textMuted }}>
+              Compartilhe estas credenciais com <strong style={{ color: T.text }}>{credentialsModal.user.name}</strong> de forma segura (WhatsApp, presencial).
+            </p>
+            {/* Email */}
+            <div className="rounded-lg p-3 space-y-1" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>E-mail</span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-mono" style={{ color: T.text }}>{credentialsModal.user.email}</span>
+                <button onClick={() => copyToClipboard(credentialsModal.user!.email, 'E-mail')} className="shrink-0 text-xs px-2 py-1 rounded" style={{ background: 'rgba(72,101,129,0.2)', color: T.textMuted }}>Copiar</button>
+              </div>
+            </div>
+            {/* Senha */}
+            <div className="rounded-lg p-3 space-y-1" style={{ background: 'rgba(200,164,74,0.06)', border: '1px solid rgba(200,164,74,0.2)' }}>
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--gold, #C8A44A)' }}>Senha Provisória</span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-lg font-mono font-bold tracking-widest" style={{ color: T.text }}>{credentialsModal.tempPassword}</span>
+                <button onClick={() => copyToClipboard(credentialsModal.tempPassword, 'Senha')} className="shrink-0 text-xs px-2 py-1 rounded" style={{ background: 'rgba(200,164,74,0.15)', color: 'var(--gold, #C8A44A)' }}>Copiar</button>
+              </div>
+            </div>
+            {/* Link */}
+            <div className="rounded-lg p-3 space-y-1" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>Link de Primeiro Acesso</span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs truncate" style={{ color: T.textMuted }}>/login/primeiro-acesso</span>
+                <button onClick={() => copyToClipboard(`${typeof window !== 'undefined' ? window.location.origin : ''}/login/primeiro-acesso`, 'Link')} className="shrink-0 text-xs px-2 py-1 rounded" style={{ background: 'rgba(72,101,129,0.2)', color: T.textMuted }}>Copiar</button>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const text = `Acesso IMI\nEmail: ${credentialsModal.user!.email}\nSenha: ${credentialsModal.tempPassword}\nLink: ${typeof window !== 'undefined' ? window.location.origin : ''}/login/primeiro-acesso`
+                copyToClipboard(text, 'Todas as credenciais')
+              }}
+              className="w-full h-10 rounded-lg text-sm font-semibold transition-all hover:brightness-110"
+              style={{ background: 'rgba(200,164,74,0.12)', border: '1px solid rgba(200,164,74,0.3)', color: 'var(--gold, #C8A44A)' }}
+            >
+              Copiar Tudo
+            </button>
+          </div>
+        </div>
+      )}
       {/* ── Deactivate Confirmation Modal ─────────────────────────── */}
       {deactivateModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
@@ -497,6 +643,94 @@ export default function UsuariosPage() {
               >
                 {deactivateModal.saving && <Loader2 size={14} className="animate-spin" />}
                 {deactivateModal.saving ? 'Desativando...' : 'Desativar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ── Reactivate Confirmation Modal ─────────────────────────── */}
+      {reactivateModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div
+            className="w-full max-w-sm rounded-xl p-6 space-y-5"
+            style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}
+          >
+            <div className="flex flex-col items-center text-center gap-3">
+              <div
+                className="w-12 h-12 rounded-lg flex items-center justify-center"
+                style={{ background: 'rgba(107,184,123,0.12)', border: '1px solid rgba(107,184,123,0.25)' }}
+              >
+                <UserCheck size={22} style={{ color: 'var(--success)' }} />
+              </div>
+              <div>
+                <h2 className="font-semibold text-base" style={{ color: T.text }}>Reativar Usuário</h2>
+                <p className="text-sm mt-1" style={{ color: T.textMuted }}>
+                  Tem certeza que deseja reativar <strong style={{ color: T.text }}>{reactivateModal.user?.name}</strong>?
+                  O acesso ao sistema será restaurado.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setReactivateModal({ open: false, user: null, saving: false })}
+                disabled={reactivateModal.saving}
+                className="flex-1 h-11 rounded-[6px] text-sm font-medium transition-all"
+                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleReactivate}
+                disabled={reactivateModal.saving}
+                className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
+                style={{ background: 'var(--success, #6bb87b)' }}
+              >
+                {reactivateModal.saving && <Loader2 size={14} className="animate-spin" />}
+                {reactivateModal.saving ? 'Reativando...' : 'Reativar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ── Permanent Delete Confirmation Modal ───────────────────── */}
+      {deleteModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div
+            className="w-full max-w-sm rounded-xl p-6 space-y-5"
+            style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}
+          >
+            <div className="flex flex-col items-center text-center gap-3">
+              <div
+                className="w-12 h-12 rounded-lg flex items-center justify-center"
+                style={{ background: 'rgba(229,115,115,0.12)', border: '1px solid rgba(229,115,115,0.25)' }}
+              >
+                <Trash2 size={22} style={{ color: 'var(--error)' }} />
+              </div>
+              <div>
+                <h2 className="font-semibold text-base" style={{ color: T.text }}>Excluir Usuário</h2>
+                <p className="text-sm mt-1" style={{ color: T.textMuted }}>
+                  Esta ação é <strong style={{ color: 'var(--error)' }}>irreversível</strong>. O usuário{' '}
+                  <strong style={{ color: T.text }}>{deleteModal.user?.name}</strong> será removido permanentemente do sistema.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteModal({ open: false, user: null, saving: false })}
+                disabled={deleteModal.saving}
+                className="flex-1 h-11 rounded-[6px] text-sm font-medium transition-all"
+                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleteModal.saving}
+                className="flex-1 h-11 rounded-[6px] text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
+                style={{ background: '#e57373' }}
+              >
+                {deleteModal.saving && <Loader2 size={14} className="animate-spin" />}
+                {deleteModal.saving ? 'Excluindo...' : 'Excluir Permanentemente'}
               </button>
             </div>
           </div>

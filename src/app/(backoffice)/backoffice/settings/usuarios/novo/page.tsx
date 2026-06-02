@@ -13,6 +13,7 @@ export default function NovoUsuarioPage() {
     const [form, setForm] = useState({ name: '', email: '', role: 'CORRETOR' })
     const [loading, setLoading] = useState(false)
     const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+    const [createdAccess, setCreatedAccess] = useState<{ email: string; tempPassword: string } | null>(null)
 
     useEffect(() => {
         const supabase = createClient()
@@ -43,9 +44,15 @@ export default function NovoUsuarioPage() {
             })
             const data = await response.json()
             if (!response.ok) throw new Error(data.error || 'Erro ao criar o usuário')
-            toast.success(data.message || `Convite enviado para ${form.email}. O usuário receberá um link para definir sua senha.`)
-            router.push('/backoffice/settings/usuarios')
-            router.refresh()
+            toast.success(data.message || 'Usuário criado com sucesso.')
+            if (data.temp_password) {
+                setCreatedAccess({ email: form.email.trim().toLowerCase(), tempPassword: data.temp_password })
+                toast.info('Senha provisória gerada. Copie antes de sair da tela.')
+            }
+            if (!data.temp_password) {
+                router.push('/backoffice/settings/usuarios')
+                router.refresh()
+            }
         } catch (err: unknown) {
             toast.error((err instanceof Error ? err.message : 'Erro desconhecido'))
         } finally {
@@ -149,7 +156,7 @@ export default function NovoUsuarioPage() {
                     {/* Info box */}
                     <div className="rounded-lg p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
                         <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                            O usuario recebera um email para definir sua propria senha no primeiro acesso. Nao e necessario criar uma senha manualmente.
+                            Se o envio de e-mail estiver desativado, compartilhe a senha provisoria exibida ao salvar e oriente o usuario a usar a opcao "Primeiro acesso" na tela de login.
                         </p>
                     </div>
 
@@ -174,6 +181,40 @@ export default function NovoUsuarioPage() {
                     </div>
                 </form>
             </div>
+
+            {createdAccess && (
+                <div className="rounded-lg p-5 space-y-4" style={{ background: 'rgba(72,101,129,0.1)', border: '1px solid rgba(72,101,129,0.35)' }}>
+                    <h3 className="text-sm font-semibold" style={{ color: T.text }}>Acesso provisório gerado</h3>
+                    <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                        Compartilhe com segurança com o usuário e peça para acessar <strong>/login/primeiro-acesso</strong>.
+                    </p>
+                    <div className="grid gap-2 text-xs" style={{ color: T.text }}>
+                        <div><strong>E-mail:</strong> {createdAccess.email}</div>
+                        <div><strong>Senha provisória:</strong> {createdAccess.tempPassword}</div>
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            type="button"
+                            onClick={async () => {
+                                await navigator.clipboard.writeText(`Email: ${createdAccess.email}\nSenha provisória: ${createdAccess.tempPassword}\nPrimeiro acesso: ${window.location.origin}/login/primeiro-acesso`)
+                                toast.success('Credenciais copiadas!')
+                            }}
+                            className="h-10 px-4 rounded-[6px] text-xs font-semibold"
+                            style={{ background: T.accent, color: '#fff' }}
+                        >
+                            Copiar credenciais
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => { setCreatedAccess(null); router.push('/backoffice/settings/usuarios'); router.refresh() }}
+                            className="h-10 px-4 rounded-[6px] text-xs font-medium"
+                            style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: T.elevated }}
+                        >
+                            Ir para lista de usuários
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

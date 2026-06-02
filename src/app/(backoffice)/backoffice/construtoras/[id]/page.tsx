@@ -157,7 +157,7 @@ export default function ConstrutoraDetalhesPage() {
           <button
             onClick={() => router.push('/backoffice/construtoras')}
             className="px-4 py-2 rounded-lg text-white text-sm font-medium"
-            style={{ backgroundColor: T.accent }}
+            style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             Voltar para lista
           </button>
@@ -191,7 +191,7 @@ export default function ConstrutoraDetalhesPage() {
             <Link
               href={`/backoffice/construtoras/${params.id}/editar`}
               className="flex items-center gap-2 h-10 px-5 rounded-[6px] text-white text-sm font-semibold hover:opacity-90 transition-colors"
-              style={{ backgroundColor: T.accent }}
+              style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
             >
               <Edit size={15} />
               Editar
@@ -479,7 +479,7 @@ export default function ConstrutoraDetalhesPage() {
               <Link
                 href="/backoffice/imoveis/novo"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium"
-                style={{ backgroundColor: T.accent }}
+                style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
               >
                 Criar Empreendimento
               </Link>

@@ -195,7 +195,7 @@ export default function EditarConstrutoraPage() {
           <button
             onClick={() => router.back()}
             className="mt-4 px-4 py-2 rounded-lg text-white text-sm"
-            style={{ backgroundColor: T.accent }}
+            style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             Voltar
           </button>
@@ -513,7 +513,7 @@ export default function EditarConstrutoraPage() {
             type="submit"
             disabled={saving}
             className="flex items-center gap-2 h-11 px-6 rounded-[6px] text-white font-medium transition-colors hover:opacity-90 disabled:opacity-50"
-            style={{ backgroundColor: T.accent }}
+            style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             {saving ? (
               <>

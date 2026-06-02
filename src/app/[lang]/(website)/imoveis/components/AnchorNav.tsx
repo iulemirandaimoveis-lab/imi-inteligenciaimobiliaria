@@ -42,7 +42,7 @@ export default function AnchorNav({ sections }: AnchorNavProps) {
 
     return (
         <nav
-            className="sticky top-16 z-30 overflow-x-auto no-scrollbar"
+            className="sticky top-[60px] lg:top-[68px] z-30 overflow-x-auto no-scrollbar"
             style={{
                 background: 'rgba(5,11,20,0.95)',
                 backdropFilter: 'blur(16px)',

@@ -228,14 +228,15 @@ export default function SmartNotifications() {
       {/* Slide-out panel */}
       <div
         ref={panelRef}
-        className="fixed top-0 right-0 h-full z-50 flex flex-col overflow-hidden transition-transform duration-300"
+        className="fixed top-0 right-0 z-[9999] flex flex-col overflow-hidden transition-transform duration-300"
         style={{
-          width: '380px',
+          width: '400px',
           maxWidth: '100vw',
+          height: '100dvh',
           transform: open ? 'translateX(0)' : 'translateX(100%)',
           background: 'var(--bg-elevated)',
           borderLeft: '1px solid var(--border-default)',
-          boxShadow: open ? '-8px 0 40px rgba(0,0,0,0.25)' : 'none',
+          boxShadow: open ? '-8px 0 40px rgba(0,0,0,0.35)' : 'none',
         }}
       >
         {/* Panel header */}
@@ -327,11 +328,11 @@ export default function SmartNotifications() {
                         {notifIcon(n.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                        <p className="text-xs font-semibold" style={{ color: 'var(--text-primary)', wordBreak: 'break-word' }}>
                           {n.title}
                         </p>
                         {n.message && (
-                          <p className="text-[11px] mt-0.5 leading-tight truncate" style={{ color: 'var(--text-secondary)' }}>
+                          <p className="text-[11px] mt-0.5 leading-snug" style={{ color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                             {n.message}
                           </p>
                         )}

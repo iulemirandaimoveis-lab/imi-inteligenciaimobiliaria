@@ -2,14 +2,24 @@
 
 import { useState } from 'react';
 import { Development } from '../types/development';
-import { MessageCircle, FileText, Building2, MapPin, Calendar, Download, Shield, Star } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+import { MessageCircle, FileText, Building2, MapPin, Calendar, Download, Shield, Star, BarChart3, ChevronDown, ChevronUp, TrendingUp, Droplets } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import LeadCaptureModal from './LeadCaptureModal';
 
 const GOLD = '#C8A44A';
 
+interface IMIData {
+    imiScore: number;
+    location: number;
+    liquidity: number;
+    rentabilidade: number;
+    construtora: number;
+}
+
 interface DevelopmentCTAProps {
     development: Development;
+    imiData?: IMIData;
+    whatsappPhone?: string;
 }
 
 const formatPrice = (price: number) => {
@@ -20,11 +30,16 @@ const formatPrice = (price: number) => {
     return price.toLocaleString('pt-BR');
 };
 
-export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
+export default function DevelopmentCTA({ development, imiData, whatsappPhone }: DevelopmentCTAProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [ctaType, setCtaType] = useState<'info' | 'table'>('info');
+    const [ctaType, setCtaType] = useState<'info' | 'table' | 'imi'>('info');
+    const [showIMIPreview, setShowIMIPreview] = useState(false);
 
-    const handleCTAClick = (type: 'info' | 'table') => {
+    const handleCTAClick = (type: 'info' | 'table' | 'imi') => {
+        if (type === 'imi') {
+            document.getElementById('inteligencia')?.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
         setCtaType(type);
         setIsModalOpen(true);
     };
@@ -32,10 +47,11 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
     const handleSuccess = () => {
         const messages = {
             info: `Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`,
-            table: `Olá! Gostaria de receber a tabela completa de preços do ${development.name}.`
+            table: `Olá! Gostaria de receber a tabela completa de preços do ${development.name}.`,
+            imi: `Olá! Gostaria de receber a Análise IMI completa do ${development.name}.`,
         };
         const message = encodeURIComponent(messages[ctaType]);
-        window.open(`https://wa.me/5581997230455?text=${message}`, '_blank');
+        window.open(`https://wa.me/${whatsappPhone ?? '5581997230455'}?text=${message}`, '_blank');
         setIsModalOpen(false);
     };
 
@@ -84,6 +100,22 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                             Solicitar Tabela
                         </button>
 
+                        {/* Análise IMI button */}
+                        <button
+                            onClick={() => setShowIMIPreview(v => !v)}
+                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 active:scale-[0.98]"
+                            style={{
+                                background: showIMIPreview ? '#C8A44A' : 'rgba(200,164,74,0.08)',
+                                color: showIMIPreview ? '#FFFFFF' : '#C8A44A',
+                                border: '1.5px solid rgba(200,164,74,0.35)',
+                                fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                            }}
+                        >
+                            <BarChart3 className="w-4 h-4" />
+                            Análise IMI
+                            {showIMIPreview ? <ChevronUp className="w-3.5 h-3.5 ml-auto" /> : <ChevronDown className="w-3.5 h-3.5 ml-auto" />}
+                        </button>
+
                         {development.images.brochure && (
                             <a
                                 href={development.images.brochure}
@@ -124,6 +156,64 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                         </div>
                     </div>
                 </div>
+
+            {/* IMI Analysis Preview Panel */}
+            <AnimatePresence>
+                {showIMIPreview && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                        style={{ borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(200,164,74,0.2)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
+                    >
+                        <div className="p-5">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="w-6 h-[2px] rounded-full" style={{ background: '#C8A44A' }} />
+                                <span className="text-[10px] uppercase tracking-[0.25em] font-bold" style={{ color: '#C8A44A' }}>Inteligência IMI</span>
+                            </div>
+
+                            {/* Score highlights */}
+                            <div className="grid grid-cols-2 gap-2 mb-4">
+                                {[
+                                    { label: 'Localização', score: imiData?.location ?? 72, Icon: MapPin },
+                                    { label: 'Liquidez', score: imiData?.liquidity ?? 55, Icon: Droplets },
+                                    { label: 'Rentabilidade', score: imiData?.rentabilidade ?? 55, Icon: TrendingUp },
+                                    { label: 'Construtora', score: imiData?.construtora ?? 72, Icon: Building2 },
+                                ].map(item => (
+                                    <div key={item.label} className="p-3 rounded-xl" style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.2)' }}>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#948F84' }}>{item.label}</span>
+                                            <item.Icon size={11} style={{ color: '#948F84', opacity: 0.7 }} />
+                                        </div>
+                                        <div className="flex items-end gap-1.5">
+                                            <span className="text-xl font-bold" style={{ color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{item.score}</span>
+                                            <span className="text-[10px] font-bold mb-0.5" style={{ color: '#948F84' }}>/100</span>
+                                        </div>
+                                        <div className="mt-1.5 h-1 rounded-full" style={{ background: 'rgba(11,25,40,0.08)' }}>
+                                            <div className="h-full rounded-full" style={{ width: `${item.score}%`, background: item.score >= 90 ? '#22C55E' : item.score >= 75 ? '#C8A44A' : '#EF4444' }} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <p className="text-[11px] leading-relaxed mb-4" style={{ color: '#5A6577' }}>
+                                <strong style={{ color: '#0B1928' }}>IMI Score: {imiData?.imiScore ?? '—'}/100</strong> — Análise IMI baseada em dados do empreendimento e do mercado de {development.location.city}.
+                            </p>
+
+                            <button
+                                onClick={() => handleCTAClick('imi')}
+                                className="w-full h-10 flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all"
+                                style={{ background: '#0B1928', color: '#FFFFFF', border: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+                            >
+                                <BarChart3 className="w-3.5 h-3.5" />
+                                Ver Análise Completa
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             </div>
 

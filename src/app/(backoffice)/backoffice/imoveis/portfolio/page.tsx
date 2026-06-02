@@ -198,8 +198,8 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
             <button className="desk-new-btn" style={{
               position: 'relative', overflow: 'hidden',
               display: 'flex', alignItems: 'center', gap: 8,
-              background: '#0A1624', color: '#fff',
-              border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6,
+              background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)',
+              border: '1px solid transparent', borderRadius: 6,
               padding: '10px 20px', cursor: 'pointer',
               fontFamily: 'var(--font-sans)',
               fontSize: 13, fontWeight: 600,
@@ -319,7 +319,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
               <Link href="/backoffice/imoveis/novo" style={{ textDecoration: 'none' }}>
                 <button style={{
                   position: 'relative', overflow: 'hidden',
-                  background: '#0A1624', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6,
+                  background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', border: '1px solid transparent', borderRadius: 6,
                   padding: '10px 20px', cursor: 'pointer',
                   fontFamily: 'var(--font-sans)',
                   fontSize: 13, fontWeight: 600,
@@ -532,8 +532,8 @@ function MobilePortfolio({ properties, loading }: { properties: IMIProperty[]; l
               <button style={{
                 position: 'relative', overflow: 'hidden',
                 display: 'flex', alignItems: 'center', gap: 5,
-                background: '#0A1624', color: '#fff',
-                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6,
+                background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)',
+                border: '1px solid transparent', borderRadius: 6,
                 padding: '6px 12px', cursor: 'pointer',
                 fontSize: 12, fontWeight: 600,
                 fontFamily: 'var(--font-outfit, sans-serif)',

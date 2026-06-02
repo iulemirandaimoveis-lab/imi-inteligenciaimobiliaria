@@ -5,10 +5,18 @@ import { fetchNearbyPOIs as fetchOSMPOIs, type POI as OSMPOI } from '@/lib/poi-s
 
 export const runtime = 'nodejs';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+// Lazy-initialize so the module can be imported during `next build`
+// without crashing when SUPABASE_SERVICE_ROLE_KEY is absent.
+let _supabase: ReturnType<typeof createClient> | null = null;
+function getSupabase() {
+    if (!_supabase) {
+        _supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        );
+    }
+    return _supabase;
+}
 
 // Google Places type mapping
 const GOOGLE_TYPE_MAP: Record<string, string> = {
@@ -171,7 +179,7 @@ export async function GET(request: NextRequest) {
     // Check Supabase cache — only serve if score > 0 (avoids serving stale empty results)
     if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
         try {
-            const { data: cached } = await supabase
+            const { data: cached } = await getSupabase()
                 .from('poi_cache')
                 .select('pois')
                 .eq('development_id', developmentId)
@@ -179,7 +187,8 @@ export async function GET(request: NextRequest) {
                 .gt('expires_at', new Date().toISOString())
                 .maybeSingle();
 
-            const cachedData = cached?.pois as ConvenienceData | undefined;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cachedData = (cached as any)?.pois as ConvenienceData | undefined;
             if (cachedData && cachedData.score > 0) {
                 return NextResponse.json(cachedData);
             }
@@ -200,7 +209,8 @@ export async function GET(request: NextRequest) {
 
     for (let i = 0; i < config.length; i++) {
         const cat = config[i];
-        const items: POIItem[] = settled[i].status === 'fulfilled' ? settled[i].value : [];
+        const result = settled[i];
+        const items: POIItem[] = result.status === 'fulfilled' ? result.value : [];
         const nearest = items.length > 0 ? Math.min(...items.map((p) => p.distance_meters)) : 0;
 
         categoryResults.push({
@@ -246,16 +256,17 @@ export async function GET(request: NextRequest) {
 
     // Persist to cache only when we have real data (score > 0)
     if (score > 0 && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        getSupabase()
             .from('poi_cache')
             .upsert({
                 development_id: developmentId,
                 category: imovelType,
-                pois: convenienceData,
+                pois: convenienceData as any,
                 convenience_score: score,
                 cached_at: new Date().toISOString(),
                 expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-            })
+            } as any)
             .then(({ error }) => {
                 if (error) console.warn('[POI cache] upsert failed:', error.message);
             });

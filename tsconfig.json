@@ -25,7 +25,19 @@
         "paths": {
             "@/*": [
                 "./src/*"
-            ]
+            ],
+            "@imi/cad-generator": ["./packages/imi-cad-generator/src/index.ts"],
+            "@imi/cad-generator/*": ["./packages/imi-cad-generator/src/*"],
+            "@imi/scene-adapter": ["./packages/imi-scene-adapter/src/index.ts"],
+            "@imi/scene-adapter/*": ["./packages/imi-scene-adapter/src/*"],
+            "@imi/property-metadata": ["./packages/imi-property-metadata/src/index.ts"],
+            "@imi/property-metadata/*": ["./packages/imi-property-metadata/src/*"],
+            "@imi/domain": ["./packages/imi-domain/src/index.ts"],
+            "@imi/spatial": ["./packages/imi-spatial/src/index.ts"],
+            "@imi/spatial/*": ["./packages/imi-spatial/src/*"],
+            "@imi/crm-adapter": ["./packages/imi-crm-adapter/src/index.ts"],
+            "@imi/templates": ["./templates/index.ts"],
+            "@imi/templates/*": ["./templates/*"]
         }
     },
     "include": [

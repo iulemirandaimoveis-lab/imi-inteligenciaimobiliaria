@@ -57,7 +57,7 @@ export default function Services({ dict }: ServicesProps) {
     ]
 
     return (
-        <section ref={sectionRef} className="relative py-16 lg:py-20 overflow-hidden" style={{ background: 'var(--bg-void)' }}>
+        <section ref={sectionRef} className="relative py-16 lg:py-20 overflow-hidden" style={{ background: '#0B1928' }}>
             {/* Parallax gold accent line */}
             <motion.div
                 className="absolute top-0 left-0 right-0 h-[1px]"
@@ -100,12 +100,12 @@ export default function Services({ dict }: ServicesProps) {
                         >
                             <Link
                                 href={item.href}
-                                className="group relative block rounded-2xl p-7 border border-white/[0.06] overflow-hidden transition-all duration-500 hover:border-[#C8A44A]/30 hover:shadow-[0_0_40px_rgba(200,164,74,0.06)]"
-                                style={{ background: 'var(--bg-base)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
+                                className="group relative block rounded-2xl p-7 border border-[#C8A44A]/30 shadow-[0_0_40px_rgba(200,164,74,0.06)] overflow-hidden transition-all duration-500 hover:border-white/[0.06] hover:shadow-none"
+                                style={{ background: '#0d2035', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
                             >
-                                {/* Corner glow on hover — now gold */}
+                                {/* Corner glow — visible by default, hides on hover */}
                                 <div
-                                    className="absolute top-0 right-0 w-32 h-32 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full"
+                                    className="absolute top-0 right-0 w-32 h-32 pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-700 rounded-full"
                                     style={{
                                         background: `radial-gradient(circle, ${item.glow} 0%, transparent 70%)`,
                                         filter: 'blur(20px)',
@@ -113,14 +113,14 @@ export default function Services({ dict }: ServicesProps) {
                                     }}
                                 />
 
-                                {/* Hover slide-up gold line */}
-                                <div className="absolute bottom-0 left-[10%] right-[10%] h-[2px] opacity-0 group-hover:opacity-60 transition-opacity duration-500" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
+                                {/* Gold line — visible by default, hides on hover */}
+                                <div className="absolute bottom-0 left-[10%] right-[10%] h-[2px] opacity-60 group-hover:opacity-0 transition-opacity duration-500" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }} />
 
                                 <div className="relative z-10">
                                     {/* Icon + tag */}
                                     <div className="flex items-start justify-between mb-6">
-                                        <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-white/[0.05] border border-white/[0.08] transition-all duration-500 group-hover:border-[#C8A44A]/20 group-hover:bg-[#C8A44A]/[0.06]">
-                                            <item.icon className="w-5 h-5 text-white/70 transition-colors duration-500 group-hover:text-[#C8A44A]" strokeWidth={1.5} />
+                                        <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-[#C8A44A]/[0.06] border border-[#C8A44A]/20 transition-all duration-500 group-hover:border-white/[0.08] group-hover:bg-white/[0.05]">
+                                            <item.icon className="w-5 h-5 text-[#C8A44A] transition-colors duration-500 group-hover:text-white/70" strokeWidth={1.5} />
                                         </div>
                                         <span className="text-[10px] font-bold uppercase tracking-wider bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}>
                                             {item.tag}
@@ -130,7 +130,7 @@ export default function Services({ dict }: ServicesProps) {
                                     <h3 className="text-[16px] font-bold text-white mb-2" style={{ fontFamily: 'var(--font-sans)' }}>{item.title}</h3>
                                     <p className="text-[13px] text-white/50 leading-relaxed mb-6" style={{ fontFamily: 'var(--font-sans)' }}>{item.desc}</p>
 
-                                    <div className="flex items-center gap-2 text-[12px] font-semibold transition-all duration-300 group-hover:gap-3 group-hover:text-[#C8A44A]" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}>
+                                    <div className="flex items-center gap-2 text-[12px] font-semibold transition-all duration-300 group-hover:gap-3 text-[#C8A44A] group-hover:text-white/50" style={{ fontFamily: 'var(--font-sans)' }}>
                                         Saiba mais <ArrowRight size={12} className="transition-transform duration-300 group-hover:translate-x-1" />
                                     </div>
                                 </div>

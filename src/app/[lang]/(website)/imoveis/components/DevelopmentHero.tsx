@@ -35,6 +35,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIdx, setLightboxIdx] = useState(0);
     const [copied, setCopied] = useState(false);
+    const [logoError, setLogoError] = useState(false);
 
     const openLightbox = (idx: number) => { setLightboxIdx(idx); setLightboxOpen(true); };
     const closeLightbox = useCallback(() => setLightboxOpen(false), []);
@@ -79,14 +80,25 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                 onClick={() => openLightbox(0)}
                                 className="col-span-2 row-span-2 relative overflow-hidden cursor-pointer group"
                             >
-                                <Image
-                                    src={gridImages[0]}
-                                    alt={development.name}
-                                    fill
-                                    priority
-                                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                                    sizes="50vw"
-                                />
+                                {development.images.heroVideo ? (
+                                    <video
+                                        src={development.images.heroVideo}
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <Image
+                                        src={gridImages[0]}
+                                        alt={development.name}
+                                        fill
+                                        priority
+                                        className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                                        sizes="50vw"
+                                    />
+                                )}
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                             </button>
 
@@ -124,16 +136,28 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                         {/* Mobile: single hero with swipe indicator */}
                         <button
                             onClick={() => openLightbox(0)}
-                            className="md:hidden relative w-full aspect-[16/10] overflow-hidden"
+                            className="md:hidden relative w-full overflow-hidden"
+                            style={{ aspectRatio: '16/9' }}
                         >
-                            <Image
-                                src={gridImages[0]}
-                                alt={development.name}
-                                fill
-                                priority
-                                className="object-cover"
-                                sizes="100vw"
-                            />
+                            {development.images.heroVideo ? (
+                                <video
+                                    src={development.images.heroVideo}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                            ) : (
+                                <Image
+                                    src={gridImages[0]}
+                                    alt={development.name}
+                                    fill
+                                    priority
+                                    className="object-cover"
+                                    sizes="100vw"
+                                />
+                            )}
                             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.95) 0%, rgba(5,11,20,0.7) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.1) 100%)' }} />
                         </button>
 
@@ -164,8 +188,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                 )}
 
                 {/* ── Content overlay ── */}
-                <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 md:pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.95) 0%, rgba(5,11,20,0.7) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.1) 100%)' }}>
-                    <div className="container-custom pb-8 md:pb-12 pt-6 md:pt-32 md:pointer-events-auto">
+                <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 md:pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.97) 0%, rgba(5,11,20,0.75) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.05) 100%)' }}>
+                    <div className="container-custom pb-6 md:pb-12 pt-5 md:pt-32 md:pointer-events-auto">
                         <motion.div
                             initial="hidden"
                             animate="visible"
@@ -194,13 +218,14 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                     </span>
                                 </motion.div>
 
-                                {development.developerLogo && (
+                                {development.developerLogo && !logoError && (
                                     <motion.div variants={slideUp} className="relative w-28 h-10 md:w-36 md:h-12">
                                         <Image
                                             src={development.developerLogo}
                                             alt={development.developer}
                                             fill
                                             className="object-contain object-left sm:object-right filter brightness-0 invert opacity-60"
+                                            onError={() => setLogoError(true)}
                                         />
                                     </motion.div>
                                 )}
@@ -209,7 +234,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             {/* Title */}
                             <motion.h1
                                 variants={slideUp}
-                                className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-5 leading-[1.08] tracking-tight"
+                                className="text-[28px] sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-4 leading-[1.07] tracking-tight"
                                 style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
                             >
                                 {development.name}

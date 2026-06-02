@@ -72,12 +72,16 @@ export async function GET(
 
     const evaluatorName = profile?.full_name || profile?.name || user.email || 'Avaliador'
 
+    const rawPhotos = valuation.photos as unknown
+    const photos = Array.isArray(rawPhotos) ? rawPhotos as { url: string; name?: string; caption?: string }[] : []
+
     const html = generatePTAMHtml({
       valuation,
       development: valuation.developments || null,
       comparables: comparables || [],
       result,
       evaluatorName,
+      photos,
     })
 
     return new NextResponse(html, {

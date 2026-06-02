@@ -279,7 +279,7 @@ export default function VideoCreatorPage() {
                                     onClick={() => setTab('editor')}
                                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                                     className="w-full h-10 rounded-[6px] flex items-center justify-center gap-2 text-sm font-semibold text-white"
-                                    style={{ background: T.accent }}
+                                    style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                                 >
                                     Próximo <ChevronRight size={15} />
                                 </motion.button>
@@ -357,7 +357,7 @@ export default function VideoCreatorPage() {
                                     onClick={loadComposition}
                                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                                     className="w-full h-10 rounded-[6px] flex items-center justify-center gap-2 text-sm font-semibold text-white"
-                                    style={{ background: T.accent }}
+                                    style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                                 >
                                     <Play size={15} /> Gerar Preview
                                 </motion.button>
@@ -446,7 +446,7 @@ export default function VideoCreatorPage() {
                                     onClick={() => setTab('editor')}
                                     whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                                     className="bo-btn bo-btn-primary"
-                                    style={{ background: T.accent }}
+                                    style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
                                 >
                                     <Sparkles size={14} /> Criar Vídeo
                                 </motion.button>

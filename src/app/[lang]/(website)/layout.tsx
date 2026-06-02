@@ -36,7 +36,7 @@ export default async function WebsiteLayout({
     const settings = await getGlobalSettings()
 
     return (
-        <div className="flex flex-col min-h-screen overflow-x-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="flex flex-col min-h-screen overflow-x-hidden bg-[#0B1928]" dir={isRTL ? 'rtl' : 'ltr'}>
             {/* Performance: DNS prefetch & preconnect for external origins */}
             <link rel="dns-prefetch" href="https://zocffccwjjyelwrgunhu.supabase.co" />
             <link rel="preconnect" href="https://zocffccwjjyelwrgunhu.supabase.co" crossOrigin="anonymous" />

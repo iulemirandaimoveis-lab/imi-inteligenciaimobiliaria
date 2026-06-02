@@ -5,12 +5,21 @@
  * 1. Comparativo Direto de Dados de Mercado (NBR 14653-2 §8)
  * 2. Evolutivo / Custo de Reprodução com Ross-Heidecke (NBR 14653-2 §10/§12)
  * 3. Método da Renda / Capitalização (NBR 14653-2 §11)
+ * 4. Método Involutivo / VGV (NBR 14653-2 §9)
+ * 5. Cap Rate / NOI
+ * 6. Fluxo de Caixa Descontado — DCF (NBR 14653-2 §11.3)
+ * 7. Liquidação Forçada
+ * 8. Cenários: Conservador / Realista / Agressivo
+ * 9. BDI — Benefícios e Despesas Indiretas
+ * 10. Fundo de Comércio / Ponto Comercial
  *
  * Referências:
  * - ABNT NBR 14653-1:2019 — Procedimentos gerais
  * - ABNT NBR 14653-2:2011 — Imóveis urbanos
+ * - ABNT NBR 14653-3 — Imóveis rurais
  * - IBAPE/SP — Tabela de honorários
  * - Ross-Heidecke — Depreciação de benfeitorias
+ * - João Diniz Marcello — Avaliação Mercadológica de Imóveis
  */
 
 // ── Types ─────────────────────────────────────────────────────
@@ -624,4 +633,435 @@ function inferEstado(status: string): string {
     ready: 'Regular', active: 'Regular', disponivel: 'Regular',
   }
   return map[status] ?? 'Regular'
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NOVOS MÉTODOS — IMI Avaliação Premium
+// Baseados em: João Diniz Marcello — Avaliação Mercadológica de Imóveis
+// e ABNT NBR 14653 partes 1-3
+// ═══════════════════════════════════════════════════════════════
+
+// ── Método Involutivo ─────────────────────────────────────────
+
+export interface InvolutivoInput {
+  vgv: number                   // Valor Geral de Vendas (R$)
+  custos_pct: number            // % de custos sobre VGV (típico 50-65%)
+  lucro_pct: number             // % de lucro do incorporador (típico 12-20%)
+  area_terreno: number          // m² do terreno
+}
+
+export interface InvolutivoResult {
+  metodo: string
+  vgv: number
+  custos_totais: number
+  lucro_incorporador: number
+  valor_terreno: number         // VT = VGV - C - L
+  valor_unitario_terreno: number // R$/m²
+  valor_minimo: number
+  valor_maximo: number
+  amplitude: number
+}
+
+/**
+ * Método Involutivo — NBR 14653-2 §9
+ * VT = VGV − C − L
+ * Indicado para terrenos com potencial de incorporação e glebas.
+ * Cap. 8 João Diniz: "O método involutivo simula a hipótese de
+ * incorporação e retroage ao valor do terreno."
+ */
+export function metodoInvolutivo(input: InvolutivoInput): InvolutivoResult {
+  const { vgv, custos_pct, lucro_pct, area_terreno } = input
+  const custos = vgv * (custos_pct / 100)
+  const lucro = vgv * (lucro_pct / 100)
+  const valorTerreno = Math.round(vgv - custos - lucro)
+  const valorUnitario = area_terreno > 0 ? valorTerreno / area_terreno : 0
+  const amplitude = 20 // ±20% para método involutivo
+  return {
+    metodo: 'Involutivo (VGV − Custos − Lucro)',
+    vgv,
+    custos_totais: Math.round(custos),
+    lucro_incorporador: Math.round(lucro),
+    valor_terreno: valorTerreno,
+    valor_unitario_terreno: Number(valorUnitario.toFixed(2)),
+    valor_minimo: Math.round(valorTerreno * (1 - amplitude / 100)),
+    valor_maximo: Math.round(valorTerreno * (1 + amplitude / 100)),
+    amplitude,
+  }
+}
+
+// ── Cap Rate / NOI ────────────────────────────────────────────
+
+export interface CapRateInput {
+  noi_mensal: number            // Net Operating Income mensal (R$)
+  taxa_cap_rate: number         // % a.a. (ex: 8)
+  vacancia_pct: number          // % de vacância (ex: 5)
+}
+
+export interface CapRateResult {
+  metodo: string
+  noi_mensal_bruto: number
+  vacancia_valor: number
+  noi_mensal_liquido: number
+  noi_anual: number
+  taxa_cap_rate: number
+  valor_total: number
+  valor_minimo: number
+  valor_maximo: number
+  yield_bruto: number           // % a.a.
+  yield_liquido: number         // % a.a.
+}
+
+/**
+ * Cap Rate / NOI — NBR 14653-2 §11
+ * Valor = NOI anual / Cap Rate
+ * Usado para imóveis comerciais, galpões, lojas com locatários estáveis.
+ */
+export function metodoCapRate(input: CapRateInput): CapRateResult {
+  const { noi_mensal, taxa_cap_rate, vacancia_pct } = input
+  const vacanciaValor = noi_mensal * (vacancia_pct / 100)
+  const noiLiquido = noi_mensal - vacanciaValor
+  const noiAnual = noiLiquido * 12
+  const valorTotal = Math.round(noiAnual / (taxa_cap_rate / 100))
+  const amplitude = 15
+  const yieldBruto = valorTotal > 0 ? (noi_mensal * 12 / valorTotal) * 100 : 0
+  const yieldLiquido = valorTotal > 0 ? (noiAnual / valorTotal) * 100 : 0
+
+  return {
+    metodo: 'Cap Rate / NOI',
+    noi_mensal_bruto: noi_mensal,
+    vacancia_valor: Math.round(vacanciaValor),
+    noi_mensal_liquido: Math.round(noiLiquido),
+    noi_anual: Math.round(noiAnual),
+    taxa_cap_rate,
+    valor_total: valorTotal,
+    valor_minimo: Math.round(valorTotal * (1 - amplitude / 100)),
+    valor_maximo: Math.round(valorTotal * (1 + amplitude / 100)),
+    yield_bruto: Number(yieldBruto.toFixed(2)),
+    yield_liquido: Number(yieldLiquido.toFixed(2)),
+  }
+}
+
+// ── Fluxo de Caixa Descontado (DCF) ──────────────────────────
+
+export interface DCFInput {
+  fluxo_anual: number[]         // Fluxo de caixa por ano (R$)
+  taxa_desconto: number         // % a.a. (TMA)
+  valor_residual: number        // Valor residual no ano final (R$)
+}
+
+export interface DCFResult {
+  metodo: string
+  vpl: number                   // Valor Presente Líquido
+  tir: number                   // Taxa Interna de Retorno (% a.a.)
+  payback_anos: number          // Anos para recuperar investimento
+  valor_presente_fluxos: number
+  valor_presente_residual: number
+  fluxo_descontado: { ano: number; fluxo: number; fator_desconto: number; vp: number }[]
+  taxa_desconto: number
+}
+
+/**
+ * Fluxo de Caixa Descontado — NBR 14653-2 §11.3
+ * VPL = Σ FCt/(1+i)^t + VR/(1+i)^n
+ * Para hotéis, shoppings, empreendimentos complexos.
+ */
+export function metodoFluxoCaixaDescontado(input: DCFInput): DCFResult {
+  const { fluxo_anual, taxa_desconto, valor_residual } = input
+  const i = taxa_desconto / 100
+  const n = fluxo_anual.length
+
+  let vpFluxos = 0
+  const fluxoDesc: DCFResult['fluxo_descontado'] = []
+  let acumulado = 0
+  let payback = n // default: não recupera no período
+
+  for (let t = 0; t < n; t++) {
+    const fator = Math.pow(1 + i, t + 1)
+    const vp = fluxo_anual[t] / fator
+    vpFluxos += vp
+    acumulado += fluxo_anual[t]
+    if (acumulado >= 0 && payback === n) payback = t + 1
+    fluxoDesc.push({
+      ano: t + 1,
+      fluxo: fluxo_anual[t],
+      fator_desconto: Number(fator.toFixed(4)),
+      vp: Math.round(vp),
+    })
+  }
+
+  const vpResidual = valor_residual / Math.pow(1 + i, n)
+  const vpl = Math.round(vpFluxos + vpResidual)
+
+  // TIR — Newton-Raphson iterativo (simplificado)
+  let tir = 0
+  try {
+    let rate = 0.1
+    for (let iter = 0; iter < 100; iter++) {
+      let f = 0
+      let df = 0
+      for (let t = 0; t < n; t++) {
+        const v = Math.pow(1 + rate, t + 1)
+        f += fluxo_anual[t] / v
+        df -= (t + 1) * fluxo_anual[t] / (v * (1 + rate))
+      }
+      f += valor_residual / Math.pow(1 + rate, n)
+      df -= n * valor_residual / (Math.pow(1 + rate, n) * (1 + rate))
+      const newRate = rate - f / df
+      if (Math.abs(newRate - rate) < 1e-8) { rate = newRate; break }
+      rate = newRate
+    }
+    tir = Number((rate * 100).toFixed(2))
+  } catch { tir = 0 }
+
+  return {
+    metodo: 'Fluxo de Caixa Descontado (DCF)',
+    vpl,
+    tir,
+    payback_anos: payback,
+    valor_presente_fluxos: Math.round(vpFluxos),
+    valor_presente_residual: Math.round(vpResidual),
+    fluxo_descontado: fluxoDesc,
+    taxa_desconto,
+  }
+}
+
+// ── Liquidação Forçada ────────────────────────────────────────
+
+export interface LiquidacaoForcadaResult {
+  metodo: string
+  valor_mercado: number
+  liquidez: 'alta' | 'media' | 'baixa'
+  desconto_pct: number
+  valor_liquidacao: number
+  descricao_liquidez: string
+}
+
+/**
+ * Liquidação Forçada — Cap. 14 João Diniz
+ * Aplica desconto ao valor de mercado conforme urgência de venda.
+ * Usado em penhoras, leilões e execuções hipotecárias.
+ * NBR 14653-2: "preço vil" = abaixo de 50% do valor de mercado.
+ */
+export function metodoLiquidacaoForcada(
+  valorMercado: number,
+  liquidez: 'alta' | 'media' | 'baixa',
+): LiquidacaoForcadaResult {
+  const DESCONTOS = { alta: 10, media: 20, baixa: 30 } as const
+  const DESCRICOES = {
+    alta: 'Liquidez alta — imóvel em região com demanda aquecida, venda possível em até 30 dias',
+    media: 'Liquidez média — imóvel em região com demanda normal, venda em 60-120 dias',
+    baixa: 'Liquidez baixa — imóvel em região com pouca demanda, venda pode levar 6-12 meses',
+  }
+
+  const descontoPct = DESCONTOS[liquidez]
+  const valorLiquidacao = Math.round(valorMercado * (1 - descontoPct / 100))
+
+  return {
+    metodo: 'Liquidação Forçada',
+    valor_mercado: valorMercado,
+    liquidez,
+    desconto_pct: descontoPct,
+    valor_liquidacao: valorLiquidacao,
+    descricao_liquidez: DESCRICOES[liquidez],
+  }
+}
+
+// ── Cenários ──────────────────────────────────────────────────
+
+export interface CenariosResult {
+  conservador: { valor: number; variacao_pct: number; descricao: string }
+  realista:    { valor: number; variacao_pct: number; descricao: string }
+  agressivo:   { valor: number; variacao_pct: number; descricao: string }
+}
+
+/**
+ * Três cenários de valor — abordagem de mercado imobiliário.
+ * Conservador: −15% (pior caso, mercado recessivo)
+ * Realista: valor de mercado calculado
+ * Agressivo: +12% (otimista, mercado em valorização)
+ */
+export function metodoCenarios(valorBase: number): CenariosResult {
+  return {
+    conservador: {
+      valor: Math.round(valorBase * 0.85),
+      variacao_pct: -15,
+      descricao: 'Cenário pessimista — mercado em retração, maior tempo de venda, possível necessidade de desconto',
+    },
+    realista: {
+      valor: Math.round(valorBase),
+      variacao_pct: 0,
+      descricao: 'Cenário base — valor de mercado calculado com os dados disponíveis, dentro do grau de fundamentação NBR 14653',
+    },
+    agressivo: {
+      valor: Math.round(valorBase * 1.12),
+      variacao_pct: 12,
+      descricao: 'Cenário otimista — mercado em valorização, região em desenvolvimento, imóvel com diferenciais competitivos',
+    },
+  }
+}
+
+// ── BDI ───────────────────────────────────────────────────────
+
+export interface BDIResult {
+  custo_direto: number
+  bdi_pct: number
+  valor_bdi: number
+  custo_total_bdi: number
+  componentes: {
+    administracao_central: number  // ~5%
+    risco: number                  // ~1.5%
+    impostos: number               // ~4%
+    lucro: number                  // ~7.5%
+    outros: number                 // ~7%
+  }
+}
+
+/**
+ * BDI — Benefícios e Despesas Indiretas (NBR 14653-2 §10)
+ * Encargos sobre o custo direto de construção (tipicamente 20-30%).
+ * Inclui: administração central, risco, impostos, lucro, outros.
+ */
+export function metodoBDI(
+  custoDireto: number,
+  bdiPct: number = 25,
+): BDIResult {
+  const valorBdi = custoDireto * (bdiPct / 100)
+  const total = custoDireto + valorBdi
+
+  // Distribuição típica do BDI (proporcional ao % informado)
+  const proporcao = bdiPct / 25 // normaliza para padrão 25%
+  return {
+    custo_direto: custoDireto,
+    bdi_pct: bdiPct,
+    valor_bdi: Math.round(valorBdi),
+    custo_total_bdi: Math.round(total),
+    componentes: {
+      administracao_central: Math.round(custoDireto * 0.05 * proporcao),
+      risco:                  Math.round(custoDireto * 0.015 * proporcao),
+      impostos:               Math.round(custoDireto * 0.04 * proporcao),
+      lucro:                  Math.round(custoDireto * 0.075 * proporcao),
+      outros:                 Math.round(custoDireto * 0.07 * proporcao),
+    },
+  }
+}
+
+// ── Fundo de Comércio ─────────────────────────────────────────
+
+export interface FundoComercioInput {
+  faturamento_mensal: number    // R$/mês
+  margem_liquida_pct: number    // % de margem líquida (ex: 15)
+  meses_multiplicador: number   // típico 24-48 meses
+}
+
+export interface FundoComercioResult {
+  metodo: string
+  faturamento_mensal: number
+  lucro_mensal: number
+  meses_multiplicador: number
+  valor_fundo: number
+  valor_minimo: number
+  valor_maximo: number
+}
+
+/**
+ * Fundo de Comércio — Cap. 15 João Diniz (Situações Específicas)
+ * Valor = Faturamento × Margem × Multiplicador de meses
+ * Para estabelecimentos comerciais em funcionamento.
+ */
+export function metodoFundoComercio(input: FundoComercioInput): FundoComercioResult {
+  const { faturamento_mensal, margem_liquida_pct, meses_multiplicador } = input
+  const lucroMensal = faturamento_mensal * (margem_liquida_pct / 100)
+  const valorFundo = Math.round(lucroMensal * meses_multiplicador)
+
+  return {
+    metodo: 'Fundo de Comércio',
+    faturamento_mensal,
+    lucro_mensal: Math.round(lucroMensal),
+    meses_multiplicador,
+    valor_fundo: valorFundo,
+    valor_minimo: Math.round(valorFundo * 0.80),
+    valor_maximo: Math.round(valorFundo * 1.20),
+  }
+}
+
+// ── Honorários — Tabela IBAPE Simplificada ───────────────────
+
+export interface HonorariosResult {
+  valor_imovel: number
+  percentual: number
+  honorarios_base: number
+  honorarios_minimos: number
+  honorarios_sugeridos: number
+  complexidade_label: string
+}
+
+/**
+ * Cálculo de honorários — Cap. 17 João Diniz
+ * Tabela IBAPE/SP regressiva: quanto maior o valor, menor o percentual.
+ * Ref: IBAPE Nacional — Tabela de Honorários para Avaliações Imobiliárias.
+ */
+export function calcularHonorarios(
+  valorImovel: number,
+  complexidade: 'simples' | 'normal' | 'complexa' = 'normal',
+): HonorariosResult {
+  // Tabela IBAPE simplificada (regressiva por faixa de valor)
+  let pct: number
+  if (valorImovel <= 200_000)       pct = 1.50
+  else if (valorImovel <= 500_000)  pct = 1.20
+  else if (valorImovel <= 1_000_000) pct = 0.90
+  else if (valorImovel <= 2_000_000) pct = 0.70
+  else if (valorImovel <= 5_000_000) pct = 0.50
+  else if (valorImovel <= 10_000_000) pct = 0.40
+  else pct = 0.30
+
+  const COMPLEXIDADE_MULT = { simples: 0.80, normal: 1.00, complexa: 1.50 }
+  const COMPLEXIDADE_LABELS = {
+    simples: 'Avaliação simples (1 método, imóvel padrão)',
+    normal: 'Avaliação normal (com homogeneização e PTAM)',
+    complexa: 'Avaliação complexa (judicial, múltiplos métodos, perícia)',
+  }
+
+  const baseHonorarios = valorImovel * (pct / 100) * COMPLEXIDADE_MULT[complexidade]
+  const minimo = 500 // piso mínimo sugerido
+
+  return {
+    valor_imovel: valorImovel,
+    percentual: pct * COMPLEXIDADE_MULT[complexidade],
+    honorarios_base: Math.round(baseHonorarios),
+    honorarios_minimos: minimo,
+    honorarios_sugeridos: Math.max(Math.round(baseHonorarios), minimo),
+    complexidade_label: COMPLEXIDADE_LABELS[complexidade],
+  }
+}
+
+// ── Valor Venal Simplificado ──────────────────────────────────
+
+export interface ValorVenalResult {
+  valor_terreno: number
+  valor_edificacao: number
+  valor_venal_total: number
+  base_iptu_estimada: number
+}
+
+/**
+ * Estimativa de valor venal para referência fiscal.
+ * Não substitui o cálculo oficial do município.
+ * Tipicamente 60-80% do valor de mercado.
+ */
+export function estimarValorVenal(
+  valorMercado: number,
+  areaTerreno: number = 0,
+  areaConstruida: number = 0,
+  cubM2: number = 2450,
+): ValorVenalResult {
+  const valorEdificacao = areaConstruida > 0 ? areaConstruida * cubM2 * 0.60 : valorMercado * 0.40
+  const valorTerreno = areaTerreno > 0 ? areaTerreno * (valorMercado / (areaTerreno + areaConstruida)) : valorMercado * 0.35
+  const valorVenal = Math.round((valorTerreno + valorEdificacao) * 0.75) // ~75% do mercado
+
+  return {
+    valor_terreno: Math.round(valorTerreno),
+    valor_edificacao: Math.round(valorEdificacao),
+    valor_venal_total: valorVenal,
+    base_iptu_estimada: Math.round(valorVenal * 0.80), // 80% do venal como base típica
+  }
 }

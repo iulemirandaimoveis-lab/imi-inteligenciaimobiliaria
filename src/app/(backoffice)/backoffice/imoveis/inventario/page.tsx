@@ -652,7 +652,7 @@ export default function InventarioPage() {
                     <Link
                         href="/backoffice/imoveis/novo"
                         className="flex items-center gap-2 h-10 px-5 rounded-[6px] font-semibold text-sm text-white transition-all hover:brightness-110"
-                        style={{ background: T.accent, textDecoration: 'none' }}
+                        style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', textDecoration: 'none' }}
                     >
                         <Plus size={15} /> Novo Imóvel
                     </Link>

@@ -33,14 +33,15 @@ export async function uploadFile(
             throw new Error('Nenhum arquivo fornecido')
         }
         // Validar tipo
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'application/pdf']
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/ogg', 'application/pdf']
         if (!allowedTypes.includes(file.type)) {
-            throw new Error('Tipo de arquivo não permitido')
+            throw new Error('Tipo de arquivo não permitido. Use: JPG, PNG, WEBP, MP4, MOV, AVI, WEBM ou PDF')
         }
-        // Validar tamanho (50MB max)
-        const maxSize = 50 * 1024 * 1024 // 50MB
+        // Validar tamanho — vídeos até 500MB, outros até 50MB
+        const isVideo = file.type.startsWith('video/')
+        const maxSize = isVideo ? 500 * 1024 * 1024 : 50 * 1024 * 1024
         if (file.size > maxSize) {
-            throw new Error('Arquivo muito grande. Máximo: 50MB')
+            throw new Error(isVideo ? 'Vídeo muito grande. Máximo: 500MB' : 'Arquivo muito grande. Máximo: 50MB')
         }
         // Upload via API route (uses supabaseAdmin to bypass storage RLS)
         const formData = new FormData()

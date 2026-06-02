@@ -16,7 +16,7 @@ export const POST = withLogging(async (request: Request) => {
         const body = await request.json()
         const {
             name, email, phone, interest, development_id,
-            attribution, sessionId,
+            attribution, sessionId, financing_status, purchase_timeline,
         } = body
         if (!name || (!email && !phone)) {
             return NextResponse.json({ error: 'Identificação básica obrigatória' }, { status: 400 })
@@ -60,6 +60,8 @@ export const POST = withLogging(async (request: Request) => {
                     session_id: sessionId || null,
                     short_code: attribution?.shortCode || null,
                     captured_at: new Date().toISOString(),
+                    financing_status: financing_status || null,
+                    purchase_timeline: purchase_timeline || null,
                 },
             })
             .select()

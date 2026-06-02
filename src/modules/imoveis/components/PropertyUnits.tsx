@@ -84,8 +84,8 @@ export default function PropertyUnits({ propertyId }: PropertyUnitsProps) {
                 )}
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <table className="w-full text-left border-collapse">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto">
+                <table className="w-full min-w-[700px] text-left border-collapse">
                     <thead>
                         <tr className="bg-slate-50 border-b border-slate-100">
                             <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Identificação</th>

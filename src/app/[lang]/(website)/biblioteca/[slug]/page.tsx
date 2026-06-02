@@ -420,8 +420,8 @@ export default function EbookReaderPage() {
                     <button
                         onClick={() => goTo(chapterIdx - 1)}
                         disabled={chapterIdx === 0}
-                        className="flex items-center gap-2 px-4 py-3 min-h-[48px] rounded-xl text-sm font-medium transition-all disabled:opacity-20 active:scale-[0.97]"
-                        style={{ color: textColor, border: `1px solid ${borderColor}` }}
+                        className="relative flex items-center gap-2 px-4 py-3 min-h-[48px] text-xs font-semibold uppercase tracking-[1px] transition-all disabled:opacity-20 active:scale-[0.97]"
+                        style={{ color: darkMode ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)', border: `1px solid ${borderColor}`, borderRadius: 6 }}
                         aria-label="Capitulo anterior"
                     >
                         <ChevronLeft size={16} /> <span className="hidden sm:inline">Anterior</span>
@@ -432,11 +432,13 @@ export default function EbookReaderPage() {
                     <button
                         onClick={() => goTo(chapterIdx + 1)}
                         disabled={chapterIdx >= totalChapters - 1}
-                        className="flex items-center gap-2 px-4 py-3 min-h-[48px] rounded-xl text-sm font-semibold transition-all disabled:opacity-20 active:scale-[0.97]"
-                        style={{ color: '#0B1928', background: accentColor }}
+                        className="relative overflow-hidden flex items-center gap-2 px-4 py-3 min-h-[48px] text-xs font-semibold uppercase tracking-[1px] transition-all disabled:opacity-20 active:scale-[0.97]"
+                        style={{ color: '#ffffff', background: '#0A1624', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6 }}
                         aria-label="Proximo capitulo"
                     >
                         <span className="hidden sm:inline">Proximo</span> <ChevronRight size={16} />
+                        {/* Gold gradient line at bottom — design system accent */}
+                        <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6, pointerEvents: 'none' }} />
                     </button>
                 </div>
             </main>

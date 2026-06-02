@@ -7,6 +7,7 @@ import { Building2, Banknote, TrendingUp, ShieldCheck, Clock, ChevronDown, Chevr
 import { ButtonPrimary } from '@/components/website/Buttons'
 import { formatCurrency } from '@/lib/utils'
 import LeadCaptureModal from '@/app/[lang]/(website)/imoveis/components/LeadCaptureModal'
+import SubsidySimulator from '@/app/[lang]/(website)/inteligencia/SubsidySimulator'
 
 const creditTypes = [
     {
@@ -84,7 +85,7 @@ export default function CreditPage() {
     const ltv = (loanAmount / propertyValue) * 100
 
     return (
-        <main className="bg-[#0D0F14] min-h-screen">
+        <main className="bg-[#0B1928] min-h-screen">
             {/* HERO */}
             <section className="relative bg-[#0B1928] overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
@@ -111,7 +112,7 @@ export default function CreditPage() {
                         </motion.div>
                     </motion.div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#0D0F14] to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#0B1928] to-transparent" />
             </section>
 
             {/* MODALIDADES */}
@@ -133,7 +134,7 @@ export default function CreditPage() {
                                 whileInView="visible"
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 }}
-                                className="p-10 rounded-3xl bg-[#0B1928] border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:border-[#C8A44A]/30 hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] transition-all duration-300"
+                                className="p-10 rounded-3xl bg-[#0B1928] border border-[#C8A44A]/30 shadow-[0_12px_40px_rgba(26,26,46,0.15)] hover:border-white/[0.05] hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)] transition-all duration-300"
                             >
                                 <div className="w-14 h-14 bg-[#1A1E2A] border border-white/10 text-[#C8A44A] rounded-2xl flex items-center justify-center mb-8">
                                     <type.icon className="w-6 h-6" strokeWidth={1.5} />
@@ -158,8 +159,39 @@ export default function CreditPage() {
                 </div>
             </section>
 
+
+            {/* SIMULADOR DE SUBSÍDIO */}
+            <section className="py-10 md:py-16 border-t border-white/[0.05]">
+                <div className="container-custom">
+                    <div className="hidden md:grid md:grid-cols-2 gap-10 items-start">
+                        <div className="md:sticky md:top-24">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-px bg-[#334E68]" />
+                                <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[10px]">Motor de Decisão</span>
+                            </div>
+                            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
+                                Quanto você pode{' '}
+                                <span className="text-[#C8A44A] italic">receber de subsídio</span>?
+                            </h2>
+                            <p className="text-[#94A0B2] text-sm md:text-base font-light leading-relaxed mb-6 max-w-md">
+                                Descubra se você tem direito ao MCMV ou Habite Seguro, quanto de desconto
+                                no imóvel e como estruturar duas compras com subsídios separados.
+                            </p>
+                        </div>
+                        <SubsidySimulator lang="pt" />
+                    </div>
+                    <div className="md:hidden">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-px bg-[#334E68]" />
+                            <span className="text-[#C8A44A] font-bold uppercase tracking-[0.25em] text-[10px]">Motor de Decisão</span>
+                        </div>
+                        <SubsidySimulator lang="pt" />
+                    </div>
+                </div>
+            </section>
+
             {/* SEÇÃO CAIXA CONSÓRCIOS */}
-            <section className="section-padding bg-[#0D0F14] text-white relative overflow-hidden border-t border-white/[0.05]">
+            <section className="section-padding bg-[#0B1928] text-white relative overflow-hidden border-t border-white/[0.05]">
                 <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
                     <div className="absolute top-0 right-0 w-1/2 h-full bg-[#C8A44A] -skew-x-12 translate-x-1/2" />
                 </div>
@@ -249,7 +281,7 @@ export default function CreditPage() {
                             </p>
                         </div>
 
-                        <div className="bg-[#0D0F14] rounded-3xl p-8 md:p-12 border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+                        <div className="bg-[#0B1928] rounded-3xl p-8 md:p-12 border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                             <div className="grid lg:grid-cols-2 gap-16">
                                 <div className="space-y-10">
                                     {/* Valor do imóvel */}
@@ -364,7 +396,7 @@ export default function CreditPage() {
             </section>
 
             {/* POR QUE ESCOLHER IMI */}
-            <section className="section-padding bg-[#0D0F14]">
+            <section className="section-padding bg-[#0B1928]">
                 <div className="container-custom">
                     <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-16 text-center">
                         Diferenciais da Assessoria IMI
@@ -389,7 +421,7 @@ export default function CreditPage() {
                             }
                         ].map((item, index) => (
                             <div key={index} className="text-center group">
-                                <div className="w-20 h-20 bg-[#1A1E2A] text-[#C8A44A] border border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[#0B1928] group-hover:border-[#C8A44A]/30 transition-all duration-500 group-hover:-translate-y-2">
+                                <div className="w-20 h-20 bg-[#0B1928] text-[#C8A44A] border border-[#C8A44A]/30 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[#1A1E2A] group-hover:border-white/10 transition-all duration-500 group-hover:-translate-y-2">
                                     <item.icon className="w-8 h-8" strokeWidth={1.5} />
                                 </div>
                                 <h3 className="text-xl font-bold text-white mb-4 font-display uppercase tracking-tight">
@@ -417,7 +449,7 @@ export default function CreditPage() {
 
                         <div className="space-y-4">
                             {faqs.map((faq, index) => (
-                                <div key={index} className="bg-[#0D0F14] rounded-2xl border border-white/[0.05] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+                                <div key={index} className="bg-[#0B1928] rounded-2xl border border-white/[0.05] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                                     <button
                                         onClick={() => setOpenFaq(openFaq === index ? null : index)}
                                         className="w-full px-8 py-6 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
@@ -449,7 +481,7 @@ export default function CreditPage() {
             </section>
 
             {/* CTA FINAL */}
-            <section className="bg-[#0D0F14] section-padding text-center relative overflow-hidden">
+            <section className="bg-[#0B1928] section-padding text-center relative overflow-hidden">
                 <div className="container-custom relative z-10">
                     <div className="max-w-4xl mx-auto bg-[#0B1928] text-white rounded-3xl md:rounded-[40px] p-10 md:p-16 lg:p-20 relative overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.3)] border border-[#21263A] border-b-4 border-b-[#C8A44A]">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#C8A44A]/10 rounded-full blur-3xl -mr-32 -mt-32" />

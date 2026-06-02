@@ -456,10 +456,10 @@ export default function EditRentalPage() {
             disabled={saving}
             className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold transition-all"
             style={{
-              background: saving ? T.textDim : T.gold,
-              color: '#0A1624',
+              background: saving ? 'var(--bg-muted)' : 'var(--btn-primary-bg)',
+              color: saving ? 'var(--text-tertiary)' : 'var(--btn-primary-text)',
               borderRadius: 6,
-              border: 'none',
+              border: '1px solid transparent',
               fontFamily: 'var(--font-sans)',
               cursor: saving ? 'not-allowed' : 'pointer',
               opacity: saving ? 0.7 : 1,

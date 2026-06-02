@@ -33,18 +33,19 @@ export async function POST(request: NextRequest) {
             )
         }
         // Valida tipo de arquivo
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4', 'video/quicktime']
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/ogg']
         if (!allowedTypes.includes(file.type)) {
             return NextResponse.json(
-                { success: false, error: 'Tipo não permitido. Use JPG, PNG, WebP, PDF ou MP4' },
+                { success: false, error: 'Tipo não permitido. Use JPG, PNG, WebP, PDF, MP4, MOV, AVI ou WEBM' },
                 { status: 400 }
             )
         }
-        // Valida tamanho (máx 50MB)
-        const maxSize = 50 * 1024 * 1024 // 50MB
+        // Valida tamanho — vídeos até 500MB, outros até 50MB
+        const isVideo = file.type.startsWith('video/')
+        const maxSize = isVideo ? 500 * 1024 * 1024 : 50 * 1024 * 1024
         if (file.size > maxSize) {
             return NextResponse.json(
-                { success: false, error: 'Arquivo muito grande. Máximo 50MB' },
+                { success: false, error: isVideo ? 'Vídeo muito grande. Máximo 500MB' : 'Arquivo muito grande. Máximo 50MB' },
                 { status: 400 }
             )
         }

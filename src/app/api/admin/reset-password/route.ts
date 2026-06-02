@@ -18,7 +18,8 @@ export async function POST(req: NextRequest) {
       .eq('id', session.user.id)
       .single()
 
-    if (adminProfile?.role !== 'admin' && adminProfile?.role !== 'manager') {
+    const role = adminProfile?.role?.toLowerCase() || ''
+    if (!['admin', 'manager', 'super_admin', 'owner'].includes(role)) {
       return NextResponse.json({ error: 'Sem permissao' }, { status: 403 })
     }
 

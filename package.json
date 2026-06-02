@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build": "NODE_OPTIONS='--max-old-space-size=7168' next build",
     "start": "next start",
     "lint": "next lint --quiet",
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "deploy": "bash deploy.sh",
-    "deploy:prod": "bash deploy.sh"
+    "deploy:prod": "bash deploy.sh",
+    "ai:map": "npx sigmap",
+    "ai:ask": "npx sigmap ask"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.74.0",
@@ -77,6 +79,7 @@
     "@playwright/test": "^1.58.2",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/typography": "^0.5.19",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/bcryptjs": "^2.4.6",

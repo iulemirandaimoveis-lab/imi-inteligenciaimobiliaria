@@ -58,11 +58,12 @@ export function calcYieldEst(property: IMIProperty): number {
   const base = getYield(property.neighborhood ?? '')
   const typeBonus: Record<string, number> = {
     apartamento: 0, studio: 1.2, flat: 1.5, comercial: 0.8,
-    casa: -0.3, cobertura: -0.5, terreno: -2,
+    casa: -0.3, cobertura: -0.5, terreno: -2, loteamento: 0.5,
   }
   const type = (property.type ?? 'apartamento').toLowerCase()
   const bonus = typeBonus[type] ?? 0
-  const priceAdjust = property.price && property.price < 500_000 ? 0.4
+  const priceAdjust = property.price && property.price < 100_000 ? 1.2
+    : property.price && property.price < 500_000 ? 0.4
     : property.price && property.price < 800_000 ? 0.1
     : property.price && property.price > 2_000_000 ? -0.5 : 0
   return parseFloat((base + bonus + priceAdjust).toFixed(2))
@@ -220,6 +221,53 @@ export function enrichProperty(p: IMIProperty): IMIProperty {
     roi_12m: roi12m,
     liquidity_index: liquidity,
     market_delta_pct: marketDelta,
+  }
+}
+
+export interface IMIScoreBreakdown {
+  imiScore: number
+  location: number
+  liquidity: number
+  rentabilidade: number
+  construtora: number
+}
+
+/**
+ * Returns individual score components (0-100 each) for display in UI panels.
+ * All values are property-specific — no hardcoded or static data.
+ */
+export function calcDetailedScores(property: IMIProperty): IMIScoreBreakdown {
+  const neighborhood = property.neighborhood ?? ''
+  const yieldEst = calcYieldEst(property)
+
+  // Location score
+  const majorCities = ['Recife', 'São Paulo', 'Rio de Janeiro', 'Fortaleza', 'Salvador',
+    'Dubai', 'Miami', 'Orlando', 'Balneário Camboriú', 'João Pessoa', 'Natal', 'Maceió']
+  const isMajorCity = majorCities.includes(property.city ?? '')
+  const hasNeighData = !!(getAvgSqm(neighborhood))
+  const hasFullAddress = !!(property.address && property.neighborhood && property.city)
+  const locationScore = clamp((isMajorCity ? 70 : 50) + (hasFullAddress ? 15 : 0) + (hasNeighData ? 15 : 0))
+
+  // Liquidity (already 0-100)
+  const liquidityScore = calcLiquidityIndex(property)
+
+  // Rentabilidade — normalize yield 3%→30 .. 12%→100
+  const rentabilidade = Math.round(clamp(30 + ((yieldEst - 3) / (12 - 3)) * 70))
+
+  // Construtora — inferred from property status/condition
+  const conditionMap: Record<string, number> = {
+    lancamento: 88, launch: 88, em_construcao: 80, under_construction: 80,
+    pronto: 72, ready: 72, seminovo: 62, usado: 52, active: 72,
+  }
+  const condition = property.condition ?? property.status ?? 'pronto'
+  const construtora = clamp(conditionMap[condition] ?? 70)
+
+  return {
+    imiScore: calcIMIScore(property),
+    location: Math.round(locationScore),
+    liquidity: Math.round(liquidityScore),
+    rentabilidade: Math.round(rentabilidade),
+    construtora: Math.round(construtora),
   }
 }
 

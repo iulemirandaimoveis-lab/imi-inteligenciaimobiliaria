@@ -675,7 +675,9 @@ export function MobileImovelDetail({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {[
                   { icon: Edit, label: 'Editar', href: `/backoffice/imoveis/${id}/editar` },
-                  { icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
+                  dev.type === 'loteamento'
+                    ? { icon: Layers, label: 'Lotes', href: `/backoffice/imoveis/${id}/lotes` }
+                    : { icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
                   { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics` },
                   { icon: Scale, label: 'Avaliacao', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}` },
                   { icon: QrCode, label: 'QR Code', href: `/backoffice/tracking/qr?propertyId=${id}&propertyName=${encodeURIComponent(dev?.name || '')}` },

@@ -45,6 +45,7 @@ export interface DevelopmentImages {
     floorPlans: string[];                // Plantas baixas
     virtualTour?: string;                // Link para tour virtual
     brochure?: string;                   // URL do brochure/book PDF
+    heroVideo?: string;                  // URL de vídeo MP4 para loop no hero
 }
 
 export interface DevelopmentExternalLinks {
@@ -79,6 +80,7 @@ export interface Development {
     isHighlighted: boolean;              // Destaque especial
     createdAt: string;
     updatedAt: string;
+    propertyType?: string;               // Ex: 'loteamento', 'residencial', 'comercial'
     // Rental / listing category
     listingCategory: ListingCategory;    // comprar | aluguel | temporada | short_stay
     dailyRate?: number;                  // Diária (para short_stay / temporada)
