@@ -99,7 +99,8 @@ export class ClicksignProvider implements SignatureProvider {
   }
 
   verifyWebhook(req: WebhookRequest): boolean {
-    if (!this.webhookSecret) return true; // sem secret configurado → não bloqueia (dev)
+    // Fail-closed: sem segredo HMAC configurado, NÃO confiamos no webhook.
+    if (!this.webhookSecret) return false;
     const sig = req.headers['content-hmac'] || req.headers['Content-Hmac'];
     if (!sig) return false;
     const digest = 'sha256=' + crypto.createHmac('sha256', this.webhookSecret).update(req.rawBody).digest('hex');

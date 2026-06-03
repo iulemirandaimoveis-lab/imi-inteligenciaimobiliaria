@@ -91,7 +91,8 @@ export class DocusignProvider implements SignatureProvider {
   }
 
   verifyWebhook(req: WebhookRequest): boolean {
-    if (!this.webhookSecret) return true;
+    // Fail-closed: sem segredo HMAC configurado, NÃO confiamos no webhook.
+    if (!this.webhookSecret) return false;
     // DocuSign Connect HMAC: base64(HMAC-SHA256(secret, rawBody)) em X-DocuSign-Signature-1
     const sig = req.headers['x-docusign-signature-1'] || req.headers['X-DocuSign-Signature-1'];
     if (!sig) return false;

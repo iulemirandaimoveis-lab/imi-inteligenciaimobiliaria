@@ -116,7 +116,7 @@ export default function AssinaturaSettingsPage() {
             placeholder={data?.clicksign.secretHint ?? 'cole o token'} value={ck.secret}
             onChange={v => setCk(s => ({ ...s, secret: v }))} hint={data?.clicksign.configured ? 'deixe em branco para manter o atual' : undefined} />
           <Field label="Base URL" value={ck.baseUrl} placeholder="https://app.clicksign.com" onChange={v => setCk(s => ({ ...s, baseUrl: v }))} />
-          <Field label="Webhook Secret (HMAC)" type="password" value={ck.webhookSecret} placeholder="opcional" onChange={v => setCk(s => ({ ...s, webhookSecret: v }))} />
+          <Field label="Webhook Secret (HMAC)" type="password" value={ck.webhookSecret} placeholder="necessário p/ validar webhooks" onChange={v => setCk(s => ({ ...s, webhookSecret: v }))} />
         </div>
         <Actions
           onSave={() => save('clicksign', data?.activeProvider === 'clicksign')}
@@ -135,7 +135,7 @@ export default function AssinaturaSettingsPage() {
             onChange={v => setDs(s => ({ ...s, secret: v }))} hint={data?.docusign.configured ? 'deixe em branco para manter o atual' : undefined} />
           <Field label="Base URI" value={ds.baseUri} placeholder="https://demo.docusign.net/restapi" onChange={v => setDs(s => ({ ...s, baseUri: v }))} />
           <Field label="Account ID" value={ds.accountId} placeholder="xxxxxxxx-xxxx-…" onChange={v => setDs(s => ({ ...s, accountId: v }))} />
-          <Field label="Webhook Secret (Connect HMAC)" type="password" value={ds.webhookSecret} placeholder="opcional" onChange={v => setDs(s => ({ ...s, webhookSecret: v }))} />
+          <Field label="Webhook Secret (Connect HMAC)" type="password" value={ds.webhookSecret} placeholder="necessário p/ validar webhooks" onChange={v => setDs(s => ({ ...s, webhookSecret: v }))} />
         </div>
         <Actions
           onSave={() => save('docusign', data?.activeProvider === 'docusign')}
