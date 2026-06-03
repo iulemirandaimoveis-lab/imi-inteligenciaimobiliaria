@@ -11,11 +11,11 @@ const SubdivisionLotMap = dynamic(
 export const metadata: Metadata = {
   title: 'Alto Bellevue | IMI — Inteligência Imobiliária',
   description:
-    'Loteamento residencial premium em Aloísio Pinto, Garanhuns (PE). 382 lotes de 289 a 693 m², com infraestrutura completa, portaria 24h e condições especiais de financiamento.',
+    'Loteamento residencial premium em Aloísio Pinto, Garanhuns (PE). 383 lotes de 289 a 693 m², com infraestrutura completa, portaria 24h e condições especiais de financiamento.',
   openGraph: {
     title: 'Alto Bellevue — Loteamento Premium em Garanhuns',
     description:
-      'Escolha seu lote. 382 unidades disponíveis, a partir de R$ 202.231. Explore o mapa interativo.',
+      'Escolha seu lote. 383 unidades disponíveis, a partir de R$ 202.231. Explore o mapa interativo.',
   },
 }
 
@@ -124,7 +124,7 @@ export default async function AltoBellevuePage({
           {/* Stats */}
           <div className="grid grid-cols-3 gap-0 max-w-md">
             {[
-              { n: '382', label: 'Lotes' },
+              { n: '383', label: 'Lotes' },
               { n: '289–693', label: 'm² por Lote' },
               { n: '16', label: 'Quadras' },
             ].map((stat, i) => (
