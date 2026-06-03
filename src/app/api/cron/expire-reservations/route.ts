@@ -6,7 +6,9 @@ export const dynamic = 'force-dynamic'
 /**
  * GET /api/cron/expire-reservations
  * Parte 2.1 — libera automaticamente reservas de lote vencidas (janela de 48h).
- * Vercel cron: rodar a cada hora. Protegido por CRON_SECRET.
+ * Vercel cron: diário (plano Hobby só permite cron diário). Protegido por CRON_SECRET.
+ * Rede de segurança adicional: reserve_lot já expira a reserva vencida do próprio
+ * lote no momento de uma nova tentativa de reserva (não depende só do cron).
  *
  * Chama a função `expire_lot_reservations()` (SECURITY DEFINER), que marca as
  * reservas 'ativa' com expires_at < now() como 'expirada' e devolve os lotes
