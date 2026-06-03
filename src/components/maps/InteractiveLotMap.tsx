@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect, WheelEvent } from 'react';
-import { ZoomIn, ZoomOut, RotateCcw, MapPin } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, MapPin, Layers } from 'lucide-react';
 import { useLotMap, type LotMapEntry } from './useLotMap';
 import AmenityLayer from './AmenityLayer';
 import LotDetailPanel from './LotDetailPanel';
@@ -13,6 +13,7 @@ function parseVb(s: string): { x: number; y: number; w: number; h: number } {
 
 const LOT_COLORS: Record<string, { fill: string; stroke: string }> = {
   disponivel:  { fill: '#22c55e', stroke: '#16a34a' },
+  reservado:   { fill: '#3b82f6', stroke: '#1d4ed8' },
   vendido:     { fill: '#92400e', stroke: '#78350f' },
   negociacao:  { fill: '#eab308', stroke: '#ca8a04' },
   _hover:      { fill: '#C8A44A', stroke: '#b08530' },
@@ -37,6 +38,12 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
   const {
     lots,
     amenities,
+    greenAreas,
+    streets,
+    perimeter,
+    brLine,
+    streetLabels,
+    entrance,
     viewBox: initialViewBox,
     stats,
     isLoading,
@@ -46,6 +53,11 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
     activeFilter,
     setActiveFilter,
     quadras,
+    isManager,
+    actionLoading,
+    actionError,
+    reserveLot,
+    releaseLot,
   } = useLotMap(developmentId, lotMapJsonUrl);
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -66,6 +78,7 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [showAmenities, setShowAmenities] = useState(true);
+  const [showInfra, setShowInfra] = useState(true);
   const [showLegend, setShowLegend] = useState(true);
 
   // Detect mobile
@@ -243,6 +256,60 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
           </defs>
           <rect x={vbParts.x} y={vbParts.y} width={vbParts.w} height={vbParts.h} fill="url(#grid)" />
 
+          {/* ─── Infraestrutura: perímetro, ruas, áreas de lazer, BR ─── */}
+          {showInfra && (
+            <g className="infra-layer" style={{ pointerEvents: 'none' }}>
+              {/* Perímetro do condomínio (poligonal aprovada) */}
+              {perimeter.map((pts, i) => (
+                <polygon
+                  key={`peri-${i}`}
+                  points={pts}
+                  fill="rgba(200,164,74,0.04)"
+                  stroke="#C8A44A"
+                  strokeWidth={2.2 / scale}
+                  strokeLinejoin="round"
+                />
+              ))}
+
+              {/* Faixa da BR (rodovia confrontante) */}
+              {brLine.map((pts, i) => (
+                <polyline
+                  key={`br-${i}`}
+                  points={pts}
+                  fill="none"
+                  stroke="#64748b"
+                  strokeWidth={1.4 / scale}
+                  strokeDasharray={`${6 / scale} ${4 / scale}`}
+                />
+              ))}
+
+              {/* Áreas de lazer / institucionais / verdes */}
+              {greenAreas.map((pts, i) => (
+                <polygon
+                  key={`green-${i}`}
+                  points={pts}
+                  fill="rgba(34,197,94,0.18)"
+                  stroke="#16a34a"
+                  strokeWidth={0.6 / scale}
+                  strokeLinejoin="round"
+                />
+              ))}
+
+              {/* Ruas (calçadas / sistema viário) */}
+              {streets.map((pts, i) => (
+                <polyline
+                  key={`st-${i}`}
+                  points={pts}
+                  fill="none"
+                  stroke="rgba(255,255,255,0.22)"
+                  strokeWidth={0.5 / scale}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                />
+              ))}
+            </g>
+          )}
+
           {/* Lots */}
           <g className="lots-layer">
             {lots.map(lot => {
@@ -321,6 +388,52 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
             );
           })}
 
+          {/* Street name labels (visible when zoomed in a bit) */}
+          {showInfra && scale > 1.3 && (
+            <g className="street-labels" style={{ pointerEvents: 'none' }}>
+              {streetLabels.map((s, i) => (
+                <text
+                  key={`stl-${i}`}
+                  x={s.x}
+                  y={s.y}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={5 / scale}
+                  fill="rgba(226,232,240,0.85)"
+                  fontWeight="600"
+                  fontFamily="var(--font-outfit, sans-serif)"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}
+                >
+                  {s.name}
+                </text>
+              ))}
+            </g>
+          )}
+
+          {/* Condominium entrance marker */}
+          {showInfra && entrance && (
+            <g className="entrance-marker" style={{ pointerEvents: 'none' }}>
+              <circle cx={entrance.x} cy={entrance.y} r={9 / scale} fill="#C8A44A" stroke="#fff" strokeWidth={1.5 / scale} />
+              <path
+                d={`M ${entrance.x - 4 / scale} ${entrance.y + 1 / scale} h ${8 / scale} M ${entrance.x} ${entrance.y - 3 / scale} v ${6 / scale}`}
+                stroke="#1a2332"
+                strokeWidth={1.4 / scale}
+                strokeLinecap="round"
+              />
+              <text
+                x={entrance.x}
+                y={entrance.y - 13 / scale}
+                textAnchor="middle"
+                fontSize={6 / scale}
+                fill="#C8A44A"
+                fontWeight="800"
+                fontFamily="var(--font-outfit, sans-serif)"
+              >
+                {entrance.label}
+              </text>
+            </g>
+          )}
+
           {/* Amenities layer */}
           {showAmenities && <AmenityLayer amenities={amenities} scale={scale} />}
         </svg>
@@ -356,6 +469,14 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
           >
             <MapPin className="w-3.5 h-3.5" />
           </button>
+          <button
+            onClick={() => setShowInfra(v => !v)}
+            className={`w-8 h-8 flex items-center justify-center backdrop-blur rounded-lg transition shadow-lg border border-white/10 ${showInfra ? 'bg-[#C8A44A] text-white' : 'bg-[#1a2332]/90 text-gray-400'}`}
+            aria-label="Ruas e perímetro"
+            title="Mostrar/ocultar ruas, perímetro e entrada"
+          >
+            <Layers className="w-3.5 h-3.5" />
+          </button>
         </div>
 
         {/* ─── Gallery thumbnails (top right, desktop) ─── */}
@@ -385,6 +506,7 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
           {showLegend && (
             <div className="flex items-center gap-3">
               <LegendItem color="#22c55e" label="Disponível" />
+              {isManager && <LegendItem color="#3b82f6" label="Reservado" />}
               <LegendItem color="#92400e" label="Vendido" />
               <LegendItem color="#eab308" label="Negociação" />
             </div>
@@ -395,7 +517,17 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
         {!isMobile && panelOpen && (
           <div className="absolute inset-0 pointer-events-none z-20">
             <div className="pointer-events-auto h-full">
-              <LotDetailPanel lot={selectedLot} onClose={() => setSelectedLot(null)} isMobile={false} whatsappContact={whatsappContact} />
+              <LotDetailPanel
+                lot={selectedLot}
+                onClose={() => setSelectedLot(null)}
+                isMobile={false}
+                whatsappContact={whatsappContact}
+                isManager={isManager}
+                actionLoading={actionLoading}
+                actionError={actionError}
+                onReserve={opts => selectedLot && reserveLot(selectedLot, opts)}
+                onRelease={() => selectedLot && releaseLot(selectedLot)}
+              />
             </div>
           </div>
         )}
@@ -403,7 +535,17 @@ export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galler
 
       {/* Mobile bottom sheet */}
       {isMobile && (
-        <LotDetailPanel lot={selectedLot} onClose={() => setSelectedLot(null)} isMobile={true} whatsappContact={whatsappContact} />
+        <LotDetailPanel
+          lot={selectedLot}
+          onClose={() => setSelectedLot(null)}
+          isMobile={true}
+          whatsappContact={whatsappContact}
+          isManager={isManager}
+          actionLoading={actionLoading}
+          actionError={actionError}
+          onReserve={opts => selectedLot && reserveLot(selectedLot, opts)}
+          onRelease={() => selectedLot && releaseLot(selectedLot)}
+        />
       )}
 
       {/* Mobile CTA */}

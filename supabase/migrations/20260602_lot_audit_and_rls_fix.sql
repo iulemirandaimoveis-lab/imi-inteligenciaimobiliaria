@@ -58,6 +58,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS lot_status_audit ON public.subdivision_lots;
 CREATE TRIGGER lot_status_audit
   AFTER UPDATE ON public.subdivision_lots
   FOR EACH ROW
@@ -66,6 +67,7 @@ CREATE TRIGGER lot_status_audit
 -- ── 3. Fix RLS on subdivision_lots ──────────────────────────────────────────
 -- Drop the overly permissive "any authed user can do anything" policy
 DROP POLICY IF EXISTS "subdivision_lots_auth_write" ON public.subdivision_lots;
+DROP POLICY IF EXISTS "subdivision_lots_manager_write" ON public.subdivision_lots;
 
 -- Read: anyone (incl. anonymous) can see available lots; RLS was already permissive for SELECT
 -- Write: only authenticated admins and managers
@@ -88,24 +90,15 @@ CREATE POLICY "subdivision_lots_manager_write" ON public.subdivision_lots
     )
   );
 
--- ── 4. Fix RLS on imi_properties (same flaw as subdivision_lots) ────────────
-DROP POLICY IF EXISTS "imi_properties_auth_write" ON public.imi_properties;
-
-CREATE POLICY "imi_properties_manager_write" ON public.imi_properties
-  FOR ALL
-  USING (
-    auth.uid() IS NOT NULL
-    AND EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid()
-        AND p.role IN ('admin', 'manager')
-    )
-  )
-  WITH CHECK (
-    auth.uid() IS NOT NULL
-    AND EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid()
-        AND p.role IN ('admin', 'manager')
-    )
-  );
+-- ── 4. Fix RLS on imi_properties (same flaw) — só se a tabela existir ───────
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables
+             WHERE table_name='imi_properties' AND table_schema='public') THEN
+    EXECUTE 'DROP POLICY IF EXISTS "imi_properties_auth_write" ON public.imi_properties';
+    EXECUTE 'DROP POLICY IF EXISTS "imi_properties_manager_write" ON public.imi_properties';
+    EXECUTE 'CREATE POLICY "imi_properties_manager_write" ON public.imi_properties FOR ALL
+      USING (auth.uid() IS NOT NULL AND EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.role IN (''admin'',''manager'')))
+      WITH CHECK (auth.uid() IS NOT NULL AND EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.role IN (''admin'',''manager'')))';
+  END IF;
+END $$;
