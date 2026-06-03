@@ -1,9 +1,22 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
-export type LotStatus = 'disponivel' | 'vendido' | 'negociacao';
+export type LotStatus = 'disponivel' | 'reservado' | 'negociacao' | 'vendido';
+
+/** subdivision_lots.status é MAIÚSCULO; o mapa/UI usam minúsculo. */
+export function normalizeLotStatus(raw: string | null | undefined): LotStatus {
+  switch (String(raw ?? '').toUpperCase()) {
+    case 'DISPONIVEL': return 'disponivel';
+    case 'RESERVADO': return 'reservado';
+    case 'NEGOCIACAO':
+    case 'EM_NEGOCIACAO':
+    case 'NEGOCIACAO_EM_ANDAMENTO': return 'negociacao';
+    // VENDIDO, PROPRIETARIO, ANTENA e quaisquer outros → indisponível
+    default: return 'vendido';
+  }
+}
 
 export interface LotMapEntry {
   id: string;
@@ -20,6 +33,20 @@ export interface LotMapEntry {
   // Enriched from Supabase
   dbId?: string;
   unitName?: string;
+  // Planos de pagamento oficiais (do JSON de preços) — usados pelo simulador
+  valor?: number | null;        // preço de tabela
+  valorVista?: number | null;   // preço à vista
+  entrada?: number;             // entrada padrão (~10%)
+  p12?: PaymentPlan;
+  p36?: PaymentPlan;
+  p60?: PaymentPlan;
+  p120?: PaymentPlan;
+  metragem?: number;
+}
+
+export interface PaymentPlan {
+  total: number;
+  parcela: number;
 }
 
 export interface AmenityPoint {
@@ -29,6 +56,18 @@ export interface AmenityPoint {
   x: number;
   y: number;
   color: string;
+}
+
+export interface StreetLabel {
+  x: number;
+  y: number;
+  name: string;
+}
+
+export interface MapMarker {
+  x: number;
+  y: number;
+  label: string;
 }
 
 export interface LotMapData {
@@ -43,12 +82,24 @@ export interface LotMapData {
   };
   lots: LotMapEntry[];
   amenities: AmenityPoint[];
+  greenAreas?: string[];
+  streets?: string[];
+  perimeter?: string[];
+  brLine?: string[];
+  streetLabels?: StreetLabel[];
+  entrance?: MapMarker | null;
   note?: string;
 }
 
 interface UseLotMapResult {
   lots: LotMapEntry[];
   amenities: AmenityPoint[];
+  greenAreas: string[];
+  streets: string[];
+  perimeter: string[];
+  brLine: string[];
+  streetLabels: StreetLabel[];
+  entrance: MapMarker | null;
   viewBox: string;
   stats: LotMapData['stats'] | null;
   isLoading: boolean;
@@ -58,6 +109,12 @@ interface UseLotMapResult {
   activeFilter: string;
   setActiveFilter: (f: string) => void;
   quadras: string[];
+  // Parte 2.1 — reserva de lote (somente corretor/gestor)
+  isManager: boolean;
+  actionLoading: boolean;
+  actionError: string | null;
+  reserveLot: (lot: LotMapEntry, opts?: { clientName?: string; clientPhone?: string; note?: string }) => Promise<boolean>;
+  releaseLot: (lot: LotMapEntry, reason?: string) => Promise<boolean>;
 }
 
 export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResult {
@@ -67,6 +124,9 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedLot, setSelectedLot] = useState<LotMapEntry | null>(null);
   const [activeFilter, setActiveFilter] = useState('todos');
+  const [isManager, setIsManager] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   // Load static JSON (polygons from DWG/DXF)
   useEffect(() => {
@@ -80,6 +140,7 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
       .then((data: LotMapData) => {
         setStaticData(data);
         setLots(data.lots);
+        setIsLoading(false); // mostra o mapa estático mesmo antes do enrich do Supabase
       })
       .catch((err: Error) => {
         setFetchError(err.message ?? 'Erro ao carregar mapa de lotes.');
@@ -87,14 +148,17 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
       });
   }, [jsonUrl]);
 
-  // Enrich with live Supabase data (status, price)
+  // Enrich with live Supabase data (status) from subdivision_lots — a FONTE DA
+  // VERDADE dos lotes de loteamento (Alto Bellevue = 383 linhas). O preço/planos
+  // vêm do JSON estático; aqui sobrescrevemos apenas o status e o id do banco
+  // (necessário p/ reservar). Casamento por (quadra, lot_number).
   useEffect(() => {
     if (!staticData || !developmentId) return;
 
     const supabase = createClient();
     supabase
-      .from('development_units')
-      .select('id, unit_name, polygon_id, quadra, lote_number, total_price, price_per_m2, map_status, area, discount_pct')
+      .from('subdivision_lots')
+      .select('id, quadra, lot_number, status, price')
       .eq('development_id', developmentId)
       .then(({ data }) => {
         if (!data || data.length === 0) {
@@ -102,28 +166,104 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
           return;
         }
 
-        // Build lookup: polygon_id → db row
-        const byPolygonId = new Map(data.map(u => [u.polygon_id, u]));
+        // Lookup: "QUADRA-LOTNUMBER" → db row
+        const byKey = new Map(
+          data.map(u => [`${String(u.quadra).toUpperCase()}-${u.lot_number}`, u]),
+        );
 
         setLots(prev =>
           prev.map(lot => {
-            const db = byPolygonId.get(lot.id);
+            const db = byKey.get(`${lot.quadra.toUpperCase()}-${parseInt(lot.lote, 10)}`);
             if (!db) return lot;
             return {
               ...lot,
-              status: (db.map_status as LotStatus) ?? lot.status,
-              price: db.total_price ?? lot.price,
-              pricePerM2: db.price_per_m2 ?? undefined,
-              discountPct: db.discount_pct ?? 20,
+              status: normalizeLotStatus(db.status),
+              price: db.price ?? lot.price,
               dbId: db.id,
-              unitName: db.unit_name,
-              area: db.area ?? lot.area,
             };
-          })
+          }),
         );
         setIsLoading(false);
       });
   }, [staticData, developmentId]);
+
+  // Detecta se o usuário logado é corretor/gestor (habilita ações de reserva)
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        setIsManager(false);
+        return;
+      }
+      supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+        .then(({ data }) => {
+          setIsManager(data?.role === 'admin' || data?.role === 'manager');
+        });
+    });
+  }, []);
+
+  // Atualiza o status de um lote no estado local (otimista pós-confirmação)
+  const patchLotStatus = useCallback((lotId: string, status: LotStatus) => {
+    setLots(prev => prev.map(l => (l.id === lotId ? { ...l, status } : l)));
+    setSelectedLot(prev => (prev && prev.id === lotId ? { ...prev, status } : prev));
+  }, []);
+
+  const reserveLot = useCallback<UseLotMapResult['reserveLot']>(async (lot, opts) => {
+    if (!lot.dbId) {
+      setActionError('Lote ainda não sincronizado com o banco.');
+      return false;
+    }
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      const res = await fetch('/api/lots/reserve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ unitId: lot.dbId, action: 'reserve', ...opts }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setActionError(json.error ?? 'Falha ao reservar.');
+        return false;
+      }
+      patchLotStatus(lot.id, 'reservado');
+      return true;
+    } catch {
+      setActionError('Erro de rede ao reservar.');
+      return false;
+    } finally {
+      setActionLoading(false);
+    }
+  }, [patchLotStatus]);
+
+  const releaseLot = useCallback<UseLotMapResult['releaseLot']>(async (lot, reason) => {
+    if (!lot.dbId) return false;
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      const res = await fetch('/api/lots/reserve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ unitId: lot.dbId, action: 'release', note: reason }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setActionError(json.error ?? 'Falha ao liberar.');
+        return false;
+      }
+      patchLotStatus(lot.id, 'disponivel');
+      return true;
+    } catch {
+      setActionError('Erro de rede ao liberar.');
+      return false;
+    } finally {
+      setActionLoading(false);
+    }
+  }, [patchLotStatus]);
 
   const quadras = useMemo(
     () => Array.from(new Set(lots.map(l => l.quadra))).sort(),
@@ -139,6 +279,12 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
   return {
     lots: filteredLots,
     amenities: staticData?.amenities ?? [],
+    greenAreas: staticData?.greenAreas ?? [],
+    streets: staticData?.streets ?? [],
+    perimeter: staticData?.perimeter ?? [],
+    brLine: staticData?.brLine ?? [],
+    streetLabels: staticData?.streetLabels ?? [],
+    entrance: staticData?.entrance ?? null,
     viewBox: staticData?.viewBox ?? '0 0 1200 900',
     stats: staticData?.stats ?? null,
     isLoading,
@@ -148,5 +294,10 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
     activeFilter,
     setActiveFilter,
     quadras,
+    isManager,
+    actionLoading,
+    actionError,
+    reserveLot,
+    releaseLot,
   };
 }
