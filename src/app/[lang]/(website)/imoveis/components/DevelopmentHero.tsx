@@ -238,6 +238,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                 style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
                             >
                                 {development.name}
+                                <span className="sr-only"> — {development.location.neighborhood}, {development.location.city}, {development.location.state}</span>
                             </motion.h1>
 
                             {/* Meta info row */}

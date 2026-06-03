@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
-import { Bed, Bath, Ruler, Car, Calendar, MessageCircle } from 'lucide-react'
+import { Bed, Bath, Ruler, Car, Calendar } from 'lucide-react'
 import DevelopmentHero from '../components/DevelopmentHero'
 import DevelopmentDetails from '../components/DevelopmentDetails'
 import DevelopmentGallery from '../components/DevelopmentGallery'
@@ -16,6 +16,7 @@ import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
+import MobileStickyBar from '../components/MobileStickyBar'
 import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
 import PropertyIntelligence from '../components/PropertyIntelligence'
 import { generateBreadcrumbSchema } from '@/lib/seo'
@@ -253,34 +254,48 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
     const pageUrl = `${BASE}/${params.lang}/imoveis/${params.slug}`
 
+    const allImages = [mainImage, ...gallery.map((img: string) => img.startsWith('http') ? img : `${BASE}${img}`)].filter(Boolean)
+
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'RealEstateListing',
         name: development.name,
         description: data.description || development.shortDescription || `Empreendimento premium em ${location}.`,
         url: pageUrl,
-        image: mainImage ? [mainImage] : [],
+        image: allImages.slice(0, 10),
         ...(priceMin && {
             offers: {
                 '@type': 'Offer',
                 priceCurrency: 'BRL',
                 price: priceMin,
+                priceValidUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                 availability: 'https://schema.org/InStock',
             },
         }),
         address: {
             '@type': 'PostalAddress',
-            streetAddress: development.location?.address || data.neighborhood || '',
+            streetAddress: development.location?.address || data.address || data.neighborhood || '',
             addressLocality: development.location?.city || data.city || '',
             addressRegion: development.location?.state || data.state || '',
+            postalCode: data.postal_code || data.cep || '',
             addressCountry: development.location?.country || (data.country === 'Brasil' ? 'BR' : data.country || 'BR'),
         },
-        ...(development.location?.coordinates && {
+        ...(development.location?.coordinates?.lat && development.location?.coordinates?.lng && {
             geo: {
                 '@type': 'GeoCoordinates',
                 latitude: development.location.coordinates.lat,
                 longitude: development.location.coordinates.lng,
             },
+        }),
+        ...(Number(data.area_from) > 0 && {
+            floorSize: {
+                '@type': 'QuantitativeValue',
+                value: Number(data.area_from),
+                unitCode: 'MTK',
+            },
+        }),
+        ...(Number(data.bedrooms_from) > 0 && {
+            numberOfRooms: Number(data.bedrooms_from),
         }),
     }
 
@@ -319,11 +334,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 sm:grid sm:grid-cols-4 xl:grid-cols-5 sm:gap-3">
                     {[
                         { label: 'Quartos', value: development.specs.bedroomsRange, Icon: Bed },
-                        { label: 'Banheiros', value: development.specs.bathroomsRange || '\u2014', Icon: Bath },
+                        { label: 'Banheiros', value: development.specs.bathroomsRange, Icon: Bath },
                         { label: 'Área', value: development.specs.areaRange, Icon: Ruler },
-                        { label: 'Vagas', value: development.specs.parkingRange || '\u2014', Icon: Car },
+                        { label: 'Vagas', value: development.specs.parkingRange, Icon: Car },
                         ...(development.deliveryDate ? [{ label: 'Entrega', value: development.deliveryDate, Icon: Calendar }] : []),
-                    ].map((item, i) => (
+                    ].filter(item => item.value && item.value !== '—').map((item, i) => (
                         <div key={i} role="group" aria-label={`${item.value} ${item.label.toLowerCase()}`} style={{
                             background: '#FFFFFF',
                             padding: '12px 10px',
@@ -433,61 +448,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 <SimilarProperties developments={similarDevs} lang={params.lang} />
             )}
 
-            {/* Sticky Mobile CTA — always visible */}
-            <div className="fixed left-0 right-0 z-[140] lg:hidden"
-                style={{
-                    bottom: 0,
-                    background: 'rgba(255,255,255,0.97)',
-                    backdropFilter: 'blur(12px)',
-                    WebkitBackdropFilter: 'blur(12px)',
-                    borderTop: '1px solid rgba(184,179,168,0.25)',
-                    padding: '10px 16px',
-                    paddingBottom: 'calc(10px + env(safe-area-inset-bottom, 0px))',
-                    boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
-                }}>
-                {/* Gold accent line at top */}
-                <div style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 1.5, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
-                <div className="flex items-center gap-3 max-w-lg mx-auto">
-                    <div className="flex-1 min-w-0">
-                        <p style={{ fontSize: 9, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '0 0 1px' }}>A partir de</p>
-                        <p style={{ fontSize: 18, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0, lineHeight: 1.2 }}>
-                            {development.priceRange.min > 0 ? `R$ ${development.priceRange.min >= 1000000 ? `${(development.priceRange.min / 1000000).toFixed(1).replace(/\.0$/, '')}M` : development.priceRange.min.toLocaleString('pt-BR')}` : 'Consulte'}
-                        </p>
-                    </div>
-                    <a
-                        href={`https://wa.me/${whatsappContact}?text=${encodeURIComponent(`Olá! Tenho interesse no ${development.name}. Gostaria de mais informações.`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                            position: 'relative',
-                            background: '#0B1928',
-                            color: '#FFFFFF',
-                            borderRadius: 10,
-                            padding: '0 18px',
-                            height: 44,
-                            fontWeight: 700,
-                            fontSize: 11,
-                            letterSpacing: '0.07em',
-                            textTransform: 'uppercase' as const,
-                            border: 'none',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 7,
-                            whiteSpace: 'nowrap',
-                            textDecoration: 'none',
-                            fontFamily: "var(--fu, 'Outfit', sans-serif)",
-                            overflow: 'hidden',
-                            flexShrink: 0,
-                        }}
-                    >
-                        <MessageCircle size={13} />
-                        Falar com Especialista
-                        <span style={{ position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 1.5, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
-                    </a>
-                </div>
-            </div>
+            {/* Sticky Mobile CTA — captures lead via modal before redirecting to WhatsApp */}
+            <MobileStickyBar
+                propertyName={development.name}
+                propertyId={development.id}
+                priceMin={development.priceRange.min}
+                whatsappContact={whatsappContact}
+            />
         </main>
     )
 }
