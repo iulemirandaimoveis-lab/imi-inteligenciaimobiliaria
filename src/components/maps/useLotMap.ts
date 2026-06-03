@@ -52,6 +52,7 @@ interface UseLotMapResult {
   viewBox: string;
   stats: LotMapData['stats'] | null;
   isLoading: boolean;
+  fetchError: string | null;
   selectedLot: LotMapEntry | null;
   setSelectedLot: (lot: LotMapEntry | null) => void;
   activeFilter: string;
@@ -59,23 +60,32 @@ interface UseLotMapResult {
   quadras: string[];
 }
 
-export function useLotMap(developmentId: string): UseLotMapResult {
+export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResult {
   const [staticData, setStaticData] = useState<LotMapData | null>(null);
   const [lots, setLots] = useState<LotMapEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedLot, setSelectedLot] = useState<LotMapEntry | null>(null);
   const [activeFilter, setActiveFilter] = useState('todos');
 
-  // Load static JSON (polygons from DWG)
+  // Load static JSON (polygons from DWG/DXF)
   useEffect(() => {
-    fetch('/maps/alto-bellevue-lots.json')
-      .then(r => r.json())
+    setIsLoading(true);
+    setFetchError(null);
+    fetch(jsonUrl)
+      .then(r => {
+        if (!r.ok) throw new Error(`Mapa não encontrado (${r.status})`);
+        return r.json();
+      })
       .then((data: LotMapData) => {
         setStaticData(data);
         setLots(data.lots);
       })
-      .catch(console.error);
-  }, []);
+      .catch((err: Error) => {
+        setFetchError(err.message ?? 'Erro ao carregar mapa de lotes.');
+        setIsLoading(false);
+      });
+  }, [jsonUrl]);
 
   // Enrich with live Supabase data (status, price)
   useEffect(() => {
@@ -132,6 +142,7 @@ export function useLotMap(developmentId: string): UseLotMapResult {
     viewBox: staticData?.viewBox ?? '0 0 1200 900',
     stats: staticData?.stats ?? null,
     isLoading,
+    fetchError,
     selectedLot,
     setSelectedLot,
     activeFilter,
