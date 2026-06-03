@@ -28,22 +28,25 @@ interface ViewBox {
 
 interface InteractiveLotMapProps {
   developmentId: string;
+  lotMapJsonUrl: string;
   galleryImages?: string[];
+  whatsappContact?: string;
 }
 
-export default function InteractiveLotMap({ developmentId, galleryImages = [] }: InteractiveLotMapProps) {
+export default function InteractiveLotMap({ developmentId, lotMapJsonUrl, galleryImages = [], whatsappContact }: InteractiveLotMapProps) {
   const {
     lots,
     amenities,
     viewBox: initialViewBox,
     stats,
     isLoading,
+    fetchError,
     selectedLot,
     setSelectedLot,
     activeFilter,
     setActiveFilter,
     quadras,
-  } = useLotMap(developmentId);
+  } = useLotMap(developmentId, lotMapJsonUrl);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -199,8 +202,16 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
         className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-[#1a2332]"
         style={{ height: isMobile ? '90vw' : 'clamp(560px, 68vh, 820px)' }}
       >
+        {/* Error overlay */}
+        {fetchError && (
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#1a2332] px-6 text-center">
+            <p className="text-gray-400 text-sm font-semibold mb-1">Mapa indisponível</p>
+            <p className="text-gray-600 text-xs">{fetchError}</p>
+          </div>
+        )}
+
         {/* Loading overlay */}
-        {isLoading && (
+        {isLoading && !fetchError && (
           <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#1a2332]">
             <div className="w-8 h-8 rounded-full border-2 border-[#C8A44A] border-t-transparent animate-spin mb-3" />
             <p className="text-gray-400 text-xs uppercase tracking-widest font-semibold">Carregando mapa...</p>
@@ -384,7 +395,7 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
         {!isMobile && panelOpen && (
           <div className="absolute inset-0 pointer-events-none z-20">
             <div className="pointer-events-auto h-full">
-              <LotDetailPanel lot={selectedLot} onClose={() => setSelectedLot(null)} isMobile={false} />
+              <LotDetailPanel lot={selectedLot} onClose={() => setSelectedLot(null)} isMobile={false} whatsappContact={whatsappContact} />
             </div>
           </div>
         )}
@@ -392,14 +403,14 @@ export default function InteractiveLotMap({ developmentId, galleryImages = [] }:
 
       {/* Mobile bottom sheet */}
       {isMobile && (
-        <LotDetailPanel lot={selectedLot} onClose={() => setSelectedLot(null)} isMobile={true} />
+        <LotDetailPanel lot={selectedLot} onClose={() => setSelectedLot(null)} isMobile={true} whatsappContact={whatsappContact} />
       )}
 
       {/* Mobile CTA */}
       {isMobile && !panelOpen && (
         <div className="mt-3 flex gap-2">
           <a
-            href={`https://wa.me/5581997230455?text=${encodeURIComponent('Olá! Tenho interesse no Alto Bellevue. Gostaria de falar com um especialista.')}`}
+            href={`https://wa.me/${whatsappContact ?? '5581997230455'}?text=${encodeURIComponent('Olá! Tenho interesse neste empreendimento. Gostaria de falar com um especialista.')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-white"

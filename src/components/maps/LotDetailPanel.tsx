@@ -24,18 +24,22 @@ const PAYMENT_OPTIONS: PaymentOption[] = [
   { label: '36 meses', months: 36, discount: 8, entry: 10 },
 ];
 
-function calcPrice(base: number, discPct: number, entryPct: number) {
+// Returns total (à vista) or monthly installment (parceled)
+function calcPrice(base: number, discPct: number, entryPct: number, months: number): number {
   const afterDisc = base * (1 - discPct / 100);
-  return afterDisc;
+  if (months === 0) return afterDisc;
+  const remaining = afterDisc * (1 - entryPct / 100);
+  return remaining / months;
 }
 
 interface LotDetailPanelProps {
   lot: LotMapEntry | null;
   onClose: () => void;
   isMobile: boolean;
+  whatsappContact?: string;
 }
 
-export default function LotDetailPanel({ lot, onClose, isMobile }: LotDetailPanelProps) {
+export default function LotDetailPanel({ lot, onClose, isMobile, whatsappContact = '5581997230455' }: LotDetailPanelProps) {
   const [pricingMode, setPricingMode] = useState<'avista' | 'tabela'>('avista');
 
   const tablePrice = lot?.price;
@@ -121,7 +125,7 @@ export default function LotDetailPanel({ lot, onClose, isMobile }: LotDetailPane
             <p className="text-[11px] uppercase tracking-widest text-gray-400 font-bold mb-3">Condições de Pagamento</p>
             <div className="space-y-2">
               {PAYMENT_OPTIONS.map(opt => {
-                const price = calcPrice(tablePrice, opt.discount, opt.entry);
+                const price = calcPrice(tablePrice, opt.discount, opt.entry, opt.months);
                 return (
                   <div
                     key={opt.months}
@@ -133,7 +137,9 @@ export default function LotDetailPanel({ lot, onClose, isMobile }: LotDetailPane
                         {opt.discount}% desc{opt.entry > 0 ? ` + ${opt.entry}% ent.` : ''}
                       </span>
                     </div>
-                    <span className="text-[13px] font-bold text-gray-800">{fmt(price)}</span>
+                    <span className="text-[13px] font-bold text-gray-800">
+                      {fmt(price)}{opt.months > 0 ? '/mês' : ''}
+                    </span>
                   </div>
                 );
               })}
@@ -175,9 +181,9 @@ export default function LotDetailPanel({ lot, onClose, isMobile }: LotDetailPane
             style={{ background: GOLD }}
             onClick={() => {
               const msg = encodeURIComponent(
-                `Olá! Tenho interesse no Lote ${lot.lote}, Quadra ${lot.quadra} do Alto Bellevue (${lot.area}m²). Gostaria de mais informações e condições de pagamento.`
+                `Olá! Tenho interesse no Lote ${lot.lote}, Quadra ${lot.quadra} (${lot.area}m²). Gostaria de mais informações e condições de pagamento.`
               );
-              window.open(`https://wa.me/5581997230455?text=${msg}`, '_blank');
+              window.open(`https://wa.me/${whatsappContact}?text=${msg}`, '_blank');
             }}
           >
             <ShoppingCart className="w-4 h-4" />
@@ -188,9 +194,9 @@ export default function LotDetailPanel({ lot, onClose, isMobile }: LotDetailPane
           className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all"
           onClick={() => {
             const msg = encodeURIComponent(
-              `Olá! Tenho interesse no Alto Bellevue e gostaria de falar com um especialista.`
+              `Olá! Tenho interesse neste empreendimento e gostaria de falar com um especialista.`
             );
-            window.open(`https://wa.me/5581997230455?text=${msg}`, '_blank');
+            window.open(`https://wa.me/${whatsappContact}?text=${msg}`, '_blank');
           }}
         >
           <MessageCircle className="w-4 h-4" />

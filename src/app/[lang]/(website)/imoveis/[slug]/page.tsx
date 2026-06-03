@@ -292,6 +292,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     ])
 
     const isLoteamento = data.type === 'loteamento'
+    const lotMapEnabled = isLoteamento && data.lot_map_enabled === true
+    const lotMapJsonUrl = `/maps/${params.slug}-lots.json`
     const anchorSections = isLoteamento ? ANCHOR_SECTIONS_LOTEAMENTO : ANCHOR_SECTIONS
 
     return (
@@ -360,7 +362,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                             />
                         </section>
                         <section id={isLoteamento ? 'mapa' : 'unidades'}>
-                            {isLoteamento ? (
+                            {lotMapEnabled ? (
                                 <SubdivisionErrorBoundary developmentName={development.name}>
                                     <div className="scroll-mt-32">
                                         <div className="flex items-center gap-3 mb-6">
@@ -371,7 +373,9 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                         </div>
                                         <InteractiveLotMap
                                             developmentId={development.id}
+                                            lotMapJsonUrl={lotMapJsonUrl}
                                             galleryImages={development.images.gallery.slice(0, 4)}
+                                            whatsappContact={whatsappContact}
                                         />
                                     </div>
                                 </SubdivisionErrorBoundary>
