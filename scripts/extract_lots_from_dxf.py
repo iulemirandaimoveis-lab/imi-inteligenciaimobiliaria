@@ -242,15 +242,29 @@ def process_region(region, geom, prices):
 
     # classifica polígonos: lote (tem número dentro) vs área reservada.
     # Para cada lote captura também a área de levantamento (texto AREA_DOS_LOTES dentro).
+    #
+    # Estratégia em dois passes:
+    #   1º passo  → ponto-no-polígono (texto dentro do lote)
+    #   2º passo  → fallback por centróide mais próximo para textos que ficaram
+    #               levemente fora do polígono no CAD (bug de textos na borda)
+    NEAR_DIST_SQ = 600 ** 2  # 600 unidades CAD ≈ ~60 m — ajuste se necessário
+
     lots_raw, reserved = [], []
+
+    # 1º passo: atribuição por ponto-no-polígono
+    used_numbers: set = set()  # índices dos textos já atribuídos
+    pending_reserved = []      # polígonos sem número neste passo
+
     for pts, area, (cx, cy) in region:
         num, best_d = None, float("inf")
-        for x, y, t in numero:
+        best_idx = -1
+        for idx, (x, y, t) in enumerate(numero):
             if point_in_polygon(x, y, pts):
                 d = dist2(cx, cy, x, y)
                 if d < best_d:
-                    best_d, num = d, t
+                    best_d, num, best_idx = d, t, idx
         if num and num.strip().isdigit():
+            used_numbers.add(best_idx)
             surveyed = None
             for x, y, t in area_texts:
                 if point_in_polygon(x, y, pts):
@@ -262,7 +276,49 @@ def process_region(region, geom, prices):
                 "surveyed": surveyed if surveyed is not None else area,
             })
         else:
-            reserved.append((pts, (cx, cy)))
+            pending_reserved.append((pts, area, cx, cy))
+
+    # 2º passo: textos não atribuídos → tentar casar com polígono mais próximo
+    # (cobre textos posicionados levemente fora do polígono no arquivo CAD)
+    unmatched_nums = [
+        (idx, x, y, t) for idx, (x, y, t) in enumerate(numero)
+        if idx not in used_numbers and t.strip().isdigit()
+    ]
+
+    if unmatched_nums and pending_reserved:
+        still_reserved = []
+        claimed: set = set()  # índices de pending_reserved já resgatados neste passo
+
+        for idx_p, (pts, area, cx, cy) in enumerate(pending_reserved):
+            best_d, best_num, best_idx_n = float("inf"), None, -1
+            for idx_n, x, y, t in unmatched_nums:
+                if idx_n in used_numbers:
+                    continue
+                d = dist2(cx, cy, x, y)
+                if d < NEAR_DIST_SQ and d < best_d:
+                    best_d, best_num, best_idx_n = d, t, idx_n
+            if best_num:
+                used_numbers.add(best_idx_n)
+                claimed.add(idx_p)
+                surveyed = None
+                for x2, y2, t2 in area_texts:
+                    if point_in_polygon(x2, y2, pts):
+                        surveyed = parse_area(t2)
+                        break
+                lots_raw.append({
+                    "pts": pts, "area": area, "cx": cx, "cy": cy,
+                    "num": int(best_num.strip()),
+                    "surveyed": surveyed if surveyed is not None else area,
+                })
+
+        # polígonos não resgatados no 2º passo → reservados
+        for idx_p, (pts, area, cx, cy) in enumerate(pending_reserved):
+            if idx_p not in claimed:
+                still_reserved.append((pts, (cx, cy)))
+
+        reserved = still_reserved
+    else:
+        reserved = [(pts, (cx, cy)) for pts, area, cx, cy in pending_reserved]
 
     # normalização para SVG (TODA a geometria que será desenhada nesta cópia:
     # lotes + áreas + delimitação + calçadas + linha da BR) — garante que nada
@@ -395,6 +451,69 @@ def process_region(region, geom, prices):
         ex, ey = min(perimeter_poly, key=lambda p: p[1])  # menor Y (sul = frente p/ BR)
         sx, sy = to_svg(ex, ey)
         entrance = {"x": sx, "y": sy, "label": "Entrada / Acesso"}
+
+    # ── 3º passo: suplementar com DB2 LOTES (cobre REGIAO_LOTES incompleto) ──
+    # Polígonos do DB2 LOTES que estejam na região e cujas áreas casem com lotes
+    # ainda ausentes na tabela de preços.
+    db2_supplement = geom.get("db2_lotes", [])
+    if db2_supplement:
+        lot_keys_so_far = {(l["quadra"], int(l["lote"])) for l in lots}
+        missing_rows = [
+            r for r in prices
+            if (str(r["quadra"]).upper(), int(r["lote"])) not in lot_keys_so_far
+        ]
+
+        if missing_rows:
+            supp_candidates = []
+            for pts in db2_supplement:
+                pts2 = [(p[0], p[1]) for p in pts]
+                cx2, cy2 = centroid(pts2)
+                if in_region(cx2, cy2):
+                    a2 = poly_area_m2(pts2)
+                    if LOT_AREA_MIN <= a2 <= LOT_AREA_MAX:
+                        supp_candidates.append((a2, cx2, cy2, pts2))
+
+            missing_rows.sort(key=lambda r: float(r["area_m2"]))
+            supp_candidates.sort(key=lambda c: c[0])
+
+            claimed_supp = set()
+            for mr in missing_rows:
+                target = float(mr["area_m2"])
+                best_diff, best_idx = float("inf"), -1
+                for idx, (sa, scx2, scy2, spts) in enumerate(supp_candidates):
+                    if idx in claimed_supp:
+                        continue
+                    diff = abs(sa - target) / target
+                    if diff < 0.12 and diff < best_diff:
+                        best_diff, best_idx = diff, idx
+
+                if best_idx >= 0:
+                    claimed_supp.add(best_idx)
+                    sa, scx2, scy2, spts = supp_candidates[best_idx]
+                    svg_pts = [to_svg(x, y) for x, y in spts]
+                    pts_str = " ".join(f"{p[0]},{p[1]}" for p in svg_pts)
+                    svgcx, svgcy = to_svg(scx2, scy2)
+                    q = str(mr["quadra"]).upper()
+                    l_str = str(int(mr["lote"])).zfill(2)
+                    lots.append({
+                        "id": f"{q}-{l_str}",
+                        "quadra": q,
+                        "lote": l_str,
+                        "points": pts_str,
+                        "area": round(target),
+                        "labelX": svgcx,
+                        "labelY": svgcy,
+                        "status": "disponivel",
+                        "price": mr["preco_lote"],
+                        "valor": mr["preco_lote"],
+                        "valorVista": mr.get("preco_vista"),
+                        "entrada": mr["entrada"],
+                        "p12": {"total": mr["p12_total"], "parcela": mr["p12_parcela"]},
+                        "p36": {"total": mr["p36_total"], "parcela": mr["p36_parcela"]},
+                        "p60": {"total": mr["p60_total"], "parcela": mr["p60_parcela"]},
+                        "p120": {"total": mr["p120_total"], "parcela": mr["p120_parcela"]},
+                        "metragem": target,
+                    })
 
     # ordena por quadra, lote
     lots.sort(key=lambda l: (l["quadra"], int(l["lote"])))

@@ -43,6 +43,7 @@ calcada = []         # DB2_CALCADA edges (streets/sidewalks)
 poligonal = []       # POLIGONAL perimeter (fragments — não usado como limite)
 linha_br = []        # DB2 LINHA DA BR
 limite = []          # DB2 LIMITE DO LOTE — delimitação oficial do condomínio
+db2_lotes = []       # DB2 LOTES — lotes suplementares (cobre REGIAO_LOTES incompleto)
 
 for e in msp.query("LWPOLYLINE LINE ARC POLYLINE"):
     lyr = e.dxf.layer
@@ -66,6 +67,10 @@ for e in msp.query("LWPOLYLINE LINE ARC POLYLINE"):
         f = flatten(e)
         if len(f) >= 10:   # ignora notações pequenas (4 vértices)
             limite.append(f)
+    elif lyr == "DB2 LOTES" and e.dxftype() == "LWPOLYLINE":
+        pts = poly_pts(e)
+        if len(pts) >= 3:
+            db2_lotes.append(pts)
 
 
 def collect(layer):
@@ -90,6 +95,7 @@ data = {
     "poligonal": poligonal,
     "linha_br": linha_br,
     "limite": limite,
+    "db2_lotes": db2_lotes,
     "numero": collect("NUMERO_DOS_LOTES"),
     "quadra": collect("IDENT_DAS_QUADRAS"),
     "area": collect("AREA_DOS_LOTES"),
@@ -98,6 +104,7 @@ data = {
 with open(out, "w") as f:
     json.dump(data, f)
 print("polys", len(polys), "calcada", len(calcada), "poligonal", len(poligonal),
-      "linha_br", len(linha_br), "numero", len(data["numero"]),
+      "linha_br", len(linha_br), "db2_lotes", len(db2_lotes),
+      "numero", len(data["numero"]),
       "quadra", len(data["quadra"]), "area", len(data["area"]), "ruas", len(data["ruas"]))
 print("cached ->", out)
