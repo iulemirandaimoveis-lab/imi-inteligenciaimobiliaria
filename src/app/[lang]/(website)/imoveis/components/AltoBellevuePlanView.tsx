@@ -130,6 +130,38 @@ function computeDimensions(polygon: [number, number][], areaM2: number): { testa
   return { testada, profundidade };
 }
 
+/**
+ * Medidas aproximadas das confrontações a partir das arestas do polígono.
+ * Convenção de cadastro (vértices digitados a partir da frente): frente → lateral direita
+ * → fundos → lateral esquerda. Só para polígonos de 4 lados; senão `null` (pendente).
+ */
+function computeSides(
+  polygon: [number, number][],
+  areaM2: number,
+): { frente: number; lateralDir: number; fundos: number; lateralEsq: number } | null {
+  if (!polygon || polygon.length !== 4 || !areaM2 || areaM2 <= 0) return null;
+  const svgArea = polygonAreaSvg(polygon);
+  if (svgArea <= 0) return null;
+  const scaleFactor = Math.sqrt(areaM2 / svgArea);
+  const edge = (i: number) => {
+    const [x1, y1] = polygon[i];
+    const [x2, y2] = polygon[(i + 1) % 4];
+    return Math.round(Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2) * scaleFactor * 10) / 10;
+  };
+  return { frente: edge(0), lateralDir: edge(1), fundos: edge(2), lateralEsq: edge(3) };
+}
+
+/** Rua de acesso aproximada: label de rua mais próxima do centroide do lote. */
+function nearestStreet(centroid: [number, number] | undefined, labels: { x: number; y: number; name: string }[]): string | null {
+  if (!centroid || !labels?.length) return null;
+  let best: { name: string; d: number } | null = null;
+  for (const s of labels) {
+    const d = (s.x - centroid[0]) ** 2 + (s.y - centroid[1]) ** 2;
+    if (!best || d < best.d) best = { name: s.name, d };
+  }
+  return best?.name ?? null;
+}
+
 // ── Data hooks ────────────────────────────────────────────────────────────────
 
 function useABMap() {
@@ -517,7 +549,7 @@ function MapSkeleton() {
 // ── Lot Detail Bottom Sheet ───────────────────────────────────────────────────
 
 function LotBottomSheet({
-  lot, priceEntry, onClose, whatsappPhone, developmentName, dbLot,
+  lot, priceEntry, onClose, whatsappPhone, developmentName, dbLot, streetLabels,
 }: {
   lot: PlanLot;
   priceEntry?: PriceEntry;
@@ -525,6 +557,7 @@ function LotBottomSheet({
   whatsappPhone: string;
   developmentName: string;
   dbLot?: Lot;
+  streetLabels?: { x: number; y: number; name: string }[];
 }) {
   const isAvailable = lot.status === 'DISPONIVEL';
   const isNegotiating = lot.status === 'NEGOCIACAO';
@@ -536,6 +569,15 @@ function LotBottomSheet({
       : null,
     [lot]
   );
+
+  const sides = useMemo(() =>
+    lot.polygon && lot.area_m2
+      ? computeSides(lot.polygon, lot.area_m2 as number)
+      : null,
+    [lot]
+  );
+
+  const acessoRua = useMemo(() => nearestStreet(lot.centroid, streetLabels ?? []), [lot.centroid, streetLabels]);
 
   const isCorner = dbLot?.special_type === 'ESQUINA';
   const pricePerM2 = lot.price && lot.area_m2 ? (lot.price as number) / (lot.area_m2 as number) : null;
@@ -664,6 +706,38 @@ function LotBottomSheet({
               <p style={{ fontSize: 15, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
                 {fmtM(dims.profundidade)}
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Confrontações (aprox. — derivadas das arestas) */}
+        {sides && (
+          <div className="px-5 pb-3">
+            <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 8px', fontFamily: "'Outfit', sans-serif" }}>
+              Confrontações <span style={{ color: '#C0BAB2', fontWeight: 500 }}>(aprox.)</span>
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              {([
+                { label: 'Frente', v: sides.frente },
+                { label: 'Fundos', v: sides.fundos },
+                { label: 'Lateral esq.', v: sides.lateralEsq },
+                { label: 'Lateral dir.', v: sides.lateralDir },
+              ] as const).map((s) => (
+                <div key={s.label} style={{ background: '#F8F6F2', borderRadius: 10, padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 10, color: '#948F84', fontWeight: 600 }}>{s.label}</span>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace" }}>{fmtM(s.v)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Rua de acesso */}
+        {acessoRua && (
+          <div className="px-5 pb-3">
+            <div style={{ background: '#F0EDE5', borderRadius: 12, padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600, flexShrink: 0 }}>Rua de acesso</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#081524', textAlign: 'right', fontFamily: "'Outfit', sans-serif" }}>{acessoRua}</span>
             </div>
           </div>
         )}
@@ -1222,6 +1296,7 @@ export default function AltoBellevuePlanView({
             whatsappPhone={whatsappPhone}
             developmentName={developmentName}
             dbLot={selectedDbLot}
+            streetLabels={mapData?.streetLabels}
           />
         )}
       </AnimatePresence>
