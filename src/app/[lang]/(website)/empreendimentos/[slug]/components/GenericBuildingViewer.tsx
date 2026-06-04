@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Building2, BedDouble, Bath, Car, Maximize2, X, MessageCircle, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { type IMIProperty, type AvailabilityStatus, AVAILABILITY_COLORS } from '@/lib/imi-domain/types'
-import FloorSelector from '../../imoveis/jazz-boulevard-garanhuns/components/FloorSelector'
+import FloorSelector from '../../../imoveis/jazz-boulevard-garanhuns/components/FloorSelector'
 
 // Map Supabase snake_case row → IMIProperty camelCase
 function mapRow(row: Record<string, unknown>): IMIProperty {
@@ -210,7 +210,7 @@ export default function GenericBuildingViewer({
               floors={floors}
               selectedFloor={selectedFloor}
               units={towerUnits}
-              onFloorSelect={floor => { setSelectedFloor(floor); setSelectedUnit(null) }}
+              onFloorSelect={(floor: number) => { setSelectedFloor(floor); setSelectedUnit(null) }}
             />
           </div>
         )}
