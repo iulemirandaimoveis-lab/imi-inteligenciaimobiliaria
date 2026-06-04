@@ -1123,10 +1123,10 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                 onClick={() => { setViewMode('list'); setSelectedLot(null); }}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
                 style={{
-                  background: viewMode === 'list' ? '#fff' : 'transparent',
-                  color: viewMode === 'list' ? '#0B1928' : '#948F84',
+                  background: 'transparent',
+                  color: '#948F84',
                   fontSize: 11, fontWeight: 700,
-                  boxShadow: viewMode === 'list' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  boxShadow: 'none',
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
                   whiteSpace: 'nowrap',
                 }}
@@ -1138,10 +1138,10 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                 onClick={() => setViewMode('plan')}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
                 style={{
-                  background: viewMode === 'plan' ? '#fff' : 'transparent',
-                  color: viewMode === 'plan' ? '#0B1928' : '#948F84',
+                  background: '#fff',
+                  color: '#0B1928',
                   fontSize: 11, fontWeight: 700,
-                  boxShadow: viewMode === 'plan' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
                   whiteSpace: 'nowrap',
                 }}
