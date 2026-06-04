@@ -312,8 +312,8 @@ function LotBottomSheet({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.18 }}
-        className="fixed inset-0 z-40"
-        style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+        className="fixed inset-0 z-[9998]"
+        style={{ background: 'rgba(0,0,0,0.52)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
         onClick={onClose}
       />
 
@@ -323,12 +323,13 @@ function LotBottomSheet({
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-        className="fixed bottom-0 left-0 right-0 z-50 overflow-y-auto"
+        className="fixed bottom-0 left-0 right-0 z-[9999] overflow-y-auto"
         style={{
-          maxHeight: '82vh',
-          borderRadius: '36px 36px 0 0',
+          maxHeight: '88vh',
+          borderRadius: '28px 28px 0 0',
           background: '#fff',
-          boxShadow: '0 -32px 80px rgba(0,0,0,0.28)',
+          boxShadow: '0 -32px 80px rgba(0,0,0,0.36)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -514,7 +515,7 @@ function LotBottomSheet({
         )}
 
         {/* CTAs */}
-        <div className="px-6 pb-8 pt-1 flex flex-col gap-2">
+        <div className="px-6 pt-1 flex flex-col gap-2" style={{ paddingBottom: 'max(2rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)))' }}>
           {isAvailable || lot.status === 'NEGOCIACAO' ? (
             <>
               <a

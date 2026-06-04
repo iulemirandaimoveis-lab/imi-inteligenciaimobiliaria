@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Send, Check, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getAttribution } from '@/lib/utils/attribution'
@@ -75,6 +75,11 @@ export default function LeadCaptureModal({
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({ name: '', email: '', phone: '' })
 
+    useEffect(() => {
+        document.body.style.overflow = 'hidden'
+        return () => { document.body.style.overflow = '' }
+    }, [])
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         setIsLoading(true)
@@ -107,7 +112,7 @@ export default function LeadCaptureModal({
     }
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             {/* Backdrop */}
             <motion.div
                 initial={{ opacity: 0 }}

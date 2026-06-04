@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, MessageCircle, Lock, Unlock, AlertCircle, Calculator, PhoneCall } from 'lucide-react';
 import type { LotMapEntry } from './useLotMap';
@@ -125,8 +125,8 @@ export default function LotDetailPanel({
         </div>
         <button
           onClick={onClose}
-          className="p-1.5 rounded-full transition-all hover:scale-110 active:scale-95 shrink-0"
-          style={{ color: TEXT3, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+          className="w-9 h-9 flex items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 shrink-0"
+          style={{ color: TEXT2, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
           aria-label="Fechar"
         >
           <X className="w-4 h-4" />
@@ -432,6 +432,17 @@ export default function LotDetailPanel({
     </div>
   ) : null;
 
+  // Lock body scroll when mobile sheet is open so WhatsAppFAB hides
+  useEffect(() => {
+    if (!isMobile) return;
+    if (lot) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [lot, isMobile]);
+
   if (isMobile) {
     return (
       <AnimatePresence>
@@ -441,8 +452,8 @@ export default function LotDetailPanel({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40"
-              style={{ background: 'rgba(5,10,22,0.65)' }}
+              className="fixed inset-0 z-[9998]"
+              style={{ background: 'rgba(5,10,22,0.72)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
               onClick={onClose}
             />
             <motion.div
@@ -454,8 +465,13 @@ export default function LotDetailPanel({
               dragConstraints={{ top: 0 }}
               dragElastic={0.1}
               onDragEnd={(_: unknown, info: { offset: { y: number } }) => { if (info.offset.y > 120) onClose(); }}
-              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl p-5 pb-8 max-h-[88vh] overflow-y-auto"
-              style={{ background: SURFACE, borderTop: `1px solid ${BORDER}`, boxShadow: '0 -8px 40px rgba(0,0,0,0.6)' }}
+              className="fixed bottom-0 left-0 right-0 z-[9999] rounded-t-[24px] p-5 max-h-[88vh] overflow-y-auto"
+              style={{
+                background: SURFACE,
+                borderTop: `1px solid ${BORDER}`,
+                boxShadow: '0 -8px 40px rgba(0,0,0,0.6)',
+                paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))',
+              }}
             >
               {/* Drag handle */}
               <div

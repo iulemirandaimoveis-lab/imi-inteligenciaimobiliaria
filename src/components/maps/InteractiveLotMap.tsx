@@ -597,15 +597,15 @@ export default function InteractiveLotMap({
         </svg>
 
         {/* ─── Map controls (bottom-right) ─── */}
-        <div className="absolute bottom-14 right-3 flex flex-col gap-1 z-10">
+        <div className="absolute bottom-14 right-3 flex flex-col gap-1.5 z-10">
           <MapCtrlBtn onClick={() => zoom(0.75)} label="Aproximar">
-            <ZoomIn className="w-3.5 h-3.5" />
+            <ZoomIn className="w-4 h-4" />
           </MapCtrlBtn>
           <MapCtrlBtn onClick={() => zoom(1.33)} label="Afastar">
-            <ZoomOut className="w-3.5 h-3.5" />
+            <ZoomOut className="w-4 h-4" />
           </MapCtrlBtn>
           <MapCtrlBtn onClick={resetZoom} label="Ver tudo">
-            <RotateCcw className="w-3 h-3" />
+            <RotateCcw className="w-3.5 h-3.5" />
           </MapCtrlBtn>
         </div>
 
@@ -698,8 +698,10 @@ function StatusChip({
   return (
     <button
       onClick={onClick}
-      className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
+      className="shrink-0 flex items-center gap-1.5 px-3.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
       style={{
+        height: 36,
+        minHeight: 36,
         background: active ? 'rgba(200,164,74,0.08)' : 'transparent',
         color: active ? activeColor : '#4F5B6B',
         border: active ? `1.5px solid ${activeColor}44` : '1.5px solid rgba(255,255,255,0.08)',
@@ -727,8 +729,10 @@ function QuadraChip({
   return (
     <button
       onClick={onClick}
-      className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
+      className="shrink-0 flex items-center gap-1.5 px-3 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
       style={{
+        height: 32,
+        minHeight: 32,
         background: active ? 'rgba(200,164,74,0.08)' : 'transparent',
         color: active ? GOLD : '#4F5B6B',
         border: active ? `1.5px solid rgba(200,164,74,0.35)` : '1.5px solid rgba(255,255,255,0.08)',
@@ -737,9 +741,9 @@ function QuadraChip({
       {label}
       {count !== undefined && count > 0 && (
         <span
-          className="inline-flex items-center justify-center text-[9px] font-black rounded-full px-1 min-w-[16px] h-[16px]"
+          className="inline-flex items-center justify-center text-[9px] font-black rounded-full px-1 min-w-[18px] h-[18px]"
           style={{
-            background: active ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.06)',
+            background: active ? 'rgba(200,164,74,0.18)' : 'rgba(255,255,255,0.08)',
             color: active ? GOLD : '#4F5B6B',
           }}
         >
@@ -762,12 +766,13 @@ function MapCtrlBtn({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="w-7 h-7 flex items-center justify-center rounded-lg text-white transition-all active:scale-95"
+      className="w-10 h-10 flex items-center justify-center rounded-xl text-white transition-all active:scale-95"
       style={{
-        background: 'rgba(11,25,40,0.88)',
-        backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(200,164,74,0.18)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+        background: 'rgba(11,25,40,0.90)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        border: '1px solid rgba(200,164,74,0.22)',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.45)',
         color: '#8E99AB',
       }}
     >
