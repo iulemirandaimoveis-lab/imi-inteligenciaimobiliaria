@@ -1109,6 +1109,59 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
     );
   }
 
+  // Premium Alto Bellevue experience — self-contained with its own filters and bottom sheet
+  if (developmentId === AB_DEV_ID && viewMode === 'plan') {
+    return (
+      <div>
+        {hasPlanView && (
+          <div className="flex justify-end mb-4">
+            <div
+              className="flex items-center rounded-xl p-1 flex-shrink-0"
+              style={{ background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)' }}
+            >
+              <button
+                onClick={() => { setViewMode('list'); setSelectedLot(null); }}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
+                style={{
+                  background: viewMode === 'list' ? '#fff' : 'transparent',
+                  color: viewMode === 'list' ? '#0B1928' : '#948F84',
+                  fontSize: 11, fontWeight: 700,
+                  boxShadow: viewMode === 'list' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <List size={12} />
+                Lista
+              </button>
+              <button
+                onClick={() => setViewMode('plan')}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
+                style={{
+                  background: viewMode === 'plan' ? '#fff' : 'transparent',
+                  color: viewMode === 'plan' ? '#0B1928' : '#948F84',
+                  fontSize: 11, fontWeight: 700,
+                  boxShadow: viewMode === 'plan' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <MapIcon size={12} />
+                Planta
+              </button>
+            </div>
+          </div>
+        )}
+        <AltoBellevuePlanView
+          lots={lots}
+          developmentId={developmentId}
+          developmentName={developmentName}
+          whatsappPhone={whatsappPhone}
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       {/* ── Header ─────────────────────────────────────────────────────────── */}
