@@ -4,7 +4,11 @@ import React, {
   useRef, useState, useCallback, useMemo, useEffect, memo,
 } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers } from 'lucide-react';
+import {
+  loadAltoBellevueMap, AB_VIEWBOX,
+  type ABMapData,
+} from '@/lib/lots/alto-bellevue';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -39,13 +43,13 @@ interface Props {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const SVG_W = 1000;
-const SVG_H = 707;
+// viewBox da fonte canônica (public/maps/alto-bellevue-lots.json)
+const SVG_W = AB_VIEWBOX.w;
+const SVG_H = AB_VIEWBOX.h;
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 20;
 const GOLD = '#C8A44A';
 const NAVY = '#081524';
-const CACHE_KEY = 'imi:ab-lots:v3';
 
 // ── Status config ─────────────────────────────────────────────────────────────
 
@@ -128,62 +132,33 @@ function computeDimensions(polygon: [number, number][], areaM2: number): { testa
 
 // ── Data hooks ────────────────────────────────────────────────────────────────
 
-function usePlanLots() {
-  const [planLots, setPlanLots] = useState<PlanLot[]>([]);
+function useABMap() {
+  const [data, setData] = useState<ABMapData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
+    const signal = { cancelled: false };
+    setLoading(true);
+    setError(null);
 
-    const load = async () => {
-      setLoading(true);
-      setError(null);
+    loadAltoBellevueMap({ signal })
+      .then((d) => {
+        if (signal.cancelled) return;
+        setData(d);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (signal.cancelled) return;
+        setError('Não foi possível carregar o mapa. Verifique sua conexão.');
+        setLoading(false);
+      });
 
-      // Serve from session cache immediately
-      try {
-        const cached = sessionStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const data = JSON.parse(cached) as PlanLot[];
-          if (!cancelled && data.length > 0) {
-            setPlanLots(data);
-            setLoading(false);
-            return;
-          }
-        }
-      } catch {}
-
-      // Fetch with up to 3 retries, exponential backoff
-      for (let i = 0; i <= 2; i++) {
-        try {
-          const res = await fetch('/data/alto-bellevue-lots.json', {
-            cache: i === 0 ? 'force-cache' : 'reload',
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data: PlanLot[] = await res.json();
-          if (!cancelled) {
-            setPlanLots(data);
-            setLoading(false);
-            try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch {}
-          }
-          return;
-        } catch {
-          if (i < 2) {
-            await new Promise(r => setTimeout(r, Math.pow(2, i) * 800));
-          } else if (!cancelled) {
-            setError('Não foi possível carregar o mapa. Verifique sua conexão.');
-            setLoading(false);
-          }
-        }
-      }
-    };
-
-    load();
-    return () => { cancelled = true; };
+    return () => { signal.cancelled = true; };
   }, [attempt]);
 
-  return { planLots, loading, error, retry: () => setAttempt(a => a + 1) };
+  return { data, loading, error, retry: () => setAttempt((a) => a + 1) };
 }
 
 function usePrices() {
@@ -225,6 +200,8 @@ function mergeLots(dbLots: Lot[], planLots: PlanLot[]): PlanLot[] {
 interface MapInnerProps {
   lots: PlanLot[];
   allLots: PlanLot[];
+  context: ABMapData | null;
+  showTechLayer: boolean;
   selectedId: string | null;
   scale: number;
   origin: { x: number; y: number };
@@ -238,7 +215,7 @@ interface MapInnerProps {
 }
 
 const MapInner = memo(function MapInner({
-  lots, allLots, selectedId, scale, origin, isDragging,
+  lots, allLots, context, showTechLayer, selectedId, scale, origin, isDragging,
   activeQuadra, onLotClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
 }: MapInnerProps) {
   // Quadra centroid badges — computed from all lots
@@ -263,6 +240,8 @@ const MapInner = memo(function MapInner({
   const showLotNumbers = scale >= 1.5;
   const showAreaLabels = scale >= 3.5;
   const showQuadraBadges = scale < 4;
+  const showStreetLabels = scale >= 1.1;
+  const streetStroke = Math.max(0.5, 1.6 / scale);
 
   // Inverse-scale badge sizing so badges appear constant size on screen
   const badgeR = Math.max(7, 22 / scale);
@@ -295,16 +274,98 @@ const MapInner = memo(function MapInner({
             <feGaussianBlur stdDeviation="4.5" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
+          <linearGradient id="ab-base" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0A1A2C" />
+            <stop offset="100%" stopColor="#06101D" />
+          </linearGradient>
         </defs>
 
-        {/* Satellite background */}
-        <image
-          href="/images/maps/alto-bellevue-bg.jpg"
-          x="0" y="0" width={SVG_W} height={SVG_H}
-          preserveAspectRatio="xMidYMid slice"
-        />
-        {/* Contrast overlay */}
-        <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="rgba(8,21,36,0.40)" />
+        {/* Technical base — fundo escuro técnico (sem foto, alinhado ao viewBox canônico) */}
+        <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-base)" />
+
+        {/* ── Camada técnica: perímetro, ruas, BR, portaria ── */}
+        {showTechLayer && context && (
+          <g style={{ pointerEvents: 'none' }}>
+            {/* Perímetro do empreendimento */}
+            {context.perimeter.map((poly, i) => (
+              <polygon
+                key={`perim-${i}`}
+                points={poly.map(([x, y]) => `${x},${y}`).join(' ')}
+                fill="rgba(200,164,74,0.05)"
+                stroke="rgba(200,164,74,0.45)"
+                strokeWidth={Math.max(0.7, 2 / scale)}
+                strokeDasharray={`${6 / scale} ${4 / scale}`}
+              />
+            ))}
+            {/* Linha da BR */}
+            {context.brLine.map((line, i) => (
+              <polyline
+                key={`br-${i}`}
+                points={line.map(([x, y]) => `${x},${y}`).join(' ')}
+                fill="none"
+                stroke="rgba(255,255,255,0.14)"
+                strokeWidth={Math.max(0.6, 2.4 / scale)}
+              />
+            ))}
+            {/* Eixos das ruas */}
+            {context.streets.map((line, i) => (
+              <polyline
+                key={`st-${i}`}
+                points={line.map(([x, y]) => `${x},${y}`).join(' ')}
+                fill="none"
+                stroke="rgba(255,255,255,0.10)"
+                strokeWidth={streetStroke}
+                strokeLinecap="round"
+              />
+            ))}
+            {/* Amenities (portaria, lazer) */}
+            {context.amenities.map((a) => (
+              <g key={`am-${a.id}`}>
+                <circle cx={a.x} cy={a.y} r={Math.max(3, 7 / scale)} fill={a.color} opacity={0.85} />
+                {scale >= 0.9 && (
+                  <text
+                    x={a.x} y={a.y - Math.max(5, 11 / scale)}
+                    textAnchor="middle"
+                    fontSize={Math.max(5, 9 / scale)}
+                    fill="rgba(255,255,255,0.7)"
+                    fontWeight="600"
+                    style={{ fontFamily: "'Outfit', sans-serif" }}
+                  >
+                    {a.label}
+                  </text>
+                )}
+              </g>
+            ))}
+            {/* Entrada / acesso */}
+            {context.entrance && (
+              <text
+                x={context.entrance.x} y={context.entrance.y}
+                textAnchor="middle"
+                fontSize={Math.max(5, 9 / scale)}
+                fill="rgba(200,164,74,0.85)"
+                fontWeight="700"
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+              >
+                {context.entrance.label}
+              </text>
+            )}
+            {/* Nomes das ruas */}
+            {showStreetLabels && context.streetLabels.map((s, i) => (
+              <text
+                key={`sl-${i}`}
+                x={s.x} y={s.y}
+                textAnchor="middle"
+                fontSize={Math.max(4, 7 / scale)}
+                fill="rgba(255,255,255,0.34)"
+                fontWeight="500"
+                letterSpacing="0.04em"
+                style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' }}
+              >
+                {s.name}
+              </text>
+            ))}
+          </g>
+        )}
 
         {/* Lots */}
         {lots.map(lot => {
@@ -725,14 +786,16 @@ export default function AltoBellevuePlanView({
   developmentName,
   whatsappPhone = '5581997230455',
 }: Props) {
-  const { planLots, loading, error, retry } = usePlanLots();
+  const { data: mapData, loading, error, retry } = useABMap();
   const priceMap = usePrices();
+  const planLots = mapData?.lots ?? [];
 
   const [selectedLot, setSelectedLot] = useState<PlanLot | null>(null);
   const [activeStatus, setActiveStatus] = useState('ALL');
   const [activeQuadra, setActiveQuadra] = useState('ALL');
   const [isMobile, setIsMobile] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [showTechLayer, setShowTechLayer] = useState(true);
 
   const [scale, setScale] = useState(1);
   const [origin, setOrigin] = useState({ x: 0, y: 0 });
@@ -909,28 +972,51 @@ export default function AltoBellevuePlanView({
         className="relative w-full overflow-hidden"
         style={{ height: mapHeight, background: NAVY }}
       >
-        {/* Error overlay */}
+        {/* Fallback estático clicável — camada 3: nunca deixa o mapa em branco */}
         {error && (
-          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 px-8 text-center" style={{ background: NAVY }}>
-            <div style={{ width: 52, height: 52, borderRadius: 16, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <AlertCircle size={24} style={{ color: 'rgba(200,164,74,0.65)' }} />
+          <div className="absolute inset-0 z-30" style={{ background: NAVY }}>
+            {/* Planta estática (offline-first) */}
+            <img
+              src="/images/maps/alto-bellevue-plant.jpg"
+              alt="Planta do loteamento Alto Bellevue"
+              className="w-full h-full"
+              style={{ objectFit: 'cover', opacity: 0.55 }}
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3.5 px-8 text-center"
+              style={{ background: 'linear-gradient(rgba(8,21,36,0.45), rgba(8,21,36,0.78))' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <AlertCircle size={22} style={{ color: 'rgba(200,164,74,0.75)' }} />
+              </div>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.88)', margin: '0 0 4px', fontFamily: "'Outfit', sans-serif" }}>
+                  Modo planta estática
+                </p>
+                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', margin: 0, maxWidth: 280 }}>
+                  Não foi possível carregar o mapa interativo. Veja a planta acima ou fale com um
+                  especialista para condições atualizadas.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap justify-center">
+                <button
+                  onClick={retry}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-opacity hover:opacity-80 active:scale-95"
+                  style={{ background: GOLD, color: '#0B1B2D', fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}
+                >
+                  <RefreshCw size={13} />
+                  Tentar novamente
+                </button>
+                <a
+                  href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(`Olá! Gostaria de informações sobre lotes disponíveis no ${developmentName}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl"
+                  style={{ background: 'rgba(255,255,255,0.10)', color: '#fff', fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif", textDecoration: 'none', border: '1px solid rgba(255,255,255,0.18)' }}
+                >
+                  <MessageCircle size={13} />
+                  Falar com especialista
+                </a>
+              </div>
             </div>
-            <div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.80)', margin: '0 0 4px', fontFamily: "'Outfit', sans-serif" }}>
-                Mapa temporariamente indisponível
-              </p>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)', margin: 0 }}>
-                {error}
-              </p>
-            </div>
-            <button
-              onClick={retry}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl transition-opacity hover:opacity-80 active:scale-95"
-              style={{ background: GOLD, color: '#0B1B2D', fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}
-            >
-              <RefreshCw size={13} />
-              Tentar novamente
-            </button>
           </div>
         )}
 
@@ -942,6 +1028,8 @@ export default function AltoBellevuePlanView({
           <MapInner
             lots={filteredLots}
             allLots={allLots}
+            context={mapData}
+            showTechLayer={showTechLayer}
             selectedId={selectedLot?.id ?? null}
             scale={scale}
             origin={origin}
@@ -961,6 +1049,12 @@ export default function AltoBellevuePlanView({
             <MapBtn onClick={zoomIn} label="Aproximar"><ZoomIn size={15} /></MapBtn>
             <MapBtn onClick={zoomOut} label="Afastar"><ZoomOut size={15} /></MapBtn>
             <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={13} /></MapBtn>
+            <MapBtn
+              onClick={() => setShowTechLayer((v) => !v)}
+              label={showTechLayer ? 'Ocultar camada técnica' : 'Mostrar camada técnica'}
+            >
+              <Layers size={14} style={{ opacity: showTechLayer ? 1 : 0.4 }} />
+            </MapBtn>
           </div>
         )}
 
