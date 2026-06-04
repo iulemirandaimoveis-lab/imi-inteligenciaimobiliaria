@@ -59,6 +59,81 @@ const MONO: React.CSSProperties = {
   fontFamily: 'var(--font-mono, monospace)',
 }
 
+// ─── Audit history (lot_status_history) ───────────────────────────────────────
+
+interface LotHistoryRow {
+  id: string
+  previous_status: string | null
+  new_status: string
+  changed_by: string | null
+  reason: string | null
+  changed_at: string
+  actor?: string
+}
+
+function LotHistory({ lotId }: { lotId: string }) {
+  const [rows, setRows] = useState<LotHistoryRow[] | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const supabase = createClient()
+    ;(async () => {
+      const { data, error } = await supabase
+        .from('lot_status_history')
+        .select('id, previous_status, new_status, changed_by, reason, changed_at')
+        .eq('lot_id', lotId)
+        .order('changed_at', { ascending: false })
+        .limit(25)
+      if (cancelled) return
+      if (error || !data) { setRows([]); return }
+
+      // Resolve nomes dos autores (best-effort; RLS pode restringir)
+      const ids = [...new Set(data.map(r => r.changed_by).filter(Boolean))] as string[]
+      const names = new Map<string, string>()
+      if (ids.length) {
+        const { data: profs } = await supabase.from('profiles').select('id, name, email').in('id', ids)
+        for (const p of profs ?? []) names.set(p.id, p.name || p.email || '')
+      }
+      setRows(data.map(r => ({ ...r, actor: r.changed_by ? (names.get(r.changed_by) || 'Usuário') : 'Sistema' })))
+    })()
+    return () => { cancelled = true }
+  }, [lotId])
+
+  const fmtDate = (s: string) =>
+    new Date(s).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })
+
+  return (
+    <div>
+      <label style={{ ...EYEBROW, display: 'block', marginBottom: 6 }}>Histórico de alterações</label>
+      {rows === null ? (
+        <p style={{ fontSize: 12, color: T.textDim, margin: 0 }}>Carregando…</p>
+      ) : rows.length === 0 ? (
+        <p style={{ fontSize: 12, color: T.textDim, margin: 0 }}>Sem alterações registradas.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 160, overflowY: 'auto' }}>
+          {rows.map(r => {
+            const prev = r.previous_status ? (STATUS_CFG[r.previous_status]?.label ?? r.previous_status) : '—'
+            const next = STATUS_CFG[r.new_status]?.label ?? r.new_status
+            return (
+              <div key={r.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, padding: '7px 10px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.border}` }}>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: T.text, margin: 0 }}>
+                    {prev} <span style={{ color: T.textDim }}>→</span> {next}
+                  </p>
+                  <p style={{ fontSize: 10, color: T.textDim, margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {r.actor}{r.reason ? ` · ${r.reason}` : ''}
+                  </p>
+                </div>
+                <span style={{ ...MONO, fontSize: 10, color: T.textDim, flexShrink: 0 }}>{fmtDate(r.changed_at)}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Inline Edit Cell ─────────────────────────────────────────────────────────
 
 function StatusPill({ status, onClick }: { status: string; onClick?: () => void }) {
@@ -108,6 +183,13 @@ function LotEditModal({
   }, [onClose])
 
   const handleSave = async () => {
+    // Guarda: reverter um lote VENDIDO exige confirmação explícita do gestor.
+    if (lot.status === 'VENDIDO' && status !== 'VENDIDO') {
+      const ok = window.confirm(
+        `Este lote está VENDIDO. Confirmar a mudança para "${STATUS_CFG[status]?.label ?? status}"? Esta ação fica registrada na auditoria.`,
+      )
+      if (!ok) return
+    }
     setSaving(true)
     const priceVal = price ? parseFloat(price.replace(',', '.')) : null
     await onSave(lot.id, { status, price: isNaN(priceVal as number) ? null : priceVal, notes: notes || null })
@@ -196,6 +278,9 @@ function LotEditModal({
               }}
             />
           </div>
+
+          {/* Audit history */}
+          <LotHistory lotId={lot.id} />
 
           {/* Actions */}
           <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
