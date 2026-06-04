@@ -23,6 +23,20 @@
   (total/quadra, duplicados, polígonos inválidos, divergência planta×tabela).
 - Itens sem fonte oficial marcados `pendente` (áreas verdes, preço `B-24`, `D-15`).
 
+### UX (Tarefa C — parcial)
+- Busca de lote por número (`A-12` / `A12` / `12` na quadra ativa) com foco e seleção.
+- `focusOn()` centraliza lote/quadra na tela; clique na quadra centraliza nela.
+
+### Drawer (Tarefa D — parcial)
+- Confrontações aproximadas (frente, fundos, lateral esq./dir.) derivadas das arestas do
+  polígono (só lotes de 4 lados; senão omitidas — não inventa).
+- Rua de acesso aproximada pela street label mais próxima do centroide.
+
+### Backoffice (Tarefa E — parcial)
+- Visualizador de auditoria (`lot_status_history`) no modal de edição: quem alterou,
+  quando, antes→depois e motivo, com nomes dos autores (best-effort via `profiles`).
+- Guarda de confirmação ao reverter um lote `VENDIDO`.
+
 ### Testes
 - `src/__tests__/lib/lots/alto-bellevue.test.ts` (14 testes): geometria, validação e
   integridade da fonte canônica.
