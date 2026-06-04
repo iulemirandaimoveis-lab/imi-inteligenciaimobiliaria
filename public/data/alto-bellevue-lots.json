@@ -1624,7 +1624,7 @@
     ],
     "area_m2": 427.52,
     "price": 294133.76,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -2699,7 +2699,7 @@
     ],
     "area_m2": 312.71,
     "price": 205137.76,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -4900,7 +4900,7 @@
     ],
     "area_m2": 417.82,
     "price": 287460.16,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -5622,7 +5622,7 @@
     ],
     "area_m2": 359.76,
     "price": 247514.88,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -6790,7 +6790,7 @@
     ],
     "area_m2": 359.76,
     "price": 247514.88,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -6829,7 +6829,7 @@
     ],
     "area_m2": 359.76,
     "price": 247514.88,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -6868,7 +6868,7 @@
     ],
     "area_m2": 359.76,
     "price": 247514.88,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -9491,7 +9491,7 @@
     ],
     "area_m2": 362.86,
     "price": 249647.68,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -9518,7 +9518,7 @@
     ],
     "area_m2": 362.86,
     "price": 249647.68,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -9545,7 +9545,7 @@
     ],
     "area_m2": 362.86,
     "price": 249647.68,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
@@ -9572,7 +9572,7 @@
     ],
     "area_m2": 362.86,
     "price": 249647.68,
-    "status": "DISPONIVEL",
+    "status": "VENDIDO",
     "has_polygon": true
   },
   {
