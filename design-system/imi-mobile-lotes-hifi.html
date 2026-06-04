@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMI — Reserva do Vale · Mobile HiFi Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#060D16; --n:#0B1928; --n2:#0F2035; --n3:#142840; --n4:#1A3250; --n5:#1F3B5C;
+  --gold:#C8A44A; --gold-b:#D4B86A; --gold-d:#A8842A;
+  --g04:rgba(200,164,74,.04); --g08:rgba(200,164,74,.08); --g12:rgba(200,164,74,.12);
+  --g15:rgba(200,164,74,.15); --g25:rgba(200,164,74,.25); --g40:rgba(200,164,74,.40);
+  --w:#FFF; --t1:#E8E4DC; --t2:#94A0B2; --t3:#556170;
+  --grn:#4ADE80; --red:#F87171; --blu:#60A5FA; --amb:#FBBF24; --cyan:#22D3EE;
+  --bdr:rgba(255,255,255,.06); --bdr2:rgba(255,255,255,.09);
+  --bdg:rgba(200,164,74,.18); --bdgh:rgba(200,164,74,.38);
+  --fd:'Playfair Display',Georgia,serif;
+  --fu:'Outfit',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+html { font-size:16px }
+body {
+  background:var(--bg);
+  font-family:var(--fu);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:48px 24px 80px;
+  background-image:
+    radial-gradient(ellipse 800px 500px at 50% -100px, rgba(200,164,74,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 400px at 20% 60%, rgba(11,25,40,.8) 0%, transparent 80%);
+}
+
+/* ══ PRESENTATION HEADER ══ */
+.presentation-header {
+  display:flex; align-items:center; gap:16px;
+  margin-bottom:40px; text-align:center;
+  flex-direction:column;
+}
+.ph-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); border:1px solid var(--bdg);
+  padding:7px 16px; border-radius:4px; background:var(--g04);
+}
+.ph-dot { width:5px; height:5px; border-radius:50%; background:var(--gold); animation:pulse 2s ease-in-out infinite }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.ph-title {
+  font-family:var(--fd); font-size:32px; font-weight:600;
+  color:var(--w); letter-spacing:-.3px; line-height:1.1;
+}
+.ph-title em { font-style:italic; font-weight:400; color:var(--gold) }
+.ph-sub { font-size:12px; color:var(--t2); font-weight:300; letter-spacing:.2px }
+
+/* ══ PHONE FRAME ══ */
+.phone-wrap {
+  position:relative;
+  filter:drop-shadow(0 60px 120px rgba(0,0,0,.7)) drop-shadow(0 0 80px rgba(200,164,74,.06));
+}
+.phone {
+  width:393px;
+  background:var(--n);
+  border-radius:54px;
+  border:10px solid #1a2535;
+  position:relative;
+  overflow:hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 0 0 1px rgba(0,0,0,.5);
+}
+.phone::before {
+  content:'';
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:120px; height:34px;
+  background:#0a0a0a;
+  border-radius:0 0 20px 20px;
+  z-index:200;
+  box-shadow:0 2px 0 rgba(255,255,255,.04);
+}
+/* camera pill within notch */
+.phone::after {
+  content:'';
+  position:absolute; top:9px; left:50%; transform:translateX(-50%);
+  width:12px; height:12px;
+  background:#1a1a2e;
+  border-radius:50%;
+  border:2px solid #0d0d1a;
+  z-index:210;
+  box-shadow:
+    inset 0 0 4px rgba(0,0,0,.5),
+    0 0 0 1px rgba(96,165,250,.15),
+    0 0 6px rgba(96,165,250,.1);
+}
+
+/* ══ SCREEN ══ */
+.screen {
+  height:852px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  position:relative;
+  background:var(--n);
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.screen::-webkit-scrollbar { display:none }
+
+/* ══ STATUS BAR ══ */
+.status-bar {
+  height:50px;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  padding:0 28px 10px;
+  position:sticky; top:0; z-index:100;
+  background:transparent;
+  pointer-events:none;
+}
+.sb-time {
+  font-family:var(--fu); font-size:15px; font-weight:600;
+  color:var(--w); letter-spacing:-.3px;
+}
+.sb-icons { display:flex; align-items:center; gap:6px }
+.sb-icons svg { width:16px; height:16px; fill:var(--w) }
+.sb-bat {
+  display:flex; align-items:center; gap:2px;
+  font-family:var(--fu); font-size:12px; color:var(--w); font-weight:500;
+}
+.sb-bat-body {
+  width:22px; height:11px; border:1.5px solid rgba(255,255,255,.6);
+  border-radius:2.5px; position:relative; padding:2px;
+}
+.sb-bat-body::after {
+  content:''; position:absolute; right:-4px; top:50%;
+  transform:translateY(-50%);
+  width:2px; height:5px; background:rgba(255,255,255,.5); border-radius:0 1px 1px 0;
+}
+.sb-bat-fill { height:100%; width:68%; background:var(--w); border-radius:1px }
+
+/* ══ HERO ══ */
+.hero {
+  position:relative;
+  height:320px;
+  overflow:hidden;
+  margin-top:-50px; /* behind status bar */
+}
+.hero-aerial {
+  position:absolute; inset:0; width:100%; height:100%;
+}
+.hero-overlay {
+  position:absolute; inset:0;
+  background:
+    linear-gradient(180deg,
+      rgba(6,13,22,.55) 0%,
+      rgba(6,13,22,.25) 35%,
+      rgba(11,25,40,.60) 65%,
+      rgba(11,25,40,.92) 85%,
+      var(--n) 100%
+    );
+}
+.hero-gradient-top {
+  position:absolute; top:0; left:0; right:0; height:90px;
+  background:linear-gradient(180deg, rgba(6,13,22,.85) 0%, transparent 100%);
+}
+.hero-content {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:0 20px 24px;
+  z-index:10;
+}
+.hero-brand {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:14px;
+}
+.hb-imi {
+  font-family:var(--fd); font-size:17px; font-weight:700;
+  color:var(--w); letter-spacing:2.5px;
+}
+.hb-div { width:1px; height:22px; background:var(--gold); opacity:.8 }
+.hb-text {
+  font-family:var(--fu); font-size:7px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--gold); line-height:1.5;
+}
+.hero-title {
+  font-family:var(--fd); font-size:36px; font-weight:600;
+  color:var(--w); line-height:1.05; margin-bottom:6px;
+  letter-spacing:-.3px;
+}
+.hero-title em {
+  font-style:italic; font-weight:400;
+  background:linear-gradient(90deg, var(--gold-d), var(--gold-b), var(--gold-d));
+  background-size:200% auto;
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  animation:shimmer 4s linear infinite;
+}
+@keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+.hero-sub {
+  font-size:11.5px; color:var(--t2); font-weight:300;
+  line-height:1.65; margin-bottom:18px; max-width:280px;
+}
+.hero-stats {
+  display:flex; gap:0; margin-bottom:20px;
+  background:rgba(11,25,40,.6);
+  border:1px solid var(--bdg);
+  border-radius:12px;
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  overflow:hidden;
+}
+.hs-item {
+  flex:1; padding:12px 14px;
+  position:relative;
+}
+.hs-item + .hs-item::before {
+  content:''; position:absolute; left:0; top:20%; bottom:20%;
+  width:1px; background:var(--bdg);
+}
+.hs-value {
+  font-family:var(--fm); font-size:20px; font-weight:600;
+  color:var(--w); letter-spacing:-.5px; line-height:1;
+  margin-bottom:4px;
+}
+.hs-value.gold { color:var(--gold-b) }
+.hs-value .hs-from {
+  font-family:var(--fu); font-size:8px; font-weight:500;
+  color:var(--t3); display:block; text-transform:uppercase;
+  letter-spacing:1.5px; margin-bottom:3px;
+}
+.hs-label {
+  font-size:9px; text-transform:uppercase; letter-spacing:1.5px;
+  color:var(--t3); font-weight:500;
+}
+.hero-ctas {
+  display:flex; gap:10px;
+}
+.btn-hero-pri {
+  flex:1; display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 16px;
+  background:var(--n); color:var(--w);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  font-family:var(--fu); font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+  cursor:pointer; position:relative; overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.4);
+}
+.btn-hero-pri::after {
+  content:''; position:absolute; bottom:0; left:10%; right:10%;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity:.8;
+}
+.btn-hero-sec {
+  flex:1; display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 16px;
+  background:rgba(15,32,53,.5); color:var(--t1);
+  border:1px solid var(--bdg);
+  border-radius:10px;
+  font-family:var(--fu); font-size:11px; font-weight:500;
+  letter-spacing:.5px;
+  cursor:pointer;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+}
+.btn-icon { width:14px; height:14px; flex-shrink:0 }
+
+/* ══ FILTERS PANEL ══ */
+.filters-panel {
+  margin:0 16px 14px;
+  background:rgba(20,40,64,.72);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--bdg);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,.4),
+    0 0 0 1px rgba(255,255,255,.03) inset,
+    0 0 40px rgba(200,164,74,.04);
+}
+.fp-section { margin-bottom:12px }
+.fp-section:last-child { margin-bottom:0 }
+.fp-label {
+  font-size:7.5px; letter-spacing:2.8px; text-transform:uppercase;
+  color:var(--t3); font-weight:700; margin-bottom:8px;
+  display:flex; align-items:center; gap:6px;
+}
+.fp-label::after { content:''; flex:1; height:1px; background:var(--bdr) }
+.fp-chips { display:flex; gap:6px; flex-wrap:wrap }
+.chip {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:6px 12px;
+  background:rgba(11,25,40,.7);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:99px;
+  font-family:var(--fu); font-size:10.5px; font-weight:500;
+  color:var(--t2); cursor:pointer;
+  transition:all .18s var(--ease);
+  white-space:nowrap;
+}
+.chip-dot {
+  width:6px; height:6px; border-radius:50%; flex-shrink:0;
+}
+.chip.active {
+  border-color:var(--gold); color:var(--w);
+  background:rgba(20,40,64,.9);
+}
+.chip.active .chip-dot { box-shadow:0 0 5px currentColor }
+.chip-grn { color:var(--grn) }
+.chip-red { color:var(--red) }
+.chip-blu { color:var(--blu) }
+.chip-amb { color:var(--amb) }
+.chip-sm { padding:5px 10px; font-size:9.5px; gap:4px }
+.chip-sm svg { width:11px; height:11px; flex-shrink:0 }
+
+/* ══ MAP SECTION ══ */
+.map-section {
+  margin:0 16px 0;
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--bdg);
+  box-shadow:0 4px 24px rgba(0,0,0,.4);
+}
+.map-container {
+  position:relative;
+  height:256px;
+}
+.map-svg { width:100%; height:100%; display:block }
+.map-controls-left {
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  display:flex; flex-direction:column; gap:6px; z-index:10;
+}
+.map-btn {
+  width:32px; height:32px;
+  background:rgba(11,25,40,.85);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; backdrop-filter:blur(8px);
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+.map-btn svg { width:14px; height:14px; color:var(--t1) }
+.map-controls-right {
+  position:absolute; right:12px; bottom:12px;
+  display:flex; flex-direction:column; gap:6px; z-index:10;
+}
+.map-btn-legend {
+  display:flex; align-items:center; gap:5px;
+  padding:6px 10px;
+  background:rgba(11,25,40,.85);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:8px; font-size:9px; color:var(--t2);
+  font-weight:500; letter-spacing:.5px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+.map-btn-legend svg { width:12px; height:12px }
+.map-quadra-label {
+  font-family:var(--fm); font-size:9px; font-weight:600;
+  fill:rgba(255,255,255,.35); text-anchor:middle;
+}
+.map-lot-num {
+  font-family:var(--fm); font-size:7px; font-weight:500;
+  fill:rgba(255,255,255,.5); text-anchor:middle;
+}
+.map-lot-num.selected { fill:var(--n); font-weight:700 }
+.map-scale {
+  position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:6px;
+  font-size:8px; color:var(--t3); font-family:var(--fm);
+}
+.map-scale-bar {
+  width:40px; height:2px; background:rgba(255,255,255,.2);
+  position:relative;
+}
+.map-scale-bar::before, .map-scale-bar::after {
+  content:''; position:absolute; top:-2px;
+  width:1px; height:6px; background:rgba(255,255,255,.3);
+}
+.map-scale-bar::before { left:0 }
+.map-scale-bar::after { right:0 }
+
+/* ══ BOTTOM SHEET ══ */
+.bottom-sheet {
+  margin-top:14px;
+  background:linear-gradient(180deg, #0f1e30 0%, var(--n) 100%);
+  border-top:1px solid var(--bdg);
+  border-radius:24px 24px 0 0;
+  box-shadow:0 -8px 48px rgba(0,0,0,.5), 0 -1px 0 rgba(200,164,74,.12);
+  overflow:hidden;
+}
+.sheet-handle-wrap {
+  display:flex; justify-content:center; padding:12px 0 4px;
+}
+.sheet-handle {
+  width:36px; height:4px;
+  background:rgba(255,255,255,.12);
+  border-radius:99px;
+}
+.sheet-body { padding:0 20px 120px }
+
+/* Header row */
+.sheet-header-row {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:12px;
+}
+.sheet-left { flex:1 }
+.sheet-actions { display:flex; gap:8px; padding-top:2px }
+.action-btn {
+  width:36px; height:36px;
+  background:var(--n3);
+  border:1px solid var(--bdg);
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.action-btn svg { width:16px; height:16px; color:var(--t2) }
+
+.lot-status-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 10px;
+  background:rgba(74,222,128,.08);
+  border:1px solid rgba(74,222,128,.2);
+  border-radius:99px;
+  font-size:8.5px; font-weight:700; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--grn);
+  margin-bottom:8px;
+}
+.lot-status-badge::before {
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:var(--grn);
+  box-shadow:0 0 6px var(--grn);
+  animation:pulse 2s ease-in-out infinite;
+}
+.lot-title {
+  font-family:var(--fd); font-size:32px; font-weight:600;
+  color:var(--w); letter-spacing:-.3px; line-height:1;
+  margin-bottom:4px;
+}
+.lot-subtitle {
+  font-size:12px; color:var(--t2); font-weight:400; letter-spacing:.2px;
+}
+
+/* Preview card */
+.lot-preview-row {
+  display:flex; gap:12px; margin-bottom:14px; align-items:flex-start;
+}
+.lot-preview-card {
+  width:120px; height:88px; flex-shrink:0;
+  background:var(--n3);
+  border:1px solid var(--bdg);
+  border-radius:12px;
+  overflow:hidden; position:relative;
+}
+.lot-preview-svg { width:100%; height:100%; display:block }
+.preview-3d-btn {
+  position:absolute; top:6px; right:6px;
+  background:rgba(11,25,40,.8);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:5px;
+  padding:3px 7px;
+  font-family:var(--fm); font-size:8px; color:var(--t1);
+  font-weight:500; letter-spacing:.5px;
+  backdrop-filter:blur(4px);
+}
+.lot-info-side { flex:1; display:flex; flex-direction:column; gap:6px; padding-top:2px }
+.quality-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 11px;
+  background:var(--g04);
+  border:1px solid var(--bdg);
+  border-radius:99px;
+  font-size:9px; font-weight:600; letter-spacing:.8px;
+  color:var(--gold); text-transform:uppercase;
+  align-self:flex-start;
+}
+.quality-badge svg { width:11px; height:11px; fill:var(--gold) }
+.quality-desc {
+  font-size:11px; color:var(--t2); font-weight:300; line-height:1.55;
+}
+
+/* Divider */
+.sheet-divider {
+  height:1px; background:var(--bdr);
+  margin:14px 0;
+}
+
+/* Metrics row */
+.metrics-row {
+  display:flex; gap:0;
+  background:var(--n3);
+  border:1px solid var(--bdg);
+  border-radius:12px; overflow:hidden;
+  margin-bottom:14px;
+}
+.metric-item {
+  flex:1; padding:12px 10px;
+  text-align:center; position:relative;
+}
+.metric-item + .metric-item::before {
+  content:''; position:absolute; left:0; top:16%; bottom:16%;
+  width:1px; background:var(--bdg);
+}
+.metric-label {
+  font-size:8px; text-transform:uppercase; letter-spacing:1.8px;
+  color:var(--t3); font-weight:600; margin-bottom:6px;
+}
+.metric-value {
+  font-family:var(--fm); font-size:17px; font-weight:600;
+  color:var(--w); letter-spacing:-.5px; line-height:1;
+}
+.metric-unit {
+  font-family:var(--fm); font-size:10px; color:var(--t3);
+  font-weight:400; margin-top:3px;
+}
+
+/* Price cards */
+.price-cards-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px }
+.price-card {
+  background:var(--n3);
+  border:1px solid var(--bdg);
+  border-radius:14px; padding:14px;
+  position:relative; overflow:hidden;
+  transition:border-color .2s;
+}
+.price-card.featured {
+  border-color:var(--bdg);
+  background:linear-gradient(145deg, #142840, #0f1e2e);
+}
+.price-card.featured::before {
+  content:''; position:absolute; top:0; left:10%; right:10%;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity:.6;
+}
+.pc-label {
+  font-size:8.5px; text-transform:uppercase; letter-spacing:2px;
+  color:var(--t3); font-weight:700; margin-bottom:8px;
+}
+.pc-discount {
+  display:inline-flex; padding:3px 8px;
+  background:rgba(74,222,128,.08);
+  border:1px solid rgba(74,222,128,.15);
+  border-radius:99px;
+  font-size:8px; color:var(--grn); font-weight:600;
+  letter-spacing:.5px; margin-bottom:10px;
+}
+.pc-price {
+  font-family:var(--fm); font-size:20px; font-weight:700;
+  color:var(--gold-b); letter-spacing:-.5px; line-height:1;
+  margin-bottom:4px;
+}
+.pc-price .pc-currency {
+  font-size:13px; font-weight:500; margin-right:1px;
+}
+.pc-sub {
+  font-family:var(--fm); font-size:9.5px; color:var(--t3);
+  font-weight:400;
+}
+.pc-financing-label {
+  font-size:9px; color:var(--t2); font-weight:500;
+  margin-bottom:6px; letter-spacing:.2px;
+}
+.pc-price-month {
+  font-family:var(--fm); font-size:17px; font-weight:700;
+  color:var(--w); letter-spacing:-.5px; line-height:1;
+  margin-bottom:3px;
+}
+.pc-price-month .pc-month-label {
+  font-family:var(--fu); font-size:9px; color:var(--t3); font-weight:400;
+}
+.pc-entry {
+  font-size:9.5px; color:var(--t3); font-family:var(--fm);
+}
+
+/* Attributes grid */
+.attributes-section { margin-bottom:16px }
+.attr-title {
+  font-size:8.5px; text-transform:uppercase; letter-spacing:2.5px;
+  color:var(--t3); font-weight:700; margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.attr-title::after { content:''; flex:1; height:1px; background:var(--bdr) }
+.attrs-grid { display:flex; flex-direction:column; gap:0 }
+.attr-item {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid var(--bdr);
+}
+.attr-item:last-child { border-bottom:none }
+.attr-icon {
+  width:32px; height:32px; flex-shrink:0;
+  background:var(--g08);
+  border:1px solid var(--bdg);
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+}
+.attr-icon svg { width:15px; height:15px; color:var(--gold) }
+.attr-content { flex:1 }
+.attr-label { font-size:9px; color:var(--t3); text-transform:uppercase; letter-spacing:1.5px; font-weight:600; margin-bottom:2px }
+.attr-value { font-size:12px; color:var(--t1); font-weight:500 }
+.attr-badge {
+  display:inline-flex; padding:3px 8px;
+  border-radius:99px; font-size:8px; font-weight:600;
+  letter-spacing:.5px;
+}
+.attr-badge.good { background:rgba(74,222,128,.07); color:var(--grn); border:1px solid rgba(74,222,128,.15) }
+.attr-badge.gold { background:var(--g08); color:var(--gold); border:1px solid var(--bdg) }
+
+/* CTAs */
+.sheet-ctas { display:flex; flex-direction:column; gap:10px; margin-bottom:8px }
+.btn-cta-primary {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  padding:16px 20px;
+  background:var(--n); color:var(--w);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:13px;
+  font-family:var(--fu); font-weight:700;
+  cursor:pointer; position:relative; overflow:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+}
+.btn-cta-primary::after {
+  content:''; position:absolute; bottom:0; left:8%; right:8%;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold), var(--gold-b), transparent);
+  opacity:.85;
+}
+.btn-cta-primary::before {
+  content:''; position:absolute; top:0; left:-100%; width:60%; height:100%;
+  background:linear-gradient(90deg, transparent, rgba(200,164,74,.05), transparent);
+  transition:left .6s;
+}
+.btn-cta-primary:hover::before { left:100% }
+.cta-pri-text { flex:1 }
+.cta-pri-main {
+  font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--w);
+}
+.cta-pri-sub { font-size:10px; color:var(--t3); font-weight:400; letter-spacing:.2px; margin-top:2px }
+.cta-pri-icon {
+  width:36px; height:36px; flex-shrink:0;
+  background:var(--n3); border:1px solid var(--bdg); border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+}
+.cta-pri-icon svg { width:17px; height:17px; color:var(--gold) }
+.btn-cta-secondary {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 20px;
+  background:rgba(11,25,40,.6); color:var(--t1);
+  border:1px solid var(--bdg);
+  border-radius:13px;
+  font-family:var(--fu); font-size:11.5px; font-weight:500;
+  letter-spacing:.5px; cursor:pointer;
+  backdrop-filter:blur(8px);
+}
+.btn-cta-secondary svg { width:16px; height:16px; color:var(--t2) }
+
+/* ══ BOTTOM NAV ══ */
+.bottom-nav {
+  position:sticky; bottom:0; left:0; right:0;
+  background:linear-gradient(180deg, rgba(11,25,40,.96) 0%, var(--n) 100%);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--bdg);
+  display:flex; align-items:center; justify-content:space-around;
+  padding:10px 0 22px;
+  z-index:50;
+  box-shadow:0 -4px 24px rgba(0,0,0,.4);
+}
+.nav-item {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  cursor:pointer; min-width:52px;
+}
+.nav-icon {
+  width:24px; height:24px;
+  display:flex; align-items:center; justify-content:center;
+}
+.nav-icon svg { width:22px; height:22px; color:var(--t3) }
+.nav-item.active .nav-icon svg { color:var(--gold) }
+.nav-item.active .nav-icon {
+  position:relative;
+}
+.nav-item.active .nav-icon::after {
+  content:''; position:absolute; bottom:-2px; left:50%; transform:translateX(-50%);
+  width:4px; height:4px; border-radius:50%; background:var(--gold);
+}
+.nav-label { font-size:9px; color:var(--t3); font-weight:500; letter-spacing:.3px }
+.nav-item.active .nav-label { color:var(--gold); font-weight:600 }
+
+/* ══ PRESENTATION FOOTER ══ */
+.presentation-footer {
+  margin-top:40px;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.pf-tokens {
+  display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+}
+.pf-token {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 12px; border-radius:99px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  font-size:10px; color:var(--t3); font-weight:500;
+}
+.pf-swatch { width:10px; height:10px; border-radius:50%; flex-shrink:0 }
+.pf-credits {
+  font-size:10px; color:var(--t3); letter-spacing:.5px; text-align:center;
+  line-height:1.8;
+}
+.pf-credits span { color:var(--gold) }
+
+/* SVG text helper */
+text { font-family: 'JetBrains Mono', monospace }
+
+/* Scrollbar hidden everywhere */
+* { scrollbar-width:none }
+*::-webkit-scrollbar { display:none }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     PRESENTATION HEADER
+     ═══════════════════════════════════════════ -->
+<div class="presentation-header">
+  <div class="ph-badge"><span class="ph-dot"></span>IMI · Inteligência Imobiliária · Design System</div>
+  <h1 class="ph-title">Mobile <em>HiFi</em> Mockup</h1>
+  <p class="ph-sub">Experiência de escolha de lotes · Reserva do Vale · Dark Premium · IMI Brand</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PHONE FRAME
+     ═══════════════════════════════════════════ -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="screen">
+
+  <!-- ── STATUS BAR ── -->
+  <div class="status-bar">
+    <span class="sb-time">9:41</span>
+    <div class="sb-icons">
+      <!-- Signal -->
+      <svg viewBox="0 0 17 12" style="width:17px;height:12px;fill:white">
+        <rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/>
+        <rect x="4.5" y="5.5" width="3" height="6.5" rx=".5" opacity=".6"/>
+        <rect x="9" y="3" width="3" height="9" rx=".5" opacity=".8"/>
+        <rect x="13.5" y="0" width="3" height="12" rx=".5"/>
+      </svg>
+      <!-- WiFi -->
+      <svg viewBox="0 0 16 12" style="width:16px;height:12px;fill:white">
+        <path d="M8 10a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+        <path d="M8 6.5C6.3 6.5 4.8 7.2 3.7 8.3l1.4 1.4C5.9 8.9 6.9 8.4 8 8.4s2.1.5 2.9 1.3l1.4-1.4C11.2 7.2 9.7 6.5 8 6.5z" opacity=".8"/>
+        <path d="M8 3C5.4 3 3.1 4.1 1.4 5.9L2.8 7.3C4.1 5.9 5.9 5 8 5s3.9.9 5.2 2.3l1.4-1.4C12.9 4.1 10.6 3 8 3z" opacity=".6"/>
+      </svg>
+      <!-- Battery -->
+      <div class="sb-bat">
+        <div class="sb-bat-body"><div class="sb-bat-fill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HERO SECTION ── -->
+  <div class="hero">
+
+    <!-- Aerial SVG illustration -->
+    <svg class="hero-aerial" viewBox="0 0 393 320" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow-center" cx="55%" cy="62%" r="40%">
+          <stop offset="0%" stop-color="rgba(200,164,74,.08)"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <radialGradient id="glow-lake" cx="30%" cy="45%" r="18%">
+          <stop offset="0%" stop-color="rgba(34,100,180,.25)"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <filter id="blur-soft">
+          <feGaussianBlur stdDeviation="3"/>
+        </filter>
+        <filter id="blur-veg">
+          <feGaussianBlur stdDeviation="1.5"/>
+        </filter>
+        <!-- Noise texture -->
+        <filter id="noise" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noise"/>
+          <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
+          <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" result="blend"/>
+          <feComponentTransfer in="blend">
+            <feFuncA type="linear" slope="0.06"/>
+          </feComponentTransfer>
+        </filter>
+      </defs>
+
+      <!-- Sky/earth base gradient -->
+      <rect width="393" height="320" fill="url(#sky-grad)"/>
+      <defs>
+        <linearGradient id="sky-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0a1520"/>
+          <stop offset="40%" stop-color="#0c1e2c"/>
+          <stop offset="100%" stop-color="#091624"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Dense forest areas — outer perimeter -->
+      <ellipse cx="15" cy="80" rx="70" ry="100" fill="#0f2a14" opacity=".9"/>
+      <ellipse cx="30" cy="50" rx="55" ry="70" fill="#122e17" opacity=".85"/>
+      <polygon points="0,0 120,0 90,60 40,90 0,110" fill="#0e2812" opacity=".8"/>
+      <polygon points="280,0 393,0 393,80 340,110 270,70" fill="#0d2611" opacity=".85"/>
+      <polygon points="300,0 393,0 393,50" fill="#122e17" opacity=".7"/>
+
+      <!-- Right forest mass -->
+      <ellipse cx="370" cy="130" rx="50" ry="80" fill="#0f2a14" opacity=".8"/>
+      <ellipse cx="385" cy="200" rx="40" ry="60" fill="#122e17" opacity=".75"/>
+
+      <!-- Bottom forest -->
+      <polygon points="0,260 80,240 120,280 60,320 0,320" fill="#0e2812" opacity=".85"/>
+      <polygon points="300,280 393,250 393,320 260,320" fill="#0f2a14" opacity=".8"/>
+
+      <!-- Mid vegetation patches -->
+      <ellipse cx="160" cy="50" rx="30" ry="20" fill="#163419" opacity=".6"/>
+      <ellipse cx="240" cy="60" rx="25" ry="18" fill="#163419" opacity=".55"/>
+      <ellipse cx="80" cy="180" rx="28" ry="22" fill="#153218" opacity=".5"/>
+      <ellipse cx="330" cy="200" rx="24" ry="18" fill="#153218" opacity=".5"/>
+
+      <!-- Tree canopy dots — small circles suggesting individual trees -->
+      <g opacity=".45">
+        <circle cx="22" cy="35" r="7" fill="#1a3d1e"/>
+        <circle cx="40" cy="28" r="5" fill="#1e4422"/>
+        <circle cx="58" cy="42" r="6" fill="#1a3d1e"/>
+        <circle cx="35" cy="58" r="5" fill="#1e4422"/>
+        <circle cx="12" cy="50" r="4" fill="#163419"/>
+        <circle cx="348" cy="30" r="8" fill="#1a3d1e"/>
+        <circle cx="368" cy="22" r="5" fill="#1e4422"/>
+        <circle cx="375" cy="45" r="6" fill="#1a3d1e"/>
+        <circle cx="358" cy="58" r="5" fill="#163419"/>
+        <circle cx="385" cy="68" r="7" fill="#1a3d1e"/>
+        <!-- Bottom trees -->
+        <circle cx="30" cy="280" r="9" fill="#1a3d1e"/>
+        <circle cx="52" cy="268" r="6" fill="#163419"/>
+        <circle cx="68" cy="285" r="7" fill="#1e4422"/>
+        <circle cx="340" cy="285" r="8" fill="#1a3d1e"/>
+        <circle cx="358" cy="272" r="6" fill="#163419"/>
+        <circle cx="372" cy="290" r="7" fill="#1e4422"/>
+      </g>
+
+      <!-- Lake / water feature -->
+      <ellipse cx="120" cy="155" rx="44" ry="28" fill="#0a1e35" opacity=".9" filter="url(#blur-soft)"/>
+      <ellipse cx="118" cy="152" rx="40" ry="25" fill="#0d2540"/>
+      <ellipse cx="116" cy="150" rx="36" ry="22" fill="#0f2848"/>
+      <!-- Water shimmer -->
+      <ellipse cx="108" cy="145" rx="18" ry="9" fill="rgba(96,165,250,.08)"/>
+      <path d="M100 148 Q112 144 126 148 Q118 152 100 148Z" fill="rgba(255,255,255,.06)"/>
+      <ellipse cx="120" cy="155" rx="44" ry="28" fill="url(#glow-lake)"/>
+
+      <!-- Main development area — the loteamento clearing -->
+      <rect x="130" y="80" width="200" height="170" rx="8" fill="#0c1e2e" opacity=".6"/>
+
+      <!-- Internal roads of the development -->
+      <!-- Main horizontal road -->
+      <rect x="125" y="158" width="210" height="9" fill="#0a1828" opacity=".9"/>
+      <!-- Main vertical road -->
+      <rect x="222" y="75" width="9" height="180" fill="#0a1828" opacity=".9"/>
+      <!-- Secondary roads -->
+      <rect x="125" y="118" width="93" height="5" fill="#0b1c2c" opacity=".7"/>
+      <rect x="235" y="118" width="100" height="5" fill="#0b1c2c" opacity=".7"/>
+      <rect x="125" y="198" width="93" height="5" fill="#0b1c2c" opacity=".7"/>
+      <rect x="235" y="198" width="100" height="5" fill="#0b1c2c" opacity=".7"/>
+
+      <!-- Lot grid — Quadra A (top-left of development) -->
+      <g opacity=".55">
+        <!-- Row 1 -->
+        <rect x="132" y="82" width="22" height="32" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="155" y="82" width="22" height="32" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="178" y="82" width="22" height="32" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/><!-- green available -->
+        <rect x="201" y="82" width="16" height="32" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <!-- Row 2 -->
+        <rect x="132" y="115" width="22" height="38" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="155" y="115" width="22" height="38" fill="#3a1212" stroke="#1e3a50" stroke-width=".5"/><!-- sold -->
+        <rect x="178" y="115" width="22" height="38" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="201" y="115" width="16" height="38" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+      </g>
+
+      <!-- Lot grid — Quadra B (top-right) -->
+      <g opacity=".55">
+        <rect x="236" y="82" width="22" height="32" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="259" y="82" width="22" height="32" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="282" y="82" width="22" height="32" fill="#1a2a10" stroke="#1e3a50" stroke-width=".5"/><!-- reserved amber -->
+        <rect x="305" y="82" width="22" height="32" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="236" y="115" width="22" height="38" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="259" y="115" width="22" height="38" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="282" y="115" width="22" height="38" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="305" y="115" width="22" height="38" fill="#3a1212" stroke="#1e3a50" stroke-width=".5"/>
+      </g>
+
+      <!-- Lot grid — Quadra C (bottom-left) -->
+      <g opacity=".55">
+        <rect x="132" y="168" width="22" height="26" fill="#3a1212" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="155" y="168" width="22" height="26" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="178" y="168" width="22" height="26" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="201" y="168" width="16" height="26" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="132" y="195" width="22" height="26" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="155" y="195" width="22" height="26" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="178" y="195" width="22" height="26" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="201" y="195" width="16" height="26" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+      </g>
+
+      <!-- Lot grid — Quadra D (bottom-right) — SELECTED LOT 08 -->
+      <g opacity=".55">
+        <rect x="236" y="168" width="22" height="26" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="259" y="168" width="22" height="26" fill="#3a1212" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="282" y="168" width="22" height="26" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="305" y="168" width="22" height="26" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="236" y="195" width="22" height="26" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="259" y="195" width="22" height="26" fill="#122030" stroke="#1e3a50" stroke-width=".5"/>
+        <rect x="282" y="195" width="22" height="26" fill="#0f4020" stroke="#1e3a50" stroke-width=".5"/>
+        <!-- Lot 08 — SELECTED — gold highlight -->
+        <rect x="305" y="195" width="22" height="26" fill="rgba(200,164,74,.15)" stroke="#C8A44A" stroke-width="1.5"/>
+      </g>
+
+      <!-- Selected lot glow -->
+      <rect x="305" y="195" width="22" height="26" fill="rgba(200,164,74,.2)" filter="url(#blur-soft)"/>
+      <text x="316" y="211" font-size="8" font-weight="700" fill="#C8A44A" text-anchor="middle" opacity="1">08</text>
+
+      <!-- Development boundary -->
+      <rect x="127" y="77" width="208" height="177" rx="6" fill="none" stroke="rgba(200,164,74,.25)" stroke-width="1" stroke-dasharray="4 3"/>
+
+      <!-- Central amenity area (small park/club icon) -->
+      <circle cx="231" cy="163" r="8" fill="#0f2814" stroke="rgba(74,222,128,.2)" stroke-width=".8"/>
+      <text x="231" y="167" font-size="8" fill="rgba(74,222,128,.4)" text-anchor="middle">★</text>
+
+      <!-- Entry road -->
+      <rect x="222" y="255" width="9" height="65" fill="#0a1828" opacity=".85"/>
+      <polygon points="218,255 235,255 231,248 226,248" fill="#0a1828" opacity=".85"/>
+
+      <!-- Warm ambient glow over the development -->
+      <ellipse cx="231" cy="165" rx="100" ry="80" fill="url(#glow-center)" opacity=".8"/>
+
+      <!-- Street lighting dots -->
+      <g opacity=".4">
+        <circle cx="222" cy="80" r="2" fill="#FBBF24"/>
+        <circle cx="231" cy="118" r="1.5" fill="#FBBF24"/>
+        <circle cx="231" cy="168" r="1.5" fill="#FBBF24"/>
+        <circle cx="222" cy="215" r="2" fill="#FBBF24"/>
+        <circle cx="131" cy="118" r="1.5" fill="#FBBF24"/>
+        <circle cx="335" cy="118" r="1.5" fill="#FBBF24"/>
+        <circle cx="131" cy="168" r="1.5" fill="#FBBF24"/>
+        <circle cx="335" cy="168" r="1.5" fill="#FBBF24"/>
+      </g>
+
+      <!-- Noise overlay for photographic feel -->
+      <rect width="393" height="320" fill="rgba(0,0,0,.01)" filter="url(#noise)"/>
+    </svg>
+
+    <!-- Hero overlays -->
+    <div class="hero-overlay"></div>
+    <div class="hero-gradient-top"></div>
+
+    <!-- Hero content -->
+    <div class="hero-content">
+      <!-- Brand mark -->
+      <div class="hero-brand">
+        <span class="hb-imi">IMI</span>
+        <div class="hb-div"></div>
+        <span class="hb-text">INTELIGÊNCIA<br>IMOBILIÁRIA</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="hero-title">Reserva<br><em>do Vale</em></h1>
+      <p class="hero-sub">Natureza, sofisticação e bem-estar em perfeita harmonia.</p>
+
+      <!-- Stats strip -->
+      <div class="hero-stats">
+        <div class="hs-item">
+          <div class="hs-value" style="font-size:26px">381</div>
+          <div class="hs-label">Lotes disp.</div>
+        </div>
+        <div class="hs-item">
+          <div class="hs-value gold">
+            <span class="hs-from">A partir de</span>
+            R$ 202.000
+          </div>
+          <div class="hs-label">Valor mínimo</div>
+        </div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="hero-ctas">
+        <button class="btn-hero-pri">
+          <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+          Explorar Lotes
+          <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+          </svg>
+        </button>
+        <button class="btn-hero-sec">
+          <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Especialista
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FILTERS PANEL ── -->
+  <div class="filters-panel">
+
+    <!-- STATUS filter -->
+    <div class="fp-section">
+      <div class="fp-label">Status</div>
+      <div class="fp-chips">
+        <div class="chip active">
+          <span class="chip-dot" style="background:var(--t2)"></span>
+          Todos
+        </div>
+        <div class="chip">
+          <span class="chip-dot chip-grn" style="background:var(--grn)"></span>
+          Disponíveis
+        </div>
+        <div class="chip">
+          <span class="chip-dot" style="background:var(--amb)"></span>
+          Reservados
+        </div>
+        <div class="chip">
+          <span class="chip-dot chip-red" style="background:var(--red)"></span>
+          Vendidos
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCALIZAÇÃO filter -->
+    <div class="fp-section">
+      <div class="fp-label">Localização</div>
+      <div class="fp-chips">
+        <div class="chip">Todas</div>
+        <div class="chip">Quadra A</div>
+        <div class="chip">Quadra B</div>
+        <div class="chip">Quadra C</div>
+        <div class="chip active">Quadra D</div>
+      </div>
+    </div>
+
+    <!-- Additional filters -->
+    <div class="fp-section">
+      <div class="fp-chips">
+        <div class="chip chip-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" d="M12 6v12M6 12h12"/>
+          </svg>
+          Faixa de preço
+        </div>
+        <div class="chip chip-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+          </svg>
+          Tamanho
+        </div>
+        <div class="chip chip-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
+          Mais filtros
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAP SECTION ── -->
+  <div class="map-section" style="margin:0 16px 0">
+    <div class="map-container">
+
+      <!-- Map SVG — schematic loteamento plan -->
+      <svg class="map-svg" viewBox="0 0 361 256" xmlns="http://www.w3.org/2000/svg" style="background:#0a1520">
+        <defs>
+          <radialGradient id="selected-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(200,164,74,.35)"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+          <filter id="lot-glow">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <pattern id="grid-dots" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="10" cy="10" r=".6" fill="rgba(255,255,255,.04)"/>
+          </pattern>
+        </defs>
+
+        <!-- Background -->
+        <rect width="361" height="256" fill="#08121e"/>
+        <!-- Grid dots -->
+        <rect width="361" height="256" fill="url(#grid-dots)"/>
+
+        <!-- Green park (center) -->
+        <rect x="142" y="98" width="76" height="60" rx="4" fill="#0f2814"/>
+        <rect x="145" y="101" width="70" height="54" rx="3" fill="#112e16" stroke="rgba(74,222,128,.12)" stroke-width=".8"/>
+        <text x="180" y="131" font-size="8" fill="rgba(74,222,128,.3)" text-anchor="middle" font-weight="500">ÁREA VERDE</text>
+
+        <!-- Entry road (bottom) -->
+        <rect x="172" y="218" width="14" height="38" fill="#0d1e2e"/>
+        <rect x="175" y="218" width="8" height="38" fill="#0a1828"/>
+        <!-- Entry label -->
+        <text x="180" y="248" font-size="6.5" fill="rgba(255,255,255,.2)" text-anchor="middle" letter-spacing="1">ACESSO</text>
+
+        <!-- ROADS -->
+        <!-- Outer boundary road (perimeter ring) -->
+        <rect x="30" y="18" width="300" height="200" rx="8" fill="none" stroke="#0d1e2c" stroke-width="12"/>
+        <!-- Main horizontal central road -->
+        <rect x="30" y="98" width="300" height="14" fill="#0c1b2a"/>
+        <!-- Main vertical central road -->
+        <rect x="172" y="18" width="14" height="200" fill="#0c1b2a"/>
+        <!-- Road lane markings -->
+        <line x1="180" y1="18" x2="180" y2="96" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="8 6"/>
+        <line x1="180" y1="112" x2="180" y2="218" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="8 6"/>
+        <line x1="30" y1="105" x2="172" y2="105" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="8 6"/>
+        <line x1="186" y1="105" x2="330" y2="105" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="8 6"/>
+
+        <!-- QUADRA A — top-left -->
+        <rect x="36" y="24" width="130" height="68" rx="4" fill="#0d1e2e" stroke="rgba(255,255,255,.04)" stroke-width=".5"/>
+        <text class="map-quadra-label" x="70" y="37">A</text>
+        <!-- Lots Quadra A -->
+        <g>
+          <!-- Row 1: lots 01-05 -->
+          <rect x="38" y="40" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="49" y="55">01</text>
+          <rect x="62" y="40" width="22" height="24" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="73" y="55">02</text>
+          <rect x="86" y="40" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="97" y="55">03</text>
+          <rect x="110" y="40" width="22" height="24" rx="1.5" fill="#1e2a08" stroke="#2a3a10" stroke-width=".5"/>
+          <text class="map-lot-num" x="121" y="55">04</text>
+          <rect x="134" y="40" width="24" height="24" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="146" y="55">05</text>
+          <!-- Row 2: lots 06-10 -->
+          <rect x="38" y="66" width="22" height="24" rx="1.5" fill="#102030" stroke="#1a3040" stroke-width=".5"/>
+          <text class="map-lot-num" x="49" y="81">06</text>
+          <rect x="62" y="66" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="73" y="81">07</text>
+          <rect x="86" y="66" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="97" y="81">08</text>
+          <rect x="110" y="66" width="22" height="24" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="121" y="81">09</text>
+          <rect x="134" y="66" width="24" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="146" y="81">10</text>
+        </g>
+
+        <!-- QUADRA B — top-right -->
+        <rect x="190" y="24" width="134" height="68" rx="4" fill="#0d1e2e" stroke="rgba(255,255,255,.04)" stroke-width=".5"/>
+        <text class="map-quadra-label" x="256" y="37">B</text>
+        <g>
+          <rect x="192" y="40" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="203" y="55">01</text>
+          <rect x="216" y="40" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="227" y="55">02</text>
+          <rect x="240" y="40" width="22" height="24" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="251" y="55">03</text>
+          <rect x="264" y="40" width="22" height="24" rx="1.5" fill="#1e2a08" stroke="#2a3a10" stroke-width=".5"/>
+          <text class="map-lot-num" x="275" y="55">04</text>
+          <rect x="288" y="40" width="28" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="302" y="55">05</text>
+          <rect x="192" y="66" width="22" height="24" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="203" y="81">06</text>
+          <rect x="216" y="66" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="227" y="81">07</text>
+          <rect x="240" y="66" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="251" y="81">08</text>
+          <rect x="264" y="66" width="22" height="24" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="275" y="81">09</text>
+          <rect x="288" y="66" width="28" height="24" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="302" y="81">10</text>
+        </g>
+
+        <!-- QUADRA C — bottom-left -->
+        <rect x="36" y="118" width="130" height="88" rx="4" fill="#0d1e2e" stroke="rgba(255,255,255,.04)" stroke-width=".5"/>
+        <text class="map-quadra-label" x="70" y="131">C</text>
+        <g>
+          <rect x="38" y="136" width="22" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="49" y="153">01</text>
+          <rect x="62" y="136" width="22" height="28" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="73" y="153">02</text>
+          <rect x="86" y="136" width="22" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="97" y="153">03</text>
+          <rect x="110" y="136" width="22" height="28" rx="1.5" fill="#1e2a08" stroke="#2a3a10" stroke-width=".5"/>
+          <text class="map-lot-num" x="121" y="153">04</text>
+          <rect x="134" y="136" width="24" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="146" y="153">05</text>
+
+          <rect x="38" y="166" width="22" height="28" rx="1.5" fill="#102030" stroke="#1a3040" stroke-width=".5"/>
+          <text class="map-lot-num" x="49" y="183">06</text>
+          <rect x="62" y="166" width="22" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="73" y="183">07</text>
+          <rect x="86" y="166" width="22" height="28" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="97" y="183">08</text>
+          <rect x="110" y="166" width="22" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="121" y="183">09</text>
+          <rect x="134" y="166" width="24" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="146" y="183">10</text>
+        </g>
+
+        <!-- QUADRA D — bottom-right (ACTIVE) -->
+        <rect x="190" y="118" width="134" height="88" rx="4"
+              fill="#0f1e2e" stroke="rgba(200,164,74,.3)" stroke-width="1.2"/>
+        <!-- Quadra D active glow -->
+        <rect x="190" y="118" width="134" height="88" rx="4"
+              fill="rgba(200,164,74,.04)" filter="url(#lot-glow)"/>
+        <text class="map-quadra-label" x="256" y="131" fill="rgba(200,164,74,.5)">D</text>
+        <g>
+          <rect x="192" y="136" width="22" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="203" y="153">01</text>
+          <rect x="216" y="136" width="22" height="28" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="227" y="153">02</text>
+          <rect x="240" y="136" width="22" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="251" y="153">03</text>
+          <rect x="264" y="136" width="22" height="28" rx="1.5" fill="#1e2a08" stroke="#2a3a10" stroke-width=".5"/>
+          <text class="map-lot-num" x="275" y="153">04</text>
+          <rect x="288" y="136" width="28" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="302" y="153">05</text>
+
+          <rect x="192" y="166" width="22" height="28" rx="1.5" fill="#3a1010" stroke="#4a1818" stroke-width=".5"/>
+          <text class="map-lot-num" x="203" y="183">06</text>
+          <rect x="216" y="166" width="22" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="227" y="183">07</text>
+
+          <!-- SELECTED LOT 08 — D-08 GOLD -->
+          <rect x="240" y="166" width="22" height="28" rx="2"
+                fill="rgba(200,164,74,.18)" stroke="#C8A44A" stroke-width="1.5"
+                filter="url(#lot-glow)"/>
+          <!-- Selected glow halo -->
+          <rect x="237" y="163" width="28" height="34" rx="4" fill="url(#selected-glow)" opacity=".8"/>
+          <text class="map-lot-num selected" x="251" y="183">08</text>
+          <!-- Gold dot marker -->
+          <circle cx="251" cy="173" r="4" fill="rgba(200,164,74,.9)" opacity=".9">
+            <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values=".9;.5;.9" dur="2s" repeatCount="indefinite"/>
+          </circle>
+
+          <rect x="264" y="166" width="22" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="275" y="183">09</text>
+          <rect x="288" y="166" width="28" height="28" rx="1.5" fill="#1a3010" stroke="#1e4a18" stroke-width=".5"/>
+          <text class="map-lot-num" x="302" y="183">10</text>
+        </g>
+
+        <!-- Compass rose -->
+        <g transform="translate(336,222)">
+          <circle r="12" fill="rgba(11,25,40,.7)" stroke="rgba(255,255,255,.08)" stroke-width=".8"/>
+          <polygon points="0,-9 2,-2 0,-4 -2,-2" fill="rgba(248,113,113,.7)"/>
+          <polygon points="0,9 2,2 0,4 -2,2" fill="rgba(255,255,255,.25)"/>
+          <polygon points="-9,0 -2,-2 -4,0 -2,2" fill="rgba(255,255,255,.25)"/>
+          <polygon points="9,0 2,-2 4,0 2,2" fill="rgba(255,255,255,.25)"/>
+          <text x="0" y="-11" font-size="5" fill="rgba(248,113,113,.7)" text-anchor="middle">N</text>
+        </g>
+
+        <!-- Scale bar area -->
+        <g transform="translate(20,242)">
+          <rect width="60" height="3" rx="1.5" fill="none" stroke="rgba(255,255,255,.15)" stroke-width=".8"/>
+          <rect width="30" height="3" rx="1.5" fill="rgba(255,255,255,.2)"/>
+          <text x="0" y="-4" font-size="6" fill="rgba(255,255,255,.2)">0</text>
+          <text x="28" y="-4" font-size="6" fill="rgba(255,255,255,.2)">50m</text>
+          <text x="55" y="-4" font-size="6" fill="rgba(255,255,255,.2)">100m</text>
+        </g>
+
+        <!-- Legend (inline) -->
+        <g transform="translate(20,20)">
+          <circle cx="4" cy="4" r="4" fill="#1a3010" stroke="#1e4a18" stroke-width=".7"/>
+          <text x="11" y="8" font-size="7" fill="rgba(255,255,255,.3)">Disponível</text>
+          <circle cx="4" cy="18" r="4" fill="#3a1010" stroke="#4a1818" stroke-width=".7"/>
+          <text x="11" y="22" font-size="7" fill="rgba(255,255,255,.3)">Vendido</text>
+          <circle cx="4" cy="32" r="4" fill="rgba(200,164,74,.18)" stroke="#C8A44A" stroke-width="1"/>
+          <text x="11" y="36" font-size="7" fill="rgba(200,164,74,.6)">Selecionado</text>
+        </g>
+      </svg>
+
+      <!-- Map controls left -->
+      <div class="map-controls-left">
+        <div class="map-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </div>
+        <div class="map-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M5 12h14"/>
+          </svg>
+        </div>
+        <div class="map-btn" style="margin-top:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Map controls right -->
+      <div class="map-controls-right">
+        <div class="map-btn-legend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px">
+            <path d="M3 6h18M3 12h18M3 18h12"/>
+          </svg>
+          Legenda
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM SHEET ── -->
+  <div class="bottom-sheet">
+    <div class="sheet-handle-wrap">
+      <div class="sheet-handle"></div>
+    </div>
+    <div class="sheet-body">
+
+      <!-- Header row -->
+      <div class="sheet-header-row">
+        <div class="sheet-left">
+          <div class="lot-status-badge">Disponível</div>
+          <div class="lot-title">Lote 08</div>
+          <div class="lot-subtitle" style="color:var(--t2)">
+            Quadra D &nbsp;·&nbsp; Lote 08 &nbsp;·&nbsp; Reserva do Vale
+          </div>
+        </div>
+        <div class="sheet-actions">
+          <div class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <div class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview + Quality badge -->
+      <div class="lot-preview-row">
+        <div class="lot-preview-card">
+          <!-- Aerial lot preview SVG -->
+          <svg class="lot-preview-svg" viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg">
+            <rect width="120" height="88" fill="#081420"/>
+            <!-- Surrounding lots context -->
+            <rect x="0" y="0" width="120" height="88" fill="#0a1828"/>
+            <!-- Road H -->
+            <rect x="0" y="40" width="120" height="8" fill="#071018"/>
+            <!-- Road V -->
+            <rect x="56" y="0" width="8" height="88" fill="#071018"/>
+            <!-- Neighboring lots -->
+            <rect x="2" y="2" width="52" height="36" rx="1" fill="#0e2010" opacity=".7"/>
+            <rect x="66" y="2" width="52" height="36" rx="1" fill="#0e2010" opacity=".7"/>
+            <rect x="2" y="50" width="52" height="36" rx="1" fill="#0e2010" opacity=".7"/>
+            <!-- Selected lot highlighted -->
+            <rect x="66" y="50" width="52" height="36" rx="2"
+                  fill="rgba(200,164,74,.2)" stroke="#C8A44A" stroke-width="1.5"/>
+            <!-- Gold glow on selected -->
+            <rect x="64" y="48" width="56" height="40" rx="4"
+                  fill="rgba(200,164,74,.15)" filter="url(#lot-glow)"/>
+            <!-- Lot number -->
+            <text x="92" y="72" font-size="11" font-weight="700" fill="#C8A44A" text-anchor="middle" opacity=".9">08</text>
+            <!-- Green marker dot -->
+            <circle cx="92" cy="62" r="6" fill="rgba(74,222,128,.2)" stroke="var(--grn)" stroke-width="1"/>
+            <circle cx="92" cy="62" r="3" fill="var(--grn)"/>
+          </svg>
+          <div class="preview-3d-btn">3D</div>
+        </div>
+
+        <div class="lot-info-side">
+          <div class="quality-badge">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Localização Premium
+          </div>
+          <p class="quality-desc">Posição privilegiada no fundo de quadra, com vista para a área verde e afastada do trânsito principal.</p>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="metrics-row">
+        <div class="metric-item">
+          <div class="metric-label">Área total</div>
+          <div class="metric-value">364</div>
+          <div class="metric-unit">m²</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">Testada</div>
+          <div class="metric-value">14,5</div>
+          <div class="metric-unit">metros</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">Profund.</div>
+          <div class="metric-value">25,1</div>
+          <div class="metric-unit">metros</div>
+        </div>
+      </div>
+
+      <div class="sheet-divider"></div>
+
+      <!-- Price cards -->
+      <div class="price-cards-row">
+
+        <!-- Card à vista -->
+        <div class="price-card featured">
+          <div class="pc-label">À vista</div>
+          <div class="pc-discount">20% off</div>
+          <div class="pc-price">
+            <span class="pc-currency">R$</span>200.533
+          </div>
+          <div class="pc-sub">R$ 550,36/m²</div>
+        </div>
+
+        <!-- Card financiamento -->
+        <div class="price-card">
+          <div class="pc-label">Financiamento</div>
+          <div class="pc-financing-label" style="font-size:9px;color:var(--t3);margin-bottom:8px">Simulação 12 meses</div>
+          <div class="pc-price-month">
+            R$ 15.980
+            <span class="pc-month-label">/mês</span>
+          </div>
+          <div class="pc-entry">Entrada 10% + 12×</div>
+        </div>
+      </div>
+
+      <div class="sheet-divider"></div>
+
+      <!-- Intelligent attributes -->
+      <div class="attributes-section">
+        <div class="attr-title">Inteligência do Lote</div>
+        <div class="attrs-grid">
+
+          <div class="attr-item">
+            <div class="attr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+              </svg>
+            </div>
+            <div class="attr-content">
+              <div class="attr-label">Posição</div>
+              <div class="attr-value">Fundo de quadra</div>
+            </div>
+            <div class="attr-badge gold">Premium</div>
+          </div>
+
+          <div class="attr-item">
+            <div class="attr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+              </svg>
+            </div>
+            <div class="attr-content">
+              <div class="attr-label">Sol da manhã</div>
+              <div class="attr-value">Frente Leste</div>
+            </div>
+            <div class="attr-badge good">Ideal</div>
+          </div>
+
+          <div class="attr-item">
+            <div class="attr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M2 22L7 3l5 9 5-4.5L19 22"/>
+                <path d="M2 22h20"/>
+              </svg>
+            </div>
+            <div class="attr-content">
+              <div class="attr-label">Vista</div>
+              <div class="attr-value">Área verde preservada</div>
+            </div>
+          </div>
+
+          <div class="attr-item">
+            <div class="attr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 8v4l3 3"/>
+              </svg>
+            </div>
+            <div class="attr-content">
+              <div class="attr-label">Clube & lazer</div>
+              <div class="attr-value">300 m a pé</div>
+            </div>
+          </div>
+
+          <div class="attr-item">
+            <div class="attr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+                <polyline points="16 7 22 7 22 13"/>
+              </svg>
+            </div>
+            <div class="attr-content">
+              <div class="attr-label">Valorização estimada</div>
+              <div class="attr-value">+11–14% a.a. projetado</div>
+            </div>
+            <div class="attr-badge good">Alto pot.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="sheet-divider"></div>
+
+      <!-- CTAs -->
+      <div class="sheet-ctas">
+        <button class="btn-cta-primary">
+          <div class="cta-pri-text">
+            <div class="cta-pri-main">Agendar Visita</div>
+            <div class="cta-pri-sub">Converse com um especialista</div>
+          </div>
+          <div class="cta-pri-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+        </button>
+        <button class="btn-cta-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Falar com Especialista
+        </button>
+      </div>
+
+    </div><!-- /sheet-body -->
+  </div><!-- /bottom-sheet -->
+
+  <!-- ── BOTTOM NAVIGATION (sticky) ── -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span class="nav-label">Início</span>
+    </div>
+    <div class="nav-item active">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+        </svg>
+      </div>
+      <span class="nav-label">Mapa</span>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </div>
+      <span class="nav-label">Favoritos</span>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </div>
+      <span class="nav-label">Simulações</span>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <span class="nav-label">Perfil</span>
+    </div>
+  </div>
+
+</div><!-- /screen -->
+</div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<!-- ═══════════════════════════════════════════
+     DESIGN TOKENS FOOTER
+     ═══════════════════════════════════════════ -->
+<div class="presentation-footer">
+  <div class="pf-tokens">
+    <div class="pf-token"><div class="pf-swatch" style="background:#060D16;border:1px solid rgba(255,255,255,.1)"></div>#060D16 · BG</div>
+    <div class="pf-token"><div class="pf-swatch" style="background:#0B1928"></div>#0B1928 · Navy</div>
+    <div class="pf-token"><div class="pf-swatch" style="background:#C8A44A"></div>#C8A44A · Gold</div>
+    <div class="pf-token"><div class="pf-swatch" style="background:#4ADE80"></div>#4ADE80 · Disponível</div>
+    <div class="pf-token"><div class="pf-swatch" style="background:#F87171"></div>#F87171 · Vendido</div>
+    <div class="pf-token"><div class="pf-swatch" style="background:#60A5FA"></div>#60A5FA · Reservado</div>
+  </div>
+  <div class="pf-credits">
+    <span>IMI — Inteligência Imobiliária</span> · Reserva do Vale · Mobile HiFi<br>
+    Dark Premium · Gold Accent · Navy Primary · Playfair + Outfit + JetBrains Mono
+  </div>
+</div>
+
+</body>
+</html>
