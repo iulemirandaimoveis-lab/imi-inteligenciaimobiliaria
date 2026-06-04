@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Building2 } from 'lucide-react'
+import { ArrowLeft, MapPin } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import dynamic from 'next/dynamic'
 
@@ -11,6 +11,10 @@ const JazzBoulevardViewer = dynamic(
 )
 const SubdivisionLotMap = dynamic(
   () => import('../../imoveis/components/SubdivisionLotMap'),
+  { ssr: false }
+)
+const GenericBuildingViewer = dynamic(
+  () => import('./components/GenericBuildingViewer'),
   { ssr: false }
 )
 
@@ -106,12 +110,11 @@ export default async function EmpreendimentoPage({ params }: PageProps) {
           />
         )}
         {isBuilding && !isJazz && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <Building2 size={48} className="mb-4 opacity-20" />
-            <p style={{ fontSize: 14, color: '#948F84', fontWeight: 600 }}>
-              Visualizador interativo em breve.
-            </p>
-          </div>
+          <GenericBuildingViewer
+            developmentId={dev.id}
+            developmentName={dev.name}
+            whatsappPhone={dev.whatsapp_phone ?? '5581997230455'}
+          />
         )}
       </section>
     </main>
