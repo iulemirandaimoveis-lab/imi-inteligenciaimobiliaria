@@ -4,12 +4,9 @@ import React, {
   useRef, useState, useCallback, useMemo, useEffect, memo,
 } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  X, ZoomIn, ZoomOut, RotateCcw, MessageCircle,
-  ShoppingCart, Trash2, Send, Layers, ChevronDown, ChevronUp,
-} from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle } from 'lucide-react';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Lot {
   id: string; quadra: string; lot_number: number;
@@ -24,37 +21,84 @@ interface PlanLot {
   status: string; has_polygon: boolean;
 }
 
-type StatusKey = 'DISPONIVEL' | 'VENDIDO' | 'NEGOCIACAO' | 'PROPRIETARIO' | 'IGREJA';
+interface PriceEntry {
+  quadra: string; lote: string;
+  preco_lote: number; preco_vista: number; entrada: number;
+  p12_total: number; p12_parcela: number;
+  p36_total: number; p36_parcela: number;
+  p60_total: number; p60_parcela: number;
+  p120_total: number; p120_parcela: number;
+}
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+interface Props {
+  lots: Lot[];
+  developmentId: string;
+  developmentName: string;
+  whatsappPhone?: string;
+}
 
-const SVG_W = 1000, SVG_H = 707;
-const MIN_SCALE = 0.4, MAX_SCALE = 18;
-const WHATSAPP_NUMBER = '5587999999999';
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const SVG_W = 1000;
+const SVG_H = 707;
+const MIN_SCALE = 0.25;
+const MAX_SCALE = 20;
+
+// ── Formatters ────────────────────────────────────────────────────────────────
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
 const fmtM2 = (v: number) =>
   `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 }).format(v)} m²`;
 
-const STATUS: Record<StatusKey, { label: string; fill: string; stroke: string; text: string }> = {
-  DISPONIVEL:   { label: 'Disponível',   fill: 'rgba(34,197,94,0.22)',  stroke: '#22C55E', text: '#16A34A' },
-  VENDIDO:      { label: 'Vendido',      fill: 'rgba(30,41,59,0.65)',   stroke: '#334155', text: '#94A3B8' },
-  NEGOCIACAO:   { label: 'Negociação',   fill: 'rgba(234,179,8,0.22)',  stroke: '#EAB308', text: '#CA8A04' },
-  PROPRIETARIO: { label: 'Proprietário', fill: 'rgba(59,130,246,0.18)', stroke: '#3B82F6', text: '#2563EB' },
-  IGREJA:       { label: 'Igreja',       fill: 'rgba(167,139,250,0.2)', stroke: '#A78BFA', text: '#7C3AED' },
+// ── Status config ─────────────────────────────────────────────────────────────
+
+const STATUS_CFG: Record<string, {
+  label: string; fill: string; stroke: string;
+  pillActiveBg: string; dot: string;
+  badgeBg: string; badgeText: string;
+}> = {
+  DISPONIVEL: {
+    label: 'Disponível',
+    fill: 'rgba(50,209,124,0.22)',
+    stroke: '#32D17C',
+    pillActiveBg: '#32D17C',
+    dot: '#32D17C',
+    badgeBg: '#DCFCE7',
+    badgeText: '#166534',
+  },
+  NEGOCIACAO: {
+    label: 'Negociação',
+    fill: 'rgba(255,181,71,0.28)',
+    stroke: '#FFB547',
+    pillActiveBg: '#FFB547',
+    dot: '#FFB547',
+    badgeBg: '#FEF3C7',
+    badgeText: '#92400E',
+  },
+  VENDIDO: {
+    label: 'Vendido',
+    fill: 'rgba(8,21,36,0.78)',
+    stroke: '#243042',
+    pillActiveBg: '#FF5C5C',
+    dot: '#FF5C5C',
+    badgeBg: '#FEE2E2',
+    badgeText: '#991B1B',
+  },
+  PROPRIETARIO: {
+    label: 'Proprietário',
+    fill: 'rgba(59,130,246,0.18)',
+    stroke: '#3B82F6',
+    pillActiveBg: '#3B82F6',
+    dot: '#3B82F6',
+    badgeBg: '#DBEAFE',
+    badgeText: '#1E40AF',
+  },
 };
-const getStatus = (key: string) => STATUS[key as StatusKey] ?? STATUS.DISPONIVEL;
 
-const PAYMENT_CONDITIONS = [
-  { label: 'À vista',   desc: '20% desconto',        calc: (p: number) => p * 0.80 },
-  { label: '12 meses',  desc: '15% desc + 10% ent.', calc: (p: number) => p * 0.85 },
-  { label: '36 meses',  desc: '8% desc + 10% ent.',  calc: (p: number) => p * 0.92 },
-  { label: '60 meses',  desc: '5% desc + 10% ent.',  calc: (p: number) => p * 0.95 },
-  { label: '120 meses', desc: 'INCC/IPCA+0,5%/m',    calc: (p: number) => p },
-];
+const getCfg = (k: string) => STATUS_CFG[k] ?? STATUS_CFG.DISPONIVEL;
 
-// ─── Hook: Load plan lots from JSON ──────────────────────────────────────────
+// ── Data hooks ────────────────────────────────────────────────────────────────
 
 function usePlanLots() {
   const [planLots, setPlanLots] = useState<PlanLot[]>([]);
@@ -63,717 +107,884 @@ function usePlanLots() {
   useEffect(() => {
     fetch('/data/alto-bellevue-lots.json')
       .then(r => r.json())
-      .then((data: PlanLot[]) => { setPlanLots(data); setLoading(false); })
+      .then((d: PlanLot[]) => { setPlanLots(d); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
   return { planLots, loading };
 }
 
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
+function usePrices() {
+  const [priceMap, setPriceMap] = useState<Map<string, PriceEntry>>(new Map());
+
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)');
-    setIsMobile(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    fetch('/data/alto-bellevue-prices.json')
+      .then(r => r.json())
+      .then((data: PriceEntry[]) => {
+        const m = new Map<string, PriceEntry>();
+        for (const e of data) {
+          m.set(`${e.quadra}-${String(parseInt(e.lote, 10)).padStart(2, '0')}`, e);
+        }
+        setPriceMap(m);
+      })
+      .catch(() => {});
   }, []);
-  return isMobile;
+
+  return priceMap;
 }
 
-// ─── Merge DB lots with plan polygons ─────────────────────────────────────────
-
+// JSON status has priority (updated from Excel); DB price has priority
 function mergeLots(dbLots: Lot[], planLots: PlanLot[]): PlanLot[] {
-  const dbMap = new Map(dbLots.map(l => [`${l.quadra}-${String(l.lot_number).padStart(2, '0')}`, l]));
+  const dbMap = new Map(
+    dbLots.map(l => [`${l.quadra}-${String(l.lot_number).padStart(2, '0')}`, l])
+  );
   return planLots.map(pl => {
     const db = dbMap.get(pl.id);
     return {
       ...pl,
       price: db?.price ?? pl.price,
-      area_m2: db?.area_m2 ?? pl.area_m2,
-      status: db?.status ?? pl.status,
+      area_m2: (db?.area_m2 ?? pl.area_m2) || 0,
+      status: pl.status || db?.status || 'DISPONIVEL',
     };
   });
 }
 
-// ─── CartPanel ────────────────────────────────────────────────────────────────
+// ── SVG Map (memoized) ────────────────────────────────────────────────────────
 
-interface CartPanelProps {
-  cart: PlanLot[]; whatsapp: string;
-  onRemove: (id: string) => void; onClear: () => void;
+interface MapInnerProps {
+  lots: PlanLot[];
+  selectedId: string | null;
+  scale: number;
+  origin: { x: number; y: number };
+  isDragging: boolean;
+  onLotClick: (lot: PlanLot) => void;
+  onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
+  onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
+  onPointerUp: () => void;
+  onBgClick: () => void;
 }
 
-const CartPanel = memo(function CartPanel({ cart, whatsapp, onRemove, onClear }: CartPanelProps) {
-  const [payIdx, setPayIdx] = useState(0);
-  const totalArea = cart.reduce((s, l) => s + (l.area_m2 ?? 0), 0);
-  const totalPrice = cart.reduce((s, l) => s + (l.price ?? 0), 0);
-
-  function sendWhatsApp() {
-    const lines = cart.map(l =>
-      `• Quadra ${l.quadra}, Lote ${l.lot_number}${l.area_m2 ? ` — ${fmtM2(l.area_m2)}` : ''}${l.price ? ` — ${fmtBRL(l.price)}` : ''}`
-    );
-    const msg = `Olá! Tenho interesse nos seguintes lotes do *Alto Bellevue*:\n\n${lines.join('\n')}\n\n${totalPrice ? `*Valor total: ${fmtBRL(totalPrice)}*\n` : ''}Gostaria de receber uma proposta. Obrigado!`;
-    window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-  }
-
+const MapInner = memo(function MapInner({
+  lots, selectedId, scale, origin, isDragging,
+  onLotClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
+}: MapInnerProps) {
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between p-4 border-b border-white/10">
-        <div className="flex items-center gap-2">
-          <ShoppingCart size={16} className="text-emerald-400"/>
-          <span className="font-semibold text-white text-sm">{cart.length} {cart.length === 1 ? 'lote' : 'lotes'}</span>
-        </div>
-        {cart.length > 0 && (
-          <button onClick={onClear} className="text-slate-500 hover:text-red-400 text-xs flex items-center gap-1">
-            <Trash2 size={12}/> Limpar
-          </button>
-        )}
-      </div>
+    <div
+      className="w-full h-full"
+      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerLeave={onPointerUp}
+    >
+      <svg
+        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+        className="w-full h-full select-none"
+        style={{
+          transform: `translate(${origin.x}px, ${origin.y}px) scale(${scale})`,
+          transformOrigin: 'center center',
+          willChange: 'transform',
+          transition: isDragging ? 'none' : 'transform 0.18s ease',
+        }}
+        onClick={onBgClick}
+      >
+        <defs>
+          <filter id="ab-glow-gold" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
 
-      {cart.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 text-slate-500 p-6 text-center">
-          <ShoppingCart size={32} className="opacity-30"/>
-          <p className="text-sm">Selecione lotes no mapa para adicionar à proposta</p>
-        </div>
-      ) : (
-        <>
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
-            {cart.map(lot => (
-              <div key={lot.id} className="bg-white/5 rounded-lg p-3 flex items-start gap-2">
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-white text-sm">Quadra {lot.quadra} · Lote {lot.lot_number}</div>
-                  {lot.area_m2 && <div className="text-slate-400 text-xs">{fmtM2(lot.area_m2)}</div>}
-                  {lot.price && <div className="text-emerald-400 text-xs font-medium mt-0.5">{fmtBRL(lot.price)}</div>}
-                </div>
-                <button onClick={() => onRemove(lot.id)} className="text-slate-600 hover:text-red-400 flex-shrink-0 mt-0.5">
-                  <X size={14}/>
-                </button>
-              </div>
-            ))}
-          </div>
+        {/* Satellite background */}
+        <image
+          href="/images/maps/alto-bellevue-bg.jpg"
+          x="0" y="0"
+          width={SVG_W} height={SVG_H}
+          preserveAspectRatio="xMidYMid slice"
+        />
 
-          {totalPrice > 0 && (
-            <div className="p-3 border-t border-white/10 space-y-3">
-              <div className="bg-white/5 rounded-lg p-3 space-y-1.5">
-                <div className="flex justify-between text-xs text-slate-400">
-                  <span>Área total</span><span>{fmtM2(totalArea)}</span>
-                </div>
-                <div className="flex justify-between text-sm font-semibold text-white">
-                  <span>Valor total</span><span>{fmtBRL(totalPrice)}</span>
-                </div>
-              </div>
+        {/* Luxury dark overlay */}
+        <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="rgba(8,21,36,0.50)" />
 
-              <div className="space-y-1">
-                <div className="text-xs text-slate-500 mb-1">Condição de pagamento:</div>
-                {PAYMENT_CONDITIONS.map((c, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setPayIdx(i)}
-                    className={`w-full flex justify-between px-3 py-1.5 rounded text-xs transition-colors ${
-                      i === payIdx ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'hover:bg-white/5 text-slate-400'
-                    }`}
-                  >
-                    <span>{c.label}</span>
-                    <span className="font-medium">{fmtBRL(c.calc(totalPrice))}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+        {/* Lots */}
+        {lots.map(lot => {
+          const cfg = getCfg(lot.status);
+          const sel = lot.id === selectedId;
+          const pts = lot.polygon.map(([x, y]) => `${x},${y}`).join(' ');
 
-          <div className="p-3 pt-0">
-            <button
-              onClick={sendWhatsApp}
-              className="w-full bg-[#25D366] hover:bg-[#22c55e] active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all shadow-lg shadow-green-500/20"
+          return (
+            <g
+              key={lot.id}
+              style={{ cursor: 'pointer' }}
+              onClick={(e) => { e.stopPropagation(); onLotClick(lot); }}
             >
-              <MessageCircle size={16}/>
-              Enviar Proposta no WhatsApp
-            </button>
-          </div>
-        </>
-      )}
+              {/* Gold glow ring for selected */}
+              {sel && (
+                <polygon
+                  points={pts}
+                  fill="transparent"
+                  stroke="#C8A35F"
+                  strokeWidth="6"
+                  filter="url(#ab-glow-gold)"
+                  style={{ pointerEvents: 'none' }}
+                />
+              )}
+
+              {/* Lot fill */}
+              <polygon
+                points={pts}
+                fill={sel ? 'rgba(200,163,95,0.52)' : cfg.fill}
+                stroke={sel ? '#D7B97A' : cfg.stroke}
+                strokeWidth={sel ? 1.5 : 0.65}
+              />
+
+              {/* Lot number label */}
+              {lot.centroid && (
+                <text
+                  x={lot.centroid[0]}
+                  y={lot.centroid[1] + 1}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fill={sel
+                    ? '#D7B97A'
+                    : lot.status === 'VENDIDO'
+                      ? 'rgba(255,255,255,0.18)'
+                      : 'rgba(255,255,255,0.62)'}
+                  fontSize="6"
+                  fontWeight={sel ? '700' : '400'}
+                  style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
+                >
+                  {lot.lot_number}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
     </div>
   );
 });
 
-// ─── LotInfoPanel ─────────────────────────────────────────────────────────────
+// ── Lot Bottom Sheet ──────────────────────────────────────────────────────────
 
-interface LotInfoProps {
-  lot: PlanLot; inCart: boolean;
-  onAddToCart: () => void; onRemoveFromCart: () => void;
+function LotBottomSheet({
+  lot, priceEntry, onClose, whatsappPhone, developmentName,
+}: {
+  lot: PlanLot;
+  priceEntry?: PriceEntry;
   onClose: () => void;
-}
+  whatsappPhone: string;
+  developmentName: string;
+}) {
+  const isAvailable = lot.status === 'DISPONIVEL';
+  const cfg = getCfg(lot.status);
 
-function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: LotInfoProps) {
-  const st = getStatus(lot.status);
-  const priceVista = lot.price ? lot.price * 0.80 : null;
+  // Block body scroll while sheet is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  const handleKey = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [handleKey]);
+
+  const waInterest = encodeURIComponent(
+    `Olá! Tenho interesse no ${developmentName} — Quadra ${lot.quadra}, Lote ${lot.lot_number}${lot.area_m2 ? `, área de ${Math.round(lot.area_m2 as number)} m²` : ''}. Gostaria de mais informações.`
+  );
+  const waVisit = encodeURIComponent(
+    `Olá! Gostaria de agendar uma visita ao ${developmentName}.`
+  );
 
   return (
     <>
-      {/* Backdrop para fechar no mobile */}
-      <div
-        className="fixed inset-0 z-[149] md:hidden"
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.18 }}
+        className="fixed inset-0 z-40"
+        style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
         onClick={onClose}
       />
+
+      {/* Sheet */}
       <motion.div
-        initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }}
-        transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-        className="fixed bottom-0 left-0 right-0 md:bottom-6 md:left-auto md:right-6 md:w-[360px] md:rounded-2xl rounded-t-[24px] shadow-2xl z-[150]"
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+        className="fixed bottom-0 left-0 right-0 z-50 overflow-y-auto"
         style={{
           maxHeight: '82vh',
-          display: 'flex',
-          flexDirection: 'column',
+          borderRadius: '36px 36px 0 0',
           background: '#fff',
-          border: '1px solid rgba(0,0,0,0.08)',
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          boxShadow: '0 -32px 80px rgba(0,0,0,0.28)',
         }}
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Drag handle — mobile only */}
-        <div className="md:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full bg-gray-200"/>
+        {/* Handle bar */}
+        <div className="flex justify-center pt-3 pb-2">
+          <div style={{ width: 40, height: 4, borderRadius: 2, background: '#E5E0D8' }} />
         </div>
 
+        {/* Status accent bar */}
+        <div style={{ height: 3, background: cfg.dot }} />
+
         {/* Header */}
-        <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-start justify-between px-6 pt-5 pb-3">
           <div>
-            <span
-              className="inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-2"
-              style={{ background: `${st.stroke}18`, color: st.text }}
-            >
-              {st.label}
-            </span>
-            <div className="font-bold text-[#0B1928] text-lg leading-tight">
-              Quadra {lot.quadra} · Lote {lot.lot_number}
+            <div className="flex items-center gap-2 mb-2">
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                style={{ background: cfg.badgeBg, color: cfg.badgeText }}
+              >
+                {cfg.label}
+              </span>
+              {isAvailable && (
+                <span
+                  className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full"
+                  style={{ background: '#F0EDE5', color: '#C8A35F' }}
+                >
+                  Premium
+                </span>
+              )}
             </div>
+            <h3
+              className="leading-tight"
+              style={{
+                fontSize: 22,
+                fontWeight: 800,
+                color: '#081524',
+                fontFamily: "'Outfit', sans-serif",
+                margin: 0,
+              }}
+            >
+              Quadra {lot.quadra} &middot; Lote {lot.lot_number}
+            </h3>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-400 hover:text-gray-600 flex items-center justify-center transition-all flex-shrink-0 mt-0.5"
+            className="w-9 h-9 flex items-center justify-center rounded-full flex-shrink-0 mt-1"
+            style={{ background: '#F7F8FA' }}
           >
-            <X size={15}/>
+            <X size={16} color="#948F84" />
           </button>
         </div>
 
-        {/* Content — scrollable */}
-        <div className="flex-1 overflow-y-auto overscroll-contain">
-          <div className="px-5 py-4 space-y-4">
-            {/* Price hero */}
-            {lot.price ? (
-              <div className="grid grid-cols-2 gap-3">
-                <div style={{ background: '#F0FDF4', border: '1.5px solid #86EFAC', borderRadius: 14, padding: '14px 16px' }}>
-                  <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#16A34A' }}>À VISTA</div>
-                  <div className="font-bold text-lg leading-tight" style={{ color: '#15803D' }}>{fmtBRL(priceVista!)}</div>
-                  <div className="text-[11px] mt-1 font-medium" style={{ color: '#4ADE80' }}>20% desconto</div>
-                </div>
-                <div style={{ background: '#F8F6F2', border: '1.5px solid #E5E0D8', borderRadius: 14, padding: '14px 16px' }}>
-                  <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#948F84' }}>TABELA</div>
-                  <div className="font-bold text-lg leading-tight" style={{ color: '#0B1928' }}>{fmtBRL(lot.price)}</div>
-                  {lot.area_m2 && (
-                    <div className="text-[11px] mt-1" style={{ color: '#948F84' }}>{fmtBRL(lot.price / lot.area_m2)}/m²</div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div style={{ background: '#F8F6F2', border: '1px solid #E5E0D8', borderRadius: 12, padding: 16, textAlign: 'center', color: '#948F84', fontSize: 14 }}>
-                Preço sob consulta
-              </div>
-            )}
-
-            {/* Área */}
-            {lot.area_m2 && (
-              <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                <span style={{ color: '#948F84', fontSize: 14 }}>Área do lote</span>
-                <span style={{ color: '#0B1928', fontWeight: 700, fontSize: 14 }}>{fmtM2(lot.area_m2)}</span>
-              </div>
-            )}
-
-            {/* Payment conditions */}
-            {lot.price && (
-              <div className="space-y-1.5">
-                <div style={{ fontSize: 10, color: '#948F84', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Condições de Pagamento</div>
-                {PAYMENT_CONDITIONS.map((c, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between items-center px-3 py-2.5 rounded-xl"
-                    style={i === 0
-                      ? { background: '#F0FDF4', border: '1.5px solid #86EFAC' }
-                      : { background: '#F8F6F2', border: '1px solid #E5E0D8' }
-                    }
-                  >
-                    <div>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#15803D' : '#0B1928' }}>{c.label}</span>
-                      <span style={{ fontSize: 11, color: '#948F84', marginLeft: 6 }}>{c.desc}</span>
-                    </div>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#15803D' : '#0B1928' }}>
-                      {fmtBRL(c.calc(lot.price!))}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Area + Price cards */}
+        <div className="grid grid-cols-2 gap-3 px-6 pb-4">
+          <div style={{ background: '#F7F8FA', borderRadius: 16, padding: '14px 16px' }}>
+            <p
+              className="text-[10px] font-bold uppercase tracking-widest mb-1.5"
+              style={{ color: '#948F84', fontFamily: "'Outfit', sans-serif" }}
+            >
+              Área
+            </p>
+            <p
+              style={{
+                fontSize: 20, fontWeight: 800, color: '#081524',
+                fontFamily: "'JetBrains Mono', monospace", margin: 0,
+              }}
+            >
+              {lot.area_m2 ? fmtM2(lot.area_m2 as number) : '—'}
+            </p>
+          </div>
+          <div style={{ background: isAvailable ? '#081524' : '#F7F8FA', borderRadius: 16, padding: '14px 16px' }}>
+            <p
+              className="text-[10px] font-bold uppercase tracking-widest mb-1.5"
+              style={{ color: isAvailable ? '#C8A35F' : '#948F84', fontFamily: "'Outfit', sans-serif" }}
+            >
+              Valor
+            </p>
+            <p
+              style={{
+                fontSize: lot.price && lot.price >= 100000 ? 16 : 20,
+                fontWeight: 800,
+                color: isAvailable ? '#fff' : '#081524',
+                fontFamily: "'JetBrains Mono', monospace",
+                margin: 0,
+              }}
+            >
+              {lot.price ? fmtBRL(lot.price) : 'Consultar'}
+            </p>
           </div>
         </div>
 
-        {/* CTA */}
-        {lot.status === 'DISPONIVEL' && (
-          <div className="px-5 py-4 border-t border-gray-100 flex-shrink-0" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}>
-            {inCart ? (
-              <button
-                onClick={onRemoveFromCart}
-                className="w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
-                style={{ border: '1.5px solid #FCA5A5', color: '#DC2626', background: '#FFF1F1' }}
+        {/* Price/m² */}
+        {lot.price && lot.area_m2 ? (
+          <div className="px-6 pb-3">
+            <div
+              style={{
+                background: '#F0EDE5', borderRadius: 12, padding: '10px 14px',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}
+            >
+              <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600 }}>
+                Preço por m²
+              </span>
+              <span
+                style={{
+                  fontSize: 15, fontWeight: 800, color: '#081524',
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
               >
-                <X size={14}/> Remover da proposta
-              </button>
-            ) : (
-              <button
-                onClick={onAddToCart}
-                className="w-full active:scale-[0.98] text-white py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
-                style={{ background: '#16A34A', boxShadow: '0 4px 14px rgba(22,163,74,0.3)' }}
-              >
-                <ShoppingCart size={15}/> Adicionar à proposta
-              </button>
-            )}
+                {fmtBRL((lot.price as number) / (lot.area_m2 as number))}/m²
+              </span>
+            </div>
+          </div>
+        ) : null}
+
+        {/* Payment plans */}
+        {priceEntry && isAvailable && (
+          <div className="px-6 pb-4">
+            <p
+              className="text-[9px] font-bold uppercase tracking-widest mb-2.5"
+              style={{ color: '#948F84', fontFamily: "'Outfit', sans-serif" }}
+            >
+              Formas de Pagamento
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              {([
+                { label: 'À Vista', note: '20% desconto', value: priceEntry.preco_vista, mono: false, highlight: true },
+                { label: '12×', note: `Ent. ${fmtBRL(priceEntry.entrada)}`, value: priceEntry.p12_parcela, mono: true, highlight: false },
+                { label: '36×', note: `Ent. ${fmtBRL(priceEntry.entrada)}`, value: priceEntry.p36_parcela, mono: true, highlight: false },
+                { label: '60×', note: `Ent. ${fmtBRL(priceEntry.entrada)}`, value: priceEntry.p60_parcela, mono: true, highlight: false },
+                { label: '120×', note: 'INCC/IPCA+0,5%/m', value: priceEntry.p120_parcela, mono: true, highlight: false },
+              ] as const).map(plan => (
+                <div
+                  key={plan.label}
+                  style={{
+                    background: plan.highlight ? '#081524' : '#F7F8FA',
+                    borderRadius: 12,
+                    padding: '10px 12px',
+                  }}
+                >
+                  <p
+                    className="text-[9px] font-bold uppercase tracking-wider mb-1"
+                    style={{
+                      color: plan.highlight ? '#C8A35F' : '#948F84',
+                      fontFamily: "'Outfit', sans-serif",
+                      margin: '0 0 4px',
+                    }}
+                  >
+                    {plan.label}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 800,
+                      color: plan.highlight ? '#C8A35F' : '#081524',
+                      fontFamily: "'JetBrains Mono', monospace",
+                      margin: 0,
+                    }}
+                  >
+                    {fmtBRL(plan.value)}{plan.mono ? '/mês' : ''}
+                  </p>
+                  <p style={{ fontSize: 8, color: plan.highlight ? 'rgba(255,255,255,0.35)' : '#B8B3A8', margin: '2px 0 0', fontWeight: 500 }}>
+                    {plan.note}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Notes */}
+        {lot.status === 'NEGOCIACAO' && (
+          <div className="px-6 pb-3">
+            <p
+              style={{
+                fontSize: 11, color: '#92400E', background: '#FEF3C7',
+                borderRadius: 10, padding: '8px 12px', margin: 0, lineHeight: 1.5,
+              }}
+            >
+              Este lote está em processo de negociação. Entre em contato para verificar disponibilidade.
+            </p>
+          </div>
+        )}
+
+        {/* CTAs */}
+        <div className="px-6 pb-8 pt-1 flex flex-col gap-2">
+          {isAvailable || lot.status === 'NEGOCIACAO' ? (
+            <>
+              <a
+                href={`https://wa.me/${whatsappPhone}?text=${waInterest}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative flex items-center justify-center gap-2 w-full h-12 rounded-2xl text-[13px] font-bold uppercase tracking-wider overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #0B1B2D, #10233B)',
+                  color: '#fff',
+                  textDecoration: 'none',
+                  fontFamily: "'Outfit', sans-serif",
+                }}
+              >
+                <MessageCircle size={15} />
+                Tenho Interesse
+                <span
+                  style={{
+                    position: 'absolute', bottom: 0, left: '20%', right: '20%',
+                    height: 2, background: 'linear-gradient(90deg, transparent, #C8A35F, transparent)',
+                    opacity: 0.8,
+                  }}
+                />
+              </a>
+              <a
+                href={`https://wa.me/${whatsappPhone}?text=${waVisit}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl text-[12px] font-semibold"
+                style={{
+                  color: '#0B1B2D',
+                  border: '1.5px solid rgba(11,27,45,0.12)',
+                  background: '#F7F8FA',
+                  textDecoration: 'none',
+                  fontFamily: "'Outfit', sans-serif",
+                }}
+              >
+                Agendar Visita
+              </a>
+            </>
+          ) : (
+            <a
+              href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(`Olá! Gostaria de informações sobre lotes disponíveis no ${developmentName}.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl text-[13px] font-bold"
+              style={{
+                color: '#0B1B2D',
+                border: '1.5px solid rgba(11,27,45,0.12)',
+                background: '#fff',
+                textDecoration: 'none',
+                fontFamily: "'Outfit', sans-serif",
+              }}
+            >
+              <MessageCircle size={15} />
+              Ver Lotes Disponíveis
+            </a>
+          )}
+        </div>
       </motion.div>
     </>
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// ── Main component ────────────────────────────────────────────────────────────
 
-interface Props {
-  lots: Lot[];
-  developmentId: string;
-  developmentName: string;
-  whatsappPhone: string;
-  onLotClick?: (lot: Lot) => void;
-}
-
-export default function AltoBellevuePlanView({ lots, whatsappPhone, onLotClick }: Props) {
+export default function AltoBellevuePlanView({
+  lots: dbLots,
+  developmentName,
+  whatsappPhone = '5581997230455',
+}: Props) {
   const { planLots, loading } = usePlanLots();
-  const isMobile = useIsMobile();
-  const mergedLots = useMemo(() => mergeLots(lots, planLots), [lots, planLots]);
+  const priceMap = usePrices();
 
-  // Pan/zoom state
-  const svgRef = useRef<SVGSVGElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
-  const isPanning = useRef(false);
-  const lastPan = useRef({ x: 0, y: 0 });
-  const pinchRef = useRef<{ dist: number } | null>(null);
-
-  // UI state
   const [selectedLot, setSelectedLot] = useState<PlanLot | null>(null);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [cart, setCart] = useState<PlanLot[]>([]);
-  const [showCart, setShowCart] = useState(false);
-  const [filterStatus, setFilterStatus] = useState<'ALL' | StatusKey>('ALL');
-  const [showFilters, setShowFilters] = useState(false);
-  const [showImage, setShowImage] = useState(true);
+  const [activeStatus, setActiveStatus] = useState('ALL');
+  const [activeQuadra, setActiveQuadra] = useState('ALL');
 
-  // Compute visible lots
-  const visibleLots = useMemo(() => {
-    const withPoly = mergedLots.filter(l => l.has_polygon);
-    if (filterStatus === 'ALL') return withPoly;
-    return withPoly.filter(l => l.status === filterStatus);
-  }, [mergedLots, filterStatus]);
+  // Zoom/pan
+  const [scale, setScale] = useState(1);
+  const [origin, setOrigin] = useState({ x: 0, y: 0 });
+  const dragging = useRef(false);
+  const lastPos = useRef({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const lotsWithPoly = useMemo(() => mergedLots.filter(l => l.has_polygon), [mergedLots]);
-  const lotsNoPrice = useMemo(() => lotsWithPoly.filter(l => !l.price && l.status === 'DISPONIVEL'), [lotsWithPoly]);
-  const lotsDisponiveis = useMemo(() => mergedLots.filter(l => l.status === 'DISPONIVEL'), [mergedLots]);
+  // Merge DB lots with plan lots (JSON status takes priority — sourced from Excel)
+  const allLots = useMemo(() => mergeLots(dbLots, planLots), [dbLots, planLots]);
 
-  // Zoom
-  const doZoom = useCallback((factor: number, cx = SVG_W / 2, cy = SVG_H / 2) => {
-    setTransform(t => {
-      const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, t.scale * factor));
-      const ratio = newScale / t.scale;
-      return { scale: newScale, x: cx - (cx - t.x) * ratio, y: cy - (cy - t.y) * ratio };
+  // DATA INTEGRITY CHECK: validate counters match rendered data
+  const stats = useMemo(() => {
+    const available = allLots.filter(l => l.status === 'DISPONIVEL').length;
+    const reserved = allLots.filter(l => l.status === 'NEGOCIACAO').length;
+    const sold = allLots.filter(l => l.status === 'VENDIDO').length;
+    const other = allLots.filter(l => !['DISPONIVEL', 'NEGOCIACAO', 'VENDIDO', 'PROPRIETARIO'].includes(l.status)).length;
+    const total = allLots.length;
+    // Integrity: total must equal available + reserved + sold + other
+    const valid = (available + reserved + sold + other) === total;
+    return { available, reserved, sold, other, total, valid };
+  }, [allLots]);
+
+  // Filtered lots
+  const filteredLots = useMemo(() => {
+    return allLots.filter(lot => {
+      if (activeStatus !== 'ALL' && lot.status !== activeStatus) return false;
+      if (activeQuadra !== 'ALL' && lot.quadra !== activeQuadra) return false;
+      return true;
     });
+  }, [allLots, activeStatus, activeQuadra]);
+
+  // Quadras sorted
+  const quadras = useMemo(() =>
+    [...new Set(allLots.map(l => l.quadra))].sort(),
+    [allLots]
+  );
+
+  // Pan handlers
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    dragging.current = true;
+    lastPos.current = { x: e.clientX, y: e.clientY };
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
   }, []);
 
-  const resetView = useCallback(() => setTransform({ x: 0, y: 0, scale: 1 }), []);
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragging.current) return;
+    const dx = e.clientX - lastPos.current.x;
+    const dy = e.clientY - lastPos.current.y;
+    lastPos.current = { x: e.clientX, y: e.clientY };
+    setOrigin(prev => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    dragging.current = false;
+  }, []);
 
   // Wheel zoom
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    function onWheel(e: WheelEvent) {
+    const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      const rect = el!.getBoundingClientRect();
-      const cx = (e.clientX - rect.left) / rect.width * SVG_W;
-      const cy = (e.clientY - rect.top) / rect.height * SVG_H;
-      const delta = e.deltaMode === 1 ? e.deltaY * 28 : e.deltaMode === 2 ? e.deltaY * 500 : e.deltaY;
-      doZoom(delta > 0 ? 0.88 : 1.14, cx, cy);
-    }
+      setScale(s => Math.max(MIN_SCALE, Math.min(MAX_SCALE, s * (e.deltaY > 0 ? 0.9 : 1.1))));
+    };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [doZoom]);
-
-  // Mouse pan
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if ((e.target as Element).closest('[data-lot]')) return;
-    isPanning.current = true;
-    lastPan.current = { x: e.clientX, y: e.clientY };
   }, []);
-  const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isPanning.current) return;
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const dx = (e.clientX - lastPan.current.x) / rect.width * SVG_W;
-    const dy = (e.clientY - lastPan.current.y) / rect.height * SVG_H;
-    lastPan.current = { x: e.clientX, y: e.clientY };
-    setTransform(t => ({ ...t, x: t.x + dx / t.scale, y: t.y + dy / t.scale }));
+
+  const zoomIn = useCallback(() => setScale(s => Math.min(MAX_SCALE, s * 1.3)), []);
+  const zoomOut = useCallback(() => setScale(s => Math.max(MIN_SCALE, s / 1.3)), []);
+  const resetView = useCallback(() => { setScale(1); setOrigin({ x: 0, y: 0 }); }, []);
+
+  const handleBgClick = useCallback(() => {
+    if (!dragging.current) setSelectedLot(null);
   }, []);
-  const onMouseUp = useCallback(() => { isPanning.current = false; }, []);
 
-  // Touch pan/pinch
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      pinchRef.current = { dist: Math.sqrt(dx * dx + dy * dy) };
-    } else {
-      lastPan.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    }
-  }, []);
-  const onTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
-    if (e.touches.length === 2 && pinchRef.current) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      const newDist = Math.sqrt(dx * dx + dy * dy);
-      doZoom(newDist / pinchRef.current.dist);
-      pinchRef.current = { dist: newDist };
-    } else if (e.touches.length === 1) {
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const ddx = (e.touches[0].clientX - lastPan.current.x) / rect.width * SVG_W;
-      const ddy = (e.touches[0].clientY - lastPan.current.y) / rect.height * SVG_H;
-      lastPan.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-      setTransform(t => ({ ...t, x: t.x + ddx / t.scale, y: t.y + ddy / t.scale }));
-    }
-  }, [doZoom]);
+  const selectedPrice = selectedLot
+    ? priceMap.get(`${selectedLot.quadra}-${selectedLot.lot_number}`)
+    : undefined;
 
-  // Cart helpers
-  const cartIds = useMemo(() => new Set(cart.map(l => l.id)), [cart]);
-  const addToCart = useCallback((lot: PlanLot) => {
-    setCart(c => cartIds.has(lot.id) ? c : [...c, lot]);
-    setShowCart(true);
-  }, [cartIds]);
-  const removeFromCart = useCallback((id: string) => setCart(c => c.filter(l => l.id !== id)), []);
-
-  // Lot click
-  const handleLotClick = useCallback((lot: PlanLot) => {
-    setSelectedLot(prev => prev?.id === lot.id ? null : lot);
-    onLotClick?.({ id: lot.id, quadra: lot.quadra, lot_number: Number(lot.lot_number), area_m2: lot.area_m2 ?? 0, price: lot.price, status: lot.status, special_type: null, notes: null });
-  }, [onLotClick]);
-
-  const showScale = transform.scale >= 2.5;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-3">
+        <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-green-500 animate-spin" />
+        <p
+          style={{
+            fontSize: 11, color: '#948F84', fontWeight: 700,
+            letterSpacing: '0.15em', textTransform: 'uppercase',
+            fontFamily: "'Outfit', sans-serif",
+          }}
+        >
+          Carregando mapa de lotes…
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative w-full h-full flex bg-[#070E16] overflow-hidden select-none" style={{ minHeight: '100%' }}>
+    <div className="w-full" style={{ background: '#F7F8FA' }}>
 
-      {/* Map SVG */}
+      {/* ── FILTER PILLS ─────────────────────────────────────────── */}
+      <div
+        style={{
+          background: '#fff',
+          borderBottom: '1px solid rgba(0,0,0,0.06)',
+          padding: '14px 16px 12px',
+        }}
+      >
+        {/* Status filters */}
+        <div className="flex gap-2 overflow-x-auto pb-2 mb-2" style={{ scrollbarWidth: 'none' }}>
+          {([
+            { key: 'ALL', label: 'Todos', count: stats.total },
+            { key: 'DISPONIVEL', label: 'Disponível', count: stats.available },
+            { key: 'NEGOCIACAO', label: 'Negociação', count: stats.reserved },
+            { key: 'VENDIDO', label: 'Vendido', count: stats.sold },
+          ] as const).map(({ key, label, count }) => {
+            const isActive = activeStatus === key;
+            const dotColor = key === 'ALL' ? '#0B1B2D'
+              : key === 'DISPONIVEL' ? '#32D17C'
+              : key === 'NEGOCIACAO' ? '#FFB547'
+              : '#FF5C5C';
+            const activeBg = key === 'ALL' ? '#0B1B2D'
+              : STATUS_CFG[key]?.pillActiveBg ?? '#0B1B2D';
+
+            return (
+              <button
+                key={key}
+                onClick={() => setActiveStatus(key)}
+                className="flex items-center gap-2 whitespace-nowrap flex-shrink-0 transition-all"
+                style={{
+                  height: 40,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  borderRadius: 20,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  fontFamily: "'Outfit', sans-serif",
+                  border: isActive ? 'none' : '1.5px solid rgba(0,0,0,0.09)',
+                  background: isActive ? activeBg : '#fff',
+                  color: isActive ? '#fff' : '#636363',
+                  boxShadow: isActive ? '0 2px 12px rgba(0,0,0,0.14)' : 'none',
+                }}
+              >
+                <span
+                  style={{
+                    width: 7, height: 7, borderRadius: '50%',
+                    background: isActive ? 'rgba(255,255,255,0.55)' : dotColor,
+                    display: 'inline-block',
+                    flexShrink: 0,
+                  }}
+                />
+                {label}
+                <span
+                  style={{
+                    fontSize: 10, fontWeight: 800,
+                    opacity: isActive ? 0.85 : 0.55,
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Quadra filters */}
+        <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+          {(['ALL', ...quadras] as string[]).map(q => {
+            const isActive = activeQuadra === q;
+            return (
+              <button
+                key={q}
+                onClick={() => setActiveQuadra(q)}
+                className="whitespace-nowrap flex-shrink-0 transition-all"
+                style={{
+                  height: 36,
+                  paddingLeft: 14,
+                  paddingRight: 14,
+                  borderRadius: 18,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  fontFamily: "'Outfit', sans-serif",
+                  border: isActive ? 'none' : '1.5px solid rgba(0,0,0,0.09)',
+                  background: isActive ? '#0B1B2D' : '#F7F8FA',
+                  color: isActive ? '#fff' : '#636363',
+                  boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.18)' : 'none',
+                }}
+              >
+                {q === 'ALL' ? 'Todas as Quadras' : `Q ${q}`}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── MAP ──────────────────────────────────────────────────── */}
       <div
         ref={containerRef}
-        className="flex-1 relative overflow-hidden"
-        style={{ cursor: isPanning.current ? 'grabbing' : 'grab' }}
-        onMouseDown={onMouseDown} onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp} onMouseLeave={onMouseUp}
-        onTouchStart={onTouchStart} onTouchMove={onTouchMove}
-        onTouchEnd={() => { pinchRef.current = null; }}
+        className="relative w-full overflow-hidden"
+        style={{
+          height: 'clamp(280px, 40vh, 440px)',
+          background: '#081524',
+        }}
       >
-        <svg
-          ref={svgRef}
-          viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-          className="w-full h-full"
-          style={{ overflow: 'visible' }}
-        >
-          <defs>
-            <filter id="ab-glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
-              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <filter id="ab-hover-glow" x="-25%" y="-25%" width="150%" height="150%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-              <feFlood floodColor="#ffffff" floodOpacity="0.3" result="color"/>
-              <feComposite in="color" in2="blur" operator="in" result="colorBlur"/>
-              <feMerge><feMergeNode in="colorBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
+        <MapInner
+          lots={filteredLots}
+          selectedId={selectedLot?.id ?? null}
+          scale={scale}
+          origin={origin}
+          isDragging={dragging.current}
+          onLotClick={setSelectedLot}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onBgClick={handleBgClick}
+        />
 
-          <g transform={`scale(${transform.scale}) translate(${transform.x},${transform.y})`}>
-
-            {/* Background image (plant scan — pre-cropped to match SVG coordinate space) */}
-            {showImage && (
-              <image
-                href="/images/maps/alto-bellevue-bg.jpg"
-                x={0} y={0} width={1000} height={707}
-                preserveAspectRatio="none"
-                opacity={0.35}
-                style={{ imageRendering: 'crisp-edges' }}
-              />
-            )}
-
-            {/* Lot polygons */}
-            {visibleLots.map(lot => {
-              if (!lot.polygon || lot.polygon.length < 3) return null;
-              const st = getStatus(lot.status);
-              const isHovered = hoveredId === lot.id;
-              const isSelected = selectedLot?.id === lot.id;
-              const inCart = cartIds.has(lot.id);
-              const pts = lot.polygon.map(([x, y]) => `${x},${y}`).join(' ');
-
-              return (
-                <polygon
-                  key={lot.id}
-                  data-lot={lot.id}
-                  points={pts}
-                  fill={isSelected ? 'rgba(245,210,40,0.35)' : inCart ? 'rgba(52,211,153,0.32)' : st.fill}
-                  stroke={isSelected ? '#F5D228' : inCart ? '#34D399' : isHovered ? '#FFFFFF' : st.stroke}
-                  strokeWidth={isSelected || isHovered ? 1.2 / transform.scale : 0.7 / transform.scale}
-                  filter={isSelected ? 'url(#ab-glow)' : isHovered ? 'url(#ab-hover-glow)' : undefined}
-                  style={{ cursor: 'pointer', transition: 'fill 0.12s, stroke 0.12s' }}
-                  onMouseEnter={() => setHoveredId(lot.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  onClick={(e) => { e.stopPropagation(); handleLotClick(lot); }}
-                />
-              );
-            })}
-
-            {/* Lot labels (only when zoomed in) */}
-            {showScale && visibleLots.map(lot => {
-              if (!lot.centroid || !lot.polygon || lot.polygon.length < 3) return null;
-              const [cx, cy] = lot.centroid;
-              const fontSize = Math.max(2, Math.min(4, 6 / transform.scale));
-              return (
-                <text
-                  key={`lbl-${lot.id}`}
-                  x={cx} y={cy}
-                  textAnchor="middle" dominantBaseline="middle"
-                  fontSize={fontSize}
-                  fill={selectedLot?.id === lot.id ? '#F5D228' : '#FFFFFFCC'}
-                  style={{ pointerEvents: 'none', fontFamily: 'monospace', fontWeight: 600 }}
-                >
-                  {lot.lot_number}
-                </text>
-              );
-            })}
-
-            {/* Quadra labels */}
-            {!showScale && (
-              <g style={{ pointerEvents: 'none' }}>
-                {Object.entries(
-                  visibleLots.reduce((acc, l) => {
-                    if (!l.centroid || !l.has_polygon) return acc;
-                    if (!acc[l.quadra]) acc[l.quadra] = { xs: [], ys: [] };
-                    acc[l.quadra].xs.push(l.centroid[0]);
-                    acc[l.quadra].ys.push(l.centroid[1]);
-                    return acc;
-                  }, {} as Record<string, { xs: number[]; ys: number[] }>)
-                ).map(([q, { xs, ys }]) => {
-                  const cx = xs.reduce((a, b) => a + b, 0) / xs.length;
-                  const cy = ys.reduce((a, b) => a + b, 0) / ys.length;
-                  return (
-                    <g key={q} transform={`translate(${cx},${cy})`}>
-                      <circle r={8 / transform.scale} fill="#0A1828CC" stroke="#FFFFFF33" strokeWidth={0.5 / transform.scale}/>
-                      <text textAnchor="middle" dominantBaseline="middle" fontSize={7 / transform.scale} fill="#FFFFFF" fontWeight="bold" fontFamily="system-ui">
-                        {q}
-                      </text>
-                    </g>
-                  );
-                })}
-              </g>
-            )}
-          </g>
-        </svg>
-
-        {/* Controls */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
-          <button onClick={() => doZoom(1.3)} className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform">
-            <ZoomIn size={15}/>
-          </button>
-          <button onClick={() => doZoom(0.77)} className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform">
-            <ZoomOut size={15}/>
-          </button>
-          <button onClick={resetView} className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform">
-            <RotateCcw size={14}/>
-          </button>
-        </div>
-
-        {/* Filter bar */}
-        <div className="absolute top-3 right-3 flex items-center gap-1.5 md:gap-2 z-20 max-w-[calc(100%-52px)]">
-          <div className="relative">
+        {/* Floating map controls */}
+        <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-10">
+          {([
+            { icon: ZoomIn, onClick: zoomIn, label: 'Zoom in' },
+            { icon: ZoomOut, onClick: zoomOut, label: 'Zoom out' },
+            { icon: RotateCcw, onClick: resetView, label: 'Reset' },
+          ] as const).map(({ icon: Icon, onClick, label }) => (
             <button
-              onClick={() => setShowFilters(f => !f)}
-              className="flex items-center gap-1.5 h-9 md:h-8 px-3 bg-[#0A1828]/90 border border-white/10 rounded-lg text-slate-300 text-xs hover:bg-white/10 transition-colors"
+              key={label}
+              onClick={(e) => { e.stopPropagation(); onClick(); }}
+              aria-label={label}
+              className="w-9 h-9 flex items-center justify-center rounded-xl transition-opacity hover:opacity-80"
+              style={{
+                background: 'rgba(255,255,255,0.11)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.14)',
+                color: '#fff',
+              }}
             >
-              <Layers size={12}/> <span className="hidden sm:inline">{filterStatus === 'ALL' ? 'Todos' : STATUS[filterStatus as StatusKey]?.label}</span>
-              <ChevronDown size={10}/>
+              <Icon size={15} />
             </button>
-            {showFilters && (
-              <div className="absolute right-0 top-full mt-1 bg-[#0A1828] border border-white/10 rounded-xl shadow-2xl overflow-hidden min-w-36 z-30">
-                {(['ALL', ...Object.keys(STATUS)] as const).map(k => (
-                  <button
-                    key={k}
-                    onClick={() => { setFilterStatus(k as 'ALL' | StatusKey); setShowFilters(false); }}
-                    className={`w-full px-4 py-2.5 text-left text-xs hover:bg-white/5 transition-colors flex items-center gap-2 ${filterStatus === k ? 'text-emerald-400' : 'text-slate-300'}`}
-                  >
-                    {k !== 'ALL' && (
-                      <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ background: STATUS[k as StatusKey].fill, border: `1px solid ${STATUS[k as StatusKey].stroke}` }}/>
-                    )}
-                    {k === 'ALL' ? 'Todos os lotes' : STATUS[k as StatusKey].label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={() => setShowImage(s => !s)}
-            className={`h-9 md:h-8 px-3 border rounded-lg text-xs transition-colors ${showImage ? 'bg-slate-600/40 border-slate-500/40 text-slate-300' : 'bg-white/5 border-white/10 text-slate-500'}`}
-          >
-            Planta
-          </button>
-
-          <button
-            onClick={() => { setShowCart(s => !s); setSelectedLot(null); }}
-            className="relative flex items-center gap-1.5 h-9 md:h-8 px-3 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs hover:bg-emerald-500/30 transition-colors"
-          >
-            <ShoppingCart size={13}/>
-            <span className="hidden sm:inline font-medium">Proposta</span>
-            {cart.length > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 w-5 h-5 bg-emerald-500 text-white rounded-full text-[9px] flex items-center justify-center font-bold leading-none">
-                {cart.length}
-              </span>
-            )}
-          </button>
+          ))}
         </div>
 
-        {/* Stats bar — hidden on mobile when lot panel is open */}
-        {!(isMobile && selectedLot && !showCart) && (
-          <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs text-slate-500 z-20">
-            <span className="bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
-              <span className="text-emerald-400 font-semibold">{lotsDisponiveis.length}</span> disponíveis
-            </span>
-            {lotsWithPoly.length > 0 && (
-              <span className="hidden sm:inline bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
-                <span className="text-white">{lotsWithPoly.length}</span> mapeados
-              </span>
-            )}
-            {lotsNoPrice.length > 0 && (
-              <span className="bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
-                <span className="text-amber-400">{lotsNoPrice.length}</span> sem preço
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Legend — hidden on mobile when lot panel is open */}
-        {!(isMobile && selectedLot && !showCart) && (
-          <div className="absolute bottom-3 right-3 flex items-center gap-2 z-20">
-            {(['DISPONIVEL', 'VENDIDO', 'NEGOCIACAO'] as const).map(k => (
-              <div key={k} className="flex items-center gap-1 text-xs text-slate-400">
-                <div className="w-2.5 h-2.5 rounded-sm" style={{ background: STATUS[k].fill, border: `1px solid ${STATUS[k].stroke}` }}/>
-                <span className="hidden sm:inline">{STATUS[k].label}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Loading */}
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#070E16]/60 z-50">
-            <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"/>
-          </div>
-        )}
-
-        {/* Lot info panel */}
+        {/* Active quadra badge */}
         <AnimatePresence>
-          {selectedLot && !showCart && (
-            <LotInfoPanel
-              lot={selectedLot}
-              inCart={cartIds.has(selectedLot.id)}
-              onAddToCart={() => addToCart(selectedLot)}
-              onRemoveFromCart={() => removeFromCart(selectedLot.id)}
-              onClose={() => setSelectedLot(null)}
-            />
+          {activeQuadra !== 'ALL' && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: -4 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: -4 }}
+              transition={{ duration: 0.18 }}
+              className="absolute top-3 left-3 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-widest"
+              style={{
+                background: 'rgba(200,163,95,0.88)',
+                color: '#fff',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                fontFamily: "'Outfit', sans-serif",
+              }}
+            >
+              Quadra {activeQuadra}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Tap hint when nothing selected */}
+        <AnimatePresence>
+          {!selectedLot && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.5, duration: 0.3 }}
+              className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none"
+            >
+              <span
+                className="px-3 py-1.5 rounded-full text-[10px] font-semibold"
+                style={{
+                  background: 'rgba(0,0,0,0.48)',
+                  color: 'rgba(255,255,255,0.72)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                }}
+              >
+                Toque em um lote para ver detalhes
+              </span>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Cart — sidebar on desktop, bottom sheet on mobile */}
-      <AnimatePresence>
-        {showCart && !isMobile && (
-          <motion.div
-            initial={{ width: 0, opacity: 0 }} animate={{ width: 300, opacity: 1 }} exit={{ width: 0, opacity: 0 }}
-            className="border-l border-white/10 bg-[#0A1828] overflow-hidden flex-shrink-0"
-          >
-            <div className="flex items-center justify-between p-4 border-b border-white/10">
-              <span className="text-sm font-semibold text-white">Proposta de Compra</span>
-              <button onClick={() => setShowCart(false)} className="text-slate-500 hover:text-white">
-                <X size={16}/>
-              </button>
-            </div>
-            <div className="h-[calc(100%-49px)] overflow-hidden">
-              <CartPanel
-                cart={cart}
-                whatsapp={whatsappPhone || WHATSAPP_NUMBER}
-                onRemove={removeFromCart}
-                onClear={() => setCart([])}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Cart — mobile bottom sheet */}
-      <AnimatePresence>
-        {showCart && isMobile && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[155]"
-              style={{ background: 'rgba(0,0,0,0.5)' }}
-              onClick={() => setShowCart(false)}
+      {/* ── STATS BAR ────────────────────────────────────────────── */}
+      <div
+        style={{
+          background: '#fff',
+          borderTop: '1px solid rgba(0,0,0,0.06)',
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 20,
+          flexWrap: 'wrap',
+        }}
+      >
+        {([
+          { label: 'Disponíveis', value: stats.available, dot: '#32D17C' },
+          { label: 'Negociação', value: stats.reserved, dot: '#FFB547' },
+          { label: 'Vendidos', value: stats.sold, dot: '#FF5C5C' },
+        ] as const).map(item => (
+          <div key={item.label} className="flex items-center gap-2">
+            <span
+              style={{
+                width: 8, height: 8, borderRadius: '50%',
+                background: item.dot, display: 'inline-block', flexShrink: 0,
+              }}
             />
-            <motion.div
-              initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-              className="fixed left-0 right-0 bg-[#0A1828] border-t border-white/10 rounded-t-[20px] z-[160] flex flex-col"
-              style={{ bottom: 0, maxHeight: '75vh', paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
+            <span
+              style={{
+                fontSize: 14, fontWeight: 800, color: '#081524',
+                fontFamily: "'JetBrains Mono', monospace",
+              }}
             >
-              {/* Drag handle */}
-              <div className="flex justify-center pt-2.5 pb-1 flex-shrink-0">
-                <div className="w-8 h-1 rounded-full bg-white/25"/>
-              </div>
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
-                <div className="flex items-center gap-2">
-                  <ShoppingCart size={15} className="text-emerald-400"/>
-                  <span className="text-sm font-semibold text-white">Proposta de Compra</span>
-                  {cart.length > 0 && (
-                    <span className="text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
-                      {cart.length} lote{cart.length !== 1 ? 's' : ''}
-                    </span>
-                  )}
-                </div>
-                <button onClick={() => setShowCart(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 text-slate-400 hover:text-white">
-                  <ChevronDown size={16}/>
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto min-h-0">
-                <CartPanel
-                  cart={cart}
-                  whatsapp={whatsappPhone || WHATSAPP_NUMBER}
-                  onRemove={removeFromCart}
-                  onClear={() => setCart([])}
-                />
-              </div>
-            </motion.div>
-          </>
+              {item.value}
+            </span>
+            <span style={{ fontSize: 11, color: '#948F84', fontWeight: 500 }}>
+              {item.label}
+            </span>
+          </div>
+        ))}
+        <div
+          style={{
+            marginLeft: 'auto',
+            fontSize: 11, color: '#B8B3A8', fontWeight: 500,
+          }}
+        >
+          {stats.total} lotes · {quadras.length} quadras
+        </div>
+      </div>
+
+      {/* ── CTA STRIP ────────────────────────────────────────────── */}
+      <div
+        style={{
+          background: '#0B1B2D',
+          padding: '20px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+          flexWrap: 'wrap',
+        }}
+      >
+        <div>
+          <p
+            style={{
+              fontSize: 13, color: '#C8A35F', fontWeight: 700,
+              margin: '0 0 2px',
+              textTransform: 'uppercase', letterSpacing: '0.1em',
+              fontFamily: "'Outfit', sans-serif",
+            }}
+          >
+            {stats.available} lote{stats.available !== 1 ? 's' : ''} disponíve{stats.available !== 1 ? 'is' : 'l'}
+          </p>
+          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', margin: 0 }}>
+            Fale com um especialista e escolha o seu.
+          </p>
+        </div>
+        <a
+          href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(`Olá! Tenho interesse em um lote no ${developmentName}. Gostaria de ver as opções disponíveis.`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative flex items-center gap-2 h-11 px-6 rounded-xl text-[12px] font-bold uppercase tracking-wider overflow-hidden flex-shrink-0"
+          style={{
+            background: '#C8A35F',
+            color: '#0B1B2D',
+            textDecoration: 'none',
+            fontFamily: "'Outfit', sans-serif",
+          }}
+        >
+          <MessageCircle size={14} />
+          Falar com Especialista
+        </a>
+      </div>
+
+      {/* ── LOT DETAIL BOTTOM SHEET ───────────────────────────────── */}
+      <AnimatePresence>
+        {selectedLot && (
+          <LotBottomSheet
+            lot={selectedLot}
+            priceEntry={selectedPrice}
+            onClose={() => setSelectedLot(null)}
+            whatsappPhone={whatsappPhone}
+            developmentName={developmentName}
+          />
         )}
       </AnimatePresence>
     </div>
