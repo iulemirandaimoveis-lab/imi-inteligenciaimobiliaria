@@ -4,7 +4,7 @@ import React, {
   useRef, useState, useCallback, useMemo, useEffect, memo,
 } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search } from 'lucide-react';
 import {
   loadAltoBellevueMap, AB_VIEWBOX,
   type ABMapData,
@@ -870,6 +870,8 @@ export default function AltoBellevuePlanView({
   const [isMobile, setIsMobile] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showTechLayer, setShowTechLayer] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchMiss, setSearchMiss] = useState(false);
 
   const [scale, setScale] = useState(1);
   const [origin, setOrigin] = useState({ x: 0, y: 0 });
@@ -953,9 +955,45 @@ export default function AltoBellevuePlanView({
   const zoomOut = useCallback(() => setScale(s => Math.max(MIN_SCALE, s / 1.35)), []);
   const resetView = useCallback(() => { setScale(1); setOrigin({ x: 0, y: 0 }); }, []);
 
+  // Centraliza um ponto (coords do viewBox) na tela, com escala-alvo.
+  const focusOn = useCallback((cx: number, cy: number, targetScale = 5) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const { width: W, height: H } = el.getBoundingClientRect();
+    const s = Math.max(MIN_SCALE, Math.min(MAX_SCALE, targetScale));
+    setScale(s);
+    setOrigin({
+      x: -((cx / SVG_W - 0.5) * W) * s,
+      y: -((cy / SVG_H - 0.5) * H) * s,
+    });
+  }, []);
+
+  const focusLot = useCallback((lot: PlanLot) => {
+    setSelectedLot(lot);
+    if (lot.centroid) focusOn(lot.centroid[0], lot.centroid[1], 6);
+  }, [focusOn]);
+
   const handleBgClick = useCallback(() => {
     if (!didDrag.current) setSelectedLot(null);
   }, []);
+
+  // Busca "A-12", "A12", "a 12" ou só "12" (dentro da quadra ativa).
+  const runSearch = useCallback(() => {
+    const q = searchQuery.trim().toUpperCase().replace(/\s+/g, '');
+    if (!q) return;
+    const m = q.match(/^([A-P])?-?(\d{1,3})$/);
+    if (!m) { setSearchMiss(true); return; }
+    const [, qLetter, num] = m;
+    const n = String(parseInt(num, 10)).padStart(2, '0');
+    const found = allLots.find((l) => {
+      const matchNum = String(l.lot_number).padStart(2, '0') === n;
+      if (qLetter) return l.quadra === qLetter && matchNum;
+      if (activeQuadra !== 'ALL') return l.quadra === activeQuadra && matchNum;
+      return matchNum; // sem quadra → primeiro match
+    });
+    if (found) { setSearchMiss(false); focusLot(found); }
+    else setSearchMiss(true);
+  }, [searchQuery, allLots, activeQuadra, focusLot]);
 
   const selectedPrice = selectedLot
     ? priceMap.get(`${selectedLot.quadra}-${selectedLot.lot_number}`)
@@ -977,6 +1015,47 @@ export default function AltoBellevuePlanView({
 
       {/* ── FILTER PILLS ────────────────────────────── */}
       <div style={{ background: '#fff', borderBottom: '1px solid rgba(0,0,0,0.06)', padding: '12px 14px 10px' }}>
+        {/* Search by lot */}
+        <div className="flex items-center gap-2 mb-2.5">
+          <div
+            className="flex items-center gap-2 flex-1"
+            style={{
+              height: 40, borderRadius: 12, padding: '0 12px',
+              background: '#F7F8FA',
+              border: searchMiss ? '1.5px solid #FF5C5C' : '1.5px solid rgba(0,0,0,0.07)',
+            }}
+          >
+            <Search size={15} color="#948F84" style={{ flexShrink: 0 }} />
+            <input
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setSearchMiss(false); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') runSearch(); }}
+              placeholder="Buscar lote (ex.: A-12)"
+              inputMode="text"
+              aria-label="Buscar lote por número"
+              className="flex-1 bg-transparent outline-none"
+              style={{ fontSize: 13, color: '#081524', fontFamily: "'Outfit', sans-serif", minWidth: 0 }}
+            />
+            {searchQuery && (
+              <button onClick={() => { setSearchQuery(''); setSearchMiss(false); }} aria-label="Limpar busca" style={{ flexShrink: 0 }}>
+                <X size={14} color="#948F84" />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={runSearch}
+            className="flex items-center justify-center flex-shrink-0 active:scale-95"
+            style={{ height: 40, paddingLeft: 16, paddingRight: 16, borderRadius: 12, background: '#0B1B2D', color: '#fff', fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}
+          >
+            Ir
+          </button>
+        </div>
+        {searchMiss && (
+          <p style={{ fontSize: 10, color: '#FF5C5C', margin: '-4px 0 8px', fontWeight: 600 }}>
+            Lote não encontrado. Tente como "A-12".
+          </p>
+        )}
+
         {/* Status */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-2" style={{ scrollbarWidth: 'none' }}>
           {([
@@ -1019,7 +1098,18 @@ export default function AltoBellevuePlanView({
             return (
               <button
                 key={q}
-                onClick={() => { setActiveQuadra(q === activeQuadra && q !== 'ALL' ? 'ALL' : q); setSelectedLot(null); }}
+                onClick={() => {
+                  const next = q === activeQuadra && q !== 'ALL' ? 'ALL' : q;
+                  setActiveQuadra(next);
+                  setSelectedLot(null);
+                  if (next === 'ALL') { resetView(); return; }
+                  const pts = allLots.filter((l) => l.quadra === next && l.centroid);
+                  if (pts.length) {
+                    const cx = pts.reduce((s, l) => s + l.centroid[0], 0) / pts.length;
+                    const cy = pts.reduce((s, l) => s + l.centroid[1], 0) / pts.length;
+                    focusOn(cx, cy, 3);
+                  }
+                }}
                 style={{
                   height: 32, paddingLeft: 12, paddingRight: 12, borderRadius: 16,
                   fontSize: 10, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
