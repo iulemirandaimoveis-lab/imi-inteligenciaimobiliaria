@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
-import { useLotMap, type LotMapEntry } from './useLotMap';
+import { useLotMap, type LotMapEntry, type StatusFilter } from './useLotMap';
 import AmenityLayer from './AmenityLayer';
 import LotDetailPanel from './LotDetailPanel';
 
@@ -13,16 +13,18 @@ function parseVb(s: string): ViewBox {
 
 interface ViewBox { x: number; y: number; w: number; h: number }
 
+// IMI Brand System — lot fill colors (semantic, not gold)
 const LOT_COLORS: Record<string, { fill: string; stroke: string }> = {
-  disponivel:  { fill: '#22c55e', stroke: '#16a34a' },
-  reservado:   { fill: '#3b82f6', stroke: '#1d4ed8' },
-  vendido:     { fill: '#92400e', stroke: '#78350f' },
-  negociacao:  { fill: '#eab308', stroke: '#ca8a04' },
-  _hover:      { fill: '#C8A44A', stroke: '#b08530' },
-  _selected:   { fill: '#C8A44A', stroke: '#92660a' },
+  disponivel:  { fill: 'rgba(74,222,128,0.72)',  stroke: '#4ADE80' },
+  reservado:   { fill: 'rgba(96,165,250,0.72)',  stroke: '#60A5FA' },
+  vendido:     { fill: 'rgba(248,113,113,0.55)', stroke: '#F87171' },
+  negociacao:  { fill: 'rgba(251,191,36,0.72)',  stroke: '#FBBF24' },
+  _hover:      { fill: 'rgba(200,164,74,0.45)',  stroke: '#C8A44A' },
+  _selected:   { fill: 'rgba(200,164,74,0.65)',  stroke: '#D4B86A' },
 };
 
 const GOLD = '#C8A44A';
+const NAVY = '#0B1928';
 
 interface InteractiveLotMapProps {
   developmentId: string;
@@ -31,9 +33,8 @@ interface InteractiveLotMapProps {
   whatsappContact?: string;
 }
 
-// Compute a robust bounding box for a set of lots.
-// Uses outlier detection (2.5 std dev) to ignore misassigned lots when computing
-// the zoom target, so selecting a quadra always focuses on the main cluster.
+// Robust bounding box using 2.5σ outlier exclusion — ensures selecting a quadra
+// always zooms to the main cluster, even if one lot has corrupted coordinates.
 function fitToLots(lots: LotMapEntry[]): ViewBox | null {
   if (!lots.length) return null;
 
@@ -95,6 +96,7 @@ export default function InteractiveLotMap({
 }: InteractiveLotMapProps) {
   const {
     lots,
+    allLots,
     amenities,
     greenAreas,
     streets,
@@ -103,12 +105,15 @@ export default function InteractiveLotMap({
     streetLabels,
     entrance,
     viewBox: initialViewBox,
+    filteredStats,
     isLoading,
     fetchError,
     selectedLot,
     setSelectedLot,
-    activeFilter,
-    setActiveFilter,
+    statusFilter,
+    setStatusFilter,
+    selectedQuadra,
+    setSelectedQuadra,
     quadras,
     isManager,
     actionLoading,
@@ -122,7 +127,6 @@ export default function InteractiveLotMap({
 
   const [vbParts, setVbParts] = useState(() => parseVb(initialViewBox));
   const [vb, setVb] = useState<ViewBox>(() => parseVb(initialViewBox));
-  // Keep a stable ref to current vb so animateTo doesn't need vb as a dependency
   const vbLive = useRef<ViewBox>(vb);
   vbLive.current = vb;
 
@@ -146,10 +150,9 @@ export default function InteractiveLotMap({
 
   const scale = vbParts.w / vb.w;
 
-  // ─── Animated viewBox transition ─────────────────────────────────────────
+  // ─── Animated viewBox transition ────────────────────────────────────────────
   const animRef = useRef<number | null>(null);
 
-  // Stable reference — reads current vb via vbLive ref, no dependency on vb state
   const animateTo = useCallback((target: ViewBox) => {
     if (animRef.current !== null) cancelAnimationFrame(animRef.current);
 
@@ -172,9 +175,9 @@ export default function InteractiveLotMap({
     };
 
     animRef.current = requestAnimationFrame(tick);
-  }, []); // stable — no deps needed since we use the vbLive ref
+  }, []);
 
-  // ─── Zoom ─────────────────────────────────────────────────────────────────
+  // ─── Zoom ────────────────────────────────────────────────────────────────────
   const zoom = useCallback((factor: number, pivotX?: number, pivotY?: number) => {
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
     setVb((prev: ViewBox) => {
@@ -190,29 +193,34 @@ export default function InteractiveLotMap({
 
   const resetZoom = useCallback(() => {
     animateTo({ x: vbParts.x, y: vbParts.y, w: vbParts.w, h: vbParts.h });
-  }, [vbParts, animateTo]); // animateTo is now stable
+  }, [vbParts, animateTo]);
 
-  // ─── Auto-fit when quadra filter changes ─────────────────────────────────
-  const lotsRef = useRef<LotMapEntry[]>(lots);
-  useEffect(() => { lotsRef.current = lots; }, [lots]);
+  // ─── Auto-fit when quadra selection changes ──────────────────────────────────
+  // Uses allLots (unfiltered) to compute the quadra bounding box — this way the
+  // viewport always fits the full physical extent of the quadra, regardless of
+  // which status filter is active.
+  const allLotsRef = useRef<LotMapEntry[]>(allLots);
+  useEffect(() => { allLotsRef.current = allLots; }, [allLots]);
   const vbPartsRef = useRef(vbParts);
   useEffect(() => { vbPartsRef.current = vbParts; }, [vbParts]);
 
   useEffect(() => {
-    const currentLots = lotsRef.current;
+    const all = allLotsRef.current;
     const currentVbParts = vbPartsRef.current;
-    if (isLoading || currentLots.length === 0) return;
+    if (isLoading || all.length === 0) return;
 
-    if (activeFilter === 'todos' || activeFilter === 'disponiveis') {
+    if (selectedQuadra === null) {
       animateTo({ x: currentVbParts.x, y: currentVbParts.y, w: currentVbParts.w, h: currentVbParts.h });
       return;
     }
 
-    const target = fitToLots(currentLots);
+    // Strict: only lots belonging to this quadra, all statuses, for the viewport fit
+    const quadraLots = all.filter((l: LotMapEntry) => l.quadra === selectedQuadra);
+    const target = fitToLots(quadraLots);
     if (target) animateTo(target);
-  }, [activeFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedQuadra]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Wheel zoom ──────────────────────────────────────────────────────────
+  // ─── Wheel zoom ──────────────────────────────────────────────────────────────
   const onWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
     const svg = svgRef.current;
@@ -223,7 +231,7 @@ export default function InteractiveLotMap({
     zoom(e.deltaY > 0 ? 1.15 : 0.87, mx, my);
   }, [vb, zoom]);
 
-  // ─── Pan (drag) ──────────────────────────────────────────────────────────
+  // ─── Pan (drag) ──────────────────────────────────────────────────────────────
   const dragStart = useRef<{ mx: number; my: number; vx: number; vy: number } | null>(null);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
@@ -243,7 +251,7 @@ export default function InteractiveLotMap({
 
   const onMouseUp = useCallback(() => { dragStart.current = null; }, []);
 
-  // ─── Touch pinch-to-zoom ─────────────────────────────────────────────────
+  // ─── Touch pinch-to-zoom & single-finger pan ─────────────────────────────────
   const lastDist = useRef<number | null>(null);
   const lastTouchCenter = useRef<{ x: number; y: number } | null>(null);
 
@@ -258,9 +266,7 @@ export default function InteractiveLotMap({
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (lastDist.current !== null) {
-        zoom(lastDist.current / dist);
-      }
+      if (lastDist.current !== null) zoom(lastDist.current / dist);
       lastDist.current = dist;
       dragStart.current = null;
     } else if (e.touches.length === 1 && dragStart.current) {
@@ -279,7 +285,7 @@ export default function InteractiveLotMap({
     dragStart.current = null;
   }, []);
 
-  // ─── Lot click ───────────────────────────────────────────────────────────
+  // ─── Lot click ───────────────────────────────────────────────────────────────
   const handleLotClick = useCallback((lot: LotMapEntry, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedLot(lot.id === selectedLot?.id ? null : lot);
@@ -288,76 +294,103 @@ export default function InteractiveLotMap({
   const vbStr = `${vb.x} ${vb.y} ${vb.w} ${vb.h}`;
   const panelOpen = !!selectedLot;
 
-  // Stats derived from current filtered lots
-  const statsAvail = lots.filter(l => l.status === 'disponivel').length;
-  const statsSold = lots.filter(l => l.status === 'vendido').length;
-  const statsReserved = lots.filter(l => l.status === 'reservado').length;
-  const statsNeg = lots.filter(l => l.status === 'negociacao').length;
+  // Per-quadra availability counts — always from allLots so filter pills show
+  // the full availability even when a status filter is active
+  const quadraAvail = useMemo(() => {
+    const m = new Map<string, number>();
+    quadras.forEach(q => {
+      m.set(q, allLots.filter((l: LotMapEntry) => l.quadra === q && l.status === 'disponivel').length);
+    });
+    return m;
+  }, [quadras, allLots]);
 
-  // Per-quadra availability counts for the filter badges
-  const allLots = lotsRef.current; // may differ from filtered lots — but quadras derivation includes all
-  const quadraAvail = new Map<string, number>();
-  quadras.forEach(q => {
-    const total = allLots.filter((l: LotMapEntry) => l.quadra === q && l.status === 'disponivel').length;
-    quadraAvail.set(q, total);
-  });
+  const STATUS_FILTERS: { key: StatusFilter; label: string; color: string }[] = [
+    { key: 'todos',      label: 'TODOS',       color: GOLD },
+    { key: 'disponiveis', label: 'DISPONÍVEIS', color: '#4ADE80' },
+    { key: 'reservados',  label: 'RESERVADOS',  color: '#60A5FA' },
+    { key: 'vendidos',    label: 'VENDIDOS',    color: '#F87171' },
+  ];
 
   return (
     <div className="w-full">
-      {/* ─── Filter bar ─── */}
-      <div className="mb-4">
+      {/* ─── Filter bar — two rows ─── */}
+      <div className="mb-3 space-y-2">
+        {/* Row 1: Status filters */}
         <div
-          className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide"
+          className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide"
           style={{ WebkitOverflowScrolling: 'touch' }}
+          role="group"
+          aria-label="Filtrar por status"
         >
-          {/* Global filters */}
-          {(['todos', 'disponiveis'] as const).map(f => (
-            <FilterPill
-              key={f}
-              label={f === 'todos' ? 'TODOS' : 'DISPONÍVEIS'}
-              active={activeFilter === f}
-              onClick={() => { setActiveFilter(f); setSelectedLot(null); }}
-            />
-          ))}
-
-          {/* Divider */}
-          <div className="shrink-0 w-px h-5 bg-gray-200 mx-1" />
-
-          {/* Quadra filters */}
-          {quadras.map(q => (
-            <FilterPill
-              key={q}
-              label={q}
-              sublabel={quadraAvail.get(q) ?? 0}
-              active={activeFilter === q}
-              onClick={() => { setActiveFilter(q); setSelectedLot(null); }}
+          {STATUS_FILTERS.map(f => (
+            <StatusChip
+              key={f.key}
+              label={f.label}
+              active={statusFilter === f.key}
+              activeColor={f.color}
+              onClick={() => { setStatusFilter(f.key); setSelectedLot(null); }}
             />
           ))}
         </div>
+
+        {/* Row 2: Quadra filters */}
+        {quadras.length > 0 && (
+          <div
+            className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+            role="group"
+            aria-label="Filtrar por quadra"
+          >
+            <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.18em] mr-1" style={{ color: '#4F5B6B' }}>
+              Quadra
+            </span>
+            <QuadraChip
+              label="Todas"
+              count={undefined}
+              active={selectedQuadra === null}
+              onClick={() => { setSelectedQuadra(null); setSelectedLot(null); }}
+            />
+            {quadras.map(q => (
+              <QuadraChip
+                key={q}
+                label={q}
+                count={quadraAvail.get(q) ?? 0}
+                active={selectedQuadra === q}
+                onClick={() => { setSelectedQuadra(q === selectedQuadra ? null : q); setSelectedLot(null); }}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ─── Map container ─── */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden rounded-2xl bg-[#1a2332]"
+        className="relative w-full overflow-hidden rounded-2xl"
         style={{
           height: isMobile ? 'max(72vw, 340px)' : 'clamp(520px, 65vh, 800px)',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+          background: NAVY,
+          boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,164,74,0.12)',
         }}
       >
         {/* Error overlay */}
         {fetchError && (
-          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#1a2332] px-6 text-center">
-            <p className="text-gray-400 text-sm font-semibold mb-1">Mapa indisponível</p>
-            <p className="text-gray-600 text-xs">{fetchError}</p>
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center px-6 text-center" style={{ background: NAVY }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: '#8E99AB' }}>Mapa indisponível</p>
+            <p className="text-xs" style={{ color: '#4F5B6B' }}>{fetchError}</p>
           </div>
         )}
 
         {/* Loading overlay */}
         {isLoading && !fetchError && (
-          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#1a2332]">
-            <div className="w-8 h-8 rounded-full border-2 border-[#C8A44A] border-t-transparent animate-spin mb-3" />
-            <p className="text-gray-400 text-xs uppercase tracking-widest font-semibold">Carregando mapa…</p>
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center" style={{ background: NAVY }}>
+            <div
+              className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin mb-3"
+              style={{ borderColor: `${GOLD} transparent transparent transparent` }}
+            />
+            <p className="text-xs uppercase tracking-widest font-semibold" style={{ color: '#4F5B6B' }}>
+              Carregando mapa…
+            </p>
           </div>
         )}
 
@@ -381,19 +414,19 @@ export default function InteractiveLotMap({
         >
           <defs>
             <pattern id="imi-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.025)" strokeWidth="0.5" />
             </pattern>
           </defs>
           <rect x={vbParts.x} y={vbParts.y} width={vbParts.w} height={vbParts.h} fill="url(#imi-grid)" />
 
-          {/* Infra layer */}
+          {/* Infrastructure layer */}
           <g style={{ pointerEvents: 'none' }}>
             {perimeter.map((pts, i) => (
               <polygon
                 key={`peri-${i}`}
                 points={pts}
-                fill="rgba(200,164,74,0.04)"
-                stroke="#C8A44A"
+                fill="rgba(200,164,74,0.03)"
+                stroke={GOLD}
                 strokeWidth={2.2 / scale}
                 strokeLinejoin="round"
               />
@@ -412,8 +445,8 @@ export default function InteractiveLotMap({
               <polygon
                 key={`green-${i}`}
                 points={pts}
-                fill="rgba(34,197,94,0.15)"
-                stroke="#16a34a"
+                fill="rgba(74,222,128,0.10)"
+                stroke="rgba(74,222,128,0.35)"
                 strokeWidth={0.6 / scale}
               />
             ))}
@@ -422,7 +455,7 @@ export default function InteractiveLotMap({
                 key={`st-${i}`}
                 points={pts}
                 fill="none"
-                stroke="rgba(255,255,255,0.18)"
+                stroke="rgba(255,255,255,0.14)"
                 strokeWidth={0.5 / scale}
                 strokeLinejoin="round"
                 strokeLinecap="round"
@@ -448,7 +481,7 @@ export default function InteractiveLotMap({
                   fill={colors.fill}
                   stroke={colors.stroke}
                   strokeWidth={isSelected ? 2.5 / scale : 0.8 / scale}
-                  opacity={lot.status === 'vendido' ? 0.65 : 0.88}
+                  opacity={lot.status === 'vendido' ? 0.6 : 1}
                   style={{ cursor: 'pointer' }}
                   onMouseEnter={() => setHoveredId(lot.id)}
                   onMouseLeave={() => setHoveredId(null)}
@@ -462,7 +495,7 @@ export default function InteractiveLotMap({
             })}
           </g>
 
-          {/* Lot number labels (zoomed in) */}
+          {/* Lot number labels (zoom level ≥ 1.8) */}
           {scale > 1.8 && (
             <g style={{ pointerEvents: 'none' }}>
               {lots.map(lot => (
@@ -475,7 +508,7 @@ export default function InteractiveLotMap({
                   fontSize={7 / scale}
                   fill="rgba(255,255,255,0.95)"
                   fontWeight="700"
-                  fontFamily="var(--font-outfit, sans-serif)"
+                  fontFamily="var(--font-sans, sans-serif)"
                 >
                   {lot.lote}
                 </text>
@@ -483,22 +516,23 @@ export default function InteractiveLotMap({
             </g>
           )}
 
-          {/* Quadra labels */}
+          {/* Quadra badge labels */}
           {quadras.map(q => {
-            const lotsInQ = lots.filter(l => l.quadra === q);
+            // Compute centroid from allLots to always show label even when filtered
+            const lotsInQ = allLots.filter(l => l.quadra === q);
             if (!lotsInQ.length) return null;
             const cx = lotsInQ.reduce((s, l) => s + l.labelX, 0) / lotsInQ.length;
             const cy = lotsInQ.reduce((s, l) => s + l.labelY, 0) / lotsInQ.length;
-            const isActive = activeFilter === q;
+            const isActive = selectedQuadra === q;
             return (
               <g key={`qlbl-${q}`} style={{ pointerEvents: 'none' }}>
                 <circle
                   cx={cx}
                   cy={cy}
                   r={13}
-                  fill={isActive ? 'rgba(200,164,74,0.9)' : 'rgba(26,35,50,0.8)'}
-                  stroke={isActive ? '#C8A44A' : 'rgba(255,255,255,0.15)'}
-                  strokeWidth={1}
+                  fill={isActive ? 'rgba(200,164,74,0.18)' : 'rgba(11,25,40,0.75)'}
+                  stroke={isActive ? GOLD : 'rgba(255,255,255,0.12)'}
+                  strokeWidth={isActive ? 1.5 : 1}
                 />
                 <text
                   x={cx}
@@ -506,9 +540,9 @@ export default function InteractiveLotMap({
                   textAnchor="middle"
                   dominantBaseline="central"
                   fontSize={10}
-                  fill="#fff"
-                  fontWeight="800"
-                  fontFamily="var(--font-outfit, sans-serif)"
+                  fill={isActive ? GOLD : 'rgba(255,255,255,0.75)'}
+                  fontWeight="700"
+                  fontFamily="var(--font-sans, sans-serif)"
                 >
                   {q}
                 </text>
@@ -516,7 +550,7 @@ export default function InteractiveLotMap({
             );
           })}
 
-          {/* Street labels */}
+          {/* Street labels (zoom level ≥ 1.3) */}
           {scale > 1.3 && streetLabels.map((s, i) => (
             <text
               key={`stl-${i}`}
@@ -525,10 +559,10 @@ export default function InteractiveLotMap({
               textAnchor="middle"
               dominantBaseline="central"
               fontSize={5 / scale}
-              fill="rgba(226,232,240,0.7)"
+              fill="rgba(142,153,171,0.6)"
               fontWeight="600"
-              fontFamily="var(--font-outfit, sans-serif)"
-              style={{ pointerEvents: 'none', textTransform: 'uppercase', letterSpacing: '0.5px' }}
+              fontFamily="var(--font-sans, sans-serif)"
+              style={{ pointerEvents: 'none' }}
             >
               {s.name}
             </text>
@@ -537,10 +571,10 @@ export default function InteractiveLotMap({
           {/* Entrance marker */}
           {entrance && (
             <g style={{ pointerEvents: 'none' }}>
-              <circle cx={entrance.x} cy={entrance.y} r={9 / scale} fill="#C8A44A" stroke="#fff" strokeWidth={1.5 / scale} />
+              <circle cx={entrance.x} cy={entrance.y} r={9 / scale} fill={GOLD} stroke="#fff" strokeWidth={1.5 / scale} />
               <path
                 d={`M ${entrance.x - 4 / scale} ${entrance.y + 1 / scale} h ${8 / scale} M ${entrance.x} ${entrance.y - 3 / scale} v ${6 / scale}`}
-                stroke="#1a2332"
+                stroke={NAVY}
                 strokeWidth={1.4 / scale}
                 strokeLinecap="round"
               />
@@ -549,9 +583,9 @@ export default function InteractiveLotMap({
                 y={entrance.y - 14 / scale}
                 textAnchor="middle"
                 fontSize={5.5 / scale}
-                fill="#C8A44A"
+                fill={GOLD}
                 fontWeight="800"
-                fontFamily="var(--font-outfit, sans-serif)"
+                fontFamily="var(--font-sans, sans-serif)"
                 style={{ pointerEvents: 'none' }}
               >
                 {entrance.label}
@@ -575,35 +609,41 @@ export default function InteractiveLotMap({
           </MapCtrlBtn>
         </div>
 
-        {/* ─── Quadra indicator badge (top-center when quadra selected) ─── */}
-        {activeFilter !== 'todos' && activeFilter !== 'disponiveis' && !isLoading && (
+        {/* ─── Quadra indicator badge (top-center when a quadra is selected) ─── */}
+        {selectedQuadra !== null && !isLoading && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
             <div
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-white"
-              style={{ background: 'rgba(200,164,74,0.92)', backdropFilter: 'blur(8px)' }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
+              style={{
+                background: 'rgba(11,25,40,0.85)',
+                backdropFilter: 'blur(12px)',
+                border: `1px solid rgba(200,164,74,0.35)`,
+                color: GOLD,
+              }}
             >
-              <span>Quadra {activeFilter}</span>
-              <span className="opacity-70">·</span>
-              <span>{statsAvail} disponíveis</span>
+              <span>Quadra {selectedQuadra}</span>
+              <span style={{ color: 'rgba(200,164,74,0.4)' }}>·</span>
+              <span>{filteredStats.disponiveis} disponíveis</span>
             </div>
           </div>
         )}
 
-        {/* ─── Stats & legend bar (bottom) ─── */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between gap-2 px-3 py-2"
-          style={{ background: 'linear-gradient(to top, rgba(26,35,50,0.98) 60%, rgba(26,35,50,0.0))' }}
+        {/* ─── Stats & legend bar (bottom gradient) ─── */}
+        <div
+          className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between gap-2 px-3 py-2.5"
+          style={{ background: 'linear-gradient(to top, rgba(11,25,40,0.98) 60%, transparent)' }}
         >
           <div className="flex items-center gap-3 flex-wrap">
-            <StatChip value={lots.length} label="visíveis" color={GOLD} />
-            <StatChip value={statsAvail} label="disponíveis" color="#22c55e" />
-            {statsSold > 0 && <StatChip value={statsSold} label="vendidos" color="#ef4444" />}
-            {statsReserved > 0 && isManager && <StatChip value={statsReserved} label="reservados" color="#3b82f6" />}
-            {statsNeg > 0 && <StatChip value={statsNeg} label="negociação" color="#eab308" />}
+            <StatChip value={filteredStats.total} label="visíveis" color={GOLD} />
+            <StatChip value={filteredStats.disponiveis} label="disponíveis" color="#4ADE80" />
+            {filteredStats.vendidos > 0 && <StatChip value={filteredStats.vendidos} label="vendidos" color="#F87171" />}
+            {filteredStats.reservados > 0 && isManager && <StatChip value={filteredStats.reservados} label="reservados" color="#60A5FA" />}
+            {filteredStats.negociacao > 0 && <StatChip value={filteredStats.negociacao} label="negociação" color="#FBBF24" />}
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <LegendDot color="#22c55e" label="Disponível" />
-            {isManager && <LegendDot color="#3b82f6" label="Reservado" />}
-            <LegendDot color="#92400e" label="Vendido" />
+            <LegendDot color="#4ADE80" label="Disponível" />
+            {isManager && <LegendDot color="#60A5FA" label="Reservado" />}
+            <LegendDot color="#F87171" label="Vendido" />
           </div>
         </div>
 
@@ -645,40 +685,65 @@ export default function InteractiveLotMap({
   );
 }
 
-// ─── Sub-components ──────────────────────────────────────────────────────────
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
-function FilterPill({
-  label,
-  sublabel,
-  active,
-  onClick,
+function StatusChip({
+  label, active, activeColor, onClick,
 }: {
   label: string;
-  sublabel?: number;
+  active: boolean;
+  activeColor: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
+      style={{
+        background: active ? 'rgba(200,164,74,0.08)' : 'transparent',
+        color: active ? activeColor : '#4F5B6B',
+        border: active ? `1.5px solid ${activeColor}44` : '1.5px solid rgba(255,255,255,0.08)',
+      }}
+    >
+      {active && (
+        <span
+          className="inline-block w-1.5 h-1.5 rounded-full shrink-0"
+          style={{ background: activeColor }}
+        />
+      )}
+      {label}
+    </button>
+  );
+}
+
+function QuadraChip({
+  label, count, active, onClick,
+}: {
+  label: string;
+  count?: number;
   active: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
-      className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
+      className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
       style={{
-        background: active ? GOLD : 'transparent',
-        color: active ? '#1a2332' : '#6b7280',
-        border: active ? `1.5px solid ${GOLD}` : '1.5px solid #e5e7eb',
-        boxShadow: active ? '0 2px 8px rgba(200,164,74,0.3)' : 'none',
+        background: active ? 'rgba(200,164,74,0.08)' : 'transparent',
+        color: active ? GOLD : '#4F5B6B',
+        border: active ? `1.5px solid rgba(200,164,74,0.35)` : '1.5px solid rgba(255,255,255,0.08)',
       }}
     >
       {label}
-      {sublabel !== undefined && (
+      {count !== undefined && count > 0 && (
         <span
-          className="inline-flex items-center justify-center text-[10px] font-black rounded-full px-1 min-w-[18px] h-[18px]"
+          className="inline-flex items-center justify-center text-[9px] font-black rounded-full px-1 min-w-[16px] h-[16px]"
           style={{
-            background: active ? 'rgba(26,35,50,0.2)' : 'rgba(200,164,74,0.12)',
-            color: active ? '#1a2332' : '#C8A44A',
+            background: active ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.06)',
+            color: active ? GOLD : '#4F5B6B',
           }}
         >
-          {sublabel}
+          {count}
         </span>
       )}
     </button>
@@ -686,9 +751,7 @@ function FilterPill({
 }
 
 function MapCtrlBtn({
-  onClick,
-  label,
-  children,
+  onClick, label, children,
 }: {
   onClick: () => void;
   label: string;
@@ -701,10 +764,11 @@ function MapCtrlBtn({
       title={label}
       className="w-7 h-7 flex items-center justify-center rounded-lg text-white transition-all active:scale-95"
       style={{
-        background: 'rgba(26,35,50,0.88)',
+        background: 'rgba(11,25,40,0.88)',
         backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+        border: '1px solid rgba(200,164,74,0.18)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+        color: '#8E99AB',
       }}
     >
       {children}
@@ -715,8 +779,12 @@ function MapCtrlBtn({
 function StatChip({ value, label, color }: { value: number; label: string; color: string }) {
   return (
     <div className="flex items-center gap-1">
-      <span className="text-sm font-black leading-none" style={{ color }}>{value}</span>
-      <span className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">{label}</span>
+      <span className="text-sm font-black leading-none" style={{ color, fontFamily: 'var(--font-mono, monospace)' }}>
+        {value}
+      </span>
+      <span className="text-[9px] uppercase tracking-wider font-medium" style={{ color: '#4F5B6B' }}>
+        {label}
+      </span>
     </div>
   );
 }
@@ -725,7 +793,7 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   return (
     <div className="flex items-center gap-1">
       <div className="w-2 h-2 rounded-sm shrink-0" style={{ background: color }} />
-      <span className="text-[10px] text-gray-500 hidden sm:inline">{label}</span>
+      <span className="text-[9px] hidden sm:inline" style={{ color: '#4F5B6B' }}>{label}</span>
     </div>
   );
 }

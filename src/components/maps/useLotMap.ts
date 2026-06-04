@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 export type LotStatus = 'disponivel' | 'reservado' | 'negociacao' | 'vendido';
+export type StatusFilter = 'todos' | 'disponiveis' | 'reservados' | 'vendidos';
 
 /** subdivision_lots.status é MAIÚSCULO; o mapa/UI usam minúsculo. */
 export function normalizeLotStatus(raw: string | null | undefined): LotStatus {
@@ -70,6 +71,14 @@ export interface MapMarker {
   label: string;
 }
 
+export interface FilteredStats {
+  total: number;
+  disponiveis: number;
+  reservados: number;
+  vendidos: number;
+  negociacao: number;
+}
+
 export interface LotMapData {
   viewBox: string;
   totalLots: number;
@@ -92,7 +101,8 @@ export interface LotMapData {
 }
 
 interface UseLotMapResult {
-  lots: LotMapEntry[];
+  lots: LotMapEntry[];       // filtered by both dimensions — use for rendering
+  allLots: LotMapEntry[];    // unfiltered enriched lots — use for quadra stats & viewport fitting
   amenities: AmenityPoint[];
   greenAreas: string[];
   streets: string[];
@@ -102,12 +112,16 @@ interface UseLotMapResult {
   entrance: MapMarker | null;
   viewBox: string;
   stats: LotMapData['stats'] | null;
+  filteredStats: FilteredStats;
   isLoading: boolean;
   fetchError: string | null;
   selectedLot: LotMapEntry | null;
   setSelectedLot: (lot: LotMapEntry | null) => void;
-  activeFilter: string;
-  setActiveFilter: (f: string) => void;
+  // Two-dimensional filter — status is orthogonal to quadra
+  statusFilter: StatusFilter;
+  setStatusFilter: (f: StatusFilter) => void;
+  selectedQuadra: string | null;
+  setSelectedQuadra: (q: string | null) => void;
   quadras: string[];
   // Parte 2.1 — reserva de lote (somente corretor/gestor)
   isManager: boolean;
@@ -119,11 +133,13 @@ interface UseLotMapResult {
 
 export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResult {
   const [staticData, setStaticData] = useState<LotMapData | null>(null);
-  const [lots, setLots] = useState<LotMapEntry[]>([]);
+  // rawLots: Supabase-enriched but unfiltered
+  const [rawLots, setRawLots] = useState<LotMapEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedLot, setSelectedLot] = useState<LotMapEntry | null>(null);
-  const [activeFilter, setActiveFilter] = useState('todos');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('todos');
+  const [selectedQuadra, setSelectedQuadra] = useState<string | null>(null);
   const [isManager, setIsManager] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -139,8 +155,8 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
       })
       .then((data: LotMapData) => {
         setStaticData(data);
-        setLots(data.lots);
-        setIsLoading(false); // mostra o mapa estático mesmo antes do enrich do Supabase
+        setRawLots(data.lots);
+        setIsLoading(false);
       })
       .catch((err: Error) => {
         setFetchError(err.message ?? 'Erro ao carregar mapa de lotes.');
@@ -148,10 +164,7 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
       });
   }, [jsonUrl]);
 
-  // Enrich with live Supabase data (status) from subdivision_lots — a FONTE DA
-  // VERDADE dos lotes de loteamento (Alto Bellevue = 383 linhas). O preço/planos
-  // vêm do JSON estático; aqui sobrescrevemos apenas o status e o id do banco
-  // (necessário p/ reservar). Casamento por (quadra, lot_number).
+  // Enrich with live Supabase data — overwrites status and dbId; price comes from static JSON
   useEffect(() => {
     if (!staticData || !developmentId) return;
 
@@ -160,7 +173,7 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
       .from('subdivision_lots')
       .select('id, quadra, lot_number, status, price')
       .eq('development_id', developmentId)
-      .then(({ data }) => {
+      .then(({ data }: { data: Array<{ id: string; quadra: string; lot_number: number; status: string; price: number | null }> | null }) => {
         if (!data || data.length === 0) {
           setIsLoading(false);
           return;
@@ -171,7 +184,7 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
           data.map(u => [`${String(u.quadra).toUpperCase()}-${u.lot_number}`, u]),
         );
 
-        setLots(prev =>
+        setRawLots(prev =>
           prev.map(lot => {
             const db = byKey.get(`${lot.quadra.toUpperCase()}-${parseInt(lot.lote, 10)}`);
             if (!db) return lot;
@@ -187,14 +200,11 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
       });
   }, [staticData, developmentId]);
 
-  // Detecta se o usuário logado é corretor/gestor (habilita ações de reserva)
+  // Detecta se o usuário logado é corretor/gestor
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) {
-        setIsManager(false);
-        return;
-      }
+      if (!user) { setIsManager(false); return; }
       supabase
         .from('profiles')
         .select('role')
@@ -206,9 +216,8 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
     });
   }, []);
 
-  // Atualiza o status de um lote no estado local (otimista pós-confirmação)
   const patchLotStatus = useCallback((lotId: string, status: LotStatus) => {
-    setLots(prev => prev.map(l => (l.id === lotId ? { ...l, status } : l)));
+    setRawLots(prev => prev.map(l => (l.id === lotId ? { ...l, status } : l)));
     setSelectedLot(prev => (prev && prev.id === lotId ? { ...prev, status } : prev));
   }, []);
 
@@ -226,10 +235,7 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
         body: JSON.stringify({ unitId: lot.dbId, action: 'reserve', ...opts }),
       });
       const json = await res.json();
-      if (!res.ok) {
-        setActionError(json.error ?? 'Falha ao reservar.');
-        return false;
-      }
+      if (!res.ok) { setActionError(json.error ?? 'Falha ao reservar.'); return false; }
       patchLotStatus(lot.id, 'reservado');
       return true;
     } catch {
@@ -251,10 +257,7 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
         body: JSON.stringify({ unitId: lot.dbId, action: 'release', note: reason }),
       });
       const json = await res.json();
-      if (!res.ok) {
-        setActionError(json.error ?? 'Falha ao liberar.');
-        return false;
-      }
+      if (!res.ok) { setActionError(json.error ?? 'Falha ao liberar.'); return false; }
       patchLotStatus(lot.id, 'disponivel');
       return true;
     } catch {
@@ -266,18 +269,36 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
   }, [patchLotStatus]);
 
   const quadras = useMemo(
-    () => Array.from(new Set(lots.map(l => l.quadra))).sort(),
-    [lots],
+    () => Array.from(new Set(rawLots.map(l => l.quadra))).sort(),
+    [rawLots],
   );
 
+  // Two-dimensional filtering: quadra is strict (only exact match), status is orthogonal
   const filteredLots = useMemo(() => {
-    if (activeFilter === 'todos') return lots;
-    if (activeFilter === 'disponiveis') return lots.filter(l => l.status === 'disponivel');
-    return lots.filter(l => l.quadra === activeFilter);
-  }, [lots, activeFilter]);
+    let result = rawLots;
+    // Strict quadra enforcement — no exceptions
+    if (selectedQuadra !== null) {
+      result = result.filter(l => l.quadra === selectedQuadra);
+    }
+    // Status dimension — independent of quadra
+    if (statusFilter === 'disponiveis') result = result.filter(l => l.status === 'disponivel');
+    else if (statusFilter === 'reservados') result = result.filter(l => l.status === 'reservado');
+    else if (statusFilter === 'vendidos') result = result.filter(l => l.status === 'vendido');
+    return result;
+  }, [rawLots, statusFilter, selectedQuadra]);
+
+  // Stats derived from the same filteredLots used for rendering — never manually maintained
+  const filteredStats = useMemo((): FilteredStats => ({
+    total: filteredLots.length,
+    disponiveis: filteredLots.filter(l => l.status === 'disponivel').length,
+    reservados: filteredLots.filter(l => l.status === 'reservado').length,
+    vendidos: filteredLots.filter(l => l.status === 'vendido').length,
+    negociacao: filteredLots.filter(l => l.status === 'negociacao').length,
+  }), [filteredLots]);
 
   return {
     lots: filteredLots,
+    allLots: rawLots,
     amenities: staticData?.amenities ?? [],
     greenAreas: staticData?.greenAreas ?? [],
     streets: staticData?.streets ?? [],
@@ -287,12 +308,15 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
     entrance: staticData?.entrance ?? null,
     viewBox: staticData?.viewBox ?? '0 0 1200 900',
     stats: staticData?.stats ?? null,
+    filteredStats,
     isLoading,
     fetchError,
     selectedLot,
     setSelectedLot,
-    activeFilter,
-    setActiveFilter,
+    statusFilter,
+    setStatusFilter,
+    selectedQuadra,
+    setSelectedQuadra,
     quadras,
     isManager,
     actionLoading,
