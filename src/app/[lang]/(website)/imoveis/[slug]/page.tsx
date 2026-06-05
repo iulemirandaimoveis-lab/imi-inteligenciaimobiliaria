@@ -11,6 +11,7 @@ import DevelopmentUnits from '../components/DevelopmentUnits'
 import dynamic from 'next/dynamic'
 import SubdivisionErrorBoundary from '../components/SubdivisionErrorBoundary'
 const InteractiveLotMap = dynamic(() => import('@/components/maps/InteractiveLotMap'), { ssr: false })
+const SubdivisionLotMap = dynamic(() => import('../components/SubdivisionLotMap'), { ssr: false })
 import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -386,12 +387,20 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                                 Planta de Lotes
                                             </h2>
                                         </div>
-                                        <InteractiveLotMap
-                                            developmentId={development.id}
-                                            lotMapJsonUrl={lotMapJsonUrl}
-                                            galleryImages={development.images.gallery.slice(0, 4)}
-                                            whatsappContact={whatsappContact}
-                                        />
+                                        {params.slug === 'alto-bellevue' ? (
+                                            <SubdivisionLotMap
+                                                developmentId={development.id}
+                                                developmentName={development.name}
+                                                whatsappPhone={whatsappContact}
+                                            />
+                                        ) : (
+                                            <InteractiveLotMap
+                                                developmentId={development.id}
+                                                lotMapJsonUrl={lotMapJsonUrl}
+                                                galleryImages={development.images.gallery.slice(0, 4)}
+                                                whatsappContact={whatsappContact}
+                                            />
+                                        )}
                                     </div>
                                 </SubdivisionErrorBoundary>
                             ) : (
