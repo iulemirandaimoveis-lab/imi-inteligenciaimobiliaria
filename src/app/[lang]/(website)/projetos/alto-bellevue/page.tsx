@@ -152,19 +152,20 @@ export default async function AltoBellevuePage({
       </section>
 
       {/* ── Interactive Lot Map ──────────────────────────── */}
-      <section className="bg-[#F5F0EA] px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <section className="bg-[#F5F0EA] py-10 lg:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+          <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.3em] mb-3">
+            Mapa do Loteamento
+          </p>
+          <h2
+            className="text-2xl lg:text-3xl font-bold text-[#0B1928] leading-tight"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          >
+            Escolha o seu lote
+          </h2>
+        </div>
+        {/* map flush with screen edges on mobile, max-width on desktop */}
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.3em] mb-3">
-              Mapa do Loteamento
-            </p>
-            <h2
-              className="text-2xl lg:text-3xl font-bold text-[#0B1928] leading-tight"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-            >
-              Escolha o seu lote
-            </h2>
-          </div>
           <SubdivisionLotMap
             developmentId={DEVELOPMENT_ID}
             developmentName="Alto Bellevue"
