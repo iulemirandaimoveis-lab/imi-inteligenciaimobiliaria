@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react';
-import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
 import { useLotMap, type LotMapEntry, type StatusFilter } from './useLotMap';
 import AmenityLayer from './AmenityLayer';
 import LotDetailPanel from './LotDetailPanel';
@@ -124,6 +124,8 @@ export default function InteractiveLotMap({
 
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const [vbParts, setVbParts] = useState(() => parseVb(initialViewBox));
   const [vb, setVb] = useState<ViewBox>(() => parseVb(initialViewBox));
@@ -147,6 +149,43 @@ export default function InteractiveLotMap({
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    const wrapper = wrapperRef.current;
+    if (!isFullscreen) {
+      setIsFullscreen(true);
+      wrapper?.requestFullscreen?.().catch(() => {});
+    } else {
+      setIsFullscreen(false);
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    }
+  }, [isFullscreen]);
+
+  // Sync state when browser exits native fullscreen (e.g. user presses Esc)
+  useEffect(() => {
+    const onChange = () => { if (!document.fullscreenElement) setIsFullscreen(false); };
+    document.addEventListener('fullscreenchange', onChange);
+    document.addEventListener('webkitfullscreenchange', onChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onChange);
+      document.removeEventListener('webkitfullscreenchange', onChange);
+    };
+  }, []);
+
+  // Escape key exits CSS fullscreen on devices without native fullscreen (e.g. iOS)
+  useEffect(() => {
+    if (!isFullscreen || document.fullscreenElement) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsFullscreen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isFullscreen]);
+
+  // Lock body scroll when in CSS fullscreen
+  useEffect(() => {
+    if (isFullscreen) { document.body.style.overflow = 'hidden'; }
+    else { document.body.style.overflow = ''; }
+    return () => { document.body.style.overflow = ''; };
+  }, [isFullscreen]);
 
   const scale = vbParts.w / vb.w;
 
@@ -220,16 +259,30 @@ export default function InteractiveLotMap({
     if (target) animateTo(target);
   }, [selectedQuadra]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Wheel zoom ──────────────────────────────────────────────────────────────
-  const onWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
+  // ─── Wheel zoom — attached via useEffect with passive:false so preventDefault works ──
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = el.getBoundingClientRect();
+      const mx = vbLive.current.x + (e.clientX - rect.left) / rect.width * vbLive.current.w;
+      const my = vbLive.current.y + (e.clientY - rect.top) / rect.height * vbLive.current.h;
+      zoom(e.deltaY > 0 ? 1.12 : 0.89, mx, my);
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  }, [zoom]);
+
+  // ─── Double-click to zoom in ─────────────────────────────────────────────────
+  const onDblClick = useCallback((e: React.MouseEvent) => {
     const svg = svgRef.current;
     if (!svg) return;
     const rect = svg.getBoundingClientRect();
-    const mx = vb.x + (e.clientX - rect.left) / rect.width * vb.w;
-    const my = vb.y + (e.clientY - rect.top) / rect.height * vb.h;
-    zoom(e.deltaY > 0 ? 1.15 : 0.87, mx, my);
-  }, [vb, zoom]);
+    const mx = vbLive.current.x + (e.clientX - rect.left) / rect.width * vbLive.current.w;
+    const my = vbLive.current.y + (e.clientY - rect.top) / rect.height * vbLive.current.h;
+    zoom(0.6, mx, my);
+  }, [zoom]);
 
   // ─── Pan (drag) ──────────────────────────────────────────────────────────────
   const dragStart = useRef<{ mx: number; my: number; vx: number; vy: number } | null>(null);
@@ -312,7 +365,20 @@ export default function InteractiveLotMap({
   ];
 
   return (
-    <div className="w-full">
+    <div
+      ref={wrapperRef}
+      className="w-full"
+      style={isFullscreen ? {
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        background: NAVY,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '12px',
+        gap: '8px',
+      } : undefined}
+    >
       {/* ─── Filter bar — two rows ─── */}
       <div className="mb-3 space-y-2">
         {/* Row 1: Status filters */}
@@ -368,7 +434,10 @@ export default function InteractiveLotMap({
         ref={containerRef}
         className="relative w-full overflow-hidden rounded-2xl"
         style={{
-          height: isMobile ? 'max(72vw, 340px)' : 'clamp(520px, 65vh, 800px)',
+          ...(isFullscreen
+            ? { flex: 1, minHeight: 0 }
+            : { height: isMobile ? 'max(72vw, 340px)' : 'clamp(520px, 65vh, 800px)' }
+          ),
           background: NAVY,
           boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,164,74,0.12)',
         }}
@@ -400,8 +469,8 @@ export default function InteractiveLotMap({
           viewBox={vbStr}
           className="w-full h-full"
           style={{ cursor: dragStart.current ? 'grabbing' : 'grab', touchAction: 'none' }}
-          onWheel={onWheel}
           onMouseDown={onMouseDown}
+          onDoubleClick={onDblClick}
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseUp}
@@ -606,6 +675,9 @@ export default function InteractiveLotMap({
           </MapCtrlBtn>
           <MapCtrlBtn onClick={resetZoom} label="Ver tudo">
             <RotateCcw className="w-3.5 h-3.5" />
+          </MapCtrlBtn>
+          <MapCtrlBtn onClick={toggleFullscreen} label={isFullscreen ? 'Sair da tela cheia' : 'Tela cheia'}>
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </MapCtrlBtn>
         </div>
 
