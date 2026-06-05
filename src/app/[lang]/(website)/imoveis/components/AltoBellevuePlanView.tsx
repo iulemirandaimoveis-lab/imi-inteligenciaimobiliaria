@@ -114,6 +114,27 @@ const STATUS_CFG: Record<string, {
 
 const getCfg = (k: string) => STATUS_CFG[k] ?? STATUS_CFG.DISPONIVEL;
 
+// ── Áreas comuns (descrições editoriais) ──────────────────────────────────────
+// Conteúdo do painel de cada área comum. A geometria/posição vem da fonte canônica
+// (campo `amenities`); aqui ficam só os textos. Ids novos caem no fallback.
+interface AmenityInfo { title: string; subtitle: string; description: string; fn: string; }
+const AMENITY_INFO: Record<string, AmenityInfo> = {
+  portaria: {
+    title: 'Portaria Principal',
+    subtitle: 'Acesso e segurança',
+    description: 'Entrada monitorada do empreendimento, com controle de acesso de moradores e visitantes.',
+    fn: 'Controle de acesso 24h',
+  },
+  lazer: {
+    title: 'Área de Lazer / Clube',
+    subtitle: 'Convivência e bem-estar',
+    description: 'Espaço de lazer e convívio do condomínio — piscina, área de descanso e equipamentos comuns.',
+    fn: 'Lazer e convivência',
+  },
+};
+const getAmenityInfo = (id: string, label: string): AmenityInfo =>
+  AMENITY_INFO[id] ?? { title: label, subtitle: 'Área comum', description: 'Área de uso comum do empreendimento.', fn: 'Área comum' };
+
 // ── Formatters ────────────────────────────────────────────────────────────────
 
 const fmtBRL = (v: number) =>
@@ -123,6 +144,19 @@ const fmtM2 = (v: number) =>
 const fmtM = (v: number) => `${v.toFixed(1).replace('.', ',')} m`;
 
 // ── Geometry helpers ──────────────────────────────────────────────────────────
+
+/** Ponto-em-polígono (ray casting). Usado como rede de segurança de contenção. */
+function pointInPolygon(pt: [number, number], poly: [number, number][]): boolean {
+  if (!poly || poly.length < 3) return false;
+  const [x, y] = pt;
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
 
 function polygonAreaSvg(polygon: [number, number][]): number {
   let area = 0;
@@ -260,6 +294,7 @@ interface MapInnerProps {
   isDragging: boolean;
   activeQuadra: string;
   onLotClick: (lot: PlanLot) => void;
+  onAmenityClick: (amenity: { id: string; label: string; icon: string; color: string; x: number; y: number }) => void;
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
@@ -268,7 +303,7 @@ interface MapInnerProps {
 
 const MapInner = memo(function MapInner({
   lots, allLots, context, showTechLayer, selectedId, vb, isDragging,
-  activeQuadra, onLotClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
+  activeQuadra, onLotClick, onAmenityClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
   const scale = SVG_W / vb.w;
@@ -309,18 +344,42 @@ const MapInner = memo(function MapInner({
   const showQuadraBadges = scale < 3.5;
   const showStreetLabels = scale >= 1.5;
 
+  // Maior anel do perímetro oficial — base da rede de contenção.
+  const perimeterRing = useMemo<[number, number][]>(() => {
+    const rings = context?.perimeter ?? [];
+    if (!rings.length) return [];
+    return rings.reduce((best, r) => (r.length > best.length ? r : best), rings[0]) as [number, number][];
+  }, [context]);
+
+  // Rede de segurança de contenção: nunca desenhar um lote totalmente fora do
+  // perímetro oficial (ex.: B-24 importado com coordenadas erradas). Só exclui
+  // quando NENHUM vértice cai dentro — evita falso-positivo em lotes de borda.
+  const containedLots = useMemo(() => {
+    if (perimeterRing.length < 3) return lots;
+    return lots.filter(l => {
+      if (!l.polygon?.length) return true;
+      const anyInside = l.polygon.some(p => pointInPolygon(p as [number, number], perimeterRing));
+      const centroidInside = l.centroid ? pointInPolygon(l.centroid as [number, number], perimeterRing) : false;
+      if (!anyInside && !centroidInside) {
+        if (typeof console !== 'undefined') console.warn(`[alto-bellevue] lote ${l.id} fora do perímetro — não renderizado`);
+        return false;
+      }
+      return true;
+    });
+  }, [lots, perimeterRing]);
+
   // Viewport culling: skip lots whose centroid is outside the current viewBox (+ 15% buffer).
   // Always include the selected lot so it stays highlighted even after panning.
   const visibleLots = useMemo(() => {
     const buf = 0.15;
     const x0 = vb.x - vb.w * buf, x1 = vb.x + vb.w * (1 + buf);
     const y0 = vb.y - vb.h * buf, y1 = vb.y + vb.h * (1 + buf);
-    return lots.filter(l => {
+    return containedLots.filter(l => {
       if (l.id === selectedId) return true;
       const [cx, cy] = l.centroid ?? [0, 0];
       return cx > x0 && cx < x1 && cy > y0 && cy < y1;
     });
-  }, [lots, vb, selectedId]);
+  }, [containedLots, vb, selectedId]);
 
   // Deduplicate street labels closer than 8 SVG units (removes CAD-import noise clusters)
   const visibleStreetLabels = useMemo(() => {
@@ -406,13 +465,23 @@ const MapInner = memo(function MapInner({
                 strokeLinecap="round"
               />
             ))}
-            {/* Amenities (portaria, lazer) */}
+            {/* Amenities (portaria, lazer, …) — clicáveis abrem painel de área comum */}
             {context.amenities.map((a) => {
               const r = Math.max(4, 22 / scale);
               const fontSize = Math.max(5, 16 / scale);
               const isPortaria = a.id === 'portaria';
+              // Hit target sempre confortável para toque (mín. ~22px na tela)
+              const hit = Math.max(r * 1.6, 26 / scale);
               return (
-                <g key={`am-${a.id}`}>
+                <g
+                  key={`am-${a.id}`}
+                  style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Área comum: ${a.label}`}
+                  onClick={(e) => { e.stopPropagation(); onAmenityClick(a); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onAmenityClick(a); } }}
+                >
                   {/* Glow ring for portaria */}
                   {isPortaria && (
                     <circle cx={a.x} cy={a.y} r={r * 2.2}
@@ -420,7 +489,10 @@ const MapInner = memo(function MapInner({
                       opacity={0.25}
                     />
                   )}
-                  <circle cx={a.x} cy={a.y} r={r} fill={a.color} opacity={isPortaria ? 0.95 : 0.85} />
+                  {/* Invisible touch target */}
+                  <circle cx={a.x} cy={a.y} r={hit} fill="transparent" />
+                  <circle cx={a.x} cy={a.y} r={r} fill={a.color} opacity={isPortaria ? 0.95 : 0.85}
+                    stroke="rgba(255,255,255,0.85)" strokeWidth={Math.max(0.25, 1 / scale)} />
                   {scale >= 0.5 && (
                     <text
                       x={a.x} y={a.y - Math.max(5, 26 / scale)}
@@ -428,7 +500,7 @@ const MapInner = memo(function MapInner({
                       fontSize={fontSize}
                       fill={isPortaria ? 'rgba(200,164,74,0.92)' : 'rgba(255,255,255,0.7)'}
                       fontWeight={isPortaria ? '700' : '600'}
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                      style={{ fontFamily: "'Outfit', sans-serif", pointerEvents: 'none' }}
                     >
                       {a.label}
                     </text>
@@ -1006,6 +1078,111 @@ function LotBottomSheet({
   );
 }
 
+// ── Common-area Bottom Sheet ──────────────────────────────────────────────────
+
+function AmenityBottomSheet({
+  amenity, onClose, onLocate, whatsappPhone, developmentName,
+}: {
+  amenity: { id: string; label: string; icon: string; color: string; x: number; y: number };
+  onClose: () => void;
+  onLocate: () => void;
+  whatsappPhone: string;
+  developmentName: string;
+}) {
+  const info = getAmenityInfo(amenity.id, amenity.label);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  const waText = encodeURIComponent(
+    `Olá! Gostaria de conhecer melhor a área "${info.title}" do ${developmentName}.`,
+  );
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        onClick={onClose}
+        className="fixed inset-0 z-[9100]"
+        style={{ background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
+      />
+      <motion.div
+        initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 32, stiffness: 320 }}
+        className="fixed left-0 right-0 bottom-0 z-[9101]"
+        style={{
+          background: '#fff', borderTopLeftRadius: 22, borderTopRightRadius: 22,
+          boxShadow: '0 -8px 40px rgba(0,0,0,0.30)', maxHeight: '82vh', overflowY: 'auto',
+          paddingBottom: 'env(safe-area-inset-bottom, 12px)',
+        }}
+        role="dialog"
+        aria-label={`Detalhes da área ${info.title}`}
+      >
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 10 }}>
+          <div style={{ width: 38, height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.14)' }} />
+        </div>
+
+        <div style={{ padding: '14px 20px 8px', display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{
+            width: 52, height: 52, borderRadius: 16, flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 26, background: `${amenity.color}1F`, border: `1.5px solid ${amenity.color}55`,
+          }}>
+            {amenity.icon || '📍'}
+          </div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, color: '#C8A44A', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 2px', fontFamily: "'Outfit', sans-serif" }}>
+              {info.subtitle}
+            </p>
+            <h3 style={{ fontSize: 19, fontWeight: 800, color: '#081524', margin: 0, fontFamily: "'Outfit', sans-serif" }}>
+              {info.title}
+            </h3>
+          </div>
+          <button onClick={onClose} aria-label="Fechar" style={{ flexShrink: 0, width: 34, height: 34, borderRadius: 10, background: '#F2F1EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <X size={16} color="#636363" />
+          </button>
+        </div>
+
+        <p style={{ padding: '0 20px', fontSize: 13.5, lineHeight: 1.55, color: '#4A4A4A', margin: '4px 0 14px', fontFamily: "'Outfit', sans-serif" }}>
+          {info.description}
+        </p>
+
+        <div style={{ padding: '0 20px', display: 'flex', gap: 10, marginBottom: 16 }}>
+          <div style={{ flex: 1, background: '#F8F6F2', borderRadius: 12, padding: '10px 12px' }}>
+            <p style={{ fontSize: 9, fontWeight: 700, color: '#A8A296', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px' }}>Função</p>
+            <p style={{ fontSize: 12.5, fontWeight: 700, color: '#081524', margin: 0 }}>{info.fn}</p>
+          </div>
+          <div style={{ flex: 1, background: '#F8F6F2', borderRadius: 12, padding: '10px 12px' }}>
+            <p style={{ fontSize: 9, fontWeight: 700, color: '#A8A296', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px' }}>Localização</p>
+            <p style={{ fontSize: 12.5, fontWeight: 700, color: '#081524', margin: 0 }}>No empreendimento</p>
+          </div>
+        </div>
+
+        <div style={{ padding: '0 20px 18px', display: 'flex', gap: 10 }}>
+          <button
+            onClick={() => { onLocate(); onClose(); }}
+            className="flex items-center justify-center gap-2 active:scale-95"
+            style={{ flex: 1, height: 48, borderRadius: 14, background: '#0B1B2D', color: '#fff', fontSize: 12.5, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}
+          >
+            <Search size={15} /> Ver no mapa
+          </button>
+          <a
+            href={`https://wa.me/${whatsappPhone}?text=${waText}`}
+            target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 active:scale-95"
+            style={{ flex: 1, height: 48, borderRadius: 14, background: '#C8A44A', color: '#0B1B2D', fontSize: 12.5, fontWeight: 700, fontFamily: "'Outfit', sans-serif", textDecoration: 'none' }}
+          >
+            <MessageCircle size={15} /> Falar com especialista
+          </a>
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function AltoBellevuePlanView({
@@ -1018,6 +1195,7 @@ export default function AltoBellevuePlanView({
   const planLots = mapData?.lots ?? [];
 
   const [selectedLot, setSelectedLot] = useState<PlanLot | null>(null);
+  const [selectedAmenity, setSelectedAmenity] = useState<{ id: string; label: string; icon: string; color: string; x: number; y: number } | null>(null);
   const [activeStatus, setActiveStatus] = useState('ALL');
   const [activeQuadra, setActiveQuadra] = useState('ALL');
   const [isMobile, setIsMobile] = useState(false);
@@ -1189,6 +1367,20 @@ export default function AltoBellevuePlanView({
   const zoomIn = useCallback(() => setVb(prev => zoomViewBox(prev, 0.75)), []);
   const zoomOut = useCallback(() => setVb(prev => zoomViewBox(prev, 1.33)), []);
   const resetView = useCallback(() => animateTo(INITIAL_VB), [animateTo]);
+
+  // Área comum clicada → abre painel (e fecha painel de lote, se houver)
+  const handleAmenityClick = useCallback((a: { id: string; label: string; icon: string; color: string; x: number; y: number }) => {
+    setSelectedLot(null);
+    setSelectedAmenity(a);
+  }, []);
+
+  // "Ver no mapa" → centraliza e aproxima na área comum
+  const locateAmenity = useCallback((a: { x: number; y: number }) => {
+    const targetW = SVG_W / 6;
+    const targetH = targetW * (SVG_H / SVG_W);
+    animateTo({ x: a.x - targetW / 2, y: a.y - targetH / 2, w: targetW, h: targetH });
+  }, [animateTo]);
+
   const toggleFullscreen = useCallback(async () => {
     const el = wrapperRef.current;
     if (!document.fullscreenElement) {
@@ -1507,6 +1699,7 @@ export default function AltoBellevuePlanView({
             isDragging={isDragging}
             activeQuadra={activeQuadra}
             onLotClick={setSelectedLot}
+            onAmenityClick={handleAmenityClick}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -1700,6 +1893,19 @@ export default function AltoBellevuePlanView({
             developmentName={developmentName}
             dbLot={selectedDbLot}
             streetLabels={mapData?.streetLabels}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── COMMON-AREA BOTTOM SHEET ────────────────────── */}
+      <AnimatePresence>
+        {selectedAmenity && (
+          <AmenityBottomSheet
+            amenity={selectedAmenity}
+            onClose={() => setSelectedAmenity(null)}
+            onLocate={() => locateAmenity(selectedAmenity)}
+            whatsappPhone={whatsappPhone}
+            developmentName={developmentName}
           />
         )}
       </AnimatePresence>
