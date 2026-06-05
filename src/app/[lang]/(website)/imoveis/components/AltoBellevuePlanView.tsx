@@ -279,6 +279,8 @@ const MapInner = memo(function MapInner({
   // Progressive zoom levels
   const showLotNumbers = scale >= 1.5;
   const showAreaLabels = scale >= 3.5;
+  const showDimensions = scale >= 5;
+  const showStreetOnLot = scale >= 8;
   const showQuadraBadges = scale < 4;
   const showStreetLabels = scale >= 1.1;
   const streetStroke = Math.max(0.5, 1.6 / scale);
@@ -434,6 +436,10 @@ const MapInner = memo(function MapInner({
           const pts = lot.polygon.map(([x, y]) => `${x},${y}`).join(' ');
           const cx = lot.centroid?.[0] ?? 0;
           const cy = lot.centroid?.[1] ?? 0;
+          const dims = showDimensions && lot.area_m2 ? computeDimensions(lot.polygon, lot.area_m2 as number) : null;
+          const accessStreet = showStreetOnLot && lot.centroid && context?.streetLabels?.length
+            ? nearestStreet(lot.centroid, context.streetLabels)
+            : null;
 
           return (
             <g
@@ -483,7 +489,7 @@ const MapInner = memo(function MapInner({
                 </text>
               )}
 
-              {/* Area m² — zoom level 3+ */}
+              {/* Area m² — zoom level 3.5+ */}
               {showAreaLabels && cx > 0 && cy > 0 && lot.area_m2 && (
                 <text
                   x={cx}
@@ -496,6 +502,39 @@ const MapInner = memo(function MapInner({
                   style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
                 >
                   {Math.round(lot.area_m2 as number)}m²
+                </text>
+              )}
+
+              {/* Testada × Profundidade — zoom level 5+ */}
+              {dims && cx > 0 && cy > 0 && (
+                <text
+                  x={cx}
+                  y={cy + 9}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fill={isSelected ? 'rgba(215,185,122,0.65)' : 'rgba(255,255,255,0.34)'}
+                  fontSize={3.5}
+                  fontWeight="500"
+                  style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
+                >
+                  {fmtM(dims.testada)} × {fmtM(dims.profundidade)}
+                </text>
+              )}
+
+              {/* Rua de acesso — zoom level 8+ */}
+              {accessStreet && cx > 0 && cy > 0 && (
+                <text
+                  x={cx}
+                  y={cy + 13.5}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fill={isSelected ? 'rgba(200,164,74,0.55)' : 'rgba(200,164,74,0.38)'}
+                  fontSize={3}
+                  fontWeight="600"
+                  letterSpacing="0.04em"
+                  style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
+                >
+                  {accessStreet}
                 </text>
               )}
             </g>
@@ -1042,10 +1081,19 @@ export default function AltoBellevuePlanView({
     if (!isFullscreen) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsFullscreen(false); };
     window.addEventListener('keydown', onKey);
+    // iOS-safe scroll lock: position:fixed prevents rubber-band scrolling under the overlay
+    const scrollY = window.scrollY;
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, scrollY);
     };
   }, [isFullscreen]);
 
@@ -1099,7 +1147,8 @@ export default function AltoBellevuePlanView({
 
   const zoomLabel = scale < 1.5 ? 'Visão geral — toque num lote'
     : scale < 3.5 ? 'Nomes dos lotes visíveis'
-    : scale < 7 ? 'Lote + área m²'
+    : scale < 5 ? 'Lote + área m²'
+    : scale < 8 ? 'Testada e dimensões'
     : 'Detalhamento completo';
 
   const mapHeight = isMobile ? 'max(78vw, 480px)' : 'clamp(520px, 68vh, 820px)';
@@ -1408,7 +1457,7 @@ export default function AltoBellevuePlanView({
       </div>
 
       {/* ── STATS BAR ─────────────────────────────────── */}
-      <div
+      {!isFullscreen && <div
         style={{
           background: '#fff',
           borderTop: '1px solid rgba(0,0,0,0.06)',
@@ -1436,10 +1485,10 @@ export default function AltoBellevuePlanView({
         <span style={{ fontSize: 10, color: '#C0BAB2', fontWeight: 500, flexShrink: 0 }}>
           {stats.total} lotes · {quadras.length} quadras
         </span>
-      </div>
+      </div>}
 
       {/* ── LEGEND ─────────────────────────────────────── */}
-      <div style={{ background: '#F8F6F2', borderTop: '1px solid rgba(0,0,0,0.04)', padding: '8px 16px', display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+      {!isFullscreen && <div style={{ background: '#F8F6F2', borderTop: '1px solid rgba(0,0,0,0.04)', padding: '8px 16px', display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
         <span style={{ fontSize: 9, fontWeight: 700, color: '#C8C3BB', textTransform: 'uppercase', letterSpacing: '0.15em', flexShrink: 0 }}>Legenda</span>
         {Object.entries(STATUS_CFG).map(([key, cfg]) => (
           <div key={key} className="flex items-center gap-1.5">
@@ -1447,10 +1496,10 @@ export default function AltoBellevuePlanView({
             <span style={{ fontSize: 10, color: '#636363', fontWeight: 600 }}>{cfg.label}</span>
           </div>
         ))}
-      </div>
+      </div>}
 
       {/* ── CTA STRIP — hidden while detail sheet is open ── */}
-      <AnimatePresence>
+      {!isFullscreen && <AnimatePresence>
         {!selectedLot && (
           <motion.div
             initial={false}
@@ -1487,7 +1536,7 @@ export default function AltoBellevuePlanView({
             </a>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>}
 
       {/* ── DETAIL BOTTOM SHEET ─────────────────────────── */}
       <AnimatePresence>
