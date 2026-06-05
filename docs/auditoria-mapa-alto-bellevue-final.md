@@ -23,6 +23,12 @@
 | Prints mobile/desktop antes/depois | ⏳ pendente |
 | Confirmação de produção | ⏳ pendente |
 
+> **Handoff:** a leva de precisão geométrica (portaria, Quadra O, B-24, ruas)
+> continua em **nova branch**, onde o solicitante fará o upload do CAD oficial.
+> Instruções completas de continuidade: `docs/handoff-mapa-alto-bellevue-cad.md`.
+> Nesta branch (`claude/alto-bellevue-map-audit-r0Kby`, PR #233) ficam apenas as
+> correções independentes de CAD, já deployadas e verificadas no preview.
+
 ---
 
 ## 1. Arquivos usados (fontes)
