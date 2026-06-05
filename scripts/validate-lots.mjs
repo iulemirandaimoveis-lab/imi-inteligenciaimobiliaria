@@ -53,6 +53,28 @@ function isValidPolygon(poly) {
   return Array.isArray(poly) && poly.length >= 3 && polygonArea(poly) > 0.5;
 }
 
+/** Centroide simples (média dos vértices) — usado para teste de contenção. */
+function centroidOf(poly) {
+  if (!poly.length) return null;
+  const s = poly.reduce(([sx, sy], [x, y]) => [sx + x, sy + y], [0, 0]);
+  return [s[0] / poly.length, s[1] / poly.length];
+}
+
+/** Ponto-em-polígono (ray casting). `pt`=[x,y], `poly`=[[x,y],...]. */
+function pointInPolygon(pt, poly) {
+  if (!pt || !Array.isArray(poly) || poly.length < 3) return false;
+  const [x, y] = pt;
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    const intersect =
+      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
 function tally(arr, keyFn) {
   const m = {};
   for (const x of arr) {
@@ -146,8 +168,43 @@ function analyze(src) {
 
 // ── Execução ───────────────────────────────────────────────────────────────────
 
-const maps = analyze(normalizeMaps(load('public/maps/alto-bellevue-lots.json')));
+const rawCanonical = load('public/maps/alto-bellevue-lots.json');
+const maps = analyze(normalizeMaps(rawCanonical));
 const data = analyze(normalizeData(load('public/data/alto-bellevue-lots.json')));
+
+// ── Contenção geométrica: nada pode cair fora do perímetro oficial ─────────────
+// Usa o maior anel do perímetro como poligonal do empreendimento. Cada lote é
+// testado pelo seu rótulo (labelX/labelY) ou centroide do polígono.
+const perimeterRings = (rawCanonical.perimeter || [])
+  .map(pointsToPolygon)
+  .filter((p) => p.length >= 3)
+  .sort((a, b) => polygonArea(b) - polygonArea(a));
+const perimeter = perimeterRings[0] || [];
+
+function containmentReport() {
+  if (!perimeter.length) {
+    return { hasPerimeter: false, lotsOutside: [], amenitiesOutside: [], entranceOutside: false };
+  }
+  const lotsOutside = [];
+  for (const l of rawCanonical.lots || []) {
+    const pt =
+      l.labelX != null && l.labelY != null
+        ? [l.labelX, l.labelY]
+        : centroidOf(pointsToPolygon(l.points));
+    if (pt && !pointInPolygon(pt, perimeter)) {
+      lotsOutside.push({ id: l.id ?? `${l.quadra}-${l.lote}`, x: Math.round(pt[0]), y: Math.round(pt[1]) });
+    }
+  }
+  const amenitiesOutside = (rawCanonical.amenities || [])
+    .filter((a) => !pointInPolygon([a.x, a.y], perimeter))
+    .map((a) => ({ id: a.id, label: a.label, x: a.x, y: a.y }));
+  const entranceOutside =
+    rawCanonical.entrance != null &&
+    !pointInPolygon([rawCanonical.entrance.x, rawCanonical.entrance.y], perimeter);
+  return { hasPerimeter: true, perimeterPoints: perimeter.length, lotsOutside, amenitiesOutside, entranceOutside };
+}
+
+const containment = containmentReport();
 const prices = load('public/data/alto-bellevue-prices.json');
 const priceKeys = new Set(
   prices.map((p) => `${p.quadra}-${String(parseInt(p.lote, 10)).padStart(2, '0')}`),
@@ -165,13 +222,15 @@ const pricedNotInMaps = [...priceKeys].filter((k) => !canonicalKeys.has(k));
 const canonicalOk =
   maps.total === EXPECTED_TOTAL &&
   maps.duplicates.length === 0 &&
-  maps.invalidPolygons.length === 0;
+  maps.invalidPolygons.length === 0 &&
+  containment.lotsOutside.length === 0;
 
 const report = {
   expectedTotal: EXPECTED_TOTAL,
   canonical: maps,
   legacy: data,
   prices: { total: prices.length, inMapsNotPriced, pricedNotInMaps },
+  containment,
   canonicalOk,
 };
 
@@ -210,9 +269,21 @@ line('\n### Tabela comercial (public/data/alto-bellevue-prices.json)');
 line(`  Entradas de preço:               ${prices.length}`);
 line(`  Em planta canônica sem preço:    ${list(inMapsNotPriced)}`);
 line(`  Com preço fora da planta:        ${list(pricedNotInMaps)}`);
+
+line('\n### Contenção no perímetro oficial (point-in-polygon)');
+if (!containment.hasPerimeter) {
+  line('  ⚠️  Perímetro ausente na fonte canônica — contenção não verificada.');
+} else {
+  line(`  Perímetro:                       ${containment.perimeterPoints} vértices`);
+  line(`  Lotes FORA do perímetro (${containment.lotsOutside.length}):    ${list(containment.lotsOutside.map((l) => `${l.id}@${l.x},${l.y}`))}`);
+  line(`  Amenities fora do perímetro (${containment.amenitiesOutside.length}): ${list(containment.amenitiesOutside.map((a) => `${a.id}@${a.x},${a.y}`))}`);
+  line(`  Entrada fora do perímetro:       ${containment.entranceOutside ? 'sim (esperado — acesso externo)' : 'não'}`);
+}
+
 line('\n───────────────────────────────────────────────────────────────────');
 line(` RESULTADO: fonte canônica ${canonicalOk ? '✓ OK' : '✗ COM PROBLEMAS'} ` +
-  `(esperado ${EXPECTED_TOTAL}, encontrado ${maps.total}, dup ${maps.duplicates.length}, poly inválido ${maps.invalidPolygons.length})`);
+  `(esperado ${EXPECTED_TOTAL}, encontrado ${maps.total}, dup ${maps.duplicates.length}, ` +
+  `poly inválido ${maps.invalidPolygons.length}, fora do perímetro ${containment.lotsOutside.length})`);
 line('───────────────────────────────────────────────────────────────────');
 
 process.exit(canonicalOk ? 0 : 1);
