@@ -148,6 +148,13 @@ function UnitPanelContent({ unit, whatsappPhone, onClose }: { unit: IMIProperty;
         </div>
       </div>
 
+      {/* Data provenance */}
+      <div className="px-5 pb-3">
+        <p style={{ fontSize: 9, color: '#C8C0B8', fontWeight: 600, textAlign: 'center', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+          Preços · dados simulados para demonstração · sujeitos a alteração
+        </p>
+      </div>
+
       {/* CTA */}
       <div className="px-5 pb-8">
         {isAvailable ? (

@@ -11,9 +11,10 @@ interface Props {
   units: IMIProperty[]
   selectedUnitId: string | null
   onUnitSelect: (unit: IMIProperty) => void
+  compareIds?: Set<string>
 }
 
-export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props) {
+export default function UnitGrid({ units, selectedUnitId, onUnitSelect, compareIds }: Props) {
   if (units.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -29,6 +30,7 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
       {units.map(unit => {
         const cfg = AVAILABILITY_COLORS[unit.status]
         const isSelected = unit.id === selectedUnitId
+        const isCompared = compareIds?.has(unit.id) ?? false
         const planType = (unit.metadata?.planType as JazzPlanType | undefined) ?? 'Planta Tipo A'
         const isAvailable = unit.status === 'available' || unit.status === 'launching'
 
@@ -38,9 +40,9 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
             onClick={() => onUnitSelect(unit)}
             className="text-left rounded-2xl overflow-hidden transition-all"
             style={{
-              border: isSelected ? '2px solid #C8A44A' : '1.5px solid rgba(184,179,168,0.3)',
-              background: isSelected ? '#FFFDF5' : '#fff',
-              boxShadow: isSelected ? '0 4px 20px rgba(200,164,74,0.15)' : undefined,
+              border: isCompared ? '2px solid #2563EB' : isSelected ? '2px solid #C8A44A' : '1.5px solid rgba(184,179,168,0.3)',
+              background: isCompared ? '#EFF6FF' : isSelected ? '#FFFDF5' : '#fff',
+              boxShadow: isCompared ? '0 4px 20px rgba(37,99,235,0.15)' : isSelected ? '0 4px 20px rgba(200,164,74,0.15)' : undefined,
               opacity: unit.status === 'hidden' ? 0 : 1,
               cursor: unit.status === 'sold' ? 'default' : 'pointer',
             }}
