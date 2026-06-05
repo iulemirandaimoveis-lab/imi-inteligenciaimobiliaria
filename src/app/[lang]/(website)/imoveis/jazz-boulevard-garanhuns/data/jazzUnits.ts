@@ -18,26 +18,32 @@ export const JAZZ_PLANS: Record<JazzPlanType, {
     description: '2 dormitórios com suíte, sala ampla, cozinha integrada, varanda e 1 vaga',
     bedrooms: 2, suites: 1, bathrooms: 2, parkingSpaces: 1,
     privateAreaM2: 74.5, totalAreaM2: 86.5,
-    floorPlanImage: '/jazz/plants/planta-tipo-a.png',
+    floorPlanImage: '/jazz-boulevard/plants/planta-tipo-a.png',
   },
   'Planta Tipo B': {
     description: '3 dormitórios com 2 suítes, sala de jantar/estar, cozinha integrada e 2 vagas',
     bedrooms: 3, suites: 2, bathrooms: 2, parkingSpaces: 2,
     privateAreaM2: 98.0, totalAreaM2: 112.0,
-    floorPlanImage: '/jazz/plants/planta-tipo-b.png',
+    floorPlanImage: '/jazz-boulevard/plants/planta-tipo-b.png',
   },
   'Cobertura': {
     description: 'Cobertura duplex com terraço, churrasqueira, 3 suítes e 2 vagas',
     bedrooms: 3, suites: 3, bathrooms: 3, parkingSpaces: 2,
     privateAreaM2: 148.5, totalAreaM2: 178.0,
-    floorPlanImage: '/jazz/plants/cobertura.png',
+    floorPlanImage: '/jazz-boulevard/plants/cobertura.png',
   },
 }
 
-const SEED_STATUSES: Array<IMIProperty['status']> = [
+// Torre A and B use different seeds so their availability distributions differ
+const SEED_STATUSES_A: Array<IMIProperty['status']> = [
   'available', 'available', 'available', 'reserved',
   'available', 'available', 'sold', 'available',
   'available', 'reserved', 'available', 'available',
+]
+const SEED_STATUSES_B: Array<IMIProperty['status']> = [
+  'available', 'reserved', 'available', 'available',
+  'sold', 'available', 'available', 'available',
+  'reserved', 'available', 'sold', 'available',
 ]
 
 function getPlanType(floor: number, position: number): JazzPlanType {
@@ -46,13 +52,16 @@ function getPlanType(floor: number, position: number): JazzPlanType {
   return 'Planta Tipo B'
 }
 
-function seedStatus(floor: number, pos: number): IMIProperty['status'] {
-  return SEED_STATUSES[(floor + pos) % SEED_STATUSES.length]
+function seedStatus(tower: 'A' | 'B', floor: number, pos: number): IMIProperty['status'] {
+  const seeds = tower === 'A' ? SEED_STATUSES_A : SEED_STATUSES_B
+  return seeds[(floor * 3 + pos) % seeds.length]
 }
 
-function buildUnitPrice(plan: JazzPlanType, floor: number): number {
+function buildUnitPrice(plan: JazzPlanType, floor: number, position: number): number {
   const base = plan === 'Planta Tipo A' ? 420_000 : plan === 'Planta Tipo B' ? 580_000 : 850_000
-  return base + floor * (plan === 'Cobertura' ? 0 : 3_000)
+  // Each position adds a small premium (better view angle or end-unit advantage)
+  const posBonus = (position - 1) * 2_500
+  return base + floor * (plan === 'Cobertura' ? 0 : 3_000) + posBonus
 }
 
 export function buildJazzUnits(tower: 'A' | 'B'): IMIProperty[] {
@@ -78,13 +87,13 @@ export function buildJazzUnits(tower: 'A' | 'B'): IMIProperty[] {
         suites: planDef.suites,
         bathrooms: planDef.bathrooms,
         parkingSpaces: planDef.parkingSpaces,
-        status: seedStatus(floor, pos),
-        price: buildUnitPrice(plan, floor),
+        status: seedStatus(tower, floor, pos),
+        price: buildUnitPrice(plan, floor, pos),
         priceVisible: true,
         sceneNodeId: `node-jazz-${code.toLowerCase()}`,
         media: {
           floorPlanImage: planDef.floorPlanImage,
-          gallery: ['/jazz/renders/living.jpg', '/jazz/renders/kitchen.jpg'],
+          gallery: ['/jazz-boulevard/renders/living.jpg', '/jazz-boulevard/renders/kitchen.jpg'],
         },
         commercial: { leadCaptureEnabled: true },
         metadata: { planType: plan },

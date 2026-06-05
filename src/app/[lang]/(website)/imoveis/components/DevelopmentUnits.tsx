@@ -157,32 +157,48 @@ function FloorPlanModal({ unit, onClose }: { unit: UnitRow; onClose: () => void 
 export default function DevelopmentUnits({ propertyId, propertyName }: DevelopmentUnitsProps) {
     const [units, setUnits] = useState<UnitRow[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(false);
     const [showAll, setShowAll] = useState(false);
     const [floorPlanUnit, setFloorPlanUnit] = useState<UnitRow | null>(null);
 
     useEffect(() => {
         const supabase = createClient();
-        async function fetchUnits() {
-            const { data, error } = await supabase
-                .from('development_units')
-                .select('*')
-                .eq('development_id', propertyId)
-                .eq('status', 'available');
+        let cancelled = false;
 
-            if (!error && data) {
-                // Sort by tower name then by the trailing numeric portion of unit_name
-                const sorted = [...data].sort((a, b) => {
-                    const towerCmp = (a.tower || '').localeCompare(b.tower || '');
-                    if (towerCmp !== 0) return towerCmp;
-                    const numA = parseInt((a.unit_name || '').replace(/\D+/g, '') || '0', 10);
-                    const numB = parseInt((b.unit_name || '').replace(/\D+/g, '') || '0', 10);
-                    return numA - numB;
-                });
-                setUnits(sorted);
+        // Safety net: after 10s treat as error so spinner never hangs indefinitely
+        const timeout = setTimeout(() => {
+            if (!cancelled) { setIsLoading(false); setFetchError(true); }
+        }, 10_000);
+
+        async function fetchUnits() {
+            try {
+                const { data, error } = await supabase
+                    .from('development_units')
+                    .select('*')
+                    .eq('development_id', propertyId)
+                    .eq('status', 'available');
+
+                if (cancelled) return;
+                if (error) { setFetchError(true); }
+                else if (data) {
+                    // Sort by tower name then by the trailing numeric portion of unit_name
+                    const sorted = [...data].sort((a, b) => {
+                        const towerCmp = (a.tower || '').localeCompare(b.tower || '');
+                        if (towerCmp !== 0) return towerCmp;
+                        const numA = parseInt((a.unit_name || '').replace(/\D+/g, '') || '0', 10);
+                        const numB = parseInt((b.unit_name || '').replace(/\D+/g, '') || '0', 10);
+                        return numA - numB;
+                    });
+                    setUnits(sorted);
+                }
+            } catch {
+                if (!cancelled) setFetchError(true);
+            } finally {
+                if (!cancelled) { clearTimeout(timeout); setIsLoading(false); }
             }
-            setIsLoading(false);
         }
         fetchUnits();
+        return () => { cancelled = true; clearTimeout(timeout); };
     }, [propertyId]);
 
     if (isLoading) {
@@ -194,7 +210,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
         );
     }
 
-    if (units.length === 0) return null;
+    if (fetchError || units.length === 0) return null;
 
     const unitsToShow = showAll ? units : units.slice(0, 10);
 

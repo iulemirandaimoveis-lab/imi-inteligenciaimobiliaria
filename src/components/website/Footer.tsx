@@ -21,7 +21,7 @@ const NAV_COLS = [
             { label: 'Avaliações', href: 'avaliacoes' },
             { label: 'Imóveis', href: 'imoveis' },
             { label: 'Crédito', href: 'credito' },
-            { label: 'Consultoria', href: 'consultorias' },
+            { label: 'Consultoria', href: 'consultoria' },
             { label: 'Inteligência', href: 'inteligencia' },
             { label: 'Projetos', href: 'projetos' },
         ],
