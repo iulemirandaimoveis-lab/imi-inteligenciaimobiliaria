@@ -53,7 +53,7 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <p style={{ fontSize: 15, fontWeight: 800, color: '#0B1928', margin: 0, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
-                    Apto {unit.unitNumber}
+                    Apto {unit.code}
                   </p>
                   <p style={{ fontSize: 10, color: '#948F84', margin: '1px 0 0', fontWeight: 600 }}>
                     {planType}
@@ -81,12 +81,19 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
 
               {/* Price */}
               {unit.priceVisible && unit.price && (
-                <p style={{
-                  fontSize: 16, fontWeight: 800, color: isAvailable ? '#0B1928' : '#9CA3AF',
-                  fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0,
-                }}>
-                  {unit.status === 'sold' ? 'Vendido' : fmtBRL(unit.price)}
-                </p>
+                <div>
+                  <p style={{
+                    fontSize: 16, fontWeight: 800, color: isAvailable ? '#0B1928' : '#9CA3AF',
+                    fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0,
+                  }}>
+                    {unit.status === 'sold' ? 'Vendido' : fmtBRL(unit.price)}
+                  </p>
+                  {isAvailable && (unit.privateAreaM2 ?? 0) > 0 && (
+                    <p style={{ fontSize: 10, fontWeight: 600, color: '#948F84', margin: '2px 0 0' }}>
+                      {fmtBRL(Math.round(unit.price / unit.privateAreaM2!))}/m²
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </button>

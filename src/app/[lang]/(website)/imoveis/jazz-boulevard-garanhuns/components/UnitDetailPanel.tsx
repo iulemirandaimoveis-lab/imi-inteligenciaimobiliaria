@@ -94,6 +94,11 @@ function UnitPanelContent({ unit, whatsappPhone, onClose }: { unit: IMIProperty;
             <p style={{ fontSize: 24, fontWeight: 800, color: isAvailable ? '#fff' : '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0 }}>
               {fmtBRL(unit.price)}
             </p>
+            {(unit.privateAreaM2 ?? 0) > 0 && (
+              <p style={{ fontSize: 11, fontWeight: 600, color: isAvailable ? 'rgba(255,255,255,0.5)' : '#948F84', margin: '4px 0 0' }}>
+                {fmtBRL(Math.round(unit.price / unit.privateAreaM2!))}/m²
+              </p>
+            )}
           </div>
         )}
 

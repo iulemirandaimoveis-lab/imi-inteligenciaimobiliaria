@@ -372,7 +372,12 @@ function useIsMobile() {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function MiguelMarquesPlanView() {
+interface MiguelMarquesPlanViewProps {
+  lots?: Lot[]
+}
+
+export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesPlanViewProps) {
+  const lots = lotsProp ?? ALL_LOTS
   const isMobile = useIsMobile()
   const containerRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(true)
@@ -408,17 +413,17 @@ export default function MiguelMarquesPlanView() {
 
   // Filtered lots
   const filteredLots = useMemo(() => {
-    if (filterKey === 'ALL') return ALL_LOTS
-    if (filterKey === 'lt160') return ALL_LOTS.filter(l => l.metragem < 160)
-    if (filterKey === 'eq160') return ALL_LOTS.filter(l => l.metragem === 160)
-    if (filterKey === 'gt200') return ALL_LOTS.filter(l => l.metragem > 200)
-    return ALL_LOTS.filter(l => l.status === filterKey)
-  }, [filterKey])
+    if (filterKey === 'ALL') return lots
+    if (filterKey === 'lt160') return lots.filter(l => l.metragem < 160)
+    if (filterKey === 'eq160') return lots.filter(l => l.metragem === 160)
+    if (filterKey === 'gt200') return lots.filter(l => l.metragem > 200)
+    return lots.filter(l => l.status === filterKey)
+  }, [filterKey, lots])
 
   const filteredIds = useMemo(() => new Set(filteredLots.map(l => l.id)), [filteredLots])
-  const lotsById = useMemo(() => new Map(ALL_LOTS.map(l => [l.id, l])), [])
+  const lotsById = useMemo(() => new Map(lots.map(l => [l.id, l])), [lots])
 
-  const disponiveisCount = useMemo(() => ALL_LOTS.filter(l => l.status === 'disponivel').length, [])
+  const disponiveisCount = useMemo(() => lots.filter(l => l.status === 'disponivel').length, [lots])
 
   // Zoom
   const doZoom = useCallback((factor: number, cx = CANVAS_W / 2, cy = CANVAS_H / 2) => {
@@ -814,7 +819,7 @@ export default function MiguelMarquesPlanView() {
               <span className="text-emerald-400 font-semibold">{disponiveisCount}</span> disponíveis
             </span>
             <span className="hidden sm:inline bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
-              <span className="text-white">{ALL_LOTS.length}</span> total
+              <span className="text-white">{lots.length}</span> total
             </span>
           </div>
         )}
