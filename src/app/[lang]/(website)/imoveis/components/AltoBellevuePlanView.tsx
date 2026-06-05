@@ -51,6 +51,27 @@ const MAX_SCALE = 20;
 const GOLD = '#C8A44A';
 const NAVY = '#081524';
 
+// ── ViewBox zoom (SVG-native, like PDF zoom) ──────────────────────────────────
+// Using a viewBox-based zoom approach: as the user zooms in, the visible
+// coordinate window narrows, making each SVG unit larger on screen — exactly
+// the same behaviour as zooming a PDF or a vector map.
+
+interface ViewBox { x: number; y: number; w: number; h: number }
+
+const INITIAL_VB: ViewBox = { x: 0, y: 0, w: SVG_W, h: SVG_H };
+
+function zoomViewBox(vb: ViewBox, factor: number, pivotX?: number, pivotY?: number): ViewBox {
+  const MIN_W = SVG_W / MAX_SCALE;
+  const MAX_W = SVG_W / MIN_SCALE;
+  const newW = Math.max(MIN_W, Math.min(MAX_W, vb.w * factor));
+  const newH = newW * (SVG_H / SVG_W);
+  const px = pivotX ?? vb.x + vb.w / 2;
+  const py = pivotY ?? vb.y + vb.h / 2;
+  const ratioX = (px - vb.x) / vb.w;
+  const ratioY = (py - vb.y) / vb.h;
+  return { x: px - ratioX * newW, y: py - ratioY * newH, w: newW, h: newH };
+}
+
 // ── Status config ─────────────────────────────────────────────────────────────
 
 const STATUS_CFG: Record<string, {
@@ -235,8 +256,7 @@ interface MapInnerProps {
   context: ABMapData | null;
   showTechLayer: boolean;
   selectedId: string | null;
-  scale: number;
-  origin: { x: number; y: number };
+  vb: ViewBox;
   isDragging: boolean;
   activeQuadra: string;
   onLotClick: (lot: PlanLot) => void;
@@ -247,9 +267,12 @@ interface MapInnerProps {
 }
 
 const MapInner = memo(function MapInner({
-  lots, allLots, context, showTechLayer, selectedId, scale, origin, isDragging,
+  lots, allLots, context, showTechLayer, selectedId, vb, isDragging,
   activeQuadra, onLotClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
 }: MapInnerProps) {
+  // Derive scale from the viewBox: how much the viewport has been narrowed
+  const scale = SVG_W / vb.w;
+
   // Quadra centroid badges — uses spatial median to be immune to outlier lots
   // (e.g. N-03/N-07/N-30 are far from the main N cluster; mean would pull the badge wrong)
   const quadraCentroids = useMemo(() => {
@@ -276,18 +299,21 @@ const MapInner = memo(function MapInner({
     }));
   }, [allLots]);
 
-  // Progressive zoom levels
-  const showLotNumbers = scale >= 1.5;
-  const showAreaLabels = scale >= 3.5;
-  const showDimensions = scale >= 5;
-  const showStreetOnLot = scale >= 8;
-  const showQuadraBadges = scale < 4;
-  const showStreetLabels = scale >= 1.1;
-  const streetStroke = Math.max(0.5, 1.6 / scale);
+  // Progressive zoom levels — calibrated for viewBox zoom where scale = SVG_W / vb.w.
+  // At scale N on a 375px mobile, 1 SVG unit ≈ N × 0.31 px (375/1200).
+  // fontSize=8 at scale=3: 8 × 3 × 0.31 = 7.5 px — first readable threshold.
+  const showLotNumbers = scale >= 3;
+  const showAreaLabels = scale >= 4;
+  const showDimensions = scale >= 5.5;
+  const showStreetOnLot = scale >= 9;
+  const showQuadraBadges = scale < 3.5;
+  const showStreetLabels = scale >= 1.5;
 
-  // Inverse-scale badge sizing so badges appear constant size on screen
-  const badgeR = Math.max(7, 22 / scale);
-  const badgeFontSize = Math.max(4.5, 13 / scale);
+  // k/scale gives constant screen size: k × screenWidth/SVG_W px always visible.
+  // At ~600 px container: badgeR=40/scale → 40×600/1200 = 20 px circle.
+  const streetStroke = Math.max(0.3, 1.4 / scale);
+  const badgeR = Math.max(6, 40 / scale);
+  const badgeFontSize = Math.max(4, 24 / scale);
 
   return (
     <div
@@ -300,14 +326,9 @@ const MapInner = memo(function MapInner({
       onPointerCancel={onPointerUp}
     >
       <svg
-        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+        viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
         className="w-full h-full select-none"
-        style={{
-          transform: `translate(${origin.x}px, ${origin.y}px) scale(${scale})`,
-          transformOrigin: 'center center',
-          willChange: 'transform',
-          transition: isDragging ? 'none' : 'transform 0.18s ease',
-        }}
+        style={{ touchAction: 'none' }}
         onClick={onBgClick}
         aria-label="Mapa interativo de lotes Alto Bellevue"
         role="application"
@@ -363,22 +384,22 @@ const MapInner = memo(function MapInner({
             ))}
             {/* Amenities (portaria, lazer) */}
             {context.amenities.map((a) => {
-              const r = Math.max(4, 9 / scale);
-              const fontSize = Math.max(5, 9 / scale);
+              const r = Math.max(4, 22 / scale);
+              const fontSize = Math.max(5, 16 / scale);
               const isPortaria = a.id === 'portaria';
               return (
                 <g key={`am-${a.id}`}>
                   {/* Glow ring for portaria */}
                   {isPortaria && (
                     <circle cx={a.x} cy={a.y} r={r * 2.2}
-                      fill="none" stroke={a.color} strokeWidth={Math.max(0.5, 1.2 / scale)}
+                      fill="none" stroke={a.color} strokeWidth={Math.max(0.3, 1.5 / scale)}
                       opacity={0.25}
                     />
                   )}
                   <circle cx={a.x} cy={a.y} r={r} fill={a.color} opacity={isPortaria ? 0.95 : 0.85} />
-                  {scale >= 0.8 && (
+                  {scale >= 0.5 && (
                     <text
-                      x={a.x} y={a.y - Math.max(6, 13 / scale)}
+                      x={a.x} y={a.y - Math.max(5, 26 / scale)}
                       textAnchor="middle"
                       fontSize={fontSize}
                       fill={isPortaria ? 'rgba(200,164,74,0.92)' : 'rgba(255,255,255,0.7)'}
@@ -392,17 +413,17 @@ const MapInner = memo(function MapInner({
               );
             })}
             {/* Entrada / acesso */}
-            {context.entrance && scale >= 0.8 && (
+            {context.entrance && scale >= 0.5 && (
               <g>
                 <circle
                   cx={context.entrance.x} cy={context.entrance.y}
-                  r={Math.max(3, 6 / scale)}
+                  r={Math.max(3, 18 / scale)}
                   fill="rgba(200,164,74,0.7)"
                 />
                 <text
-                  x={context.entrance.x} y={context.entrance.y - Math.max(5, 10 / scale)}
+                  x={context.entrance.x} y={context.entrance.y - Math.max(5, 22 / scale)}
                   textAnchor="middle"
-                  fontSize={Math.max(5, 8 / scale)}
+                  fontSize={Math.max(5, 16 / scale)}
                   fill="rgba(200,164,74,0.80)"
                   fontWeight="700"
                   style={{ fontFamily: "'Outfit', sans-serif" }}
@@ -417,9 +438,9 @@ const MapInner = memo(function MapInner({
                 key={`sl-${i}`}
                 x={s.x} y={s.y}
                 textAnchor="middle"
-                fontSize={Math.max(4, 7 / scale)}
-                fill="rgba(255,255,255,0.34)"
-                fontWeight="500"
+                fontSize={Math.max(3.5, 20 / scale)}
+                fill="rgba(255,255,255,0.40)"
+                fontWeight="600"
                 letterSpacing="0.04em"
                 style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' }}
               >
@@ -473,31 +494,31 @@ const MapInner = memo(function MapInner({
                 strokeWidth={isSelected ? 1.8 : 0.7}
               />
 
-              {/* Lot number — zoom level 2+ */}
+              {/* Lot number — appears when scale ≥ 3 (lots ≥ 25 px wide on mobile) */}
               {showLotNumbers && cx > 0 && cy > 0 && (
                 <text
                   x={cx}
-                  y={showAreaLabels ? cy - 2.5 : cy + 1}
+                  y={showAreaLabels ? cy - 4 : cy}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fill={isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.88)'}
-                  fontSize={7}
-                  fontWeight={isSelected ? '800' : '600'}
+                  fill={isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.92)'}
+                  fontSize={8}
+                  fontWeight={isSelected ? '800' : '700'}
                   style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
                 >
                   {lot.lot_number}
                 </text>
               )}
 
-              {/* Area m² — zoom level 3.5+ */}
+              {/* Area m² — scale ≥ 4: stacks below lot number */}
               {showAreaLabels && cx > 0 && cy > 0 && lot.area_m2 && (
                 <text
                   x={cx}
-                  y={cy + 3.5}
+                  y={cy + 3}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fill={isSelected ? 'rgba(215,185,122,0.85)' : 'rgba(255,255,255,0.52)'}
-                  fontSize={4.5}
+                  fill={isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.60)'}
+                  fontSize={5.5}
                   fontWeight="500"
                   style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
                 >
@@ -505,15 +526,15 @@ const MapInner = memo(function MapInner({
                 </text>
               )}
 
-              {/* Testada × Profundidade — zoom level 5+ */}
+              {/* Testada × Profundidade — scale ≥ 5.5, positioned to stay within lot */}
               {dims && cx > 0 && cy > 0 && (
                 <text
                   x={cx}
-                  y={cy + 9}
+                  y={cy + 7.5}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fill={isSelected ? 'rgba(215,185,122,0.65)' : 'rgba(255,255,255,0.34)'}
-                  fontSize={3.5}
+                  fill={isSelected ? 'rgba(215,185,122,0.70)' : 'rgba(255,255,255,0.42)'}
+                  fontSize={4}
                   fontWeight="500"
                   style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
                 >
@@ -521,15 +542,15 @@ const MapInner = memo(function MapInner({
                 </text>
               )}
 
-              {/* Rua de acesso — zoom level 8+ */}
+              {/* Rua de acesso — scale ≥ 9, gold accent */}
               {accessStreet && cx > 0 && cy > 0 && (
                 <text
                   x={cx}
-                  y={cy + 13.5}
+                  y={cy + 11.5}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fill={isSelected ? 'rgba(200,164,74,0.55)' : 'rgba(200,164,74,0.38)'}
-                  fontSize={3}
+                  fill={isSelected ? 'rgba(200,164,74,0.65)' : 'rgba(200,164,74,0.45)'}
+                  fontSize={3.2}
                   fontWeight="600"
                   letterSpacing="0.04em"
                   style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
@@ -956,12 +977,36 @@ export default function AltoBellevuePlanView({
   const [searchMiss, setSearchMiss] = useState(false);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [origin, setOrigin] = useState({ x: 0, y: 0 });
+  const [vb, setVb] = useState<ViewBox>(INITIAL_VB);
+  const vbLive = useRef<ViewBox>(INITIAL_VB);
+  vbLive.current = vb;
+  const animRef = useRef<number | null>(null);
   const lastPos = useRef({ x: 0, y: 0 });
   const didDrag = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const pointerCache = useRef(new Map<number, { x: number; y: number }>());
+
+  const scale = SVG_W / vb.w;
+
+  const animateTo = useCallback((target: ViewBox) => {
+    if (animRef.current !== null) cancelAnimationFrame(animRef.current);
+    const from = { ...vbLive.current };
+    const duration = 350;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const e = 1 - Math.pow(1 - t, 3); // ease-out cubic
+      setVb({
+        x: from.x + (target.x - from.x) * e,
+        y: from.y + (target.y - from.y) * e,
+        w: from.w + (target.w - from.w) * e,
+        h: from.h + (target.h - from.h) * e,
+      });
+      if (t < 1) animRef.current = requestAnimationFrame(tick);
+      else animRef.current = null;
+    };
+    animRef.current = requestAnimationFrame(tick);
+  }, []);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -993,8 +1038,9 @@ export default function AltoBellevuePlanView({
     [allLots]
   );
 
-  // Pointer handlers — support single-finger drag AND two-finger pinch-to-zoom
+  // Pointer handlers — single-finger drag pans the viewBox; two-finger pinch zooms it.
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointerCache.current.size === 1) {
@@ -1007,8 +1053,12 @@ export default function AltoBellevuePlanView({
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!pointerCache.current.has(e.pointerId)) return;
 
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+
     if (pointerCache.current.size === 2) {
-      // Pinch-to-zoom: measure distance change relative to other active pointer
+      // Pinch-to-zoom: derive zoom factor from change in finger distance, pivot at midpoint
       const ids = [...pointerCache.current.keys()];
       const otherId = ids.find(id => id !== e.pointerId)!;
       const otherPos = pointerCache.current.get(otherId)!;
@@ -1019,31 +1069,32 @@ export default function AltoBellevuePlanView({
       pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
       if (prevDist < 1) return;
-      const factor = currDist / prevDist;
+      // currDist > prevDist → fingers spreading → zoom in → viewBox shrinks → factor < 1
+      const factor = prevDist / currDist;
 
-      const el = containerRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const mx = (e.clientX + otherPos.x) / 2 - rect.left - rect.width / 2;
-      const my = (e.clientY + otherPos.y) / 2 - rect.top - rect.height / 2;
+      // Pivot = midpoint of the two fingers, in SVG coordinates
+      const midClientX = (e.clientX + otherPos.x) / 2;
+      const midClientY = (e.clientY + otherPos.y) / 2;
+      const cur = vbLive.current;
+      const pivotX = cur.x + (midClientX - rect.left) / rect.width * cur.w;
+      const pivotY = cur.y + (midClientY - rect.top) / rect.height * cur.h;
 
-      setScale(s => {
-        const next = Math.max(MIN_SCALE, Math.min(MAX_SCALE, s * factor));
-        const scaleChange = next / s;
-        setOrigin(o => ({ x: o.x + mx * (1 - scaleChange), y: o.y + my * (1 - scaleChange) }));
-        return next;
-      });
+      setVb(prev => zoomViewBox(prev, factor, pivotX, pivotY));
       return;
     }
 
-    // Single-finger drag
+    // Single-finger drag: pan the viewBox (drag right → vb.x decreases)
     if (!isDragging) return;
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    setOrigin(prev => ({ x: prev.x + dx, y: prev.y + dy }));
+    setVb(prev => ({
+      ...prev,
+      x: prev.x - dx / rect.width * prev.w,
+      y: prev.y - dy / rect.height * prev.h,
+    }));
   }, [isDragging]);
 
   const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -1051,30 +1102,26 @@ export default function AltoBellevuePlanView({
     if (pointerCache.current.size === 0) setIsDragging(false);
   }, []);
 
-  // Wheel zoom centered on cursor
+  // Wheel zoom centered on cursor — deltaY > 0 = zoom out (widen viewBox), < 0 = zoom in
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      const factor = e.deltaY > 0 ? 0.88 : 1.14;
+      const factor = e.deltaY > 0 ? 1.12 : 0.89;
       const rect = el.getBoundingClientRect();
-      const mx = e.clientX - rect.left - rect.width / 2;
-      const my = e.clientY - rect.top - rect.height / 2;
-      setScale(s => {
-        const next = Math.max(MIN_SCALE, Math.min(MAX_SCALE, s * factor));
-        const scaleChange = next / s;
-        setOrigin(o => ({ x: o.x + mx * (1 - scaleChange), y: o.y + my * (1 - scaleChange) }));
-        return next;
-      });
+      const cur = vbLive.current;
+      const pivotX = cur.x + (e.clientX - rect.left) / rect.width * cur.w;
+      const pivotY = cur.y + (e.clientY - rect.top) / rect.height * cur.h;
+      setVb(prev => zoomViewBox(prev, factor, pivotX, pivotY));
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
   }, []);
 
-  const zoomIn = useCallback(() => setScale(s => Math.min(MAX_SCALE, s * 1.35)), []);
-  const zoomOut = useCallback(() => setScale(s => Math.max(MIN_SCALE, s / 1.35)), []);
-  const resetView = useCallback(() => { setScale(1); setOrigin({ x: 0, y: 0 }); }, []);
+  const zoomIn = useCallback(() => setVb(prev => zoomViewBox(prev, 0.75)), []);
+  const zoomOut = useCallback(() => setVb(prev => zoomViewBox(prev, 1.33)), []);
+  const resetView = useCallback(() => animateTo(INITIAL_VB), [animateTo]);
   const toggleFullscreen = useCallback(() => setIsFullscreen(v => !v), []);
 
   useEffect(() => {
@@ -1097,18 +1144,13 @@ export default function AltoBellevuePlanView({
     };
   }, [isFullscreen]);
 
-  // Centraliza um ponto (coords do viewBox) na tela, com escala-alvo.
+  // Centre the viewBox on (cx, cy) at the given scale (SVG_W / viewBox.w).
   const focusOn = useCallback((cx: number, cy: number, targetScale = 5) => {
-    const el = containerRef.current;
-    if (!el) return;
-    const { width: W, height: H } = el.getBoundingClientRect();
     const s = Math.max(MIN_SCALE, Math.min(MAX_SCALE, targetScale));
-    setScale(s);
-    setOrigin({
-      x: -((cx / SVG_W - 0.5) * W) * s,
-      y: -((cy / SVG_H - 0.5) * H) * s,
-    });
-  }, []);
+    const newW = SVG_W / s;
+    const newH = newW * (SVG_H / SVG_W);
+    animateTo({ x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH });
+  }, [animateTo]);
 
   const focusLot = useCallback((lot: PlanLot) => {
     setSelectedLot(lot);
@@ -1145,10 +1187,10 @@ export default function AltoBellevuePlanView({
     ? dbLots.find(l => `${l.quadra}-${String(l.lot_number).padStart(2, '0')}` === selectedLot.id)
     : undefined;
 
-  const zoomLabel = scale < 1.5 ? 'Visão geral — toque num lote'
-    : scale < 3.5 ? 'Nomes dos lotes visíveis'
-    : scale < 5 ? 'Lote + área m²'
-    : scale < 8 ? 'Testada e dimensões'
+  const zoomLabel = scale < 3 ? 'Visão geral — dê zoom para ver detalhes'
+    : scale < 4 ? 'Número dos lotes'
+    : scale < 5.5 ? 'Lote + área m²'
+    : scale < 9 ? 'Testada e profundidade'
     : 'Detalhamento completo';
 
   const mapHeight = isMobile ? 'max(78vw, 480px)' : 'clamp(520px, 68vh, 820px)';
@@ -1261,9 +1303,16 @@ export default function AltoBellevuePlanView({
                   if (next === 'ALL') { resetView(); return; }
                   const pts = allLots.filter((l) => l.quadra === next && l.centroid);
                   if (pts.length) {
-                    const cx = pts.reduce((s, l) => s + l.centroid[0], 0) / pts.length;
-                    const cy = pts.reduce((s, l) => s + l.centroid[1], 0) / pts.length;
-                    focusOn(cx, cy, 3);
+                    // Zoom to fit the quadra's bounding box with padding
+                    const xs = pts.map(l => l.centroid![0]);
+                    const ys = pts.map(l => l.centroid![1]);
+                    const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+                    const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+                    const spanX = Math.max(Math.max(...xs) - Math.min(...xs), 80) * 1.6;
+                    const spanY = Math.max(Math.max(...ys) - Math.min(...ys), 80) * 1.6;
+                    const newW = Math.max(spanX, spanY * (SVG_W / SVG_H));
+                    const newH = newW * (SVG_H / SVG_W);
+                    animateTo({ x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH });
                   }
                 }}
                 style={{
@@ -1351,8 +1400,7 @@ export default function AltoBellevuePlanView({
             context={mapData}
             showTechLayer={showTechLayer}
             selectedId={selectedLot?.id ?? null}
-            scale={scale}
-            origin={origin}
+            vb={vb}
             isDragging={isDragging}
             activeQuadra={activeQuadra}
             onLotClick={setSelectedLot}
