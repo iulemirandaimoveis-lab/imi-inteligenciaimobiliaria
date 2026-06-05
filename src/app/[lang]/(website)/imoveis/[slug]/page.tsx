@@ -378,7 +378,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                             />
                         </section>
                         <section id={isLoteamento ? 'mapa' : 'unidades'}>
-                            {lotMapEnabled ? (
+                            {params.slug === 'alto-bellevue' ? (
+                                <SubdivisionLotMap
+                                    developmentId={development.id}
+                                    developmentName={development.name}
+                                    whatsappPhone={whatsappContact}
+                                />
+                            ) : lotMapEnabled ? (
                                 <SubdivisionErrorBoundary developmentName={development.name}>
                                     <div className="scroll-mt-32">
                                         <div className="flex items-center gap-3 mb-6">
