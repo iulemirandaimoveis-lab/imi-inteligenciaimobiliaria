@@ -52,6 +52,16 @@ function getPlanType(floor: number, position: number): JazzPlanType {
   return 'Planta Tipo B'
 }
 
+// Cardinal orientation by unit position (consistent with building layout — pos 1 faces street)
+const SOLAR_ORIENTATION: Record<number, string> = { 1: 'Sul', 2: 'Norte', 3: 'Leste', 4: 'Oeste' }
+
+function getViewLabel(floor: number): string {
+  if (floor === 12) return 'Cobertura · Vista 360°'
+  if (floor >= 8) return 'Vista panorâmica privilegiada'
+  if (floor >= 4) return 'Vista parcial da cidade'
+  return 'Vista interna'
+}
+
 function seedStatus(tower: 'A' | 'B', floor: number, pos: number): IMIProperty['status'] {
   const seeds = tower === 'A' ? SEED_STATUSES_A : SEED_STATUSES_B
   return seeds[(floor * 3 + pos) % seeds.length]
@@ -96,7 +106,7 @@ export function buildJazzUnits(tower: 'A' | 'B'): IMIProperty[] {
           gallery: ['/jazz-boulevard/renders/living.jpg', '/jazz-boulevard/renders/kitchen.jpg'],
         },
         commercial: { leadCaptureEnabled: true },
-        metadata: { planType: plan },
+        metadata: { planType: plan, solarOrientation: SOLAR_ORIENTATION[pos] ?? 'N/D', viewLabel: getViewLabel(floor) },
       })
     }
   }

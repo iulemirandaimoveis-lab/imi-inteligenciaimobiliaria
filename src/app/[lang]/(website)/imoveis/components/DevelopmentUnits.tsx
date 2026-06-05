@@ -210,7 +210,30 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
         );
     }
 
-    if (fetchError || units.length === 0) return null;
+    if (fetchError) {
+        return (
+            <div className="flex flex-col items-center justify-center py-12 px-6 bg-white rounded-2xl border border-dashed border-gray-200 text-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                    <Info className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                    <p className="font-semibold text-gray-800 text-sm mb-1">Unidades temporariamente indisponíveis</p>
+                    <p className="text-gray-400 text-xs">Não foi possível carregar os dados. Consulte-nos pelo WhatsApp.</p>
+                </div>
+                <a
+                    href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Gostaria de saber sobre as unidades disponíveis em ${propertyName}.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white"
+                    style={{ background: '#25D366' }}
+                >
+                    <MessageCircle size={14} /> Consultar disponibilidade
+                </a>
+            </div>
+        );
+    }
+
+    if (units.length === 0) return null;
 
     const unitsToShow = showAll ? units : units.slice(0, 10);
 
