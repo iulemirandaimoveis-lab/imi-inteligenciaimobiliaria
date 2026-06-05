@@ -2,7 +2,7 @@
 
 import { type IMIProperty, AVAILABILITY_COLORS } from '@/lib/imi-domain/types'
 import { type JazzPlanType } from '../data/jazzUnits'
-import { BedDouble, Maximize2 } from 'lucide-react'
+import { BedDouble, Maximize2, Eye } from 'lucide-react'
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
@@ -68,7 +68,7 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
               </div>
 
               {/* Specs row */}
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
                 <div className="flex items-center gap-1">
                   <BedDouble size={11} style={{ color: '#948F84' }} />
                   <span style={{ fontSize: 11, fontWeight: 600, color: '#948F84' }}>{unit.bedrooms} dorms</span>
@@ -77,6 +77,12 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
                   <Maximize2 size={11} style={{ color: '#948F84' }} />
                   <span style={{ fontSize: 11, fontWeight: 600, color: '#948F84' }}>{unit.privateAreaM2} m²</span>
                 </div>
+                {typeof unit.metadata?.viewLabel === 'string' && (
+                  <div className="flex items-center gap-1">
+                    <Eye size={11} style={{ color: '#948F84' }} />
+                    <span style={{ fontSize: 10, fontWeight: 600, color: '#948F84' }}>{unit.metadata.viewLabel}</span>
+                  </div>
+                )}
               </div>
 
               {/* Price */}

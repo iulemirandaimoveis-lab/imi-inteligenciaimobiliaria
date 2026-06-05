@@ -56,6 +56,10 @@ const FILTER_OPTIONS = [
   { key: 'lt160',        label: '< 160 m²' },
   { key: 'eq160',        label: '= 160 m²' },
   { key: 'gt200',        label: '> 200 m²' },
+  { key: 'lt25k',        label: 'Até R$ 25k' },
+  { key: 'mid',          label: 'R$ 25k–37k' },
+  { key: 'gt37k',        label: 'Acima R$ 37k' },
+  { key: 'lakefront',    label: '🌊 Beira-lago' },
 ]
 
 // ─── Lot grid position generator ─────────────────────────────────────────────
@@ -417,6 +421,10 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
     if (filterKey === 'lt160') return lots.filter(l => l.metragem < 160)
     if (filterKey === 'eq160') return lots.filter(l => l.metragem === 160)
     if (filterKey === 'gt200') return lots.filter(l => l.metragem > 200)
+    if (filterKey === 'lt25k') return lots.filter(l => l.valor > 0 && l.valor < 25_000)
+    if (filterKey === 'mid') return lots.filter(l => l.valor >= 25_000 && l.valor <= 37_000)
+    if (filterKey === 'gt37k') return lots.filter(l => l.valor > 37_000)
+    if (filterKey === 'lakefront') return lots.filter(l => l.isLakefront)
     return lots.filter(l => l.status === filterKey)
   }, [filterKey, lots])
 
