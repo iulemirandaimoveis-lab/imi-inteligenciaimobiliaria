@@ -264,7 +264,7 @@ const MapInner = memo(function MapInner({
       }
     }
     return Array.from(map.entries()).map(([quadra, d]) => ({
-      quadra, cx: d.sx / d.n, cy: d.sy / d.n, avail: d.avail,
+      quadra, cx: d.sx / d.n, cy: d.sy / d.n, avail: d.avail, total: d.n,
     }));
   }, [allLots]);
 
@@ -475,8 +475,10 @@ const MapInner = memo(function MapInner({
         })}
 
         {/* Quadra badges — zoom level 1-2 */}
-        {showQuadraBadges && quadraCentroids.map(({ quadra, cx, cy, avail }) => {
+        {showQuadraBadges && quadraCentroids.map(({ quadra, cx, cy, avail, total }) => {
           const isActive = activeQuadra === quadra;
+          const showFraction = badgeR >= 14 && avail > 0;
+          const letterY = showFraction ? cy - badgeFontSize * 0.35 : cy;
           return (
             <g key={`qbadge-${quadra}`} style={{ pointerEvents: 'none' }}>
               <circle
@@ -486,7 +488,7 @@ const MapInner = memo(function MapInner({
                 strokeWidth={Math.max(0.4, 1.2 / scale)}
               />
               <text
-                x={cx} y={cy}
+                x={cx} y={letterY}
                 textAnchor="middle"
                 dominantBaseline="central"
                 fontSize={badgeFontSize}
@@ -496,6 +498,19 @@ const MapInner = memo(function MapInner({
               >
                 {quadra}
               </text>
+              {showFraction && (
+                <text
+                  x={cx} y={cy + badgeFontSize * 0.7}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={badgeFontSize * 0.52}
+                  fill={isActive ? 'rgba(11,25,40,0.7)' : 'rgba(50,209,124,0.85)'}
+                  fontWeight="700"
+                  style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
+                >
+                  {avail}/{total}
+                </text>
+              )}
             </g>
           );
         })}

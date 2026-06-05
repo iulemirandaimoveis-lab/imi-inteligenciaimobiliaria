@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { X, MessageCircle, BedDouble, Bath, Car, Maximize2, Image as ImageIcon } from 'lucide-react'
+import { X, MessageCircle, BedDouble, Bath, Car, Maximize2, Image as ImageIcon, Compass, Eye } from 'lucide-react'
 import { type IMIProperty, AVAILABILITY_COLORS } from '@/lib/imi-domain/types'
 import { type JazzPlanType, JAZZ_PLANS } from '../data/jazzUnits'
 
@@ -39,6 +39,9 @@ function UnitPanelContent({ unit, whatsappPhone, onClose }: { unit: IMIProperty;
   const isAvailable = unit.status === 'available' || unit.status === 'launching'
   const planType = (unit.metadata?.planType as JazzPlanType | undefined) ?? 'Planta Tipo A'
   const planDef = JAZZ_PLANS[planType] ?? JAZZ_PLANS['Planta Tipo A']
+
+  const solarOrientation = unit.metadata?.solarOrientation as string | undefined
+  const viewLabel = unit.metadata?.viewLabel as string | undefined
 
   const waMsg = encodeURIComponent(
     `Olá! Tenho interesse no apartamento ${unit.code} do Jazz Boulevard (Torre ${unit.tower}, ${unit.floor}º andar, ${planType}). Gostaria de mais informações.`
@@ -108,6 +111,8 @@ function UnitPanelContent({ unit, whatsappPhone, onClose }: { unit: IMIProperty;
           { icon: <BedDouble size={13} />, label: 'Dormitórios', value: `${unit.bedrooms} (${unit.suites} suíte${(unit.suites ?? 0) > 1 ? 's' : ''})` },
           { icon: <Bath size={13} />, label: 'Banheiros', value: String(unit.bathrooms) },
           { icon: <Car size={13} />, label: 'Vagas', value: String(unit.parkingSpaces) },
+          ...(solarOrientation ? [{ icon: <Compass size={13} />, label: 'Orientação', value: solarOrientation }] : []),
+          ...(viewLabel ? [{ icon: <Eye size={13} />, label: 'Vista', value: viewLabel }] : []),
         ].map(item => (
           <div key={item.label} style={{ background: '#F8F6F2', borderRadius: 14, padding: '12px 14px' }}>
             <div className="flex items-center gap-1.5 mb-1">
@@ -141,6 +146,13 @@ function UnitPanelContent({ unit, whatsappPhone, onClose }: { unit: IMIProperty;
             Planta Baixa · {planType}
           </span>
         </div>
+      </div>
+
+      {/* Data provenance */}
+      <div className="px-5 pb-3">
+        <p style={{ fontSize: 9, color: '#C8C0B8', fontWeight: 600, textAlign: 'center', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+          Preços · dados simulados para demonstração · sujeitos a alteração
+        </p>
       </div>
 
       {/* CTA */}

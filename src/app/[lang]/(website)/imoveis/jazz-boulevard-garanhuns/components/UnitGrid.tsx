@@ -2,7 +2,7 @@
 
 import { type IMIProperty, AVAILABILITY_COLORS } from '@/lib/imi-domain/types'
 import { type JazzPlanType } from '../data/jazzUnits'
-import { BedDouble, Maximize2 } from 'lucide-react'
+import { BedDouble, Maximize2, Eye } from 'lucide-react'
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
@@ -11,9 +11,10 @@ interface Props {
   units: IMIProperty[]
   selectedUnitId: string | null
   onUnitSelect: (unit: IMIProperty) => void
+  compareIds?: Set<string>
 }
 
-export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props) {
+export default function UnitGrid({ units, selectedUnitId, onUnitSelect, compareIds }: Props) {
   if (units.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -29,6 +30,7 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
       {units.map(unit => {
         const cfg = AVAILABILITY_COLORS[unit.status]
         const isSelected = unit.id === selectedUnitId
+        const isCompared = compareIds?.has(unit.id) ?? false
         const planType = (unit.metadata?.planType as JazzPlanType | undefined) ?? 'Planta Tipo A'
         const isAvailable = unit.status === 'available' || unit.status === 'launching'
 
@@ -38,9 +40,9 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
             onClick={() => onUnitSelect(unit)}
             className="text-left rounded-2xl overflow-hidden transition-all"
             style={{
-              border: isSelected ? '2px solid #C8A44A' : '1.5px solid rgba(184,179,168,0.3)',
-              background: isSelected ? '#FFFDF5' : '#fff',
-              boxShadow: isSelected ? '0 4px 20px rgba(200,164,74,0.15)' : undefined,
+              border: isCompared ? '2px solid #2563EB' : isSelected ? '2px solid #C8A44A' : '1.5px solid rgba(184,179,168,0.3)',
+              background: isCompared ? '#EFF6FF' : isSelected ? '#FFFDF5' : '#fff',
+              boxShadow: isCompared ? '0 4px 20px rgba(37,99,235,0.15)' : isSelected ? '0 4px 20px rgba(200,164,74,0.15)' : undefined,
               opacity: unit.status === 'hidden' ? 0 : 1,
               cursor: unit.status === 'sold' ? 'default' : 'pointer',
             }}
@@ -68,7 +70,7 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
               </div>
 
               {/* Specs row */}
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
                 <div className="flex items-center gap-1">
                   <BedDouble size={11} style={{ color: '#948F84' }} />
                   <span style={{ fontSize: 11, fontWeight: 600, color: '#948F84' }}>{unit.bedrooms} dorms</span>
@@ -77,6 +79,12 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect }: Props)
                   <Maximize2 size={11} style={{ color: '#948F84' }} />
                   <span style={{ fontSize: 11, fontWeight: 600, color: '#948F84' }}>{unit.privateAreaM2} m²</span>
                 </div>
+                {typeof unit.metadata?.viewLabel === 'string' && (
+                  <div className="flex items-center gap-1">
+                    <Eye size={11} style={{ color: '#948F84' }} />
+                    <span style={{ fontSize: 10, fontWeight: 600, color: '#948F84' }}>{unit.metadata.viewLabel}</span>
+                  </div>
+                )}
               </div>
 
               {/* Price */}

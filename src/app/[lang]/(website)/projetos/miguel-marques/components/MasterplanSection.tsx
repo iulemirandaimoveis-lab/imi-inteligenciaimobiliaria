@@ -15,25 +15,37 @@ const PAYMENT_CONDITIONS = {
   seller: 'Mano Imóveis',
 }
 
-const DEVELOPMENT_ID = 'loteamento-miguel-marques'
+const DEVELOPMENT_SLUG = 'loteamento-miguel-marques'
 
 export default function MasterplanSection() {
   const [effectiveLots, setEffectiveLots] = useState<Lot[]>(ALL_LOTS)
 
-  // Silently overlay Supabase status overrides — falls back to in-memory if table is empty or unavailable
+  // Silently overlay live Supabase status — resolve UUID from slug first, then fetch subdivision_lots
   useEffect(() => {
     const supabase = createClient()
-    supabase
-      .from('subdivision_lots')
-      .select('quadra, lot_number, status')
-      .eq('development_id', DEVELOPMENT_ID)
-      .then(({ data }) => {
-        if (!data || data.length === 0) return
-        const overrides = new Map(
-          data.map((r) => [`${r.quadra}-${r.lot_number}`, r.status.toLowerCase() as Lot['status']])
-        )
-        setEffectiveLots(ALL_LOTS.map(l => ({ ...l, status: overrides.get(l.id) ?? l.status })))
-      })
+    async function syncStatuses() {
+      // Step 1: resolve development UUID from slug
+      const { data: dev } = await supabase
+        .from('developments')
+        .select('id')
+        .eq('slug', DEVELOPMENT_SLUG)
+        .single()
+      if (!dev?.id) return
+
+      // Step 2: fetch lot statuses using UUID (subdivision_lots.development_id is UUID)
+      const { data } = await supabase
+        .from('subdivision_lots')
+        .select('quadra, lot_number, status')
+        .eq('development_id', dev.id)
+      if (!data || data.length === 0) return
+
+      // Map quadra-lot_number keys to match lotsData.ts id format (e.g. 'A-1')
+      const overrides = new Map(
+        data.map((r) => [`${r.quadra}-${r.lot_number}`, r.status.toLowerCase() as Lot['status']])
+      )
+      setEffectiveLots(ALL_LOTS.map(l => ({ ...l, status: overrides.get(l.id) ?? l.status })))
+    }
+    syncStatuses()
   }, [])
 
   const stats = useMemo(() => {

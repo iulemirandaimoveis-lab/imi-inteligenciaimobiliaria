@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -166,6 +166,18 @@ const fmtBRL = (v: number) =>
 
 const fmtM2 = (v: number) =>
   `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(v)} m²`;
+
+// ─── IA recommendation type ───────────────────────────────────────────────────
+interface RecommendedLot {
+  id: string;
+  quadra: string;
+  lot_number: number;
+  area_m2: number;
+  price: number;
+  rankScore: number;
+  reasons: string[];
+  scores: { imiScore: number; rentabilidade: number; location: number; liquidity: number; construtora: number };
+}
 
 // ─── AB price entry type ──────────────────────────────────────────────────────
 interface ABPriceEntry {
@@ -692,7 +704,7 @@ function RankingSection({
 }
 
 // ─── Individual Lot Cell ───────────────────────────────────────────────────────
-function LotCell({ lot, onClick, isInCompare }: { lot: Lot; onClick: (lot: Lot) => void; isInCompare: boolean }) {
+function LotCell({ lot, onClick, isInCompare, isRecommended }: { lot: Lot; onClick: (lot: Lot) => void; isInCompare: boolean; isRecommended?: boolean }) {
   const cfg = STATUS[lot.status as StatusKey] ?? STATUS.DISPONIVEL;
   const isChurch = lot.special_type === 'IGREJA';
   const isCorner = lot.special_type === 'ESQUINA';
@@ -734,6 +746,9 @@ function LotCell({ lot, onClick, isInCompare }: { lot: Lot; onClick: (lot: Lot) 
       {isCorner && (
         <div style={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: '0 6px 6px 0', borderColor: `transparent #2563EB transparent transparent` }} />
       )}
+      {isRecommended && !isInCompare && (
+        <div style={{ position: 'absolute', top: 1, left: 1, fontSize: 5, color: '#C8A44A', lineHeight: 1 }}>✦</div>
+      )}
       <span style={{ fontSize: 9, fontWeight: 800, color: isInCompare ? '#1E40AF' : cfg.dark, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", lineHeight: 1, position: 'relative', zIndex: 1 }}>
         {isChurch ? '⛪' : lot.lot_number}
       </span>
@@ -749,6 +764,7 @@ function QuadraBlock({
   isActive,
   onToggle,
   compareIds,
+  recommendedIds,
 }: {
   quadra: string;
   lots: Lot[];
@@ -756,6 +772,7 @@ function QuadraBlock({
   isActive: boolean;
   onToggle: () => void;
   compareIds: Set<string>;
+  recommendedIds?: Set<string>;
 }) {
   const available = lots.filter(l => l.status === 'DISPONIVEL').length;
   const total = lots.length;
@@ -835,7 +852,7 @@ function QuadraBlock({
                 gap: 4,
               }}>
                 {lots.sort((a, b) => a.lot_number - b.lot_number).map(lot => (
-                  <LotCell key={lot.id} lot={lot} onClick={onLotClick} isInCompare={compareIds.has(lot.id)} />
+                  <LotCell key={lot.id} lot={lot} onClick={onLotClick} isInCompare={compareIds.has(lot.id)} isRecommended={recommendedIds?.has(`${lot.quadra}-${lot.lot_number}`)} />
                 ))}
               </div>
             </div>
@@ -919,12 +936,22 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   const [showComparator, setShowComparator] = useState(false);
   const [showRankings, setShowRankings] = useState(false);
 
+  // IA recommendations
+  const [recommendations, setRecommendations] = useState<RecommendedLot[]>([]);
+  const [recProfile, setRecProfile] = useState<'all' | 'investor' | 'resident'>('all');
+  const [recLoading, setRecLoading] = useState(false);
+
   const hasPlanView = PLAN_VIEW_IDS.has(developmentId);
   const [viewMode, setViewMode] = useState<'list' | 'plan'>(() => hasPlanView ? 'plan' : 'list');
   const [abPricesMap, setAbPricesMap] = useState<Map<string, ABPriceEntry>>(new Map());
+  const pricesFetched = useRef(false);
 
+  // Lazy-load: defer 163 KB prices JSON until user first opens a lot drawer
   useEffect(() => {
     if (developmentId !== AB_DEV_ID) return;
+    if (!selectedLot) return;
+    if (pricesFetched.current) return;
+    pricesFetched.current = true;
     fetch('/data/alto-bellevue-prices.json')
       .then(r => r.json())
       .then((data: ABPriceEntry[]) => {
@@ -935,7 +962,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         setAbPricesMap(map);
       })
       .catch(() => {/* prices unavailable */});
-  }, [developmentId]);
+  }, [developmentId, selectedLot]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -957,6 +984,17 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
     };
     fetchLots();
   }, [developmentId]);
+
+  // IA recommendations — fetch when lots load or profile changes
+  useEffect(() => {
+    if (loading || lots.length === 0) return;
+    setRecLoading(true);
+    fetch(`/api/intelligence/lots/recommend?development_id=${developmentId}&profile=${recProfile}&limit=3`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.recommendations) setRecommendations(data.recommendations); })
+      .catch(() => {/* silent — recommendations are optional */})
+      .finally(() => setRecLoading(false));
+  }, [developmentId, recProfile, loading, lots.length]);
 
   const quadras = useMemo(() => {
     const map = new Map<string, Lot[]>();
@@ -1084,6 +1122,11 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   const collapseAll = () => setActiveQuadras(new Set());
 
   const hasRankings = useMemo(() => (lots as Lot[]).filter((l: Lot) => l.status === 'DISPONIVEL' && l.price).length >= 3, [lots]) as boolean;
+
+  const recommendedIds = useMemo(
+    () => new Set(recommendations.map(r => `${r.quadra}-${r.lot_number}`)),
+    [recommendations]
+  );
 
   if (loading) {
     return (
@@ -1461,6 +1504,64 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         </div>
       )}
 
+      {/* ── IA Recommendations ───────────────────────────────────────────────── */}
+      {viewMode === 'list' && recommendations.length > 0 && (
+        <div className="mb-6 p-4 rounded-2xl" style={{ background: 'linear-gradient(135deg, #0B1928 0%, #1a2e42 100%)', border: '1px solid rgba(200,164,74,0.2)' }}>
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <span style={{ fontSize: 16 }}>✦</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#C8A44A', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                Recomendações IA
+              </span>
+              {recLoading && <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>atualizando...</span>}
+            </div>
+            <div className="flex gap-1">
+              {(['all', 'investor', 'resident'] as const).map(p => (
+                <button key={p} onClick={() => setRecProfile(p)}
+                  style={{
+                    fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, cursor: 'pointer',
+                    background: recProfile === p ? '#C8A44A' : 'rgba(255,255,255,0.07)',
+                    color: recProfile === p ? '#0B1928' : 'rgba(255,255,255,0.5)',
+                    border: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)", textTransform: 'uppercase', letterSpacing: '0.1em',
+                  }}>
+                  {p === 'all' ? 'Geral' : p === 'investor' ? 'Investidor' : 'Morador'}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {recommendations.map((rec, i) => {
+              const lot = (lots as Lot[]).find(l => l.quadra === rec.quadra && l.lot_number === rec.lot_number);
+              return (
+                <button key={rec.id} onClick={() => lot && setSelectedLot(lot)}
+                  className="text-left rounded-xl p-3 transition-all hover:scale-[1.02]"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', cursor: lot ? 'pointer' : 'default' }}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span style={{ fontSize: 11, fontWeight: 800, color: '#C8A44A', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                      #{i + 1} Q{rec.quadra} · L{rec.lot_number}
+                    </span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#fff', background: 'rgba(200,164,74,0.2)', padding: '2px 7px', borderRadius: 20 }}>
+                      {rec.scores.imiScore} pts
+                    </span>
+                  </div>
+                  <p style={{ fontSize: 13, fontWeight: 800, color: '#fff', margin: '0 0 4px', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
+                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(rec.price)}
+                  </p>
+                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', margin: 0 }}>
+                    {Math.round(rec.area_m2)} m² · {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Math.round(rec.price / rec.area_m2))}/m²
+                  </p>
+                  {rec.reasons[0] && (
+                    <p style={{ fontSize: 9, color: 'rgba(200,164,74,0.7)', margin: '6px 0 0', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                      {rec.reasons[0]}
+                    </p>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* ── Quadra List Controls ─────────────────────────────────────────────── */}
       {viewMode === 'list' && (
         <>
@@ -1489,6 +1590,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                 isActive={activeQuadras.has(quadra)}
                 onToggle={() => toggleQuadra(quadra)}
                 compareIds={compareIds}
+                recommendedIds={recommendedIds}
               />
             ))}
 
