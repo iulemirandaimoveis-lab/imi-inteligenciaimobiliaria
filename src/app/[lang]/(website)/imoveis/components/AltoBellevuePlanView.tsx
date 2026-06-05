@@ -4,7 +4,7 @@ import React, {
   useRef, useState, useCallback, useMemo, useEffect, memo,
 } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2 } from 'lucide-react';
 import {
   loadAltoBellevueMap, AB_VIEWBOX,
   type ABMapData,
@@ -242,7 +242,7 @@ interface MapInnerProps {
   onLotClick: (lot: PlanLot) => void;
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
-  onPointerUp: () => void;
+  onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
   onBgClick: () => void;
 }
 
@@ -250,21 +250,29 @@ const MapInner = memo(function MapInner({
   lots, allLots, context, showTechLayer, selectedId, scale, origin, isDragging,
   activeQuadra, onLotClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
 }: MapInnerProps) {
-  // Quadra centroid badges — computed from all lots
+  // Quadra centroid badges — uses spatial median to be immune to outlier lots
+  // (e.g. N-03/N-07/N-30 are far from the main N cluster; mean would pull the badge wrong)
   const quadraCentroids = useMemo(() => {
-    const map = new Map<string, { sx: number; sy: number; n: number; avail: number }>();
+    const map = new Map<string, { xs: number[]; ys: number[]; avail: number }>();
     for (const lot of allLots) {
       if (!lot.centroid) continue;
+      const [cx, cy] = lot.centroid;
+      if (!Number.isFinite(cx) || !Number.isFinite(cy)) continue;
       const d = map.get(lot.quadra);
       if (d) {
-        d.sx += lot.centroid[0]; d.sy += lot.centroid[1]; d.n++;
+        d.xs.push(cx); d.ys.push(cy);
         if (lot.status === 'DISPONIVEL') d.avail++;
       } else {
-        map.set(lot.quadra, { sx: lot.centroid[0], sy: lot.centroid[1], n: 1, avail: lot.status === 'DISPONIVEL' ? 1 : 0 });
+        map.set(lot.quadra, { xs: [cx], ys: [cy], avail: lot.status === 'DISPONIVEL' ? 1 : 0 });
       }
     }
+    const median = (arr: number[]) => {
+      const s = [...arr].sort((a, b) => a - b);
+      const m = Math.floor(s.length / 2);
+      return s.length % 2 !== 0 ? s[m] : (s[m - 1] + s[m]) / 2;
+    };
     return Array.from(map.entries()).map(([quadra, d]) => ({
-      quadra, cx: d.sx / d.n, cy: d.sy / d.n, avail: d.avail, total: d.n,
+      quadra, cx: median(d.xs), cy: median(d.ys), avail: d.avail, total: d.xs.length,
     }));
   }, [allLots]);
 
@@ -282,11 +290,12 @@ const MapInner = memo(function MapInner({
   return (
     <div
       className="w-full h-full"
-      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      style={{ cursor: isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerLeave={onPointerUp}
+      onPointerCancel={onPointerUp}
     >
       <svg
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
@@ -351,35 +360,54 @@ const MapInner = memo(function MapInner({
               />
             ))}
             {/* Amenities (portaria, lazer) */}
-            {context.amenities.map((a) => (
-              <g key={`am-${a.id}`}>
-                <circle cx={a.x} cy={a.y} r={Math.max(3, 7 / scale)} fill={a.color} opacity={0.85} />
-                {scale >= 0.9 && (
-                  <text
-                    x={a.x} y={a.y - Math.max(5, 11 / scale)}
-                    textAnchor="middle"
-                    fontSize={Math.max(5, 9 / scale)}
-                    fill="rgba(255,255,255,0.7)"
-                    fontWeight="600"
-                    style={{ fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    {a.label}
-                  </text>
-                )}
-              </g>
-            ))}
+            {context.amenities.map((a) => {
+              const r = Math.max(4, 9 / scale);
+              const fontSize = Math.max(5, 9 / scale);
+              const isPortaria = a.id === 'portaria';
+              return (
+                <g key={`am-${a.id}`}>
+                  {/* Glow ring for portaria */}
+                  {isPortaria && (
+                    <circle cx={a.x} cy={a.y} r={r * 2.2}
+                      fill="none" stroke={a.color} strokeWidth={Math.max(0.5, 1.2 / scale)}
+                      opacity={0.25}
+                    />
+                  )}
+                  <circle cx={a.x} cy={a.y} r={r} fill={a.color} opacity={isPortaria ? 0.95 : 0.85} />
+                  {scale >= 0.8 && (
+                    <text
+                      x={a.x} y={a.y - Math.max(6, 13 / scale)}
+                      textAnchor="middle"
+                      fontSize={fontSize}
+                      fill={isPortaria ? 'rgba(200,164,74,0.92)' : 'rgba(255,255,255,0.7)'}
+                      fontWeight={isPortaria ? '700' : '600'}
+                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {a.label}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
             {/* Entrada / acesso */}
-            {context.entrance && (
-              <text
-                x={context.entrance.x} y={context.entrance.y}
-                textAnchor="middle"
-                fontSize={Math.max(5, 9 / scale)}
-                fill="rgba(200,164,74,0.85)"
-                fontWeight="700"
-                style={{ fontFamily: "'Outfit', sans-serif" }}
-              >
-                {context.entrance.label}
-              </text>
+            {context.entrance && scale >= 0.8 && (
+              <g>
+                <circle
+                  cx={context.entrance.x} cy={context.entrance.y}
+                  r={Math.max(3, 6 / scale)}
+                  fill="rgba(200,164,74,0.7)"
+                />
+                <text
+                  x={context.entrance.x} y={context.entrance.y - Math.max(5, 10 / scale)}
+                  textAnchor="middle"
+                  fontSize={Math.max(5, 8 / scale)}
+                  fill="rgba(200,164,74,0.80)"
+                  fontWeight="700"
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  {context.entrance.label}
+                </text>
+              </g>
             )}
             {/* Nomes das ruas */}
             {showStreetLabels && context.streetLabels.map((s, i) => (
@@ -888,11 +916,13 @@ export default function AltoBellevuePlanView({
   const [searchQuery, setSearchQuery] = useState('');
   const [searchMiss, setSearchMiss] = useState(false);
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [scale, setScale] = useState(1);
   const [origin, setOrigin] = useState({ x: 0, y: 0 });
   const lastPos = useRef({ x: 0, y: 0 });
   const didDrag = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pointerCache = useRef(new Map<number, { x: number; y: number }>());
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -924,25 +954,62 @@ export default function AltoBellevuePlanView({
     [allLots]
   );
 
-  // Pointer handlers
+  // Pointer handlers — support single-finger drag AND two-finger pinch-to-zoom
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-    didDrag.current = false;
-    lastPos.current = { x: e.clientX, y: e.clientY };
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointerCache.current.size === 1) {
+      setIsDragging(true);
+      didDrag.current = false;
+      lastPos.current = { x: e.clientX, y: e.clientY };
+    }
   }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!pointerCache.current.has(e.pointerId)) return;
+
+    if (pointerCache.current.size === 2) {
+      // Pinch-to-zoom: measure distance change relative to other active pointer
+      const ids = [...pointerCache.current.keys()];
+      const otherId = ids.find(id => id !== e.pointerId)!;
+      const otherPos = pointerCache.current.get(otherId)!;
+      const thisOldPos = pointerCache.current.get(e.pointerId)!;
+
+      const prevDist = Math.hypot(thisOldPos.x - otherPos.x, thisOldPos.y - otherPos.y);
+      const currDist = Math.hypot(e.clientX - otherPos.x, e.clientY - otherPos.y);
+      pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (prevDist < 1) return;
+      const factor = currDist / prevDist;
+
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const mx = (e.clientX + otherPos.x) / 2 - rect.left - rect.width / 2;
+      const my = (e.clientY + otherPos.y) / 2 - rect.top - rect.height / 2;
+
+      setScale(s => {
+        const next = Math.max(MIN_SCALE, Math.min(MAX_SCALE, s * factor));
+        const scaleChange = next / s;
+        setOrigin(o => ({ x: o.x + mx * (1 - scaleChange), y: o.y + my * (1 - scaleChange) }));
+        return next;
+      });
+      return;
+    }
+
+    // Single-finger drag
     if (!isDragging) return;
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
+    pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     setOrigin(prev => ({ x: prev.x + dx, y: prev.y + dy }));
   }, [isDragging]);
 
-  const handlePointerUp = useCallback(() => {
-    setIsDragging(false);
+  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    pointerCache.current.delete(e.pointerId);
+    if (pointerCache.current.size === 0) setIsDragging(false);
   }, []);
 
   // Wheel zoom centered on cursor
@@ -969,6 +1036,18 @@ export default function AltoBellevuePlanView({
   const zoomIn = useCallback(() => setScale(s => Math.min(MAX_SCALE, s * 1.35)), []);
   const zoomOut = useCallback(() => setScale(s => Math.max(MIN_SCALE, s / 1.35)), []);
   const resetView = useCallback(() => { setScale(1); setOrigin({ x: 0, y: 0 }); }, []);
+  const toggleFullscreen = useCallback(() => setIsFullscreen(v => !v), []);
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsFullscreen(false); };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [isFullscreen]);
 
   // Centraliza um ponto (coords do viewBox) na tela, com escala-alvo.
   const focusOn = useCallback((cx: number, cy: number, targetScale = 5) => {
@@ -1023,15 +1102,28 @@ export default function AltoBellevuePlanView({
     : scale < 7 ? 'Lote + área m²'
     : 'Detalhamento completo';
 
-  const mapHeight = isMobile ? 'max(72vw, 440px)' : 'clamp(520px, 68vh, 820px)';
+  const mapHeight = isMobile ? 'max(78vw, 480px)' : 'clamp(520px, 68vh, 820px)';
 
   return (
-    <div className="w-full" style={{ background: '#F7F8FA' }}>
+    <div
+      className={isFullscreen ? 'fixed inset-0 z-[9000] overflow-hidden flex flex-col' : 'w-full'}
+      style={{ background: '#F7F8FA' }}
+    >
 
       {/* ── FILTER PILLS ────────────────────────────── */}
       <div style={{ background: '#fff', borderBottom: '1px solid rgba(0,0,0,0.06)', padding: '12px 14px 10px' }}>
         {/* Search by lot */}
         <div className="flex items-center gap-2 mb-2.5">
+          {isFullscreen && (
+            <button
+              onClick={toggleFullscreen}
+              aria-label="Sair da tela cheia"
+              className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl transition-all active:scale-90"
+              style={{ background: '#0B1B2D', color: '#fff', border: '1px solid rgba(200,164,74,0.3)' }}
+            >
+              <Minimize2 size={15} />
+            </button>
+          )}
           <div
             className="flex items-center gap-2 flex-1"
             style={{
@@ -1148,8 +1240,8 @@ export default function AltoBellevuePlanView({
       {/* ── MAP ─────────────────────────────────────── */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden"
-        style={{ height: mapHeight, background: NAVY }}
+        className={`relative w-full overflow-hidden${isFullscreen ? ' flex-1 min-h-0' : ''}`}
+        style={{ height: isFullscreen ? 'auto' : mapHeight, background: NAVY }}
       >
         {/* Fallback estático clicável — camada 3: nunca deixa o mapa em branco */}
         {error && (
@@ -1233,6 +1325,12 @@ export default function AltoBellevuePlanView({
               label={showTechLayer ? 'Ocultar camada técnica' : 'Mostrar camada técnica'}
             >
               <Layers size={14} style={{ opacity: showTechLayer ? 1 : 0.4 }} />
+            </MapBtn>
+            <MapBtn
+              onClick={toggleFullscreen}
+              label={isFullscreen ? 'Sair da tela cheia' : 'Expandir mapa'}
+            >
+              {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
             </MapBtn>
           </div>
         )}
