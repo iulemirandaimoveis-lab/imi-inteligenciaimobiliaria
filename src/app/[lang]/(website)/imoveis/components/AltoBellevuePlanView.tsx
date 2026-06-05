@@ -309,6 +309,30 @@ const MapInner = memo(function MapInner({
   const showQuadraBadges = scale < 3.5;
   const showStreetLabels = scale >= 1.5;
 
+  // Viewport culling: skip lots whose centroid is outside the current viewBox (+ 15% buffer).
+  // Always include the selected lot so it stays highlighted even after panning.
+  const visibleLots = useMemo(() => {
+    const buf = 0.15;
+    const x0 = vb.x - vb.w * buf, x1 = vb.x + vb.w * (1 + buf);
+    const y0 = vb.y - vb.h * buf, y1 = vb.y + vb.h * (1 + buf);
+    return lots.filter(l => {
+      if (l.id === selectedId) return true;
+      const [cx, cy] = l.centroid ?? [0, 0];
+      return cx > x0 && cx < x1 && cy > y0 && cy < y1;
+    });
+  }, [lots, vb, selectedId]);
+
+  // Deduplicate street labels closer than 8 SVG units (removes CAD-import noise clusters)
+  const visibleStreetLabels = useMemo(() => {
+    const labels = context?.streetLabels;
+    if (!labels?.length) return [];
+    const out: { x: number; y: number; name: string }[] = [];
+    for (const sl of labels) {
+      if (!out.some(r => Math.hypot(r.x - sl.x, r.y - sl.y) < 8)) out.push(sl);
+    }
+    return out;
+  }, [context]);
+
   // k/scale gives constant screen size: k × screenWidth/SVG_W px always visible.
   // At ~600 px container: badgeR=40/scale → 40×600/1200 = 20 px circle.
   const streetStroke = Math.max(0.3, 1.4 / scale);
@@ -432,26 +456,12 @@ const MapInner = memo(function MapInner({
                 </text>
               </g>
             )}
-            {/* Nomes das ruas */}
-            {showStreetLabels && context.streetLabels.map((s, i) => (
-              <text
-                key={`sl-${i}`}
-                x={s.x} y={s.y}
-                textAnchor="middle"
-                fontSize={Math.max(3.5, 20 / scale)}
-                fill="rgba(255,255,255,0.40)"
-                fontWeight="600"
-                letterSpacing="0.04em"
-                style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' }}
-              >
-                {s.name}
-              </text>
-            ))}
+            {/* Street labels moved to a dedicated layer above lots — see below */}
           </g>
         )}
 
-        {/* Lots */}
-        {lots.map(lot => {
+        {/* ── Layer 4: Lot polygons + labels (viewport-culled) ── */}
+        {visibleLots.map(lot => {
           const cfg = getCfg(lot.status);
           const isSelected = lot.id === selectedId;
           const pts = lot.polygon.map(([x, y]) => `${x},${y}`).join(' ');
@@ -459,7 +469,7 @@ const MapInner = memo(function MapInner({
           const cy = lot.centroid?.[1] ?? 0;
           const dims = showDimensions && lot.area_m2 ? computeDimensions(lot.polygon, lot.area_m2 as number) : null;
           const accessStreet = showStreetOnLot && lot.centroid && context?.streetLabels?.length
-            ? nearestStreet(lot.centroid, context.streetLabels)
+            ? nearestStreet(lot.centroid, context.streetLabels.filter(s => /^(ALAMEDA|AVENIDA|VIA|TRECHO|RUA)/i.test(s.name)))
             : null;
 
           return (
@@ -562,7 +572,47 @@ const MapInner = memo(function MapInner({
           );
         })}
 
-        {/* Quadra badges — zoom level 1-2 */}
+        {/* ── Layer 5: Street labels — rendered ABOVE lot polygons so they're never hidden ── */}
+        {showTechLayer && showStreetLabels && (
+          <g style={{ pointerEvents: 'none' }}>
+            {visibleStreetLabels.map((s, i) => {
+              const fs = Math.max(3.5, 20 / scale);
+              const sw = Math.max(0.6, 4 / scale);
+              return (
+                <g key={`sl-${i}`}>
+                  {/* Outline pass for readability over any lot color */}
+                  <text
+                    x={s.x} y={s.y}
+                    textAnchor="middle"
+                    fontSize={fs}
+                    fill="none"
+                    stroke="rgba(6,16,29,0.85)"
+                    strokeWidth={sw}
+                    fontWeight="700"
+                    letterSpacing="0.04em"
+                    style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
+                  >
+                    {s.name}
+                  </text>
+                  {/* Fill pass */}
+                  <text
+                    x={s.x} y={s.y}
+                    textAnchor="middle"
+                    fontSize={fs}
+                    fill="rgba(255,255,255,0.82)"
+                    fontWeight="700"
+                    letterSpacing="0.04em"
+                    style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
+                  >
+                    {s.name}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        )}
+
+        {/* ── Layer 6: Quadra badges — zoom level 1-2 ── */}
         {showQuadraBadges && quadraCentroids.map(({ quadra, cx, cy, avail, total }) => {
           const isActive = activeQuadra === quadra;
           const showFraction = badgeR >= 14 && avail > 0;
@@ -984,6 +1034,8 @@ export default function AltoBellevuePlanView({
   const lastPos = useRef({ x: 0, y: 0 });
   const didDrag = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
   const pointerCache = useRef(new Map<number, { x: number; y: number }>());
 
   const scale = SVG_W / vb.w;
@@ -1044,11 +1096,26 @@ export default function AltoBellevuePlanView({
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointerCache.current.size === 1) {
+      // Double-tap zoom: zoom in 2.5× at tap point
+      const now = performance.now();
+      const lastTap = lastTapRef.current;
+      const el = containerRef.current;
+      if (el && lastTap && now - lastTap.time < 350 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 44) {
+        const rect = el.getBoundingClientRect();
+        const cur = vbLive.current;
+        const pivotX = cur.x + (e.clientX - rect.left) / rect.width * cur.w;
+        const pivotY = cur.y + (e.clientY - rect.top) / rect.height * cur.h;
+        animateTo(zoomViewBox(cur, 0.4, pivotX, pivotY));
+        lastTapRef.current = null;
+        didDrag.current = true;
+        return;
+      }
+      lastTapRef.current = { time: now, x: e.clientX, y: e.clientY };
       setIsDragging(true);
       didDrag.current = false;
       lastPos.current = { x: e.clientX, y: e.clientY };
     }
-  }, []);
+  }, [animateTo]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!pointerCache.current.has(e.pointerId)) return;
@@ -1122,7 +1189,18 @@ export default function AltoBellevuePlanView({
   const zoomIn = useCallback(() => setVb(prev => zoomViewBox(prev, 0.75)), []);
   const zoomOut = useCallback(() => setVb(prev => zoomViewBox(prev, 1.33)), []);
   const resetView = useCallback(() => animateTo(INITIAL_VB), [animateTo]);
-  const toggleFullscreen = useCallback(() => setIsFullscreen(v => !v), []);
+  const toggleFullscreen = useCallback(async () => {
+    const el = wrapperRef.current;
+    if (!document.fullscreenElement) {
+      if (el?.requestFullscreen) {
+        try { await el.requestFullscreen(); return; } catch { /* iOS fallback */ }
+      }
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) { await document.exitFullscreen(); return; }
+      setIsFullscreen(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isFullscreen) return;
@@ -1143,6 +1221,17 @@ export default function AltoBellevuePlanView({
       window.scrollTo(0, scrollY);
     };
   }, [isFullscreen]);
+
+  // Native fullscreen API: sync CSS state when browser chrome toggles fullscreen
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFsChange);
+      document.removeEventListener('webkitfullscreenchange', onFsChange);
+    };
+  }, []);
 
   // Centre the viewBox on (cx, cy) at the given scale (SVG_W / viewBox.w).
   const focusOn = useCallback((cx: number, cy: number, targetScale = 5) => {
@@ -1197,6 +1286,7 @@ export default function AltoBellevuePlanView({
 
   return (
     <div
+      ref={wrapperRef}
       className={isFullscreen ? 'fixed inset-0 z-[9000] overflow-hidden flex flex-col' : 'w-full'}
       style={{ background: '#F7F8FA' }}
     >
@@ -1303,14 +1393,27 @@ export default function AltoBellevuePlanView({
                   if (next === 'ALL') { resetView(); return; }
                   const pts = allLots.filter((l) => l.quadra === next && l.centroid);
                   if (pts.length) {
-                    // Zoom to fit the quadra's bounding box with padding
-                    const xs = pts.map(l => l.centroid![0]);
-                    const ys = pts.map(l => l.centroid![1]);
-                    const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
-                    const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
-                    const spanX = Math.max(Math.max(...xs) - Math.min(...xs), 80) * 1.6;
-                    const spanY = Math.max(Math.max(...ys) - Math.min(...ys), 80) * 1.6;
-                    const newW = Math.max(spanX, spanY * (SVG_W / SVG_H));
+                    // IQR-robust bounding box: exclude outlier lots (> 1.5×IQR from Q1/Q3)
+                    // so Quadras with one or two far-flung lots (e.g. N) still zoom sensibly
+                    const sortedX = pts.map(l => l.centroid![0]).sort((a, b) => a - b);
+                    const sortedY = pts.map(l => l.centroid![1]).sort((a, b) => a - b);
+                    const q1x = sortedX[Math.floor(sortedX.length * 0.25)];
+                    const q3x = sortedX[Math.floor(sortedX.length * 0.75)];
+                    const q1y = sortedY[Math.floor(sortedY.length * 0.25)];
+                    const q3y = sortedY[Math.floor(sortedY.length * 0.75)];
+                    const fxl = q1x - 1.5 * (q3x - q1x), fxu = q3x + 1.5 * (q3x - q1x);
+                    const fyl = q1y - 1.5 * (q3y - q1y), fyu = q3y + 1.5 * (q3y - q1y);
+                    const inXs = sortedX.filter(v => v >= fxl && v <= fxu);
+                    const inYs = sortedY.filter(v => v >= fyl && v <= fyu);
+                    const minX = inXs[0] ?? sortedX[0], maxX = inXs[inXs.length - 1] ?? sortedX[sortedX.length - 1];
+                    const minY = inYs[0] ?? sortedY[0], maxY = inYs[inYs.length - 1] ?? sortedY[sortedY.length - 1];
+                    const cx = (minX + maxX) / 2;
+                    const cy = (minY + maxY) / 2;
+                    const spanX = Math.max(maxX - minX, 80) * 1.8;
+                    const spanY = Math.max(maxY - minY, 80) * 1.8;
+                    // Ensure minimum scale of 2.5 so lot numbers are always visible after zoom
+                    const rawW = Math.max(spanX, spanY * (SVG_W / SVG_H));
+                    const newW = Math.min(rawW, SVG_W / 2.5);
                     const newH = newW * (SVG_H / SVG_W);
                     animateTo({ x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH });
                   }
