@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { ArrowLeft, Waves, Trees, Zap } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
+import { ALL_LOTS } from './data/lotsData'
+
 const MasterplanSection = dynamic(
   () => import('./components/MasterplanSection'),
   { ssr: false },
@@ -10,14 +12,17 @@ const MasterplanSection = dynamic(
 
 const WHATSAPP = '5581997230455'
 
+const LOTS_DISPONIVEIS = ALL_LOTS.filter(l => l.status === 'disponivel').length
+const LOTS_TOTAL = ALL_LOTS.length
+
 export const metadata: Metadata = {
   title: 'Loteamento Miguel Marques | IMI — Inteligência Imobiliária',
   description:
-    'Loteamento residencial de alto padrão com mais de 800 lotes individuais, lago natural e infraestrutura completa. Explore o mapa interativo e escolha o seu lote.',
+    `Loteamento residencial com ${LOTS_TOTAL} lotes individuais, lago natural e infraestrutura completa. Explore o mapa interativo e escolha o seu lote.`,
   openGraph: {
     title: 'Loteamento Miguel Marques — Escolha Seu Lote',
     description:
-      'Mapa interativo com disponibilidade em tempo real. 150 de 183 lotes disponíveis.',
+      `Mapa interativo com disponibilidade em tempo real. ${LOTS_DISPONIVEIS} de ${LOTS_TOTAL} lotes disponíveis.`,
   },
 }
 

@@ -1,8 +1,9 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useMemo } from 'react'
-import { ALL_LOTS } from '../data/lotsData'
+import { useMemo, useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { ALL_LOTS, type Lot } from '../data/lotsData'
 
 const MiguelMarquesPlanView = dynamic(() => import('./MiguelMarquesPlanView'), { ssr: false })
 
@@ -14,18 +15,38 @@ const PAYMENT_CONDITIONS = {
   seller: 'Mano Imóveis',
 }
 
+const DEVELOPMENT_ID = 'loteamento-miguel-marques'
+
 export default function MasterplanSection() {
+  const [effectiveLots, setEffectiveLots] = useState<Lot[]>(ALL_LOTS)
+
+  // Silently overlay Supabase status overrides — falls back to in-memory if table is empty or unavailable
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from('subdivision_lots')
+      .select('quadra, lot_number, status')
+      .eq('development_id', DEVELOPMENT_ID)
+      .then(({ data }) => {
+        if (!data || data.length === 0) return
+        const overrides = new Map(
+          data.map((r) => [`${r.quadra}-${r.lot_number}`, r.status.toLowerCase() as Lot['status']])
+        )
+        setEffectiveLots(ALL_LOTS.map(l => ({ ...l, status: overrides.get(l.id) ?? l.status })))
+      })
+  }, [])
+
   const stats = useMemo(() => {
-    const disponivel = ALL_LOTS.filter(l => l.status === 'disponivel').length
-    const vendido = ALL_LOTS.filter(l => l.status === 'vendido').length
-    const proprietario = ALL_LOTS.filter(l => l.status === 'proprietario').length
-    const negociacao = ALL_LOTS.filter(l => l.status === 'negociacao').length
-    const availLots = ALL_LOTS.filter(l => l.status === 'disponivel' && l.valor > 0)
+    const disponivel = effectiveLots.filter(l => l.status === 'disponivel').length
+    const vendido = effectiveLots.filter(l => l.status === 'vendido').length
+    const proprietario = effectiveLots.filter(l => l.status === 'proprietario').length
+    const negociacao = effectiveLots.filter(l => l.status === 'negociacao').length
+    const availLots = effectiveLots.filter(l => l.status === 'disponivel' && l.valor > 0)
     const priceMin = availLots.length > 0 ? Math.min(...availLots.map(l => l.valor)) : 0
     const priceMax = availLots.length > 0 ? Math.max(...availLots.map(l => l.valor)) : 0
     const areaMin = availLots.length > 0 ? Math.min(...availLots.map(l => l.metragem)) : 0
-    return { disponivel, vendido, proprietario, negociacao, total: ALL_LOTS.length, priceMin, priceMax, areaMin }
-  }, [])
+    return { disponivel, vendido, proprietario, negociacao, total: effectiveLots.length, priceMin, priceMax, areaMin }
+  }, [effectiveLots])
 
   const fmtBRL = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
@@ -123,7 +144,7 @@ export default function MasterplanSection() {
           className="rounded-2xl overflow-hidden"
           style={{ height: 'clamp(480px, 72vh, 760px)' }}
         >
-          <MiguelMarquesPlanView />
+          <MiguelMarquesPlanView lots={effectiveLots} />
         </div>
 
       </div>
