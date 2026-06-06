@@ -34,6 +34,8 @@ export interface ABLot {
   price: number | null;
   status: string;
   has_polygon: boolean;
+  /** Registro comercial sem polígono oficial no CAD (ex.: B-24) — não renderizar no mapa. */
+  pending: boolean;
   // Camada comercial embutida na fonte canônica
   valor: number | null;
   valorVista: number | null;
@@ -44,6 +46,8 @@ export interface ABLot {
 export interface StreetLabel { x: number; y: number; name: string; }
 export interface MapMarker { x: number; y: number; label: string; }
 export interface Amenity { id: string; label: string; icon: string; color: string; x: number; y: number; }
+/** Área verde do CAD (posição oficial do rótulo "ÁREA VERDE NN"). */
+export interface GreenArea { id: string; label: string; x: number; y: number; }
 
 export interface ABMapData {
   lots: ABLot[];
@@ -53,6 +57,8 @@ export interface ABMapData {
   streetLabels: StreetLabel[];
   entrance: MapMarker | null;
   amenities: Amenity[];
+  /** Áreas verdes oficiais (CAD). Vazio = pendente. */
+  greenAreas: GreenArea[];
   /** Itens sem dado oficial — exibidos como `pendente` (não inventar). */
   pending: { greenAreas: boolean };
 }
@@ -62,7 +68,7 @@ export interface ABMapData {
 interface RawLot {
   id?: string; quadra: string; lote?: string; lot_number?: string;
   points?: string; area?: number; metragem?: number; area_m2?: number;
-  labelX?: number; labelY?: number; status?: string;
+  labelX?: number; labelY?: number; status?: string; pending?: boolean;
   price?: number | null; valor?: number | null; valorVista?: number | null; entrada?: number | null;
   p12?: PaymentPlan; p36?: PaymentPlan; p60?: PaymentPlan; p120?: PaymentPlan;
 }
@@ -76,7 +82,7 @@ interface RawMap {
   streetLabels?: StreetLabel[];
   entrance?: MapMarker | null;
   amenities?: Amenity[];
-  greenAreas?: unknown[];
+  greenAreas?: GreenArea[];
 }
 
 // ── Geometria ──────────────────────────────────────────────────────────────────
@@ -134,6 +140,7 @@ function normalizeLot(raw: RawLot): ABLot {
     price: raw.price ?? raw.valor ?? null,
     status: normalizeStatus(raw.status),
     has_polygon: isValidPolygon(polygon),
+    pending: Boolean(raw.pending),
     valor: raw.valor ?? raw.price ?? null,
     valorVista: raw.valorVista ?? null,
     entrada: raw.entrada ?? null,
@@ -189,6 +196,7 @@ export function normalizeMap(raw: RawMap): ABMapData {
     streetLabels: raw.streetLabels ?? [],
     entrance: raw.entrance ?? null,
     amenities: raw.amenities ?? [],
+    greenAreas: raw.greenAreas ?? [],
     pending: { greenAreas: !raw.greenAreas || raw.greenAreas.length === 0 },
   };
 }

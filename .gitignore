@@ -61,3 +61,6 @@ public/worker-*.js.map
 
 # Backups
 backups/
+
+# CAD pipeline intermediate artifacts (derived from huge DXF; never commit)
+scripts/cad/.cache/

@@ -23,6 +23,8 @@ interface PlanLot {
   polygon: [number, number][]; centroid: [number, number];
   area_m2: number | null; price: number | null;
   status: string; has_polygon: boolean;
+  /** Registro comercial sem polígono oficial no CAD (ex.: B-24) — não renderizar. */
+  pending?: boolean;
 }
 
 interface PriceEntry {
@@ -528,6 +530,34 @@ const MapInner = memo(function MapInner({
                 </text>
               </g>
             )}
+            {/* Áreas verdes (CAD) — marcadores não interativos, dashed p/ distinguir de lotes */}
+            {context.greenAreas?.map((g) => {
+              const r = Math.max(2.4, 10 / scale);
+              const fontSize = Math.max(3.2, 11 / scale);
+              return (
+                <g key={`ga-${g.id}`}>
+                  <circle
+                    cx={g.x} cy={g.y} r={r}
+                    fill="rgba(46,125,50,0.28)"
+                    stroke="rgba(102,187,106,0.75)"
+                    strokeWidth={Math.max(0.25, 1 / scale)}
+                    strokeDasharray={`${2.5 / scale} ${1.5 / scale}`}
+                  />
+                  {scale >= 2.5 && (
+                    <text
+                      x={g.x} y={g.y - Math.max(4, 14 / scale)}
+                      textAnchor="middle"
+                      fontSize={fontSize}
+                      fill="rgba(129,199,132,0.92)"
+                      fontWeight="600"
+                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {g.label}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
             {/* Street labels moved to a dedicated layer above lots — see below */}
           </g>
         )}
@@ -1256,6 +1286,9 @@ export default function AltoBellevuePlanView({
 
   const filteredLots = useMemo(() =>
     allLots.filter(lot => {
+      // Lotes pendentes (sem polígono oficial, ex.: B-24) contam nas estatísticas,
+      // mas não são desenhados no mapa — não têm posição real.
+      if (lot.pending) return false;
       if (activeStatus !== 'ALL' && lot.status !== activeStatus) return false;
       if (activeQuadra !== 'ALL' && lot.quadra !== activeQuadra) return false;
       return true;
@@ -1451,6 +1484,7 @@ export default function AltoBellevuePlanView({
     const [, qLetter, num] = m;
     const n = String(parseInt(num, 10)).padStart(2, '0');
     const found = allLots.find((l) => {
+      if (l.pending) return false; // lote sem posição real (ex.: B-24) não é localizável
       const matchNum = String(l.lot_number).padStart(2, '0') === n;
       if (qLetter) return l.quadra === qLetter && matchNum;
       if (activeQuadra !== 'ALL') return l.quadra === activeQuadra && matchNum;
