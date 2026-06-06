@@ -9,10 +9,13 @@
  * Sem dependência de React — usado pelo componente do mapa e pelos testes (Jest/node).
  */
 
-export const AB_MAP_URL = '/maps/alto-bellevue-lots.json';
+// Bump quando o JSON do mapa mudar: invalida o sessionStorage E o cache HTTP/CDN
+// (o ?v= muda a URL). Sem isso, navegadores antigos servem dados em cache.
+export const AB_MAP_VERSION = 3;
+export const AB_MAP_URL = `/maps/alto-bellevue-lots.json?v=${AB_MAP_VERSION}`;
 export const AB_VIEWBOX = { w: 1200, h: 821.86 } as const;
 export const AB_EXPECTED_TOTAL = 383;
-const CACHE_KEY = 'imi:ab-map:v1';
+const CACHE_KEY = `imi:ab-map:v${AB_MAP_VERSION}`;
 
 export type Point = [number, number];
 

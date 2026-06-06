@@ -342,7 +342,6 @@ const MapInner = memo(function MapInner({
   const showLotNumbers = scale >= 3;
   const showAreaLabels = scale >= 4;
   const showDimensions = scale >= 5.5;
-  const showStreetOnLot = scale >= 9;
   const showQuadraBadges = scale < 3.5;
   const showStreetLabels = scale >= 1.5;
 
@@ -570,9 +569,6 @@ const MapInner = memo(function MapInner({
           const cx = lot.centroid?.[0] ?? 0;
           const cy = lot.centroid?.[1] ?? 0;
           const dims = showDimensions && lot.area_m2 ? computeDimensions(lot.polygon, lot.area_m2 as number) : null;
-          const accessStreet = showStreetOnLot && lot.centroid && context?.streetLabels?.length
-            ? nearestStreet(lot.centroid, context.streetLabels.filter(s => /^(ALAMEDA|AVENIDA|VIA|TRECHO|RUA)/i.test(s.name)))
-            : null;
 
           return (
             <g
@@ -654,22 +650,8 @@ const MapInner = memo(function MapInner({
                 </text>
               )}
 
-              {/* Rua de acesso — scale ≥ 9, gold accent */}
-              {accessStreet && cx > 0 && cy > 0 && (
-                <text
-                  x={cx}
-                  y={cy + 11.5}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fill={isSelected ? 'rgba(200,164,74,0.65)' : 'rgba(200,164,74,0.45)'}
-                  fontSize={3.2}
-                  fontWeight="600"
-                  letterSpacing="0.04em"
-                  style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
-                >
-                  {accessStreet}
-                </text>
-              )}
+              {/* Rua de acesso NÃO é mais desenhada dentro do lote (fica só nos eixos de
+                  rua, acima dos lotes, e no card de detalhe). */}
             </g>
           );
         })}
