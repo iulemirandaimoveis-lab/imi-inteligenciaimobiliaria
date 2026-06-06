@@ -183,10 +183,17 @@ const perimeter = perimeterRings[0] || [];
 
 function containmentReport() {
   if (!perimeter.length) {
-    return { hasPerimeter: false, lotsOutside: [], amenitiesOutside: [], entranceOutside: false };
+    return { hasPerimeter: false, lotsOutside: [], pendingLots: [], amenitiesOutside: [], entranceOutside: false };
   }
   const lotsOutside = [];
+  const pendingLots = [];
   for (const l of rawCanonical.lots || []) {
+    // Lotes pendentes (registro comercial sem polígono oficial no CAD, ex.: B-24)
+    // não têm posição real — não contam como "fora do perímetro" no gate.
+    if (l.pending) {
+      pendingLots.push(l.id ?? `${l.quadra}-${l.lote}`);
+      continue;
+    }
     const pt =
       l.labelX != null && l.labelY != null
         ? [l.labelX, l.labelY]
@@ -201,7 +208,7 @@ function containmentReport() {
   const entranceOutside =
     rawCanonical.entrance != null &&
     !pointInPolygon([rawCanonical.entrance.x, rawCanonical.entrance.y], perimeter);
-  return { hasPerimeter: true, perimeterPoints: perimeter.length, lotsOutside, amenitiesOutside, entranceOutside };
+  return { hasPerimeter: true, perimeterPoints: perimeter.length, lotsOutside, pendingLots, amenitiesOutside, entranceOutside };
 }
 
 const containment = containmentReport();
@@ -276,6 +283,7 @@ if (!containment.hasPerimeter) {
 } else {
   line(`  Perímetro:                       ${containment.perimeterPoints} vértices`);
   line(`  Lotes FORA do perímetro (${containment.lotsOutside.length}):    ${list(containment.lotsOutside.map((l) => `${l.id}@${l.x},${l.y}`))}`);
+  line(`  Lotes pendentes (sem polígono CAD) (${containment.pendingLots.length}): ${list(containment.pendingLots)}`);
   line(`  Amenities fora do perímetro (${containment.amenitiesOutside.length}): ${list(containment.amenitiesOutside.map((a) => `${a.id}@${a.x},${a.y}`))}`);
   line(`  Entrada fora do perímetro:       ${containment.entranceOutside ? 'sim (esperado — acesso externo)' : 'não'}`);
 }

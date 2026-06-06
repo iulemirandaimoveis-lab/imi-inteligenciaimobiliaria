@@ -19,7 +19,7 @@ function lot(partial: Partial<ABLot>): ABLot {
     id: 'A-01', quadra: 'A', lot_number: '01',
     polygon: [[0, 0], [10, 0], [10, 10], [0, 10]],
     centroid: [5, 5], area_m2: 100, price: 1000, status: 'DISPONIVEL',
-    has_polygon: true, valor: 1000, valorVista: 800, entrada: 100, plans: {},
+    has_polygon: true, pending: false, valor: 1000, valorVista: 800, entrada: 100, plans: {},
     ...partial,
   };
 }
@@ -97,8 +97,17 @@ describe('fonte canônica public/maps/alto-bellevue-lots.json', () => {
     expect(data.amenities.length).toBeGreaterThan(0);
   });
 
-  it('marca áreas verdes como pendente (sem dado oficial)', () => {
-    expect(data.pending.greenAreas).toBe(true);
+  it('carrega as áreas verdes oficiais do CAD (não mais pendente)', () => {
+    expect(data.pending.greenAreas).toBe(false);
+    expect(data.greenAreas.length).toBeGreaterThanOrEqual(9);
+    expect(
+      data.greenAreas.every((g) => Number.isFinite(g.x) && Number.isFinite(g.y) && Boolean(g.label)),
+    ).toBe(true);
+  });
+
+  it('B-24 está marcado como pendente (sem polígono oficial no CAD)', () => {
+    const b24 = data.lots.find((l) => l.id === 'B-24');
+    expect(b24?.pending).toBe(true);
   });
 
   it('validateLots da fonte canônica é ok', () => {
