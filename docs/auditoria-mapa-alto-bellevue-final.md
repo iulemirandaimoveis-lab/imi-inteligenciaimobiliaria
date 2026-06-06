@@ -218,3 +218,38 @@ vivo no preview. O mapa é um componente **client-side dinâmico** e **data-driv
 Prints pixel-a-pixel pendentes apenas por limitação de ambiente (preview headless instável
 nas pausas de sessão + preview protegido por auth). Recomendado capturar mobile/desktop em
 `…/pt/projetos/alto-bellevue` (preview) ou na produção pós-merge.
+
+---
+
+## 10. 2ª rodada — feedback do solicitante (cache + ruas + limites da fonte)
+
+**Por que "não vi nenhuma melhoria":** o loader cacheava o JSON no `sessionStorage`
+(`imi:ab-map:v1`) + `fetch force-cache`. As correções estavam no ar (produção conferida),
+mas navegadores antigos repetiam o cache. **Fix:** `AB_MAP_VERSION` versiona a chave do
+cache **e** a URL (`?v=`), invalidando sessionStorage + HTTP/CDN. Bump ao mudar o JSON.
+
+**Ruas dentro do lote:** removida a renderização do nome de rua **dentro** do polígono do
+lote em zoom alto (ficava só nos eixos de rua, acima dos lotes, e no card). Atende
+"o nome das ruas não precisa aparecer dentro do lote".
+
+**Limite de fonte de dados (importante):** este DXF é, na prática, **lotes vetoriais
+limpos (`REGIAO_LOTES`) + um underlay do PDF** (`PDF_Solid Fills`, ~24 mil hachuras).
+Consequências verificadas:
+- **Quadras:** `DB2 QUADRAS` só tem polígono fechado para **11/16** quadras e não
+  particiona os lotes (137 lotes ficam fora de qualquer polígono). Logo não dá para
+  derivar a quadra de cada lote com confiabilidade só deste DXF.
+- **Áreas verdes/recreativas:** **não têm** polígono fechado próprio no DXF (são cor do
+  underlay). Só existem como rótulos + a cor do PDF.
+- **~29/383 lotes** estão com polígono trocado pela extração antiga (outliers que
+  "vazam" para outra quadra ao filtrar). Corrigir cada um exige a quadra/numeração
+  corretas — que não estão limpas neste DXF.
+
+**Para a precisão total que casa 100% com o PDF, é preciso UMA das opções:**
+1. **DXF/DWG com camadas limpas:** cada quadra como polígono fechado (layer por quadra),
+   cada área verde/recreativa como polígono fechado, e/ou cada lote com atributo de quadra.
+2. **Digitalização guiada pelo PDF:** traçar quadras/áreas a partir do PDF aprovado
+   (trabalhoso e manual, mas confiável) — o PDF é a fonte visual de verdade.
+
+Sem (1) ou (2), reescrever a malha de quadras = adivinhar = mais erro. Por isso esta
+rodada entrega o que é **confiável** (cache + ruas) e deixa a malha de quadras/áreas
+explicitamente para a fonte adequada.
