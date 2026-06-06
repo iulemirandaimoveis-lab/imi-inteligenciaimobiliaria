@@ -244,12 +244,23 @@ Consequências verificadas:
   "vazam" para outra quadra ao filtrar). Corrigir cada um exige a quadra/numeração
   corretas — que não estão limpas neste DXF.
 
-**Para a precisão total que casa 100% com o PDF, é preciso UMA das opções:**
-1. **DXF/DWG com camadas limpas:** cada quadra como polígono fechado (layer por quadra),
-   cada área verde/recreativa como polígono fechado, e/ou cada lote com atributo de quadra.
-2. **Digitalização guiada pelo PDF:** traçar quadras/áreas a partir do PDF aprovado
-   (trabalhoso e manual, mas confiável) — o PDF é a fonte visual de verdade.
+**Re-match global das geometrias (corrige o "vazamento" entre quadras):**
+A grade estava ~92% correta, com lotes espalhados na quadra errada (extração antiga
+trocou polígonos de mesmo número entre quadras). `scripts/cad/global-rematch.mjs`
+reatribui cada lote ao **polígono do CAD com o mesmo número** mais próximo do centro
+(mediana robusta) da sua quadra — geometria real do CAD, nada inventado. Iterado 3×.
+- **363/382 lotes** reposicionados corretamente; **verificado visualmente** por
+  `scripts/cad/render_quadras.py` (cada quadra vira um bloco de cor contíguo —
+  antes/depois em `/tmp/quadras-current.png` vs `quadras-canonical.png`).
+- **10 lotes pendentes** (sem polígono no CAD, posição não confiável → ocultos, como
+  o B-24): `B-24, H-02, H-03, H-07, H-23` (vendidos) e `P-03..06, P-09` (disponíveis).
+  Estes precisam de posição confirmada (backoffice) ou de um CAD completo para reaparecer.
+- Gate: `validate:lots` ✓ (383, 0 fora do perímetro, 0 dup, 0 inválido) · jest 15/15.
 
-Sem (1) ou (2), reescrever a malha de quadras = adivinhar = mais erro. Por isso esta
-rodada entrega o que é **confiável** (cache + ruas) e deixa a malha de quadras/áreas
-explicitamente para a fonte adequada.
+**Ainda pendente de fonte adequada (não dá para extrair deste DXF):**
+- **Áreas verdes/recreativas como polígonos** (são cor de underlay do PDF, sem vetor).
+- **Os 10 lotes pendentes** acima.
+
+**Para 100% de fidelidade ao PDF, idealmente:** DXF/DWG com camadas limpas (quadra e
+área como polígono fechado; lote com atributo de quadra) **ou** digitalização guiada
+pelo PDF aprovado. Mas o re-match já elimina o vazamento visível entre quadras.
