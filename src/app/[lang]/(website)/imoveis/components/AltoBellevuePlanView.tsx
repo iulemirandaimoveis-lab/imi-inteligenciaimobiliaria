@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2 } from 'lucide-react';
 import {
   loadAltoBellevueMap, AB_VIEWBOX,
-  type ABMapData,
+  type ABMapData, type Amenity,
 } from '@/lib/lots/alto-bellevue';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -120,9 +120,11 @@ const getCfg = (k: string) => STATUS_CFG[k] ?? STATUS_CFG.DISPONIVEL;
 // A geometria/posição vem da fonte canônica (campo `amenities`); aqui ficam textos
 // e mídia (fotos do projeto aprovado / vídeo). Ids novos caem no fallback.
 const AB_AMEN_IMG = '/images/empreendimentos/alto-bellevue/amenities';
+// Tour virtual 360° (Kuula). Coleção do empreendimento — configurável (backoffice/env).
+const AB_TOUR_360 = 'https://kuula.co/share/collection/7KKb9?logo=1&info=0&logosize=68&fs=1&vr=1&zoom=1&initload=0&thumbs=0&margin=20&alpha=0.86&inst=pt';
 interface AmenityInfo {
   title: string; subtitle: string; description: string; fn: string;
-  photos?: string[]; video?: string;
+  photos?: string[]; video?: string; tour360?: string;
 }
 const AMENITY_INFO: Record<string, AmenityInfo> = {
   portaria: {
@@ -142,6 +144,7 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
       `${AB_AMEN_IMG}/ab-amenity-06.jpg`, `${AB_AMEN_IMG}/ab-amenity-07.jpg`,
       `${AB_AMEN_IMG}/ab-amenity-08.jpg`,
     ],
+    tour360: AB_TOUR_360,
   },
   'area-verde': {
     title: 'Área Verde',
@@ -151,8 +154,23 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
     photos: [`${AB_AMEN_IMG}/ab-amenity-02.jpg`, `${AB_AMEN_IMG}/ab-amenity-09.jpg`, `${AB_AMEN_IMG}/ab-amenity-10.jpg`],
   },
 };
-const getAmenityInfo = (id: string, label: string): AmenityInfo =>
-  AMENITY_INFO[id] ?? { title: label, subtitle: 'Área comum', description: 'Área de uso comum do empreendimento.', fn: 'Área comum' };
+// Overrides vindos do dado (JSON `amenities[]` — editável pelo backoffice).
+type AmenityOverride = Partial<AmenityInfo> & { id: string; label: string };
+const getAmenityInfo = (a: AmenityOverride): AmenityInfo => {
+  const base: AmenityInfo = AMENITY_INFO[a.id] ?? {
+    title: a.label, subtitle: 'Área comum', description: 'Área de uso comum do empreendimento.', fn: 'Área comum',
+  };
+  // Campos vindos do backoffice/JSON têm prioridade; senão usa o default editorial.
+  return {
+    title: a.title ?? base.title,
+    subtitle: a.subtitle ?? base.subtitle,
+    description: a.description ?? base.description,
+    fn: a.fn ?? base.fn,
+    photos: a.photos ?? base.photos,
+    video: a.video ?? base.video,
+    tour360: a.tour360 ?? base.tour360,
+  };
+};
 
 // ── Formatters ────────────────────────────────────────────────────────────────
 
@@ -286,6 +304,25 @@ function usePrices() {
   return priceMap;
 }
 
+/** Disponibilidade ao vivo da planilha (Google Sheets) — re-busca a cada 90s. */
+function useAvailability() {
+  const [avail, setAvail] = useState<Record<string, string>>({});
+  useEffect(() => {
+    let alive = true;
+    const load = () =>
+      fetch('/api/developments/alto-bellevue/availability')
+        .then((r) => r.json())
+        .then((d) => { if (alive && d?.availability) setAvail(d.availability); })
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 90_000); // near-real-time
+    const onFocus = () => load();
+    window.addEventListener('focus', onFocus);
+    return () => { alive = false; clearInterval(id); window.removeEventListener('focus', onFocus); };
+  }, []);
+  return avail;
+}
+
 function mergeLots(dbLots: Lot[], planLots: PlanLot[]): PlanLot[] {
   const dbMap = new Map(
     dbLots.map(l => [`${l.quadra}-${String(l.lot_number).padStart(2, '0')}`, l])
@@ -313,7 +350,7 @@ interface MapInnerProps {
   isDragging: boolean;
   activeQuadra: string;
   onLotClick: (lot: PlanLot) => void;
-  onAmenityClick: (amenity: { id: string; label: string; icon: string; color: string; x: number; y: number }) => void;
+  onAmenityClick: (amenity: Amenity) => void;
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
@@ -1122,13 +1159,13 @@ function LotBottomSheet({
 function AmenityBottomSheet({
   amenity, onClose, onLocate, whatsappPhone, developmentName,
 }: {
-  amenity: { id: string; label: string; icon: string; color: string; x: number; y: number };
+  amenity: Amenity;
   onClose: () => void;
   onLocate: () => void;
   whatsappPhone: string;
   developmentName: string;
 }) {
-  const info = getAmenityInfo(amenity.id, amenity.label);
+  const info = getAmenityInfo(amenity);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1184,6 +1221,24 @@ function AmenityBottomSheet({
             <X size={16} color="#636363" />
           </button>
         </div>
+
+        {/* Tour virtual 360° (Kuula) — destaque */}
+        {info.tour360 && (
+          <div className="px-5 pb-2">
+            <div style={{ position: 'relative', paddingTop: '62%', borderRadius: 14, overflow: 'hidden', background: '#000' }}>
+              <iframe
+                src={info.tour360}
+                title={`${info.title} — tour 360°`}
+                allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen; autoplay"
+                allowFullScreen
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+              />
+            </div>
+            <p style={{ fontSize: 10.5, color: '#948F84', margin: '6px 2px 0', fontWeight: 600 }}>
+              🅥 Tour virtual 360° — arraste para explorar · óculos VR suportado
+            </p>
+          </div>
+        )}
 
         {/* Galeria de fotos da área (projeto aprovado) */}
         {info.photos && info.photos.length > 0 && (
@@ -1268,10 +1323,11 @@ export default function AltoBellevuePlanView({
 }: Props) {
   const { data: mapData, loading, error, retry } = useABMap();
   const priceMap = usePrices();
+  const availability = useAvailability();
   const planLots = mapData?.lots ?? [];
 
   const [selectedLot, setSelectedLot] = useState<PlanLot | null>(null);
-  const [selectedAmenity, setSelectedAmenity] = useState<{ id: string; label: string; icon: string; color: string; x: number; y: number } | null>(null);
+  const [selectedAmenity, setSelectedAmenity] = useState<Amenity | null>(null);
   const [activeStatus, setActiveStatus] = useState('ALL');
   const [activeQuadra, setActiveQuadra] = useState('ALL');
   const [isMobile, setIsMobile] = useState(false);
@@ -1321,7 +1377,15 @@ export default function AltoBellevuePlanView({
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  const allLots = useMemo(() => mergeLots(dbLots, planLots), [dbLots, planLots]);
+  const allLots = useMemo(() => {
+    const merged = mergeLots(dbLots, planLots);
+    // Disponibilidade ao vivo (planilha) tem prioridade sobre o status do JSON.
+    if (!availability || Object.keys(availability).length === 0) return merged;
+    return merged.map((l) => {
+      const live = availability[l.id];
+      return live && live !== l.status ? { ...l, status: live } : l;
+    });
+  }, [dbLots, planLots, availability]);
 
   const stats = useMemo(() => ({
     available: allLots.filter(l => l.status === 'DISPONIVEL').length,
@@ -1448,7 +1512,7 @@ export default function AltoBellevuePlanView({
   const resetView = useCallback(() => animateTo(INITIAL_VB), [animateTo]);
 
   // Área comum clicada → abre painel (e fecha painel de lote, se houver)
-  const handleAmenityClick = useCallback((a: { id: string; label: string; icon: string; color: string; x: number; y: number }) => {
+  const handleAmenityClick = useCallback((a: Amenity) => {
     setSelectedLot(null);
     setSelectedAmenity(a);
   }, []);
