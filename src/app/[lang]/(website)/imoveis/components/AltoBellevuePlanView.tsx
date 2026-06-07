@@ -116,22 +116,39 @@ const STATUS_CFG: Record<string, {
 
 const getCfg = (k: string) => STATUS_CFG[k] ?? STATUS_CFG.DISPONIVEL;
 
-// ── Áreas comuns (descrições editoriais) ──────────────────────────────────────
-// Conteúdo do painel de cada área comum. A geometria/posição vem da fonte canônica
-// (campo `amenities`); aqui ficam só os textos. Ids novos caem no fallback.
-interface AmenityInfo { title: string; subtitle: string; description: string; fn: string; }
+// ── Áreas comuns (conteúdo editorial: textos, fotos, vídeo) ────────────────────
+// A geometria/posição vem da fonte canônica (campo `amenities`); aqui ficam textos
+// e mídia (fotos do projeto aprovado / vídeo). Ids novos caem no fallback.
+const AB_AMEN_IMG = '/images/empreendimentos/alto-bellevue/amenities';
+interface AmenityInfo {
+  title: string; subtitle: string; description: string; fn: string;
+  photos?: string[]; video?: string;
+}
 const AMENITY_INFO: Record<string, AmenityInfo> = {
   portaria: {
     title: 'Portaria Principal',
     subtitle: 'Acesso e segurança',
-    description: 'Entrada monitorada do empreendimento, com controle de acesso de moradores e visitantes.',
+    description: 'Entrada monitorada do empreendimento, com guarita e controle de acesso de moradores e visitantes 24 horas.',
     fn: 'Controle de acesso 24h',
+    photos: [`${AB_AMEN_IMG}/ab-amenity-01.jpg`, `${AB_AMEN_IMG}/ab-amenity-03.jpg`],
   },
   lazer: {
     title: 'Área de Lazer / Clube',
     subtitle: 'Convivência e bem-estar',
-    description: 'Espaço de lazer e convívio do condomínio — piscina, área de descanso e equipamentos comuns.',
+    description: 'Espaço de lazer e convívio do condomínio — piscina, quadra poliesportiva, espaços de descanso e equipamentos comuns em meio ao paisagismo.',
     fn: 'Lazer e convivência',
+    photos: [
+      `${AB_AMEN_IMG}/ab-amenity-04.jpg`, `${AB_AMEN_IMG}/ab-amenity-05.jpg`,
+      `${AB_AMEN_IMG}/ab-amenity-06.jpg`, `${AB_AMEN_IMG}/ab-amenity-07.jpg`,
+      `${AB_AMEN_IMG}/ab-amenity-08.jpg`,
+    ],
+  },
+  'area-verde': {
+    title: 'Área Verde',
+    subtitle: 'Paisagismo e bem-estar',
+    description: 'Áreas verdes preservadas e arborizadas, distribuídas pelo loteamento para qualidade de vida e convívio ao ar livre.',
+    fn: 'Preservação e paisagismo',
+    photos: [`${AB_AMEN_IMG}/ab-amenity-02.jpg`, `${AB_AMEN_IMG}/ab-amenity-09.jpg`, `${AB_AMEN_IMG}/ab-amenity-10.jpg`],
   },
 };
 const getAmenityInfo = (id: string, label: string): AmenityInfo =>
@@ -529,12 +546,22 @@ const MapInner = memo(function MapInner({
                 </text>
               </g>
             )}
-            {/* Áreas verdes (CAD) — marcadores não interativos, dashed p/ distinguir de lotes */}
+            {/* Áreas verdes (CAD) — clicáveis: abrem o card da área verde (fotos + info) */}
             {context.greenAreas?.map((g) => {
               const r = Math.max(2.4, 10 / scale);
               const fontSize = Math.max(3.2, 11 / scale);
+              const hit = Math.max(r * 1.8, 24 / scale);
               return (
-                <g key={`ga-${g.id}`}>
+                <g
+                  key={`ga-${g.id}`}
+                  style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Área comum: ${g.label}`}
+                  onClick={(e) => { e.stopPropagation(); onAmenityClick({ id: 'area-verde', label: g.label, icon: '🌳', color: '#66BB6A', x: g.x, y: g.y }); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onAmenityClick({ id: 'area-verde', label: g.label, icon: '🌳', color: '#66BB6A', x: g.x, y: g.y }); } }}
+                >
+                  <circle cx={g.x} cy={g.y} r={hit} fill="transparent" />
                   <circle
                     cx={g.x} cy={g.y} r={r}
                     fill="rgba(46,125,50,0.28)"
@@ -549,7 +576,7 @@ const MapInner = memo(function MapInner({
                       fontSize={fontSize}
                       fill="rgba(129,199,132,0.92)"
                       fontWeight="600"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                      style={{ fontFamily: "'Outfit', sans-serif", pointerEvents: 'none' }}
                     >
                       {g.label}
                     </text>
@@ -1158,7 +1185,44 @@ function AmenityBottomSheet({
           </button>
         </div>
 
-        <p style={{ padding: '0 20px', fontSize: 13.5, lineHeight: 1.55, color: '#4A4A4A', margin: '4px 0 14px', fontFamily: "'Outfit', sans-serif" }}>
+        {/* Galeria de fotos da área (projeto aprovado) */}
+        {info.photos && info.photos.length > 0 && (
+          <div
+            className="flex gap-2 overflow-x-auto px-5 pb-1"
+            style={{ scrollbarWidth: 'none', scrollSnapType: 'x mandatory' }}
+          >
+            {info.photos.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={`${info.title} — foto ${i + 1}`}
+                loading="lazy"
+                style={{
+                  height: 168, minWidth: 244, width: 244, objectFit: 'cover',
+                  borderRadius: 14, flexShrink: 0, scrollSnapAlign: 'start',
+                  background: '#EDEAE3',
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Vídeo da área (se houver) */}
+        {info.video && (
+          <div className="px-5 pt-2">
+            <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: 14, overflow: 'hidden', background: '#000' }}>
+              <iframe
+                src={info.video}
+                title={`${info.title} — vídeo`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+              />
+            </div>
+          </div>
+        )}
+
+        <p style={{ padding: '14px 20px 0', fontSize: 13.5, lineHeight: 1.55, color: '#4A4A4A', margin: '4px 0 14px', fontFamily: "'Outfit', sans-serif" }}>
           {info.description}
         </p>
 
