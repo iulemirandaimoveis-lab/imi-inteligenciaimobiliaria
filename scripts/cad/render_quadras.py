@@ -49,5 +49,29 @@ for q, ps in cents.items():
     d.ellipse([mx-20,my-20,mx+20,my+20], fill=(0,0,0,200))
     d.text((mx, my), q, fill=(255,255,255,255), anchor="mm", font=font)
 
+# streets (faint), street labels (white), amenities, green markers — to check positioning
+for ln in data.get("streets", []):
+    p = pts_of(ln)
+    if len(p) >= 2:
+        d.line(p, fill=(255, 255, 255, 28), width=2)
+try: sf = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 15)
+except Exception: sf = ImageFont.load_default()
+for s in data.get("streetLabels", []):
+    x, y = s["x"] * sx, s["y"] * sy
+    d.text((x, y), s.get("name", ""), fill=(255, 255, 255, 235), anchor="mm", font=sf)
+for g in data.get("greenAreas", []):
+    x, y = g["x"] * sx, g["y"] * sy
+    d.ellipse([x-9, y-9, x+9, y+9], outline=(120, 220, 150, 255), width=2)
+    d.text((x, y-16), g.get("label", ""), fill=(150, 230, 170, 255), anchor="mm", font=sf)
+for a in data.get("amenities", []):
+    x, y = a["x"] * sx, a["y"] * sy
+    col = (200, 164, 74) if a.get("id") == "portaria" else (14, 165, 233)
+    d.ellipse([x-12, y-12, x+12, y+12], fill=col + (255,))
+    d.text((x, y-20), a.get("label", ""), fill=col + (255,), anchor="mm", font=sf)
+ent = data.get("entrance")
+if ent:
+    d.ellipse([ent["x"]*sx-10, ent["y"]*sy-10, ent["x"]*sx+10, ent["y"]*sy+10], fill=(200,164,74,255))
+    d.text((ent["x"]*sx, ent["y"]*sy-18), ent.get("label",""), fill=(200,164,74,255), anchor="mm", font=sf)
+
 img.save(out)
 print("wrote", out, img.size)
