@@ -11,7 +11,7 @@ const SubdivisionLotMap = dynamic(
 export const metadata: Metadata = {
   title: 'Alto Bellevue | IMI — Inteligência Imobiliária',
   description:
-    'Loteamento residencial premium em Aloísio Pinto, Garanhuns (PE). 383 lotes de 289 a 693 m², com infraestrutura completa, portaria 24h e condições especiais de financiamento.',
+    'Loteamento residencial premium em Garanhuns, PE — BR-424, Km 86. 383 lotes de 289 a 693 m², com infraestrutura completa, portaria 24h e condições especiais de financiamento.',
   openGraph: {
     title: 'Alto Bellevue — Loteamento Premium em Garanhuns',
     description:
@@ -115,7 +115,7 @@ export default async function AltoBellevuePage({
 
           {/* Subtitle */}
           <p className="text-white/50 text-lg sm:text-xl font-light max-w-xl leading-relaxed mb-4">
-            Loteamento residencial premium em Aloísio Pinto, Garanhuns.
+            Loteamento residencial premium em Garanhuns, PE.
           </p>
           <p className="text-white/35 text-base font-light max-w-md leading-relaxed mb-16">
             Lotes de 289 a 693 m² com infraestrutura completa, segurança 24h e qualidade de vida.
@@ -221,7 +221,7 @@ export default async function AltoBellevuePage({
               <p className="text-white text-xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                 R$ 202.231 — R$ 476.570
               </p>
-              <p className="text-white/40 text-xs mt-1">Lotes de 289 m² a 693 m² · Garanhuns, PE</p>
+              <p className="text-white/40 text-xs mt-1">Lotes de 289 m² a 693 m² · BR-424, Km 86 · Garanhuns, PE</p>
             </div>
             <a
               href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Olá! Tenho interesse em um lote no Alto Bellevue. Gostaria de saber mais sobre preços e condições.')}`}

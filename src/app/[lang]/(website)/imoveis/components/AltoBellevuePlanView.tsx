@@ -4,7 +4,7 @@ import React, {
   useRef, useState, useCallback, useMemo, useEffect, memo,
 } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2 } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2, Shield, TreePine, Building2, Dumbbell, MapPin, Video } from 'lucide-react';
 import {
   loadAltoBellevueMap, AB_VIEWBOX,
   type ABMapData, type Amenity,
@@ -241,24 +241,60 @@ function computeDimensions(polygon: [number, number][], areaM2: number): { testa
 }
 
 /**
- * Medidas aproximadas das confrontações a partir das arestas do polígono.
- * Convenção de cadastro (vértices digitados a partir da frente): frente → lateral direita
- * → fundos → lateral esquerda. Só para polígonos de 4 lados; senão `null` (pendente).
+ * Medidas aproximadas das confrontações para qualquer polígono (≥ 3 vértices).
+ * Para 4 vértices: usa as arestas exatas na convenção cadastral (frente→lat.dir→fundos→lat.esq).
+ * Para n > 4: projeta as arestas em 4 grupos de direção a partir do maior eixo,
+ * somando os comprimentos por face — boa aproximação para lotes com chanfros ou micro-recuos.
  */
 function computeSides(
   polygon: [number, number][],
   areaM2: number,
 ): { frente: number; lateralDir: number; fundos: number; lateralEsq: number } | null {
-  if (!polygon || polygon.length !== 4 || !areaM2 || areaM2 <= 0) return null;
+  if (!polygon || polygon.length < 3 || !areaM2 || areaM2 <= 0) return null;
   const svgArea = polygonAreaSvg(polygon);
   if (svgArea <= 0) return null;
-  const scaleFactor = Math.sqrt(areaM2 / svgArea);
-  const edge = (i: number) => {
+  const sf = Math.sqrt(areaM2 / svgArea);
+  const r = (v: number) => Math.round(v * sf * 10) / 10;
+
+  if (polygon.length === 4) {
+    const edge = (i: number) => {
+      const [x1, y1] = polygon[i];
+      const [x2, y2] = polygon[(i + 1) % 4];
+      return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    };
+    return { frente: r(edge(0)), lateralDir: r(edge(1)), fundos: r(edge(2)), lateralEsq: r(edge(3)) };
+  }
+
+  // n > 4: find the primary axis (longest edge), then group all edges into 4 faces
+  const n = polygon.length;
+  let maxLen = 0, primAngle = 0;
+  for (let i = 0; i < n; i++) {
     const [x1, y1] = polygon[i];
-    const [x2, y2] = polygon[(i + 1) % 4];
-    return Math.round(Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2) * scaleFactor * 10) / 10;
+    const [x2, y2] = polygon[(i + 1) % n];
+    const len = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    if (len > maxLen) { maxLen = len; primAngle = Math.atan2(y2 - y1, x2 - x1); }
+  }
+  const cos = Math.cos(-primAngle), sin = Math.sin(-primAngle);
+  const groups = { frente: 0, fundos: 0, lateralDir: 0, lateralEsq: 0 };
+  for (let i = 0; i < n; i++) {
+    const [x1, y1] = polygon[i];
+    const [x2, y2] = polygon[(i + 1) % n];
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const rdx = dx * cos - dy * sin;
+    const rdy = dx * sin + dy * cos;
+    if (Math.abs(rdx) >= Math.abs(rdy)) {
+      if (rdx >= 0) groups.frente += len; else groups.fundos += len;
+    } else {
+      if (rdy >= 0) groups.lateralDir += len; else groups.lateralEsq += len;
+    }
+  }
+  return {
+    frente: r(groups.frente),
+    fundos: r(groups.fundos),
+    lateralDir: r(groups.lateralDir),
+    lateralEsq: r(groups.lateralEsq),
   };
-  return { frente: edge(0), lateralDir: edge(1), fundos: edge(2), lateralEsq: edge(3) };
 }
 
 /** Rua de acesso aproximada: label de rua mais próxima do centroide do lote. */
@@ -613,8 +649,8 @@ const MapInner = memo(function MapInner({
                   role="button"
                   tabIndex={0}
                   aria-label={`Área comum: ${g.label}`}
-                  onClick={(e) => { e.stopPropagation(); onAmenityClick({ id: 'area-verde', label: g.label, icon: '🌳', color: '#66BB6A', x: g.x, y: g.y }); }}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onAmenityClick({ id: 'area-verde', label: g.label, icon: '🌳', color: '#66BB6A', x: g.x, y: g.y }); } }}
+                  onClick={(e) => { e.stopPropagation(); onAmenityClick({ id: 'area-verde', label: g.label, icon: 'tree', color: '#66BB6A', x: g.x, y: g.y }); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onAmenityClick({ id: 'area-verde', label: g.label, icon: 'tree', color: '#66BB6A', x: g.x, y: g.y }); } }}
                 >
                   <circle cx={g.x} cy={g.y} r={hit} fill="transparent" />
                   <circle
@@ -684,58 +720,58 @@ const MapInner = memo(function MapInner({
                 strokeWidth={isSelected ? 1.8 : 0.7}
               />
 
-              {/* Rótulos internos do lote — compactos e centrados (organização tipo PDF):
-                  nº em destaque, área abaixo, e testada×profundidade em fonte menor. */}
-              {showLotNumbers && cx > 0 && cy > 0 && (
-                <text
-                  x={cx}
-                  y={showDimensions ? cy - 5.5 : showAreaLabels ? cy - 3.5 : cy}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fill={isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.92)'}
-                  fontSize={7}
-                  fontWeight={isSelected ? '800' : '700'}
-                  style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
-                >
-                  {lot.lot_number}
-                </text>
-              )}
+              {/* Rótulos internos — centrados verticalmente no lote (PDF-style).
+                  Três linhas: número, área m², testada×profundidade.
+                  Background outline melhora legibilidade sobre qualquer cor. */}
+              {showLotNumbers && cx > 0 && cy > 0 && (() => {
+                const hasArea = showAreaLabels && lot.area_m2;
+                const hasDims = !!dims;
+                // Total linhas visíveis → offset base para centralizar o grupo
+                const lineCount = 1 + (hasArea ? 1 : 0) + (hasDims ? 1 : 0);
+                const lineH = 5.6; // espaçamento entre linhas em coord SVG
+                const groupTop = cy - ((lineCount - 1) * lineH) / 2;
 
-              {/* Área m² — scale ≥ 4: logo abaixo do número */}
-              {showAreaLabels && cx > 0 && cy > 0 && lot.area_m2 && (
-                <text
-                  x={cx}
-                  y={showDimensions ? cy + 0.5 : cy + 3}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fill={isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.58)'}
-                  fontSize={4.6}
-                  fontWeight="500"
-                  style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
-                >
-                  {Math.round(lot.area_m2 as number)} m²
-                </text>
-              )}
+                const numColor = isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.92)';
+                const areaColor = isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.60)';
+                const dimColor = isSelected ? 'rgba(215,185,122,0.65)' : 'rgba(255,255,255,0.38)';
+                const outlineStroke = 'rgba(6,16,29,0.85)';
+                const outlineW = Math.max(0.4, 1.5 / scale);
 
-              {/* Testada × Profundidade — fonte menor, dentro do lote (como no PDF) */}
-              {dims && cx > 0 && cy > 0 && (
-                <text
-                  x={cx}
-                  y={cy + 5.2}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fill={isSelected ? 'rgba(215,185,122,0.62)' : 'rgba(255,255,255,0.40)'}
-                  fontSize={3.1}
-                  fontWeight="500"
-                  letterSpacing="-0.02em"
-                  style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
-                >
-                  {fmtM(dims.testada)} × {fmtM(dims.profundidade)}
-                </text>
-              )}
+                let row = 0;
+                const y0 = groupTop + row++ * lineH;
+                const y1 = hasArea ? groupTop + row++ * lineH : null;
+                const y2 = hasDims ? groupTop + row++ * lineH : null;
 
-              {/* Rua de acesso NÃO é mais desenhada dentro do lote (fica só nos eixos de
-                  rua, acima dos lotes, e no card de detalhe). */}
+                return (
+                  <g style={{ pointerEvents: 'none', userSelect: 'none' }}>
+                    {/* Lot number */}
+                    <text x={cx} y={y0} textAnchor="middle" dominantBaseline="central"
+                      stroke={outlineStroke} strokeWidth={outlineW} paintOrder="stroke"
+                      fill={numColor} fontSize={7} fontWeight={isSelected ? '800' : '700'}
+                      style={{ fontFamily: 'monospace' }}>
+                      {lot.lot_number}
+                    </text>
+                    {/* Area m² */}
+                    {y1 !== null && (
+                      <text x={cx} y={y1} textAnchor="middle" dominantBaseline="central"
+                        stroke={outlineStroke} strokeWidth={outlineW} paintOrder="stroke"
+                        fill={areaColor} fontSize={4.4} fontWeight="500"
+                        style={{ fontFamily: 'monospace' }}>
+                        {Math.round(lot.area_m2 as number)} m²
+                      </text>
+                    )}
+                    {/* Testada × Profundidade — compact format */}
+                    {y2 !== null && dims && (
+                      <text x={cx} y={y2} textAnchor="middle" dominantBaseline="central"
+                        stroke={outlineStroke} strokeWidth={outlineW} paintOrder="stroke"
+                        fill={dimColor} fontSize={3.0} fontWeight="500" letterSpacing="-0.01em"
+                        style={{ fontFamily: 'monospace' }}>
+                        {fmtM(dims.testada)} × {fmtM(dims.profundidade)}
+                      </text>
+                    )}
+                  </g>
+                );
+              })()}
             </g>
           );
         })}
@@ -1175,6 +1211,27 @@ function LotBottomSheet({
   );
 }
 
+// ── Amenity icon (ID-mapped SVG) — no emoji ───────────────────────────────────
+
+function AmenityIcon({ id, color, size = 22 }: { id: string; color: string; size?: number }) {
+  const c = color ?? '#C8A44A';
+  const prefix = id.replace(/-\d+$/, '');
+  if (prefix === 'portaria') return <Shield size={size} style={{ color: c }} />;
+  if (prefix === 'lazer') return <Dumbbell size={size} style={{ color: c }} />;
+  if (prefix === 'area-verde') return <TreePine size={size} style={{ color: c }} />;
+  if (prefix === 'coworking') return <Building2 size={size} style={{ color: c }} />;
+  if (prefix === 'recreativa') return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <line x1="3" y1="9" x2="21" y2="9" />
+      <line x1="3" y1="15" x2="21" y2="15" />
+      <line x1="9" y1="9" x2="9" y2="21" />
+      <line x1="15" y1="9" x2="15" y2="21" />
+    </svg>
+  );
+  return <MapPin size={size} style={{ color: c }} />;
+}
+
 // ── Common-area Bottom Sheet ──────────────────────────────────────────────────
 
 function AmenityBottomSheet({
@@ -1228,9 +1285,9 @@ function AmenityBottomSheet({
           <div style={{
             width: 52, height: 52, borderRadius: 16, flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 26, background: `${amenity.color}1F`, border: `1.5px solid ${amenity.color}55`,
+            background: `${amenity.color}1F`, border: `1.5px solid ${amenity.color}55`,
           }}>
-            {amenity.icon || '📍'}
+            <AmenityIcon id={amenity.id} color={amenity.color} size={26} />
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
             <p style={{ fontSize: 10, fontWeight: 700, color: '#C8A44A', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 2px', fontFamily: "'Outfit', sans-serif" }}>
@@ -1257,8 +1314,9 @@ function AmenityBottomSheet({
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
               />
             </div>
-            <p style={{ fontSize: 10.5, color: '#948F84', margin: '6px 2px 0', fontWeight: 600 }}>
-              🅥 Tour virtual 360° — arraste para explorar · óculos VR suportado
+            <p style={{ fontSize: 10.5, color: '#948F84', margin: '6px 2px 0', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <Video size={12} style={{ color: '#C8A44A', flexShrink: 0 }} />
+              Tour virtual 360° — arraste para explorar · óculos VR suportado
             </p>
           </div>
         )}
@@ -2019,6 +2077,56 @@ export default function AltoBellevuePlanView({
           </div>
         ))}
       </div>}
+
+      {/* ── ÁREAS COMUNS ────────────────────────────────── */}
+      {!isFullscreen && mapData?.amenities && mapData.amenities.length > 0 && (
+        <div style={{ background: '#fff', borderTop: '1px solid rgba(0,0,0,0.06)', padding: '12px 16px' }}>
+          <p style={{ fontSize: 9, fontWeight: 700, color: '#C8C3BB', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 10px', fontFamily: "'Outfit', sans-serif" }}>
+            Áreas Comuns
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            {mapData.amenities.map(a => (
+              <button
+                key={a.id}
+                onClick={() => handleAmenityClick(a)}
+                className="flex items-center gap-2 h-9 px-3 rounded-xl transition-all active:scale-95 hover:opacity-90"
+                style={{
+                  background: `${a.color}14`,
+                  border: `1.5px solid ${a.color}40`,
+                  color: a.color,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  fontFamily: "'Outfit', sans-serif",
+                  flexShrink: 0,
+                }}
+                aria-label={`Ver detalhes: ${a.label}`}
+              >
+                <AmenityIcon id={a.id} color={a.color} size={14} />
+                {a.label}
+              </button>
+            ))}
+            {mapData.greenAreas && mapData.greenAreas.length > 0 && (
+              <button
+                onClick={() => handleAmenityClick({ id: 'area-verde', label: 'Área Verde', icon: 'tree', color: '#66BB6A', x: mapData.greenAreas[0].x, y: mapData.greenAreas[0].y })}
+                className="flex items-center gap-2 h-9 px-3 rounded-xl transition-all active:scale-95 hover:opacity-90"
+                style={{
+                  background: 'rgba(102,187,106,0.08)',
+                  border: '1.5px solid rgba(102,187,106,0.35)',
+                  color: '#66BB6A',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  fontFamily: "'Outfit', sans-serif",
+                  flexShrink: 0,
+                }}
+                aria-label="Ver detalhes: Áreas Verdes"
+              >
+                <TreePine size={14} style={{ color: '#66BB6A' }} />
+                Área Verde ({mapData.greenAreas.length})
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ── CTA STRIP — hidden while detail sheet is open ── */}
       {!isFullscreen && <AnimatePresence>
