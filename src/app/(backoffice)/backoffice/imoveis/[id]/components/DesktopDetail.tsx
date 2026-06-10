@@ -470,6 +470,98 @@ export function DesktopImovelDetail({
             </div>
           )}
 
+          {/* TAB: MAPA & ÁREAS COMUNS */}
+          {activeTab === 'mapa' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Mapa */}
+              {(dev.lat && dev.lng) ? (
+                <div style={{ ...CARD, padding: 0, overflow: 'hidden' }}>
+                  <div style={{ padding: '16px 24px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <p style={EYEBROW}>Localização no Mapa</p>
+                    <a
+                      href={`https://maps.google.com/?q=${dev.lat},${dev.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 11 }}
+                    >
+                      <MapPin size={12} /> Ver no Google Maps
+                    </a>
+                  </div>
+                  <div style={{ height: 360, position: 'relative', margin: '16px 0 0' }}>
+                    <iframe
+                      src={`https://maps.google.com/maps?q=${dev.lat},${dev.lng}&z=15&output=embed`}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      allowFullScreen
+                      title="Mapa do imóvel"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div style={{ ...CARD, padding: 24, textAlign: 'center' }}>
+                  <MapPin size={32} style={{ color: T.textDim, margin: '0 auto 12px', display: 'block' }} />
+                  <p style={{ color: T.textMuted, fontSize: 13, marginBottom: 16 }}>Coordenadas não cadastradas. Edite o imóvel para adicionar localização.</p>
+                  <Link href={`/backoffice/imoveis/${id}/editar`} style={BTN_PRIMARY}><Edit size={13} /> Editar Imóvel</Link>
+                </div>
+              )}
+
+              {/* Áreas Comuns */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <p style={EYEBROW}>Áreas Comuns</p>
+                  <Link href={`/backoffice/imoveis/${id}/editar`} style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 11 }}>
+                    <Edit size={12} /> Gerenciar Mídias
+                  </Link>
+                </div>
+
+                {dev.common_areas_description && (
+                  <p style={{ fontSize: 13, color: T.textMuted, marginBottom: 20, lineHeight: 1.6, padding: '12px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: `1px solid ${T.border}` }}>
+                    {dev.common_areas_description}
+                  </p>
+                )}
+
+                {/* Fotos das Áreas Comuns */}
+                {(() => {
+                  const imgs = dev.images?.commonAreas || dev.common_areas_images || []
+                  return imgs.length > 0 ? (
+                    <div>
+                      <p style={{ ...EYEBROW, fontSize: '8px', marginBottom: 12 }}>Fotos ({imgs.length})</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
+                        {imgs.map((url: string, i: number) => (
+                          <div key={i} style={{ aspectRatio: '16/9', borderRadius: 8, overflow: 'hidden', border: `1px solid ${T.border}` }}>
+                            <img src={url} alt={`Área comum ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '32px 0', color: T.textDim, fontSize: 13 }}>
+                      Nenhuma foto de áreas comuns cadastrada.{' '}
+                      <Link href={`/backoffice/imoveis/${id}/editar`} style={{ color: 'var(--gold, var(--accent-400))', textDecoration: 'underline' }}>Adicionar agora</Link>
+                    </div>
+                  )
+                })()}
+
+                {/* Vídeos das Áreas Comuns */}
+                {(() => {
+                  const vids = dev.images?.commonAreasVideos || dev.common_areas_videos || []
+                  return vids.length > 0 ? (
+                    <div style={{ marginTop: 24 }}>
+                      <p style={{ ...EYEBROW, fontSize: '8px', marginBottom: 12 }}>Vídeos ({vids.length})</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        {vids.map((url: string, i: number) => (
+                          <video key={i} src={url} controls style={{ width: '100%', borderRadius: 8, border: `1px solid ${T.border}` }} />
+                        ))}
+                      </div>
+                    </div>
+                  ) : null
+                })()}
+              </div>
+            </div>
+          )}
+
           {/* TAB: MAIS */}
           {activeTab === 'more' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -479,7 +571,7 @@ export function DesktopImovelDetail({
                   {[
                     { icon: Edit, label: 'Editar Imóvel', href: `/backoffice/imoveis/${id}/editar`, primary: true },
                     { icon: Scale, label: 'Solicitar Avaliação', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}`, primary: true },
-                    ...(dev.type === 'loteamento'
+                    ...(dev.type === 'loteamento' || dev.type === 'condominio_fechado'
                       ? [
                           { icon: Layers, label: 'Gerenciar Lotes', href: `/backoffice/imoveis/${id}/lotes`, primary: false },
                           { icon: MapPinned, label: 'Áreas Comuns do Mapa', href: `/backoffice/imoveis/${id}/mapa`, primary: false },
@@ -591,7 +683,7 @@ export function DesktopImovelDetail({
           <div style={{ ...CARD, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p style={{ ...EYEBROW, marginBottom: 6 }}>Ações</p>
             <Link href={`/backoffice/imoveis/${id}/editar`} style={{ ...BTN_PRIMARY, justifyContent: 'center' }}><Edit size={13} /> Editar Imóvel</Link>
-            {dev.type === 'loteamento'
+            {dev.type === 'loteamento' || dev.type === 'condominio_fechado'
               ? <Link href={`/backoffice/imoveis/${id}/lotes`} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}><Layers size={13} /> Gerenciar Lotes</Link>
               : <Link href={`/backoffice/imoveis/${id}/unidades`} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}><Layers size={13} /> Ver Unidades</Link>
             }

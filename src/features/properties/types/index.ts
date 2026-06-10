@@ -61,6 +61,7 @@ export const PROPERTY_TYPES = [
   { value: 'comercial', label: 'Comercial' },
   { value: 'terreno', label: 'Terreno' },
   { value: 'loteamento', label: 'Loteamento' },
+  { value: 'condominio_fechado', label: 'Condomínio Fechado' },
   { value: 'studio', label: 'Studio' },
   { value: 'flat', label: 'Flat' },
   { value: 'duplex', label: 'Duplex' },

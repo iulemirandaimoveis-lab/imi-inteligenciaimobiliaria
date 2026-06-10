@@ -338,10 +338,11 @@ const TABS = [
 ] as const
 type TabId = typeof TABS[number]['id']
 
-const tiposImovel = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Terreno', 'Loteamento', 'Comercial', 'Empreendimento', 'Flat', 'Penthouse', 'Villa', 'Resort']
+const tiposImovel = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Terreno', 'Loteamento', 'Condomínio Fechado', 'Comercial', 'Empreendimento', 'Flat', 'Penthouse', 'Villa', 'Resort']
 const dbTypeToForm: Record<string, string> = {
   apartamento: 'Apartamento', apartment: 'Apartamento', casa: 'Casa', house: 'Casa',
   flat: 'Flat', lote: 'Terreno', land: 'Terreno', loteamento: 'Loteamento',
+  condominio_fechado: 'Condomínio Fechado',
   comercial: 'Comercial', commercial: 'Comercial',
   resort: 'Resort', penthouse: 'Penthouse', studio: 'Studio', mixed: 'Empreendimento', villa: 'Villa',
   cobertura: 'Cobertura', duplex: 'Studio', garden: 'Studio', sala: 'Comercial', triplex: 'Studio',

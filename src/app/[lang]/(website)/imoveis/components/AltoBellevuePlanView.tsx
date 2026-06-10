@@ -151,7 +151,7 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
   'area-verde': {
     title: 'Área Verde',
     subtitle: 'Paisagismo e bem-estar',
-    description: 'Áreas verdes preservadas e arborizadas, distribuídas pelo loteamento para qualidade de vida e convívio ao ar livre.',
+    description: 'Áreas verdes preservadas e arborizadas, distribuídas pelo condomínio para qualidade de vida e convívio ao ar livre.',
     fn: 'Preservação e paisagismo',
     photos: [`${AB_AMEN_IMG}/ab-amenity-02.jpg`, `${AB_AMEN_IMG}/ab-amenity-09.jpg`, `${AB_AMEN_IMG}/ab-amenity-10.jpg`],
   },
@@ -1820,7 +1820,7 @@ export default function AltoBellevuePlanView({
             {/* Planta estática (offline-first) */}
             <img
               src="/images/maps/alto-bellevue-plant.jpg"
-              alt="Planta do loteamento Alto Bellevue"
+              alt="Planta do condomínio fechado Alto Bellevue"
               className="w-full h-full"
               style={{ objectFit: 'cover', opacity: 0.55 }}
             />

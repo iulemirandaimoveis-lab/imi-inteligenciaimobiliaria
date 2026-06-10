@@ -205,8 +205,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
     const whatsappContact = commercialWhatsapp ?? brokerData?.phone?.replace(/\D/g, '') ?? '5581997230455'
 
-    // For loteamentos: override price with real minimum available lot price from subdivision_lots
-    if (data.type === 'loteamento') {
+    // For loteamentos / condomínios fechados: override price with real minimum available lot price from subdivision_lots
+    if (data.type === 'loteamento' || data.type === 'condominio_fechado') {
         const { data: lotPrices } = await supabaseAdmin
             .from('subdivision_lots')
             .select('price')
@@ -307,7 +307,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         { name: development.name, url: pageUrl },
     ])
 
-    const isLoteamento = data.type === 'loteamento'
+    const isLoteamento = data.type === 'loteamento' || data.type === 'condominio_fechado'
     const lotMapEnabled = isLoteamento && data.lot_map_enabled === true
     const lotMapJsonUrl = `/maps/${params.slug}-lots.json`
     const anchorSections = isLoteamento ? ANCHOR_SECTIONS_LOTEAMENTO : ANCHOR_SECTIONS
