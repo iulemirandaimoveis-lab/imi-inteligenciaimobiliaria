@@ -62,7 +62,7 @@ export default async function UnidadePage({ params }: Props) {
 
   const cfg = AVAILABILITY_COLORS[unit.status as keyof typeof AVAILABILITY_COLORS] ?? AVAILABILITY_COLORS.available
   const isAvailable = unit.status === 'available' || unit.status === 'launching'
-  const WHATSAPP = '5581997230455'
+  const WHATSAPP = '5581986141487'
   const waMsg = encodeURIComponent(
     `Olá! Tenho interesse na unidade ${unit.code} do ${dev?.name ?? slug}. Gostaria de mais informações.`
   )

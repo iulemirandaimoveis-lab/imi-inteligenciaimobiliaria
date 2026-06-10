@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 }
 
 const DEVELOPMENT_ID = 'ab7d1fc1-f069-4e3b-a515-8e1204c11247'
-const WHATSAPP = '5581997230455'
+const WHATSAPP = '5581986141487'
 
 const INFO_CARDS = [
   {

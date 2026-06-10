@@ -44,7 +44,7 @@ interface Props {
 export default function GenericBuildingViewer({
   developmentId,
   developmentName,
-  whatsappPhone = '5581997230455',
+  whatsappPhone = '5581986141487',
 }: Props) {
   const [units, setUnits] = useState<IMIProperty[]>([])
   const [loading, setLoading] = useState(true)

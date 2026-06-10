@@ -51,7 +51,7 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone }: 
             imi: `Olá! Gostaria de receber a Análise IMI completa do ${development.name}.`,
         };
         const message = encodeURIComponent(messages[ctaType]);
-        window.open(`https://wa.me/${whatsappPhone ?? '5581997230455'}?text=${message}`, '_blank');
+        window.open(`https://wa.me/${whatsappPhone ?? '5581986141487'}?text=${message}`, '_blank');
         setIsModalOpen(false);
     };
 

@@ -193,7 +193,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             id: 'default',
             name: 'Iule Miranda',
             email: 'iulemirandaimoveis@gmail.com',
-            phone: '+5581997230455',
+            phone: '+5581986141487',
             creci: '17933',
             avatar_url: 'https://zocffccwjjyelwrgunhu.supabase.co/storage/v1/object/public/avatars/avatars/6a51365d-0433-4a0e-b585-3e6d6a6c28d7.jpg',
         }
@@ -203,7 +203,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     if (commercialWhatsapp) {
         brokerData = { ...brokerData, phone: `+${commercialWhatsapp}` }
     }
-    const whatsappContact = commercialWhatsapp ?? brokerData?.phone?.replace(/\D/g, '') ?? '5581997230455'
+    const whatsappContact = commercialWhatsapp ?? brokerData?.phone?.replace(/\D/g, '') ?? '5581986141487'
 
     // For loteamentos / condomínios fechados: override price with real minimum available lot price from subdivision_lots
     if (data.type === 'loteamento' || data.type === 'condominio_fechado') {

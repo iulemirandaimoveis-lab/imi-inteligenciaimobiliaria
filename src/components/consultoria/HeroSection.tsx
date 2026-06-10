@@ -63,7 +63,7 @@ export function HeroSection() {
                             </a>
 
                             <a
-                                href="https://wa.me/5581997230455"
+                                href="https://wa.me/5581986141487"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-transparent text-white rounded-xl border border-white/20 hover:bg-white/5 transition-all duration-300"

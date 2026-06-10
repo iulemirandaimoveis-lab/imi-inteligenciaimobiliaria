@@ -465,7 +465,7 @@ export default async function AboutPage({
                             <span className="absolute bottom-0 left-[12%] right-[12%] h-[2px] pointer-events-none" style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
                         </Link>
                         <a
-                            href="https://wa.me/5581997230455"
+                            href="https://wa.me/5581986141487"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold border border-white/10 text-slate-300 hover:bg-white/[0.04] hover:text-white rounded-lg transition-all duration-300"

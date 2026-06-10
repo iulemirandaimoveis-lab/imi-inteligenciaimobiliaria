@@ -18,7 +18,7 @@ import {
 
 const MIN_SCALE = 0.08
 const MAX_SCALE = 10
-const WHATSAPP_NUMBER = '5581997230455'
+const WHATSAPP_NUMBER = '5581986141487'
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', {

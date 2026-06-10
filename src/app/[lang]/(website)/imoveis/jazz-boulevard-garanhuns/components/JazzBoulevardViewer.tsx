@@ -16,7 +16,7 @@ interface Props {
   whatsappPhone?: string
 }
 
-export default function JazzBoulevardViewer({ whatsappPhone = '5581997230455' }: Props) {
+export default function JazzBoulevardViewer({ whatsappPhone = '5581986141487' }: Props) {
   const [selectedTower, setSelectedTower] = useState<'A' | 'B'>('A')
   const [selectedFloor, setSelectedFloor] = useState(1)
   const [selectedUnit, setSelectedUnit] = useState<IMIProperty | null>(null)

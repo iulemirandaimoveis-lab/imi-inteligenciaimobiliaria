@@ -347,7 +347,7 @@ export default function SubdivisionPlanView({
   lots,
   developmentId,
   developmentName,
-  whatsappPhone = '5581997230455',
+  whatsappPhone = '5581986141487',
   onLotClick,
 }: {
   lots: Lot[];

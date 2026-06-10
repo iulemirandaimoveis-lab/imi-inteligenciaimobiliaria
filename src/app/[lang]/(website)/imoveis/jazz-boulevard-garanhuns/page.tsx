@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
 }
 
-const WHATSAPP = '5581997230455'
+const WHATSAPP = '5581986141487'
 
 const HIGHLIGHTS = [
   { icon: Building2, label: '2 Torres', sub: '12 andares cada' },

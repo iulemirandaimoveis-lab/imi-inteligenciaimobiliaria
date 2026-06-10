@@ -83,7 +83,7 @@ export default function RentalDetailClient({ property, bookedDates, lang }: Prop
     const [calYear, setCalYear] = useState(new Date().getFullYear())
 
     const whatsappMsg = encodeURIComponent(`Olá! Tenho interesse no imóvel "${p.name as string}" para locação. Poderia me passar mais informações?`)
-    const whatsappUrl = `https://wa.me/5581997230455?text=${whatsappMsg}`
+    const whatsappUrl = `https://wa.me/5581986141487?text=${whatsappMsg}`
 
     function nextMonth() { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1) } else setCalMonth(m => m + 1) }
     function prevMonth() { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1) } else setCalMonth(m => m - 1) }
@@ -342,7 +342,7 @@ export default function RentalDetailClient({ property, bookedDates, lang }: Prop
                             </a>
 
                             <a
-                                href="tel:+5581997230455"
+                                href="tel:+5581986141487"
                                 className="w-full flex items-center justify-center gap-2 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 hover:bg-white/5 active:scale-[0.98]"
                                 style={{ background: 'transparent', border: `2px solid rgba(200,164,74,0.35)`, color: GOLD, textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                             >

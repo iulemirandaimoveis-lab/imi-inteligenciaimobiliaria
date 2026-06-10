@@ -360,7 +360,7 @@ function Step4({ strategy, form, lang }: { strategy: StrategyResult; form: FormS
         <span className="text-lg">→</span>
       </a>
 
-      <a href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Fiz a simulação no site e quero entender melhor meu cenário. Renda: ${R$(form.income)}, Imóvel: ${R$(form.property_value)}, Subsídio estimado: ${R$(strategy.total_subsidy)}`)}`}
+      <a href={`https://wa.me/5581986141487?text=${encodeURIComponent(`Olá! Fiz a simulação no site e quero entender melhor meu cenário. Renda: ${R$(form.income)}, Imóvel: ${R$(form.property_value)}, Subsídio estimado: ${R$(strategy.total_subsidy)}`)}`}
         target="_blank" rel="noopener noreferrer"
         className="flex items-center justify-center w-full h-12 rounded-xl bg-[#0F2035] border border-[rgba(200,164,74,0.25)] text-white text-sm font-semibold hover:border-[rgba(255,255,255,0.06)] transition-colors">
         Falar com Especialista
