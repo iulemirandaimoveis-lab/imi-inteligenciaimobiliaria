@@ -89,18 +89,21 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     const typeToTipo: Record<string, string> = {
         'Apartamento': 'apartamento', 'Casa': 'casa', 'Cobertura': 'cobertura',
         'Studio': 'studio', 'Loft': 'flat', 'Terreno': 'lote', 'Loteamento': 'lote',
+        'Condomínio Fechado': 'lote',
         'Comercial': 'comercial', 'Flat': 'flat', 'Penthouse': 'apartamento',
         'Villa': 'casa', 'Empreendimento': 'apartamento', 'Resort': 'resort',
     }
     const typeToEn: Record<string, string> = {
         'Apartamento': 'apartment', 'Casa': 'house', 'Cobertura': 'penthouse',
         'Studio': 'studio', 'Loft': 'studio', 'Terreno': 'land', 'Loteamento': 'loteamento',
+        'Condomínio Fechado': 'condominio_fechado',
         'Comercial': 'commercial', 'Flat': 'apartment', 'Penthouse': 'penthouse',
         'Villa': 'house', 'Empreendimento': 'apartment', 'Resort': 'resort',
     }
     const typeToPropType: Record<string, string> = {
         'Apartamento': 'apartment', 'Casa': 'house', 'Cobertura': 'apartment',
         'Studio': 'apartment', 'Loft': 'apartment', 'Terreno': 'land', 'Loteamento': 'land',
+        'Condomínio Fechado': 'land',
         'Comercial': 'commercial', 'Flat': 'apartment', 'Penthouse': 'apartment',
         'Villa': 'house', 'Empreendimento': 'mixed', 'Resort': 'resort',
     }
@@ -111,6 +114,7 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     }
     const rawTypeToType: Record<string, string> = {
         'loteamento': 'loteamento',
+        'condominio_fechado': 'condominio_fechado',
     }
     if (result.type && typeToTipo[result.type]) {
         // Form sends capitalized Portuguese, normalize to constraint values
@@ -126,7 +130,7 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     const validTipos = new Set(['apartamento', 'casa', 'flat', 'lote', 'comercial', 'resort', 'cobertura', 'studio', 'terreno', 'duplex', 'garden', 'sala'])
     if (result.tipo && !validTipos.has(result.tipo)) result.tipo = null
     // Sanitize type against constraint values
-    const validTypes = new Set(['apartment', 'house', 'penthouse', 'studio', 'land', 'commercial', 'resort', 'villa', 'loft', 'flat', 'duplex', 'triplex', 'cobertura', 'garden', 'terreno', 'sala', 'loteamento'])
+    const validTypes = new Set(['apartment', 'house', 'penthouse', 'studio', 'land', 'commercial', 'resort', 'villa', 'loft', 'flat', 'duplex', 'triplex', 'cobertura', 'garden', 'terreno', 'sala', 'loteamento', 'condominio_fechado'])
     if (result.type && !validTypes.has(result.type)) result.type = null
     // Sanitize property_type against constraint values
     const validPropTypes = new Set(['apartment', 'house', 'commercial', 'land', 'mixed', 'penthouse', 'studio', 'resort', 'villa', 'loft', 'flat'])
@@ -305,14 +309,14 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
         const enToPt: Record<string, string> = {
             apartment: 'apartamento', house: 'casa', penthouse: 'apartamento',
             studio: 'studio', land: 'lote', commercial: 'comercial',
-            resort: 'resort', flat: 'flat', loteamento: 'lote',
+            resort: 'resort', flat: 'flat', loteamento: 'lote', condominio_fechado: 'lote',
             villa: 'casa', duplex: 'duplex', triplex: 'duplex',
             cobertura: 'cobertura', garden: 'garden', terreno: 'terreno', sala: 'sala',
         }
         const enToPropType: Record<string, string> = {
             apartment: 'apartment', house: 'house', penthouse: 'apartment',
             studio: 'apartment', land: 'land', commercial: 'commercial',
-            resort: 'mixed', flat: 'apartment', loteamento: 'land',
+            resort: 'mixed', flat: 'apartment', loteamento: 'land', condominio_fechado: 'land',
             villa: 'house', duplex: 'apartment', triplex: 'apartment',
             cobertura: 'apartment', garden: 'apartment', terreno: 'land', sala: 'commercial',
         }
