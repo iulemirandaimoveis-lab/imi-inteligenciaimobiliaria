@@ -37,6 +37,18 @@ export interface Development {
   lng?: number
   developer?: { id: string; name: string; logo_url?: string | null } | null
   broker_id?: string | null
+  images?: {
+    main?: string
+    gallery?: string[]
+    videos?: string[]
+    floorPlans?: string[]
+    heroVideo?: string
+    commonAreas?: string[]
+    commonAreasVideos?: string[]
+  } | null
+  common_areas_images?: string[] | null
+  common_areas_videos?: string[] | null
+  common_areas_description?: string | null
 }
 
 export interface BrokerInfo {
@@ -48,12 +60,13 @@ export interface BrokerInfo {
   creci?: string | null
 }
 
-export type TabKey = 'overview' | 'analysis' | 'analytics' | 'more'
+export type TabKey = 'overview' | 'analysis' | 'analytics' | 'mapa' | 'more'
 
 export const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: 'Visão Geral' },
   { key: 'analysis', label: 'Análise' },
   { key: 'analytics', label: 'Analytics' },
+  { key: 'mapa', label: 'Mapa & Áreas Comuns' },
   { key: 'more', label: 'Mais' },
 ]
 

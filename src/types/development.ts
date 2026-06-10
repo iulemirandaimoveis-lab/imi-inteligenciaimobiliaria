@@ -34,7 +34,14 @@ export interface Development {
         videos: string[]
         floorPlans: string[]
         heroVideo?: string
+        commonAreas?: string[]
+        commonAreasVideos?: string[]
     }
+
+    // Áreas Comuns / Mapa
+    common_areas_images?: string[] | null
+    common_areas_videos?: string[] | null
+    common_areas_description?: string | null
     video_url: string | null
     external_links: Record<string, string>
     tags: string[]
