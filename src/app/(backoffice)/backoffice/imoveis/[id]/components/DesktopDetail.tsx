@@ -7,7 +7,7 @@ import {
   ArrowLeft, MapPin, Building2, Bed, Bath, Car, Ruler, Edit, QrCode,
   BarChart2, Layers, Clock, TrendingUp, TrendingDown, Copy, MessageSquare,
   ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles,
-  Activity, CheckSquare, Zap, Scale, Handshake, User,
+  Activity, CheckSquare, Zap, Scale, Handshake, User, MapPinned,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -480,7 +480,10 @@ export function DesktopImovelDetail({
                     { icon: Edit, label: 'Editar Imóvel', href: `/backoffice/imoveis/${id}/editar`, primary: true },
                     { icon: Scale, label: 'Solicitar Avaliação', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}`, primary: true },
                     ...(dev.type === 'loteamento'
-                      ? [{ icon: Layers, label: 'Gerenciar Lotes', href: `/backoffice/imoveis/${id}/lotes`, primary: false }]
+                      ? [
+                          { icon: Layers, label: 'Gerenciar Lotes', href: `/backoffice/imoveis/${id}/lotes`, primary: false },
+                          { icon: MapPinned, label: 'Áreas Comuns do Mapa', href: `/backoffice/imoveis/${id}/mapa`, primary: false },
+                        ]
                       : [{ icon: Layers, label: 'Ver Unidades', href: `/backoffice/imoveis/${id}/unidades`, primary: false }]
                     ),
                     { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics`, primary: false },

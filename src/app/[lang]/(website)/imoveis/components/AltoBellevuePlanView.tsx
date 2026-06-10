@@ -41,6 +41,8 @@ interface Props {
   developmentId: string;
   developmentName: string;
   whatsappPhone?: string;
+  /** Mídia/textos das áreas comuns vindos do backoffice (developments.lot_map_amenities, JSONB). */
+  amenityOverrides?: Record<string, unknown>[];
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -1341,8 +1343,18 @@ export default function AltoBellevuePlanView({
   lots: dbLots,
   developmentName,
   whatsappPhone = '5581997230455',
+  amenityOverrides,
 }: Props) {
   const { data: mapData, loading, error, retry } = useABMap();
+  // Lookup das mídias do backoffice por id de área (sobrepõe os defaults da UI).
+  const overrideMap = useMemo(() => {
+    const m = new Map<string, Partial<Amenity>>();
+    for (const o of amenityOverrides ?? []) {
+      const id = typeof o.id === 'string' ? o.id : null;
+      if (id) m.set(id, o as Partial<Amenity>);
+    }
+    return m;
+  }, [amenityOverrides]);
   const priceMap = usePrices();
   const availability = useAvailability();
   const planLots = mapData?.lots ?? [];
@@ -1532,11 +1544,12 @@ export default function AltoBellevuePlanView({
   const zoomOut = useCallback(() => setVb(prev => zoomViewBox(prev, 1.33)), []);
   const resetView = useCallback(() => animateTo(INITIAL_VB), [animateTo]);
 
-  // Área comum clicada → abre painel (e fecha painel de lote, se houver)
+  // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
     setSelectedLot(null);
-    setSelectedAmenity(a);
-  }, []);
+    const ov = overrideMap.get(a.id) ?? overrideMap.get(a.id.replace(/-\d+$/, ''));
+    setSelectedAmenity(ov ? { ...a, ...ov, id: a.id, x: a.x, y: a.y } : a);
+  }, [overrideMap]);
 
   // "Ver no mapa" → centraliza e aproxima na área comum
   const locateAmenity = useCallback((a: { x: number; y: number }) => {

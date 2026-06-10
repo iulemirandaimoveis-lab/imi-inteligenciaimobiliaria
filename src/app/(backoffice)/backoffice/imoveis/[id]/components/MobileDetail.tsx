@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   ArrowLeft, MapPin, Building2, Bed, Bath, Car, Ruler, Edit, QrCode,
-  BarChart2, Layers, Zap, TrendingUp, TrendingDown, Copy, MessageSquare,
+  BarChart2, Layers, Zap, TrendingUp, TrendingDown, Copy, MessageSquare, MapPinned,
   ChevronLeft, ChevronRight, ExternalLink, Home, Share2, Sparkles, Scale, Handshake, User,
 } from 'lucide-react'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -675,9 +675,12 @@ export function MobileImovelDetail({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {[
                   { icon: Edit, label: 'Editar', href: `/backoffice/imoveis/${id}/editar` },
-                  dev.type === 'loteamento'
-                    ? { icon: Layers, label: 'Lotes', href: `/backoffice/imoveis/${id}/lotes` }
-                    : { icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
+                  ...(dev.type === 'loteamento'
+                    ? [
+                        { icon: Layers, label: 'Lotes', href: `/backoffice/imoveis/${id}/lotes` },
+                        { icon: MapPinned, label: 'Áreas do Mapa', href: `/backoffice/imoveis/${id}/mapa` },
+                      ]
+                    : [{ icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` }]),
                   { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics` },
                   { icon: Scale, label: 'Avaliacao', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}` },
                   { icon: QrCode, label: 'QR Code', href: `/backoffice/tracking/qr?propertyId=${id}&propertyName=${encodeURIComponent(dev?.name || '')}` },
