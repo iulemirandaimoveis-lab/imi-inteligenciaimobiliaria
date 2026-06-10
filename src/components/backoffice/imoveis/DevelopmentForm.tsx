@@ -43,7 +43,7 @@ interface DevelopmentFormProps {
 
 export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }: DevelopmentFormProps) {
     const { developers } = useDevelopers()
-    const [activeTab, setActiveTab] = useState<'info' | 'location' | 'specs' | 'media'>('info')
+    const [activeTab, setActiveTab] = useState<'info' | 'location' | 'specs' | 'media' | 'areas_comuns'>('info')
 
     // Media States
     const [gallery, setGallery] = useState<string[]>(initialData?.images?.gallery || [])
@@ -51,6 +51,15 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
     const [floorPlans, setFloorPlans] = useState<string[]>(initialData?.images?.floorPlans || [])
     const [heroVideo, setHeroVideo] = useState<string[]>(
         initialData?.images?.heroVideo ? [initialData.images.heroVideo] : []
+    )
+    const [commonAreasImages, setCommonAreasImages] = useState<string[]>(
+        initialData?.images?.commonAreas || initialData?.common_areas_images || []
+    )
+    const [commonAreasVideos, setCommonAreasVideos] = useState<string[]>(
+        initialData?.images?.commonAreasVideos || initialData?.common_areas_videos || []
+    )
+    const [commonAreasDescription, setCommonAreasDescription] = useState<string>(
+        initialData?.common_areas_description || ''
     )
 
     // Update internal state if initialData changes (e.g. after save)
@@ -60,6 +69,11 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
             setVideos(initialData.images.videos || [])
             setFloorPlans(initialData.images.floorPlans || [])
             setHeroVideo(initialData.images.heroVideo ? [initialData.images.heroVideo] : [])
+            setCommonAreasImages(initialData.images.commonAreas || initialData?.common_areas_images || [])
+            setCommonAreasVideos(initialData.images.commonAreasVideos || initialData?.common_areas_videos || [])
+        }
+        if (initialData?.common_areas_description) {
+            setCommonAreasDescription(initialData.common_areas_description)
         }
     }, [initialData])
 
@@ -101,6 +115,8 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
             videos,
             floorPlans,
             hero_video: heroVideo.length > 0 ? heroVideo[0] : null,
+            commonAreas: commonAreasImages,
+            commonAreasVideos,
         }
 
         const apiData = {
@@ -128,6 +144,9 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
             parking_spaces: data.parking_spots,
             images: images, // Include images
             video_url: videos.length > 0 ? videos[0] : null, // Fallback for video_url column
+            common_areas_images: commonAreasImages,
+            common_areas_videos: commonAreasVideos,
+            common_areas_description: commonAreasDescription || null,
             region: 'paraiba', // Default or add field
             state: 'PB' // Default or add field
         }
@@ -140,6 +159,7 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
         { id: 'location', label: 'Localização', icon: MapPin },
         { id: 'specs', label: 'Características', icon: LayoutDashboard },
         { id: 'media', label: 'Visual & Mídia', icon: ImageIcon },
+        { id: 'areas_comuns', label: 'Áreas Comuns', icon: MapPin },
     ]
 
     return (
@@ -341,6 +361,58 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                                     onChange={setVideos}
                                     developmentId={initialData.id}
                                     maxFiles={3}
+                                />
+                            </>
+                        ) : (
+                            <div className="text-center py-20 bg-imi-50 rounded-xl border border-dashed border-imi-100">
+                                <ImageIcon className="w-12 h-12 mx-auto text-imi-300 mb-4" />
+                                <p className="text-imi-600 font-bold mb-2">Salve o empreendimento primeiro</p>
+                                <p className="text-xs text-imi-400">O upload de mídia requer um registro salvo para criar as pastas.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Áreas Comuns Tab */}
+                {activeTab === 'areas_comuns' && (
+                    <div className="space-y-10 animate-in fade-in slide-in-from-left-4 duration-300">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Descrição das Áreas Comuns</label>
+                            <textarea
+                                rows={4}
+                                value={commonAreasDescription}
+                                onChange={e => setCommonAreasDescription(e.target.value)}
+                                placeholder="Descreva as áreas comuns do empreendimento: piscina, academia, salão de festas, playground..."
+                                className="w-full px-4 py-3 rounded-xl border border-imi-100 bg-white font-medium text-imi-700 focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
+                            />
+                        </div>
+
+                        {initialData?.id ? (
+                            <>
+                                <div className="border-t border-imi-100 my-2"></div>
+
+                                <MediaUploader
+                                    type="gallery"
+                                    label="Fotos das Áreas Comuns"
+                                    description="Fotos da piscina, academia, salão de festas, playground e demais áreas comuns."
+                                    value={commonAreasImages}
+                                    onChange={setCommonAreasImages}
+                                    entityId={initialData.id}
+                                    entityType="development"
+                                    maxFiles={30}
+                                />
+
+                                <div className="border-t border-imi-100 my-6"></div>
+
+                                <MediaUploader
+                                    type="videos"
+                                    label="Vídeos das Áreas Comuns"
+                                    description="Vídeos mostrando as áreas comuns e lazer do empreendimento (MP4)."
+                                    value={commonAreasVideos}
+                                    onChange={setCommonAreasVideos}
+                                    entityId={initialData.id}
+                                    entityType="development"
+                                    maxFiles={5}
                                 />
                             </>
                         ) : (
