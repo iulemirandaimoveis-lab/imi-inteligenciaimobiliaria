@@ -571,7 +571,7 @@ export function DesktopImovelDetail({
                   {[
                     { icon: Edit, label: 'Editar Imóvel', href: `/backoffice/imoveis/${id}/editar`, primary: true },
                     { icon: Scale, label: 'Solicitar Avaliação', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}`, primary: true },
-                    ...(dev.type === 'loteamento'
+                    ...(dev.type === 'loteamento' || dev.type === 'condominio_fechado'
                       ? [{ icon: Layers, label: 'Gerenciar Lotes', href: `/backoffice/imoveis/${id}/lotes`, primary: false }]
                       : [{ icon: Layers, label: 'Ver Unidades', href: `/backoffice/imoveis/${id}/unidades`, primary: false }]
                     ),
@@ -680,7 +680,7 @@ export function DesktopImovelDetail({
           <div style={{ ...CARD, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p style={{ ...EYEBROW, marginBottom: 6 }}>Ações</p>
             <Link href={`/backoffice/imoveis/${id}/editar`} style={{ ...BTN_PRIMARY, justifyContent: 'center' }}><Edit size={13} /> Editar Imóvel</Link>
-            {dev.type === 'loteamento'
+            {dev.type === 'loteamento' || dev.type === 'condominio_fechado'
               ? <Link href={`/backoffice/imoveis/${id}/lotes`} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}><Layers size={13} /> Gerenciar Lotes</Link>
               : <Link href={`/backoffice/imoveis/${id}/unidades`} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}><Layers size={13} /> Ver Unidades</Link>
             }

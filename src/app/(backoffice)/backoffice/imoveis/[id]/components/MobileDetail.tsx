@@ -675,7 +675,7 @@ export function MobileImovelDetail({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {[
                   { icon: Edit, label: 'Editar', href: `/backoffice/imoveis/${id}/editar` },
-                  dev.type === 'loteamento'
+                  (dev.type === 'loteamento' || dev.type === 'condominio_fechado')
                     ? { icon: Layers, label: 'Lotes', href: `/backoffice/imoveis/${id}/lotes` }
                     : { icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
                   { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics` },
