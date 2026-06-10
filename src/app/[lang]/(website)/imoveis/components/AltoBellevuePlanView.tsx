@@ -41,6 +41,8 @@ interface Props {
   developmentId: string;
   developmentName: string;
   whatsappPhone?: string;
+  /** Mídia/textos das áreas comuns vindos do backoffice (developments.lot_map_amenities, JSONB). */
+  amenityOverrides?: Record<string, unknown>[];
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -137,8 +139,8 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
   lazer: {
     title: 'Área de Lazer / Clube',
     subtitle: 'Convivência e bem-estar',
-    description: 'Espaço de lazer e convívio do condomínio — piscina, quadra poliesportiva, espaços de descanso e equipamentos comuns em meio ao paisagismo.',
-    fn: 'Lazer e convivência',
+    description: 'Espaço de lazer e convívio do condomínio — piscina, academia, quadra poliesportiva, espaços de descanso e equipamentos comuns em meio ao paisagismo.',
+    fn: 'Piscina · Academia · Lazer',
     photos: [
       `${AB_AMEN_IMG}/ab-amenity-04.jpg`, `${AB_AMEN_IMG}/ab-amenity-05.jpg`,
       `${AB_AMEN_IMG}/ab-amenity-06.jpg`, `${AB_AMEN_IMG}/ab-amenity-07.jpg`,
@@ -153,11 +155,27 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
     fn: 'Preservação e paisagismo',
     photos: [`${AB_AMEN_IMG}/ab-amenity-02.jpg`, `${AB_AMEN_IMG}/ab-amenity-09.jpg`, `${AB_AMEN_IMG}/ab-amenity-10.jpg`],
   },
+  coworking: {
+    title: 'Coworking · Bloco Administrativo',
+    subtitle: 'Trabalho e gestão',
+    description: 'Espaço de coworking e administração do condomínio — ambiente compartilhado para trabalho, reuniões e apoio aos moradores.',
+    fn: 'Coworking e administração',
+    photos: [`${AB_AMEN_IMG}/ab-amenity-03.jpg`],
+  },
+  recreativa: {
+    title: 'Área Recreativa',
+    subtitle: 'Esporte e convivência',
+    description: 'Área recreativa do empreendimento — espaços para esporte, lazer ao ar livre e convivência das famílias.',
+    fn: 'Recreação e esporte',
+    photos: [`${AB_AMEN_IMG}/ab-amenity-06.jpg`, `${AB_AMEN_IMG}/ab-amenity-07.jpg`],
+  },
 };
 // Overrides vindos do dado (JSON `amenities[]` — editável pelo backoffice).
 type AmenityOverride = Partial<AmenityInfo> & { id: string; label: string };
 const getAmenityInfo = (a: AmenityOverride): AmenityInfo => {
-  const base: AmenityInfo = AMENITY_INFO[a.id] ?? {
+  // id exato (ex.: "portaria") → prefixo (ex.: "recreativa-01" → "recreativa") → fallback.
+  const prefix = a.id.replace(/-\d+$/, '');
+  const base: AmenityInfo = AMENITY_INFO[a.id] ?? AMENITY_INFO[prefix] ?? {
     title: a.label, subtitle: 'Área comum', description: 'Área de uso comum do empreendimento.', fn: 'Área comum',
   };
   // Campos vindos do backoffice/JSON têm prioridade; senão usa o default editorial.
@@ -440,7 +458,7 @@ const MapInner = memo(function MapInner({
   const visibleStreetLabels = useMemo(() => {
     const labels = context?.streetLabels;
     if (!labels?.length) return [];
-    const out: { x: number; y: number; name: string }[] = [];
+    const out: { x: number; y: number; name: string; rot?: number }[] = [];
     for (const sl of labels) {
       if (!out.some(r => Math.hypot(r.x - sl.x, r.y - sl.y) < 8)) out.push(sl);
     }
@@ -666,15 +684,16 @@ const MapInner = memo(function MapInner({
                 strokeWidth={isSelected ? 1.8 : 0.7}
               />
 
-              {/* Lot number — appears when scale ≥ 3 (lots ≥ 25 px wide on mobile) */}
+              {/* Rótulos internos do lote — compactos e centrados (organização tipo PDF):
+                  nº em destaque, área abaixo, e testada×profundidade em fonte menor. */}
               {showLotNumbers && cx > 0 && cy > 0 && (
                 <text
                   x={cx}
-                  y={showAreaLabels ? cy - 4 : cy}
+                  y={showDimensions ? cy - 5.5 : showAreaLabels ? cy - 3.5 : cy}
                   textAnchor="middle"
                   dominantBaseline="central"
                   fill={isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.92)'}
-                  fontSize={8}
+                  fontSize={7}
                   fontWeight={isSelected ? '800' : '700'}
                   style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
                 >
@@ -682,32 +701,33 @@ const MapInner = memo(function MapInner({
                 </text>
               )}
 
-              {/* Area m² — scale ≥ 4: stacks below lot number */}
+              {/* Área m² — scale ≥ 4: logo abaixo do número */}
               {showAreaLabels && cx > 0 && cy > 0 && lot.area_m2 && (
                 <text
                   x={cx}
-                  y={cy + 3}
+                  y={showDimensions ? cy + 0.5 : cy + 3}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fill={isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.60)'}
-                  fontSize={5.5}
+                  fill={isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.58)'}
+                  fontSize={4.6}
                   fontWeight="500"
                   style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
                 >
-                  {Math.round(lot.area_m2 as number)}m²
+                  {Math.round(lot.area_m2 as number)} m²
                 </text>
               )}
 
-              {/* Testada × Profundidade — scale ≥ 5.5, positioned to stay within lot */}
+              {/* Testada × Profundidade — fonte menor, dentro do lote (como no PDF) */}
               {dims && cx > 0 && cy > 0 && (
                 <text
                   x={cx}
-                  y={cy + 7.5}
+                  y={cy + 5.2}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fill={isSelected ? 'rgba(215,185,122,0.70)' : 'rgba(255,255,255,0.42)'}
-                  fontSize={4}
+                  fill={isSelected ? 'rgba(215,185,122,0.62)' : 'rgba(255,255,255,0.40)'}
+                  fontSize={3.1}
                   fontWeight="500"
+                  letterSpacing="-0.02em"
                   style={{ pointerEvents: 'none', userSelect: 'none', fontFamily: 'monospace' }}
                 >
                   {fmtM(dims.testada)} × {fmtM(dims.profundidade)}
@@ -724,10 +744,11 @@ const MapInner = memo(function MapInner({
         {showTechLayer && showStreetLabels && (
           <g style={{ pointerEvents: 'none' }}>
             {visibleStreetLabels.map((s, i) => {
-              const fs = Math.max(3.5, 20 / scale);
-              const sw = Math.max(0.6, 4 / scale);
+              const fs = Math.max(3.2, 17 / scale);
+              const sw = Math.max(0.5, 3.4 / scale);
               return (
-                <g key={`sl-${i}`}>
+                // Rotaciona o nome ao longo do eixo da via (como no PDF)
+                <g key={`sl-${i}`} transform={`rotate(${s.rot ?? 0} ${s.x} ${s.y})`}>
                   {/* Outline pass for readability over any lot color */}
                   <text
                     x={s.x} y={s.y}
@@ -1182,13 +1203,15 @@ function AmenityBottomSheet({
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
         onClick={onClose}
-        className="fixed inset-0 z-[9100]"
+        className="fixed inset-0 z-[9998]"
         style={{ background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
       />
       <motion.div
         initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-        className="fixed left-0 right-0 bottom-0 z-[9101]"
+        // Mobile: bottom sheet. Desktop (sm:): modal centrado sobre o mapa (ml negativo
+        // evita conflito de transform com o framer-motion). z alto p/ ficar acima de tudo.
+        className="fixed left-0 right-0 bottom-0 z-[9999] sm:left-1/2 sm:right-auto sm:bottom-auto sm:top-[8vh] sm:w-[440px] sm:max-w-[92vw] sm:ml-[-220px] sm:rounded-[22px]"
         style={{
           background: '#fff', borderTopLeftRadius: 22, borderTopRightRadius: 22,
           boxShadow: '0 -8px 40px rgba(0,0,0,0.30)', maxHeight: '82vh', overflowY: 'auto',
@@ -1320,8 +1343,18 @@ export default function AltoBellevuePlanView({
   lots: dbLots,
   developmentName,
   whatsappPhone = '5581997230455',
+  amenityOverrides,
 }: Props) {
   const { data: mapData, loading, error, retry } = useABMap();
+  // Lookup das mídias do backoffice por id de área (sobrepõe os defaults da UI).
+  const overrideMap = useMemo(() => {
+    const m = new Map<string, Partial<Amenity>>();
+    for (const o of amenityOverrides ?? []) {
+      const id = typeof o.id === 'string' ? o.id : null;
+      if (id) m.set(id, o as Partial<Amenity>);
+    }
+    return m;
+  }, [amenityOverrides]);
   const priceMap = usePrices();
   const availability = useAvailability();
   const planLots = mapData?.lots ?? [];
@@ -1511,11 +1544,12 @@ export default function AltoBellevuePlanView({
   const zoomOut = useCallback(() => setVb(prev => zoomViewBox(prev, 1.33)), []);
   const resetView = useCallback(() => animateTo(INITIAL_VB), [animateTo]);
 
-  // Área comum clicada → abre painel (e fecha painel de lote, se houver)
+  // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
     setSelectedLot(null);
-    setSelectedAmenity(a);
-  }, []);
+    const ov = overrideMap.get(a.id) ?? overrideMap.get(a.id.replace(/-\d+$/, ''));
+    setSelectedAmenity(ov ? { ...a, ...ov, id: a.id, x: a.x, y: a.y } : a);
+  }, [overrideMap]);
 
   // "Ver no mapa" → centraliza e aproxima na área comum
   const locateAmenity = useCallback((a: { x: number; y: number }) => {

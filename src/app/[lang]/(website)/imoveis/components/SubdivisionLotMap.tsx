@@ -38,6 +38,8 @@ interface SubdivisionLotMapProps {
   developmentName: string;
   whatsappPhone?: string;
   paymentConditions?: PaymentConditions | null;
+  /** Mídia das áreas comuns do mapa (developments.lot_map_amenities) — editável no backoffice. */
+  mapAmenities?: Record<string, unknown>[];
 }
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -922,7 +924,7 @@ function CompareBar({
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581997230455', paymentConditions }: SubdivisionLotMapProps) {
+export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581997230455', paymentConditions, mapAmenities }: SubdivisionLotMapProps) {
   const [lots, setLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
@@ -1200,6 +1202,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           developmentId={developmentId}
           developmentName={developmentName}
           whatsappPhone={whatsappPhone}
+          amenityOverrides={mapAmenities}
         />
       </div>
     );
@@ -1494,6 +1497,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                 developmentId={developmentId}
                 developmentName={developmentName}
                 whatsappPhone={whatsappPhone}
+                amenityOverrides={mapAmenities}
               />
             : <SubdivisionPlanView
                 lots={lots}
