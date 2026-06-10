@@ -1201,13 +1201,15 @@ function AmenityBottomSheet({
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
         onClick={onClose}
-        className="fixed inset-0 z-[9100]"
+        className="fixed inset-0 z-[9998]"
         style={{ background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
       />
       <motion.div
         initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-        className="fixed left-0 right-0 bottom-0 z-[9101]"
+        // Mobile: bottom sheet. Desktop (sm:): modal centrado sobre o mapa (ml negativo
+        // evita conflito de transform com o framer-motion). z alto p/ ficar acima de tudo.
+        className="fixed left-0 right-0 bottom-0 z-[9999] sm:left-1/2 sm:right-auto sm:bottom-auto sm:top-[8vh] sm:w-[440px] sm:max-w-[92vw] sm:ml-[-220px] sm:rounded-[22px]"
         style={{
           background: '#fff', borderTopLeftRadius: 22, borderTopRightRadius: 22,
           boxShadow: '0 -8px 40px rgba(0,0,0,0.30)', maxHeight: '82vh', overflowY: 'auto',
