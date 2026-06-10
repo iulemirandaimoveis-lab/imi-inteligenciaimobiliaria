@@ -7,7 +7,8 @@ import {
   MessageCircle, X, MapPin, Ruler, DollarSign, Filter,
   ChevronDown, ChevronUp, BarChart2, List, Map as MapIcon,
   Scale, Trophy, Sparkles, TrendingUp, Home, Star,
-  CheckCircle2, Circle, ArrowRight, Zap,
+  CheckCircle2, Circle, ArrowRight, Zap, Building2,
+  Layers, ChevronsUpDown, Tag, LayoutGrid,
 } from 'lucide-react';
 import SubdivisionPlanView, { PLAN_VIEW_IDS } from './SubdivisionPlanView';
 import AltoBellevuePlanView from './AltoBellevuePlanView';
@@ -151,15 +152,15 @@ type SmartFilter =
   | 'investimento'
   | 'morar';
 
-const SMART_FILTERS: { key: SmartFilter; label: string; icon: string }[] = [
-  { key: 'ALL', label: 'Todos', icon: '🏘️' },
-  { key: 'DISPONIVEL', label: 'Disponíveis', icon: '✅' },
-  { key: 'menor_preco', label: 'Menor preço', icon: '💰' },
-  { key: 'maior_area', label: 'Maior área', icon: '📐' },
-  { key: 'melhor_custo', label: 'Melhor custo-benefício', icon: '⭐' },
-  { key: 'lote_esquina', label: 'Lote de esquina', icon: '🔷' },
-  { key: 'investimento', label: 'Melhor para investir', icon: '📈' },
-  { key: 'morar', label: 'Melhor para morar', icon: '🏡' },
+const SMART_FILTERS: { key: SmartFilter; label: string; icon: React.ReactNode }[] = [
+  { key: 'ALL',         label: 'Todos',                  icon: <LayoutGrid size={11} /> },
+  { key: 'DISPONIVEL',  label: 'Disponíveis',             icon: <CheckCircle2 size={11} /> },
+  { key: 'menor_preco', label: 'Menor preço',             icon: <Tag size={11} /> },
+  { key: 'maior_area',  label: 'Maior área',              icon: <ChevronsUpDown size={11} /> },
+  { key: 'melhor_custo',label: 'Melhor custo-benefício',  icon: <Star size={11} /> },
+  { key: 'lote_esquina',label: 'Lote de esquina',         icon: <Layers size={11} /> },
+  { key: 'investimento',label: 'Melhor para investir',    icon: <TrendingUp size={11} /> },
+  { key: 'morar',       label: 'Melhor para morar',       icon: <Home size={11} /> },
 ];
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
@@ -638,7 +639,8 @@ function RankingSection({
   const items = rankings[activeRanking] as RankingItem[];
   if (items.length === 0) return null;
 
-  const medals = ['🥇', '🥈', '🥉'];
+  const medalColors = ['#C8A44A', '#8E9BAB', '#B07340'];
+  const medalLabels = ['1', '2', '3'];
   const activeTab = tabs.find(t => t.key === activeRanking)!;
 
   return (
@@ -681,7 +683,7 @@ function RankingSection({
             className="w-full flex items-center justify-between py-3 border-b last:border-0 border-gray-100 text-left hover:bg-gray-50 rounded-lg px-2 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <span style={{ fontSize: 16, flexShrink: 0 }}>{medals[i]}</span>
+              <span style={{ width: 22, height: 22, borderRadius: 7, background: `${medalColors[i]}18`, border: `1.5px solid ${medalColors[i]}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, color: medalColors[i], fontFamily: "var(--fm,'JetBrains Mono',monospace)", flexShrink: 0 }}>{medalLabels[i]}</span>
               <div>
                 <p style={{ fontSize: 12, fontWeight: 700, color: '#0B1928', margin: 0, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
                   Q{item.lot.quadra} — Lote {item.lot.lot_number}
@@ -749,11 +751,14 @@ function LotCell({ lot, onClick, isInCompare, isRecommended }: { lot: Lot; onCli
         <div style={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: '0 6px 6px 0', borderColor: `transparent #2563EB transparent transparent` }} />
       )}
       {isRecommended && !isInCompare && (
-        <div style={{ position: 'absolute', top: 1, left: 1, fontSize: 5, color: '#C8A44A', lineHeight: 1 }}>✦</div>
+        <div style={{ position: 'absolute', top: 2, left: 2 }}>
+          <Star size={5} style={{ color: '#C8A44A', fill: '#C8A44A' }} />
+        </div>
       )}
-      <span style={{ fontSize: 9, fontWeight: 800, color: isInCompare ? '#1E40AF' : cfg.dark, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", lineHeight: 1, position: 'relative', zIndex: 1 }}>
-        {isChurch ? '⛪' : lot.lot_number}
-      </span>
+      {isChurch
+        ? <Building2 size={12} style={{ color: isInCompare ? '#1E40AF' : cfg.dark, position: 'relative', zIndex: 1 }} />
+        : <span style={{ fontSize: 9, fontWeight: 800, color: isInCompare ? '#1E40AF' : cfg.dark, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", lineHeight: 1, position: 'relative', zIndex: 1 }}>{lot.lot_number}</span>
+      }
     </button>
   );
 }
@@ -1513,7 +1518,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         <div className="mb-6 p-4 rounded-2xl" style={{ background: 'linear-gradient(135deg, #0B1928 0%, #1a2e42 100%)', border: '1px solid rgba(200,164,74,0.2)' }}>
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <span style={{ fontSize: 16 }}>✦</span>
+              <Sparkles size={14} style={{ color: '#C8A44A', flexShrink: 0 }} />
               <span style={{ fontSize: 12, fontWeight: 700, color: '#C8A44A', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
                 Recomendações IA
               </span>
