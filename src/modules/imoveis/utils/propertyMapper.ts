@@ -59,6 +59,14 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
         ? imagesJson.floorPlans
         : (Array.isArray(dbProp.floor_plans) ? dbProp.floor_plans : []);
 
+    const commonAreas: string[] = Array.isArray(imagesJson.commonAreas)
+        ? imagesJson.commonAreas
+        : (Array.isArray(dbProp.common_areas_images) ? dbProp.common_areas_images : []);
+    const commonAreasVideos: string[] = Array.isArray(imagesJson.commonAreasVideos)
+        ? imagesJson.commonAreasVideos
+        : (Array.isArray(dbProp.common_areas_videos) ? dbProp.common_areas_videos : []);
+    const commonAreasDescription: string = dbProp.common_areas_description || '';
+
     const features = Array.isArray(dbProp.features)
         ? dbProp.features
         : (Array.isArray(dbProp.selling_points) ? dbProp.selling_points : []);
@@ -122,6 +130,9 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             virtualTour: dbProp.virtual_tour_url,
             brochure: dbProp.brochure_url,
             heroVideo: imagesJson.hero_video || undefined,
+            commonAreas,
+            commonAreasVideos,
+            commonAreasDescription,
         },
         propertyType: dbProp.type || undefined,
         units: [], // Units are loaded separately on detail view if needed

@@ -20,6 +20,7 @@ import RealtorCard from '../components/RealtorCard'
 import MobileStickyBar from '../components/MobileStickyBar'
 import NeighborhoodIntel from '@/components/intelligence/NeighborhoodIntel'
 import PropertyIntelligence from '../components/PropertyIntelligence'
+import CommonAreasSection from '../components/CommonAreasSection'
 import { generateBreadcrumbSchema } from '@/lib/seo'
 import type { IMIProperty } from '@/features/properties/types'
 import { calcDetailedScores } from '@/features/properties/services/score.service'
@@ -310,7 +311,19 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     const isLoteamento = data.type === 'loteamento'
     const lotMapEnabled = isLoteamento && data.lot_map_enabled === true
     const lotMapJsonUrl = `/maps/${params.slug}-lots.json`
-    const anchorSections = isLoteamento ? ANCHOR_SECTIONS_LOTEAMENTO : ANCHOR_SECTIONS
+
+    const hasCommonAreas = (development.images.commonAreas?.length ?? 0) > 0 ||
+        (development.images.commonAreasVideos?.length ?? 0) > 0 ||
+        !!development.images.commonAreasDescription
+
+    const anchorSectionsBase = isLoteamento ? ANCHOR_SECTIONS_LOTEAMENTO : ANCHOR_SECTIONS
+    const anchorSections = hasCommonAreas
+        ? [
+            ...anchorSectionsBase.slice(0, 2),
+            { id: 'areas-comuns', label: 'Áreas Comuns' },
+            ...anchorSectionsBase.slice(2),
+          ]
+        : anchorSectionsBase
 
     return (
         <main className="pb-40 lg:pb-0" style={{ background: '#F7F5F2' }}>
@@ -377,6 +390,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 lang={params.lang}
                             />
                         </section>
+                        {hasCommonAreas && (
+                            <section id="areas-comuns">
+                                <CommonAreasSection development={development} />
+                            </section>
+                        )}
                         <section id={isLoteamento ? 'mapa' : 'unidades'}>
                             {params.slug === 'alto-bellevue' ? (
                                 <SubdivisionLotMap

@@ -46,6 +46,9 @@ export interface DevelopmentImages {
     virtualTour?: string;                // Link para tour virtual
     brochure?: string;                   // URL do brochure/book PDF
     heroVideo?: string;                  // URL de vídeo MP4 para loop no hero
+    commonAreas?: string[];              // Fotos das áreas comuns
+    commonAreasVideos?: string[];        // Vídeos das áreas comuns
+    commonAreasDescription?: string;     // Descrição das áreas comuns
 }
 
 export interface DevelopmentExternalLinks {
