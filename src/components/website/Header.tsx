@@ -224,7 +224,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                         {/* Desktop Right */}
                         <div className="hidden lg:flex items-center gap-3">
                             <a
-                                href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
+                                href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581986141487'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="relative overflow-hidden inline-flex items-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-300 border border-white/[0.15] hover:border-white/[0.25]"
@@ -334,7 +334,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                     className="mt-4"
                                 >
                                     <a
-                                        href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
+                                        href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581986141487'}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={() => setOpen(false)}
@@ -382,7 +382,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         <p className="text-[10px] text-[#C8A44A]/60 font-bold uppercase tracking-[0.15em]">CRECI 17933</p>
                                     </div>
                                     <a
-                                        href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
+                                        href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581986141487'}`}
                                         className="text-[12px] text-white/30 mt-1 block hover:text-white transition-colors"
                                     >
                                         {settings?.companyPhone || '+55 81 9 9723-0455'}

@@ -242,7 +242,7 @@ export default async function ProjetosWebsitePage({
                                         Solicitar Briefing Exclusivo <ArrowRight size={15} />
                                     </Link>
                                     <a
-                                        href="https://wa.me/5581997230455"
+                                        href="https://wa.me/5581986141487"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm border border-white/20 hover:border-white/40 transition-all"

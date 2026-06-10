@@ -1342,7 +1342,7 @@ function AmenityBottomSheet({
 export default function AltoBellevuePlanView({
   lots: dbLots,
   developmentName,
-  whatsappPhone = '5581997230455',
+  whatsappPhone = '5581986141487',
   amenityOverrides,
 }: Props) {
   const { data: mapData, loading, error, retry } = useABMap();

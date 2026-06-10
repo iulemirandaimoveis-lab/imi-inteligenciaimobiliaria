@@ -924,7 +924,7 @@ function CompareBar({
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581997230455', paymentConditions, mapAmenities }: SubdivisionLotMapProps) {
+export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581986141487', paymentConditions, mapAmenities }: SubdivisionLotMapProps) {
   const [lots, setLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null);

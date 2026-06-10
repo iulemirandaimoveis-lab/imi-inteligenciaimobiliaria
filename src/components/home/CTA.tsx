@@ -26,7 +26,7 @@ export default function CTA({ dict }: CTAProps) {
     const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.6, 1.3, 0.8])
 
     const handleSuccess = () => {
-        window.open("https://wa.me/5581997230455", "_blank")
+        window.open("https://wa.me/5581986141487", "_blank")
         setIsModalOpen(false)
     }
     return (

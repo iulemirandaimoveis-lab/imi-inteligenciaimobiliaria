@@ -247,7 +247,7 @@ export default function AppraisalsPage() {
         <div className="container-custom text-center">
           <h2 className="text-[28px] lg:text-[38px] font-black text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Dúvidas sobre Avaliações?</h2>
           <p className="text-white/40 text-lg mb-10 max-w-md mx-auto font-light">Nossa equipe técnica esclarece qualquer questão normativa ou processual.</p>
-          <ButtonPrimary href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" size="lg" icon={<MessageCircle size={16} />}>
+          <ButtonPrimary href="https://wa.me/5581986141487" target="_blank" rel="noopener noreferrer" size="lg" icon={<MessageCircle size={16} />}>
             Falar com Especialista
           </ButtonPrimary>
         </div>

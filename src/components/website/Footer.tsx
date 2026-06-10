@@ -142,7 +142,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                 </a>
 
                                 <a
-                                    href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
+                                    href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581986141487'}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"

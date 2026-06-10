@@ -441,12 +441,12 @@ function BrokerCard({ compact = false }: { compact?: boolean }) {
             {/* Actions */}
             {compact ? (
                 <div className="flex gap-2">
-                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
+                    <a href="https://wa.me/5581986141487" target="_blank" rel="noopener noreferrer"
                         className="w-[38px] h-[38px] flex items-center justify-center border-none cursor-pointer"
                         style={{ borderRadius: R.btn, background: '#25D366', color: '#fff' }}>
                         <MessageCircle size={16} />
                     </a>
-                    <a href="tel:+5581997230455"
+                    <a href="tel:+5581986141487"
                         className="w-[38px] h-[38px] flex items-center justify-center cursor-pointer"
                         style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_SUB }}>
                         <Phone size={16} />
@@ -454,12 +454,12 @@ function BrokerCard({ compact = false }: { compact?: boolean }) {
                 </div>
             ) : (
                 <div className="flex gap-2">
-                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
+                    <a href="https://wa.me/5581986141487" target="_blank" rel="noopener noreferrer"
                         className="flex-1 h-11 flex items-center justify-center gap-2 text-white text-sm font-semibold no-underline cursor-pointer"
                         style={{ borderRadius: R.btn, background: '#25D366' }}>
                         <MessageCircle size={15} /> WhatsApp
                     </a>
-                    <a href="tel:+5581997230455"
+                    <a href="tel:+5581986141487"
                         className="flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold no-underline cursor-pointer"
                         style={{ borderRadius: R.btn, border: `2px solid ${BORDER}`, background: CARD_BG, color: TEXT_SUB }}>
                         <Phone size={15} /> Ligar
@@ -551,7 +551,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         setIsModalOpen(true);
     };
     const handleSuccess = () => {
-        window.open('https://wa.me/5581997230455', '_blank');
+        window.open('https://wa.me/5581986141487', '_blank');
         setIsModalOpen(false);
     };
 

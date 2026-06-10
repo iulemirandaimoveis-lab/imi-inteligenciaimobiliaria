@@ -228,7 +228,7 @@ export default async function RelatoriosPage({ params }: { params: { lang: strin
                         Encomende um dossiê técnico de mercado, análise de viabilidade ou laudo de avaliação com a equipe IMI.
                     </p>
                     <a
-                        href="https://wa.me/5581997230455"
+                        href="https://wa.me/5581986141487"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-navy-800 text-white font-bold text-sm uppercase tracking-wider hover:bg-navy-700 transition-all shadow-[0_4px_14px_rgba(16,42,67,0.4)]"

@@ -121,7 +121,7 @@ export default function Drawer({ open, setOpen }: Props) {
 
                     {/* WhatsApp CTA */}
                     <a
-                        href="https://wa.me/5581997230455"
+                        href="https://wa.me/5581986141487"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="block w-full mt-5 bg-navy-900 text-white py-3 rounded-xl font-bold text-sm text-center shadow-lg hover:bg-black transition-all active:scale-[0.98]"
@@ -161,7 +161,7 @@ export default function Drawer({ open, setOpen }: Props) {
                         </p>
                         <div className="space-y-1 text-[11px] text-neutral-500">
                             <a
-                                href="https://wa.me/5581997230455"
+                                href="https://wa.me/5581986141487"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="block hover:text-neutral-800 transition-colors"

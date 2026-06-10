@@ -79,7 +79,7 @@ interface LotDetailPanelProps {
 }
 
 export default function LotDetailPanel({
-  lot, onClose, isMobile, whatsappContact = '5581997230455',
+  lot, onClose, isMobile, whatsappContact = '5581986141487',
   isManager = false, actionLoading = false, actionError = null, onReserve, onRelease,
 }: LotDetailPanelProps) {
   const [clientName, setClientName] = useState('');

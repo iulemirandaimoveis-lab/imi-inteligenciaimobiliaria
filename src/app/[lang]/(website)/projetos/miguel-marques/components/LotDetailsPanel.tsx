@@ -202,7 +202,7 @@ export default function LotDetailsPanel({ lot, onClose, isMobile }: Props) {
             {/* CTA */}
             <div className="p-6 pt-0 space-y-3">
               <a
-                href={`https://wa.me/5581997230455?text=${encodeURIComponent(whatsappMessage)}`}
+                href={`https://wa.me/5581986141487?text=${encodeURIComponent(whatsappMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2.5 w-full h-12 rounded-xl bg-[#0D1410] text-white text-sm font-semibold tracking-wide hover:bg-[#1A2820] transition-colors"

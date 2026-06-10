@@ -521,7 +521,7 @@ export default function IntelligenceDashboard({
             Dossiê de bairro, estudo de viabilidade ou laudo técnico com metodologia ABNT.
           </p>
           <a
-            href="https://wa.me/5581997230455"
+            href="https://wa.me/5581986141487"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2.5 h-12 px-8 rounded-xl bg-[#C8A44A] text-[#060D16] font-bold text-xs uppercase tracking-[0.16em] hover:bg-[#D4B86A] active:scale-95 transition-all duration-200 shadow-lg shadow-[#C8A44A]/15"
@@ -886,7 +886,7 @@ function EmptyState({ city, lang }: { city: string; lang: string }) {
         você terá acesso ao panorama completo.
       </p>
       <a
-        href="https://wa.me/5581997230455"
+        href="https://wa.me/5581986141487"
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 h-9 px-5 rounded-lg border border-[#C8A44A]/30 text-[#C8A44A] text-xs font-bold uppercase tracking-wider hover:bg-[#C8A44A]/10 transition-all duration-200"

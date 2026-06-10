@@ -214,7 +214,7 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                         <a
-                            href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Gostaria%20de%20ser%20avisada(o)%20quando%20novos%20ebooks%20da%20IMI%20forem%20lan%C3%A7ados."
+                            href="https://wa.me/5581986141487?text=Ol%C3%A1!%20Gostaria%20de%20ser%20avisada(o)%20quando%20novos%20ebooks%20da%20IMI%20forem%20lan%C3%A7ados."
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-6 text-[11px] font-semibold uppercase tracking-[1px] transition-all duration-200 hover:brightness-110"
@@ -223,7 +223,7 @@ export default function BibliotecaClient({ ebooks, pilares, bookSlugs = [] }: Pr
                             <MessageCircle size={15} /> Quero ser avisado via WhatsApp
                         </a>
                         <ButtonGhost
-                            href="https://wa.me/5581997230455"
+                            href="https://wa.me/5581986141487"
                             target="_blank"
                             rel="noopener noreferrer"
                             arrow
@@ -381,7 +381,7 @@ function EbookCard({ ebook, index, lang, bookSlugs }: { ebook: Ebook; index: num
                         </ButtonPrimary>
                     ) : !hasBookContent ? (
                         <ButtonGhost
-                            href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Tenho%20interesse%20no%20ebook%20da%20IMI%20sobre%20esse%20tema."
+                            href="https://wa.me/5581986141487?text=Ol%C3%A1!%20Tenho%20interesse%20no%20ebook%20da%20IMI%20sobre%20esse%20tema."
                             target="_blank"
                             rel="noopener noreferrer"
                             icon={<MessageCircle size={13} />}

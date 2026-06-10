@@ -11,7 +11,7 @@ interface CityCTAProps {
 
 export default function CityCTA({ city, lang }: CityCTAProps) {
     const whatsappMessage = `Olá! Tenho interesse em investir em ${city.name}. Gostaria de agendar uma consultoria.`
-    const whatsappUrl = `https://wa.me/5581997230455?text=${encodeURIComponent(whatsappMessage)}`
+    const whatsappUrl = `https://wa.me/5581986141487?text=${encodeURIComponent(whatsappMessage)}`
 
     return (
         <section className="bg-imi-900 text-white section-padding text-center relative overflow-hidden">

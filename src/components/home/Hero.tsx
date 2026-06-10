@@ -70,7 +70,7 @@ export default function Hero({ dict }: HeroProps) {
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.6], [0, 0.4])
 
   const handleWhatsApp = () => {
-    window.open('https://wa.me/5581997230455', '_blank')
+    window.open('https://wa.me/5581986141487', '_blank')
   }
 
   const handleCanPlay = useCallback(() => setVideoReady(true), [])

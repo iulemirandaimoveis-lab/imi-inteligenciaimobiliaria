@@ -10,7 +10,7 @@ export function QualificationCTA() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSuccess = () => {
-        window.open("https://wa.me/5581997230455?text=Ol%C3%A1%2C%20queria%20agendar%20uma%20sess%C3%A3o%20estrat%C3%A9gica%20sobre%20im%C3%B3veis%20internacionais.", "_blank");
+        window.open("https://wa.me/5581986141487?text=Ol%C3%A1%2C%20queria%20agendar%20uma%20sess%C3%A3o%20estrat%C3%A9gica%20sobre%20im%C3%B3veis%20internacionais.", "_blank");
         setIsModalOpen(false);
     };
     return (

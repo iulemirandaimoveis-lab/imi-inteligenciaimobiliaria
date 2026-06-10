@@ -67,7 +67,7 @@ export default function CreditPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const handleSuccess = () => {
-        window.open("https://wa.me/5581997230455", "_blank")
+        window.open("https://wa.me/5581986141487", "_blank")
         setIsModalOpen(false)
     }
 

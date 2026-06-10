@@ -10,7 +10,7 @@ const MasterplanSection = dynamic(
   { ssr: false },
 )
 
-const WHATSAPP = '5581997230455'
+const WHATSAPP = '5581986141487'
 
 const LOTS_DISPONIVEIS = ALL_LOTS.filter(l => l.status === 'disponivel').length
 const LOTS_TOTAL = ALL_LOTS.length
@@ -240,7 +240,7 @@ export default async function MiguelMarquesPage({
             Nossa equipe está disponível para apresentar as melhores opções de acordo com o seu perfil e orçamento.
           </p>
           <a
-            href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Loteamento%20Miguel%20Marques.%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es."
+            href="https://wa.me/5581986141487?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Loteamento%20Miguel%20Marques.%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es."
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-sm transition-all hover:opacity-90 active:scale-95"

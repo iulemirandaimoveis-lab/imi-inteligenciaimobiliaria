@@ -234,7 +234,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                             Estamos sempre em busca de novos parceiros para ampliar nosso portfólio.
                         </p>
                         <a
-                            href="https://wa.me/5581997230455"
+                            href="https://wa.me/5581986141487"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-2 h-14 px-8 w-full sm:w-auto text-[11px] font-semibold uppercase tracking-[0.15em] text-white rounded-lg relative overflow-hidden hover:-translate-y-1 transition-all duration-300"

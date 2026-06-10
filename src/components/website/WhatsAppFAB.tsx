@@ -65,7 +65,7 @@ export function WhatsAppFAB() {
 
             {/* WhatsApp button */}
             <a
-                href="https://wa.me/5581997230455?text=Ol%C3%A1!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20im%C3%B3veis."
+                href="https://wa.me/5581986141487?text=Ol%C3%A1!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20im%C3%B3veis."
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Conversar no WhatsApp"

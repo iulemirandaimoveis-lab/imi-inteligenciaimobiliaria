@@ -221,7 +221,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                     <p className="text-gray-400 text-xs">Não foi possível carregar os dados. Consulte-nos pelo WhatsApp.</p>
                 </div>
                 <a
-                    href={`https://wa.me/5581997230455?text=${encodeURIComponent(`Olá! Gostaria de saber sobre as unidades disponíveis em ${propertyName}.`)}`}
+                    href={`https://wa.me/5581986141487?text=${encodeURIComponent(`Olá! Gostaria de saber sobre as unidades disponíveis em ${propertyName}.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white"
@@ -241,7 +241,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
         const message = encodeURIComponent(
             `Olá! Tenho interesse na unidade ${unit.unit_name} do empreendimento ${propertyName}. Gostaria de mais informações.`
         );
-        window.open(`https://wa.me/5581997230455?text=${message}`, '_blank');
+        window.open(`https://wa.me/5581986141487?text=${message}`, '_blank');
     };
 
     const typologyLabel = (type: string) => {

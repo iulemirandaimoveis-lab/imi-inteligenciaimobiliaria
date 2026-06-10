@@ -126,7 +126,7 @@ export default function Footer() {
                             </div>
                             <span style={{ wordBreak: 'break-all' }}>iulemirandaimoveis@gmail.com</span>
                         </a>
-                        <a href="https://wa.me/5581997230455" style={S.contactRow}>
+                        <a href="https://wa.me/5581986141487" style={S.contactRow}>
                             <div style={S.iconBox}>
                                 <svg width="16" height="16" fill="none" stroke="#C8A44A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1zm0 0a5 5 0 0 0 5 5m0 0a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1h1z"/></svg>
                             </div>

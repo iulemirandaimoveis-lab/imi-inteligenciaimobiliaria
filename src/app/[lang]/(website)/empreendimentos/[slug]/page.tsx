@@ -100,20 +100,20 @@ export default async function EmpreendimentoPage({ params }: PageProps) {
       {/* Interactive Viewer */}
       <section className="max-w-5xl mx-auto px-6 py-12">
         {isJazz && (
-          <JazzBoulevardViewer whatsappPhone={dev.whatsapp_phone ?? '5581997230455'} />
+          <JazzBoulevardViewer whatsappPhone={dev.whatsapp_phone ?? '5581986141487'} />
         )}
         {isSubdivision && (
           <SubdivisionLotMap
             developmentId={dev.id}
             developmentName={dev.name}
-            whatsappPhone={dev.whatsapp_phone ?? '5581997230455'}
+            whatsappPhone={dev.whatsapp_phone ?? '5581986141487'}
           />
         )}
         {isBuilding && !isJazz && (
           <GenericBuildingViewer
             developmentId={dev.id}
             developmentName={dev.name}
-            whatsappPhone={dev.whatsapp_phone ?? '5581997230455'}
+            whatsappPhone={dev.whatsapp_phone ?? '5581986141487'}
           />
         )}
       </section>

@@ -83,7 +83,7 @@ export default function ContactPage() {
             title: 'WhatsApp',
             content: '+55 (81) 9 9723-0455',
             sub: 'Atendimento rápido',
-            link: 'https://wa.me/5581997230455',
+            link: 'https://wa.me/5581986141487',
         },
         {
             icon: Mail,
@@ -410,7 +410,7 @@ export default function ContactPage() {
                             Precisa de agilidade? Fale diretamente com nossa equipe técnica pelo WhatsApp.
                         </p>
                         <ButtonPrimary
-                            href="https://wa.me/5581997230455"
+                            href="https://wa.me/5581986141487"
                             target="_blank"
                             rel="noopener noreferrer"
                             size="lg"
