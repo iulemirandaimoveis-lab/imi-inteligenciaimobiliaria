@@ -88,8 +88,8 @@ const PROJETOS = [
     {
         id: 'alto-bellevue',
         nome: 'Alto Bellevue',
-        subtitulo: 'Loteamento premium com qualidade de vida.',
-        tipo: 'Loteamento Residencial Premium',
+        subtitulo: 'Condomínio fechado premium com qualidade de vida.',
+        tipo: 'Condomínio Fechado Premium',
         status: 'lancamento',
         statusLabel: 'Em Comercialização',
         localizacao: 'Aloísio Pinto, Garanhuns — PE',
@@ -98,7 +98,7 @@ const PROJETOS = [
         vgv: 'R$ 96M',
         unidades: '465 lotes',
         area: '312–440 m²/lote',
-        conceito: 'Loteamento residencial premium com 465 lotes, portaria 24h, câmeras de segurança, piscina, salão de festas e infraestrutura completa em Garanhuns.',
+        conceito: 'Condomínio fechado premium com 465 lotes, portaria 24h, câmeras de segurança, piscina, salão de festas e infraestrutura completa em Garanhuns.',
         diferenciais: [
             'Mapa interativo com disponibilidade em tempo real',
             'Portaria 24h + câmeras em todo o perímetro',

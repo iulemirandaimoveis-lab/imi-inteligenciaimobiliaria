@@ -11,9 +11,9 @@ const SubdivisionLotMap = dynamic(
 export const metadata: Metadata = {
   title: 'Alto Bellevue | IMI — Inteligência Imobiliária',
   description:
-    'Loteamento residencial premium em Aloísio Pinto, Garanhuns (PE). 383 lotes de 289 a 693 m², com infraestrutura completa, portaria 24h e condições especiais de financiamento.',
+    'Condomínio fechado premium em Aloísio Pinto, Garanhuns (PE). 383 lotes de 289 a 693 m², com infraestrutura completa, portaria 24h e condições especiais de financiamento.',
   openGraph: {
-    title: 'Alto Bellevue — Loteamento Premium em Garanhuns',
+    title: 'Alto Bellevue — Condomínio Fechado Premium em Garanhuns',
     description:
       'Escolha seu lote. 383 unidades disponíveis, a partir de R$ 202.231. Explore o mapa interativo.',
   },
@@ -91,7 +91,7 @@ export default async function AltoBellevuePage({
 
           {/* Overline */}
           <p className="text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.35em] mb-5">
-            Empreendimento · Loteamento Residencial Premium
+            Empreendimento · Condomínio Fechado Premium
           </p>
 
           {/* Title */}
@@ -115,7 +115,7 @@ export default async function AltoBellevuePage({
 
           {/* Subtitle */}
           <p className="text-white/50 text-lg sm:text-xl font-light max-w-xl leading-relaxed mb-4">
-            Loteamento residencial premium em Aloísio Pinto, Garanhuns.
+            Condomínio fechado premium em Aloísio Pinto, Garanhuns.
           </p>
           <p className="text-white/35 text-base font-light max-w-md leading-relaxed mb-16">
             Lotes de 289 a 693 m² com infraestrutura completa, segurança 24h e qualidade de vida.
@@ -155,7 +155,7 @@ export default async function AltoBellevuePage({
       <section className="bg-[#F5F0EA] py-10 lg:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
           <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.3em] mb-3">
-            Mapa do Loteamento
+            Mapa do Condomínio
           </p>
           <h2
             className="text-2xl lg:text-3xl font-bold text-[#0B1928] leading-tight"
