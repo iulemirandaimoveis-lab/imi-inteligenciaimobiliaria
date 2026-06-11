@@ -58,7 +58,7 @@ function CategoryBadge({ category }: { category: string }) {
       textTransform: 'uppercase' as const,
       background: style.bg,
       color: style.color,
-      fontFamily: 'var(--font-ui,"Figtree",sans-serif)',
+      fontFamily: 'var(--font-sans)',
     }}>
       {style.label}
     </span>
@@ -92,7 +92,7 @@ function ToastMessage({ toast, onDismiss }: { toast: NonNullable<Toast>; onDismi
       borderRadius: 'var(--r-sm,4px)',
       background: toast.type === 'success' ? 'var(--accent-400)' : '#EF4444',
       color: toast.type === 'success' ? '#1a1a1a' : '#fff',
-      fontFamily: 'var(--font-ui,"Figtree",sans-serif)',
+      fontFamily: 'var(--font-sans)',
       fontSize: 14,
       fontWeight: 600,
       boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
@@ -181,7 +181,7 @@ export default function WidgetsPage() {
     <div style={{
       padding: '32px 24px',
       minHeight: '100vh',
-      fontFamily: 'var(--font-ui,"Figtree",sans-serif)',
+      fontFamily: 'var(--font-sans)',
     }}>
       {/* Header */}
       <div style={{
@@ -194,7 +194,7 @@ export default function WidgetsPage() {
       }}>
         <div>
           <h1 style={{
-            fontFamily: 'var(--font-display,"Figtree",sans-serif)',
+            fontFamily: 'var(--font-display)',
             fontSize: 24,
             fontWeight: 700,
             margin: '0 0 4px',

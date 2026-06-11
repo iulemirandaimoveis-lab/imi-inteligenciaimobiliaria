@@ -21,12 +21,12 @@ interface AIInsightCardProps {
 
 const VARIANT_STYLES = {
   gold: {
-    border: 'rgba(61,111,255,0.30)',
-    bg: 'rgba(61,111,255,0.06)',
+    border: 'rgba(200,164,74,0.30)',
+    bg: 'rgba(200,164,74,0.06)',
     iconColor: 'var(--accent-400)',
     labelColor: 'var(--accent-400)',
     btnBg: 'var(--accent-400)',
-    btnShadow: '0 2px 10px rgba(61,111,255,0.35)',
+    btnShadow: '0 2px 10px rgba(200,164,74,0.35)',
     btnColor: '#FFFFFF',
   },
   blue: {
