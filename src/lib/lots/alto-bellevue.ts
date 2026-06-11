@@ -11,7 +11,7 @@
 
 // Bump quando o JSON do mapa mudar: invalida o sessionStorage E o cache HTTP/CDN
 // (o ?v= muda a URL). Sem isso, navegadores antigos servem dados em cache.
-export const AB_MAP_VERSION = 4;
+export const AB_MAP_VERSION = 5;
 export const AB_MAP_URL = `/maps/alto-bellevue-lots.json?v=${AB_MAP_VERSION}`;
 export const AB_VIEWBOX = { w: 1200, h: 821.86 } as const;
 export const AB_EXPECTED_TOTAL = 383;
@@ -24,6 +24,8 @@ export type LotStatus = 'DISPONIVEL' | 'NEGOCIACAO' | 'VENDIDO' | 'PROPRIETARIO'
 export interface PaymentPlan {
   total: number;
   parcela: number;
+  /** Entrada oficial do plano = 10% do total com desconto (tabela de preços). */
+  entrada?: number;
 }
 
 /** Lote normalizado para consumo pela UI (compatível com a antiga shape `PlanLot`). */

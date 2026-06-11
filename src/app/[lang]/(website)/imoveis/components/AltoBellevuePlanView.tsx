@@ -30,11 +30,16 @@ interface PlanLot {
 interface PriceEntry {
   quadra: string; lote: string;
   preco_lote: number; preco_vista: number; entrada: number;
-  p12_total: number; p12_parcela: number;
-  p36_total: number; p36_parcela: number;
-  p60_total: number; p60_parcela: number;
-  p120_total: number; p120_parcela: number;
+  p12_total: number; p12_parcela: number; p12_entrada?: number;
+  p36_total: number; p36_parcela: number; p36_entrada?: number;
+  p60_total: number; p60_parcela: number; p60_entrada?: number;
+  p120_total: number; p120_parcela: number; p120_entrada?: number;
 }
+
+// Condições financeiras oficiais (tabela de preços do empreendimento):
+// à vista −20%; 12 meses −15%; 36 meses −8%; 60 meses −5%; 120 meses sem desconto.
+// Entrada de cada plano = 10% do total com desconto do próprio plano.
+const PLAN_DISCOUNTS: Record<string, number> = { p12: 15, p36: 8, p60: 5, p120: 0 };
 
 interface Props {
   lots: Lot[];
@@ -296,6 +301,26 @@ function computeSides(
     lateralEsq: r(groups.lateralEsq),
   };
 }
+
+/**
+ * Comprimento da corda horizontal do polígono na altura `y` — usado para
+ * decidir se um rótulo de texto (não rotacionado) cabe dentro do lote sem
+ * transbordar para vizinhos/ruas.
+ */
+function horizontalChordAt(poly: [number, number][], y: number): number {
+  if (!poly || poly.length < 3) return 0;
+  const xs: number[] = [];
+  for (let i = 0; i < poly.length; i++) {
+    const [x1, y1] = poly[i];
+    const [x2, y2] = poly[(i + 1) % poly.length];
+    if (y1 > y !== y2 > y) xs.push(x1 + ((y - y1) * (x2 - x1)) / (y2 - y1));
+  }
+  if (xs.length < 2) return 0;
+  return Math.max(...xs) - Math.min(...xs);
+}
+
+/** Largura estimada de um texto em coordenadas SVG (fonte monoespaçada). */
+const estTextWidth = (text: string, fontSize: number) => text.length * fontSize * 0.62;
 
 /** Rua de acesso aproximada: label de rua mais próxima do centroide do lote. */
 function nearestStreet(centroid: [number, number] | undefined, labels: { x: number; y: number; name: string }[]): string | null {
@@ -576,9 +601,12 @@ const MapInner = memo(function MapInner({
             ))}
             {/* Amenities (portaria, lazer, …) — clicáveis abrem painel de área comum */}
             {context.amenities.map((a) => {
-              const r = Math.max(4, 22 / scale);
-              const fontSize = Math.max(5, 16 / scale);
               const isPortaria = a.id === 'portaria';
+              // Marcadores não-portaria menores e com rótulo só em zoom maior:
+              // portaria/coworking/lazer/recreativa-01 ficam juntos no complexo
+              // de entrada (posição oficial) — rótulos simultâneos colidiriam.
+              const r = Math.max(isPortaria ? 4 : 3, (isPortaria ? 22 : 14) / scale);
+              const fontSize = Math.max(5, 16 / scale);
               // Hit target sempre confortável para toque (mín. ~22px na tela)
               const hit = Math.max(r * 1.6, 26 / scale);
               return (
@@ -602,7 +630,7 @@ const MapInner = memo(function MapInner({
                   <circle cx={a.x} cy={a.y} r={hit} fill="transparent" />
                   <circle cx={a.x} cy={a.y} r={r} fill={a.color} opacity={isPortaria ? 0.95 : 0.85}
                     stroke="rgba(255,255,255,0.85)" strokeWidth={Math.max(0.25, 1 / scale)} />
-                  {scale >= 0.5 && (
+                  {(isPortaria ? scale >= 0.5 : scale >= 2.2) && (
                     <text
                       x={a.x} y={a.y - Math.max(5, 26 / scale)}
                       textAnchor="middle"
@@ -724,8 +752,15 @@ const MapInner = memo(function MapInner({
                   Três linhas: número, área m², testada×profundidade.
                   Background outline melhora legibilidade sobre qualquer cor. */}
               {showLotNumbers && cx > 0 && cy > 0 && (() => {
-                const hasArea = showAreaLabels && lot.area_m2;
-                const hasDims = !!dims;
+                // Fit-check: cada linha só aparece se couber na corda horizontal
+                // do polígono na sua altura — evita texto vazando para vizinhos.
+                const areaText = lot.area_m2 ? `${Math.round(lot.area_m2 as number)} m²` : '';
+                const dimsText = dims ? `${fmtM(dims.testada)} × ${fmtM(dims.profundidade)}` : '';
+                const chordMid = horizontalChordAt(lot.polygon, cy);
+                const hasArea = showAreaLabels && !!lot.area_m2 &&
+                  estTextWidth(areaText, 4.4) <= chordMid * 0.95;
+                const hasDims = !!dims &&
+                  estTextWidth(dimsText, 3.0) <= chordMid * 0.95;
                 // Total linhas visíveis → offset base para centralizar o grupo
                 const lineCount = 1 + (hasArea ? 1 : 0) + (hasDims ? 1 : 0);
                 const lineH = 5.6; // espaçamento entre linhas em coord SVG
@@ -1127,28 +1162,45 @@ function LotBottomSheet({
                 </p>
               </div>
               <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(200,164,74,0.75)', background: 'rgba(200,164,74,0.12)', padding: '3px 8px', borderRadius: 8 }}>
-                20% desc.
+                −20%
               </span>
             </div>
-            {/* Installments */}
+            {/* Installments — desconto oficial por plano (quanto menor o prazo, maior o desconto) */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
               {([
-                { label: '12×', parcela: priceEntry.p12_parcela, total: priceEntry.p12_total },
-                { label: '36×', parcela: priceEntry.p36_parcela, total: priceEntry.p36_total },
-                { label: '60×', parcela: priceEntry.p60_parcela, total: priceEntry.p60_total },
-                { label: '120×', parcela: priceEntry.p120_parcela, total: priceEntry.p120_total },
-              ] as const).map(plan => (
-                <div key={plan.label} style={{ background: '#F8F6F2', borderRadius: 12, padding: '10px 12px' }}>
-                  <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px', fontFamily: "'Outfit', sans-serif" }}>{plan.label}</p>
-                  <p style={{ fontSize: 13, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
-                    {fmtBRL(plan.parcela)}/mês
-                  </p>
-                  <p style={{ fontSize: 8, color: '#B8B3A8', margin: '2px 0 0', fontWeight: 500 }}>
-                    Entrada {fmtBRL(priceEntry.entrada)}
-                  </p>
-                </div>
-              ))}
+                { key: 'p12', label: '12×', parcela: priceEntry.p12_parcela, total: priceEntry.p12_total, entrada: priceEntry.p12_entrada },
+                { key: 'p36', label: '36×', parcela: priceEntry.p36_parcela, total: priceEntry.p36_total, entrada: priceEntry.p36_entrada },
+                { key: 'p60', label: '60×', parcela: priceEntry.p60_parcela, total: priceEntry.p60_total, entrada: priceEntry.p60_entrada },
+                { key: 'p120', label: '120×', parcela: priceEntry.p120_parcela, total: priceEntry.p120_total, entrada: priceEntry.p120_entrada },
+              ] as const).map(plan => {
+                const desconto = PLAN_DISCOUNTS[plan.key];
+                // Entrada oficial = 10% do total com desconto do plano (fallback p/ dados antigos)
+                const entrada = plan.entrada ?? Math.round(plan.total * 10) / 100;
+                return (
+                  <div key={plan.label} style={{ background: '#F8F6F2', borderRadius: 12, padding: '10px 12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
+                      <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0, fontFamily: "'Outfit', sans-serif" }}>{plan.label}</p>
+                      <span style={{
+                        fontSize: 8, fontWeight: 700, padding: '2px 6px', borderRadius: 6,
+                        background: desconto > 0 ? 'rgba(50,209,124,0.14)' : 'rgba(0,0,0,0.05)',
+                        color: desconto > 0 ? '#15803D' : '#A8A296',
+                      }}>
+                        {desconto > 0 ? `−${desconto}%` : 'sem desc.'}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: 13, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
+                      {fmtBRL(plan.parcela)}/mês
+                    </p>
+                    <p style={{ fontSize: 8, color: '#B8B3A8', margin: '2px 0 0', fontWeight: 500 }}>
+                      Entrada {fmtBRL(entrada)} · Total {fmtBRL(plan.total)}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
+            <p style={{ fontSize: 8.5, color: '#B8B3A8', margin: '8px 2px 0', fontWeight: 500, lineHeight: 1.45 }}>
+              Entrada de 10% sobre o valor do plano · correção mensal pelo INCC conforme tabela oficial.
+            </p>
           </div>
         )}
 
@@ -1428,6 +1480,15 @@ export default function AltoBellevuePlanView({
   const [searchMiss, setSearchMiss] = useState(false);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
+  // Dica "toque em um lote": some sozinha após 6s ou na primeira seleção.
+  const [showTapHint, setShowTapHint] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setShowTapHint(false), 6000);
+    return () => clearTimeout(t);
+  }, []);
+  useEffect(() => {
+    if (selectedLot) setShowTapHint(false);
+  }, [selectedLot]);
   const [vb, setVb] = useState<ViewBox>(INITIAL_VB);
   const vbLive = useRef<ViewBox>(INITIAL_VB);
   vbLive.current = vb;
@@ -2010,18 +2071,20 @@ export default function AltoBellevuePlanView({
           </div>
         )}
 
-        {/* Tap hint */}
+        {/* Tap hint — some após 6s ou na primeira interação (não cobre o mapa nem
+            colide com o indicador de zoom no mobile) */}
         <AnimatePresence>
-          {!selectedLot && !loading && !error && (
+          {showTapHint && !selectedLot && !loading && !error && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ delay: 1, duration: 0.4 }}
-              className="absolute bottom-3 left-3 z-10 pointer-events-none"
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
+              style={{ maxWidth: 'calc(100% - 24px)' }}
             >
               <span
-                className="px-3 py-1.5 rounded-full text-[10px] font-semibold"
+                className="px-3 py-1.5 rounded-full text-[10px] font-semibold whitespace-nowrap"
                 style={{
                   background: 'rgba(0,0,0,0.50)',
                   color: 'rgba(255,255,255,0.72)',
