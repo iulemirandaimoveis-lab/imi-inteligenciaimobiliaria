@@ -48,6 +48,8 @@ interface Props {
   whatsappPhone?: string;
   /** Mídia/textos das áreas comuns vindos do backoffice (developments.lot_map_amenities, JSONB). */
   amenityOverrides?: Record<string, unknown>[];
+  /** Tour virtual 360° do empreendimento — configurável no backoffice (developments.virtual_tour_url). */
+  virtualTourUrl?: string;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -151,7 +153,6 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
       `${AB_AMEN_IMG}/ab-amenity-06.jpg`, `${AB_AMEN_IMG}/ab-amenity-07.jpg`,
       `${AB_AMEN_IMG}/ab-amenity-08.jpg`,
     ],
-    tour360: AB_TOUR_360,
   },
   'area-verde': {
     title: 'Área Verde',
@@ -165,7 +166,6 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
     subtitle: 'Trabalho e gestão',
     description: 'Espaço de coworking e administração do condomínio — ambiente compartilhado para trabalho, reuniões e apoio aos moradores.',
     fn: 'Coworking e administração',
-    photos: [`${AB_AMEN_IMG}/ab-amenity-03.jpg`],
   },
   recreativa: {
     title: 'Área Recreativa',
@@ -1287,15 +1287,17 @@ function AmenityIcon({ id, color, size = 22 }: { id: string; color: string; size
 // ── Common-area Bottom Sheet ──────────────────────────────────────────────────
 
 function AmenityBottomSheet({
-  amenity, onClose, onLocate, whatsappPhone, developmentName,
+  amenity, onClose, onLocate, whatsappPhone, developmentName, fallbackTour360,
 }: {
   amenity: Amenity;
   onClose: () => void;
   onLocate: () => void;
   whatsappPhone: string;
   developmentName: string;
+  fallbackTour360?: string;
 }) {
-  const info = getAmenityInfo(amenity);
+  const rawInfo = getAmenityInfo(amenity);
+  const info = fallbackTour360 && !rawInfo.tour360 ? { ...rawInfo, tour360: fallbackTour360 } : rawInfo;
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1454,6 +1456,7 @@ export default function AltoBellevuePlanView({
   developmentName,
   whatsappPhone = '5581986141487',
   amenityOverrides,
+  virtualTourUrl,
 }: Props) {
   const { data: mapData, loading, error, retry } = useABMap();
   // Lookup das mídias do backoffice por id de área (sobrepõe os defaults da UI).
@@ -2191,6 +2194,28 @@ export default function AltoBellevuePlanView({
         </div>
       )}
 
+      {/* ── TOUR VIRTUAL 360° — visível quando configurado no backoffice ── */}
+      {!isFullscreen && virtualTourUrl && (
+        <div style={{ background: '#fff', borderTop: '1px solid rgba(0,0,0,0.06)', padding: '16px 16px 20px' }}>
+          <p style={{ fontSize: 9, fontWeight: 700, color: '#C8C3BB', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 10px', fontFamily: "'Outfit', sans-serif" }}>
+            Tour Virtual 360°
+          </p>
+          <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: 16, overflow: 'hidden', background: '#000' }}>
+            <iframe
+              src={virtualTourUrl}
+              title={`${developmentName} — tour virtual 360°`}
+              allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen; autoplay"
+              allowFullScreen
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+            />
+          </div>
+          <p style={{ fontSize: 10.5, color: '#948F84', margin: '6px 2px 0', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Video size={12} style={{ color: '#C8A44A', flexShrink: 0 }} />
+            Arraste para explorar o empreendimento em 360° · compatível com óculos VR
+          </p>
+        </div>
+      )}
+
       {/* ── CTA STRIP — hidden while detail sheet is open ── */}
       {!isFullscreen && <AnimatePresence>
         {!selectedLot && (
@@ -2255,6 +2280,7 @@ export default function AltoBellevuePlanView({
             onLocate={() => locateAmenity(selectedAmenity)}
             whatsappPhone={whatsappPhone}
             developmentName={developmentName}
+            fallbackTour360={virtualTourUrl}
           />
         )}
       </AnimatePresence>

@@ -48,6 +48,7 @@ export default function MapaAreasComunsPage() {
   const router = useRouter()
   const id = params.id as string
   const [areas, setAreas] = useState<Record<string, MapAmenity>>({})
+  const [globalTourUrl, setGlobalTourUrl] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -56,14 +57,18 @@ export default function MapaAreasComunsPage() {
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
-    fetch(`/api/developments/${id}/map-amenities`)
-      .then((r) => r.json())
-      .then((d) => {
+    Promise.all([
+      fetch(`/api/developments/${id}/map-amenities`).then(r => r.json()),
+      fetch(`/api/developments?id=${id}`).then(r => r.json()),
+    ])
+      .then(([d, devData]) => {
         const savedAreas: MapAmenity[] = Array.isArray(d?.amenities) ? d.amenities : []
         const map: Record<string, MapAmenity> = {}
         for (const a of DEFAULT_AREAS) map[a.id] = { id: a.id }
         for (const a of savedAreas) map[a.id] = { ...map[a.id], ...a }
         setAreas(map)
+        const dev = Array.isArray(devData) ? devData[0] : devData
+        setGlobalTourUrl(dev?.virtual_tour_url || '')
       })
       .catch(() => {})
       .finally(() => setLoading(false))
@@ -105,19 +110,25 @@ export default function MapaAreasComunsPage() {
       (a: MapAmenity) => a.description || a.title || a.subtitle || a.video || a.tour360 || (a.photos && a.photos.length),
     )
     try {
-      const res = await fetch(`/api/developments/${id}/map-amenities`, {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amenities: payload }),
-      })
-      const data = await res.json()
-      if (res.ok) { setSaved(true); setMsg(`${data.count ?? payload.length} áreas salvas`) }
+      const [amenRes, tourRes] = await Promise.all([
+        fetch(`/api/developments/${id}/map-amenities`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amenities: payload }),
+        }),
+        fetch('/api/developments', {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, virtual_tour_url: globalTourUrl || null }),
+        }),
+      ])
+      const data = await amenRes.json()
+      if (amenRes.ok && tourRes.ok) { setSaved(true); setMsg(`${data.count ?? payload.length} áreas + tour 360° salvos`) }
       else setMsg(data?.error || 'Erro ao salvar')
     } catch {
       setMsg('Erro ao salvar')
     } finally {
       setSaving(false)
     }
-  }, [areas, id])
+  }, [areas, id, globalTourUrl])
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: N, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -220,6 +231,49 @@ export default function MapaAreasComunsPage() {
             borderRadius: 2,
             transition: 'width .4s cubic-bezier(0.16,1,0.3,1)',
           }} />
+        </div>
+      </div>
+
+      {/* ── Tour Virtual 360° global ──────────────────────────────── */}
+      <div style={{ padding: '12px 14px 0' }}>
+        <div style={{
+          background: 'rgba(14,28,48,.52)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: `1px solid ${globalTourUrl ? G_BORDER : BDR}`,
+          borderLeft: globalTourUrl ? '3px solid rgba(200,164,74,.5)' : `1px solid ${BDR}`,
+          borderRadius: 16, padding: '14px 16px', marginBottom: 4,
+        }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 9.5, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
+            <Globe size={11} /> Tour Virtual 360° do Empreendimento
+          </label>
+          <input
+            value={globalTourUrl}
+            onChange={e => setGlobalTourUrl(e.target.value)}
+            placeholder="https://kuula.co/share/collection/… ou https://matterport.com/…"
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              background: 'rgba(20,36,64,.5)',
+              border: `1px solid ${globalTourUrl ? 'rgba(167,139,250,.35)' : G_BORDER_MED}`,
+              borderRadius: 8, padding: '8px 11px',
+              fontSize: 11, color: T1, fontFamily: MONO,
+              outline: 'none', transition: 'border-color .15s',
+            }}
+          />
+          {globalTourUrl && (
+            <div style={{ marginTop: 10, borderRadius: 10, overflow: 'hidden', position: 'relative', paddingTop: '50%', background: '#000' }}>
+              <iframe
+                src={globalTourUrl}
+                title="Tour virtual 360°"
+                allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen; autoplay"
+                allowFullScreen
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+              />
+            </div>
+          )}
+          <p style={{ fontSize: 9.5, color: T3, fontFamily: FONT, marginTop: 6, lineHeight: 1.4 }}>
+            Aparece no mapa público e como fallback nas áreas sem tour específico.
+          </p>
         </div>
       </div>
 

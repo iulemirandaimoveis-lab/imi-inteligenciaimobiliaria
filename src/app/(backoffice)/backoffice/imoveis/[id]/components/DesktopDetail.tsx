@@ -507,12 +507,33 @@ export function DesktopImovelDetail({
                 </div>
               )}
 
+              {/* Tour Virtual 360° */}
+              {dev.virtual_tour_url && (
+                <div style={{ ...CARD, padding: 0, overflow: 'hidden' }}>
+                  <div style={{ padding: '16px 24px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <p style={EYEBROW}>Tour Virtual 360°</p>
+                    <Link href={`/backoffice/imoveis/${id}/editar`} style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 11 }}>
+                      <Edit size={12} /> Editar URL
+                    </Link>
+                  </div>
+                  <div style={{ position: 'relative', paddingTop: '56.25%', margin: '16px 0 0' }}>
+                    <iframe
+                      src={dev.virtual_tour_url}
+                      title="Tour Virtual 360°"
+                      allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen; autoplay"
+                      allowFullScreen
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Áreas Comuns */}
               <div style={{ ...CARD, padding: 24 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                  <p style={EYEBROW}>Áreas Comuns</p>
-                  <Link href={`/backoffice/imoveis/${id}/editar`} style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 11 }}>
-                    <Edit size={12} /> Gerenciar Mídias
+                  <p style={EYEBROW}>{(dev.type === 'loteamento' || dev.type === 'condominio_fechado') ? 'Áreas Comuns do Mapa' : 'Áreas Comuns'}</p>
+                  <Link href={`/backoffice/imoveis/${id}/${(dev.type === 'loteamento' || dev.type === 'condominio_fechado') ? 'mapa' : 'editar'}`} style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 11, background: 'rgba(200,164,74,0.12)', borderColor: 'rgba(200,164,74,0.4)', color: 'var(--gold, #C8A44A)' }}>
+                    <MapPinned size={12} /> Gerenciar Fotos e Tour
                   </Link>
                 </div>
 

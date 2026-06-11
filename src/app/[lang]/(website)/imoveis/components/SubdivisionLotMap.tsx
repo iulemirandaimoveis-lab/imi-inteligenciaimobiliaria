@@ -41,6 +41,8 @@ interface SubdivisionLotMapProps {
   paymentConditions?: PaymentConditions | null;
   /** Mídia das áreas comuns do mapa (developments.lot_map_amenities) — editável no backoffice. */
   mapAmenities?: Record<string, unknown>[];
+  /** Tour virtual 360° do empreendimento (developments.virtual_tour_url) — editável no backoffice. */
+  virtualTourUrl?: string;
 }
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -929,7 +931,7 @@ function CompareBar({
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581986141487', paymentConditions, mapAmenities }: SubdivisionLotMapProps) {
+export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581986141487', paymentConditions, mapAmenities, virtualTourUrl }: SubdivisionLotMapProps) {
   const [lots, setLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
@@ -1208,6 +1210,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           developmentName={developmentName}
           whatsappPhone={whatsappPhone}
           amenityOverrides={mapAmenities}
+          virtualTourUrl={virtualTourUrl}
         />
       </div>
     );
