@@ -32,7 +32,8 @@ const N2  = '#0B1928'
 const N3  = '#0F2035'
 const N4  = '#142840'
 const GOLD = '#C8A44A'
-const G_BORDER = 'rgba(200,164,74,.18)'
+const G_BORDER     = 'rgba(200,164,74,.18)'
+const G_BORDER_MED = 'rgba(200,164,74,.30)'
 const G_BG     = 'rgba(200,164,74,.08)'
 const G_BG_MED = 'rgba(200,164,74,.14)'
 const T1 = '#E8E4DC'
@@ -124,6 +125,12 @@ export default function MapaAreasComunsPage() {
     </div>
   )
 
+  const filledCount = Object.values(areas as Record<string, MapAmenity>).filter(
+    (a: MapAmenity) => a.title || a.description || a.video || a.tour360 || (a.photos?.length ?? 0) > 0
+  ).length
+  const totalCount = DEFAULT_AREAS.length
+  const progressPct = Math.round((filledCount / totalCount) * 100)
+
   return (
     <div style={{ minHeight: '100vh', background: N, color: T1, fontFamily: FONT, WebkitFontSmoothing: 'antialiased' }}>
 
@@ -196,8 +203,28 @@ export default function MapaAreasComunsPage() {
         )}
       </div>
 
+      {/* ── Progress indicator ────────────────────────────────────── */}
+      <div style={{ padding: '12px 14px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+          <span style={{ fontSize: 9, color: GOLD, fontFamily: FONT, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase' }}>
+            Progresso
+          </span>
+          <span style={{ fontSize: 9, color: T2, fontFamily: MONO, letterSpacing: '0.5px' }}>
+            {filledCount} de {totalCount} áreas configuradas
+          </span>
+        </div>
+        <div style={{ height: 3, background: 'rgba(255,255,255,.06)', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{
+            height: '100%', width: `${progressPct}%`,
+            background: 'rgba(200,164,74,.7)',
+            borderRadius: 2,
+            transition: 'width .4s cubic-bezier(0.16,1,0.3,1)',
+          }} />
+        </div>
+      </div>
+
       {/* ── Area cards ────────────────────────────────────────────── */}
-      <div style={{ padding: '16px 14px 100px' }}>
+      <div style={{ padding: '12px 14px 100px' }}>
         {DEFAULT_AREAS.map(({ id: aId, label, icon }, index) => {
           const a = areas[aId] ?? { id: aId }
           const isUploading = uploadingFor === aId
@@ -212,6 +239,7 @@ export default function MapaAreasComunsPage() {
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
                 border: `1px solid ${hasSomeData ? G_BORDER : BDR}`,
+                borderLeft: hasSomeData ? '3px solid rgba(200,164,74,.5)' : `1px solid ${BDR}`,
                 borderRadius: 16,
                 marginBottom: 12,
                 overflow: 'hidden',
@@ -247,8 +275,8 @@ export default function MapaAreasComunsPage() {
                   )}
                 </div>
                 <div style={{
-                  fontSize: 9, fontFamily: MONO, color: T3,
-                  background: N4, border: `1px solid ${BDR}`,
+                  fontSize: 9, fontFamily: MONO, color: GOLD,
+                  background: 'rgba(200,164,74,.12)', border: `1px solid ${G_BORDER}`,
                   borderRadius: 5, padding: '3px 7px', letterSpacing: '0.5px',
                   flexShrink: 0,
                 }}>
@@ -262,7 +290,7 @@ export default function MapaAreasComunsPage() {
                 {/* Título + Subtítulo */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: 9, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
+                    <label style={{ display: 'block', fontSize: 9.5, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
                       Título
                     </label>
                     <input
@@ -272,7 +300,7 @@ export default function MapaAreasComunsPage() {
                       style={{
                         width: '100%', boxSizing: 'border-box',
                         background: 'rgba(20,36,64,.5)',
-                        border: `1px solid ${G_BORDER}`,
+                        border: `1px solid ${G_BORDER_MED}`,
                         borderRadius: 8, padding: '8px 11px',
                         fontSize: 12, color: T1, fontFamily: FONT,
                         outline: 'none', transition: 'border-color .15s',
@@ -280,7 +308,7 @@ export default function MapaAreasComunsPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: 9, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
+                    <label style={{ display: 'block', fontSize: 9.5, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
                       Subtítulo
                     </label>
                     <input
@@ -290,7 +318,7 @@ export default function MapaAreasComunsPage() {
                       style={{
                         width: '100%', boxSizing: 'border-box',
                         background: 'rgba(20,36,64,.5)',
-                        border: `1px solid ${G_BORDER}`,
+                        border: `1px solid ${G_BORDER_MED}`,
                         borderRadius: 8, padding: '8px 11px',
                         fontSize: 12, color: T1, fontFamily: FONT,
                         outline: 'none', transition: 'border-color .15s',
@@ -301,7 +329,7 @@ export default function MapaAreasComunsPage() {
 
                 {/* Descrição */}
                 <div>
-                  <label style={{ display: 'block', fontSize: 9, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
+                  <label style={{ display: 'block', fontSize: 9.5, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
                     Descrição
                   </label>
                   <textarea
@@ -312,7 +340,7 @@ export default function MapaAreasComunsPage() {
                     style={{
                       width: '100%', boxSizing: 'border-box',
                       background: 'rgba(20,36,64,.5)',
-                      border: `1px solid ${G_BORDER}`,
+                      border: `1px solid ${G_BORDER_MED}`,
                       borderRadius: 8, padding: '8px 11px',
                       fontSize: 12, color: T1, fontFamily: FONT,
                       outline: 'none', resize: 'none',
@@ -324,7 +352,7 @@ export default function MapaAreasComunsPage() {
                 {/* Vídeo + Tour 360 */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                   <div>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9.5, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
                       <Video size={10} /> Vídeo
                     </label>
                     <input
@@ -334,7 +362,7 @@ export default function MapaAreasComunsPage() {
                       style={{
                         width: '100%', boxSizing: 'border-box',
                         background: 'rgba(20,36,64,.5)',
-                        border: `1px solid ${a.video ? 'rgba(96,165,250,.35)' : G_BORDER}`,
+                        border: `1px solid ${a.video ? 'rgba(96,165,250,.35)' : G_BORDER_MED}`,
                         borderRadius: 8, padding: '8px 11px',
                         fontSize: 11, color: T1, fontFamily: MONO,
                         outline: 'none', transition: 'border-color .15s',
@@ -342,7 +370,7 @@ export default function MapaAreasComunsPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9.5, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
                       <Globe size={10} /> Tour 360°
                     </label>
                     <input
@@ -352,7 +380,7 @@ export default function MapaAreasComunsPage() {
                       style={{
                         width: '100%', boxSizing: 'border-box',
                         background: 'rgba(20,36,64,.5)',
-                        border: `1px solid ${a.tour360 ? 'rgba(167,139,250,.35)' : G_BORDER}`,
+                        border: `1px solid ${a.tour360 ? 'rgba(167,139,250,.35)' : G_BORDER_MED}`,
                         borderRadius: 8, padding: '8px 11px',
                         fontSize: 11, color: T1, fontFamily: MONO,
                         outline: 'none', transition: 'border-color .15s',
@@ -364,7 +392,7 @@ export default function MapaAreasComunsPage() {
                 {/* Fotos */}
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9.5, color: GOLD, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700 }}>
                       <ImageIcon size={10} /> Fotos {photoCount > 0 && <span style={{ color: T2, fontFamily: MONO, fontSize: 9 }}>({photoCount})</span>}
                     </label>
                     <button
@@ -398,17 +426,17 @@ export default function MapaAreasComunsPage() {
                     <button
                       onClick={() => fileRefs.current[aId]?.click()}
                       style={{
-                        width: '100%', padding: '18px 0',
+                        width: '100%', padding: '24px 0',
                         border: `1px dashed rgba(200,164,74,.22)`,
                         borderRadius: 10,
                         background: 'rgba(200,164,74,.03)',
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
                         cursor: 'pointer',
                       }}
                     >
-                      <ImageIcon size={20} style={{ color: T3 }} />
-                      <span style={{ fontSize: 11, color: T3, fontFamily: FONT }}>Nenhuma foto ainda</span>
-                      <span style={{ fontSize: 9, color: GOLD, fontFamily: FONT, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>Adicionar agora</span>
+                      <Upload size={20} style={{ color: T3 }} />
+                      <span style={{ fontSize: 11, color: T2, fontFamily: FONT }}>Nenhuma foto adicionada</span>
+                      <span style={{ fontSize: 9, color: GOLD, fontFamily: FONT, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>Toque para enviar</span>
                     </button>
                   ) : (
                     <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
@@ -462,7 +490,7 @@ export default function MapaAreasComunsPage() {
           {msg
             ? <span style={{ fontSize: 12, fontFamily: MONO, color: saved ? '#4ADE80' : '#F87171', letterSpacing: '0.3px' }}>{msg}</span>
             : <span style={{ fontSize: 11, color: T3, fontFamily: FONT }}>
-                {Object.values(areas as Record<string, MapAmenity>).filter((a: MapAmenity) => a.title || a.description || a.video || a.tour360 || (a.photos?.length ?? 0) > 0).length} de {DEFAULT_AREAS.length} áreas preenchidas
+                {filledCount} de {totalCount} áreas preenchidas
               </span>
           }
         </div>
@@ -491,7 +519,7 @@ export default function MapaAreasComunsPage() {
 
       <style suppressHydrationWarning>{`
         @keyframes spin { to { transform: rotate(360deg); } }
-        input::placeholder, textarea::placeholder { color: #556170; }
+        input::placeholder, textarea::placeholder { color: #6B7A8E; }
         input:focus, textarea:focus { border-color: rgba(200,164,74,.5) !important; box-shadow: 0 0 0 3px rgba(200,164,74,.08); }
       `}</style>
     </div>

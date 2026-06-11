@@ -156,7 +156,7 @@ export function DesktopImovelDetail({
             title="Alterar status"
             style={{
               width: 24, height: 24, borderRadius: 6,
-              background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.2)',
+              background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s',
             }}
@@ -167,7 +167,7 @@ export function DesktopImovelDetail({
             <div style={{
               position: 'absolute', top: '110%', right: 0, zIndex: 100,
               background: 'rgba(11,25,40,0.97)', backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(61,111,255,0.2)', borderRadius: 10, padding: '6px 0',
+              border: '1px solid rgba(200,164,74,0.2)', borderRadius: 10, padding: '6px 0',
               minWidth: 160, boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
             }}>
               {STATUS_OPTIONS.map(opt => (
@@ -187,7 +187,7 @@ export function DesktopImovelDetail({
                     fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)',
                     fontWeight: localStatus === opt.value ? 700 : 400, transition: 'background 0.1s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(61,111,255,0.06)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(200,164,74,0.06)' }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
                   <span style={{ width: 7, height: 7, borderRadius: '50%', background: opt.color, flexShrink: 0 }} />
@@ -216,9 +216,9 @@ export function DesktopImovelDetail({
             </div>
             {images.length > 1 && (
               <>
-                <button onClick={() => setGalleryIdx(i => (i - 1 + images.length) % images.length)} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(61,111,255,0.3)', color: '#EBE7E0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronLeft size={18} /></button>
-                <button onClick={() => setGalleryIdx(i => (i + 1) % images.length)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(61,111,255,0.3)', color: '#EBE7E0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronRight size={18} /></button>
-                <div style={{ position: 'absolute', top: 14, right: 14, background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(61,111,255,0.2)', borderRadius: 6, padding: '4px 10px', ...MONO, fontSize: 11, color: 'rgba(235,231,224,0.8)' }}>{galleryIdx + 1} / {images.length}</div>
+                <button onClick={() => setGalleryIdx(i => (i - 1 + images.length) % images.length)} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(200,164,74,0.3)', color: '#EBE7E0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronLeft size={18} /></button>
+                <button onClick={() => setGalleryIdx(i => (i + 1) % images.length)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: '50%', background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(200,164,74,0.3)', color: '#EBE7E0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronRight size={18} /></button>
+                <div style={{ position: 'absolute', top: 14, right: 14, background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(200,164,74,0.2)', borderRadius: 6, padding: '4px 10px', ...MONO, fontSize: 11, color: 'rgba(235,231,224,0.8)' }}>{galleryIdx + 1} / {images.length}</div>
               </>
             )}
           </>
@@ -245,7 +245,7 @@ export function DesktopImovelDetail({
         {/* LEFT COLUMN */}
         <div>
           {/* Sticky tab bar */}
-          <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--bg-base, var(--navy, #0B1120))', borderBottom: '1px solid rgba(61,111,255,0.14)', marginBottom: 20 }}>
+          <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--bg-base, var(--navy, #0B1120))', borderBottom: '1px solid rgba(200,164,74,0.14)', marginBottom: 20 }}>
             <div className="imovel-tabs" style={{ display: 'flex', gap: 0, overflowX: 'auto', scrollbarWidth: 'none' }}>
               {TABS.map(tab => (
                 <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ padding: '12px 20px', background: 'transparent', border: 'none', borderBottom: `2px solid ${activeTab === tab.key ? 'var(--gold, var(--accent-400))' : 'transparent'}`, color: activeTab === tab.key ? 'var(--gold, var(--accent-400))' : T.textMuted, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 700, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 200ms ease', marginBottom: '-1px' }}>
@@ -279,7 +279,7 @@ export function DesktopImovelDetail({
                     { icon: MapPin, label: 'Bairro', value: dev.neighborhood ?? '—' },
                     { icon: Home, label: 'CEP', value: dev.cep ?? '—' },
                   ].map(({ icon: Icon, label, value }) => (
-                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8, padding: '12px 14px' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(200,164,74,0.1)', borderRadius: 8, padding: '12px 14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
                         <Icon size={12} style={{ color: 'var(--gold, var(--accent-400))', flexShrink: 0 }} />
                         <span style={{ ...EYEBROW, fontSize: '8px' }}>{label}</span>
@@ -294,14 +294,14 @@ export function DesktopImovelDetail({
                   <p style={{ ...EYEBROW, marginBottom: 16 }}>Diferenciais & Comodidades</p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {(dev.features ?? []).map((item, i) => (
-                      <span key={i} style={{ padding: '5px 12px', borderRadius: 6, background: 'rgba(61,111,255,0.08)', border: '1px solid rgba(61,111,255,0.18)', color: T.textMuted, fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 500 }}>{item}</span>
+                      <span key={i} style={{ padding: '5px 12px', borderRadius: 6, background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.18)', color: T.textMuted, fontSize: 12, fontFamily: 'var(--font-outfit, sans-serif)', fontWeight: 500 }}>{item}</span>
                     ))}
                   </div>
                 </div>
               )}
               <div style={{ ...CARD, padding: 24 }}>
                 <p style={{ ...EYEBROW, marginBottom: 16 }}>Localização</p>
-                <div style={{ background: 'var(--bg-surface)', borderRadius: 8, overflow: 'hidden', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(61,111,255,0.1)', flexDirection: 'column', gap: 8, color: T.textDim }}>
+                <div style={{ background: 'var(--bg-surface)', borderRadius: 8, overflow: 'hidden', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(200,164,74,0.1)', flexDirection: 'column', gap: 8, color: T.textDim }}>
                   <MapPin size={28} style={{ opacity: 0.3 }} />
                   <span style={{ fontSize: 12 }}>{fullAddress || 'Endereço não informado'}</span>
                   {dev.lat && dev.lng && (
@@ -325,21 +325,21 @@ export function DesktopImovelDetail({
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid rgba(61,111,255,0.14)' }}>
+                      <tr style={{ borderBottom: '1px solid rgba(200,164,74,0.14)' }}>
                         {['Empreendimento', 'Área', 'Preço/m²', 'Δ Mercado'].map(h => (
                           <th key={h} style={{ ...EYEBROW, fontSize: '8px', textAlign: 'left', padding: '6px 12px 8px' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ background: 'rgba(61,111,255,0.06)', borderBottom: '1px solid rgba(61,111,255,0.1)' }}>
+                      <tr style={{ background: 'rgba(200,164,74,0.06)', borderBottom: '1px solid rgba(200,164,74,0.1)' }}>
                         <td style={{ padding: '10px 12px', color: 'var(--gold, var(--accent-400))', fontWeight: 600 }}>{dev.name} <span style={{ fontSize: 10, opacity: 0.7 }}>(este)</span></td>
                         <td style={{ ...MONO, padding: '10px 12px', color: T.text }}>{dev.area_from ? `${dev.area_from} m²` : '—'}</td>
                         <td style={{ ...MONO, padding: '10px 12px', color: T.text }}>{priceSqm ? `R$ ${fmtNum(priceSqm)}` : '—'}</td>
                         <td style={{ ...MONO, padding: '10px 12px', color: T.textDim }}>—</td>
                       </tr>
                       {comparables.map((comp, i) => (
-                        <tr key={i} style={{ borderBottom: '1px solid rgba(61,111,255,0.06)' }}>
+                        <tr key={i} style={{ borderBottom: '1px solid rgba(200,164,74,0.06)' }}>
                           <td style={{ padding: '10px 12px', color: T.text }}>{comp.name}</td>
                           <td style={{ ...MONO, padding: '10px 12px', color: T.textMuted }}>{comp.area} m²</td>
                           <td style={{ ...MONO, padding: '10px 12px', color: T.textMuted }}>R$ {fmtNum(comp.priceSqm)}</td>
@@ -372,7 +372,7 @@ export function DesktopImovelDetail({
                     { label: 'ROI 12m Estimado', value: `${enriched.roi_12m?.toFixed(1) ?? '—'}%`, unit: '', color: '#D4B86A' },
                     { label: 'Preço/m²', value: priceSqm ? `R$ ${fmtNum(priceSqm)}` : '—', unit: '', color: T.text as string },
                   ].map(({ label, value, unit, color }) => (
-                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8, padding: '16px 18px' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(200,164,74,0.1)', borderRadius: 8, padding: '16px 18px' }}>
                       <p style={{ ...EYEBROW, fontSize: '8px', marginBottom: 8 }}>{label}</p>
                       <p style={{ ...MONO, fontSize: 24, fontWeight: 400, color, lineHeight: 1, margin: 0 }}>
                         {value}
@@ -411,7 +411,7 @@ export function DesktopImovelDetail({
                   ].map(({ label, value, onChange }) => (
                     <div key={label}>
                       <label style={{ ...EYEBROW, fontSize: '8px', display: 'block', marginBottom: 6 }}>{label}</label>
-                      <input type="number" value={value} onChange={e => onChange(Number(e.target.value))} min={0} max={label.includes('%') ? 100 : undefined} style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.2)', color: T.text, outline: 'none', ...MONO, fontSize: 14, boxSizing: 'border-box' }} />
+                      <input type="number" value={value} onChange={e => onChange(Number(e.target.value))} min={0} max={label.includes('%') ? 100 : undefined} style={{ width: '100%', padding: '10px 12px', borderRadius: 6, background: 'var(--bg-surface)', border: '1px solid rgba(200,164,74,0.2)', color: T.text, outline: 'none', ...MONO, fontSize: 14, boxSizing: 'border-box' }} />
                     </div>
                   ))}
                 </div>
@@ -421,7 +421,7 @@ export function DesktopImovelDetail({
                     { label: 'Yield Líquido', value: `${netYield.toFixed(2)}%`, color: '#5B9BD5' },
                     { label: 'Cashflow Mensal', value: fmtCurrency(monthlyCashflow), color: 'var(--gold, var(--accent-400))' },
                   ].map(({ label, value, color }) => (
-                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(61,111,255,0.1)', borderRadius: 8, padding: '14px 16px', textAlign: 'center' }}>
+                    <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(200,164,74,0.1)', borderRadius: 8, padding: '14px 16px', textAlign: 'center' }}>
                       <div style={{ ...EYEBROW, fontSize: '8px', marginBottom: 6 }}>{label}</div>
                       <div style={{ ...MONO, fontSize: 20, color, fontWeight: 400 }}>{value}</div>
                     </div>
@@ -441,7 +441,7 @@ export function DesktopImovelDetail({
                         <span style={{ fontSize: 13, color: T.textMuted, fontFamily: 'var(--font-outfit, sans-serif)' }}>{label}</span>
                         <span style={{ ...MONO, fontSize: 13, color, fontWeight: 500 }}>+{roi.toFixed(1)}%</span>
                       </div>
-                      <div style={{ height: 6, background: 'rgba(61,111,255,0.1)', borderRadius: 6, overflow: 'hidden' }}>
+                      <div style={{ height: 6, background: 'rgba(200,164,74,0.1)', borderRadius: 6, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${Math.min(100, (roi / 30) * 100)}%`, background: color, borderRadius: 6, transition: 'width 1s cubic-bezier(0.16,1,0.3,1)' }} />
                       </div>
                       <div style={{ fontSize: 11, color: T.textDim, marginTop: 3 }}>Estimativa acumulada com apreciação</div>
@@ -637,7 +637,7 @@ export function DesktopImovelDetail({
                 <span style={{ ...MONO, fontSize: 13, color: T.textMuted }}>R$ {fmtNum(priceSqm)}</span>
               </div>
             )}
-            <div style={{ height: '1px', background: 'rgba(61,111,255,0.14)', margin: '16px 0' }} />
+            <div style={{ height: '1px', background: 'rgba(200,164,74,0.14)', margin: '16px 0' }} />
             <IMIScoreDisplay score={score} />
             {score > 0 && (
               <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -661,7 +661,7 @@ export function DesktopImovelDetail({
                 })}
               </div>
             )}
-            <div style={{ height: '1px', background: 'rgba(61,111,255,0.14)', margin: '16px 0' }} />
+            <div style={{ height: '1px', background: 'rgba(200,164,74,0.14)', margin: '16px 0' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-outfit, sans-serif)' }}>Yield Estimado</span>
@@ -714,7 +714,7 @@ export function DesktopImovelDetail({
                     <Image src={dev.developer.logo_url} alt={dev.developer.name} fill sizes="36px" style={{ objectFit: 'contain' }} loading="lazy" />
                   </div>
                 ) : (
-                  <div style={{ width: 36, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(61,111,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 6, flexShrink: 0, background: 'rgba(200,164,74,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Building2 size={16} style={{ color: 'var(--gold, var(--accent-400))' }} />
                   </div>
                 )}

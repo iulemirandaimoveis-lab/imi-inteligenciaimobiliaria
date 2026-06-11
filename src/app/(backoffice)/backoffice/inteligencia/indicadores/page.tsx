@@ -169,7 +169,7 @@ function IndicatorEditCard({
     return (
         <div
             className="rounded-lg p-4 flex flex-col gap-3"
-            style={{ background: 'var(--bg-active)', border: `1px solid rgba(61,111,255,0.25)` }}
+            style={{ background: 'var(--bg-active)', border: `1px solid rgba(200,164,74,0.25)` }}
         >
             <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold" style={{ color: T.text }}>

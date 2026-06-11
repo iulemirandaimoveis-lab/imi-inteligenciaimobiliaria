@@ -56,7 +56,7 @@ function TileBadge({ badge }: { badge: string | number }) {
             lineHeight: 1.2,
             pointerEvents: 'none',
             whiteSpace: 'nowrap',
-            boxShadow: isNew ? '0 1px 4px rgba(45,143,92,0.3)' : isIA ? '0 1px 4px rgba(61,111,255,0.25)' : 'none',
+            boxShadow: isNew ? '0 1px 4px rgba(45,143,92,0.3)' : isIA ? '0 1px 4px rgba(200,164,74,0.25)' : 'none',
         }}>
             {isNew ? 'NOVO' : isIA ? 'IA' : 'BREVE'}
         </span>

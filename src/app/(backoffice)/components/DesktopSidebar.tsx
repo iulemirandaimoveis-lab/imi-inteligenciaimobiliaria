@@ -42,7 +42,7 @@ function badgeStyle(badge: string | number) {
         return { ...base, background: '#2D8F5C', color: 'var(--text-inverse)', border: 'none', boxShadow: '0 1px 4px rgba(45,143,92,0.25)' }
     }
     if (badge === 'IA') {
-        return { ...base, background: 'var(--accent-400)', color: 'var(--bg-base)', border: 'none', boxShadow: '0 1px 4px rgba(61,111,255,0.25)' }
+        return { ...base, background: 'var(--accent-400)', color: 'var(--bg-base)', border: 'none', boxShadow: '0 1px 4px rgba(200,164,74,0.25)' }
     }
     if (badge === 'BREVE') {
         return { ...base, fontSize: 11, background: 'rgba(148,163,184,0.15)', color: 'var(--text-tertiary)', border: '1px solid rgba(148,163,184,0.15)' }
