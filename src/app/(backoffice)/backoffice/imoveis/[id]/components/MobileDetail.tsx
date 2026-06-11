@@ -790,68 +790,130 @@ export function MobileImovelDetail({
 
         {/* ── TAB: Mais ────────────────────────────────────────────────── */}
         {activeTab === 'more' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-            {/* Quick actions 2x3 grid */}
+            {/* Primary CTA — Editar */}
+            <Link
+              href={`/backoffice/imoveis/${id}/editar`}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                background: 'linear-gradient(135deg, rgba(200,164,74,.12) 0%, rgba(200,164,74,.05) 100%)',
+                border: '1px solid rgba(200,164,74,.28)',
+                borderRadius: 14, padding: '16px 20px',
+                textDecoration: 'none',
+                boxShadow: '0 0 24px rgba(200,164,74,.06)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(200,164,74,.15)', border: '1px solid rgba(200,164,74,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Edit size={16} style={{ color: '#C8A44A' }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontFamily: 'Outfit, sans-serif', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.2px' }}>Editar Imóvel</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Dados, fotos e condições</div>
+                </div>
+              </div>
+              <ExternalLink size={14} style={{ color: '#C8A44A', flexShrink: 0 }} />
+            </Link>
+
+            {/* Ações secundárias */}
             <div>
-              <p style={{ ...EYEBROW, marginBottom: 10 }}>Acoes Rapidas</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <p style={{ ...EYEBROW, marginBottom: 12 }}>Ações Rápidas</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
                 {[
-                  { icon: Edit, label: 'Editar', href: `/backoffice/imoveis/${id}/editar` },
                   ...(dev.type === 'loteamento' || dev.type === 'condominio_fechado'
                     ? [
                         { icon: Layers, label: 'Lotes', href: `/backoffice/imoveis/${id}/lotes` },
-                        { icon: MapPinned, label: 'Áreas do Mapa', href: `/backoffice/imoveis/${id}/mapa` },
+                        { icon: MapPinned, label: 'Áreas', href: `/backoffice/imoveis/${id}/mapa` },
                       ]
                     : [{ icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` }]),
                   { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics` },
-                  { icon: Scale, label: 'Avaliacao', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}` },
+                  { icon: Scale, label: 'Avaliação', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}` },
                   { icon: QrCode, label: 'QR Code', href: `/backoffice/tracking/qr?propertyId=${id}&propertyName=${encodeURIComponent(dev?.name || '')}` },
                   { icon: Zap, label: 'Campanha', href: `/backoffice/campanhas?imovel=${id}` },
                 ].map(({ icon: Icon, label, href }) => (
-                  <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(61,111,255,0.06)', border: '1px solid rgba(61,111,255,0.14)', borderRadius: 10, padding: '14px 16px', textDecoration: 'none' }}>
-                    <Icon size={16} style={{ color: 'var(--accent-400)', flexShrink: 0 }} />
-                    <span style={{ fontSize: 13, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>{label}</span>
+                  <Link key={label} href={href} style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    gap: 7, padding: '14px 8px',
+                    background: 'rgba(255,255,255,.02)',
+                    border: '1px solid rgba(255,255,255,.06)',
+                    borderRadius: 12, textDecoration: 'none',
+                  }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(200,164,74,.08)', border: '1px solid rgba(200,164,74,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={14} style={{ color: '#C8A44A' }} />
+                    </div>
+                    <span style={{ fontSize: 10, color: 'var(--text-secondary)', fontFamily: 'Outfit, sans-serif', fontWeight: 500, textAlign: 'center', letterSpacing: '0.2px', lineHeight: 1.2 }}>{label}</span>
                   </Link>
                 ))}
               </div>
             </div>
 
-            {/* Share (4 options) */}
+            {/* Compartilhar */}
             <div>
-              <p style={{ ...EYEBROW, marginBottom: 10 }}>Compartilhar</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <button onClick={handleCopyLink} style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(61,111,255,0.25)', borderRadius: 10, color: 'var(--accent-400)', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
-                  <Copy size={14} /> {copied ? 'Copiado!' : 'Link'}
-                </button>
-                <button onClick={handleWhatsApp} style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(93,184,135,0.35)', borderRadius: 10, color: '#5DB887', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
-                  <MessageSquare size={14} /> WhatsApp
-                </button>
-                <button onClick={handleLinkedIn} style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(10,102,194,0.4)', borderRadius: 10, color: '#0A66C2', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                  LinkedIn
-                </button>
-                <button onClick={handleInstagramCopy} style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', border: '1px solid rgba(225,48,108,0.4)', borderRadius: 10, color: '#E1306C', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                  Instagram
-                </button>
+              <p style={{ ...EYEBROW, marginBottom: 12 }}>Compartilhar</p>
+              <button
+                onClick={handleCopyLink}
+                style={{
+                  width: '100%', height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  background: copied ? 'rgba(74,222,128,.08)' : 'rgba(200,164,74,.08)',
+                  border: `1px solid ${copied ? 'rgba(74,222,128,.3)' : 'rgba(200,164,74,.25)'}`,
+                  borderRadius: 11, marginBottom: 8,
+                  color: copied ? '#4ADE80' : '#C8A44A',
+                  fontSize: 11, fontFamily: 'Outfit, sans-serif', fontWeight: 700,
+                  letterSpacing: '1.5px', textTransform: 'uppercase', cursor: 'pointer',
+                  transition: 'all .2s cubic-bezier(0.16,1,0.3,1)',
+                }}
+              >
+                <Copy size={13} /> {copied ? 'Link copiado!' : 'Copiar link'}
+              </button>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                {([
+                  { label: 'WhatsApp', fn: handleWhatsApp, icon: <MessageSquare size={14} />, color: '#25D366' },
+                  { label: 'LinkedIn', fn: handleLinkedIn, icon: (<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>), color: '#0A66C2' },
+                  { label: 'Instagram', fn: handleInstagramCopy, icon: (<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>), color: '#E1306C' },
+                ] as { label: string; fn: () => void; icon: React.ReactNode; color: string }[]).map(({ label, fn, icon, color }) => (
+                  <button
+                    key={label}
+                    onClick={fn}
+                    style={{
+                      height: 52, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      justifyContent: 'center', gap: 5,
+                      background: 'rgba(255,255,255,.02)',
+                      border: '1px solid rgba(255,255,255,.07)',
+                      borderRadius: 10, cursor: 'pointer', color,
+                      transition: 'all .2s cubic-bezier(0.16,1,0.3,1)',
+                    }}
+                  >
+                    {icon}
+                    <span style={{ fontSize: 9, fontFamily: 'Outfit, sans-serif', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{label}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Activity */}
-            <div>
-              <p style={{ ...EYEBROW, marginBottom: 12 }}>Atividade Recente</p>
+            {/* Atividade Recente */}
+            <div style={{ ...CARD, padding: '4px 0' }}>
+              <div style={{ padding: '12px 16px 10px', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
+                <p style={EYEBROW}>Atividade Recente</p>
+              </div>
               {[
-                { icon: '\ud83d\udc41', label: 'Visualizacoes esta semana', value: '\u2014', color: 'var(--text-secondary)' },
-                { icon: '\ud83d\udccb', label: 'Leads este mes', value: '\u2014', color: 'var(--text-secondary)' },
-                { icon: '\ud83d\udcc5', label: 'Ultima atualizacao', value: dev?.updated_at ? new Date(dev.updated_at).toLocaleDateString('pt-BR') : '\u2014', color: 'var(--text-secondary)' },
-              ].map(({ icon, label, value, color }) => (
-                <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(61,111,255,0.06)' }}>
+                { emoji: '👁', label: 'Visualizações esta semana', value: '—' },
+                { emoji: '📋', label: 'Leads este mês', value: '—' },
+                { emoji: '📅', label: 'Última atualização', value: dev?.updated_at ? new Date(dev.updated_at).toLocaleDateString('pt-BR') : '—' },
+              ].map(({ emoji, label, value }, i, arr) => (
+                <div
+                  key={label}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '12px 16px',
+                    borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,.04)' : 'none',
+                  }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: 14 }}>{icon}</span>
-                    <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>{label}</span>
+                    <span style={{ fontSize: 15, lineHeight: 1 }}>{emoji}</span>
+                    <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Outfit, sans-serif' }}>{label}</span>
                   </div>
-                  <span style={{ fontSize: 11, ...MONO, color }}>{value}</span>
+                  <span style={{ fontSize: 12, ...MONO, color: 'var(--text-secondary)', letterSpacing: '-0.3px' }}>{value}</span>
                 </div>
               ))}
             </div>
