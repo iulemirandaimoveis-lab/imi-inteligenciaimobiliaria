@@ -669,6 +669,73 @@ export function MobileImovelDetail({
         {activeTab === 'mapa' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
+            {/* Editor de Áreas Comuns — acesso rápido */}
+            {(dev.type === 'loteamento' || dev.type === 'condominio_fechado') && (
+              <Link
+                href={`/backoffice/imoveis/${id}/mapa`}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 14,
+                  background: 'rgba(200,164,74,0.08)', border: '1.5px solid rgba(200,164,74,0.35)',
+                  borderRadius: 14, padding: '16px 18px', textDecoration: 'none',
+                }}
+              >
+                <div style={{ width: 40, height: 40, borderRadius: 11, background: 'rgba(200,164,74,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <MapPinned size={18} style={{ color: '#C8A44A' }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 9, fontWeight: 700, color: '#C8A44A', textTransform: 'uppercase', letterSpacing: '1.5px', margin: '0 0 2px', fontFamily: 'var(--font-sans)' }}>Áreas Comuns do Mapa</p>
+                  <p style={{ fontSize: 13, color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', fontWeight: 600, margin: 0 }}>
+                    Gerenciar Fotos, Vídeos e Tour 360°
+                  </p>
+                </div>
+                <ExternalLink size={15} style={{ color: 'var(--text-tertiary)', flexShrink: 0 }} />
+              </Link>
+            )}
+
+            {/* Tour Virtual 360° */}
+            {dev.virtual_tour_url ? (
+              <div style={{ ...CARD, overflow: 'hidden' }}>
+                <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <p style={{ ...EYEBROW, marginBottom: 0 }}>Tour Virtual 360°</p>
+                  <Link href={`/backoffice/imoveis/${id}/mapa`} style={{ fontSize: 10, color: 'var(--accent-400)', textDecoration: 'none', fontFamily: 'var(--font-sans)', fontWeight: 700 }}>
+                    Editar
+                  </Link>
+                </div>
+                <div style={{ position: 'relative', paddingTop: '58%', marginTop: 12 }}>
+                  <iframe
+                    src={dev.virtual_tour_url}
+                    title="Tour Virtual 360°"
+                    allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen; autoplay"
+                    allowFullScreen
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                  />
+                </div>
+                <p style={{ fontSize: 10, color: 'var(--text-tertiary)', padding: '8px 16px 14px', fontFamily: 'var(--font-sans)' }}>
+                  Arraste para explorar o tour 360° interativo
+                </p>
+              </div>
+            ) : (
+              <Link
+                href={`/backoffice/imoveis/${id}/mapa`}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 14,
+                  background: 'rgba(61,111,255,0.04)', border: '1px dashed rgba(61,111,255,0.2)',
+                  borderRadius: 14, padding: '16px 18px', textDecoration: 'none',
+                }}
+              >
+                <div style={{ width: 40, height: 40, borderRadius: 11, background: 'rgba(61,111,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 20 }}>
+                  🌐
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '1.5px', margin: '0 0 2px', fontFamily: 'var(--font-sans)' }}>Tour Virtual 360°</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'var(--font-sans)', margin: 0 }}>
+                    Nenhum tour configurado — clique para adicionar
+                  </p>
+                </div>
+                <ExternalLink size={15} style={{ color: 'var(--text-tertiary)', flexShrink: 0 }} />
+              </Link>
+            )}
+
             {/* Localização no Mapa */}
             {(dev.lat && dev.lng) ? (
               <div style={{ ...CARD, padding: 0, overflow: 'hidden' }}>
@@ -726,14 +793,14 @@ export function MobileImovelDetail({
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <p style={EYEBROW}>Áreas Comuns</p>
                 <Link
-                  href={`/backoffice/imoveis/${id}/editar`}
+                  href={`/backoffice/imoveis/${id}/${(dev.type === 'loteamento' || dev.type === 'condominio_fechado') ? 'mapa' : 'editar'}`}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 5, fontSize: 10,
                     color: 'var(--accent-400)', fontFamily: 'var(--font-sans)',
                     fontWeight: 600, letterSpacing: '0.5px', textDecoration: 'none',
                   }}
                 >
-                  <Edit size={10} /> Gerenciar
+                  <MapPinned size={10} /> Gerenciar
                 </Link>
               </div>
 

@@ -49,6 +49,10 @@ export interface Development {
   common_areas_images?: string[] | null
   common_areas_videos?: string[] | null
   common_areas_description?: string | null
+  lot_map_amenities?: Record<string, unknown>[] | null
+  virtual_tour_url?: string | null
+  lot_map_enabled?: boolean | null
+  lot_map_image_url?: string | null
 }
 
 export interface BrokerInfo {

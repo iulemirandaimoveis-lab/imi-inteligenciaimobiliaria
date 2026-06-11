@@ -375,7 +375,7 @@ interface FormData {
   floorPlans: File[]; existingBrochure: string; brochure: File | null
   logo: File | null; existingLogo: string
   status: string; status_commercial: string; is_highlighted: boolean
-  videoUrl: string; videoShort: string
+  videoUrl: string; videoShort: string; tourUrl: string
   videoFile: File | null; videoShortFile: File | null
   brokerId: string; brokerName: string; brokerPhone: string
   brokerCreci: string; brokerAvatarUrl: string
@@ -391,7 +391,7 @@ const INITIAL: FormData = {
   availableUnits: '', deliveryDate: '', galleryItems: [],
   existingFloorPlans: [], floorPlans: [], existingBrochure: '', brochure: null,
   logo: null, existingLogo: '', status: 'disponivel', status_commercial: 'draft',
-  is_highlighted: false, videoUrl: '', videoShort: '',
+  is_highlighted: false, videoUrl: '', videoShort: '', tourUrl: '',
   videoFile: null, videoShortFile: null,
   brokerId: '', brokerName: '', brokerPhone: '', brokerCreci: '', brokerAvatarUrl: '',
   financingEnabled: true,
@@ -554,6 +554,31 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
                   </p>
                 )}
               </>
+            )}
+          </div>
+
+          {/* Tour Virtual 360° */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
+              <Globe size={11} className="inline mr-1" />Tour Virtual 360° (Kuula / Matterport)
+            </label>
+            <input value={formData.tourUrl} onChange={e => set('tourUrl', e.target.value)}
+              placeholder="https://kuula.co/share/..." className={inp} style={inpStyle} />
+            {formData.tourUrl && (
+              <div className="mt-3 rounded-lg overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                <iframe
+                  src={formData.tourUrl}
+                  title="Tour virtual 360°"
+                  allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen; autoplay"
+                  allowFullScreen
+                  className="w-full h-40"
+                />
+              </div>
+            )}
+            {formData.tourUrl && (
+              <p className="mt-1 text-xs flex items-center gap-1" style={{ color: T.accent }}>
+                <Globe size={10} /> Link do tour 360° salvo — aparece no mapa e nas áreas comuns
+              </p>
             )}
           </div>
 
@@ -812,7 +837,7 @@ export default function EditarImovelPage() {
           floorPlans: [], existingBrochure: d.brochure_url || '', brochure: null,
           logo: null, existingLogo: d.developers?.logo_url || '',
           status: knownStatuses.includes(d.status) ? d.status : 'disponivel', status_commercial: d.status_commercial || d.status_comercial || 'draft',
-          is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '',
+          is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '', tourUrl: d.virtual_tour_url || '',
           videoFile: null, videoShortFile: null,
           brokerId, brokerName, brokerPhone, brokerCreci, brokerAvatarUrl,
           financingEnabled: d.financing_enabled !== false,
@@ -936,6 +961,7 @@ export default function EditarImovelPage() {
           image: allImages[0] || null,
           floor_plans: [...formData.existingFloorPlans, ...newFpUrls],
           brochure_url: brochureUrl, video_url: finalVideoUrl, video_short_url: finalVideoShortUrl,
+          virtual_tour_url: formData.tourUrl || null,
           broker_id: formData.brokerId || null,
         }),
       })
