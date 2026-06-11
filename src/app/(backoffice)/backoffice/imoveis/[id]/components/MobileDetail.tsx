@@ -665,6 +665,129 @@ export function MobileImovelDetail({
           </div>
         )}
 
+        {/* ── TAB: Mapa & Áreas Comuns ─────────────────────────────────── */}
+        {activeTab === 'mapa' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+            {/* Localização no Mapa */}
+            {(dev.lat && dev.lng) ? (
+              <div style={{ ...CARD, padding: 0, overflow: 'hidden' }}>
+                <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <p style={EYEBROW}>Localização</p>
+                  <a
+                    href={`https://maps.google.com/?q=${dev.lat},${dev.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 6,
+                      fontSize: 11, color: 'var(--accent-400)',
+                      fontFamily: 'Figtree, sans-serif', fontWeight: 600,
+                      letterSpacing: '0.5px', textDecoration: 'none',
+                    }}
+                  >
+                    <ExternalLink size={12} /> Google Maps
+                  </a>
+                </div>
+                <div style={{ height: 240, position: 'relative' }}>
+                  <iframe
+                    src={`https://maps.google.com/maps?q=${dev.lat},${dev.lng}&z=15&output=embed`}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, display: 'block' }}
+                    loading="lazy"
+                    allowFullScreen
+                    title="Mapa do imóvel"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div style={{ ...CARD, padding: 24, textAlign: 'center' }}>
+                <MapPin size={28} style={{ color: 'var(--text-tertiary)', margin: '0 auto 10px', display: 'block' }} />
+                <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>
+                  Coordenadas não cadastradas. Edite o imóvel para adicionar localização.
+                </p>
+                <Link
+                  href={`/backoffice/imoveis/${id}/editar`}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    height: 40, borderRadius: 8, padding: '0 16px',
+                    background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)',
+                    textDecoration: 'none', fontSize: 12, fontFamily: 'Figtree, sans-serif',
+                    fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase',
+                  }}
+                >
+                  <Edit size={12} /> Editar Imóvel
+                </Link>
+              </div>
+            )}
+
+            {/* Áreas Comuns */}
+            <div style={{ ...CARD, padding: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <p style={EYEBROW}>Áreas Comuns</p>
+                <Link
+                  href={`/backoffice/imoveis/${id}/editar`}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 5, fontSize: 10,
+                    color: 'var(--accent-400)', fontFamily: 'Figtree, sans-serif',
+                    fontWeight: 600, letterSpacing: '0.5px', textDecoration: 'none',
+                  }}
+                >
+                  <Edit size={10} /> Gerenciar
+                </Link>
+              </div>
+
+              {dev.common_areas_description && (
+                <p style={{
+                  fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16,
+                  lineHeight: 1.6, padding: '10px 14px',
+                  background: 'rgba(255,255,255,0.03)',
+                  borderRadius: 8, border: '1px solid rgba(61,111,255,0.1)',
+                }}>
+                  {dev.common_areas_description}
+                </p>
+              )}
+
+              {(() => {
+                const imgs: string[] = dev.images?.commonAreas || dev.common_areas_images || []
+                return imgs.length > 0 ? (
+                  <div>
+                    <p style={{ ...EYEBROW, fontSize: '7px', marginBottom: 10 }}>Fotos ({imgs.length})</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                      {imgs.map((url: string, i: number) => (
+                        <div key={i} style={{ aspectRatio: '16/9', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(61,111,255,0.12)' }}>
+                          <img src={url} alt={`Área comum ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-tertiary)', fontSize: 12 }}>
+                    Nenhuma foto de áreas comuns cadastrada.{' '}
+                    <Link href={`/backoffice/imoveis/${id}/editar`} style={{ color: 'var(--accent-400)', textDecoration: 'underline' }}>
+                      Adicionar agora
+                    </Link>
+                  </div>
+                )
+              })()}
+
+              {(() => {
+                const vids: string[] = dev.images?.commonAreasVideos || dev.common_areas_videos || []
+                return vids.length > 0 ? (
+                  <div style={{ marginTop: 20 }}>
+                    <p style={{ ...EYEBROW, fontSize: '7px', marginBottom: 10 }}>Vídeos ({vids.length})</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {vids.map((url: string, i: number) => (
+                        <video key={i} src={url} controls style={{ width: '100%', borderRadius: 8, border: '1px solid rgba(61,111,255,0.12)' }} />
+                      ))}
+                    </div>
+                  </div>
+                ) : null
+              })()}
+            </div>
+          </div>
+        )}
+
         {/* ── TAB: Mais ────────────────────────────────────────────────── */}
         {activeTab === 'more' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
