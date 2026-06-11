@@ -3,6 +3,7 @@
 import React, {
   useRef, useState, useCallback, useMemo, useEffect, memo,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2, Shield, TreePine, Building2, Dumbbell, MapPin, Video } from 'lucide-react';
 import {
@@ -132,7 +133,16 @@ const AB_TOUR_360 = 'https://kuula.co/share/collection/7KKb9?logo=1&info=0&logos
 interface AmenityInfo {
   title: string; subtitle: string; description: string; fn: string;
   photos?: string[]; video?: string; tour360?: string;
+  /** Lista de equipamentos da área (ex.: piscina, academia, capela) — do PDF aprovado. */
+  features?: string[];
 }
+// Equipamentos do clube/lazer (lista oficial "Equipamentos" da planta aprovada).
+const CLUBE_EQUIPAMENTOS = [
+  'Piscina coberta aquecida com borda infinita', 'Piscina descoberta com borda infinita',
+  'Espaço Fit · Academia', 'Quadra Poliesportiva', 'Quadra Society', 'Quadras de Areia',
+  'Salão de Festas (200 pessoas)', 'Espaço Gourmet', 'Espaço Grill · Churrasqueiras',
+  'Fire Pit · Fogueira e Mirante', 'Vestiários', 'Capela', 'Marco e Mirante', 'Pista de Cooper',
+];
 const AMENITY_INFO: Record<string, AmenityInfo> = {
   portaria: {
     title: 'Portaria Principal',
@@ -152,6 +162,7 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
       `${AB_AMEN_IMG}/ab-amenity-08.jpg`,
     ],
     tour360: AB_TOUR_360,
+    features: CLUBE_EQUIPAMENTOS,
   },
   'area-verde': {
     title: 'Área Verde',
@@ -192,6 +203,7 @@ const getAmenityInfo = (a: AmenityOverride): AmenityInfo => {
     photos: a.photos ?? base.photos,
     video: a.video ?? base.video,
     tour360: a.tour360 ?? base.tour360,
+    features: a.features ?? base.features,
   };
 };
 
@@ -612,7 +624,7 @@ const MapInner = memo(function MapInner({
               return (
                 <g
                   key={`am-${a.id}`}
-                  style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+                  style={{ pointerEvents: 'auto', cursor: 'pointer', outline: 'none' }}
                   role="button"
                   tabIndex={0}
                   aria-label={`Área comum: ${a.label}`}
@@ -673,7 +685,7 @@ const MapInner = memo(function MapInner({
               return (
                 <g
                   key={`ga-${g.id}`}
-                  style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+                  style={{ pointerEvents: 'auto', cursor: 'pointer', outline: 'none' }}
                   role="button"
                   tabIndex={0}
                   aria-label={`Área comum: ${g.label}`}
@@ -719,7 +731,9 @@ const MapInner = memo(function MapInner({
           return (
             <g
               key={lot.id}
-              style={{ cursor: 'pointer' }}
+              // outline:none remove o "quadrado" azul do foco do browser — o destaque
+              // é só o polígono exato do lote (forma real), nunca um retângulo.
+              style={{ cursor: 'pointer', outline: 'none' }}
               onClick={(e) => { e.stopPropagation(); onLotClick(lot); }}
               role="button"
               aria-label={`Lote ${lot.lot_number} Quadra ${lot.quadra} — ${cfg.label}${lot.area_m2 ? `, ${Math.round(lot.area_m2 as number)}m²` : ''}${lot.price ? `, ${fmtBRL(lot.price as number)}` : ''}`}
@@ -996,7 +1010,11 @@ function LotBottomSheet({
     `Olá! Gostaria de informações sobre lotes disponíveis no ${developmentName}.`
   );
 
-  return (
+  // Portal para document.body — escapa o `overflow:hidden` do wrapper do mapa e
+  // qualquer ancestral que crie containing-block, garantindo `position:fixed` real.
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <>
       <motion.div
         initial={{ opacity: 0 }}
@@ -1259,7 +1277,8 @@ function LotBottomSheet({
           )}
         </div>
       </motion.div>
-    </>
+    </>,
+    document.body,
   );
 }
 
@@ -1306,7 +1325,12 @@ function AmenityBottomSheet({
     `Olá! Gostaria de conhecer melhor a área "${info.title}" do ${developmentName}.`,
   );
 
-  return (
+  // Portal para document.body: o wrapper do mapa usa transform (pan/zoom), o que
+  // torna `position:fixed` relativo a ele (containing block) — no desktop o sheet
+  // ficava recortado/fora da vista. O portal escapa qualquer ancestral transformado.
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <>
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -1414,6 +1438,25 @@ function AmenityBottomSheet({
           {info.description}
         </p>
 
+        {/* Equipamentos da área (lista oficial do PDF aprovado) */}
+        {info.features && info.features.length > 0 && (
+          <div style={{ padding: '0 20px', marginBottom: 16 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, color: '#A8A296', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 8px' }}>
+              Equipamentos
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {info.features.map((f, i) => (
+                <span key={i} style={{
+                  fontSize: 11.5, fontWeight: 600, color: '#0B1B2D', background: '#EEF1F4',
+                  borderRadius: 9, padding: '5px 10px', lineHeight: 1.2,
+                }}>
+                  {f}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div style={{ padding: '0 20px', display: 'flex', gap: 10, marginBottom: 16 }}>
           <div style={{ flex: 1, background: '#F8F6F2', borderRadius: 12, padding: '10px 12px' }}>
             <p style={{ fontSize: 9, fontWeight: 700, color: '#A8A296', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px' }}>Função</p>
@@ -1443,7 +1486,8 @@ function AmenityBottomSheet({
           </a>
         </div>
       </motion.div>
-    </>
+    </>,
+    document.body,
   );
 }
 
