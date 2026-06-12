@@ -1233,8 +1233,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             </p>
           </div>
         </div>
-        {/* Action buttons — horizontal scroll on mobile, no wrap */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
+        {/* Action buttons — wrap on mobile */}
+        <div className="flex flex-wrap items-center gap-2">
           {/* Rankings button — list mode only */}
           {hasRankings && viewMode === 'list' && (
             <button
