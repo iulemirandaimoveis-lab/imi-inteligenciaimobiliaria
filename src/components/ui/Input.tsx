@@ -1,5 +1,5 @@
 // components/ui/Input.tsx
-// Input Component - Estados Claros e Profissionais
+// Input Component — Dark/Light theme, Apple HIG touch targets
 
 'use client'
 
@@ -39,53 +39,49 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
         const baseStyles = `
       w-full h-[48px] px-[16px]
-      bg-white border rounded-[12px]
-      text-base text-imi-900 leading-[20px]
-      placeholder:text-imi-400
+      bg-white dark:bg-[#081624]
+      border rounded-[10px]
+      text-[14px] text-imi-900 dark:text-[#E8E4DC] leading-[20px]
+      placeholder:text-imi-400 dark:placeholder:text-[#3F4E5E]
       transition-all duration-200 ease-smooth
-      focus:outline-none focus:ring-2 focus:ring-offset-0
-      hover:border-imi-300
-      disabled:bg-imi-50 disabled:cursor-not-allowed disabled:opacity-60
+      focus:outline-none
+      hover:border-imi-300 dark:hover:border-[rgba(200,164,74,0.38)]
+      disabled:bg-imi-50 dark:disabled:bg-[rgba(255,255,255,0.03)] disabled:cursor-not-allowed disabled:opacity-55
     `
 
-        // Estados de borda
         const borderStyles = error
-            ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+            ? 'border-red-300 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)] focus:border-red-400 dark:border-red-500/40 dark:focus:border-red-400/60 dark:focus:shadow-[0_0_0_3px_rgba(248,113,113,0.10)]'
             : success
-                ? 'border-green-300 focus:ring-green-500 focus:border-green-500'
+                ? 'border-green-300 focus:border-green-400 focus:shadow-[0_0_0_3px_rgba(34,197,94,0.10)] dark:border-green-500/40 dark:focus:border-green-400/60'
                 : isFocused
-                    ? 'border-accent-500 ring-2 ring-accent-500'
-                    : 'border-imi-200'
+                    ? 'border-[#C8A44A] shadow-[0_0_0_3px_rgba(200,164,74,0.12)] dark:border-[rgba(200,164,74,0.60)] dark:shadow-[0_0_0_3px_rgba(200,164,74,0.10)]'
+                    : 'border-imi-200 dark:border-[rgba(200,164,74,0.20)]'
 
         return (
-            <div className="space-y-[8px]">
-                {/* Label */}
+            <div className="space-y-[6px]">
                 {label && (
-                    <label className="block text-sm font-medium text-imi-700">
+                    <label className="block text-[11px] font-semibold uppercase tracking-[1.2px] text-imi-600 dark:text-[#C8A44A]">
                         {label}
                     </label>
                 )}
 
-                {/* Input Container */}
                 <div className="relative">
-                    {/* Left Icon */}
                     {leftIcon && (
-                        <div className="absolute left-[16px] top-1/2 -translate-y-1/2 text-imi-400 pointer-events-none">
-                            <div className="w-[20px] h-[20px] flex items-center justify-center">
+                        <div className="absolute left-[14px] top-1/2 -translate-y-1/2 text-imi-400 dark:text-[#4F5B6B] pointer-events-none">
+                            <div className="w-[18px] h-[18px] flex items-center justify-center">
                                 {leftIcon}
                             </div>
                         </div>
                     )}
 
-                    {/* Input */}
                     <input
                         ref={ref}
                         type={inputType}
                         className={cn(
                             baseStyles,
                             borderStyles,
-                            leftIcon && 'pl-[48px]',
-                            (rightIcon || showPasswordToggle || error || success) && 'pr-[48px]',
+                            leftIcon && 'pl-[44px]',
+                            (rightIcon || showPasswordToggle || error || success) && 'pr-[44px]',
                             className
                         )}
                         disabled={disabled}
@@ -100,58 +96,45 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                         {...props}
                     />
 
-                    {/* Right Icons */}
-                    <div className="absolute right-[16px] top-1/2 -translate-y-1/2 flex items-center gap-[8px]">
-                        {/* Error Icon */}
+                    <div className="absolute right-[14px] top-1/2 -translate-y-1/2 flex items-center gap-[6px]">
                         {error && (
-                            <AlertCircle className="w-[20px] h-[20px] text-red-500" />
+                            <AlertCircle className="w-[16px] h-[16px] text-red-500" />
                         )}
-
-                        {/* Success Icon */}
                         {success && !error && (
-                            <Check className="w-[20px] h-[20px] text-green-500" />
+                            <Check className="w-[16px] h-[16px] text-green-500" />
                         )}
-
-                        {/* Custom Right Icon */}
                         {rightIcon && !error && !success && (
-                            <div className="w-[20px] h-[20px] text-imi-400">
+                            <div className="w-[18px] h-[18px] text-imi-400 dark:text-[#4F5B6B]">
                                 {rightIcon}
                             </div>
                         )}
-
-                        {/* Password Toggle */}
                         {showPasswordToggle && !error && !success && (
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="w-[20px] h-[20px] text-imi-400 hover:text-imi-600 transition-colors focus:outline-none"
+                                className="w-[18px] h-[18px] text-imi-400 dark:text-[#4F5B6B] hover:text-imi-600 dark:hover:text-[#8E99AB] transition-colors focus:outline-none"
                                 tabIndex={-1}
                             >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         )}
                     </div>
                 </div>
 
-                {/* Error Message */}
                 {error && (
-                    <p className="text-xs text-red-600 leading-[16px] flex items-center gap-[4px]">
-                        <AlertCircle size={12} />
+                    <p className="text-[11px] text-red-600 dark:text-red-400 leading-[16px] flex items-center gap-[4px]">
+                        <AlertCircle size={11} />
                         {error}
                     </p>
                 )}
-
-                {/* Success Message */}
                 {success && !error && (
-                    <p className="text-xs text-green-600 leading-[16px] flex items-center gap-[4px]">
-                        <Check size={12} />
+                    <p className="text-[11px] text-green-600 dark:text-green-400 leading-[16px] flex items-center gap-[4px]">
+                        <Check size={11} />
                         {success}
                     </p>
                 )}
-
-                {/* Hint */}
                 {hint && !error && !success && (
-                    <p className="text-xs text-imi-500 leading-[16px]">
+                    <p className="text-[11px] text-imi-500 dark:text-[#4F5B6B] leading-[16px]">
                         {hint}
                     </p>
                 )}
@@ -163,7 +146,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = 'Input'
 
 // ============================================
-// TEXTAREA COMPONENT
+// TEXTAREA
 // ============================================
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -187,27 +170,28 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         const [isFocused, setIsFocused] = useState(false)
 
         const baseStyles = `
-      w-full px-[16px] py-[12px]
-      bg-white border rounded-[12px]
-      text-base text-imi-900 leading-[20px]
-      placeholder:text-imi-400
+      w-full px-[14px] py-[12px]
+      bg-white dark:bg-[#081624]
+      border rounded-[10px]
+      text-[14px] text-imi-900 dark:text-[#E8E4DC] leading-relaxed
+      placeholder:text-imi-400 dark:placeholder:text-[#3F4E5E]
       transition-all duration-200 ease-smooth
-      resize-vertical min-h-[96px]
-      focus:outline-none focus:ring-2 focus:ring-offset-0
-      hover:border-imi-300
-      disabled:bg-imi-50 disabled:cursor-not-allowed disabled:opacity-60
+      resize-vertical min-h-[88px]
+      focus:outline-none
+      hover:border-imi-300 dark:hover:border-[rgba(200,164,74,0.38)]
+      disabled:bg-imi-50 dark:disabled:bg-[rgba(255,255,255,0.03)] disabled:cursor-not-allowed disabled:opacity-55
     `
 
         const borderStyles = error
-            ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+            ? 'border-red-300 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.10)] focus:border-red-400 dark:border-red-500/40'
             : isFocused
-                ? 'border-accent-500 ring-2 ring-accent-500'
-                : 'border-imi-200'
+                ? 'border-[#C8A44A] shadow-[0_0_0_3px_rgba(200,164,74,0.12)] dark:border-[rgba(200,164,74,0.60)] dark:shadow-[0_0_0_3px_rgba(200,164,74,0.10)]'
+                : 'border-imi-200 dark:border-[rgba(200,164,74,0.20)]'
 
         return (
-            <div className="space-y-[8px]">
+            <div className="space-y-[6px]">
                 {label && (
-                    <label className="block text-sm font-medium text-imi-700">
+                    <label className="block text-[11px] font-semibold uppercase tracking-[1.2px] text-imi-600 dark:text-[#C8A44A]">
                         {label}
                     </label>
                 )}
@@ -229,14 +213,13 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                 />
 
                 {error && (
-                    <p className="text-xs text-red-600 leading-[16px] flex items-center gap-[4px]">
-                        <AlertCircle size={12} />
+                    <p className="text-[11px] text-red-600 dark:text-red-400 leading-[16px] flex items-center gap-[4px]">
+                        <AlertCircle size={11} />
                         {error}
                     </p>
                 )}
-
                 {hint && !error && (
-                    <p className="text-xs text-imi-500 leading-[16px]">
+                    <p className="text-[11px] text-imi-500 dark:text-[#4F5B6B] leading-[16px]">
                         {hint}
                     </p>
                 )}

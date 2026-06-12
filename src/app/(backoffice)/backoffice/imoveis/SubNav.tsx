@@ -5,13 +5,13 @@ import { usePathname } from 'next/navigation'
 import { Building2, BarChart2, LineChart, Scale, List, Plus, Key, MapPin } from 'lucide-react'
 
 const tabs = [
-  { href: '/backoffice/imoveis', label: 'Listagem', icon: Building2 },
-  { href: '/backoffice/imoveis/explorer', label: 'Mapa', icon: MapPin },
-  { href: '/backoffice/imoveis/portfolio', label: 'Portfolio', icon: LineChart },
-  { href: '/backoffice/imoveis/comparar', label: 'Comparar', icon: Scale },
-  { href: '/backoffice/imoveis/inventario', label: 'Inventário', icon: List },
-  { href: '/backoffice/rentals', label: 'Rentals', icon: Key },
-  { href: '/backoffice/imoveis/novo', label: 'Novo', icon: Plus },
+  { href: '/backoffice/imoveis',           label: 'Listagem',   icon: Building2  },
+  { href: '/backoffice/imoveis/explorer',  label: 'Mapa',       icon: MapPin     },
+  { href: '/backoffice/imoveis/portfolio', label: 'Portfolio',  icon: LineChart  },
+  { href: '/backoffice/imoveis/comparar',  label: 'Comparar',   icon: Scale      },
+  { href: '/backoffice/imoveis/inventario',label: 'Inventário', icon: List       },
+  { href: '/backoffice/rentals',           label: 'Rentals',    icon: Key        },
+  { href: '/backoffice/imoveis/novo',      label: 'Novo',       icon: Plus       },
 ]
 
 export function ImoveisSubNav() {
@@ -27,13 +27,13 @@ export function ImoveisSubNav() {
       <nav
         style={{
           display: 'flex',
-          gap: 4,
+          gap: 2,
           overflowX: 'auto',
           WebkitOverflowScrolling: 'touch',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
-          padding: '0 4px',
-          paddingRight: 40,
+          padding: '6px 8px',
+          paddingRight: 44,
         }}
       >
         <style>{`nav::-webkit-scrollbar { display: none; }`}</style>
@@ -44,32 +44,49 @@ export function ImoveisSubNav() {
               key={href}
               href={href}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 gap: 6,
                 padding: '0 14px',
-                minHeight: 44,
-                borderRadius: 8,
+                minHeight: 36,
+                borderRadius: 9,
                 fontSize: 13,
                 fontWeight: active ? 600 : 400,
                 whiteSpace: 'nowrap',
                 textDecoration: 'none',
-                color: active ? 'var(--text-gold, #C9A84C)' : 'var(--text-tertiary, #888)',
-                background: active ? 'var(--g10, rgba(201,168,76,0.10))' : 'transparent',
-                borderBottom: active ? '2px solid var(--text-gold, #C9A84C)' : '2px solid transparent',
-                transition: 'all 0.15s ease',
+                color: active ? 'var(--text-gold, #C8A44A)' : 'var(--text-tertiary, #4F5B6B)',
+                background: active
+                  ? 'linear-gradient(135deg, rgba(200,164,74,0.14) 0%, rgba(200,164,74,0.07) 100%)'
+                  : 'transparent',
+                border: active
+                  ? '1px solid rgba(200,164,74,0.25)'
+                  : '1px solid transparent',
+                boxShadow: active
+                  ? '0 1px 6px rgba(200,164,74,0.10), inset 0 1px 0 rgba(255,255,255,0.05)'
+                  : 'none',
+                transition: 'all 0.18s cubic-bezier(0.16,1,0.3,1)',
+                letterSpacing: active ? '-0.01em' : '0',
               }}
             >
-              <Icon size={16} strokeWidth={active ? 2.2 : 1.6} />
+              <Icon
+                size={14}
+                strokeWidth={active ? 2.2 : 1.6}
+                style={{
+                  color: active ? 'var(--text-gold, #C8A44A)' : 'var(--text-tertiary, #4F5B6B)',
+                  transition: 'color 0.15s',
+                  flexShrink: 0,
+                }}
+              />
               {label}
             </Link>
           )
         })}
       </nav>
+      {/* Fade-out on right edge */}
       <div style={{
         position: 'absolute',
         right: 0, top: 0, bottom: 0,
-        width: 40,
+        width: 44,
         background: 'linear-gradient(to right, transparent, var(--bg-base))',
         pointerEvents: 'none',
       }} />
