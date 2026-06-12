@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Upload, X, Save, Image as ImageIcon, Video, Globe, Check, Shield, Dumbbell, Building2, TreePine } from 'lucide-react'
+import { ArrowLeft, Upload, X, Save, Image as ImageIcon, Video, Globe, Check, Shield, ShieldCheck, Dumbbell, Building, Building2, TreePine, DoorOpen, Users, Truck, Mountain, Waves, Flame, UtensilsCrossed, PartyPopper, Activity, Shirt } from 'lucide-react'
 
 interface MapAmenity {
   id: string
@@ -16,14 +16,26 @@ interface MapAmenity {
 }
 
 const DEFAULT_AREAS: { id: string; label: string }[] = [
-  { id: 'portaria',      label: 'Portaria Principal'        },
-  { id: 'lazer',         label: 'Área de Lazer / Clube'     },
-  { id: 'coworking',     label: 'Coworking · Bloco Adm.'    },
-  { id: 'recreativa-01', label: 'Área Recreativa 01'        },
-  { id: 'recreativa-02', label: 'Área Recreativa 02'        },
-  { id: 'recreativa-03', label: 'Área Recreativa 03'        },
-  { id: 'area-verde',    label: 'Áreas Verdes'              },
-  { id: 'capela',        label: 'Capela'                    },
+  { id: 'portico',              label: 'Pórtico de Acesso'                    },
+  { id: 'guarita',              label: 'Guarita'                              },
+  { id: 'acesso-social',        label: 'Acessos Sociais — Morador e Visitante'},
+  { id: 'acesso-servico',       label: 'Acesso de Serviço'                    },
+  { id: 'predio-adm',           label: 'Prédio Administrativo'               },
+  { id: 'quadra-poliesportiva', label: 'Quadra Poliesportiva'                 },
+  { id: 'quadras-areia',        label: 'Quadras de Areia'                    },
+  { id: 'quadra-society',       label: 'Quadra Society'                      },
+  { id: 'capela',               label: 'Capela'                              },
+  { id: 'mirante',              label: 'Marco e Mirante'                     },
+  { id: 'piscina-coberta',      label: 'Piscina Coberta Aquecida'            },
+  { id: 'piscina-descoberta',   label: 'Piscina Descoberta'                  },
+  { id: 'vestiarios',           label: 'Vestiários'                          },
+  { id: 'grill',                label: 'Espaço Grill — Churrasqueiras'       },
+  { id: 'firepit',              label: 'Fire Pit — Fogueira e Mirante'       },
+  { id: 'gourmet',              label: 'Espaço Gourmet'                      },
+  { id: 'academia',             label: 'Espaço Fit — Academia'               },
+  { id: 'salao-festas',         label: 'Salão de Festas — 200 pessoas'       },
+  { id: 'coworking',            label: 'Coworking'                           },
+  { id: 'pista-cooper',         label: 'Pista de Cooper'                     },
 ]
 
 /* ── Design tokens (IMI brandkit dark) ─────────────────────────────────── */
@@ -46,13 +58,21 @@ const MONO = "'JetBrains Mono', monospace"
 /* ── Area icon — SVG por tipo de área ─────────────────────────────────────── */
 function AreaIcon({ id, size = 18 }: { id: string; size?: number }) {
   const c = GOLD
-  const prefix = id.replace(/-\d+$/, '')
-  if (prefix === 'portaria') return <Shield size={size} color={c} />
-  if (prefix === 'lazer') return <Dumbbell size={size} color={c} />
-  if (prefix === 'coworking') return <Building2 size={size} color={c} />
-  if (prefix === 'area-verde') return <TreePine size={size} color={c} />
-  if (prefix === 'recreativa') return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  const s = String(size)
+  // Entradas / Acesso
+  if (id === 'portico') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 21V11a9 9 0 0 1 18 0v10"/>
+      <line x1="1" y1="21" x2="23" y2="21"/>
+    </svg>
+  )
+  if (id === 'guarita') return <ShieldCheck size={size} color={c} />
+  if (id === 'acesso-social') return <Users size={size} color={c} />
+  if (id === 'acesso-servico') return <Truck size={size} color={c} />
+  if (id === 'predio-adm') return <Building size={size} color={c} />
+  // Quadras
+  if (id === 'quadra-poliesportiva') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="3" width="18" height="18" rx="2"/>
       <line x1="3" y1="9" x2="21" y2="9"/>
       <line x1="3" y1="15" x2="21" y2="15"/>
@@ -60,14 +80,71 @@ function AreaIcon({ id, size = 18 }: { id: string; size?: number }) {
       <line x1="15" y1="9" x2="15" y2="21"/>
     </svg>
   )
-  if (prefix === 'capela') return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  if (id === 'quadras-areia') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="12" rx="1"/>
+      <line x1="12" y1="4" x2="12" y2="16"/>
+      <path d="M3 20c2-2 4 2 6 0s4-2 6 0 4-2 6 0"/>
+    </svg>
+  )
+  if (id === 'quadra-society') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="16" rx="1"/>
+      <circle cx="12" cy="12" r="3"/>
+      <line x1="12" y1="4" x2="12" y2="20"/>
+      <path d="M3 9h3v6H3M18 9h3v6h-3"/>
+    </svg>
+  )
+  // Religioso
+  if (id === 'capela') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <line x1="12" y1="2" x2="12" y2="7"/>
       <line x1="9.5" y1="4.5" x2="14.5" y2="4.5"/>
       <path d="M4 22V12l8-5 8 5v10"/>
       <path d="M9 22v-5a3 3 0 0 1 6 0v5"/>
     </svg>
   )
+  // Natureza / Vista
+  if (id === 'mirante') return <Mountain size={size} color={c} />
+  if (id === 'area-verde') return <TreePine size={size} color={c} />
+  // Piscinas
+  if (id === 'piscina-coberta') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 10C5 7 8 5 12 5s7 2 7 5"/>
+      <rect x="3" y="10" width="18" height="9" rx="1"/>
+      <line x1="8" y1="10" x2="8" y2="19"/>
+      <line x1="12" y1="10" x2="12" y2="19"/>
+      <line x1="16" y1="10" x2="16" y2="19"/>
+    </svg>
+  )
+  if (id === 'piscina-descoberta') return <Waves size={size} color={c} />
+  // Instalações
+  if (id === 'vestiarios') return <Shirt size={size} color={c} />
+  if (id === 'grill') return <Flame size={size} color={c} />
+  if (id === 'firepit') return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2c-1 4-4 6-4 10a4 4 0 0 0 8 0c0-4-3-6-4-10z"/>
+      <path d="M8 20l-3 2M16 20l3 2M12 20v2"/>
+      <line x1="5" y1="22" x2="19" y2="22"/>
+    </svg>
+  )
+  if (id === 'gourmet') return <UtensilsCrossed size={size} color={c} />
+  if (id === 'academia') return <Dumbbell size={size} color={c} />
+  if (id === 'salao-festas') return <PartyPopper size={size} color={c} />
+  if (id === 'coworking') return <Building2 size={size} color={c} />
+  if (id === 'pista-cooper') return <Activity size={size} color={c} />
+  // Legado (compatibilidade)
+  if (id === 'portaria') return <Shield size={size} color={c} />
+  if (id.startsWith('recreativa')) return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <line x1="3" y1="9" x2="21" y2="9"/>
+      <line x1="3" y1="15" x2="21" y2="15"/>
+      <line x1="9" y1="9" x2="9" y2="21"/>
+      <line x1="15" y1="9" x2="15" y2="21"/>
+    </svg>
+  )
+  if (id === 'lazer') return <Waves size={size} color={c} />
   return <Globe size={size} color={c} />
 }
 

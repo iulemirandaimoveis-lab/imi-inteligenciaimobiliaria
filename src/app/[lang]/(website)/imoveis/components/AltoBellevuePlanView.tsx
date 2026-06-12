@@ -4,7 +4,7 @@ import React, {
   useRef, useState, useCallback, useMemo, useEffect, memo,
 } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2, Shield, TreePine, Building2, Dumbbell, MapPin, Video } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2, Shield, ShieldCheck, TreePine, Building, Building2, Dumbbell, MapPin, Video, DoorOpen, Users, Truck, Mountain, Waves, Flame, UtensilsCrossed, PartyPopper, Activity, Shirt } from 'lucide-react';
 import {
   loadAltoBellevueMap, AB_VIEWBOX,
   type ABMapData, type Amenity,
@@ -1267,28 +1267,53 @@ function LotBottomSheet({
 
 function AmenityIcon({ id, color, size = 22 }: { id: string; color: string; size?: number }) {
   const c = color ?? '#C8A44A';
-  const prefix = id.replace(/-\d+$/, '');
-  if (prefix === 'portaria') return <Shield size={size} style={{ color: c }} />;
-  if (prefix === 'lazer') return <Dumbbell size={size} style={{ color: c }} />;
-  if (prefix === 'area-verde') return <TreePine size={size} style={{ color: c }} />;
-  if (prefix === 'coworking') return <Building2 size={size} style={{ color: c }} />;
-  if (prefix === 'recreativa') return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-      <line x1="3" y1="9" x2="21" y2="9" />
-      <line x1="3" y1="15" x2="21" y2="15" />
-      <line x1="9" y1="9" x2="9" y2="21" />
-      <line x1="15" y1="9" x2="15" y2="21" />
+  const sw = 1.8;
+  const svg = (children: React.ReactNode) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+      {children}
     </svg>
   );
-  if (prefix === 'capela') return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="2" x2="12" y2="7"/>
-      <line x1="9.5" y1="4.5" x2="14.5" y2="4.5"/>
-      <path d="M4 22V12l8-5 8 5v10"/>
-      <path d="M9 22v-5a3 3 0 0 1 6 0v5"/>
-    </svg>
+  // Entradas
+  if (id === 'portico') return svg(<><path d="M3 21V11a9 9 0 0 1 18 0v10"/><line x1="1" y1="21" x2="23" y2="21"/></>);
+  if (id === 'guarita') return <ShieldCheck size={size} style={{ color: c }} />;
+  if (id === 'acesso-social') return <Users size={size} style={{ color: c }} />;
+  if (id === 'acesso-servico') return <Truck size={size} style={{ color: c }} />;
+  if (id === 'predio-adm') return <Building size={size} style={{ color: c }} />;
+  // Quadras
+  if (id === 'quadra-poliesportiva' || id.startsWith('recreativa')) return svg(
+    <><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/></>
   );
+  if (id === 'quadras-areia') return svg(
+    <><rect x="3" y="4" width="18" height="12" rx="1"/><line x1="12" y1="4" x2="12" y2="16"/><path d="M3 20c2-2 4 2 6 0s4-2 6 0 4-2 6 0"/></>
+  );
+  if (id === 'quadra-society') return svg(
+    <><rect x="3" y="4" width="18" height="16" rx="1"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="4" x2="12" y2="20"/><path d="M3 9h3v6H3M18 9h3v6h-3"/></>
+  );
+  // Religioso
+  if (id === 'capela') return svg(
+    <><line x1="12" y1="2" x2="12" y2="7"/><line x1="9.5" y1="4.5" x2="14.5" y2="4.5"/><path d="M4 22V12l8-5 8 5v10"/><path d="M9 22v-5a3 3 0 0 1 6 0v5"/></>
+  );
+  // Natureza / Vista
+  if (id === 'mirante') return <Mountain size={size} style={{ color: c }} />;
+  if (id === 'area-verde') return <TreePine size={size} style={{ color: c }} />;
+  // Piscinas
+  if (id === 'piscina-coberta') return svg(
+    <><path d="M5 10C5 7 8 5 12 5s7 2 7 5"/><rect x="3" y="10" width="18" height="9" rx="1"/><line x1="8" y1="10" x2="8" y2="19"/><line x1="12" y1="10" x2="12" y2="19"/><line x1="16" y1="10" x2="16" y2="19"/></>
+  );
+  if (id === 'piscina-descoberta' || id === 'lazer') return <Waves size={size} style={{ color: c }} />;
+  // Instalações
+  if (id === 'vestiarios') return <Shirt size={size} style={{ color: c }} />;
+  if (id === 'grill') return <Flame size={size} style={{ color: c }} />;
+  if (id === 'firepit') return svg(
+    <><path d="M12 2c-1 4-4 6-4 10a4 4 0 0 0 8 0c0-4-3-6-4-10z"/><path d="M8 20l-3 2M16 20l3 2M12 20v2"/><line x1="5" y1="22" x2="19" y2="22"/></>
+  );
+  if (id === 'gourmet') return <UtensilsCrossed size={size} style={{ color: c }} />;
+  if (id === 'academia') return <Dumbbell size={size} style={{ color: c }} />;
+  if (id === 'salao-festas') return <PartyPopper size={size} style={{ color: c }} />;
+  if (id === 'coworking') return <Building2 size={size} style={{ color: c }} />;
+  if (id === 'pista-cooper') return <Activity size={size} style={{ color: c }} />;
+  // Legado
+  if (id === 'portaria') return <Shield size={size} style={{ color: c }} />;
   return <MapPin size={size} style={{ color: c }} />;
 }
 
