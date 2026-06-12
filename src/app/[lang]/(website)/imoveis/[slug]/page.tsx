@@ -383,7 +383,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                     developmentId={development.id}
                                     developmentName={development.name}
                                     whatsappPhone={whatsappContact}
-                                    mapAmenities={(development as { lot_map_amenities?: Record<string, unknown>[] }).lot_map_amenities}
+                                    mapAmenities={Array.isArray(data.lot_map_amenities) ? data.lot_map_amenities : []}
+                                    virtualTourUrl={data.virtual_tour_url || undefined}
                                 />
                             ) : lotMapEnabled ? (
                                 <SubdivisionErrorBoundary developmentName={development.name}>
@@ -399,7 +400,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                                 developmentId={development.id}
                                                 developmentName={development.name}
                                                 whatsappPhone={whatsappContact}
-                                                mapAmenities={(development as { lot_map_amenities?: Record<string, unknown>[] }).lot_map_amenities}
+                                                mapAmenities={Array.isArray(data.lot_map_amenities) ? data.lot_map_amenities : []}
+                                                virtualTourUrl={data.virtual_tour_url || undefined}
                                             />
                                         ) : (
                                             <InteractiveLotMap

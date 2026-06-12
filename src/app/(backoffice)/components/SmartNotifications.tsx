@@ -363,8 +363,8 @@ export default function SmartNotifications() {
             <div
               className="rounded-lg p-4"
               style={{
-                background: 'rgba(61,111,255,0.06)',
-                border: '1px solid rgba(61,111,255,0.18)',
+                background: 'rgba(200,164,74,0.06)',
+                border: '1px solid rgba(200,164,74,0.18)',
               }}
             >
               {dailySummary.loading ? (
@@ -399,7 +399,7 @@ export default function SmartNotifications() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'rgba(61,111,255,0.12)', color: 'var(--accent-400)' }}>
+                    style={{ background: 'rgba(200,164,74,0.12)', color: 'var(--accent-400)' }}>
                     {actionLoading === 'qualify' ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
                   </div>
                   <span className="text-xs font-medium">Qualificar leads com IA</span>

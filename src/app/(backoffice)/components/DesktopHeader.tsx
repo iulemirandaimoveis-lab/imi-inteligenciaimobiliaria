@@ -25,7 +25,7 @@ function SearchBar() {
                 borderRadius: 'var(--r-xl)',
                 background: 'var(--bg-surface)',
                 border: `1px solid ${focused ? 'var(--border-focus)' : 'var(--border-default)'}`,
-                boxShadow: focused ? '0 0 0 3px rgba(61,111,255,0.12)' : 'none',
+                boxShadow: focused ? '0 0 0 3px rgba(200,164,74,0.12)' : 'none',
             }}
         >
             <Search size={14} style={{ color: focused ? 'var(--accent-400)' : 'var(--text-tertiary)' }} className="flex-shrink-0 transition-colors" />
