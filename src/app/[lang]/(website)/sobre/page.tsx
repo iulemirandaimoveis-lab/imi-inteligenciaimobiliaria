@@ -102,6 +102,10 @@ const certificationImages = [
         src: '/Certificado-puc.jpg',
         alt: 'Certificado PUCRS de extensão em Wealth Management e Family Office',
     },
+    {
+        src: '/certificado-cofeci-cnai53290.png',
+        alt: 'Certificado de Registro de Avaliador Imobiliário COFECI — CNAI Nº 53290',
+    },
 ]
 
 const EBOOKS = [
