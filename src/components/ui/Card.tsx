@@ -1,5 +1,5 @@
 // components/ui/Card.tsx
-// Card Component - Sofisticação e Profundidade Sutil
+// Card Component — Dark/Light theme aware
 
 'use client'
 
@@ -7,7 +7,7 @@ import { HTMLAttributes, forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
-    variant?: 'default' | 'elevated' | 'outlined' | 'flat'
+    variant?: 'default' | 'elevated' | 'outlined' | 'flat' | 'glass'
     padding?: 'none' | 'sm' | 'md' | 'lg'
     hover?: boolean
     as?: 'div' | 'article' | 'section'
@@ -25,40 +25,51 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     }, ref) => {
 
         const baseStyles = `
-      bg-white rounded-[16px]
+      bg-white dark:bg-[#0F1E30]
+      rounded-[14px]
       transition-all duration-200 ease-smooth
     `
 
         const variants = {
             default: `
-        border border-imi-100
-        shadow-sm
+        border border-[rgba(11,17,32,0.10)] dark:border-[rgba(200,164,74,0.15)]
+        shadow-[0_1px_4px_rgba(11,17,32,0.06)]
+        dark:shadow-[0_4px_20px_rgba(0,0,0,0.20),inset_0_1px_0_rgba(255,255,255,0.04)]
       `,
             elevated: `
-        border border-imi-100
-        shadow-md
+        border border-[rgba(11,17,32,0.10)] dark:border-[rgba(200,164,74,0.20)]
+        shadow-[0_4px_16px_rgba(11,17,32,0.08),0_1px_4px_rgba(11,17,32,0.04)]
+        dark:shadow-[0_8px_32px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.05)]
       `,
             outlined: `
-        border-2 border-imi-200
+        border-2 border-[rgba(11,17,32,0.16)] dark:border-[rgba(200,164,74,0.28)]
       `,
             flat: `
-        border border-imi-50
+        border border-[rgba(11,17,32,0.07)] dark:border-[rgba(200,164,74,0.10)]
+      `,
+            glass: `
+        bg-[rgba(255,255,255,0.92)] dark:bg-[rgba(15,32,53,0.75)]
+        backdrop-blur-md
+        border border-[rgba(11,17,32,0.10)] dark:border-[rgba(200,164,74,0.18)]
+        shadow-[0_4px_20px_rgba(11,17,32,0.08)]
+        dark:shadow-[0_8px_32px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.05)]
       `,
         }
 
-        // Padding múltiplos de 8px
         const paddings = {
             none: '',
-            sm: 'p-[16px]',  // 16px
-            md: 'p-[24px]',  // 24px
-            lg: 'p-[32px]',  // 32px
+            sm: 'p-[16px]',
+            md: 'p-[24px]',
+            lg: 'p-[32px]',
         }
 
-        const hoverEffect = hover && `
-      shadow-lg border-imi-200 -translate-y-[2px]
-      hover:shadow-sm hover:border-imi-100 hover:translate-y-0 hover:opacity-90
+        const hoverEffect = hover ? `
+      hover:shadow-[0_8px_24px_rgba(11,17,32,0.12),0_2px_6px_rgba(11,17,32,0.06)]
+      dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]
+      dark:hover:border-[rgba(200,164,74,0.28)]
+      hover:-translate-y-[2px]
       cursor-pointer
-    `
+    ` : ''
 
         return (
             <Component
@@ -81,7 +92,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 Card.displayName = 'Card'
 
 // ============================================
-// CARD HEADER - Hierarquia Clara
+// CARD HEADER
 // ============================================
 
 export interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -96,22 +107,22 @@ const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
         return (
             <div
                 ref={ref}
-                className={cn('flex items-start justify-between mb-[24px]', className)}
+                className={cn('flex items-start justify-between mb-[20px]', className)}
                 {...props}
             >
                 <div className="flex-1 min-w-0">
                     {subtitle && (
-                        <p className="text-xs font-medium text-imi-600 uppercase tracking-wide mb-[4px]">
+                        <p className="text-[11px] font-semibold uppercase tracking-[1.2px] text-imi-500 dark:text-[#C8A44A] mb-[4px]">
                             {subtitle}
                         </p>
                     )}
                     {title && (
-                        <h3 className="text-[20px] font-semibold text-imi-900 leading-[28px] tracking-tight">
+                        <h3 className="text-[18px] font-semibold text-imi-900 dark:text-[#E8E4DC] leading-[26px] tracking-[-0.02em]">
                             {title}
                         </h3>
                     )}
                     {description && (
-                        <p className="text-sm text-imi-600 mt-[8px] leading-[20px]">
+                        <p className="text-[13px] text-imi-500 dark:text-[#8E99AB] mt-[6px] leading-[20px]">
                             {description}
                         </p>
                     )}
@@ -148,7 +159,7 @@ const CardBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 CardBody.displayName = 'CardBody'
 
 // ============================================
-// CARD FOOTER - Ações Alinhadas
+// CARD FOOTER
 // ============================================
 
 const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
@@ -158,7 +169,7 @@ const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
                 ref={ref}
                 className={cn(
                     'flex items-center justify-end gap-[12px]',
-                    'mt-[24px] pt-[24px] border-t border-imi-100',
+                    'mt-[20px] pt-[20px] border-t border-[rgba(11,17,32,0.08)] dark:border-[rgba(200,164,74,0.12)]',
                     className
                 )}
                 {...props}
@@ -170,7 +181,7 @@ const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 CardFooter.displayName = 'CardFooter'
 
 // ============================================
-// CARD SECTION - Divisão Interna
+// CARD SECTION
 // ============================================
 
 const CardSection = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
@@ -179,7 +190,7 @@ const CardSection = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
             <div
                 ref={ref}
                 className={cn(
-                    'py-[24px] border-t border-imi-100 first:pt-0 first:border-t-0',
+                    'py-[20px] border-t border-[rgba(11,17,32,0.08)] dark:border-[rgba(200,164,74,0.12)] first:pt-0 first:border-t-0',
                     className
                 )}
                 {...props}

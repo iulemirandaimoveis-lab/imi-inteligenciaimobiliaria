@@ -1,16 +1,15 @@
 // components/ui/Button.tsx
-// Button Component - Institutional Dark Premium
-// Height: sm=36px, md=44px (Apple HIG), lg=48px
+// Button Component — Institutional Dark/Light, Apple HIG 44px minimum
 
 'use client'
 
 import { forwardRef, ButtonHTMLAttributes } from 'react'
 import { Slot } from '@radix-ui/react-slot'
-import { Loader } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'gold'
     size?: 'sm' | 'md' | 'lg'
     loading?: boolean
     icon?: React.ReactNode
@@ -34,65 +33,77 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ...props
     }, ref) => {
 
-        // Base: Focus, transitions, disabled
         const baseStyles = `
       inline-flex items-center justify-center gap-2
-      font-semibold text-sm
-      transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-navy-500/40 focus:ring-offset-1
-      disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+      font-semibold text-sm tracking-[-0.01em]
+      transition-all duration-200 ease-smooth
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(200,164,74,0.5)] focus-visible:ring-offset-2
+      disabled:opacity-45 disabled:cursor-not-allowed disabled:pointer-events-none
       active:scale-[0.97]
     `
 
-        // Variants — institutional dark, NO gold
         const variants = {
+            // Light: navy fill / dark: white fill with navy text (institutional)
             primary: `
-        bg-navy-800 text-white
-        hover:bg-navy-950
-        shadow-[0_1px_3px_rgba(0,0,0,0.2),0_0_0_1px_rgba(255,255,255,0.05)_inset]
-        hover:shadow-[0_2px_8px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.08)_inset]
-        dark:bg-white dark:text-navy-800
-        dark:hover:bg-gray-100
-        dark:shadow-[0_1px_3px_rgba(0,0,0,0.1)]
+        bg-[#0B1928] text-white
+        shadow-[0_1px_3px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.06)]
+        hover:bg-[#162840] hover:shadow-[0_2px_10px_rgba(0,0,0,0.22)]
+        dark:bg-white dark:text-[#0B1928]
+        dark:shadow-[0_1px_4px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.9)]
+        dark:hover:bg-[#F4F2EA] dark:hover:shadow-[0_2px_12px_rgba(0,0,0,0.18)]
       `,
+            // Subtle fill — secondary action
             secondary: `
-        bg-gray-100 text-gray-800
-        border border-gray-200
-        hover:bg-gray-200 hover:border-gray-300
-        dark:bg-white/8 dark:text-gray-200 dark:border-white/10
-        dark:hover:bg-white/12
+        bg-[rgba(11,17,32,0.06)] text-[#0B1928]
+        border border-[rgba(11,17,32,0.12)]
+        hover:bg-[rgba(11,17,32,0.10)] hover:border-[rgba(11,17,32,0.18)]
+        dark:bg-[rgba(255,255,255,0.07)] dark:text-[#E8E4DC] dark:border-[rgba(255,255,255,0.10)]
+        dark:hover:bg-[rgba(255,255,255,0.11)] dark:hover:border-[rgba(255,255,255,0.16)]
       `,
+            // Outlined — tertiary action
             outline: `
-        bg-transparent text-gray-700
-        border border-gray-300
-        hover:bg-gray-50 hover:border-gray-400
-        dark:text-gray-300 dark:border-white/15
-        dark:hover:bg-white/5 dark:hover:border-white/25
+        bg-transparent text-[#0B1928]
+        border border-[rgba(11,17,32,0.24)]
+        hover:bg-[rgba(11,17,32,0.05)] hover:border-[rgba(11,17,32,0.34)]
+        dark:text-[#E8E4DC] dark:border-[rgba(200,164,74,0.28)]
+        dark:hover:bg-[rgba(200,164,74,0.07)] dark:hover:border-[rgba(200,164,74,0.45)]
       `,
+            // Ghost — minimal
             ghost: `
-        bg-transparent text-gray-600
-        hover:bg-gray-100
-        dark:text-gray-400
-        dark:hover:bg-white/8
+        bg-transparent text-[#545248]
+        hover:bg-[rgba(11,17,32,0.06)] hover:text-[#0B1928]
+        dark:text-[#8E99AB]
+        dark:hover:bg-[rgba(255,255,255,0.07)] dark:hover:text-[#E8E4DC]
       `,
+            // Destructive
             danger: `
         bg-red-600 text-white
-        hover:bg-red-700
-        shadow-sm hover:shadow-md
+        shadow-[0_1px_3px_rgba(220,38,38,0.25)]
+        hover:bg-red-700 hover:shadow-[0_2px_8px_rgba(220,38,38,0.30)]
+        dark:bg-[rgba(248,113,113,0.15)] dark:text-red-400
+        dark:border dark:border-red-500/30
+        dark:hover:bg-[rgba(248,113,113,0.22)] dark:hover:border-red-400/45
+      `,
+            // Gold accent — premium CTA (dark only)
+            gold: `
+        bg-[rgba(200,164,74,0.14)] text-[#C8A44A]
+        border border-[rgba(200,164,74,0.28)]
+        shadow-[0_1px_6px_rgba(200,164,74,0.10),inset_0_1px_0_rgba(255,255,255,0.06)]
+        hover:bg-[rgba(200,164,74,0.20)] hover:border-[rgba(200,164,74,0.42)]
+        hover:shadow-[0_2px_14px_rgba(200,164,74,0.18)]
       `,
         }
 
-        // Sizes — 44px default (Apple HIG standard)
         const sizes = {
-            sm: 'h-9 px-3.5 rounded-lg text-xs',
-            md: 'h-11 px-5 rounded-xl',       // 44px — touch-friendly standard
-            lg: 'h-12 px-6 rounded-xl text-base', // 48px
+            sm: 'h-9 px-[14px] rounded-[8px] text-[12px]',
+            md: 'h-11 px-[20px] rounded-[10px] text-[13px]',
+            lg: 'h-12 px-[24px] rounded-[11px] text-[14px]',
         }
 
         const iconSizes = {
-            sm: 'w-4 h-4',
-            md: 'w-[18px] h-[18px]',
-            lg: 'w-5 h-5',
+            sm: 'w-[14px] h-[14px]',
+            md: 'w-[16px] h-[16px]',
+            lg: 'w-[18px] h-[18px]',
         }
 
         const commonClasses = cn(
@@ -119,15 +130,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 {...props}
             >
                 {loading && (
-                    <Loader className={cn(iconSizes[size], 'animate-spin')} />
+                    <Loader2 className={cn(iconSizes[size], 'animate-spin')} />
                 )}
-
                 {!loading && icon && iconPosition === 'left' && (
                     <span className={iconSizes[size]}>{icon}</span>
                 )}
-
                 {children}
-
                 {!loading && icon && iconPosition === 'right' && (
                     <span className={iconSizes[size]}>{icon}</span>
                 )}

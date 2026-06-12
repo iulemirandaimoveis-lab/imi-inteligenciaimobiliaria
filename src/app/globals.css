@@ -1163,6 +1163,184 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* ── Visual Polish v4 ── */
+
+  /* Smooth theme switching — prevents flash */
+  .theme-transition,
+  .theme-transition * {
+    transition:
+      background-color 220ms var(--ease-in-out),
+      border-color 220ms var(--ease-in-out),
+      color 180ms var(--ease-in-out),
+      box-shadow 220ms var(--ease-in-out) !important;
+  }
+
+  /* Field label — 11px uppercase gold in dark, navy in light */
+  .field-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    color: var(--imi-stone-600);
+    font-family: var(--font-ui);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .dark .field-label {
+    color: var(--text-gold);
+  }
+
+  /* Glass surface — theme-aware */
+  .glass-surface {
+    background: var(--glass-surface);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-surface-border);
+    box-shadow: var(--glass-surface-shadow);
+  }
+  .glass-surface:hover {
+    border-color: var(--glass-hover-border);
+  }
+
+  /* Progress bar — gold gradient with glow */
+  .progress-gold {
+    background: linear-gradient(90deg, var(--imi-gold-700), var(--imi-gold-400));
+    box-shadow: 0 0 8px rgba(200,164,74,0.35);
+    border-radius: 999px;
+    transition: width 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  /* Progress track */
+  .progress-track {
+    height: 5px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .dark .progress-track {
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* Area card — institutional glass left-border style */
+  .area-card {
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(11,17,32,0.10);
+    border-left: 3px solid transparent;
+    border-radius: 14px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    box-shadow: 0 2px 12px rgba(11,17,32,0.06);
+  }
+  .area-card.filled {
+    border-left-color: var(--imi-gold-500);
+    box-shadow: 0 4px 20px rgba(184,148,58,0.08);
+  }
+  .dark .area-card {
+    background: rgba(13,27,46,0.85);
+    border-color: rgba(200,164,74,0.18);
+    border-left-color: transparent;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .dark .area-card.filled {
+    border-color: rgba(200,164,74,0.30);
+    border-left-color: var(--imi-gold-500);
+    box-shadow: 0 4px 20px rgba(200,164,74,0.07), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  /* Numeric badge — area index pill */
+  .area-badge {
+    font-size: 10px;
+    font-family: var(--font-data);
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    background: rgba(11,17,32,0.06);
+    border: 1px solid rgba(11,17,32,0.10);
+    color: var(--imi-stone-500);
+    transition: all 0.25s;
+  }
+  .dark .area-badge {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+    color: var(--text-tertiary);
+  }
+  .dark .area-badge.active {
+    background: rgba(200,164,74,0.12);
+    border-color: rgba(200,164,74,0.22);
+    color: var(--text-gold);
+  }
+
+  /* Tab nav pill — active state */
+  .tab-pill-active {
+    background: linear-gradient(135deg, rgba(200,164,74,0.14) 0%, rgba(200,164,74,0.07) 100%);
+    border: 1px solid rgba(200,164,74,0.28);
+    box-shadow: 0 1px 6px rgba(200,164,74,0.10), inset 0 1px 0 rgba(255,255,255,0.05);
+    color: var(--text-gold);
+  }
+  /* Light mode tab active */
+  :root .tab-pill-active {
+    background: linear-gradient(135deg, rgba(184,148,58,0.12) 0%, rgba(184,148,58,0.06) 100%);
+    border-color: rgba(184,148,58,0.28);
+    box-shadow: 0 1px 6px rgba(184,148,58,0.10);
+    color: var(--imi-gold-600);
+  }
+
+  /* Upload zone — dashed gold border drop target */
+  .upload-zone {
+    border: 1.5px dashed rgba(11,17,32,0.16);
+    border-radius: 10px;
+    background: rgba(11,17,32,0.02);
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
+  }
+  .upload-zone:hover {
+    border-color: rgba(184,148,58,0.40);
+    background: rgba(184,148,58,0.04);
+  }
+  .dark .upload-zone {
+    border-color: rgba(200,164,74,0.20);
+    background: rgba(200,164,74,0.025);
+  }
+  .dark .upload-zone:hover {
+    border-color: rgba(200,164,74,0.42);
+    background: rgba(200,164,74,0.06);
+  }
+
+  /* Sticky header glass — admin panels */
+  .header-glass {
+    background: color-mix(in srgb, var(--bg-surface) 90%, transparent);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 1px 0 rgba(200,164,74,0.05);
+  }
+
+  /* Icon button — 38×38 rounded touch target */
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.16s, border-color 0.16s;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-overlay);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .icon-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+  }
+  .dark .icon-btn {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.10);
+  }
+  .dark .icon-btn:hover {
+    background: rgba(255,255,255,0.09);
+  }
 }
 
 /* ── COMPONENTS ─────────────────────────────────────────────── */
