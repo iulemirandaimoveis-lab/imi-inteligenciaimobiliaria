@@ -1692,6 +1692,14 @@ export default function AltoBellevuePlanView({
     homeApplied.current = true;
     setVb(homeVb);
   }, [mapData, homeVb]);
+
+  // "No enquadramento inicial?" — usado para mostrar "Ver tudo" só quando há para
+  // onde voltar (zoom/pan/quadra). Um botão que não faz nada em repouso é ruído.
+  const atHome = useMemo(() =>
+    Math.abs(vb.w - homeVb.w) < homeVb.w * 0.02 &&
+    Math.abs(vb.x - homeVb.x) < homeVb.w * 0.02 &&
+    Math.abs(vb.y - homeVb.y) < homeVb.h * 0.02,
+    [vb, homeVb]);
   const animRef = useRef<number | null>(null);
   const lastPos = useRef({ x: 0, y: 0 });
   const didDrag = useRef(false);
@@ -2277,7 +2285,8 @@ export default function AltoBellevuePlanView({
             >
               {!isMobile && <MapBtn onClick={zoomIn} label="Aproximar"><ZoomIn size={17} /></MapBtn>}
               {!isMobile && <MapBtn onClick={zoomOut} label="Afastar"><ZoomOut size={17} /></MapBtn>}
-              <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={15} /></MapBtn>
+              {/* "Ver tudo" só aparece quando há para onde voltar (não no overview). */}
+              {!atHome && <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={15} /></MapBtn>}
             </div>
           </>
         )}
@@ -2387,17 +2396,8 @@ export default function AltoBellevuePlanView({
         </span>
       </div>}
 
-      {/* ── LEGEND — data-driven: só status presentes, com contagem (M1/B4) ── */}
-      {!isFullscreen && <div style={{ background: '#F8F6F2', borderTop: '1px solid rgba(0,0,0,0.04)', padding: '8px 16px', display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span style={{ fontSize: 9, fontWeight: 700, color: '#C8C3BB', textTransform: 'uppercase', letterSpacing: '0.15em', flexShrink: 0 }}>Legenda</span>
-        {presentStatuses.map(([key, cfg]) => (
-          <div key={key} className="flex items-center gap-1.5">
-            <div style={{ width: 11, height: 11, borderRadius: 3, background: cfg.dot, flexShrink: 0 }} />
-            <span style={{ fontSize: 10, color: '#636363', fontWeight: 600 }}>{cfg.label}</span>
-            <span style={{ fontSize: 10, color: '#A8A296', fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{stats.byStatus[key]}</span>
-          </div>
-        ))}
-      </div>}
+      {/* Legenda removida: a STATS BAR acima já é a legenda (mesma cor + rótulo +
+          contagem por status). Mostrar duas vezes os mesmos 203/3/177 era ruído. */}
 
       {/* ── ÁREAS COMUNS ────────────────────────────────── */}
       {!isFullscreen && mapData?.amenities && mapData.amenities.length > 0 && (
