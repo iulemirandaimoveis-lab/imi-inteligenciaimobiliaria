@@ -27,6 +27,7 @@ export function WhatsAppFAB() {
 
     return (
         <div
+            className="hide-on-short-landscape"
             style={{
                 position: 'fixed',
                 bottom: 'calc(86px + env(safe-area-inset-bottom, 0px))',

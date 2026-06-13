@@ -55,6 +55,22 @@ function parseCsvLine(line: string): string[] {
   return out;
 }
 
+/**
+ * Resolução canônica do status de um lote — usada pelas DUAS visões do mapa
+ * (Planta e Lista) para que totais e status por lote nunca divirjam (C1/C2):
+ *   1. planilha ao vivo (fonte comercial editável, sincronizada a cada 60–90s);
+ *   2. JSON canônico do mapa (snapshot commercial embutido);
+ *   3. status do banco (subdivision_lots).
+ */
+export function resolveLotStatus(
+  lotId: string,
+  dbStatus: string,
+  canonical?: Record<string, string> | null,
+  live?: Record<string, string> | null,
+): string {
+  return live?.[lotId] ?? canonical?.[lotId] ?? dbStatus;
+}
+
 const QUADRA_RE = /^QUADRA\s+([A-P])$/i;
 const GROUP_STARTS = [0, 4, 8]; // 3 quadras lado a lado por bloco
 
