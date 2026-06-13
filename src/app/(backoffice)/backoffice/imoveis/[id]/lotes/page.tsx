@@ -182,7 +182,22 @@ function LotEditModal({
     return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = '' }
   }, [onClose])
 
+  const [priceError, setPriceError] = useState<string | null>(null)
+
   const handleSave = async () => {
+    // Validação de valor: precisa ser número ≥ 0 (ou vazio = "consultar").
+    // O input é type="number" → o ponto é o separador DECIMAL (ex.: "35000.5"),
+    // nunca milhar. Só normalizamos vírgula→ponto; não removemos pontos (isso
+    // transformava 35000.50 em 3500050).
+    let priceVal: number | null = null
+    if (price.trim()) {
+      priceVal = parseFloat(price.replace(',', '.'))
+      if (isNaN(priceVal) || priceVal < 0) {
+        setPriceError('Informe um valor válido (≥ 0) ou deixe em branco.')
+        return
+      }
+    }
+    setPriceError(null)
     // Guarda: reverter um lote VENDIDO exige confirmação explícita do gestor.
     if (lot.status === 'VENDIDO' && status !== 'VENDIDO') {
       const ok = window.confirm(
@@ -191,8 +206,7 @@ function LotEditModal({
       if (!ok) return
     }
     setSaving(true)
-    const priceVal = price ? parseFloat(price.replace(',', '.')) : null
-    await onSave(lot.id, { status, price: isNaN(priceVal as number) ? null : priceVal, notes: notes || null })
+    await onSave(lot.id, { status, price: priceVal, notes: notes || null })
     setSaving(false)
     onClose()
   }
@@ -250,16 +264,24 @@ function LotEditModal({
             <label style={{ ...EYEBROW, display: 'block', marginBottom: 6 }}>Valor (R$)</label>
             <input
               type="number"
+              min={0}
+              step={100}
+              inputMode="decimal"
               value={price}
-              onChange={e => setPrice(e.target.value)}
-              placeholder="Ex: 35000"
+              onChange={e => { setPrice(e.target.value); setPriceError(null) }}
+              placeholder="Ex: 35000 (vazio = Consultar)"
+              aria-invalid={!!priceError}
               style={{
-                width: '100%', height: 40, borderRadius: 8, border: `1px solid ${T.border}`,
+                width: '100%', height: 40, borderRadius: 8,
+                border: `1px solid ${priceError ? '#DC2626' : T.border}`,
                 background: 'rgba(255,255,255,0.04)', color: T.text,
                 padding: '0 12px', fontSize: 14, fontFamily: 'var(--font-mono, monospace)',
                 boxSizing: 'border-box',
               }}
             />
+            {priceError && (
+              <p style={{ fontSize: 11, color: '#F87171', margin: '6px 0 0' }}>{priceError}</p>
+            )}
           </div>
 
           {/* Notes */}
@@ -420,6 +442,7 @@ export default function LotesPage() {
   const [importPreview, setImportPreview] = useState<Array<Partial<Lot>> | null>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const [importing, setImporting] = useState(false)
+  const [importStats, setImportStats] = useState<{ matched: number; unmatched: number } | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -543,7 +566,20 @@ export default function LotesPage() {
         })
       }
 
-      setImportPreview(parsed.slice(0, 200))
+      if (parsed.length === 0) {
+        setImportError('Nenhuma linha válida encontrada (verifique as colunas Quadra e Lote).')
+        return
+      }
+      // Cruza com os lotes existentes — só estes serão atualizados. Surface a
+      // contagem para o operador não ser surpreendido por linhas ignoradas.
+      let matched = 0
+      for (const r of parsed) {
+        if (r.quadra && r.lot_number && lots.some(l => l.quadra === r.quadra && l.lot_number === r.lot_number)) matched++
+      }
+      setImportStats({ matched, unmatched: parsed.length - matched })
+      // Mantém TODAS as linhas para importar (a tabela abaixo só exibe as primeiras 30).
+      // Antes havia .slice(0,200) que truncava silenciosamente sheets grandes (383 lotes).
+      setImportPreview(parsed)
     } catch (err) {
       setImportError('Erro ao ler o arquivo: ' + (err instanceof Error ? err.message : 'desconhecido'))
     }
@@ -753,11 +789,12 @@ export default function LotesPage() {
         {showImport && (
           <ImportModal
             preview={importPreview}
+            stats={importStats}
             error={importError}
             importing={importing}
             onFileSelect={handleFileSelect}
             onConfirm={handleImportConfirm}
-            onClose={() => { setShowImport(false); setImportPreview(null); setImportError(null) }}
+            onClose={() => { setShowImport(false); setImportPreview(null); setImportError(null); setImportStats(null) }}
           />
         )}
       </div>
@@ -777,11 +814,12 @@ export default function LotesPage() {
       {showImport && (
         <ImportModal
           preview={importPreview}
+          stats={importStats}
           error={importError}
           importing={importing}
           onFileSelect={handleFileSelect}
           onConfirm={handleImportConfirm}
-          onClose={() => { setShowImport(false); setImportPreview(null); setImportError(null) }}
+          onClose={() => { setShowImport(false); setImportPreview(null); setImportError(null); setImportStats(null) }}
         />
       )}
     </div>
@@ -791,9 +829,10 @@ export default function LotesPage() {
 // ─── Import Modal ─────────────────────────────────────────────────────────────
 
 function ImportModal({
-  preview, error, importing, onFileSelect, onConfirm, onClose,
+  preview, stats, error, importing, onFileSelect, onConfirm, onClose,
 }: {
   preview: Array<Partial<Lot>> | null
+  stats: { matched: number; unmatched: number } | null
   error: string | null
   importing: boolean
   onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -862,8 +901,20 @@ function ImportModal({
         {preview && preview.length > 0 && (
           <div>
             <p style={{ fontSize: 12, color: T.textDim, marginBottom: 8 }}>
-              <strong style={{ color: T.text }}>{preview.length}</strong> lotes encontrados no arquivo. Confirme para atualizar os lotes existentes.
+              <strong style={{ color: T.text }}>{preview.length}</strong> linha{preview.length !== 1 ? 's' : ''} no arquivo. Confirme para atualizar os lotes existentes.
             </p>
+            {stats && (
+              <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 8, background: 'rgba(22,163,74,0.12)', color: '#16A34A' }}>
+                  {stats.matched} serão atualizados
+                </span>
+                {stats.unmatched > 0 && (
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 8, background: 'rgba(217,119,6,0.12)', color: '#D97706' }}>
+                    {stats.unmatched} ignorados (lote inexistente)
+                  </span>
+                )}
+              </div>
+            )}
             <div style={{ border: `1px solid ${T.border}`, borderRadius: 10, overflow: 'hidden', maxHeight: 240, overflowY: 'auto', marginBottom: 16 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
                 <thead>

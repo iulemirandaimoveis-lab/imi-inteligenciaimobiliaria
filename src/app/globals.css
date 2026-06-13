@@ -1406,6 +1406,13 @@
     @apply w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8;
   }
 
+  /* Overlays fixos não-essenciais (FAB do WhatsApp, sticky bar de lead) escondem
+     o mapa em paisagem de baixa altura (M6). Some-os e devolve a altura ao mapa;
+     o usuário volta ao retrato — ou usa o "expandir" do próprio mapa. */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .hide-on-short-landscape { display: none !important; }
+  }
+
   /* ── CARDS ─────────────────────────────────────────────────  */
   .card {
     background: white;

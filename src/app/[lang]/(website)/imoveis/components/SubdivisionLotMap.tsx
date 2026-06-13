@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import SubdivisionPlanView, { PLAN_VIEW_IDS } from './SubdivisionPlanView';
 import AltoBellevuePlanView from './AltoBellevuePlanView';
+import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
+import { useAbAvailability, useAbCanonicalStatuses } from '@/hooks/use-ab-availability';
 
 const AB_DEV_ID = 'ab7d1fc1-f069-4e3b-a515-8e1204c11247';
 
@@ -50,6 +52,10 @@ const STATUS = {
   DISPONIVEL:   { label: 'Disponível',   bg: '#16A34A', text: '#fff', light: '#DCFCE7', dark: '#166534' },
   VENDIDO:      { label: 'Vendido',      bg: '#DC2626', text: '#fff', light: '#FEE2E2', dark: '#991B1B' },
   NEGOCIACAO:   { label: 'Negociação',   bg: '#D97706', text: '#fff', light: '#FEF3C7', dark: '#92400E' },
+  // A planilha viva pode marcar RESERVADO; sem este config a Lista cairia no
+  // fallback DISPONIVEL e pintaria o lote de verde (engano comercial). Mesma cor
+  // da Planta (roxo) para paridade entre visões.
+  RESERVADO:    { label: 'Reservado',    bg: '#8B5CF6', text: '#fff', light: '#EDE9FE', dark: '#5B21B6' },
   PROPRIETARIO: { label: 'Proprietário', bg: '#2563EB', text: '#fff', light: '#DBEAFE', dark: '#1E40AF' },
   IGREJA:       { label: 'Igreja',       bg: '#7C3AED', text: '#fff', light: '#EDE9FE', dark: '#5B21B6' },
 } as const;
@@ -436,14 +442,14 @@ function LotModal({
             </>
           ) : (
             <a
-              href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(`Olá! Gostaria de informações sobre lotes disponíveis no ${developmentName}.`)}`}
+              href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(`Olá! Tenho interesse no ${developmentName}, Quadra ${lot.quadra}, Lote ${lot.lot_number} (${cfg.label}). Pode me avisar se houver disponibilidade ou indicar um lote semelhante?`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="relative flex items-center justify-center gap-2 w-full h-12 rounded-xl text-[13px] font-bold uppercase tracking-wider border border-gray-200 overflow-hidden"
               style={{ color: '#0B1928', fontFamily: "var(--fu, 'Outfit', sans-serif)", textDecoration: 'none', background: '#fff' }}
             >
               <MessageCircle size={15} />
-              Ver Outros Lotes
+              Falar sobre este lote
             </a>
           )}
         </div>
@@ -932,8 +938,23 @@ function CompareBar({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581986141487', paymentConditions, mapAmenities, virtualTourUrl }: SubdivisionLotMapProps) {
-  const [lots, setLots] = useState<Lot[]>([]);
+  const [rawLots, setRawLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // C1/C2 — paridade de disponibilidade com a Planta: a Lista resolve o status
+  // pela MESMA cadeia (planilha viva > JSON canônico > banco). Sem isto, a Lista
+  // mostrava só o status do Supabase e divergia da Planta. Só busca p/ o AB.
+  const isAB = developmentId === AB_DEV_ID;
+  const liveAvail = useAbAvailability(isAB);
+  const canonicalStatus = useAbCanonicalStatuses(isAB);
+  const lots = useMemo<Lot[]>(() => {
+    if (!isAB) return rawLots;
+    return rawLots.map((l) => {
+      const id = `${l.quadra}-${String(l.lot_number).padStart(2, '0')}`;
+      const status = resolveLotStatus(id, l.status, canonicalStatus, liveAvail);
+      return status === l.status ? l : { ...l, status };
+    });
+  }, [rawLots, isAB, canonicalStatus, liveAvail]);
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
   const [activeQuadras, setActiveQuadras] = useState<Set<string>>(new Set(['A', 'B']));
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
@@ -984,7 +1005,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           .order('quadra')
           .order('lot_number');
         if (error) console.error('[SubdivisionLotMap] fetch error:', error.message);
-        if (data) setLots(data.map((l: Record<string, unknown>) => ({ ...l, area_m2: Number(l.area_m2) || 0 })) as Lot[]);
+        if (data) setRawLots(data.map((l: Record<string, unknown>) => ({ ...l, area_m2: Number(l.area_m2) || 0 })) as Lot[]);
       } catch (err) {
         console.error('[SubdivisionLotMap] unexpected error:', err);
       } finally {
@@ -1132,9 +1153,37 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
 
   const hasRankings = useMemo(() => (lots as Lot[]).filter((l: Lot) => l.status === 'DISPONIVEL' && l.price).length >= 3, [lots]) as boolean;
 
+  // M1 — legenda data-driven: só status presentes, com contagem; mesma taxonomia
+  // e fonte da Planta (status já resolvido pela cadeia única).
+  const presentStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const l of lots as Lot[]) counts[l.status] = (counts[l.status] ?? 0) + 1;
+    return (Object.entries(STATUS) as [StatusKey, typeof STATUS[StatusKey]][])
+      .filter(([k]) => (counts[k] ?? 0) > 0)
+      .map(([k, v]) => ({ key: k, cfg: v, count: counts[k] }));
+  }, [lots]);
+
   const recommendedIds = useMemo(
     () => new Set(recommendations.map(r => `${r.quadra}-${r.lot_number}`)),
     [recommendations]
+  );
+
+  // M5 — recomendações respeitam os filtros ativos: só mostra recomendações que
+  // pertencem ao conjunto já filtrado (reusa exatamente a lógica de filteredQuadras,
+  // fonte única). Com filtro incompatível (ex.: "Vendidos"), a seção some.
+  const filteredLotKeys = useMemo(() => {
+    const keys = new Set<string>();
+    for (const [, qLots] of filteredQuadras) {
+      for (const l of qLots) keys.add(`${l.quadra}-${l.lot_number}`);
+    }
+    return keys;
+  }, [filteredQuadras]);
+  const hasActiveFilter = filterStatus !== 'ALL' || smartFilter !== 'ALL' || maxPrice !== null || minArea !== null;
+  const visibleRecommendations = useMemo(
+    () => hasActiveFilter
+      ? recommendations.filter(r => filteredLotKeys.has(`${r.quadra}-${r.lot_number}`))
+      : recommendations,
+    [recommendations, hasActiveFilter, filteredLotKeys]
   );
 
   if (loading) {
@@ -1164,15 +1213,31 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   // Premium Alto Bellevue experience — self-contained with its own filters and bottom sheet
   if (developmentId === AB_DEV_ID && viewMode === 'plan') {
     return (
-      <div>
-        {hasPlanView && (
-          <div className="flex justify-end mb-4">
+      <div className="scroll-mt-32">
+        {/* Cabeçalho semântico (B1) — heading real + alternância de visão alinhada */}
+        <div className="flex items-end justify-between gap-3 mb-4 flex-wrap">
+          <div>
+            <div className="flex items-center gap-3 mb-1.5">
+              <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0B1928', margin: 0, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                Mapa de Disponibilidade
+              </h2>
+            </div>
+            <p style={{ fontSize: 13, color: '#948F84', margin: 0, lineHeight: 1.5 }}>
+              {stats.available} de {stats.total} lotes disponíveis em {quadras.size} quadras
+            </p>
+          </div>
+          {hasPlanView && (
             <div
               className="flex items-center rounded-lg p-0.5 flex-shrink-0"
               style={{ background: '#F0EDE5', border: '1.5px solid rgba(200,164,74,0.35)' }}
+              role="tablist"
+              aria-label="Alternar entre planta e lista"
             >
               <button
                 onClick={() => { setViewMode('list'); setSelectedLot(null); }}
+                role="tab"
+                aria-selected={false}
                 className="flex items-center gap-1.5 h-7 px-2.5 rounded-md transition-all"
                 style={{
                   background: 'transparent',
@@ -1188,6 +1253,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
               </button>
               <button
                 onClick={() => setViewMode('plan')}
+                role="tab"
+                aria-selected={true}
                 className="flex items-center gap-1.5 h-7 px-2.5 rounded-md transition-all"
                 style={{
                   background: '#fff',
@@ -1202,8 +1269,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                 Planta
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
         <AltoBellevuePlanView
           lots={lots}
           developmentId={developmentId}
@@ -1482,18 +1549,21 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         )}
       </AnimatePresence>
 
-      {/* ── Legend — list mode only ─────────────────────────────────────────── */}
+      {/* ── Legend — list mode only · data-driven, com contagem (M1) ─────────── */}
       {viewMode === 'list' && <div className="flex flex-wrap items-center gap-3 mb-5">
-        {Object.entries(STATUS).map(([k, v]) => (
-          <div key={k} className="flex items-center gap-1.5">
-            <div style={{ width: 10, height: 10, borderRadius: 3, background: v.bg }} />
-            <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600 }}>{v.label}</span>
+        {presentStatusCounts.map(({ key, cfg, count }) => (
+          <div key={key} className="flex items-center gap-1.5">
+            <div style={{ width: 10, height: 10, borderRadius: 3, background: cfg.bg }} />
+            <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600 }}>{cfg.label}</span>
+            <span style={{ fontSize: 11, color: '#B8B3A8', fontWeight: 700, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>{count}</span>
           </div>
         ))}
-        <div className="flex items-center gap-1.5">
-          <div style={{ width: 10, height: 10, borderRadius: 3, background: '#DBEAFE', border: '1.5px solid #2563EB' }} />
-          <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600 }}>Em comparação</span>
-        </div>
+        {compareLots.length > 0 && (
+          <div className="flex items-center gap-1.5">
+            <div style={{ width: 10, height: 10, borderRadius: 3, background: '#DBEAFE', border: '1.5px solid #2563EB' }} />
+            <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600 }}>Em comparação</span>
+          </div>
+        )}
       </div>}
 
       {/* ── Plan View ────────────────────────────────────────────────────────── */}
@@ -1516,8 +1586,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         </div>
       )}
 
-      {/* ── IA Recommendations ───────────────────────────────────────────────── */}
-      {viewMode === 'list' && recommendations.length > 0 && (
+      {/* ── IA Recommendations — respeitam os filtros ativos (M5) ────────────── */}
+      {viewMode === 'list' && visibleRecommendations.length > 0 && (
         <div className="mb-6 p-4 rounded-2xl" style={{ background: 'linear-gradient(135deg, #0B1928 0%, #1a2e42 100%)', border: '1px solid rgba(200,164,74,0.2)' }}>
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2">
@@ -1541,8 +1611,13 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
               ))}
             </div>
           </div>
+          {hasActiveFilter && (
+            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', margin: '0 0 10px', fontWeight: 500 }}>
+              Mostrando recomendações dentro do filtro ativo.
+            </p>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            {recommendations.map((rec, i) => {
+            {visibleRecommendations.map((rec, i) => {
               const lot = (lots as Lot[]).find(l => l.quadra === rec.quadra && l.lot_number === rec.lot_number);
               return (
                 <button key={rec.id} onClick={() => lot && setSelectedLot(lot)}

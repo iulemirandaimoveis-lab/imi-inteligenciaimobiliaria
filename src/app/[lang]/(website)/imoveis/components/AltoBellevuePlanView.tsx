@@ -8,8 +8,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2, Shield, TreePine, Building2, Dumbbell, MapPin, Video } from 'lucide-react';
 import {
   loadAltoBellevueMap, AB_VIEWBOX,
-  type ABMapData, type Amenity,
+  type ABMapData, type Amenity, type Point,
 } from '@/lib/lots/alto-bellevue';
+import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
+import { useAbAvailability } from '@/hooks/use-ab-availability';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -114,6 +116,14 @@ const STATUS_CFG: Record<string, {
     badgeBg: '#FEE2E2',
     badgeText: '#991B1B',
   },
+  RESERVADO: {
+    label: 'Reservado',
+    fill: 'rgba(139,92,246,0.26)',
+    stroke: '#8B5CF6',
+    dot: '#8B5CF6',
+    badgeBg: '#EDE9FE',
+    badgeText: '#5B21B6',
+  },
   PROPRIETARIO: {
     label: 'Proprietário',
     fill: 'rgba(59,130,246,0.22)',
@@ -122,9 +132,27 @@ const STATUS_CFG: Record<string, {
     badgeBg: '#DBEAFE',
     badgeText: '#1E40AF',
   },
+  IGREJA: {
+    label: 'Igreja',
+    fill: 'rgba(13,148,136,0.22)',
+    stroke: '#0D9488',
+    dot: '#0D9488',
+    badgeBg: '#CCFBF1',
+    badgeText: '#115E59',
+  },
 };
 
-const getCfg = (k: string) => STATUS_CFG[k] ?? STATUS_CFG.DISPONIVEL;
+// Status desconhecido NUNCA cai para "Disponível" (risco comercial) — neutro cinza.
+const UNKNOWN_CFG = {
+  label: 'Indisponível',
+  fill: 'rgba(100,116,139,0.20)',
+  stroke: '#64748B',
+  dot: '#64748B',
+  badgeBg: '#F1F5F9',
+  badgeText: '#475569',
+};
+
+const getCfg = (k: string) => STATUS_CFG[k] ?? UNKNOWN_CFG;
 
 // ── Áreas comuns (conteúdo editorial: textos, fotos, vídeo) ────────────────────
 // A geometria/posição vem da fonte canônica (campo `amenities`); aqui ficam textos
@@ -377,10 +405,14 @@ function useABMap() {
   return { data, loading, error, retry: () => setAttempt((a) => a + 1) };
 }
 
-function usePrices() {
+/** Tabela de preços (163 KB) — adiada até a primeira seleção de lote. */
+function usePrices(enabled: boolean) {
   const [priceMap, setPriceMap] = useState<Map<string, PriceEntry>>(new Map());
+  const fetched = useRef(false);
 
   useEffect(() => {
+    if (!enabled || fetched.current) return;
+    fetched.current = true;
     fetch('/data/alto-bellevue-prices.json')
       .then(r => r.json())
       .then((data: PriceEntry[]) => {
@@ -391,28 +423,9 @@ function usePrices() {
         setPriceMap(m);
       })
       .catch(() => {});
-  }, []);
+  }, [enabled]);
 
   return priceMap;
-}
-
-/** Disponibilidade ao vivo da planilha (Google Sheets) — re-busca a cada 90s. */
-function useAvailability() {
-  const [avail, setAvail] = useState<Record<string, string>>({});
-  useEffect(() => {
-    let alive = true;
-    const load = () =>
-      fetch('/api/developments/alto-bellevue/availability')
-        .then((r) => r.json())
-        .then((d) => { if (alive && d?.availability) setAvail(d.availability); })
-        .catch(() => {});
-    load();
-    const id = setInterval(load, 90_000); // near-real-time
-    const onFocus = () => load();
-    window.addEventListener('focus', onFocus);
-    return () => { alive = false; clearInterval(id); window.removeEventListener('focus', onFocus); };
-  }, []);
-  return avail;
 }
 
 function mergeLots(dbLots: Lot[], planLots: PlanLot[]): PlanLot[] {
@@ -443,6 +456,7 @@ interface MapInnerProps {
   activeQuadra: string;
   onLotClick: (lot: PlanLot) => void;
   onAmenityClick: (amenity: Amenity) => void;
+  onQuadraClick: (quadra: string) => void;
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
@@ -451,7 +465,7 @@ interface MapInnerProps {
 
 const MapInner = memo(function MapInner({
   lots, allLots, context, showTechLayer, selectedId, vb, isDragging,
-  activeQuadra, onLotClick, onAmenityClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
+  activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
   const scale = SVG_W / vb.w;
@@ -539,6 +553,42 @@ const MapInner = memo(function MapInner({
     return out;
   }, [context]);
 
+  // Oclusão de rótulos (M3): os marcadores do complexo de entrada (portaria,
+  // lazer, coworking, recreativa-01) ficam fisicamente próximos — seus rótulos
+  // colidem em zoom baixo/médio. Passe guloso por prioridade: um rótulo só
+  // aparece se sua caixa estimada não intersectar nenhum já colocado; ao
+  // aproximar o zoom, as caixas (em coords SVG) encolhem e os demais reaparecem.
+  const visibleLabelKeys = useMemo(() => {
+    const placed: { x: number; y: number; w: number; h: number }[] = [];
+    const visible = new Set<string>();
+    const tryPlace = (key: string, cx: number, baseY: number, text: string, fs: number) => {
+      const w = estTextWidth(text, fs);
+      const h = fs * 1.4;
+      const box = { x: cx - w / 2, y: baseY - h, w, h };
+      const collides = placed.some(b =>
+        box.x < b.x + b.w && b.x < box.x + box.w && box.y < b.y + b.h && b.y < box.y + box.h);
+      if (!collides) { placed.push(box); visible.add(key); }
+    };
+    const amenities = context?.amenities ?? [];
+    // Portaria primeiro (maior prioridade), depois os demais na ordem da fonte.
+    const ordered = [...amenities].sort((a, b) =>
+      (a.id === 'portaria' ? 0 : 1) - (b.id === 'portaria' ? 0 : 1));
+    for (const a of ordered) {
+      const isPortaria = a.id === 'portaria';
+      if (!(isPortaria ? scale >= 0.5 : scale >= 2.2)) continue;
+      tryPlace(`am-${a.id}`, a.x, a.y - Math.max(5, 26 / scale), a.label, Math.max(5, 16 / scale));
+    }
+    if (context?.entrance && scale >= 0.5) {
+      const e = context.entrance;
+      tryPlace('entrance', e.x, e.y - Math.max(5, 22 / scale), e.label, Math.max(5, 16 / scale));
+    }
+    for (const g of context?.greenAreas ?? []) {
+      if (scale < 2.5) continue;
+      tryPlace(`ga-${g.id}`, g.x, g.y - Math.max(4, 14 / scale), g.label, Math.max(3.2, 11 / scale));
+    }
+    return visible;
+  }, [context, scale]);
+
   // k/scale gives constant screen size: k × screenWidth/SVG_W px always visible.
   // At ~600 px container: badgeR=40/scale → 40×600/1200 = 20 px circle.
   const streetStroke = Math.max(0.3, 1.4 / scale);
@@ -561,6 +611,7 @@ const MapInner = memo(function MapInner({
         style={{ touchAction: 'none' }}
         onClick={onBgClick}
         aria-label="Mapa interativo de lotes Alto Bellevue"
+        aria-roledescription="Mapa interativo — arraste para mover, role para dar zoom, toque num lote para ver detalhes"
         role="application"
       >
         <defs>
@@ -643,7 +694,7 @@ const MapInner = memo(function MapInner({
                   <circle cx={a.x} cy={a.y} r={hit} fill="transparent" />
                   <circle cx={a.x} cy={a.y} r={r} fill={a.color} opacity={isPortaria ? 0.95 : 0.85}
                     stroke="rgba(255,255,255,0.85)" strokeWidth={Math.max(0.25, 1 / scale)} />
-                  {(isPortaria ? scale >= 0.5 : scale >= 2.2) && (
+                  {visibleLabelKeys.has(`am-${a.id}`) && (
                     <text
                       x={a.x} y={a.y - Math.max(5, 26 / scale)}
                       textAnchor="middle"
@@ -666,6 +717,7 @@ const MapInner = memo(function MapInner({
                   r={Math.max(3, 18 / scale)}
                   fill="rgba(200,164,74,0.7)"
                 />
+                {visibleLabelKeys.has('entrance') && (
                 <text
                   x={context.entrance.x} y={context.entrance.y - Math.max(5, 22 / scale)}
                   textAnchor="middle"
@@ -676,6 +728,7 @@ const MapInner = memo(function MapInner({
                 >
                   {context.entrance.label}
                 </text>
+                )}
               </g>
             )}
             {/* Áreas verdes (CAD) — clicáveis: abrem o card da área verde (fotos + info) */}
@@ -701,7 +754,7 @@ const MapInner = memo(function MapInner({
                     strokeWidth={Math.max(0.25, 1 / scale)}
                     strokeDasharray={`${2.5 / scale} ${1.5 / scale}`}
                   />
-                  {scale >= 2.5 && (
+                  {visibleLabelKeys.has(`ga-${g.id}`) && (
                     <text
                       x={g.x} y={g.y - Math.max(4, 14 / scale)}
                       textAnchor="middle"
@@ -765,14 +818,15 @@ const MapInner = memo(function MapInner({
 
               {/* Rótulos internos — centrados verticalmente no lote (PDF-style).
                   Três linhas: número, área m², testada×profundidade.
-                  Background outline melhora legibilidade sobre qualquer cor. */}
-              {showLotNumbers && cx > 0 && cy > 0 && (() => {
+                  O lote SELECIONADO sempre rotula (número+área) ancorado a si
+                  mesmo, em qualquer zoom — feedback inequívoco de seleção (A5). */}
+              {(showLotNumbers || isSelected) && cx > 0 && cy > 0 && (() => {
                 // Fit-check: cada linha só aparece se couber na corda horizontal
                 // do polígono na sua altura — evita texto vazando para vizinhos.
                 const areaText = lot.area_m2 ? `${Math.round(lot.area_m2 as number)} m²` : '';
                 const dimsText = dims ? `${fmtM(dims.testada)} × ${fmtM(dims.profundidade)}` : '';
                 const chordMid = horizontalChordAt(lot.polygon, cy);
-                const hasArea = showAreaLabels && !!lot.area_m2 &&
+                const hasArea = (showAreaLabels || isSelected) && !!lot.area_m2 &&
                   estTextWidth(areaText, 4.4) <= chordMid * 0.95;
                 const hasDims = !!dims &&
                   estTextWidth(dimsText, 3.0) <= chordMid * 0.95;
@@ -867,13 +921,24 @@ const MapInner = memo(function MapInner({
           </g>
         )}
 
-        {/* ── Layer 6: Quadra badges — zoom level 1-2 ── */}
+        {/* ── Layer 6: Quadra badges — zoom level 1-2 (clicáveis: aproximam a quadra) ── */}
         {showQuadraBadges && quadraCentroids.map(({ quadra, cx, cy, avail, total }) => {
           const isActive = activeQuadra === quadra;
           const showFraction = badgeR >= 14 && avail > 0;
           const letterY = showFraction ? cy - badgeFontSize * 0.35 : cy;
+          // Alvo de toque sempre ≥ ~40px na tela, mesmo com badge pequeno.
+          const hitR = Math.max(badgeR * 1.25, 24 / scale);
           return (
-            <g key={`qbadge-${quadra}`} style={{ pointerEvents: 'none' }}>
+            <g
+              key={`qbadge-${quadra}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`Quadra ${quadra} — ${avail} de ${total} lotes disponíveis. Aproximar quadra.`}
+              style={{ pointerEvents: 'auto', cursor: 'pointer', outline: 'none' }}
+              onClick={(e) => { e.stopPropagation(); onQuadraClick(quadra); }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onQuadraClick(quadra); } }}
+            >
+              <circle cx={cx} cy={cy} r={hitR} fill="transparent" />
               <circle
                 cx={cx} cy={cy} r={badgeR}
                 fill={isActive ? 'rgba(200,164,74,0.88)' : 'rgba(8,21,36,0.80)'}
@@ -914,24 +979,61 @@ const MapInner = memo(function MapInner({
 
 // ── Map control button ────────────────────────────────────────────────────────
 
-function MapBtn({ onClick, label, children }: { onClick: () => void; label: string; children: React.ReactNode }) {
+function MapBtn({ onClick, label, children, active }: { onClick: () => void; label: string; children: React.ReactNode; active?: boolean }) {
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onClick(); }}
       aria-label={label}
+      aria-pressed={active}
       title={label}
-      className="w-8 h-8 flex items-center justify-center rounded-lg transition-all active:scale-90"
+      // 44px = mínimo de toque (Apple HIG) e o alvo recomendado pela auditoria (44–48px).
+      className="w-11 h-11 flex items-center justify-center rounded-xl transition-all active:scale-90"
       style={{
-        background: 'rgba(8,21,36,0.92)',
+        // Estado ativo discreto (dourado tingido + borda/ícone dourados) — sinaliza
+        // "ligado" sem competir/gritar mais que o conteúdo do mapa.
+        background: active ? 'rgba(200,164,74,0.16)' : 'rgba(8,21,36,0.92)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        border: '1.5px solid rgba(200,164,74,0.50)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.45)',
-        color: 'rgba(255,255,255,0.85)',
+        border: active ? '1.5px solid rgba(200,164,74,0.85)' : '1.5px solid rgba(200,164,74,0.42)',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.45)',
+        color: active ? '#E8C97A' : 'rgba(255,255,255,0.85)',
       }}
     >
       {children}
     </button>
+  );
+}
+
+// ── Edge-fade horizontal scroller ──────────────────────────────────────────────
+// Indicador de rolagem (B5): mostra um leve degradê na(s) borda(s) só quando há
+// mais conteúdo para rolar — afford claro sem cortar o último chip de forma fixa.
+function EdgeFadeRow({
+  children, className, fadeColor = '#fff',
+}: { children: React.ReactNode; className?: string; fadeColor?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ l: false, r: false });
+  const update = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setEdges({ l: scrollLeft > 2, r: scrollLeft + clientWidth < scrollWidth - 2 });
+  }, []);
+  useEffect(() => {
+    update();
+    const el = ref.current;
+    if (!el) return;
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update); ro.disconnect(); };
+  }, [update]);
+  return (
+    <div style={{ position: 'relative' }}>
+      <div ref={ref} className={className} style={{ scrollbarWidth: 'none' }}>{children}</div>
+      {edges.l && <div aria-hidden style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 22, pointerEvents: 'none', background: `linear-gradient(to right, ${fadeColor}, transparent)` }} />}
+      {edges.r && <div aria-hidden style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 26, pointerEvents: 'none', background: `linear-gradient(to left, ${fadeColor}, transparent)` }} />}
+    </div>
   );
 }
 
@@ -989,9 +1091,13 @@ function LotBottomSheet({
 
   const isCorner = dbLot?.special_type === 'ESQUINA';
   const pricePerM2 = lot.price && lot.area_m2 ? (lot.price as number) / (lot.area_m2 as number) : null;
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
+    // Foco inicial no botão fechar — leitores de tela anunciam o diálogo e o
+    // teclado já tem rota de saída (Esc também fecha).
+    closeRef.current?.focus({ preventScroll: true });
     return () => { document.body.style.overflow = ''; };
   }, []);
 
@@ -1041,6 +1147,9 @@ function LotBottomSheet({
           paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))',
         }}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Detalhes do lote ${lot.lot_number}, quadra ${lot.quadra}`}
       >
         {/* Pull handle */}
         <div className="flex justify-center pt-3 pb-1.5">
@@ -1079,10 +1188,11 @@ function LotBottomSheet({
             </p>
           </div>
           <button
+            ref={closeRef}
             onClick={onClose}
             className="w-9 h-9 flex items-center justify-center rounded-full flex-shrink-0 mt-1"
             style={{ background: '#F7F8FA' }}
-            aria-label="Fechar"
+            aria-label="Fechar detalhes do lote"
           >
             <X size={15} color="#948F84" />
           </button>
@@ -1521,11 +1631,11 @@ export default function AltoBellevuePlanView({
     }
     return m;
   }, [amenityOverrides]);
-  const priceMap = usePrices();
-  const availability = useAvailability();
+  const availability = useAbAvailability(true);
   const planLots = mapData?.lots ?? [];
 
   const [selectedLot, setSelectedLot] = useState<PlanLot | null>(null);
+  const priceMap = usePrices(selectedLot !== null);
   const [selectedAmenity, setSelectedAmenity] = useState<Amenity | null>(null);
   const [activeStatus, setActiveStatus] = useState('ALL');
   const [activeQuadra, setActiveQuadra] = useState('ALL');
@@ -1548,6 +1658,48 @@ export default function AltoBellevuePlanView({
   const [vb, setVb] = useState<ViewBox>(INITIAL_VB);
   const vbLive = useRef<ViewBox>(INITIAL_VB);
   vbLive.current = vb;
+
+  // ViewBox "casa": enquadra o empreendimento (perímetro ∪ lotes) com 8% de folga,
+  // em vez do canvas inteiro — elimina o espaço morto escuro do overview e faz
+  // zoom/reset sempre ancorarem no conteúdo, não no viewport (auditoria A3/zoom).
+  const homeVb = useMemo<ViewBox>(() => {
+    const pts: Point[] = [];
+    for (const ring of mapData?.perimeter ?? []) pts.push(...ring);
+    if (!pts.length) for (const l of mapData?.lots ?? []) { if (l.centroid) pts.push(l.centroid); }
+    if (!pts.length) return INITIAL_VB;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const [x, y] of pts) {
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+    const padX = (maxX - minX) * 0.08, padY = (maxY - minY) * 0.08;
+    minX -= padX; maxX += padX; minY -= padY; maxY += padY;
+    let w = maxX - minX, h = maxY - minY;
+    if (w <= 0 || h <= 0) return INITIAL_VB;
+    // Corrige a proporção para a do SVG — sem distorção com preserveAspectRatio.
+    if (w / h > SVG_W / SVG_H) h = w * (SVG_H / SVG_W);
+    else w = h * (SVG_W / SVG_H);
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    return { x: cx - w / 2, y: cy - h / 2, w, h };
+  }, [mapData]);
+
+  // Aplica o enquadramento inicial uma única vez por carga do mapa.
+  const homeApplied = useRef(false);
+  useEffect(() => {
+    if (!mapData || homeApplied.current) return;
+    homeApplied.current = true;
+    setVb(homeVb);
+  }, [mapData, homeVb]);
+
+  // "No enquadramento inicial?" — usado para mostrar "Ver tudo" só quando há para
+  // onde voltar (zoom/pan/quadra). Um botão que não faz nada em repouso é ruído.
+  const atHome = useMemo(() =>
+    Math.abs(vb.w - homeVb.w) < homeVb.w * 0.02 &&
+    Math.abs(vb.x - homeVb.x) < homeVb.w * 0.02 &&
+    Math.abs(vb.y - homeVb.y) < homeVb.h * 0.02,
+    [vb, homeVb]);
   const animRef = useRef<number | null>(null);
   const lastPos = useRef({ x: 0, y: 0 });
   const didDrag = useRef(false);
@@ -1585,22 +1737,51 @@ export default function AltoBellevuePlanView({
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  // A4: ao filtrar por quadra no mobile, traz o mapa para a viewport — efeito
+  // DESACOPLADO do clique (nunca rouba o gesto, ao contrário de scroll no handler).
+  // Só rola se o mapa não estiver visível, evitando "pulo" desnecessário.
+  useEffect(() => {
+    if (!isMobile || activeQuadra === 'ALL') return;
+    const el = containerRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const visible = r.top >= 0 && r.bottom <= window.innerHeight;
+    if (!visible) {
+      const id = requestAnimationFrame(() =>
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      return () => cancelAnimationFrame(id);
+    }
+  }, [activeQuadra, isMobile]);
+
   const allLots = useMemo(() => {
     const merged = mergeLots(dbLots, planLots);
-    // Disponibilidade ao vivo (planilha) tem prioridade sobre o status do JSON.
-    if (!availability || Object.keys(availability).length === 0) return merged;
+    // Cadeia única de resolução (planilha viva > JSON canônico > banco) —
+    // compartilhada com a visão Lista para que os números nunca divirjam (C1/C2).
     return merged.map((l) => {
-      const live = availability[l.id];
-      return live && live !== l.status ? { ...l, status: live } : l;
+      const status = resolveLotStatus(l.id, l.status, null, availability);
+      return status === l.status ? l : { ...l, status };
     });
   }, [dbLots, planLots, availability]);
 
-  const stats = useMemo(() => ({
-    available: allLots.filter(l => l.status === 'DISPONIVEL').length,
-    negotiating: allLots.filter(l => l.status === 'NEGOCIACAO').length,
-    sold: allLots.filter(l => l.status === 'VENDIDO').length,
-    total: allLots.length,
-  }), [allLots]);
+  const stats = useMemo(() => {
+    const byStatus: Record<string, number> = {};
+    for (const l of allLots) byStatus[l.status] = (byStatus[l.status] ?? 0) + 1;
+    return {
+      available: byStatus.DISPONIVEL ?? 0,
+      negotiating: byStatus.NEGOCIACAO ?? 0,
+      reserved: byStatus.RESERVADO ?? 0,
+      sold: byStatus.VENDIDO ?? 0,
+      total: allLots.length,
+      byStatus,
+    };
+  }, [allLots]);
+
+  // Legenda orientada a dados: só mostra status que existem no empreendimento,
+  // com contagem ao lado — mesma taxonomia/fonte nas duas visões (M1).
+  const presentStatuses = useMemo(
+    () => Object.entries(STATUS_CFG).filter(([k]) => (stats.byStatus[k] ?? 0) > 0),
+    [stats.byStatus],
+  );
 
   const filteredLots = useMemo(() =>
     allLots.filter(lot => {
@@ -1717,7 +1898,8 @@ export default function AltoBellevuePlanView({
 
   const zoomIn = useCallback(() => setVb(prev => zoomViewBox(prev, 0.75)), []);
   const zoomOut = useCallback(() => setVb(prev => zoomViewBox(prev, 1.33)), []);
-  const resetView = useCallback(() => animateTo(INITIAL_VB), [animateTo]);
+  // "Ver tudo" volta ao enquadramento do empreendimento (conteúdo), não ao canvas.
+  const resetView = useCallback(() => animateTo(homeVb), [animateTo, homeVb]);
 
   // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
@@ -1790,6 +1972,49 @@ export default function AltoBellevuePlanView({
     if (lot.centroid) focusOn(lot.centroid[0], lot.centroid[1], 6);
   }, [focusOn]);
 
+  // Enquadra uma quadra: bounding box robusto a outliers (IQR) com folga.
+  // Reutilizado pelos chips de quadra E pelos badges clicáveis do mapa (M2),
+  // garantindo comportamento idêntico — fonte única de verdade da navegação.
+  const focusQuadra = useCallback((quadra: string) => {
+    const pts = allLots.filter((l) => l.quadra === quadra && l.centroid);
+    if (!pts.length) return;
+    const sortedX = pts.map((l) => l.centroid![0]).sort((a, b) => a - b);
+    const sortedY = pts.map((l) => l.centroid![1]).sort((a, b) => a - b);
+    const q1x = sortedX[Math.floor(sortedX.length * 0.25)];
+    const q3x = sortedX[Math.floor(sortedX.length * 0.75)];
+    const q1y = sortedY[Math.floor(sortedY.length * 0.25)];
+    const q3y = sortedY[Math.floor(sortedY.length * 0.75)];
+    const fxl = q1x - 1.5 * (q3x - q1x), fxu = q3x + 1.5 * (q3x - q1x);
+    const fyl = q1y - 1.5 * (q3y - q1y), fyu = q3y + 1.5 * (q3y - q1y);
+    const inXs = sortedX.filter((v) => v >= fxl && v <= fxu);
+    const inYs = sortedY.filter((v) => v >= fyl && v <= fyu);
+    const minX = inXs[0] ?? sortedX[0], maxX = inXs[inXs.length - 1] ?? sortedX[sortedX.length - 1];
+    const minY = inYs[0] ?? sortedY[0], maxY = inYs[inYs.length - 1] ?? sortedY[sortedY.length - 1];
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    const spanX = Math.max(maxX - minX, 80) * 1.8;
+    const spanY = Math.max(maxY - minY, 80) * 1.8;
+    const rawW = Math.max(spanX, spanY * (SVG_W / SVG_H));
+    const newW = Math.min(rawW, SVG_W / 2.5);
+    const newH = newW * (SVG_H / SVG_W);
+    animateTo({ x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH });
+  }, [allLots, animateTo]);
+
+  // Seleção de quadra (estado de UI) — desacoplada do enquadramento (estado do
+  // mapa). Um único clique aplica filtro E aproxima, sem scroll roubando o gesto.
+  const selectQuadra = useCallback((quadra: string) => {
+    const next = quadra === activeQuadra && quadra !== 'ALL' ? 'ALL' : quadra;
+    setActiveQuadra(next);
+    setSelectedLot(null);
+    if (next === 'ALL') resetView();
+    else focusQuadra(next);
+  }, [activeQuadra, focusQuadra, resetView]);
+
+  // Badge no mapa: aproxima a quadra sem ativar o filtro (drill-down visual).
+  const handleQuadraBadgeClick = useCallback((quadra: string) => {
+    setSelectedLot(null);
+    focusQuadra(quadra);
+  }, [focusQuadra]);
+
   const handleBgClick = useCallback(() => {
     if (!didDrag.current) setSelectedLot(null);
   }, []);
@@ -1821,9 +2046,9 @@ export default function AltoBellevuePlanView({
     ? dbLots.find(l => `${l.quadra}-${String(l.lot_number).padStart(2, '0')}` === selectedLot.id)
     : undefined;
 
-  const zoomLabel = scale < 3 ? 'Visão geral — dê zoom para ver detalhes'
-    : scale < 4 ? 'Número dos lotes'
-    : scale < 5.5 ? 'Lote + área m²'
+  const zoomLabel = scale < 3 ? 'Toque numa quadra para explorar os lotes'
+    : scale < 4 ? 'Toque num lote para ver preço e status'
+    : scale < 5.5 ? 'Lote + área · toque para detalhes'
     : scale < 9 ? 'Testada e profundidade'
     : 'Detalhamento completo';
 
@@ -1889,14 +2114,14 @@ export default function AltoBellevuePlanView({
           </p>
         )}
 
-        {/* Status */}
+        {/* Status — data-driven: "Todos" + cada status presente, mesma fonte da legenda (M1) */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-2" style={{ scrollbarWidth: 'none' }}>
           {([
-            { key: 'ALL',       label: 'Todos',       count: stats.total,       dot: GOLD },
-            { key: 'DISPONIVEL',label: 'Disponíveis', count: stats.available,   dot: '#32D17C' },
-            { key: 'NEGOCIACAO',label: 'Negociação',  count: stats.negotiating, dot: '#FFB547' },
-            { key: 'VENDIDO',   label: 'Vendidos',    count: stats.sold,        dot: '#FF5C5C' },
-          ] as const).map(({ key, label, count, dot }) => {
+            { key: 'ALL', label: 'Todos', count: stats.total, dot: GOLD },
+            ...presentStatuses.map(([key, cfg]) => ({
+              key, label: cfg.label, count: stats.byStatus[key] ?? 0, dot: cfg.dot,
+            })),
+          ]).map(({ key, label, count, dot }) => {
             const isActive = activeStatus === key;
             return (
               <button
@@ -1920,8 +2145,8 @@ export default function AltoBellevuePlanView({
           })}
         </div>
 
-        {/* Quadras */}
-        <div className="flex gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+        {/* Quadras — com indicador de rolagem nas bordas (B5) */}
+        <EdgeFadeRow className="flex gap-1.5 overflow-x-auto items-center">
           <span style={{ fontSize: 9, fontWeight: 700, color: '#C8C3BB', textTransform: 'uppercase', letterSpacing: '0.15em', alignSelf: 'center', flexShrink: 0, marginRight: 2 }}>
             Quadra
           </span>
@@ -1931,38 +2156,9 @@ export default function AltoBellevuePlanView({
             return (
               <button
                 key={q}
-                onClick={() => {
-                  const next = q === activeQuadra && q !== 'ALL' ? 'ALL' : q;
-                  setActiveQuadra(next);
-                  setSelectedLot(null);
-                  if (next === 'ALL') { resetView(); return; }
-                  const pts = allLots.filter((l) => l.quadra === next && l.centroid);
-                  if (pts.length) {
-                    // IQR-robust bounding box: exclude outlier lots (> 1.5×IQR from Q1/Q3)
-                    // so Quadras with one or two far-flung lots (e.g. N) still zoom sensibly
-                    const sortedX = pts.map(l => l.centroid![0]).sort((a, b) => a - b);
-                    const sortedY = pts.map(l => l.centroid![1]).sort((a, b) => a - b);
-                    const q1x = sortedX[Math.floor(sortedX.length * 0.25)];
-                    const q3x = sortedX[Math.floor(sortedX.length * 0.75)];
-                    const q1y = sortedY[Math.floor(sortedY.length * 0.25)];
-                    const q3y = sortedY[Math.floor(sortedY.length * 0.75)];
-                    const fxl = q1x - 1.5 * (q3x - q1x), fxu = q3x + 1.5 * (q3x - q1x);
-                    const fyl = q1y - 1.5 * (q3y - q1y), fyu = q3y + 1.5 * (q3y - q1y);
-                    const inXs = sortedX.filter(v => v >= fxl && v <= fxu);
-                    const inYs = sortedY.filter(v => v >= fyl && v <= fyu);
-                    const minX = inXs[0] ?? sortedX[0], maxX = inXs[inXs.length - 1] ?? sortedX[sortedX.length - 1];
-                    const minY = inYs[0] ?? sortedY[0], maxY = inYs[inYs.length - 1] ?? sortedY[sortedY.length - 1];
-                    const cx = (minX + maxX) / 2;
-                    const cy = (minY + maxY) / 2;
-                    const spanX = Math.max(maxX - minX, 80) * 1.8;
-                    const spanY = Math.max(maxY - minY, 80) * 1.8;
-                    // Ensure minimum scale of 2.5 so lot numbers are always visible after zoom
-                    const rawW = Math.max(spanX, spanY * (SVG_W / SVG_H));
-                    const newW = Math.min(rawW, SVG_W / 2.5);
-                    const newH = newW * (SVG_H / SVG_W);
-                    animateTo({ x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH });
-                  }
-                }}
+                onClick={() => selectQuadra(q)}
+                aria-pressed={isActive}
+                aria-label={q === 'ALL' ? 'Ver todas as quadras' : `Quadra ${q}${avail > 0 ? `, ${avail} disponíveis` : ''}`}
                 style={{
                   height: 32, paddingLeft: 12, paddingRight: 12, borderRadius: 16,
                   fontSize: 10, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
@@ -1980,7 +2176,7 @@ export default function AltoBellevuePlanView({
               </button>
             );
           })}
-        </div>
+        </EdgeFadeRow>
       </div>
 
       {/* ── MAP ─────────────────────────────────────── */}
@@ -2053,6 +2249,7 @@ export default function AltoBellevuePlanView({
             activeQuadra={activeQuadra}
             onLotClick={setSelectedLot}
             onAmenityClick={handleAmenityClick}
+            onQuadraClick={handleQuadraBadgeClick}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -2060,25 +2257,38 @@ export default function AltoBellevuePlanView({
           />
         )}
 
-        {/* Controls */}
+        {/* Controls — divididos em dois cantos para nunca cobrir os lotes do
+            centro-direita no mobile (C4). Camada+expandir no topo; zoom/ver-tudo
+            embaixo (convenção Google/Apple Maps). Alvos 44px (Apple HIG).
+            No mobile, +/− são ocultados: pinça, duplo-toque e toque na quadra já
+            dão zoom (padrão nativo) — isso desafoga o canto e libera o FAB. */}
         {!error && !loading && (
-          <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-10">
-            <MapBtn onClick={zoomIn} label="Aproximar"><ZoomIn size={15} /></MapBtn>
-            <MapBtn onClick={zoomOut} label="Afastar"><ZoomOut size={15} /></MapBtn>
-            <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={13} /></MapBtn>
-            <MapBtn
-              onClick={() => setShowTechLayer((v) => !v)}
-              label={showTechLayer ? 'Ocultar camada técnica' : 'Mostrar camada técnica'}
+          <>
+            <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
+              <MapBtn
+                onClick={() => setShowTechLayer((v) => !v)}
+                label={showTechLayer ? 'Ocultar camada técnica' : 'Mostrar camada técnica'}
+                active={showTechLayer}
+              >
+                <Layers size={17} style={{ opacity: showTechLayer ? 1 : 0.5 }} />
+              </MapBtn>
+              <MapBtn
+                onClick={toggleFullscreen}
+                label={isFullscreen ? 'Sair da tela cheia' : 'Expandir mapa'}
+              >
+                {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              </MapBtn>
+            </div>
+            <div
+              className="absolute right-3 flex flex-col gap-2 z-10"
+              style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
             >
-              <Layers size={14} style={{ opacity: showTechLayer ? 1 : 0.4 }} />
-            </MapBtn>
-            <MapBtn
-              onClick={toggleFullscreen}
-              label={isFullscreen ? 'Sair da tela cheia' : 'Expandir mapa'}
-            >
-              {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-            </MapBtn>
-          </div>
+              {!isMobile && <MapBtn onClick={zoomIn} label="Aproximar"><ZoomIn size={17} /></MapBtn>}
+              {!isMobile && <MapBtn onClick={zoomOut} label="Afastar"><ZoomOut size={17} /></MapBtn>}
+              {/* "Ver tudo" só aparece quando há para onde voltar (não no overview). */}
+              {!atHome && <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={15} /></MapBtn>}
+            </div>
+          </>
         )}
 
         {/* Active quadra badge */}
@@ -2108,9 +2318,13 @@ export default function AltoBellevuePlanView({
           )}
         </AnimatePresence>
 
-        {/* Zoom level text indicator */}
+        {/* Zoom level text indicator — canto inferior esquerdo (o direito é do
+            cluster de zoom). pointer-events-none p/ não bloquear o pan/arraste. */}
         {!loading && !error && (
-          <div className="absolute bottom-3 right-3 z-10 pointer-events-none">
+          <div
+            className="absolute left-3 z-10 pointer-events-none"
+            style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+          >
             <span
               className="px-2.5 py-1 rounded-lg text-[9px] font-semibold"
               style={{
@@ -2169,15 +2383,11 @@ export default function AltoBellevuePlanView({
         }}
       >
         <div className="flex items-center gap-4 flex-wrap">
-          {([
-            { label: 'Disponíveis', value: stats.available, color: '#32D17C' },
-            ...(stats.negotiating > 0 ? [{ label: 'Negociação', value: stats.negotiating, color: '#FFB547' }] : []),
-            { label: 'Vendidos', value: stats.sold, color: '#FF5C5C' },
-          ] as const).map(item => (
-            <div key={item.label} className="flex items-center gap-1.5">
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, display: 'inline-block', flexShrink: 0 }} />
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace" }}>{item.value}</span>
-              <span style={{ fontSize: 10, color: '#948F84', fontWeight: 500 }}>{item.label}</span>
+          {presentStatuses.map(([key, cfg]) => (
+            <div key={key} className="flex items-center gap-1.5">
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: cfg.dot, display: 'inline-block', flexShrink: 0 }} />
+              <span style={{ fontSize: 14, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace" }}>{stats.byStatus[key]}</span>
+              <span style={{ fontSize: 10, color: '#948F84', fontWeight: 500 }}>{cfg.label}</span>
             </div>
           ))}
         </div>
@@ -2186,16 +2396,8 @@ export default function AltoBellevuePlanView({
         </span>
       </div>}
 
-      {/* ── LEGEND ─────────────────────────────────────── */}
-      {!isFullscreen && <div style={{ background: '#F8F6F2', borderTop: '1px solid rgba(0,0,0,0.04)', padding: '8px 16px', display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span style={{ fontSize: 9, fontWeight: 700, color: '#C8C3BB', textTransform: 'uppercase', letterSpacing: '0.15em', flexShrink: 0 }}>Legenda</span>
-        {Object.entries(STATUS_CFG).map(([key, cfg]) => (
-          <div key={key} className="flex items-center gap-1.5">
-            <div style={{ width: 11, height: 11, borderRadius: 3, background: cfg.dot, flexShrink: 0 }} />
-            <span style={{ fontSize: 10, color: '#636363', fontWeight: 600 }}>{cfg.label}</span>
-          </div>
-        ))}
-      </div>}
+      {/* Legenda removida: a STATS BAR acima já é a legenda (mesma cor + rótulo +
+          contagem por status). Mostrar duas vezes os mesmos 203/3/177 era ruído. */}
 
       {/* ── ÁREAS COMUNS ────────────────────────────────── */}
       {!isFullscreen && mapData?.amenities && mapData.amenities.length > 0 && (

@@ -1,4 +1,4 @@
-import { parseAvailabilityCSV, normalizeAvailabilityStatus } from '@/lib/lots/alto-bellevue-availability';
+import { parseAvailabilityCSV, normalizeAvailabilityStatus, resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
 
 describe('alto-bellevue availability (Google Sheets)', () => {
   it('normaliza status PT da planilha', () => {
@@ -29,5 +29,34 @@ describe('alto-bellevue availability (Google Sheets)', () => {
   it('ignora linhas sem lote numérico', () => {
     const csv = 'QUADRA,LOTE,ÁREA (m2),Disponibilidade\nQUADRA A,,,\nQUADRA A,x,,Disponível';
     expect(Object.keys(parseAvailabilityCSV(csv)).length).toBe(0);
+  });
+});
+
+// Fonte única de verdade compartilhada por Planta e Lista (auditoria C1/C2).
+describe('resolveLotStatus — precedência única (planilha > canônico > banco)', () => {
+  it('planilha viva tem prioridade máxima', () => {
+    expect(resolveLotStatus('A-01', 'DISPONIVEL', { 'A-01': 'VENDIDO' }, { 'A-01': 'NEGOCIACAO' }))
+      .toBe('NEGOCIACAO');
+  });
+
+  it('cai para o JSON canônico quando a planilha não cobre o lote', () => {
+    expect(resolveLotStatus('A-01', 'DISPONIVEL', { 'A-01': 'VENDIDO' }, {}))
+      .toBe('VENDIDO');
+    expect(resolveLotStatus('A-01', 'DISPONIVEL', { 'A-01': 'VENDIDO' }, null))
+      .toBe('VENDIDO');
+  });
+
+  it('cai para o status do banco quando não há planilha nem canônico', () => {
+    expect(resolveLotStatus('A-01', 'DISPONIVEL', null, null)).toBe('DISPONIVEL');
+    expect(resolveLotStatus('A-01', 'DISPONIVEL', {}, {})).toBe('DISPONIVEL');
+  });
+
+  it('A-01 produz o MESMO status independentemente da visão (paridade Planta=Lista)', () => {
+    const canonical = { 'A-01': 'NEGOCIACAO' };
+    const live = { 'A-01': 'NEGOCIACAO' };
+    const planta = resolveLotStatus('A-01', 'DISPONIVEL', null, live);
+    const lista = resolveLotStatus('A-01', 'DISPONIVEL', canonical, live);
+    expect(planta).toBe(lista);
+    expect(planta).toBe('NEGOCIACAO');
   });
 });
