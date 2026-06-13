@@ -986,14 +986,17 @@ function MapBtn({ onClick, label, children, active }: { onClick: () => void; lab
       aria-label={label}
       aria-pressed={active}
       title={label}
-      className="w-8 h-8 flex items-center justify-center rounded-lg transition-all active:scale-90"
+      // 44px = mínimo de toque (Apple HIG) e o alvo recomendado pela auditoria (44–48px).
+      className="w-11 h-11 flex items-center justify-center rounded-xl transition-all active:scale-90"
       style={{
-        background: active ? 'rgba(200,164,74,0.92)' : 'rgba(8,21,36,0.92)',
+        // Estado ativo discreto (dourado tingido + borda/ícone dourados) — sinaliza
+        // "ligado" sem competir/gritar mais que o conteúdo do mapa.
+        background: active ? 'rgba(200,164,74,0.16)' : 'rgba(8,21,36,0.92)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        border: active ? '1.5px solid rgba(200,164,74,0.60)' : '1.5px solid rgba(200,164,74,0.50)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.45)',
-        color: active ? '#0B1B2D' : 'rgba(255,255,255,0.85)',
+        border: active ? '1.5px solid rgba(200,164,74,0.85)' : '1.5px solid rgba(200,164,74,0.42)',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.45)',
+        color: active ? '#E8C97A' : 'rgba(255,255,255,0.85)',
       }}
     >
       {children}
@@ -2248,31 +2251,33 @@ export default function AltoBellevuePlanView({
 
         {/* Controls — divididos em dois cantos para nunca cobrir os lotes do
             centro-direita no mobile (C4). Camada+expandir no topo; zoom/ver-tudo
-            embaixo (convenção Google/Apple Maps). Alvos ≥40px, cluster agrupado. */}
+            embaixo (convenção Google/Apple Maps). Alvos 44px (Apple HIG).
+            No mobile, +/− são ocultados: pinça, duplo-toque e toque na quadra já
+            dão zoom (padrão nativo) — isso desafoga o canto e libera o FAB. */}
         {!error && !loading && (
           <>
-            <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-10">
+            <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
               <MapBtn
                 onClick={() => setShowTechLayer((v) => !v)}
                 label={showTechLayer ? 'Ocultar camada técnica' : 'Mostrar camada técnica'}
                 active={showTechLayer}
               >
-                <Layers size={14} style={{ opacity: showTechLayer ? 1 : 0.45 }} />
+                <Layers size={17} style={{ opacity: showTechLayer ? 1 : 0.5 }} />
               </MapBtn>
               <MapBtn
                 onClick={toggleFullscreen}
                 label={isFullscreen ? 'Sair da tela cheia' : 'Expandir mapa'}
               >
-                {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
               </MapBtn>
             </div>
             <div
-              className="absolute right-3 flex flex-col gap-1.5 z-10"
+              className="absolute right-3 flex flex-col gap-2 z-10"
               style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
             >
-              <MapBtn onClick={zoomIn} label="Aproximar"><ZoomIn size={15} /></MapBtn>
-              <MapBtn onClick={zoomOut} label="Afastar"><ZoomOut size={15} /></MapBtn>
-              <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={13} /></MapBtn>
+              {!isMobile && <MapBtn onClick={zoomIn} label="Aproximar"><ZoomIn size={17} /></MapBtn>}
+              {!isMobile && <MapBtn onClick={zoomOut} label="Afastar"><ZoomOut size={17} /></MapBtn>}
+              <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={15} /></MapBtn>
             </div>
           </>
         )}
