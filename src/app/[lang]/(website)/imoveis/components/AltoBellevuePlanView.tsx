@@ -920,14 +920,14 @@ function MapBtn({ onClick, label, children }: { onClick: () => void; label: stri
       onClick={(e) => { e.stopPropagation(); onClick(); }}
       aria-label={label}
       title={label}
-      className="w-10 h-10 flex items-center justify-center rounded-xl transition-all active:scale-90"
+      className="w-8 h-8 flex items-center justify-center rounded-lg transition-all active:scale-90"
       style={{
-        background: 'rgba(8,21,36,0.90)',
+        background: 'rgba(8,21,36,0.92)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        border: '1px solid rgba(200,164,74,0.22)',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.5)',
-        color: 'rgba(255,255,255,0.75)',
+        border: '1.5px solid rgba(200,164,74,0.50)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.45)',
+        color: 'rgba(255,255,255,0.85)',
       }}
     >
       {children}
@@ -1844,8 +1844,8 @@ export default function AltoBellevuePlanView({
             <button
               onClick={toggleFullscreen}
               aria-label="Sair da tela cheia"
-              className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl transition-all active:scale-90"
-              style={{ background: '#0B1B2D', color: '#fff', border: '1px solid rgba(200,164,74,0.3)' }}
+              className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg transition-all active:scale-90"
+              style={{ background: '#0B1B2D', color: '#fff', border: '1.5px solid rgba(200,164,74,0.50)' }}
             >
               <Minimize2 size={15} />
             </button>
@@ -1853,9 +1853,9 @@ export default function AltoBellevuePlanView({
           <div
             className="flex items-center gap-2 flex-1"
             style={{
-              height: 40, borderRadius: 12, padding: '0 12px',
+              height: 34, borderRadius: 10, padding: '0 10px',
               background: '#F7F8FA',
-              border: searchMiss ? '1.5px solid #FF5C5C' : '1.5px solid rgba(0,0,0,0.07)',
+              border: searchMiss ? '1.5px solid #FF5C5C' : '1.5px solid rgba(200,164,74,0.3)',
             }}
           >
             <Search size={15} color="#948F84" style={{ flexShrink: 0 }} />
@@ -1878,7 +1878,7 @@ export default function AltoBellevuePlanView({
           <button
             onClick={runSearch}
             className="flex items-center justify-center flex-shrink-0 active:scale-95"
-            style={{ height: 40, paddingLeft: 16, paddingRight: 16, borderRadius: 12, background: '#0B1B2D', color: '#fff', fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}
+            style={{ height: 34, paddingLeft: 14, paddingRight: 14, borderRadius: 10, background: '#0B1B2D', color: '#fff', fontSize: 11, fontWeight: 700, fontFamily: "'Outfit', sans-serif", border: '1.5px solid rgba(200,164,74,0.5)' }}
           >
             Ir
           </button>
@@ -1904,12 +1904,12 @@ export default function AltoBellevuePlanView({
                 onClick={() => { setActiveStatus(key); setSelectedLot(null); }}
                 className="flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 transition-all"
                 style={{
-                  height: 38, paddingLeft: 14, paddingRight: 14, borderRadius: 20,
+                  height: 32, paddingLeft: 10, paddingRight: 10, borderRadius: 20,
                   fontSize: 11, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
-                  border: isActive ? 'none' : '1.5px solid rgba(0,0,0,0.09)',
+                  border: isActive ? '1.5px solid #C8A44A' : '1.5px solid rgba(200,164,74,0.3)',
                   background: isActive ? '#0B1B2D' : '#fff',
                   color: isActive ? '#fff' : '#636363',
-                  boxShadow: isActive ? '0 2px 10px rgba(0,0,0,0.15)' : 'none',
+                  boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.12)' : 'none',
                 }}
               >
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: isActive ? 'rgba(255,255,255,0.5)' : dot, display: 'inline-block', flexShrink: 0 }} />
@@ -2208,10 +2208,10 @@ export default function AltoBellevuePlanView({
               <button
                 key={a.id}
                 onClick={() => handleAmenityClick(a)}
-                className="flex items-center gap-2 h-9 px-3 rounded-xl transition-all active:scale-95 hover:opacity-90"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg transition-all active:scale-95 hover:opacity-90"
                 style={{
                   background: `${a.color}14`,
-                  border: `1.5px solid ${a.color}40`,
+                  border: `1.5px solid ${a.color}55`,
                   color: a.color,
                   fontSize: 11,
                   fontWeight: 700,
@@ -2227,10 +2227,10 @@ export default function AltoBellevuePlanView({
             {mapData.greenAreas && mapData.greenAreas.length > 0 && (
               <button
                 onClick={() => handleAmenityClick({ id: 'area-verde', label: 'Área Verde', icon: 'tree', color: '#66BB6A', x: mapData.greenAreas[0].x, y: mapData.greenAreas[0].y })}
-                className="flex items-center gap-2 h-9 px-3 rounded-xl transition-all active:scale-95 hover:opacity-90"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg transition-all active:scale-95 hover:opacity-90"
                 style={{
                   background: 'rgba(102,187,106,0.08)',
-                  border: '1.5px solid rgba(102,187,106,0.35)',
+                  border: '1.5px solid rgba(102,187,106,0.50)',
                   color: '#66BB6A',
                   fontSize: 11,
                   fontWeight: 700,

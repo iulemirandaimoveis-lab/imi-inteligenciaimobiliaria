@@ -1168,12 +1168,12 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
         {hasPlanView && (
           <div className="flex justify-end mb-4">
             <div
-              className="flex items-center rounded-xl p-1 flex-shrink-0"
-              style={{ background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)' }}
+              className="flex items-center rounded-lg p-0.5 flex-shrink-0"
+              style={{ background: '#F0EDE5', border: '1.5px solid rgba(200,164,74,0.35)' }}
             >
               <button
                 onClick={() => { setViewMode('list'); setSelectedLot(null); }}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-md transition-all"
                 style={{
                   background: 'transparent',
                   color: '#948F84',
@@ -1183,22 +1183,22 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
                   whiteSpace: 'nowrap',
                 }}
               >
-                <List size={12} />
+                <List size={11} />
                 Lista
               </button>
               <button
                 onClick={() => setViewMode('plan')}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-md transition-all"
                 style={{
                   background: '#fff',
                   color: '#0B1928',
                   fontSize: 11, fontWeight: 700,
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
                   whiteSpace: 'nowrap',
                 }}
               >
-                <MapIcon size={12} />
+                <MapIcon size={11} />
                 Planta
               </button>
             </div>
@@ -1239,53 +1239,53 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           {hasRankings && viewMode === 'list' && (
             <button
               onClick={() => setShowRankings((r: boolean) => !r)}
-              className="flex items-center gap-2 h-10 px-3 rounded-xl border transition-colors flex-shrink-0"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border transition-colors flex-shrink-0"
               style={{
-                borderColor: showRankings ? '#C8A44A' : 'rgba(184,179,168,0.4)',
+                borderColor: showRankings ? '#C8A44A' : 'rgba(200,164,74,0.4)',
                 background: showRankings ? '#FEF3C7' : '#fff',
                 color: showRankings ? '#92400E' : '#0B1928',
-                fontSize: 12, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                fontSize: 11, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)",
                 whiteSpace: 'nowrap',
               }}
             >
-              <Trophy size={13} />
+              <Trophy size={12} />
               Rankings
             </button>
           )}
           {/* View toggle */}
           {hasPlanView && (
             <div
-              className="flex items-center rounded-xl p-1 flex-shrink-0"
-              style={{ background: '#F0EDE5', border: '1px solid rgba(184,179,168,0.3)' }}
+              className="flex items-center rounded-lg p-0.5 flex-shrink-0"
+              style={{ background: '#F0EDE5', border: '1.5px solid rgba(200,164,74,0.35)' }}
             >
               <button
                 onClick={() => { setViewMode('list'); setSelectedLot(null); }}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-md transition-all"
                 style={{
                   background: viewMode === 'list' ? '#fff' : 'transparent',
                   color: viewMode === 'list' ? '#0B1928' : '#948F84',
                   fontSize: 11, fontWeight: 700,
-                  boxShadow: viewMode === 'list' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
                   whiteSpace: 'nowrap',
                 }}
               >
-                <List size={12} />
+                <List size={11} />
                 Lista
               </button>
               <button
                 onClick={() => { setViewMode('plan'); setSelectedLot(null); }}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-md transition-all"
                 style={{
                   background: viewMode === 'plan' ? '#fff' : 'transparent',
                   color: viewMode === 'plan' ? '#0B1928' : '#948F84',
                   fontSize: 11, fontWeight: 700,
-                  boxShadow: viewMode === 'plan' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  boxShadow: viewMode === 'plan' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                   fontFamily: "var(--fu, 'Outfit', sans-serif)",
                   whiteSpace: 'nowrap',
                 }}
               >
-                <MapIcon size={12} />
+                <MapIcon size={11} />
                 Planta
               </button>
             </div>
@@ -1294,19 +1294,19 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
           {viewMode === 'list' && (
             <button
               onClick={() => setShowFilters((f: boolean) => !f)}
-              className="flex items-center gap-2 h-10 px-4 rounded-xl border transition-colors flex-shrink-0"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border transition-colors flex-shrink-0"
               style={{
-                borderColor: showFilters ? '#0B1928' : 'rgba(184,179,168,0.4)',
+                borderColor: showFilters ? '#C8A44A' : 'rgba(200,164,74,0.4)',
                 background: showFilters ? '#0B1928' : '#fff',
                 color: showFilters ? '#fff' : '#0B1928',
-                fontSize: 12, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)", letterSpacing: '0.08em', textTransform: 'uppercase',
+                fontSize: 11, fontWeight: 700, fontFamily: "var(--fu, 'Outfit', sans-serif)", letterSpacing: '0.06em', textTransform: 'uppercase',
                 whiteSpace: 'nowrap',
               }}
             >
-              <Filter size={13} />
+              <Filter size={12} />
               Filtros
               {(filterStatus !== 'ALL' || maxPrice !== null || minArea !== null || smartFilter !== 'ALL') && (
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#C8A44A', display: 'inline-block' }} />
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#C8A44A', display: 'inline-block' }} />
               )}
             </button>
           )}
