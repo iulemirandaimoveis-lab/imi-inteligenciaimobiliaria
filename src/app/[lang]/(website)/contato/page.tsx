@@ -81,16 +81,16 @@ export default function ContactPage() {
         {
             icon: MessageCircle,
             title: 'WhatsApp',
-            content: '+55 (81) 9 9723-0455',
+            content: '+55 81 9 8614-1487',
             sub: 'Atendimento rápido',
             link: 'https://wa.me/5581986141487',
         },
         {
             icon: Mail,
             title: 'Email',
-            content: 'iulemirandaimoveis@gmail.com',
+            content: 'iule.miranda.imoveis@gmail.com',
             sub: 'Respondemos em até 24h',
-            link: 'mailto:iulemirandaimoveis@gmail.com',
+            link: 'mailto:iule.miranda.imoveis@gmail.com',
         },
         {
             icon: Shield,

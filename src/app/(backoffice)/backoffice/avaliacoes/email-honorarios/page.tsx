@@ -134,7 +134,7 @@ Atenciosamente,
 Iule Miranda
 Avaliadora de Imóveis • CNAI [nº] • CRECI-PE [nº]
 IMI — Iule Miranda Imóveis
-Recife/PE • (81) 9 9723-0455
+Recife/PE • (81) 9 8614-1487
 www.iulemirandaimoveis.com.br`
 }
 

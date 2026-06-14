@@ -192,7 +192,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
         brokerData = {
             id: 'default',
             name: 'Iule Miranda',
-            email: 'iulemirandaimoveis@gmail.com',
+            email: 'iule.miranda.imoveis@gmail.com',
             phone: '+5581986141487',
             creci: '17933',
             avatar_url: 'https://zocffccwjjyelwrgunhu.supabase.co/storage/v1/object/public/avatars/avatars/6a51365d-0433-4a0e-b585-3e6d6a6c28d7.jpg',
@@ -447,15 +447,20 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 compact
                             />
                         </section>
-                        {/* Corretor responsável — sempre por último */}
-                        <section id="corretor">
-                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            <RealtorCard broker={brokerData as any} propertyName={development.name} />
+                        {/* Mobile: broker + CTA side by side at the bottom */}
+                        <section id="corretor" className="lg:hidden">
+                            <div className="grid grid-cols-2 gap-3">
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                <RealtorCard broker={brokerData as any} propertyName={development.name} compact />
+                                <DevelopmentCTA development={development} imiData={imiScores} compact {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
+                            </div>
                         </section>
                     </div>
 
                     {/* Sidebar — desktop only */}
-                    <aside className="lg:col-span-4 space-y-6">
+                    <aside className="hidden lg:block lg:col-span-4 space-y-6">
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        <RealtorCard broker={brokerData as any} propertyName={development.name} />
                         <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
                     </aside>
                 </div>

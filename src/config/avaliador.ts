@@ -11,8 +11,8 @@ export const AVALIADOR = {
   cnpj: '00.000.000/0001-00', // ← inserir CNPJ real
   endereco: 'Recife, Pernambuco — Brasil',
   cep: '50000-000',
-  telefone: '(81) 9 9723-0455',
-  email: 'iulemirandaimoveis@gmail.com',
+  telefone: '(81) 9 8614-1487',
+  email: 'iule.miranda.imoveis@gmail.com',
   logo: '/logo-imi.png',
   site: 'www.iulemirandaimoveis.com.br',
 

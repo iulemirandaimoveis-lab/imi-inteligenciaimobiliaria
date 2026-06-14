@@ -87,6 +87,20 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
     // Add any domain here that should show the "Abrir Tour Virtual" card instead of an iframe.
     const shouldOpenTourExternally = /(^|\.)tour\.panoee\.net$|(^|\.)kuula\.co$/i.test(tourHost);
 
+    // For kuula.co: strip fs=1 (auto-fullscreen) and inst=pt (instructions overlay) to avoid
+    // the black fullscreen instruction screen on mobile.
+    const externalTourUrl = (() => {
+        if (!virtualTourUrl || !/(^|\.)kuula\.co$/i.test(tourHost)) return virtualTourUrl;
+        try {
+            const u = new URL(virtualTourUrl);
+            u.searchParams.set('fs', '0');
+            u.searchParams.set('inst', '0');
+            return u.toString();
+        } catch {
+            return virtualTourUrl;
+        }
+    })();
+
     return (
         <>
             <div className="space-y-14">
@@ -372,7 +386,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                         </div>
                                         <div className="flex-shrink-0 w-full sm:w-auto">
                                             <a
-                                                href={development.images.virtualTour}
+                                                href={externalTourUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="group relative flex sm:inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] overflow-hidden w-full sm:w-auto"

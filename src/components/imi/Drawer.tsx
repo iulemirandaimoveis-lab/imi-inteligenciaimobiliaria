@@ -166,13 +166,13 @@ export default function Drawer({ open, setOpen }: Props) {
                                 rel="noopener noreferrer"
                                 className="block hover:text-neutral-800 transition-colors"
                             >
-                                +55 81 9 9723-0455
+                                +55 81 9 8614-1487
                             </a>
                             <a
-                                href="mailto:iulemirandaimoveis@gmail.com"
+                                href="mailto:iule.miranda.imoveis@gmail.com"
                                 className="block hover:text-neutral-800 transition-colors"
                             >
-                                iulemirandaimoveis@gmail.com
+                                iule.miranda.imoveis@gmail.com
                             </a>
                         </div>
                         <a

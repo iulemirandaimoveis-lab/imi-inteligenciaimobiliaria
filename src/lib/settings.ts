@@ -13,8 +13,8 @@ export interface GlobalSettings {
 
 export const defaultSettings: GlobalSettings = {
     companyName: 'IMI – Inteligência Imobiliária',
-    companyEmail: 'iulemirandaimoveis@gmail.com',
-    companyPhone: '+55 81 9 9723-0455',
+    companyEmail: 'iule.miranda.imoveis@gmail.com',
+    companyPhone: '+55 81 9 8614-1487',
     companyAddress: 'Av. Boa Viagem, 3500 - Boa Viagem, Recife - PE',
     theme: 'light',
     googleAnalytics: '',
