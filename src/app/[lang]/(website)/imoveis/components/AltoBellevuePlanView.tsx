@@ -5,7 +5,7 @@ import React, {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2, Shield, TreePine, Building2, Dumbbell, MapPin, Video } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, RefreshCw, AlertCircle, Layers, Search, Maximize2, Minimize2, Shield, TreePine, Building2, Dumbbell, MapPin, Video, Scale, BarChart3 } from 'lucide-react';
 import {
   loadAltoBellevueMap, AB_VIEWBOX,
   type ABMapData, type Amenity, type Point,
@@ -64,6 +64,7 @@ const MIN_SCALE = 0.35;
 const MAX_SCALE = 20;
 const GOLD = '#C8A44A';
 const NAVY = '#081524';
+const MAX_COMPARE = 3;
 
 // ── ViewBox zoom (SVG-native, like PDF zoom) ──────────────────────────────────
 // Using a viewBox-based zoom approach: as the user zooms in, the visible
@@ -542,16 +543,35 @@ const MapInner = memo(function MapInner({
     });
   }, [containedLots, vb, selectedId]);
 
-  // Deduplicate street labels closer than 8 SVG units (removes CAD-import noise clusters)
+  // Deduplicate street labels — one per name at overview zoom, viewport-filtered at detail zoom
   const visibleStreetLabels = useMemo(() => {
     const labels = context?.streetLabels;
     if (!labels?.length) return [];
+
+    if (scale < 3) {
+      // One label per street name at overview zoom — average position across all instances
+      const byName = new Map<string, { x: number; y: number; name: string; rot?: number; n: number }>();
+      for (const sl of labels) {
+        const ex = byName.get(sl.name);
+        if (!ex) {
+          byName.set(sl.name, { ...sl, n: 1 });
+        } else {
+          byName.set(sl.name, { ...ex, x: (ex.x * ex.n + sl.x) / (ex.n + 1), y: (ex.y * ex.n + sl.y) / (ex.n + 1), n: ex.n + 1 });
+        }
+      }
+      return [...byName.values()];
+    }
+
+    // At detail zoom: viewport-filtered, deduplicate same-name labels within 80 SVG units
+    const buf = 0.25;
     const out: { x: number; y: number; name: string; rot?: number }[] = [];
     for (const sl of labels) {
-      if (!out.some(r => Math.hypot(r.x - sl.x, r.y - sl.y) < 8)) out.push(sl);
+      if (sl.x < vb.x - vb.w * buf || sl.x > vb.x + vb.w * (1 + buf)) continue;
+      if (sl.y < vb.y - vb.h * buf || sl.y > vb.y + vb.h * (1 + buf)) continue;
+      if (!out.some(r => r.name === sl.name && Math.hypot(r.x - sl.x, r.y - sl.y) < 80)) out.push(sl);
     }
     return out;
-  }, [context]);
+  }, [context, scale, vb]);
 
   // Oclusão de rótulos (M3): os marcadores do complexo de entrada (portaria,
   // lazer, coworking, recreativa-01) ficam fisicamente próximos — seus rótulos
@@ -1060,6 +1080,7 @@ function MapSkeleton() {
 
 function LotBottomSheet({
   lot, priceEntry, onClose, whatsappPhone, developmentName, dbLot, streetLabels,
+  onAddToCompare, isInCompare,
 }: {
   lot: PlanLot;
   priceEntry?: PriceEntry;
@@ -1068,6 +1089,8 @@ function LotBottomSheet({
   developmentName: string;
   dbLot?: Lot;
   streetLabels?: { x: number; y: number; name: string }[];
+  onAddToCompare?: (lot: PlanLot) => void;
+  isInCompare?: boolean;
 }) {
   const isAvailable = lot.status === 'DISPONIVEL';
   const isNegotiating = lot.status === 'NEGOCIACAO';
@@ -1351,6 +1374,22 @@ function LotBottomSheet({
 
         {/* CTAs */}
         <div className="px-5 pt-1 pb-2 flex flex-col gap-2">
+          {/* Compare button */}
+          {onAddToCompare && (
+            <button
+              onClick={() => onAddToCompare(lot)}
+              className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl text-[12px] font-semibold transition-all active:scale-95"
+              style={{
+                color: isInCompare ? '#0B1B2D' : GOLD,
+                border: isInCompare ? '1.5px solid #C8A44A' : '1.5px solid rgba(200,164,74,0.4)',
+                background: isInCompare ? 'rgba(200,164,74,0.15)' : 'transparent',
+                fontFamily: "'Outfit', sans-serif",
+              }}
+            >
+              <Scale size={14} />
+              {isInCompare ? 'Remover da comparação' : 'Comparar este lote'}
+            </button>
+          )}
           {isAvailable || isNegotiating ? (
             <>
               <a
@@ -1389,7 +1428,7 @@ function LotBottomSheet({
         </div>
       </motion.div>
     </>,
-    document.body,
+    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
   );
 }
 
@@ -1608,7 +1647,304 @@ function AmenityBottomSheet({
         </div>
       </motion.div>
     </>,
-    document.body,
+    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+  );
+}
+
+// ── Comparison Tray (floating) ─────────────────────────────────────────────────
+
+function ComparisonTray({
+  lots, priceMap, onRemove, onCompare, onClear,
+}: {
+  lots: PlanLot[];
+  priceMap: Map<string, PriceEntry>;
+  onRemove: (id: string) => void;
+  onCompare: () => void;
+  onClear: () => void;
+}) {
+  if (typeof document === 'undefined') return null;
+  return createPortal(
+    <motion.div
+      initial={{ y: 80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 80, opacity: 0 }}
+      transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+      className="fixed bottom-0 left-0 right-0 z-[8990]"
+      style={{
+        background: '#0B1B2D',
+        borderTop: '1.5px solid rgba(200,164,74,0.35)',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom, 0px))',
+        boxShadow: '0 -12px 40px rgba(0,0,0,0.45)',
+      }}
+    >
+      <div style={{ padding: '10px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
+          <Scale size={14} style={{ color: GOLD, flexShrink: 0 }} />
+          <span style={{ fontSize: 10, fontWeight: 700, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.12em', flexShrink: 0 }}>
+            Comparando {lots.length}/{MAX_COMPARE}
+          </span>
+          <div className="flex gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none', flex: 1, minWidth: 0 }}>
+            {lots.map(l => (
+              <div
+                key={l.id}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0,
+                  background: 'rgba(200,164,74,0.12)', borderRadius: 8,
+                  padding: '4px 8px', border: '1px solid rgba(200,164,74,0.25)',
+                }}
+              >
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.88)', fontFamily: "'JetBrains Mono', monospace" }}>
+                  {l.quadra}-{l.lot_number}
+                </span>
+                <button
+                  onClick={() => onRemove(l.id)}
+                  style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  aria-label={`Remover lote ${l.id} da comparação`}
+                >
+                  <X size={10} color="rgba(255,255,255,0.6)" />
+                </button>
+              </div>
+            ))}
+            {lots.length < MAX_COMPARE && (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0,
+                background: 'rgba(255,255,255,0.05)', borderRadius: 8,
+                padding: '4px 10px', border: '1px dashed rgba(255,255,255,0.15)',
+              }}>
+                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>
+                  + lote
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+          <button
+            onClick={onClear}
+            style={{ height: 36, paddingLeft: 10, paddingRight: 10, borderRadius: 10, fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.45)', background: 'rgba(255,255,255,0.06)', border: 'none' }}
+          >
+            Limpar
+          </button>
+          <button
+            onClick={onCompare}
+            disabled={lots.length < 2}
+            style={{
+              height: 36, paddingLeft: 14, paddingRight: 14, borderRadius: 10,
+              fontSize: 11, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+              background: lots.length >= 2 ? GOLD : 'rgba(200,164,74,0.3)',
+              color: lots.length >= 2 ? '#0B1B2D' : 'rgba(200,164,74,0.5)',
+              border: 'none', cursor: lots.length >= 2 ? 'pointer' : 'default',
+            }}
+          >
+            Comparar {lots.length >= 2 ? `${lots.length} lotes` : '(selecione 2+)'}
+          </button>
+        </div>
+      </div>
+    </motion.div>,
+    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+  );
+}
+
+// ── Comparison Modal ───────────────────────────────────────────────────────────
+
+function ComparisonModal({
+  lots, priceMap, streetLabels, onClose, whatsappPhone, developmentName,
+}: {
+  lots: PlanLot[];
+  priceMap: Map<string, PriceEntry>;
+  streetLabels?: { x: number; y: number; name: string }[];
+  onClose: () => void;
+  whatsappPhone: string;
+  developmentName: string;
+}) {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [onClose]);
+
+  if (typeof document === 'undefined') return null;
+
+  const colW = lots.length === 2 ? '50%' : '33.33%';
+
+  const rows: { label: string; getValue: (l: PlanLot, pe?: PriceEntry) => string }[] = [
+    { label: 'Quadra · Lote', getValue: (l) => `${l.quadra} · ${l.lot_number}` },
+    { label: 'Área', getValue: (l) => l.area_m2 ? fmtM2(l.area_m2 as number) : '—' },
+    { label: 'Valor', getValue: (l) => l.price ? fmtBRL(l.price as number) : 'Consultar' },
+    { label: 'Preço/m²', getValue: (l) => l.price && l.area_m2 ? `${fmtBRL((l.price as number) / (l.area_m2 as number))}/m²` : '—' },
+    {
+      label: 'À Vista (−20%)',
+      getValue: (l, pe) => pe ? fmtBRL(pe.preco_vista) : l.price ? fmtBRL(Math.round((l.price as number) * 0.8)) : '—',
+    },
+    {
+      label: '12× mensais',
+      getValue: (_, pe) => pe ? `${fmtBRL(pe.p12_parcela)}/mês` : '—',
+    },
+    {
+      label: '36× mensais',
+      getValue: (_, pe) => pe ? `${fmtBRL(pe.p36_parcela)}/mês` : '—',
+    },
+    {
+      label: '120× mensais',
+      getValue: (_, pe) => pe ? `${fmtBRL(pe.p120_parcela)}/mês` : '—',
+    },
+    {
+      label: 'Rua de acesso',
+      getValue: (l) => nearestStreet(l.centroid, streetLabels ?? []) ?? '—',
+    },
+    { label: 'Status', getValue: (l) => getCfg(l.status).label },
+  ];
+
+  return createPortal(
+    <>
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        transition={{ duration: 0.18 }}
+        className="fixed inset-0 z-[9998]"
+        style={{ background: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(8px)' }}
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+        className="fixed bottom-0 left-0 right-0 z-[9999] overflow-y-auto"
+        style={{
+          maxHeight: '92vh', borderRadius: '22px 22px 0 0',
+          background: '#fff', boxShadow: '0 -24px 80px rgba(0,0,0,0.4)',
+          paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Handle */}
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 6px' }}>
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#E5DDD0' }} />
+        </div>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 20px 14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Scale size={18} style={{ color: GOLD }} />
+            <h3 style={{ fontSize: 17, fontWeight: 800, color: '#081524', margin: 0, fontFamily: "'Outfit', sans-serif" }}>
+              Comparação de Lotes
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{ width: 34, height: 34, borderRadius: 10, background: '#F2F1EC', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none' }}
+            aria-label="Fechar comparação"
+          >
+            <X size={16} color="#636363" />
+          </button>
+        </div>
+
+        {/* Comparison table */}
+        <div style={{ overflowX: 'auto', paddingBottom: 8 }}>
+          <table style={{ width: '100%', minWidth: lots.length > 1 ? 360 : 280, borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: '#F8F6F2' }}>
+                <th style={{ width: '28%', padding: '8px 12px', fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.12em', textAlign: 'left', fontFamily: "'Outfit', sans-serif" }}>
+                  Característica
+                </th>
+                {lots.map((l) => {
+                  const cfg = getCfg(l.status);
+                  return (
+                    <th key={l.id} style={{ width: colW, padding: '8px 12px', textAlign: 'center' }}>
+                      <div style={{ fontSize: 14, fontWeight: 800, color: '#081524', fontFamily: "'Outfit', sans-serif" }}>
+                        {l.quadra}-{l.lot_number}
+                      </div>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: cfg.dot, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        {cfg.label}
+                      </div>
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, ri) => {
+                const values = lots.map(l => {
+                  const key = `${l.quadra}-${l.lot_number}`;
+                  const pe = priceMap.get(key);
+                  return row.getValue(l, pe);
+                });
+                const isPrice = row.label === 'Valor' || row.label === 'À Vista (−20%)';
+                const bestIdx = (row.label === 'Preço/m²' || row.label === 'Valor' || row.label === 'À Vista (−20%)' || row.label.includes('mensais'))
+                  ? values.reduce((bi, v, i) => {
+                      const n = parseFloat(v.replace(/[^\d.,]/g, '').replace(',', '.'));
+                      const bestN = parseFloat(values[bi].replace(/[^\d.,]/g, '').replace(',', '.'));
+                      return !isNaN(n) && !isNaN(bestN) && n < bestN ? i : bi;
+                    }, 0)
+                  : (row.label === 'Área')
+                    ? values.reduce((bi, v, i) => {
+                        const n = parseFloat(v.replace(/[^\d.,]/g, '').replace(',', '.'));
+                        const bestN = parseFloat(values[bi].replace(/[^\d.,]/g, '').replace(',', '.'));
+                        return !isNaN(n) && !isNaN(bestN) && n > bestN ? i : bi;
+                      }, 0)
+                    : -1;
+
+                return (
+                  <tr key={row.label} style={{ borderBottom: '1px solid #F0EDE5', background: ri % 2 === 0 ? '#fff' : '#FDFCFB' }}>
+                    <td style={{ padding: '9px 12px', fontSize: 10, fontWeight: 600, color: '#948F84', fontFamily: "'Outfit', sans-serif", verticalAlign: 'middle' }}>
+                      {row.label}
+                    </td>
+                    {values.map((v, vi) => (
+                      <td key={vi} style={{ padding: '9px 12px', textAlign: 'center', verticalAlign: 'middle' }}>
+                        <span style={{
+                          fontSize: isPrice ? 13 : 12,
+                          fontWeight: 800,
+                          color: vi === bestIdx && bestIdx >= 0 ? '#15803D' : '#081524',
+                          fontFamily: "'JetBrains Mono', monospace",
+                          background: vi === bestIdx && bestIdx >= 0 ? 'rgba(50,209,124,0.10)' : 'transparent',
+                          borderRadius: 6, padding: vi === bestIdx && bestIdx >= 0 ? '2px 6px' : '0',
+                        }}>
+                          {v}
+                        </span>
+                        {vi === bestIdx && bestIdx >= 0 && lots.length > 1 && (
+                          <div style={{ fontSize: 8, color: '#15803D', fontWeight: 700, marginTop: 1 }}>melhor</div>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* CTA for first available lot */}
+        <div style={{ padding: '12px 20px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {lots.filter(l => l.status === 'DISPONIVEL').slice(0, 1).map(l => {
+            const msg = encodeURIComponent(
+              `Olá! Após comparar os lotes no ${developmentName}, tenho interesse no Lote ${l.lot_number} da Quadra ${l.quadra}${l.area_m2 ? `, ${Math.round(l.area_m2 as number)} m²` : ''}${l.price ? `, valor ${fmtBRL(l.price as number)}` : ''}. Gostaria de mais informações.`
+            );
+            return (
+              <a
+                key={l.id}
+                href={`https://wa.me/${whatsappPhone}?text=${msg}`}
+                target="_blank" rel="noopener noreferrer"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  height: 48, borderRadius: 16, textDecoration: 'none',
+                  background: 'linear-gradient(135deg, #0B1B2D, #10233B)', color: '#fff',
+                  fontSize: 13, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+                }}
+              >
+                <MessageCircle size={15} />
+                Tenho interesse no Lote {l.quadra}-{l.lot_number}
+              </a>
+            );
+          })}
+          <p style={{ fontSize: 9.5, color: '#B8B3A8', textAlign: 'center', margin: 0, fontWeight: 500 }}>
+            Valores aproximados · sujeitos à tabela vigente · consulte nosso especialista
+          </p>
+        </div>
+      </motion.div>
+    </>,
+    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
   );
 }
 
@@ -1644,6 +1980,8 @@ export default function AltoBellevuePlanView({
   const [showTechLayer, setShowTechLayer] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchMiss, setSearchMiss] = useState(false);
+  const [compareLots, setCompareLots] = useState<PlanLot[]>([]);
+  const [showCompareModal, setShowCompareModal] = useState(false);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   // Dica "toque em um lote": some sozinha após 6s ou na primeira seleção.
@@ -1900,6 +2238,15 @@ export default function AltoBellevuePlanView({
   const zoomOut = useCallback(() => setVb(prev => zoomViewBox(prev, 1.33)), []);
   // "Ver tudo" volta ao enquadramento do empreendimento (conteúdo), não ao canvas.
   const resetView = useCallback(() => animateTo(homeVb), [animateTo, homeVb]);
+
+  const toggleCompare = useCallback((lot: PlanLot) => {
+    setCompareLots(prev => {
+      const exists = prev.some(l => l.id === lot.id);
+      if (exists) return prev.filter(l => l.id !== lot.id);
+      if (prev.length >= MAX_COMPARE) return prev; // max 3 lots
+      return [...prev, lot];
+    });
+  }, []);
 
   // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
@@ -2511,6 +2858,33 @@ export default function AltoBellevuePlanView({
         )}
       </AnimatePresence>}
 
+      {/* ── COMPARISON TRAY ─────────────────────────────── */}
+      <AnimatePresence>
+        {compareLots.length > 0 && !showCompareModal && (
+          <ComparisonTray
+            lots={compareLots}
+            priceMap={priceMap}
+            onRemove={(id) => setCompareLots(prev => prev.filter(l => l.id !== id))}
+            onCompare={() => setShowCompareModal(true)}
+            onClear={() => setCompareLots([])}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── COMPARISON MODAL ────────────────────────────── */}
+      <AnimatePresence>
+        {showCompareModal && (
+          <ComparisonModal
+            lots={compareLots}
+            priceMap={priceMap}
+            streetLabels={mapData?.streetLabels}
+            onClose={() => setShowCompareModal(false)}
+            whatsappPhone={whatsappPhone}
+            developmentName={developmentName}
+          />
+        )}
+      </AnimatePresence>
+
       {/* ── DETAIL BOTTOM SHEET ─────────────────────────── */}
       <AnimatePresence>
         {selectedLot && (
@@ -2522,6 +2896,8 @@ export default function AltoBellevuePlanView({
             developmentName={developmentName}
             dbLot={selectedDbLot}
             streetLabels={mapData?.streetLabels}
+            onAddToCompare={toggleCompare}
+            isInCompare={compareLots.some(l => l.id === selectedLot.id)}
           />
         )}
       </AnimatePresence>
