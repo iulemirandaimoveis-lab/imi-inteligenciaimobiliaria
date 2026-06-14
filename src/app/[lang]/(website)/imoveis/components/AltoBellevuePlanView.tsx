@@ -97,47 +97,47 @@ const STATUS_CFG: Record<string, {
 }> = {
   DISPONIVEL: {
     label: 'Disponível',
-    fill: 'rgba(50,209,124,0.26)',
-    stroke: '#32D17C',
-    dot: '#32D17C',
+    fill: 'rgba(34,197,94,0.68)',
+    stroke: '#16A34A',
+    dot: '#16A34A',
     badgeBg: '#DCFCE7',
     badgeText: '#166534',
   },
   NEGOCIACAO: {
     label: 'Negociação',
-    fill: 'rgba(255,181,71,0.35)',
-    stroke: '#FFB547',
-    dot: '#FFB547',
+    fill: 'rgba(245,158,11,0.72)',
+    stroke: '#D97706',
+    dot: '#D97706',
     badgeBg: '#FEF3C7',
     badgeText: '#92400E',
   },
   VENDIDO: {
     label: 'Vendido',
-    fill: 'rgba(8,21,36,0.82)',
-    stroke: '#1E3248',
-    dot: '#FF5C5C',
+    fill: 'rgba(55,65,81,0.88)',
+    stroke: '#374151',
+    dot: '#EF4444',
     badgeBg: '#FEE2E2',
     badgeText: '#991B1B',
   },
   RESERVADO: {
     label: 'Reservado',
-    fill: 'rgba(139,92,246,0.26)',
-    stroke: '#8B5CF6',
-    dot: '#8B5CF6',
+    fill: 'rgba(139,92,246,0.68)',
+    stroke: '#7C3AED',
+    dot: '#7C3AED',
     badgeBg: '#EDE9FE',
     badgeText: '#5B21B6',
   },
   PROPRIETARIO: {
     label: 'Proprietário',
-    fill: 'rgba(59,130,246,0.22)',
-    stroke: '#3B82F6',
-    dot: '#3B82F6',
+    fill: 'rgba(59,130,246,0.65)',
+    stroke: '#2563EB',
+    dot: '#2563EB',
     badgeBg: '#DBEAFE',
     badgeText: '#1E40AF',
   },
   IGREJA: {
     label: 'Igreja',
-    fill: 'rgba(13,148,136,0.22)',
+    fill: 'rgba(13,148,136,0.55)',
     stroke: '#0D9488',
     dot: '#0D9488',
     badgeBg: '#CCFBF1',
@@ -636,83 +636,92 @@ const MapInner = memo(function MapInner({
             <feGaussianBlur stdDeviation="4.5" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
-          {/* Soft shadow/depth filter for tree canopy clusters */}
+          <filter id="ab-avail-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.1  0 0 0 0 0.8  0 0 0 0 0.2  0 0 0 0.5 0" result="colorBlur"/>
+            <feMerge><feMergeNode in="colorBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
           <filter id="ab-canopy-depth" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
-          <linearGradient id="ab-base" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#081624" />
-            <stop offset="100%" stopColor="#040E1A" />
+          {/* Google Maps inspired terrain base — warm parchment */}
+          <linearGradient id="ab-base" x1="0" y1="0" x2="0.1" y2="1">
+            <stop offset="0%" stopColor="#EBE5D5" />
+            <stop offset="100%" stopColor="#DDD7C6" />
           </linearGradient>
-          {/* Topographic terrain gradient — simulates the hill elevation of Garanhuns */}
-          <radialGradient id="ab-terrain" cx="42%" cy="52%" r="58%" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stopColor="#1D3A52" stopOpacity="0.9" />
-            <stop offset="30%" stopColor="#112438" stopOpacity="0.65" />
-            <stop offset="70%" stopColor="#081A2E" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#040F1E" stopOpacity="0.85" />
+          {/* Topographic terrain — warm hill shading simulating Garanhuns elevation */}
+          <radialGradient id="ab-terrain" cx="42%" cy="52%" r="60%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stopColor="#F2EDD8" stopOpacity="0.85" />
+            <stop offset="25%" stopColor="#E8E0C4" stopOpacity="0.60" />
+            <stop offset="60%" stopColor="#D5C9A8" stopOpacity="0.40" />
+            <stop offset="100%" stopColor="#B8AC8C" stopOpacity="0.70" />
           </radialGradient>
-          {/* Secondary terrain highlight — plateau glow */}
-          <radialGradient id="ab-terrain-hi" cx="45%" cy="48%" r="30%" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stopColor="#243F5A" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#243F5A" stopOpacity="0" />
+          {/* Plateau highlight — lighter for elevated hilltop */}
+          <radialGradient id="ab-terrain-hi" cx="45%" cy="46%" r="28%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stopColor="#FFF8EA" stopOpacity="0.60" />
+            <stop offset="100%" stopColor="#FFF8EA" stopOpacity="0" />
           </radialGradient>
-          {/* Forest zone fill — dark green canopy colour */}
+          {/* Forest zone fill — bright vivid Google Maps green */}
           <radialGradient id="ab-forest-edge" cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stopColor="#0D2E16" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#071A0C" stopOpacity="0.7" />
+            <stop offset="0%" stopColor="#7AC14F" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#5A9E38" stopOpacity="0.80" />
           </radialGradient>
-          {/* Vegetation texture — fine foliage dot pattern */}
+          {/* Vegetation texture — bright green foliage dots */}
           <pattern id="ab-veg-tex" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-            <circle cx="3.5" cy="3.5" r="2.2" fill="rgba(22,68,30,0.65)" />
-            <circle cx="11" cy="9" r="1.8" fill="rgba(28,80,36,0.55)" />
-            <circle cx="6" cy="13" r="2" fill="rgba(18,58,24,0.60)" />
-            <circle cx="14" cy="3" r="1.5" fill="rgba(32,85,40,0.50)" />
+            <circle cx="3.5" cy="3.5" r="2.2" fill="rgba(80,160,50,0.55)" />
+            <circle cx="11" cy="9" r="1.8" fill="rgba(100,180,65,0.50)" />
+            <circle cx="6" cy="13" r="2" fill="rgba(70,150,45,0.52)" />
+            <circle cx="14" cy="3" r="1.5" fill="rgba(90,170,55,0.48)" />
           </pattern>
-          {/* Fine grid — technical map paper effect */}
+          {/* Topographic grid — warm brown on light background */}
           <pattern id="ab-topo-grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(200,164,74,0.045)" strokeWidth="0.35"/>
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(130,100,55,0.07)" strokeWidth="0.35"/>
           </pattern>
           <pattern id="ab-topo-grid-fine" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
-            <path d="M 5 0 L 0 0 0 5" fill="none" stroke="rgba(200,164,74,0.018)" strokeWidth="0.2"/>
+            <path d="M 5 0 L 0 0 0 5" fill="none" stroke="rgba(130,100,55,0.04)" strokeWidth="0.2"/>
           </pattern>
+          {/* Road fill pattern */}
+          <linearGradient id="ab-road-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.98" />
+            <stop offset="100%" stopColor="#F5F0E8" stopOpacity="0.95" />
+          </linearGradient>
         </defs>
 
-        {/* Technical base — fundo escuro técnico (sem foto, alinhado ao viewBox canônico) */}
+        {/* Google Maps terrain base — warm parchment terrain */}
         <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-base)" />
-        {/* Topographic terrain: elevation gradient + contour rings + grid */}
+        {/* Topographic hill shading — warm earth elevation gradient */}
         <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-terrain)" style={{ pointerEvents: 'none' }} />
         <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-terrain-hi)" style={{ pointerEvents: 'none' }} />
         {scale < 6 && <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-topo-grid)" style={{ pointerEvents: 'none' }} />}
         {scale >= 6 && <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-topo-grid-fine)" style={{ pointerEvents: 'none' }} />}
-        {/* Topographic contour rings — extended set for Garanhuns hill topography */}
+        {/* Topographic contour rings — warm brown on light terrain (Google Maps topo style) */}
         <g style={{ pointerEvents: 'none' }}>
-          <ellipse cx="505" cy="415" rx="570" ry="395" fill="none" stroke="rgba(200,164,74,0.03)" strokeWidth={Math.max(0.3, 0.9 / scale)} />
-          <ellipse cx="505" cy="415" rx="490" ry="340" fill="none" stroke="rgba(200,164,74,0.055)" strokeWidth={Math.max(0.4, 1.2 / scale)} />
-          <ellipse cx="505" cy="415" rx="420" ry="290" fill="none" stroke="rgba(200,164,74,0.042)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
-          <ellipse cx="505" cy="415" rx="350" ry="240" fill="none" stroke="rgba(200,164,74,0.07)" strokeWidth={Math.max(0.35, 1 / scale)} />
-          <ellipse cx="505" cy="415" rx="280" ry="192" fill="none" stroke="rgba(200,164,74,0.055)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
-          <ellipse cx="505" cy="415" rx="210" ry="145" fill="none" stroke="rgba(200,164,74,0.09)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
-          <ellipse cx="505" cy="415" rx="155" ry="107" fill="none" stroke="rgba(200,164,74,0.07)" strokeWidth={Math.max(0.25, 0.65 / scale)} />
-          <ellipse cx="505" cy="415" rx="105" ry="72" fill="none" stroke="rgba(200,164,74,0.11)" strokeWidth={Math.max(0.25, 0.7 / scale)} />
-          <ellipse cx="505" cy="415" rx="62" ry="43" fill="none" stroke="rgba(200,164,74,0.09)" strokeWidth={Math.max(0.2, 0.55 / scale)} />
+          <ellipse cx="505" cy="415" rx="570" ry="395" fill="none" stroke="rgba(140,105,55,0.07)" strokeWidth={Math.max(0.3, 0.9 / scale)} />
+          <ellipse cx="505" cy="415" rx="490" ry="340" fill="none" stroke="rgba(150,115,60,0.11)" strokeWidth={Math.max(0.4, 1.2 / scale)} />
+          <ellipse cx="505" cy="415" rx="420" ry="290" fill="none" stroke="rgba(140,105,55,0.09)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
+          <ellipse cx="505" cy="415" rx="350" ry="240" fill="none" stroke="rgba(155,120,65,0.14)" strokeWidth={Math.max(0.35, 1 / scale)} />
+          <ellipse cx="505" cy="415" rx="280" ry="192" fill="none" stroke="rgba(145,110,58,0.11)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
+          <ellipse cx="505" cy="415" rx="210" ry="145" fill="none" stroke="rgba(155,120,65,0.16)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
+          <ellipse cx="505" cy="415" rx="155" ry="107" fill="none" stroke="rgba(148,115,60,0.13)" strokeWidth={Math.max(0.25, 0.65 / scale)} />
+          <ellipse cx="505" cy="415" rx="105" ry="72" fill="none" stroke="rgba(160,125,68,0.18)" strokeWidth={Math.max(0.25, 0.7 / scale)} />
+          <ellipse cx="505" cy="415" rx="62" ry="43" fill="none" stroke="rgba(152,118,62,0.15)" strokeWidth={Math.max(0.2, 0.55 / scale)} />
         </g>
 
-        {/* ── Vegetation / Forest layer — arborização periférica ── */}
-        {/* Outer forest zones: large elliptical green-fill masses at the map perimeter */}
+        {/* ── Vegetation / Forest layer — Google Maps style vivid green perimeter ── */}
         <g style={{ pointerEvents: 'none' }}>
           {/* Top forest belt */}
-          <ellipse cx="580" cy="-30" rx="680" ry="140" fill="url(#ab-forest-edge)" opacity="0.82" />
-          <ellipse cx="580" cy="-30" rx="680" ry="140" fill="url(#ab-veg-tex)" opacity="0.9" />
+          <ellipse cx="580" cy="-30" rx="680" ry="140" fill="url(#ab-forest-edge)" opacity="0.92" />
+          <ellipse cx="580" cy="-30" rx="680" ry="140" fill="url(#ab-veg-tex)" opacity="0.75" />
           {/* Bottom forest belt */}
-          <ellipse cx="620" cy={SVG_H + 30} rx="700" ry="150" fill="url(#ab-forest-edge)" opacity="0.78" />
-          <ellipse cx="620" cy={SVG_H + 30} rx="700" ry="150" fill="url(#ab-veg-tex)" opacity="0.85" />
+          <ellipse cx="620" cy={SVG_H + 30} rx="700" ry="150" fill="url(#ab-forest-edge)" opacity="0.88" />
+          <ellipse cx="620" cy={SVG_H + 30} rx="700" ry="150" fill="url(#ab-veg-tex)" opacity="0.72" />
           {/* Left forest belt */}
-          <ellipse cx="-40" cy="410" rx="160" ry="400" fill="url(#ab-forest-edge)" opacity="0.80" />
-          <ellipse cx="-40" cy="410" rx="160" ry="400" fill="url(#ab-veg-tex)" opacity="0.88" />
+          <ellipse cx="-40" cy="410" rx="160" ry="400" fill="url(#ab-forest-edge)" opacity="0.90" />
+          <ellipse cx="-40" cy="410" rx="160" ry="400" fill="url(#ab-veg-tex)" opacity="0.70" />
           {/* Right forest belt */}
-          <ellipse cx={SVG_W + 40} cy="410" rx="160" ry="400" fill="url(#ab-forest-edge)" opacity="0.80" />
-          <ellipse cx={SVG_W + 40} cy="410" rx="160" ry="400" fill="url(#ab-veg-tex)" opacity="0.88" />
+          <ellipse cx={SVG_W + 40} cy="410" rx="160" ry="400" fill="url(#ab-forest-edge)" opacity="0.90" />
+          <ellipse cx={SVG_W + 40} cy="410" rx="160" ry="400" fill="url(#ab-veg-tex)" opacity="0.70" />
         </g>
 
         {/* ── Individual tree canopy symbols — arborização detalhada ── */}
@@ -740,14 +749,14 @@ const MapInner = memo(function MapInner({
               [1158,232,12],[1140,264,10],[1162,296,13],[1146,326,11],[1158,358,12],[1140,388,10],[1162,418,14],[1146,448,11],[1158,478,12],[1140,510,10],[1162,542,13],[1146,572,11],[1158,602,12],
             ] as [number,number,number][]).map(([cx, cy, r], i) => (
               <g key={`tree-${i}`}>
-                {/* Shadow/depth base */}
-                <circle cx={cx + 1.5} cy={cy + 2} r={r * 1.1} fill="rgba(0,0,0,0.4)" />
-                {/* Dark canopy base */}
-                <circle cx={cx} cy={cy} r={r} fill={i % 3 === 0 ? '#0C2E14' : i % 3 === 1 ? '#0A2812' : '#0E3218'} />
-                {/* Mid-tone canopy */}
-                <circle cx={cx - r * 0.15} cy={cy - r * 0.2} r={r * 0.72} fill={i % 3 === 0 ? '#163D1E' : i % 3 === 1 ? '#124B20' : '#1A4422'} />
-                {/* Highlight — sunlit top of canopy */}
-                <circle cx={cx - r * 0.25} cy={cy - r * 0.35} r={r * 0.38} fill="rgba(40,100,50,0.60)" />
+                {/* Shadow/depth base — softer on light background */}
+                <circle cx={cx + 1.5} cy={cy + 2} r={r * 1.1} fill="rgba(60,100,40,0.25)" />
+                {/* Vivid canopy base — Google Maps fresh green */}
+                <circle cx={cx} cy={cy} r={r} fill={i % 3 === 0 ? '#4A9B35' : i % 3 === 1 ? '#3E8E2C' : '#52A83C'} />
+                {/* Mid-tone canopy — lighter green */}
+                <circle cx={cx - r * 0.15} cy={cy - r * 0.2} r={r * 0.72} fill={i % 3 === 0 ? '#60B848' : i % 3 === 1 ? '#56AE40' : '#68C050'} />
+                {/* Highlight — sunlit canopy top */}
+                <circle cx={cx - r * 0.25} cy={cy - r * 0.35} r={r * 0.38} fill="rgba(130,210,90,0.75)" />
               </g>
             ))}
           </g>
@@ -756,36 +765,59 @@ const MapInner = memo(function MapInner({
         {/* ── Camada técnica: perímetro, ruas, BR, portaria ── */}
         {showTechLayer && context && (
           <g style={{ pointerEvents: 'none' }}>
-            {/* Perímetro do empreendimento */}
+            {/* Perímetro do empreendimento — borda dourada bem visível */}
             {context.perimeter.map((poly, i) => (
               <polygon
                 key={`perim-${i}`}
                 points={poly.map(([x, y]) => `${x},${y}`).join(' ')}
-                fill="rgba(200,164,74,0.05)"
-                stroke="rgba(200,164,74,0.45)"
-                strokeWidth={Math.max(0.7, 2 / scale)}
-                strokeDasharray={`${6 / scale} ${4 / scale}`}
+                fill="rgba(200,164,74,0.06)"
+                stroke="rgba(200,164,74,0.92)"
+                strokeWidth={Math.max(1.0, 2.5 / scale)}
+                strokeDasharray={`${8 / scale} ${3 / scale}`}
               />
             ))}
-            {/* Linha da BR */}
+            {/* Linha da BR — estilo Google Maps rodovia */}
+            {context.brLine.map((line, i) => (
+              <polyline
+                key={`br-bg-${i}`}
+                points={line.map(([x, y]) => `${x},${y}`).join(' ')}
+                fill="none"
+                stroke="rgba(220,160,40,0.85)"
+                strokeWidth={Math.max(1.2, 4.5 / scale)}
+                strokeLinecap="round"
+              />
+            ))}
             {context.brLine.map((line, i) => (
               <polyline
                 key={`br-${i}`}
                 points={line.map(([x, y]) => `${x},${y}`).join(' ')}
                 fill="none"
-                stroke="rgba(255,255,255,0.14)"
-                strokeWidth={Math.max(0.6, 2.4 / scale)}
+                stroke="rgba(255,240,180,0.95)"
+                strokeWidth={Math.max(0.7, 2.8 / scale)}
+                strokeLinecap="round"
               />
             ))}
-            {/* Eixos das ruas */}
+            {/* Eixos das ruas — estilo Google Maps: borda bege + centro branco */}
+            {context.streets.map((line, i) => (
+              <polyline
+                key={`st-border-${i}`}
+                points={line.map(([x, y]) => `${x},${y}`).join(' ')}
+                fill="none"
+                stroke="rgba(190,165,115,0.75)"
+                strokeWidth={streetStroke * 7}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            ))}
             {context.streets.map((line, i) => (
               <polyline
                 key={`st-${i}`}
                 points={line.map(([x, y]) => `${x},${y}`).join(' ')}
                 fill="none"
-                stroke="rgba(255,255,255,0.10)"
-                strokeWidth={streetStroke}
+                stroke="rgba(255,255,255,0.96)"
+                strokeWidth={streetStroke * 5}
                 strokeLinecap="round"
+                strokeLinejoin="round"
               />
             ))}
             {/* Amenities (portaria, lazer, …) — clicáveis abrem painel de área comum */}
@@ -970,10 +1002,10 @@ const MapInner = memo(function MapInner({
                 const lineH = 5.6; // espaçamento entre linhas em coord SVG
                 const groupTop = cy - ((lineCount - 1) * lineH) / 2;
 
-                const numColor = isCompared ? '#93C5FD' : isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.92)';
-                const areaColor = isCompared ? 'rgba(147,197,253,0.80)' : isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.60)';
-                const dimColor = isSelected ? 'rgba(215,185,122,0.65)' : 'rgba(255,255,255,0.38)';
-                const outlineStroke = 'rgba(6,16,29,0.85)';
+                const numColor = isCompared ? '#1D4ED8' : isSelected ? '#92400E' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.88)' : 'rgba(20,20,20,0.95)';
+                const areaColor = isCompared ? 'rgba(29,78,216,0.85)' : isSelected ? 'rgba(146,64,14,0.90)' : 'rgba(40,30,10,0.75)';
+                const dimColor = isSelected ? 'rgba(146,64,14,0.72)' : 'rgba(40,30,10,0.50)';
+                const outlineStroke = lot.status === 'VENDIDO' ? 'rgba(6,16,29,0.75)' : 'rgba(255,255,255,0.90)';
                 const outlineW = Math.max(0.4, 1.5 / scale);
 
                 let row = 0;
@@ -1050,7 +1082,9 @@ const MapInner = memo(function MapInner({
                     width={labelW + 2 * padX}
                     height={fs * 1.0 + 2 * padY}
                     rx={rx}
-                    fill="rgba(5,13,25,0.72)"
+                    fill="rgba(255,255,255,0.88)"
+                    stroke="rgba(190,165,115,0.50)"
+                    strokeWidth={Math.max(0.2, 0.6 / scale)}
                     style={{ pointerEvents: 'none' }}
                   />
                   {/* Street name text */}
@@ -1058,7 +1092,7 @@ const MapInner = memo(function MapInner({
                     x={s.x} y={s.y}
                     textAnchor="middle"
                     fontSize={fs}
-                    fill="rgba(232,213,163,0.92)"
+                    fill="rgba(80,60,30,0.92)"
                     fontWeight="700"
                     letterSpacing="0.05em"
                     style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const, pointerEvents: 'none' }}
@@ -1091,9 +1125,9 @@ const MapInner = memo(function MapInner({
               <circle cx={cx} cy={cy} r={hitR} fill="transparent" />
               <circle
                 cx={cx} cy={cy} r={badgeR}
-                fill={isActive ? 'rgba(200,164,74,0.88)' : 'rgba(8,21,36,0.80)'}
-                stroke={isActive ? '#D7B97A' : avail > 0 ? 'rgba(50,209,124,0.55)' : 'rgba(255,255,255,0.18)'}
-                strokeWidth={Math.max(0.4, 1.2 / scale)}
+                fill={isActive ? 'rgba(200,164,74,0.95)' : 'rgba(15,35,60,0.88)'}
+                stroke={isActive ? '#C8A44A' : avail > 0 ? '#16A34A' : 'rgba(100,100,100,0.55)'}
+                strokeWidth={Math.max(0.5, 1.5 / scale)}
               />
               <text
                 x={cx} y={letterY}
@@ -1191,14 +1225,14 @@ function EdgeFadeRow({
 
 function MapSkeleton() {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center gap-4" style={{ background: NAVY }}>
+    <div className="w-full h-full flex flex-col items-center justify-center gap-4" style={{ background: '#EBE5D5' }}>
       <div
         className="w-9 h-9 rounded-full border-2 animate-spin"
         style={{ borderColor: `${GOLD} ${GOLD} ${GOLD} transparent` }}
       />
       <p
         className="text-xs font-bold uppercase tracking-[0.22em]"
-        style={{ color: 'rgba(200,164,74,0.65)', fontFamily: "'Outfit', sans-serif" }}
+        style={{ color: 'rgba(140,100,40,0.80)', fontFamily: "'Outfit', sans-serif" }}
       >
         Carregando mapa de lotes…
       </p>
@@ -2746,20 +2780,20 @@ export default function AltoBellevuePlanView({
       <div
         ref={containerRef}
         className={`relative w-full overflow-hidden${isFullscreen ? ' flex-1 min-h-0' : ''}`}
-        style={{ height: isFullscreen ? 'auto' : mapHeight, background: NAVY }}
+        style={{ height: isFullscreen ? 'auto' : mapHeight, background: '#EBE5D5' }}
       >
         {/* Fallback estático clicável — camada 3: nunca deixa o mapa em branco */}
         {error && (
-          <div className="absolute inset-0 z-30" style={{ background: NAVY }}>
+          <div className="absolute inset-0 z-30" style={{ background: '#EBE5D5' }}>
             {/* Planta estática (offline-first) */}
             <img
               src="/images/maps/alto-bellevue-plant.jpg"
               alt="Planta do condomínio fechado Alto Bellevue"
               className="w-full h-full"
-              style={{ objectFit: 'cover', opacity: 0.55 }}
+              style={{ objectFit: 'cover', opacity: 0.45 }}
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3.5 px-8 text-center"
-              style={{ background: 'linear-gradient(rgba(8,21,36,0.45), rgba(8,21,36,0.78))' }}>
+              style={{ background: 'linear-gradient(rgba(235,229,213,0.55), rgba(200,190,165,0.82))' }}>
               <div style={{ width: 48, height: 48, borderRadius: 14, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <AlertCircle size={22} style={{ color: 'rgba(200,164,74,0.75)' }} />
               </div>
@@ -2893,12 +2927,13 @@ export default function AltoBellevuePlanView({
             <span
               className="px-2.5 py-1 rounded-lg text-[9px] font-semibold"
               style={{
-                background: 'rgba(8,21,36,0.72)',
-                color: 'rgba(200,164,74,0.80)',
+                background: 'rgba(255,255,255,0.88)',
+                color: 'rgba(80,60,30,0.85)',
                 backdropFilter: 'blur(6px)',
                 WebkitBackdropFilter: 'blur(6px)',
                 fontFamily: "'Outfit', sans-serif",
                 letterSpacing: '0.06em',
+                border: '1px solid rgba(190,165,115,0.35)',
               }}
             >
               {zoomLabel}
@@ -2953,10 +2988,12 @@ export default function AltoBellevuePlanView({
               <span
                 className="px-3 py-1.5 rounded-full text-[10px] font-semibold whitespace-nowrap"
                 style={{
-                  background: 'rgba(0,0,0,0.50)',
-                  color: 'rgba(255,255,255,0.72)',
+                  background: 'rgba(255,255,255,0.90)',
+                  color: 'rgba(60,40,10,0.80)',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(190,165,115,0.40)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                 }}
               >
                 Toque em um lote para ver detalhes
@@ -2966,19 +3003,35 @@ export default function AltoBellevuePlanView({
         </AnimatePresence>
       </div>
 
-      {/* ── STATS BAR ─────────────────────────────────── */}
+      {/* ── STATS BAR — gamificada com barra de progresso ─── */}
       {!isFullscreen && <div
         style={{
           background: '#fff',
           borderTop: '1px solid rgba(0,0,0,0.06)',
-          padding: '11px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 10,
+          padding: '10px 16px 12px',
         }}
       >
+        {/* Progress bar — % disponível */}
+        {stats.total > 0 && (() => {
+          const pctDisp = Math.round((stats.available / stats.total) * 100);
+          const pctVend = Math.round(((stats.byStatus['VENDIDO'] ?? 0) / stats.total) * 100);
+          return (
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#16A34A', fontFamily: "'Outfit', sans-serif" }}>
+                  🟢 {stats.available} disponíveis
+                </span>
+                <span style={{ fontSize: 9, fontWeight: 600, color: '#948F84' }}>
+                  {pctDisp}% disponível · {stats.total} lotes
+                </span>
+              </div>
+              <div style={{ height: 7, borderRadius: 4, background: '#F0EDE5', overflow: 'hidden', display: 'flex' }}>
+                <div style={{ height: '100%', width: `${pctDisp}%`, background: 'linear-gradient(90deg, #16A34A, #22C55E)', borderRadius: '4px 0 0 4px', transition: 'width 0.5s ease' }} />
+                <div style={{ height: '100%', width: `${pctVend}%`, background: '#EF4444', opacity: 0.7 }} />
+              </div>
+            </div>
+          );
+        })()}
         <div className="flex items-center gap-4 flex-wrap">
           {presentStatuses.map(([key, cfg]) => (
             <div key={key} className="flex items-center gap-1.5">
@@ -2988,9 +3041,6 @@ export default function AltoBellevuePlanView({
             </div>
           ))}
         </div>
-        <span style={{ fontSize: 10, color: '#C0BAB2', fontWeight: 500, flexShrink: 0 }}>
-          {stats.total} lotes · {quadras.length} quadras
-        </span>
       </div>}
 
       {/* Legenda removida: a STATS BAR acima já é a legenda (mesma cor + rótulo +
