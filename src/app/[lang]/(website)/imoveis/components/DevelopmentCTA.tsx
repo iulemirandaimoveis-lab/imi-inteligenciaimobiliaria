@@ -58,9 +58,9 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone, co
 
     return (
         <>
-            <div className={compact ? '' : 'lg:sticky lg:top-28 space-y-4'}>
+            <div className={compact ? 'h-full' : 'lg:sticky lg:top-28 space-y-4'}>
                 {/* Main CTA Card */}
-                <div className="rounded-2xl overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+                <div className={`rounded-2xl overflow-hidden ${compact ? 'h-full flex flex-col' : ''}`} style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
                     {/* Price Header */}
                     <div className={`${compact ? 'p-3' : 'p-6'} relative overflow-hidden`} style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
                         <p className="text-[10px] uppercase tracking-widest font-bold mb-1" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
@@ -97,7 +97,7 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone, co
                     )}
 
                     {/* CTA Buttons */}
-                    <div className={`${compact ? 'p-3' : 'p-5'} space-y-2`}>
+                    <div className={`${compact ? 'p-3 mt-auto' : 'p-5'} space-y-2`}>
                         <button
                             onClick={() => handleCTAClick('info')}
                             className={`w-full relative flex items-center justify-center gap-1.5 ${compact ? 'h-9 rounded-lg text-[10px]' : 'h-12 rounded-xl text-[11px]'} font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98]`}
