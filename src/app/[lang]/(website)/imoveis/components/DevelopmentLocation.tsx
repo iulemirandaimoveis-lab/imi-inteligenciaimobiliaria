@@ -13,9 +13,24 @@ interface DevelopmentLocationProps {
     development: Development;
 }
 
+// Hardcoded GPS overrides for developments where the database coordinates or address
+// don't resolve correctly in Google Maps geocoding. Key = development slug.
+const COORD_OVERRIDES: Record<string, { lat: number; lng: number; label: string }> = {
+    'alto-bellevue': {
+        lat: -8.8894,
+        lng: -36.4923,
+        label: 'Condomínio Alto Bellevue — Portaria Principal',
+    },
+};
+
 export default function DevelopmentLocation({ development }: DevelopmentLocationProps) {
     const [showStreetView, setShowStreetView] = useState(false);
-    const { lat, lng } = development.location.coordinates;
+
+    // Apply hardcoded coordinate override when available (avoids wrong GMB pin)
+    const coordOverride = COORD_OVERRIDES[development.slug];
+    const rawCoords = development.location.coordinates;
+    const lat = coordOverride?.lat ?? rawCoords.lat;
+    const lng = coordOverride?.lng ?? rawCoords.lng;
 
     // Build full address string for geocoding fallback
     const addressParts = [
@@ -26,20 +41,20 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
     ].filter(Boolean);
     const fullAddress = addressParts.join(', ');
 
-    // Prefer address-based Google Maps query — resolves Brazilian addresses more accurately than raw coords
+    // Prefer coordinates when an override is present (guaranteed correct pin location)
     const isDefaultCoords = (lat === -8.0476 && lng === -34.8770);
     const hasRealCoords = lat && lng && !isDefaultCoords;
-    const hasAddress = fullAddress && fullAddress.length > 3;
+    const hasAddress = !coordOverride && fullAddress && fullAddress.length > 3;
 
-    const mapSrc = hasAddress
-        ? `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=15&output=embed`
-        : hasRealCoords
-            ? `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`
+    const mapSrc = hasRealCoords
+        ? `https://maps.google.com/maps?q=${lat},${lng}&z=17&output=embed`
+        : hasAddress
+            ? `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=15&output=embed`
             : `https://maps.google.com/maps?q=${encodeURIComponent('Recife, PE, Brasil')}&output=embed`;
-    const mapsUrl = hasAddress
-        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
-        : hasRealCoords
-            ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+    const mapsUrl = hasRealCoords
+        ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
+        : hasAddress
+            ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Recife, PE, Brasil')}`;
 
     return (

@@ -28,6 +28,8 @@ interface PlanLot {
   status: string; has_polygon: boolean;
   /** Registro comercial sem polígono oficial no CAD (ex.: B-24) — não renderizar. */
   pending?: boolean;
+  special_type?: string | null;
+  notes?: string | null;
 }
 
 interface PriceEntry {
@@ -440,6 +442,8 @@ function mergeLots(dbLots: Lot[], planLots: PlanLot[]): PlanLot[] {
       price: db?.price ?? pl.price,
       area_m2: (db?.area_m2 ?? pl.area_m2) || 0,
       status: pl.status || db?.status || 'DISPONIVEL',
+      special_type: db?.special_type ?? pl.special_type ?? null,
+      notes: db?.notes ?? pl.notes ?? null,
     };
   });
 }
@@ -452,6 +456,8 @@ interface MapInnerProps {
   context: ABMapData | null;
   showTechLayer: boolean;
   selectedId: string | null;
+  compareIds: Set<string>;
+  multiSelectMode: boolean;
   vb: ViewBox;
   isDragging: boolean;
   activeQuadra: string;
@@ -465,7 +471,7 @@ interface MapInnerProps {
 }
 
 const MapInner = memo(function MapInner({
-  lots, allLots, context, showTechLayer, selectedId, vb, isDragging,
+  lots, allLots, context, showTechLayer, selectedId, compareIds, multiSelectMode, vb, isDragging,
   activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
@@ -643,10 +649,34 @@ const MapInner = memo(function MapInner({
             <stop offset="0%" stopColor="#0A1A2C" />
             <stop offset="100%" stopColor="#06101D" />
           </linearGradient>
+          {/* Topographic terrain gradient — simulates the hill elevation of Garanhuns */}
+          <radialGradient id="ab-terrain" cx="42%" cy="52%" r="58%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stopColor="#1A3248" stopOpacity="0.85" />
+            <stop offset="35%" stopColor="#102234" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#05101C" stopOpacity="0.90" />
+          </radialGradient>
+          {/* Fine grid — technical map paper effect */}
+          <pattern id="ab-topo-grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(200,164,74,0.045)" strokeWidth="0.35"/>
+          </pattern>
+          <pattern id="ab-topo-grid-fine" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
+            <path d="M 5 0 L 0 0 0 5" fill="none" stroke="rgba(200,164,74,0.018)" strokeWidth="0.2"/>
+          </pattern>
         </defs>
 
         {/* Technical base — fundo escuro técnico (sem foto, alinhado ao viewBox canônico) */}
         <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-base)" />
+        {/* Topographic terrain: elevation gradient + contour rings + grid */}
+        <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-terrain)" style={{ pointerEvents: 'none' }} />
+        {scale < 6 && <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-topo-grid)" style={{ pointerEvents: 'none' }} />}
+        {scale >= 6 && <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-topo-grid-fine)" style={{ pointerEvents: 'none' }} />}
+        {/* Topographic contour rings (simulated elevation isocontours for Garanhuns hills) */}
+        <g style={{ pointerEvents: 'none' }}>
+          <ellipse cx="505" cy="415" rx="490" ry="340" fill="none" stroke="rgba(200,164,74,0.055)" strokeWidth={Math.max(0.4, 1.2 / scale)} />
+          <ellipse cx="505" cy="415" rx="350" ry="240" fill="none" stroke="rgba(200,164,74,0.07)" strokeWidth={Math.max(0.35, 1 / scale)} />
+          <ellipse cx="505" cy="415" rx="210" ry="145" fill="none" stroke="rgba(200,164,74,0.09)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
+          <ellipse cx="505" cy="415" rx="105" ry="72" fill="none" stroke="rgba(200,164,74,0.11)" strokeWidth={Math.max(0.25, 0.7 / scale)} />
+        </g>
 
         {/* ── Camada técnica: perímetro, ruas, BR, portaria ── */}
         {showTechLayer && context && (
@@ -797,6 +827,7 @@ const MapInner = memo(function MapInner({
         {visibleLots.map(lot => {
           const cfg = getCfg(lot.status);
           const isSelected = lot.id === selectedId;
+          const isCompared = compareIds.has(lot.id);
           const pts = lot.polygon.map(([x, y]) => `${x},${y}`).join(' ');
           const cx = lot.centroid?.[0] ?? 0;
           const cy = lot.centroid?.[1] ?? 0;
@@ -805,9 +836,7 @@ const MapInner = memo(function MapInner({
           return (
             <g
               key={lot.id}
-              // outline:none remove o "quadrado" azul do foco do browser — o destaque
-              // é só o polígono exato do lote (forma real), nunca um retângulo.
-              style={{ cursor: 'pointer', outline: 'none' }}
+              style={{ cursor: multiSelectMode ? 'crosshair' : 'pointer', outline: 'none' }}
               onClick={(e) => { e.stopPropagation(); onLotClick(lot); }}
               role="button"
               aria-label={`Lote ${lot.lot_number} Quadra ${lot.quadra} — ${cfg.label}${lot.area_m2 ? `, ${Math.round(lot.area_m2 as number)}m²` : ''}${lot.price ? `, ${fmtBRL(lot.price as number)}` : ''}`}
@@ -819,7 +848,7 @@ const MapInner = memo(function MapInner({
                 }
               }}
             >
-              {isSelected && (
+              {isSelected && !isCompared && (
                 <polygon
                   points={pts}
                   fill="transparent"
@@ -829,11 +858,22 @@ const MapInner = memo(function MapInner({
                   style={{ pointerEvents: 'none' }}
                 />
               )}
+              {isCompared && (
+                <polygon
+                  points={pts}
+                  fill="transparent"
+                  stroke="#2563EB"
+                  strokeWidth="6"
+                  filter="url(#ab-sel-glow)"
+                  style={{ pointerEvents: 'none' }}
+                  opacity={0.6}
+                />
+              )}
               <polygon
                 points={pts}
-                fill={isSelected ? 'rgba(200,163,95,0.55)' : cfg.fill}
-                stroke={isSelected ? '#D7B97A' : cfg.stroke}
-                strokeWidth={isSelected ? 1.8 : 0.7}
+                fill={isCompared ? 'rgba(37,99,235,0.38)' : isSelected ? 'rgba(200,163,95,0.55)' : cfg.fill}
+                stroke={isCompared ? '#2563EB' : isSelected ? '#D7B97A' : cfg.stroke}
+                strokeWidth={isCompared || isSelected ? 1.8 : 0.7}
               />
 
               {/* Rótulos internos — centrados verticalmente no lote (PDF-style).
@@ -855,8 +895,8 @@ const MapInner = memo(function MapInner({
                 const lineH = 5.6; // espaçamento entre linhas em coord SVG
                 const groupTop = cy - ((lineCount - 1) * lineH) / 2;
 
-                const numColor = isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.92)';
-                const areaColor = isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.60)';
+                const numColor = isCompared ? '#93C5FD' : isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.92)';
+                const areaColor = isCompared ? 'rgba(147,197,253,0.80)' : isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.60)';
                 const dimColor = isSelected ? 'rgba(215,185,122,0.65)' : 'rgba(255,255,255,0.38)';
                 const outlineStroke = 'rgba(6,16,29,0.85)';
                 const outlineW = Math.max(0.4, 1.5 / scale);
@@ -893,9 +933,25 @@ const MapInner = memo(function MapInner({
                         {fmtM(dims.testada)} × {fmtM(dims.profundidade)}
                       </text>
                     )}
+                    {/* Checkmark for lots in comparison */}
+                    {isCompared && cx > 0 && cy > 0 && (
+                      <g style={{ pointerEvents: 'none' }}>
+                        <circle cx={cx} cy={cy - (lineCount > 1 ? lineH * 1.6 : lineH)} r={Math.max(2.5, 7 / scale)} fill="#2563EB" opacity={0.9} />
+                        <text x={cx} y={cy - (lineCount > 1 ? lineH * 1.6 : lineH)} textAnchor="middle" dominantBaseline="central"
+                          fill="#fff" fontSize={Math.max(2, 5 / scale)} fontWeight="700">✓</text>
+                      </g>
+                    )}
                   </g>
                 );
               })()}
+              {/* Checkmark overlay when lot labels aren't visible */}
+              {isCompared && !(showLotNumbers || isSelected) && cx > 0 && cy > 0 && (
+                <g style={{ pointerEvents: 'none' }}>
+                  <circle cx={cx} cy={cy} r={Math.max(2.5, 7 / scale)} fill="#2563EB" opacity={0.9} />
+                  <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central"
+                    fill="#fff" fontSize={Math.max(2, 5 / scale)} fontWeight="700">✓</text>
+                </g>
+              )}
             </g>
           );
         })}
@@ -904,34 +960,33 @@ const MapInner = memo(function MapInner({
         {showTechLayer && showStreetLabels && (
           <g style={{ pointerEvents: 'none' }}>
             {visibleStreetLabels.map((s, i) => {
-              const fs = Math.max(3.2, 17 / scale);
-              const sw = Math.max(0.5, 3.4 / scale);
+              const fs = Math.max(3.5, 16 / scale);
+              const labelW = estTextWidth(s.name, fs);
+              const padX = Math.max(1.5, 4 / scale);
+              const padY = Math.max(0.8, 2.5 / scale);
+              const rx = Math.max(0.8, 2.5 / scale);
               return (
-                // Rotaciona o nome ao longo do eixo da via (como no PDF)
+                // Rotaciona o nome ao longo do eixo da via (como no PDF/GIS)
                 <g key={`sl-${i}`} transform={`rotate(${s.rot ?? 0} ${s.x} ${s.y})`}>
-                  {/* Outline pass for readability over any lot color */}
+                  {/* Semi-transparent pill background for readability at all zoom levels */}
+                  <rect
+                    x={s.x - labelW / 2 - padX}
+                    y={s.y - fs * 0.78 - padY}
+                    width={labelW + 2 * padX}
+                    height={fs * 1.0 + 2 * padY}
+                    rx={rx}
+                    fill="rgba(5,13,25,0.72)"
+                    style={{ pointerEvents: 'none' }}
+                  />
+                  {/* Street name text */}
                   <text
                     x={s.x} y={s.y}
                     textAnchor="middle"
                     fontSize={fs}
-                    fill="none"
-                    stroke="rgba(6,16,29,0.85)"
-                    strokeWidth={sw}
+                    fill="rgba(232,213,163,0.92)"
                     fontWeight="700"
-                    letterSpacing="0.04em"
-                    style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
-                  >
-                    {s.name}
-                  </text>
-                  {/* Fill pass */}
-                  <text
-                    x={s.x} y={s.y}
-                    textAnchor="middle"
-                    fontSize={fs}
-                    fill="rgba(255,255,255,0.82)"
-                    fontWeight="700"
-                    letterSpacing="0.04em"
-                    style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
+                    letterSpacing="0.05em"
+                    style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const, pointerEvents: 'none' }}
                   >
                     {s.name}
                   </text>
@@ -1080,7 +1135,7 @@ function MapSkeleton() {
 
 function LotBottomSheet({
   lot, priceEntry, onClose, whatsappPhone, developmentName, dbLot, streetLabels,
-  onAddToCompare, isInCompare,
+  onAddToCompare, isInCompare, portalTarget,
 }: {
   lot: PlanLot;
   priceEntry?: PriceEntry;
@@ -1091,6 +1146,7 @@ function LotBottomSheet({
   streetLabels?: { x: number; y: number; name: string }[];
   onAddToCompare?: (lot: PlanLot) => void;
   isInCompare?: boolean;
+  portalTarget?: HTMLElement | null;
 }) {
   const isAvailable = lot.status === 'DISPONIVEL';
   const isNegotiating = lot.status === 'NEGOCIACAO';
@@ -1112,7 +1168,7 @@ function LotBottomSheet({
 
   const acessoRua = useMemo(() => nearestStreet(lot.centroid, streetLabels ?? []), [lot.centroid, streetLabels]);
 
-  const isCorner = dbLot?.special_type === 'ESQUINA';
+  const isCorner = lot.special_type === 'ESQUINA' || dbLot?.special_type === 'ESQUINA';
   const pricePerM2 = lot.price && lot.area_m2 ? (lot.price as number) / (lot.area_m2 as number) : null;
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -1143,6 +1199,10 @@ function LotBottomSheet({
   // Portal para document.body — escapa o `overflow:hidden` do wrapper do mapa e
   // qualquer ancestral que crie containing-block, garantindo `position:fixed` real.
   if (typeof document === 'undefined') return null;
+
+  const target = portalTarget instanceof HTMLElement
+    ? portalTarget
+    : (document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body);
 
   return createPortal(
     <>
@@ -1364,10 +1424,10 @@ function LotBottomSheet({
           </div>
         )}
 
-        {dbLot?.notes && (
+        {(lot.notes || dbLot?.notes) && (
           <div className="px-5 pb-3">
             <p style={{ fontSize: 11, color: '#636363', background: '#F8F6F2', borderRadius: 10, padding: '9px 13px', margin: 0, lineHeight: 1.5 }}>
-              {dbLot.notes}
+              {lot.notes ?? dbLot?.notes}
             </p>
           </div>
         )}
@@ -1428,7 +1488,7 @@ function LotBottomSheet({
         </div>
       </motion.div>
     </>,
-    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+    target,
   );
 }
 
@@ -1464,7 +1524,7 @@ function AmenityIcon({ id, color, size = 22 }: { id: string; color: string; size
 // ── Common-area Bottom Sheet ──────────────────────────────────────────────────
 
 function AmenityBottomSheet({
-  amenity, onClose, onLocate, whatsappPhone, developmentName, fallbackTour360,
+  amenity, onClose, onLocate, whatsappPhone, developmentName, fallbackTour360, portalTarget,
 }: {
   amenity: Amenity;
   onClose: () => void;
@@ -1472,6 +1532,7 @@ function AmenityBottomSheet({
   whatsappPhone: string;
   developmentName: string;
   fallbackTour360?: string;
+  portalTarget?: HTMLElement | null;
 }) {
   const rawInfo = getAmenityInfo(amenity);
   const info = fallbackTour360 && !rawInfo.tour360 ? { ...rawInfo, tour360: fallbackTour360 } : rawInfo;
@@ -1485,10 +1546,11 @@ function AmenityBottomSheet({
     `Olá! Gostaria de conhecer melhor a área "${info.title}" do ${developmentName}.`,
   );
 
-  // Portal para document.body: o wrapper do mapa usa transform (pan/zoom), o que
-  // torna `position:fixed` relativo a ele (containing block) — no desktop o sheet
-  // ficava recortado/fora da vista. O portal escapa qualquer ancestral transformado.
   if (typeof document === 'undefined') return null;
+
+  const amenityTarget = portalTarget instanceof HTMLElement
+    ? portalTarget
+    : (document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body);
 
   return createPortal(
     <>
@@ -1647,22 +1709,26 @@ function AmenityBottomSheet({
         </div>
       </motion.div>
     </>,
-    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+    amenityTarget,
   );
 }
 
 // ── Comparison Tray (floating) ─────────────────────────────────────────────────
 
 function ComparisonTray({
-  lots, priceMap, onRemove, onCompare, onClear,
+  lots, priceMap, onRemove, onCompare, onClear, portalTarget,
 }: {
   lots: PlanLot[];
   priceMap: Map<string, PriceEntry>;
   onRemove: (id: string) => void;
   onCompare: () => void;
   onClear: () => void;
+  portalTarget?: HTMLElement | null;
 }) {
   if (typeof document === 'undefined') return null;
+  const trayTarget = portalTarget instanceof HTMLElement
+    ? portalTarget
+    : (document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body);
   return createPortal(
     <motion.div
       initial={{ y: 80, opacity: 0 }}
@@ -1741,14 +1807,14 @@ function ComparisonTray({
         </div>
       </div>
     </motion.div>,
-    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+    trayTarget,
   );
 }
 
 // ── Comparison Modal ───────────────────────────────────────────────────────────
 
 function ComparisonModal({
-  lots, priceMap, streetLabels, onClose, whatsappPhone, developmentName,
+  lots, priceMap, streetLabels, onClose, whatsappPhone, developmentName, portalTarget,
 }: {
   lots: PlanLot[];
   priceMap: Map<string, PriceEntry>;
@@ -1756,6 +1822,7 @@ function ComparisonModal({
   onClose: () => void;
   whatsappPhone: string;
   developmentName: string;
+  portalTarget?: HTMLElement | null;
 }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1768,6 +1835,10 @@ function ComparisonModal({
   }, [onClose]);
 
   if (typeof document === 'undefined') return null;
+
+  const modalTarget = portalTarget instanceof HTMLElement
+    ? portalTarget
+    : (document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body);
 
   const colW = lots.length === 2 ? '50%' : '33.33%';
 
@@ -1944,7 +2015,7 @@ function ComparisonModal({
         </div>
       </motion.div>
     </>,
-    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+    modalTarget,
   );
 }
 
@@ -1982,6 +2053,7 @@ export default function AltoBellevuePlanView({
   const [searchMiss, setSearchMiss] = useState(false);
   const [compareLots, setCompareLots] = useState<PlanLot[]>([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   // Dica "toque em um lote": some sozinha após 6s ou na primeira seleção.
@@ -2248,6 +2320,16 @@ export default function AltoBellevuePlanView({
     });
   }, []);
 
+  const compareIds = useMemo(() => new Set(compareLots.map(l => l.id)), [compareLots]);
+
+  const handleLotClick = useCallback((lot: PlanLot) => {
+    if (multiSelectMode) {
+      toggleCompare(lot);
+    } else {
+      setSelectedLot(lot);
+    }
+  }, [multiSelectMode, toggleCompare]);
+
   // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
     setSelectedLot(null);
@@ -2279,19 +2361,13 @@ export default function AltoBellevuePlanView({
     if (!isFullscreen) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsFullscreen(false); };
     window.addEventListener('keydown', onKey);
-    // iOS-safe scroll lock: position:fixed prevents rubber-band scrolling under the overlay
-    const scrollY = window.scrollY;
+    // Scroll lock: overflow:hidden only — intentionally avoiding position:fixed on body,
+    // which would create a containing block and break portaled position:fixed sheets.
+    // The CSS-fallback wrapper is already position:fixed;inset:0, so the viewport is covered.
     document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      window.scrollTo(0, scrollY);
     };
   }, [isFullscreen]);
 
@@ -2393,6 +2469,11 @@ export default function AltoBellevuePlanView({
     ? dbLots.find(l => `${l.quadra}-${String(l.lot_number).padStart(2, '0')}` === selectedLot.id)
     : undefined;
 
+  // In fullscreen mode (native or CSS-fallback), portal overlays into the wrapper div.
+  // This avoids the containing-block issue caused by overflow:hidden on the fullscreen
+  // element (native) and by the body scroll-lock in CSS-fallback mode.
+  const fsPortalTarget: HTMLElement | null = isFullscreen ? (wrapperRef.current ?? null) : null;
+
   const zoomLabel = scale < 3 ? 'Toque numa quadra para explorar os lotes'
     : scale < 4 ? 'Toque num lote para ver preço e status'
     : scale < 5.5 ? 'Lote + área · toque para detalhes'
@@ -2453,6 +2534,28 @@ export default function AltoBellevuePlanView({
             style={{ height: 34, paddingLeft: 14, paddingRight: 14, borderRadius: 10, background: '#0B1B2D', color: '#fff', fontSize: 11, fontWeight: 700, fontFamily: "'Outfit', sans-serif", border: '1.5px solid rgba(200,164,74,0.5)' }}
           >
             Ir
+          </button>
+          {/* Multi-select toggle */}
+          <button
+            onClick={() => {
+              setMultiSelectMode(v => !v);
+              if (multiSelectMode) setSelectedLot(null);
+            }}
+            aria-label={multiSelectMode ? 'Sair da seleção múltipla' : 'Selecionar múltiplos lotes'}
+            className="flex items-center gap-1 flex-shrink-0 active:scale-95 transition-all"
+            style={{
+              height: 34, paddingLeft: 10, paddingRight: 10, borderRadius: 10,
+              background: multiSelectMode ? 'rgba(37,99,235,0.12)' : 'transparent',
+              color: multiSelectMode ? '#2563EB' : '#948F84',
+              border: multiSelectMode ? '1.5px solid #2563EB' : '1.5px solid rgba(148,143,132,0.4)',
+              fontSize: 10, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Scale size={13} />
+            {multiSelectMode
+              ? compareLots.length > 0 ? `${compareLots.length}/${MAX_COMPARE}` : 'Selec.'
+              : 'Comparar'}
           </button>
         </div>
         {searchMiss && (
@@ -2591,10 +2694,12 @@ export default function AltoBellevuePlanView({
             context={mapData}
             showTechLayer={showTechLayer}
             selectedId={selectedLot?.id ?? null}
+            compareIds={compareIds}
+            multiSelectMode={multiSelectMode}
             vb={vb}
             isDragging={isDragging}
             activeQuadra={activeQuadra}
-            onLotClick={setSelectedLot}
+            onLotClick={handleLotClick}
             onAmenityClick={handleAmenityClick}
             onQuadraClick={handleQuadraBadgeClick}
             onPointerDown={handlePointerDown}
@@ -2688,10 +2793,42 @@ export default function AltoBellevuePlanView({
           </div>
         )}
 
+        {/* Multi-select mode indicator banner */}
+        <AnimatePresence>
+          {multiSelectMode && !loading && !error && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
+              style={{ maxWidth: 'calc(100% - 80px)' }}
+            >
+              <span
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap"
+                style={{
+                  background: 'rgba(37,99,235,0.90)',
+                  color: '#fff',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 12px rgba(37,99,235,0.35)',
+                  fontFamily: "'Outfit', sans-serif",
+                  letterSpacing: '0.04em',
+                }}
+              >
+                <Scale size={11} />
+                {compareLots.length === 0
+                  ? 'Toque nos lotes para selecionar (máx. 3)'
+                  : `${compareLots.length} de ${MAX_COMPARE} lotes selecionados`}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Tap hint — some após 6s ou na primeira interação (não cobre o mapa nem
             colide com o indicador de zoom no mobile) */}
         <AnimatePresence>
-          {showTapHint && !selectedLot && !loading && !error && (
+          {showTapHint && !selectedLot && !multiSelectMode && !loading && !error && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -2867,6 +3004,7 @@ export default function AltoBellevuePlanView({
             onRemove={(id) => setCompareLots(prev => prev.filter(l => l.id !== id))}
             onCompare={() => setShowCompareModal(true)}
             onClear={() => setCompareLots([])}
+            portalTarget={fsPortalTarget}
           />
         )}
       </AnimatePresence>
@@ -2881,6 +3019,7 @@ export default function AltoBellevuePlanView({
             onClose={() => setShowCompareModal(false)}
             whatsappPhone={whatsappPhone}
             developmentName={developmentName}
+            portalTarget={fsPortalTarget}
           />
         )}
       </AnimatePresence>
@@ -2898,6 +3037,7 @@ export default function AltoBellevuePlanView({
             streetLabels={mapData?.streetLabels}
             onAddToCompare={toggleCompare}
             isInCompare={compareLots.some(l => l.id === selectedLot.id)}
+            portalTarget={fsPortalTarget}
           />
         )}
       </AnimatePresence>
@@ -2912,6 +3052,7 @@ export default function AltoBellevuePlanView({
             whatsappPhone={whatsappPhone}
             developmentName={developmentName}
             fallbackTour360={virtualTourUrl}
+            portalTarget={fsPortalTarget}
           />
         )}
       </AnimatePresence>
