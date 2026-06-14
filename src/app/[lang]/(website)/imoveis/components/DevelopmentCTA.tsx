@@ -20,6 +20,7 @@ interface DevelopmentCTAProps {
     development: Development;
     imiData?: IMIData;
     whatsappPhone?: string;
+    compact?: boolean;
 }
 
 const formatPrice = (price: number) => {
@@ -30,7 +31,7 @@ const formatPrice = (price: number) => {
     return price.toLocaleString('pt-BR');
 };
 
-export default function DevelopmentCTA({ development, imiData, whatsappPhone }: DevelopmentCTAProps) {
+export default function DevelopmentCTA({ development, imiData, whatsappPhone, compact }: DevelopmentCTAProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [ctaType, setCtaType] = useState<'info' | 'table' | 'imi'>('info');
     const [showIMIPreview, setShowIMIPreview] = useState(false);
@@ -57,66 +58,84 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone }: 
 
     return (
         <>
-            <div className="lg:sticky lg:top-28 space-y-4">
+            <div className={compact ? '' : 'lg:sticky lg:top-28 space-y-4'}>
                 {/* Main CTA Card */}
                 <div className="rounded-2xl overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
                     {/* Price Header */}
-                    <div className="p-6 relative overflow-hidden" style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
-                        <p className="text-[10px] uppercase tracking-widest font-bold mb-1.5" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
+                    <div className={`${compact ? 'p-3' : 'p-6'} relative overflow-hidden`} style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
+                        <p className="text-[10px] uppercase tracking-widest font-bold mb-1" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
                         <p
-                            className="text-[32px] font-bold tracking-tight relative z-10"
+                            className={`${compact ? 'text-[18px]' : 'text-[32px]'} font-bold tracking-tight relative z-10`}
                             style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#0B1928' }}
                         >
-                            <span className="text-sm font-normal mr-1.5" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>
+                            <span className="text-[11px] font-normal mr-1" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>
                             {formatPrice(development.priceRange.min)}
                         </p>
                     </div>
 
                     {/* Quick Info */}
-                    <div className="p-5 space-y-3.5" style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
-                        <InfoRow icon={Building2} text={development.developer} />
-                        <InfoRow icon={MapPin} text={`${development.location.neighborhood}, ${development.location.city}`} />
-                        {development.deliveryDate && <InfoRow icon={Calendar} text={development.deliveryDate} />}
-                    </div>
+                    {!compact && (
+                        <div className="p-5 space-y-3.5" style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
+                            <InfoRow icon={Building2} text={development.developer} />
+                            <InfoRow icon={MapPin} text={`${development.location.neighborhood}, ${development.location.city}`} />
+                            {development.deliveryDate && <InfoRow icon={Calendar} text={development.deliveryDate} />}
+                        </div>
+                    )}
+                    {compact && (
+                        <div className="px-3 pb-1 space-y-1" style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
+                            <div className="flex items-center gap-1.5 text-[11px]">
+                                <MapPin className="w-3 h-3 flex-shrink-0" strokeWidth={1.5} style={{ color: '#0B1928', opacity: 0.4 }} />
+                                <span className="truncate" style={{ color: '#2D3748' }}>{development.location.neighborhood}</span>
+                            </div>
+                            {development.deliveryDate && (
+                                <div className="flex items-center gap-1.5 text-[11px]">
+                                    <Calendar className="w-3 h-3 flex-shrink-0" strokeWidth={1.5} style={{ color: '#0B1928', opacity: 0.4 }} />
+                                    <span style={{ color: '#2D3748' }}>{development.deliveryDate}</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* CTA Buttons */}
-                    <div className="p-5 space-y-2.5">
+                    <div className={`${compact ? 'p-3' : 'p-5'} space-y-2`}>
                         <button
                             onClick={() => handleCTAClick('info')}
-                            className="w-full relative flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98]"
+                            className={`w-full relative flex items-center justify-center gap-1.5 ${compact ? 'h-9 rounded-lg text-[10px]' : 'h-12 rounded-xl text-[11px]'} font-bold uppercase tracking-wider transition-all duration-200 overflow-hidden hover:opacity-90 active:scale-[0.98]`}
                             style={{ background: '#0B1928', color: '#fff', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
-                            <MessageCircle className="w-4 h-4" />
-                            Falar com Especialista
+                            <MessageCircle className="w-3.5 h-3.5" />
+                            {compact ? 'Especialista' : 'Falar com Especialista'}
                             <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                         </button>
 
                         <button
                             onClick={() => handleCTAClick('table')}
-                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 hover:bg-gray-50 active:scale-[0.98]"
+                            className={`w-full flex items-center justify-center gap-1.5 ${compact ? 'h-9 rounded-lg text-[10px]' : 'h-12 rounded-xl text-[11px]'} font-bold uppercase tracking-wider transition-all duration-200 hover:bg-gray-50 active:scale-[0.98]`}
                             style={{ background: '#FFFFFF', color: '#0B1928', border: '2px solid #0B1928', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
                         >
-                            <FileText className="w-4 h-4" />
-                            Solicitar Tabela
+                            <FileText className="w-3.5 h-3.5" />
+                            {compact ? 'Tabela' : 'Solicitar Tabela'}
                         </button>
 
-                        {/* Análise IMI button */}
-                        <button
-                            onClick={() => setShowIMIPreview(v => !v)}
-                            className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 active:scale-[0.98]"
-                            style={{
-                                background: showIMIPreview ? '#C8A44A' : 'rgba(200,164,74,0.08)',
-                                color: showIMIPreview ? '#FFFFFF' : '#C8A44A',
-                                border: '1.5px solid rgba(200,164,74,0.35)',
-                                fontFamily: "var(--fu, 'Outfit', sans-serif)",
-                            }}
-                        >
-                            <BarChart3 className="w-4 h-4" />
-                            Análise IMI
-                            {showIMIPreview ? <ChevronUp className="w-3.5 h-3.5 ml-auto" /> : <ChevronDown className="w-3.5 h-3.5 ml-auto" />}
-                        </button>
+                        {/* Análise IMI button — full mode only */}
+                        {!compact && (
+                            <button
+                                onClick={() => setShowIMIPreview(v => !v)}
+                                className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-200 active:scale-[0.98]"
+                                style={{
+                                    background: showIMIPreview ? '#C8A44A' : 'rgba(200,164,74,0.08)',
+                                    color: showIMIPreview ? '#FFFFFF' : '#C8A44A',
+                                    border: '1.5px solid rgba(200,164,74,0.35)',
+                                    fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                                }}
+                            >
+                                <BarChart3 className="w-4 h-4" />
+                                Análise IMI
+                                {showIMIPreview ? <ChevronUp className="w-3.5 h-3.5 ml-auto" /> : <ChevronDown className="w-3.5 h-3.5 ml-auto" />}
+                            </button>
+                        )}
 
-                        {development.images.brochure && (
+                        {!compact && development.images.brochure && (
                             <a
                                 href={development.images.brochure}
                                 target="_blank"
@@ -131,7 +150,7 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone }: 
                     </div>
 
                     {/* Urgency / scarcity indicator */}
-                    {development.status === 'launch' && (
+                    {!compact && development.status === 'launch' && (
                         <div className="mx-5 mb-3 flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: '#FFF8E1', border: '1px solid #F5E6A3' }}>
                             <span className="relative flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: GOLD }} />
@@ -144,17 +163,19 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone }: 
                     )}
 
                     {/* Trust indicators */}
-                    <div className="px-5 pb-5 flex items-center gap-3">
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#948F84' }}>
-                            <Shield size={12} style={{ color: '#0B1928', opacity: 0.4 }} />
-                            Verificado
+                    {!compact && (
+                        <div className="px-5 pb-5 flex items-center gap-3">
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#948F84' }}>
+                                <Shield size={12} style={{ color: '#0B1928', opacity: 0.4 }} />
+                                Verificado
+                            </div>
+                            <div className="w-px h-3" style={{ background: '#B8B3A8' }} />
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#948F84' }}>
+                                <Star size={12} style={{ color: '#0B1928', opacity: 0.4 }} />
+                                Premium
+                            </div>
                         </div>
-                        <div className="w-px h-3" style={{ background: '#B8B3A8' }} />
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#948F84' }}>
-                            <Star size={12} style={{ color: '#0B1928', opacity: 0.4 }} />
-                            Premium
-                        </div>
-                    </div>
+                    )}
                 </div>
 
             {/* IMI Analysis Preview Panel */}

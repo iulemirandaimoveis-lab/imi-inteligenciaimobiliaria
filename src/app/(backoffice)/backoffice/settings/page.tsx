@@ -235,9 +235,9 @@ export default function SettingsPage() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [personal, setPersonal] = useState<PersonalProfile>({
     fullName: 'Iule Miranda',
-    email: 'iulemirandaimoveis@gmail.com',
+    email: 'iule.miranda.imoveis@gmail.com',
     role: 'Corretora de Imóveis',
-    phone: '+55 81 9 9723-0455',
+    phone: '+55 81 9 8614-1487',
     creci: 'CRECI-PE 12345',
     bio: 'Especialista em imóveis de alto padrão em Recife e mercados internacionais. Mais de 10 anos de experiência.',
     avatarUrl: '',
@@ -275,8 +275,8 @@ export default function SettingsPage() {
 
   const [settings, setSettings] = useState<SettingsData>({
     companyName: 'Iule Miranda Imóveis',
-    companyEmail: 'iulemirandaimoveis@gmail.com',
-    companyPhone: '+55 81 9 9723-0455',
+    companyEmail: 'iule.miranda.imoveis@gmail.com',
+    companyPhone: '+55 81 9 8614-1487',
     companyAddress: 'Av. Boa Viagem, Recife - PE',
     logoUrl: '',
     emailNotifications: true,

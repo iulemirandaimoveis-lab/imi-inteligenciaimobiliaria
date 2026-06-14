@@ -510,7 +510,9 @@ const MapInner = memo(function MapInner({
   const showAreaLabels = scale >= 4;
   const showDimensions = scale >= 5.5;
   const showQuadraBadges = scale < 3.5;
-  const showStreetLabels = scale >= 1.5;
+  const showStreetLabels = scale >= 1.5 && scale < 6;
+  // Fade street labels out as zoom increases so they don't overlap lot numbers
+  const streetLabelOpacity = scale < 3 ? 1 : Math.max(0, 1 - (scale - 3) / 3);
 
   // Maior anel do perímetro oficial — base da rede de contenção.
   const perimeterRing = useMemo<[number, number][]>(() => {
@@ -1063,9 +1065,9 @@ const MapInner = memo(function MapInner({
           );
         })}
 
-        {/* ── Layer 5: Street labels — rendered ABOVE lot polygons so they're never hidden ── */}
+        {/* ── Layer 5: Street labels — fade out at high zoom to avoid covering lot numbers ── */}
         {showTechLayer && showStreetLabels && (
-          <g style={{ pointerEvents: 'none' }}>
+          <g style={{ pointerEvents: 'none', opacity: streetLabelOpacity }}>
             {visibleStreetLabels.map((s, i) => {
               const fs = Math.max(3.5, 16 / scale);
               const labelW = estTextWidth(s.name, fs);

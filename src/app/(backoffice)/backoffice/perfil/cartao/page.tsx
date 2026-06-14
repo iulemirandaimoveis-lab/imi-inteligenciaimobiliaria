@@ -28,7 +28,7 @@ export default function CartaoDigitalPage() {
             const profileData = {
                 name: broker?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Corretor IMI',
                 email: broker?.email || user.email || '',
-                phone: broker?.phone || '+55 81 9 9723-0455',
+                phone: broker?.phone || '+55 81 9 8614-1487',
                 creci: broker?.creci || '17933',
                 role: 'Founder & CEO',
                 avatar_url: broker?.avatar_url || null,

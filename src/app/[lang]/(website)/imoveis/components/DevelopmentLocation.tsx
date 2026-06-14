@@ -19,9 +19,9 @@ const COORD_OVERRIDES: Record<string, { lat: number; lng: number; label: string 
 
 // Direct Google Maps short URLs per development — these take priority over computed URLs.
 // NEVER change these without verifying the exact pin with the development team.
-// Alto Bellevue correct link confirmed by client: https://maps.app.goo.gl/spcmb18mdf1yUWjG6
+// Alto Bellevue correct link confirmed by client: https://maps.app.goo.gl/vQh4cnsHBcYixe5u8
 const DIRECT_MAPS_URLS: Record<string, string> = {
-    'alto-bellevue': 'https://maps.app.goo.gl/spcmb18mdf1yUWjG6',
+    'alto-bellevue': 'https://maps.app.goo.gl/vQh4cnsHBcYixe5u8',
 };
 
 // Place name search queries for the embed map when no real coordinates are available.

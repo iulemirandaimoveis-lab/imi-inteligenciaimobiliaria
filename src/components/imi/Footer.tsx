@@ -120,17 +120,17 @@ export default function Footer() {
                             fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
                         }}>CRECI 17933 | CNAI 53290</p>
 
-                        <a href="mailto:iulemirandaimoveis@gmail.com" style={{ ...S.contactRow, wordBreak: 'break-all' as const }}>
+                        <a href="mailto:iule.miranda.imoveis@gmail.com" style={{ ...S.contactRow, wordBreak: 'break-all' as const }}>
                             <div style={S.iconBox}>
                                 <svg width="16" height="16" fill="none" stroke="#C8A44A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 8l9 6 9-6M3 8v10a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9-4 9 4"/></svg>
                             </div>
-                            <span style={{ wordBreak: 'break-all' }}>iulemirandaimoveis@gmail.com</span>
+                            <span style={{ wordBreak: 'break-all' }}>iule.miranda.imoveis@gmail.com</span>
                         </a>
                         <a href="https://wa.me/5581986141487" style={S.contactRow}>
                             <div style={S.iconBox}>
                                 <svg width="16" height="16" fill="none" stroke="#C8A44A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1zm0 0a5 5 0 0 0 5 5m0 0a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1h1z"/></svg>
                             </div>
-                            +55 81 9 9723-0455
+                            +55 81 9 8614-1487
                         </a>
                         <a href="https://www.linkedin.com/in/iule-miranda" target="_blank" rel="noopener noreferrer" style={S.contactRow}>
                             <div style={S.iconBox}>

@@ -138,7 +138,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     <div className="w-[28px] h-[28px] bg-white/[0.06] rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.06]">
                                         <Mail className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
+                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iule.miranda.imoveis@gmail.com'}</span>
                                 </a>
 
                                 <a
@@ -150,7 +150,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     <div className="w-[28px] h-[28px] bg-white/[0.06] rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.06]">
                                         <MessageCircle className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium">{settings?.companyPhone || '+55 (81) 9 9723-0455'}</span>
+                                    <span className="text-white/50 group-hover:text-white transition-colors text-[11px] font-medium">{settings?.companyPhone || '+55 81 9 8614-1487'}</span>
                                 </a>
 
                                 <a

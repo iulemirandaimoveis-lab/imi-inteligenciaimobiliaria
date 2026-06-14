@@ -385,7 +385,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581986141487'}`}
                                         className="text-[12px] text-white/30 mt-1 block hover:text-white transition-colors"
                                     >
-                                        {settings?.companyPhone || '+55 81 9 9723-0455'}
+                                        {settings?.companyPhone || '+55 81 9 8614-1487'}
                                     </a>
                                 </motion.div>
 
