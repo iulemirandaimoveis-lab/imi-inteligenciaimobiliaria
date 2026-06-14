@@ -18,9 +18,10 @@ Next.js application for Plataforma de inteligência imobiliária com análise de
 
 ```bash
 # 1. Load essential docs (~800 tokens - 2 min read)
-✓ .claude/COMMON_MISTAKES.md      # ⚠️ CRITICAL - Read FIRST
-✓ .claude/QUICK_START.md          # Essential commands
-✓ .claude/ARCHITECTURE_MAP.md     # File locations
+✓ .claude/COMMON_MISTAKES.md           # ⚠️ CRITICAL - Read FIRST
+✓ .claude/QUICK_START.md               # Essential commands
+✓ .claude/ARCHITECTURE_MAP.md          # File locations
+✓ .claude/ALTO_BELLEVUE_LOCATION.md    # ⚠️ NEVER change location/tour URLs
 ```
 
 **At task completion:**

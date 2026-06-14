@@ -536,18 +536,9 @@ const MapInner = memo(function MapInner({
     });
   }, [lots, perimeterRing]);
 
-  // Viewport culling: skip lots whose centroid is outside the current viewBox (+ 15% buffer).
-  // Always include the selected lot so it stays highlighted even after panning.
-  const visibleLots = useMemo(() => {
-    const buf = 0.15;
-    const x0 = vb.x - vb.w * buf, x1 = vb.x + vb.w * (1 + buf);
-    const y0 = vb.y - vb.h * buf, y1 = vb.y + vb.h * (1 + buf);
-    return containedLots.filter(l => {
-      if (l.id === selectedId) return true;
-      const [cx, cy] = l.centroid ?? [0, 0];
-      return cx > x0 && cx < x1 && cy > y0 && cy < y1;
-    });
-  }, [containedLots, vb, selectedId]);
+  // No viewport culling — all contained lots are always rendered.
+  // SVG natively clips out-of-bounds elements; ~300 paths are trivial for the browser.
+  const visibleLots = containedLots;
 
   // Deduplicate street labels — one per name at overview zoom, viewport-filtered at detail zoom
   const visibleStreetLabels = useMemo(() => {
@@ -645,16 +636,39 @@ const MapInner = memo(function MapInner({
             <feGaussianBlur stdDeviation="4.5" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
+          {/* Soft shadow/depth filter for tree canopy clusters */}
+          <filter id="ab-canopy-depth" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
           <linearGradient id="ab-base" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0A1A2C" />
-            <stop offset="100%" stopColor="#06101D" />
+            <stop offset="0%" stopColor="#081624" />
+            <stop offset="100%" stopColor="#040E1A" />
           </linearGradient>
           {/* Topographic terrain gradient — simulates the hill elevation of Garanhuns */}
           <radialGradient id="ab-terrain" cx="42%" cy="52%" r="58%" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stopColor="#1A3248" stopOpacity="0.85" />
-            <stop offset="35%" stopColor="#102234" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#05101C" stopOpacity="0.90" />
+            <stop offset="0%" stopColor="#1D3A52" stopOpacity="0.9" />
+            <stop offset="30%" stopColor="#112438" stopOpacity="0.65" />
+            <stop offset="70%" stopColor="#081A2E" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#040F1E" stopOpacity="0.85" />
           </radialGradient>
+          {/* Secondary terrain highlight — plateau glow */}
+          <radialGradient id="ab-terrain-hi" cx="45%" cy="48%" r="30%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stopColor="#243F5A" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#243F5A" stopOpacity="0" />
+          </radialGradient>
+          {/* Forest zone fill — dark green canopy colour */}
+          <radialGradient id="ab-forest-edge" cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stopColor="#0D2E16" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#071A0C" stopOpacity="0.7" />
+          </radialGradient>
+          {/* Vegetation texture — fine foliage dot pattern */}
+          <pattern id="ab-veg-tex" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+            <circle cx="3.5" cy="3.5" r="2.2" fill="rgba(22,68,30,0.65)" />
+            <circle cx="11" cy="9" r="1.8" fill="rgba(28,80,36,0.55)" />
+            <circle cx="6" cy="13" r="2" fill="rgba(18,58,24,0.60)" />
+            <circle cx="14" cy="3" r="1.5" fill="rgba(32,85,40,0.50)" />
+          </pattern>
           {/* Fine grid — technical map paper effect */}
           <pattern id="ab-topo-grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(200,164,74,0.045)" strokeWidth="0.35"/>
@@ -668,15 +682,76 @@ const MapInner = memo(function MapInner({
         <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-base)" />
         {/* Topographic terrain: elevation gradient + contour rings + grid */}
         <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-terrain)" style={{ pointerEvents: 'none' }} />
+        <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-terrain-hi)" style={{ pointerEvents: 'none' }} />
         {scale < 6 && <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-topo-grid)" style={{ pointerEvents: 'none' }} />}
         {scale >= 6 && <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-topo-grid-fine)" style={{ pointerEvents: 'none' }} />}
-        {/* Topographic contour rings (simulated elevation isocontours for Garanhuns hills) */}
+        {/* Topographic contour rings — extended set for Garanhuns hill topography */}
         <g style={{ pointerEvents: 'none' }}>
+          <ellipse cx="505" cy="415" rx="570" ry="395" fill="none" stroke="rgba(200,164,74,0.03)" strokeWidth={Math.max(0.3, 0.9 / scale)} />
           <ellipse cx="505" cy="415" rx="490" ry="340" fill="none" stroke="rgba(200,164,74,0.055)" strokeWidth={Math.max(0.4, 1.2 / scale)} />
+          <ellipse cx="505" cy="415" rx="420" ry="290" fill="none" stroke="rgba(200,164,74,0.042)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
           <ellipse cx="505" cy="415" rx="350" ry="240" fill="none" stroke="rgba(200,164,74,0.07)" strokeWidth={Math.max(0.35, 1 / scale)} />
+          <ellipse cx="505" cy="415" rx="280" ry="192" fill="none" stroke="rgba(200,164,74,0.055)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
           <ellipse cx="505" cy="415" rx="210" ry="145" fill="none" stroke="rgba(200,164,74,0.09)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
+          <ellipse cx="505" cy="415" rx="155" ry="107" fill="none" stroke="rgba(200,164,74,0.07)" strokeWidth={Math.max(0.25, 0.65 / scale)} />
           <ellipse cx="505" cy="415" rx="105" ry="72" fill="none" stroke="rgba(200,164,74,0.11)" strokeWidth={Math.max(0.25, 0.7 / scale)} />
+          <ellipse cx="505" cy="415" rx="62" ry="43" fill="none" stroke="rgba(200,164,74,0.09)" strokeWidth={Math.max(0.2, 0.55 / scale)} />
         </g>
+
+        {/* ── Vegetation / Forest layer — arborização periférica ── */}
+        {/* Outer forest zones: large elliptical green-fill masses at the map perimeter */}
+        <g style={{ pointerEvents: 'none' }}>
+          {/* Top forest belt */}
+          <ellipse cx="580" cy="-30" rx="680" ry="140" fill="url(#ab-forest-edge)" opacity="0.82" />
+          <ellipse cx="580" cy="-30" rx="680" ry="140" fill="url(#ab-veg-tex)" opacity="0.9" />
+          {/* Bottom forest belt */}
+          <ellipse cx="620" cy={SVG_H + 30} rx="700" ry="150" fill="url(#ab-forest-edge)" opacity="0.78" />
+          <ellipse cx="620" cy={SVG_H + 30} rx="700" ry="150" fill="url(#ab-veg-tex)" opacity="0.85" />
+          {/* Left forest belt */}
+          <ellipse cx="-40" cy="410" rx="160" ry="400" fill="url(#ab-forest-edge)" opacity="0.80" />
+          <ellipse cx="-40" cy="410" rx="160" ry="400" fill="url(#ab-veg-tex)" opacity="0.88" />
+          {/* Right forest belt */}
+          <ellipse cx={SVG_W + 40} cy="410" rx="160" ry="400" fill="url(#ab-forest-edge)" opacity="0.80" />
+          <ellipse cx={SVG_W + 40} cy="410" rx="160" ry="400" fill="url(#ab-veg-tex)" opacity="0.88" />
+        </g>
+
+        {/* ── Individual tree canopy symbols — arborização detalhada ── */}
+        {/* Render only when zoomed in enough to appreciate the detail */}
+        {scale < 8 && (
+          <g style={{ pointerEvents: 'none' }}>
+            {/* Tree macro-symbol: layered circles simulating canopy depth.
+                Positions in SVG coords: NW zone, NE zone, SW zone, SE zone, top/bottom/left/right belts */}
+            {([
+              // NW corner grove
+              [48,38,13],[82,32,10],[116,52,15],[58,72,11],[96,84,12],[138,48,9],[44,108,14],[79,122,10],[112,108,12],[62,148,11],[30,165,8],[98,55,8],[140,90,10],
+              // NE corner grove
+              [1062,38,13],[1098,32,10],[1134,52,15],[1158,38,11],[1082,68,12],[1052,92,10],[1102,102,9],[1144,75,14],[1072,132,10],[1120,50,11],[1155,110,8],
+              // SW corner grove
+              [46,678,12],[82,695,15],[58,720,10],[102,712,13],[132,732,11],[48,752,14],[88,762,9],[114,748,12],[66,782,10],[35,718,8],[105,775,9],
+              // SE corner grove
+              [1058,678,12],[1092,695,15],[1122,712,13],[1152,722,10],[1062,742,14],[1098,757,9],[1132,752,12],[1158,772,11],[1040,720,8],[1118,778,9],
+              // Top belt trees
+              [268,32,11],[308,48,13],[348,28,10],[388,44,12],[428,54,11],[468,32,14],[508,48,9],[548,38,12],[588,54,11],[628,32,13],[668,48,10],[708,38,12],[748,54,11],[788,38,9],[828,52,12],[868,36,11],[908,50,10],
+              // Bottom belt trees
+              [268,784,11],[308,769,13],[348,789,10],[388,774,12],[428,789,11],[468,779,14],[508,794,9],[548,784,12],[588,774,11],[628,794,13],[668,780,10],[708,790,12],[748,775,11],[788,788,9],[828,774,12],
+              // Left belt trees
+              [38,232,12],[56,264,10],[42,296,13],[62,326,11],[36,358,12],[52,388,10],[42,418,14],[62,448,11],[36,478,12],[56,510,10],[42,542,13],[62,572,11],[36,602,12],[52,632,10],
+              // Right belt trees
+              [1158,232,12],[1140,264,10],[1162,296,13],[1146,326,11],[1158,358,12],[1140,388,10],[1162,418,14],[1146,448,11],[1158,478,12],[1140,510,10],[1162,542,13],[1146,572,11],[1158,602,12],
+            ] as [number,number,number][]).map(([cx, cy, r], i) => (
+              <g key={`tree-${i}`}>
+                {/* Shadow/depth base */}
+                <circle cx={cx + 1.5} cy={cy + 2} r={r * 1.1} fill="rgba(0,0,0,0.4)" />
+                {/* Dark canopy base */}
+                <circle cx={cx} cy={cy} r={r} fill={i % 3 === 0 ? '#0C2E14' : i % 3 === 1 ? '#0A2812' : '#0E3218'} />
+                {/* Mid-tone canopy */}
+                <circle cx={cx - r * 0.15} cy={cy - r * 0.2} r={r * 0.72} fill={i % 3 === 0 ? '#163D1E' : i % 3 === 1 ? '#124B20' : '#1A4422'} />
+                {/* Highlight — sunlit top of canopy */}
+                <circle cx={cx - r * 0.25} cy={cy - r * 0.35} r={r * 0.38} fill="rgba(40,100,50,0.60)" />
+              </g>
+            ))}
+          </g>
+        )}
 
         {/* ── Camada técnica: perímetro, ruas, BR, portaria ── */}
         {showTechLayer && context && (
@@ -1986,33 +2061,71 @@ function ComparisonModal({
           </table>
         </div>
 
-        {/* CTA for first available lot */}
-        <div style={{ padding: '12px 20px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {lots.filter(l => l.status === 'DISPONIVEL').slice(0, 1).map(l => {
-            const msg = encodeURIComponent(
-              `Olá! Após comparar os lotes no ${developmentName}, tenho interesse no Lote ${l.lot_number} da Quadra ${l.quadra}${l.area_m2 ? `, ${Math.round(l.area_m2 as number)} m²` : ''}${l.price ? `, valor ${fmtBRL(l.price as number)}` : ''}. Gostaria de mais informações.`
-            );
-            return (
+        {/* CTA — proposta conjunta + individual por lote disponível */}
+        {(() => {
+          const available = lots.filter(l => l.status === 'DISPONIVEL');
+          if (available.length === 0) return (
+            <div style={{ padding: '12px 20px 4px' }}>
+              <p style={{ fontSize: 10, color: '#B8B3A8', textAlign: 'center', margin: 0 }}>
+                Nenhum lote disponível selecionado. Consulte o especialista.
+              </p>
+            </div>
+          );
+          const multiMsg = encodeURIComponent(
+            `Olá! Gostaria de montar uma proposta para os seguintes lotes do ${developmentName}:\n\n` +
+            available.map(l =>
+              `• Quadra ${l.quadra}, Lote ${l.lot_number}` +
+              (l.area_m2 ? ` — ${Math.round(l.area_m2 as number)} m²` : '') +
+              (l.price ? ` — ${fmtBRL(l.price as number)}` : '')
+            ).join('\n') +
+            `\n\nPoderia me passar mais detalhes e condições de pagamento?`
+          );
+          return (
+            <div style={{ padding: '12px 20px 4px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {/* Primary: propose all selected available lots together */}
               <a
-                key={l.id}
-                href={`https://wa.me/${whatsappPhone}?text=${msg}`}
+                href={`https://wa.me/${whatsappPhone}?text=${multiMsg}`}
                 target="_blank" rel="noopener noreferrer"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  height: 48, borderRadius: 16, textDecoration: 'none',
-                  background: 'linear-gradient(135deg, #0B1B2D, #10233B)', color: '#fff',
-                  fontSize: 13, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+                  height: 52, borderRadius: 16, textDecoration: 'none',
+                  background: 'linear-gradient(135deg, #C8A44A, #DEB85C)', color: '#0B1B2D',
+                  fontSize: 13.5, fontWeight: 800, fontFamily: "'Outfit', sans-serif",
+                  boxShadow: '0 4px 16px rgba(200,164,74,0.35)',
                 }}
               >
-                <MessageCircle size={15} />
-                Tenho interesse no Lote {l.quadra}-{l.lot_number}
+                <MessageCircle size={16} />
+                Enviar proposta com {available.length} lote{available.length > 1 ? 's' : ''} ao corretor
               </a>
-            );
-          })}
-          <p style={{ fontSize: 9.5, color: '#B8B3A8', textAlign: 'center', margin: 0, fontWeight: 500 }}>
-            Valores aproximados · sujeitos à tabela vigente · consulte nosso especialista
-          </p>
-        </div>
+              {/* Secondary: per-lot individual links when more than one available */}
+              {available.length > 1 && available.map(l => {
+                const msg = encodeURIComponent(
+                  `Olá! Após comparar os lotes no ${developmentName}, tenho interesse no Lote ${l.lot_number} da Quadra ${l.quadra}${l.area_m2 ? `, ${Math.round(l.area_m2 as number)} m²` : ''}${l.price ? `, valor ${fmtBRL(l.price as number)}` : ''}. Gostaria de mais informações.`
+                );
+                return (
+                  <a
+                    key={l.id}
+                    href={`https://wa.me/${whatsappPhone}?text=${msg}`}
+                    target="_blank" rel="noopener noreferrer"
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                      height: 40, borderRadius: 12, textDecoration: 'none',
+                      background: 'rgba(11,27,45,0.07)', color: '#0B1B2D',
+                      fontSize: 11.5, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+                      border: '1.5px solid rgba(11,27,45,0.12)',
+                    }}
+                  >
+                    <MessageCircle size={13} />
+                    Só o Lote {l.quadra}-{l.lot_number}
+                  </a>
+                );
+              })}
+              <p style={{ fontSize: 9.5, color: '#B8B3A8', textAlign: 'center', margin: 0, fontWeight: 500 }}>
+                Valores aproximados · sujeitos à tabela vigente · consulte nosso especialista
+              </p>
+            </div>
+          );
+        })()}
       </motion.div>
     </>,
     modalTarget,

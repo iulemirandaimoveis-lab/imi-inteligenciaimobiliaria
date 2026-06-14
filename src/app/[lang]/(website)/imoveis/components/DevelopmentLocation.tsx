@@ -15,12 +15,19 @@ interface DevelopmentLocationProps {
 
 // Hardcoded GPS overrides for developments where the database coordinates or address
 // don't resolve correctly in Google Maps geocoding. Key = development slug.
-const COORD_OVERRIDES: Record<string, { lat: number; lng: number; label: string }> = {
-    'alto-bellevue': {
-        lat: -8.8894,
-        lng: -36.4923,
-        label: 'Condomínio Alto Bellevue — Portaria Principal',
-    },
+const COORD_OVERRIDES: Record<string, { lat: number; lng: number; label: string }> = {};
+
+// Direct Google Maps short URLs per development — these take priority over computed URLs.
+// NEVER change these without verifying the exact pin with the development team.
+// Alto Bellevue correct link confirmed by client: https://maps.app.goo.gl/spcmb18mdf1yUWjG6
+const DIRECT_MAPS_URLS: Record<string, string> = {
+    'alto-bellevue': 'https://maps.app.goo.gl/spcmb18mdf1yUWjG6',
+};
+
+// Place name search queries for the embed map when no real coordinates are available.
+// These produce the correct map pin when used with maps.google.com?q=
+const EMBED_PLACE_QUERIES: Record<string, string> = {
+    'alto-bellevue': 'Condomínio Alto Bellevue, Garanhuns, PE, Brasil',
 };
 
 export default function DevelopmentLocation({ development }: DevelopmentLocationProps) {
@@ -46,16 +53,24 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
     const hasRealCoords = lat && lng && !isDefaultCoords;
     const hasAddress = !coordOverride && fullAddress && fullAddress.length > 3;
 
-    const mapSrc = hasRealCoords
-        ? `https://maps.google.com/maps?q=${lat},${lng}&z=17&output=embed`
-        : hasAddress
-            ? `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=15&output=embed`
-            : `https://maps.google.com/maps?q=${encodeURIComponent('Recife, PE, Brasil')}&output=embed`;
-    const mapsUrl = hasRealCoords
-        ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
-        : hasAddress
-            ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
-            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Recife, PE, Brasil')}`;
+    // Use direct URL override when available (highest priority — verified by client)
+    const directMapsUrl = DIRECT_MAPS_URLS[development.slug];
+    const embedPlaceQuery = EMBED_PLACE_QUERIES[development.slug];
+
+    const mapSrc = embedPlaceQuery
+        ? `https://maps.google.com/maps?q=${encodeURIComponent(embedPlaceQuery)}&z=16&output=embed`
+        : hasRealCoords
+            ? `https://maps.google.com/maps?q=${lat},${lng}&z=17&output=embed`
+            : hasAddress
+                ? `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=15&output=embed`
+                : `https://maps.google.com/maps?q=${encodeURIComponent('Recife, PE, Brasil')}&output=embed`;
+    const mapsUrl = directMapsUrl
+        ? directMapsUrl
+        : hasRealCoords
+            ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
+            : hasAddress
+                ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
+                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Recife, PE, Brasil')}`;
 
     return (
         <motion.div

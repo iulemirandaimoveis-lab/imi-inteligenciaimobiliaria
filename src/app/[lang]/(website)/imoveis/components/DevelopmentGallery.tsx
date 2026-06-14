@@ -83,7 +83,9 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
             return '';
         }
     })();
-    const shouldOpenTourExternally = /(^|\.)tour\.panoee\.net$/i.test(tourHost);
+    // 360°/VR platforms work best in their own full-browser tab (gyroscope, WebXR).
+    // Add any domain here that should show the "Abrir Tour Virtual" card instead of an iframe.
+    const shouldOpenTourExternally = /(^|\.)tour\.panoee\.net$|(^|\.)kuula\.co$/i.test(tourHost);
 
     return (
         <>
@@ -395,6 +397,7 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                     src={development.images.virtualTour}
                                     className="w-full h-full border-0"
                                     allowFullScreen
+                                    allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen; autoplay"
                                 />
                                 <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.10)' }}>
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
