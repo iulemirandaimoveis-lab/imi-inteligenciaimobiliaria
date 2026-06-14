@@ -51,7 +51,7 @@ export default function RealtorCard({ broker, propertyName, compact }: { broker:
 
     return (
         <div
-            className="rounded-2xl overflow-hidden"
+            className="rounded-2xl overflow-hidden flex flex-col h-full"
             style={{
                 background: '#FFFFFF',
                 border: '1px solid rgba(184,179,168,0.3)',
@@ -60,7 +60,7 @@ export default function RealtorCard({ broker, propertyName, compact }: { broker:
         >
             {/* Header bar */}
             <div
-                className="px-5 py-3"
+                className="px-5 py-3 flex-shrink-0"
                 style={{ background: '#F8F6F2', borderBottom: '1px solid rgba(184,179,168,0.2)' }}
             >
                 <p
@@ -71,7 +71,7 @@ export default function RealtorCard({ broker, propertyName, compact }: { broker:
                 </p>
             </div>
 
-            <div className={compact ? 'p-3' : 'p-5'}>
+            <div className={`${compact ? 'p-3' : 'p-5'} flex flex-col flex-1`}>
                 {/* Avatar + Identity */}
                 <div className={`flex flex-col items-center text-center gap-2 ${compact ? 'mb-3' : 'mb-5'}`}>
                     {/* Avatar with gold ring */}
@@ -201,7 +201,7 @@ export default function RealtorCard({ broker, propertyName, compact }: { broker:
                 )}
 
                 {/* Action buttons */}
-                <div className={compact ? 'space-y-2' : 'space-y-2.5'}>
+                <div className={compact ? 'space-y-2 mt-auto pt-2' : 'space-y-2.5'}>
                     {whatsappUrl && (
                         <a
                             href={whatsappUrl}
