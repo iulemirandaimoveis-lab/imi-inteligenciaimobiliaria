@@ -288,7 +288,7 @@ export default function BrokerCRMPage() {
                       {broker    && <span style={{ color: GOLD }}>· {broker}</span>}
                     </div>
                   </div>
-                  <ChevronRight size={16} style={{ color: T3, shrink: 0 }} />
+                  <ChevronRight size={16} style={{ color: T3, flexShrink: 0 }} />
                 </a>
               );
             })}

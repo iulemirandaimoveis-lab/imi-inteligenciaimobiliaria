@@ -58,7 +58,7 @@ export default function LotMapPageClient({
           </div>
 
           {/* CRM access links (visible to everyone — auth is enforced in each page) */}
-          <div style={{ display: 'flex', gap: 6, shrink: 0 }}>
+          <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
             <Link
               href={`/${lang}/empreendimentos/${slug}/crm`}
               style={{
