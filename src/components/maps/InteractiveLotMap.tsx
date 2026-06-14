@@ -13,14 +13,16 @@ function parseVb(s: string): ViewBox {
 
 interface ViewBox { x: number; y: number; w: number; h: number }
 
-// IMI Brand System — lot fill colors (semantic, not gold)
+// IMI Brand System — lot fill colors (CRM semantic palette)
 const LOT_COLORS: Record<string, { fill: string; stroke: string }> = {
-  disponivel:  { fill: 'rgba(74,222,128,0.72)',  stroke: '#4ADE80' },
-  reservado:   { fill: 'rgba(96,165,250,0.72)',  stroke: '#60A5FA' },
-  vendido:     { fill: 'rgba(248,113,113,0.55)', stroke: '#F87171' },
-  negociacao:  { fill: 'rgba(251,191,36,0.72)',  stroke: '#FBBF24' },
-  _hover:      { fill: 'rgba(200,164,74,0.45)',  stroke: '#C8A44A' },
-  _selected:   { fill: 'rgba(200,164,74,0.65)',  stroke: '#D4B86A' },
+  disponivel:    { fill: 'rgba(74,222,128,0.72)',  stroke: '#4ADE80' },
+  reservado:     { fill: 'rgba(251,146,60,0.72)',  stroke: '#FB923C' },
+  vendido:       { fill: 'rgba(248,113,113,0.55)', stroke: '#F87171' },
+  negociacao:    { fill: 'rgba(251,191,36,0.72)',  stroke: '#FBBF24' },
+  documentacao:  { fill: 'rgba(96,165,250,0.72)',  stroke: '#60A5FA' },
+  bloqueado:     { fill: 'rgba(148,163,184,0.55)', stroke: '#94A3B8' },
+  _hover:        { fill: 'rgba(200,164,74,0.45)',  stroke: '#C8A44A' },
+  _selected:     { fill: 'rgba(200,164,74,0.65)',  stroke: '#D4B86A' },
 };
 
 const GOLD = '#C8A44A';
@@ -120,6 +122,8 @@ export default function InteractiveLotMap({
     actionError,
     reserveLot,
     releaseLot,
+    negotiateLot,
+    changeStatus,
   } = useLotMap(developmentId, lotMapJsonUrl);
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -358,10 +362,11 @@ export default function InteractiveLotMap({
   }, [quadras, allLots]);
 
   const STATUS_FILTERS: { key: StatusFilter; label: string; color: string }[] = [
-    { key: 'todos',      label: 'TODOS',       color: GOLD },
-    { key: 'disponiveis', label: 'DISPONÍVEIS', color: '#4ADE80' },
-    { key: 'reservados',  label: 'RESERVADOS',  color: '#60A5FA' },
-    { key: 'vendidos',    label: 'VENDIDOS',    color: '#F87171' },
+    { key: 'todos',       label: 'TODOS',        color: GOLD      },
+    { key: 'disponiveis', label: 'DISPONÍVEIS',  color: '#4ADE80' },
+    { key: 'negociacao',  label: 'NEGOCIAÇÃO',   color: '#FBBF24' },
+    { key: 'reservados',  label: 'RESERVADOS',   color: '#FB923C' },
+    { key: 'vendidos',    label: 'VENDIDOS',     color: '#F87171' },
   ];
 
   return (
@@ -733,6 +738,8 @@ export default function InteractiveLotMap({
                 actionError={actionError}
                 onReserve={opts => selectedLot && reserveLot(selectedLot, opts)}
                 onRelease={() => selectedLot && releaseLot(selectedLot)}
+                onNegotiate={opts => selectedLot && negotiateLot(selectedLot, opts)}
+                onChangeStatus={(s, opts) => selectedLot && changeStatus(selectedLot, s, opts)}
               />
             </div>
           </div>
@@ -751,6 +758,8 @@ export default function InteractiveLotMap({
           actionError={actionError}
           onReserve={opts => selectedLot && reserveLot(selectedLot, opts)}
           onRelease={() => selectedLot && releaseLot(selectedLot)}
+          onNegotiate={opts => selectedLot && negotiateLot(selectedLot, opts)}
+          onChangeStatus={(s, opts) => selectedLot && changeStatus(selectedLot, s, opts)}
         />
       )}
     </div>
