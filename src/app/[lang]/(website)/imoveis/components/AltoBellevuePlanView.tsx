@@ -28,6 +28,8 @@ interface PlanLot {
   status: string; has_polygon: boolean;
   /** Registro comercial sem polígono oficial no CAD (ex.: B-24) — não renderizar. */
   pending?: boolean;
+  special_type?: string | null;
+  notes?: string | null;
 }
 
 interface PriceEntry {
@@ -440,6 +442,8 @@ function mergeLots(dbLots: Lot[], planLots: PlanLot[]): PlanLot[] {
       price: db?.price ?? pl.price,
       area_m2: (db?.area_m2 ?? pl.area_m2) || 0,
       status: pl.status || db?.status || 'DISPONIVEL',
+      special_type: db?.special_type ?? pl.special_type ?? null,
+      notes: db?.notes ?? pl.notes ?? null,
     };
   });
 }
@@ -452,6 +456,8 @@ interface MapInnerProps {
   context: ABMapData | null;
   showTechLayer: boolean;
   selectedId: string | null;
+  compareIds: Set<string>;
+  multiSelectMode: boolean;
   vb: ViewBox;
   isDragging: boolean;
   activeQuadra: string;
@@ -465,7 +471,7 @@ interface MapInnerProps {
 }
 
 const MapInner = memo(function MapInner({
-  lots, allLots, context, showTechLayer, selectedId, vb, isDragging,
+  lots, allLots, context, showTechLayer, selectedId, compareIds, multiSelectMode, vb, isDragging,
   activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
@@ -821,6 +827,7 @@ const MapInner = memo(function MapInner({
         {visibleLots.map(lot => {
           const cfg = getCfg(lot.status);
           const isSelected = lot.id === selectedId;
+          const isCompared = compareIds.has(lot.id);
           const pts = lot.polygon.map(([x, y]) => `${x},${y}`).join(' ');
           const cx = lot.centroid?.[0] ?? 0;
           const cy = lot.centroid?.[1] ?? 0;
@@ -829,9 +836,7 @@ const MapInner = memo(function MapInner({
           return (
             <g
               key={lot.id}
-              // outline:none remove o "quadrado" azul do foco do browser — o destaque
-              // é só o polígono exato do lote (forma real), nunca um retângulo.
-              style={{ cursor: 'pointer', outline: 'none' }}
+              style={{ cursor: multiSelectMode ? 'crosshair' : 'pointer', outline: 'none' }}
               onClick={(e) => { e.stopPropagation(); onLotClick(lot); }}
               role="button"
               aria-label={`Lote ${lot.lot_number} Quadra ${lot.quadra} — ${cfg.label}${lot.area_m2 ? `, ${Math.round(lot.area_m2 as number)}m²` : ''}${lot.price ? `, ${fmtBRL(lot.price as number)}` : ''}`}
@@ -843,7 +848,7 @@ const MapInner = memo(function MapInner({
                 }
               }}
             >
-              {isSelected && (
+              {isSelected && !isCompared && (
                 <polygon
                   points={pts}
                   fill="transparent"
@@ -853,11 +858,22 @@ const MapInner = memo(function MapInner({
                   style={{ pointerEvents: 'none' }}
                 />
               )}
+              {isCompared && (
+                <polygon
+                  points={pts}
+                  fill="transparent"
+                  stroke="#2563EB"
+                  strokeWidth="6"
+                  filter="url(#ab-sel-glow)"
+                  style={{ pointerEvents: 'none' }}
+                  opacity={0.6}
+                />
+              )}
               <polygon
                 points={pts}
-                fill={isSelected ? 'rgba(200,163,95,0.55)' : cfg.fill}
-                stroke={isSelected ? '#D7B97A' : cfg.stroke}
-                strokeWidth={isSelected ? 1.8 : 0.7}
+                fill={isCompared ? 'rgba(37,99,235,0.38)' : isSelected ? 'rgba(200,163,95,0.55)' : cfg.fill}
+                stroke={isCompared ? '#2563EB' : isSelected ? '#D7B97A' : cfg.stroke}
+                strokeWidth={isCompared || isSelected ? 1.8 : 0.7}
               />
 
               {/* Rótulos internos — centrados verticalmente no lote (PDF-style).
@@ -879,8 +895,8 @@ const MapInner = memo(function MapInner({
                 const lineH = 5.6; // espaçamento entre linhas em coord SVG
                 const groupTop = cy - ((lineCount - 1) * lineH) / 2;
 
-                const numColor = isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.92)';
-                const areaColor = isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.60)';
+                const numColor = isCompared ? '#93C5FD' : isSelected ? '#D7B97A' : lot.status === 'VENDIDO' ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.92)';
+                const areaColor = isCompared ? 'rgba(147,197,253,0.80)' : isSelected ? 'rgba(215,185,122,0.88)' : 'rgba(255,255,255,0.60)';
                 const dimColor = isSelected ? 'rgba(215,185,122,0.65)' : 'rgba(255,255,255,0.38)';
                 const outlineStroke = 'rgba(6,16,29,0.85)';
                 const outlineW = Math.max(0.4, 1.5 / scale);
@@ -917,9 +933,25 @@ const MapInner = memo(function MapInner({
                         {fmtM(dims.testada)} × {fmtM(dims.profundidade)}
                       </text>
                     )}
+                    {/* Checkmark for lots in comparison */}
+                    {isCompared && cx > 0 && cy > 0 && (
+                      <g style={{ pointerEvents: 'none' }}>
+                        <circle cx={cx} cy={cy - (lineCount > 1 ? lineH * 1.6 : lineH)} r={Math.max(2.5, 7 / scale)} fill="#2563EB" opacity={0.9} />
+                        <text x={cx} y={cy - (lineCount > 1 ? lineH * 1.6 : lineH)} textAnchor="middle" dominantBaseline="central"
+                          fill="#fff" fontSize={Math.max(2, 5 / scale)} fontWeight="700">✓</text>
+                      </g>
+                    )}
                   </g>
                 );
               })()}
+              {/* Checkmark overlay when lot labels aren't visible */}
+              {isCompared && !(showLotNumbers || isSelected) && cx > 0 && cy > 0 && (
+                <g style={{ pointerEvents: 'none' }}>
+                  <circle cx={cx} cy={cy} r={Math.max(2.5, 7 / scale)} fill="#2563EB" opacity={0.9} />
+                  <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central"
+                    fill="#fff" fontSize={Math.max(2, 5 / scale)} fontWeight="700">✓</text>
+                </g>
+              )}
             </g>
           );
         })}
@@ -1136,7 +1168,7 @@ function LotBottomSheet({
 
   const acessoRua = useMemo(() => nearestStreet(lot.centroid, streetLabels ?? []), [lot.centroid, streetLabels]);
 
-  const isCorner = dbLot?.special_type === 'ESQUINA';
+  const isCorner = lot.special_type === 'ESQUINA' || dbLot?.special_type === 'ESQUINA';
   const pricePerM2 = lot.price && lot.area_m2 ? (lot.price as number) / (lot.area_m2 as number) : null;
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -1392,10 +1424,10 @@ function LotBottomSheet({
           </div>
         )}
 
-        {dbLot?.notes && (
+        {(lot.notes || dbLot?.notes) && (
           <div className="px-5 pb-3">
             <p style={{ fontSize: 11, color: '#636363', background: '#F8F6F2', borderRadius: 10, padding: '9px 13px', margin: 0, lineHeight: 1.5 }}>
-              {dbLot.notes}
+              {lot.notes ?? dbLot?.notes}
             </p>
           </div>
         )}
@@ -2021,6 +2053,7 @@ export default function AltoBellevuePlanView({
   const [searchMiss, setSearchMiss] = useState(false);
   const [compareLots, setCompareLots] = useState<PlanLot[]>([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   // Dica "toque em um lote": some sozinha após 6s ou na primeira seleção.
@@ -2287,6 +2320,16 @@ export default function AltoBellevuePlanView({
     });
   }, []);
 
+  const compareIds = useMemo(() => new Set(compareLots.map(l => l.id)), [compareLots]);
+
+  const handleLotClick = useCallback((lot: PlanLot) => {
+    if (multiSelectMode) {
+      toggleCompare(lot);
+    } else {
+      setSelectedLot(lot);
+    }
+  }, [multiSelectMode, toggleCompare]);
+
   // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
     setSelectedLot(null);
@@ -2492,6 +2535,28 @@ export default function AltoBellevuePlanView({
           >
             Ir
           </button>
+          {/* Multi-select toggle */}
+          <button
+            onClick={() => {
+              setMultiSelectMode(v => !v);
+              if (multiSelectMode) setSelectedLot(null);
+            }}
+            aria-label={multiSelectMode ? 'Sair da seleção múltipla' : 'Selecionar múltiplos lotes'}
+            className="flex items-center gap-1 flex-shrink-0 active:scale-95 transition-all"
+            style={{
+              height: 34, paddingLeft: 10, paddingRight: 10, borderRadius: 10,
+              background: multiSelectMode ? 'rgba(37,99,235,0.12)' : 'transparent',
+              color: multiSelectMode ? '#2563EB' : '#948F84',
+              border: multiSelectMode ? '1.5px solid #2563EB' : '1.5px solid rgba(148,143,132,0.4)',
+              fontSize: 10, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Scale size={13} />
+            {multiSelectMode
+              ? compareLots.length > 0 ? `${compareLots.length}/${MAX_COMPARE}` : 'Selec.'
+              : 'Comparar'}
+          </button>
         </div>
         {searchMiss && (
           <p style={{ fontSize: 10, color: '#FF5C5C', margin: '-4px 0 8px', fontWeight: 600 }}>
@@ -2629,10 +2694,12 @@ export default function AltoBellevuePlanView({
             context={mapData}
             showTechLayer={showTechLayer}
             selectedId={selectedLot?.id ?? null}
+            compareIds={compareIds}
+            multiSelectMode={multiSelectMode}
             vb={vb}
             isDragging={isDragging}
             activeQuadra={activeQuadra}
-            onLotClick={setSelectedLot}
+            onLotClick={handleLotClick}
             onAmenityClick={handleAmenityClick}
             onQuadraClick={handleQuadraBadgeClick}
             onPointerDown={handlePointerDown}
@@ -2726,10 +2793,42 @@ export default function AltoBellevuePlanView({
           </div>
         )}
 
+        {/* Multi-select mode indicator banner */}
+        <AnimatePresence>
+          {multiSelectMode && !loading && !error && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
+              style={{ maxWidth: 'calc(100% - 80px)' }}
+            >
+              <span
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap"
+                style={{
+                  background: 'rgba(37,99,235,0.90)',
+                  color: '#fff',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 12px rgba(37,99,235,0.35)',
+                  fontFamily: "'Outfit', sans-serif",
+                  letterSpacing: '0.04em',
+                }}
+              >
+                <Scale size={11} />
+                {compareLots.length === 0
+                  ? 'Toque nos lotes para selecionar (máx. 3)'
+                  : `${compareLots.length} de ${MAX_COMPARE} lotes selecionados`}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Tap hint — some após 6s ou na primeira interação (não cobre o mapa nem
             colide com o indicador de zoom no mobile) */}
         <AnimatePresence>
-          {showTapHint && !selectedLot && !loading && !error && (
+          {showTapHint && !selectedLot && !multiSelectMode && !loading && !error && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
