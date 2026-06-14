@@ -643,10 +643,34 @@ const MapInner = memo(function MapInner({
             <stop offset="0%" stopColor="#0A1A2C" />
             <stop offset="100%" stopColor="#06101D" />
           </linearGradient>
+          {/* Topographic terrain gradient — simulates the hill elevation of Garanhuns */}
+          <radialGradient id="ab-terrain" cx="42%" cy="52%" r="58%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stopColor="#1A3248" stopOpacity="0.85" />
+            <stop offset="35%" stopColor="#102234" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#05101C" stopOpacity="0.90" />
+          </radialGradient>
+          {/* Fine grid — technical map paper effect */}
+          <pattern id="ab-topo-grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(200,164,74,0.045)" strokeWidth="0.35"/>
+          </pattern>
+          <pattern id="ab-topo-grid-fine" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
+            <path d="M 5 0 L 0 0 0 5" fill="none" stroke="rgba(200,164,74,0.018)" strokeWidth="0.2"/>
+          </pattern>
         </defs>
 
         {/* Technical base — fundo escuro técnico (sem foto, alinhado ao viewBox canônico) */}
         <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-base)" />
+        {/* Topographic terrain: elevation gradient + contour rings + grid */}
+        <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-terrain)" style={{ pointerEvents: 'none' }} />
+        {scale < 6 && <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-topo-grid)" style={{ pointerEvents: 'none' }} />}
+        {scale >= 6 && <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#ab-topo-grid-fine)" style={{ pointerEvents: 'none' }} />}
+        {/* Topographic contour rings (simulated elevation isocontours for Garanhuns hills) */}
+        <g style={{ pointerEvents: 'none' }}>
+          <ellipse cx="505" cy="415" rx="490" ry="340" fill="none" stroke="rgba(200,164,74,0.055)" strokeWidth={Math.max(0.4, 1.2 / scale)} />
+          <ellipse cx="505" cy="415" rx="350" ry="240" fill="none" stroke="rgba(200,164,74,0.07)" strokeWidth={Math.max(0.35, 1 / scale)} />
+          <ellipse cx="505" cy="415" rx="210" ry="145" fill="none" stroke="rgba(200,164,74,0.09)" strokeWidth={Math.max(0.3, 0.8 / scale)} />
+          <ellipse cx="505" cy="415" rx="105" ry="72" fill="none" stroke="rgba(200,164,74,0.11)" strokeWidth={Math.max(0.25, 0.7 / scale)} />
+        </g>
 
         {/* ── Camada técnica: perímetro, ruas, BR, portaria ── */}
         {showTechLayer && context && (
@@ -904,34 +928,33 @@ const MapInner = memo(function MapInner({
         {showTechLayer && showStreetLabels && (
           <g style={{ pointerEvents: 'none' }}>
             {visibleStreetLabels.map((s, i) => {
-              const fs = Math.max(3.2, 17 / scale);
-              const sw = Math.max(0.5, 3.4 / scale);
+              const fs = Math.max(3.5, 16 / scale);
+              const labelW = estTextWidth(s.name, fs);
+              const padX = Math.max(1.5, 4 / scale);
+              const padY = Math.max(0.8, 2.5 / scale);
+              const rx = Math.max(0.8, 2.5 / scale);
               return (
-                // Rotaciona o nome ao longo do eixo da via (como no PDF)
+                // Rotaciona o nome ao longo do eixo da via (como no PDF/GIS)
                 <g key={`sl-${i}`} transform={`rotate(${s.rot ?? 0} ${s.x} ${s.y})`}>
-                  {/* Outline pass for readability over any lot color */}
+                  {/* Semi-transparent pill background for readability at all zoom levels */}
+                  <rect
+                    x={s.x - labelW / 2 - padX}
+                    y={s.y - fs * 0.78 - padY}
+                    width={labelW + 2 * padX}
+                    height={fs * 1.0 + 2 * padY}
+                    rx={rx}
+                    fill="rgba(5,13,25,0.72)"
+                    style={{ pointerEvents: 'none' }}
+                  />
+                  {/* Street name text */}
                   <text
                     x={s.x} y={s.y}
                     textAnchor="middle"
                     fontSize={fs}
-                    fill="none"
-                    stroke="rgba(6,16,29,0.85)"
-                    strokeWidth={sw}
+                    fill="rgba(232,213,163,0.92)"
                     fontWeight="700"
-                    letterSpacing="0.04em"
-                    style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
-                  >
-                    {s.name}
-                  </text>
-                  {/* Fill pass */}
-                  <text
-                    x={s.x} y={s.y}
-                    textAnchor="middle"
-                    fontSize={fs}
-                    fill="rgba(255,255,255,0.82)"
-                    fontWeight="700"
-                    letterSpacing="0.04em"
-                    style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const }}
+                    letterSpacing="0.05em"
+                    style={{ fontFamily: "'Outfit', sans-serif", textTransform: 'uppercase' as const, pointerEvents: 'none' }}
                   >
                     {s.name}
                   </text>
@@ -1080,7 +1103,7 @@ function MapSkeleton() {
 
 function LotBottomSheet({
   lot, priceEntry, onClose, whatsappPhone, developmentName, dbLot, streetLabels,
-  onAddToCompare, isInCompare,
+  onAddToCompare, isInCompare, portalTarget,
 }: {
   lot: PlanLot;
   priceEntry?: PriceEntry;
@@ -1091,6 +1114,7 @@ function LotBottomSheet({
   streetLabels?: { x: number; y: number; name: string }[];
   onAddToCompare?: (lot: PlanLot) => void;
   isInCompare?: boolean;
+  portalTarget?: HTMLElement | null;
 }) {
   const isAvailable = lot.status === 'DISPONIVEL';
   const isNegotiating = lot.status === 'NEGOCIACAO';
@@ -1143,6 +1167,10 @@ function LotBottomSheet({
   // Portal para document.body — escapa o `overflow:hidden` do wrapper do mapa e
   // qualquer ancestral que crie containing-block, garantindo `position:fixed` real.
   if (typeof document === 'undefined') return null;
+
+  const target = portalTarget instanceof HTMLElement
+    ? portalTarget
+    : (document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body);
 
   return createPortal(
     <>
@@ -1428,7 +1456,7 @@ function LotBottomSheet({
         </div>
       </motion.div>
     </>,
-    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+    target,
   );
 }
 
@@ -1464,7 +1492,7 @@ function AmenityIcon({ id, color, size = 22 }: { id: string; color: string; size
 // ── Common-area Bottom Sheet ──────────────────────────────────────────────────
 
 function AmenityBottomSheet({
-  amenity, onClose, onLocate, whatsappPhone, developmentName, fallbackTour360,
+  amenity, onClose, onLocate, whatsappPhone, developmentName, fallbackTour360, portalTarget,
 }: {
   amenity: Amenity;
   onClose: () => void;
@@ -1472,6 +1500,7 @@ function AmenityBottomSheet({
   whatsappPhone: string;
   developmentName: string;
   fallbackTour360?: string;
+  portalTarget?: HTMLElement | null;
 }) {
   const rawInfo = getAmenityInfo(amenity);
   const info = fallbackTour360 && !rawInfo.tour360 ? { ...rawInfo, tour360: fallbackTour360 } : rawInfo;
@@ -1485,10 +1514,11 @@ function AmenityBottomSheet({
     `Olá! Gostaria de conhecer melhor a área "${info.title}" do ${developmentName}.`,
   );
 
-  // Portal para document.body: o wrapper do mapa usa transform (pan/zoom), o que
-  // torna `position:fixed` relativo a ele (containing block) — no desktop o sheet
-  // ficava recortado/fora da vista. O portal escapa qualquer ancestral transformado.
   if (typeof document === 'undefined') return null;
+
+  const amenityTarget = portalTarget instanceof HTMLElement
+    ? portalTarget
+    : (document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body);
 
   return createPortal(
     <>
@@ -1647,22 +1677,26 @@ function AmenityBottomSheet({
         </div>
       </motion.div>
     </>,
-    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+    amenityTarget,
   );
 }
 
 // ── Comparison Tray (floating) ─────────────────────────────────────────────────
 
 function ComparisonTray({
-  lots, priceMap, onRemove, onCompare, onClear,
+  lots, priceMap, onRemove, onCompare, onClear, portalTarget,
 }: {
   lots: PlanLot[];
   priceMap: Map<string, PriceEntry>;
   onRemove: (id: string) => void;
   onCompare: () => void;
   onClear: () => void;
+  portalTarget?: HTMLElement | null;
 }) {
   if (typeof document === 'undefined') return null;
+  const trayTarget = portalTarget instanceof HTMLElement
+    ? portalTarget
+    : (document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body);
   return createPortal(
     <motion.div
       initial={{ y: 80, opacity: 0 }}
@@ -1741,14 +1775,14 @@ function ComparisonTray({
         </div>
       </div>
     </motion.div>,
-    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+    trayTarget,
   );
 }
 
 // ── Comparison Modal ───────────────────────────────────────────────────────────
 
 function ComparisonModal({
-  lots, priceMap, streetLabels, onClose, whatsappPhone, developmentName,
+  lots, priceMap, streetLabels, onClose, whatsappPhone, developmentName, portalTarget,
 }: {
   lots: PlanLot[];
   priceMap: Map<string, PriceEntry>;
@@ -1756,6 +1790,7 @@ function ComparisonModal({
   onClose: () => void;
   whatsappPhone: string;
   developmentName: string;
+  portalTarget?: HTMLElement | null;
 }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1768,6 +1803,10 @@ function ComparisonModal({
   }, [onClose]);
 
   if (typeof document === 'undefined') return null;
+
+  const modalTarget = portalTarget instanceof HTMLElement
+    ? portalTarget
+    : (document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body);
 
   const colW = lots.length === 2 ? '50%' : '33.33%';
 
@@ -1944,7 +1983,7 @@ function ComparisonModal({
         </div>
       </motion.div>
     </>,
-    document.fullscreenElement instanceof HTMLElement ? document.fullscreenElement : document.body,
+    modalTarget,
   );
 }
 
@@ -2279,19 +2318,13 @@ export default function AltoBellevuePlanView({
     if (!isFullscreen) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsFullscreen(false); };
     window.addEventListener('keydown', onKey);
-    // iOS-safe scroll lock: position:fixed prevents rubber-band scrolling under the overlay
-    const scrollY = window.scrollY;
+    // Scroll lock: overflow:hidden only — intentionally avoiding position:fixed on body,
+    // which would create a containing block and break portaled position:fixed sheets.
+    // The CSS-fallback wrapper is already position:fixed;inset:0, so the viewport is covered.
     document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      window.scrollTo(0, scrollY);
     };
   }, [isFullscreen]);
 
@@ -2392,6 +2425,11 @@ export default function AltoBellevuePlanView({
   const selectedDbLot = selectedLot
     ? dbLots.find(l => `${l.quadra}-${String(l.lot_number).padStart(2, '0')}` === selectedLot.id)
     : undefined;
+
+  // In fullscreen mode (native or CSS-fallback), portal overlays into the wrapper div.
+  // This avoids the containing-block issue caused by overflow:hidden on the fullscreen
+  // element (native) and by the body scroll-lock in CSS-fallback mode.
+  const fsPortalTarget: HTMLElement | null = isFullscreen ? (wrapperRef.current ?? null) : null;
 
   const zoomLabel = scale < 3 ? 'Toque numa quadra para explorar os lotes'
     : scale < 4 ? 'Toque num lote para ver preço e status'
@@ -2867,6 +2905,7 @@ export default function AltoBellevuePlanView({
             onRemove={(id) => setCompareLots(prev => prev.filter(l => l.id !== id))}
             onCompare={() => setShowCompareModal(true)}
             onClear={() => setCompareLots([])}
+            portalTarget={fsPortalTarget}
           />
         )}
       </AnimatePresence>
@@ -2881,6 +2920,7 @@ export default function AltoBellevuePlanView({
             onClose={() => setShowCompareModal(false)}
             whatsappPhone={whatsappPhone}
             developmentName={developmentName}
+            portalTarget={fsPortalTarget}
           />
         )}
       </AnimatePresence>
@@ -2898,6 +2938,7 @@ export default function AltoBellevuePlanView({
             streetLabels={mapData?.streetLabels}
             onAddToCompare={toggleCompare}
             isInCompare={compareLots.some(l => l.id === selectedLot.id)}
+            portalTarget={fsPortalTarget}
           />
         )}
       </AnimatePresence>
@@ -2912,6 +2953,7 @@ export default function AltoBellevuePlanView({
             whatsappPhone={whatsappPhone}
             developmentName={developmentName}
             fallbackTour360={virtualTourUrl}
+            portalTarget={fsPortalTarget}
           />
         )}
       </AnimatePresence>
