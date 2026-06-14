@@ -108,7 +108,7 @@ const nextConfig = {
                             "font-src 'self' https://fonts.gstatic.com https://fonts.mapbox.com",
                             "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://*.mapbox.com https://www.google-analytics.com https://basemaps.cartocdn.com https://*.ingest.sentry.io https://*.sentry.io",
                             "worker-src 'self' blob:",
-                            "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
+                            "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://kuula.co",
                             "frame-ancestors 'self'",
                             "base-uri 'self'",
                             "form-action 'self'",
