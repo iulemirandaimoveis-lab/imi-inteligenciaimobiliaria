@@ -3,17 +3,19 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
-export type LotStatus = 'disponivel' | 'reservado' | 'negociacao' | 'vendido';
-export type StatusFilter = 'todos' | 'disponiveis' | 'reservados' | 'vendidos';
+export type LotStatus = 'disponivel' | 'reservado' | 'negociacao' | 'vendido' | 'documentacao' | 'bloqueado';
+export type StatusFilter = 'todos' | 'disponiveis' | 'reservados' | 'vendidos' | 'negociacao';
 
 /** subdivision_lots.status é MAIÚSCULO; o mapa/UI usam minúsculo. */
 export function normalizeLotStatus(raw: string | null | undefined): LotStatus {
   switch (String(raw ?? '').toUpperCase()) {
-    case 'DISPONIVEL': return 'disponivel';
-    case 'RESERVADO': return 'reservado';
+    case 'DISPONIVEL':   return 'disponivel';
+    case 'RESERVADO':    return 'reservado';
     case 'NEGOCIACAO':
     case 'EM_NEGOCIACAO':
     case 'NEGOCIACAO_EM_ANDAMENTO': return 'negociacao';
+    case 'DOCUMENTACAO': return 'documentacao';
+    case 'BLOQUEADO':    return 'bloqueado';
     // VENDIDO, PROPRIETARIO, ANTENA e quaisquer outros → indisponível
     default: return 'vendido';
   }
@@ -34,6 +36,7 @@ export interface LotMapEntry {
   // Enriched from Supabase
   dbId?: string;
   unitName?: string;
+  brokerName?: string;   // from lot_status_history metadata
   // Planos de pagamento oficiais (do JSON de preços) — usados pelo simulador
   valor?: number | null;        // preço de tabela
   valorVista?: number | null;   // preço à vista
@@ -123,12 +126,14 @@ interface UseLotMapResult {
   selectedQuadra: string | null;
   setSelectedQuadra: (q: string | null) => void;
   quadras: string[];
-  // Parte 2.1 — reserva de lote (somente corretor/gestor)
+  // CRM actions — corretor/gestor
   isManager: boolean;
   actionLoading: boolean;
   actionError: string | null;
-  reserveLot: (lot: LotMapEntry, opts?: { clientName?: string; clientPhone?: string; note?: string }) => Promise<boolean>;
+  reserveLot: (lot: LotMapEntry, opts?: { clientName?: string; clientPhone?: string; note?: string; brokerName?: string }) => Promise<boolean>;
   releaseLot: (lot: LotMapEntry, reason?: string) => Promise<boolean>;
+  negotiateLot: (lot: LotMapEntry, opts?: { brokerName?: string; clientName?: string; clientPhone?: string; note?: string }) => Promise<boolean>;
+  changeStatus: (lot: LotMapEntry, newStatus: string, opts?: { reason?: string; brokerName?: string }) => Promise<boolean>;
 }
 
 export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResult {
@@ -268,6 +273,63 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
     }
   }, [patchLotStatus]);
 
+  const negotiateLot = useCallback<UseLotMapResult['negotiateLot']>(async (lot, opts) => {
+    if (!lot.dbId) {
+      setActionError('Lote ainda não sincronizado com o banco.');
+      return false;
+    }
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      const res = await fetch('/api/lotmap/negotiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lotId: lot.dbId, ...opts }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setActionError(json.error ?? 'Falha ao registrar negociação.'); return false; }
+      patchLotStatus(lot.id, 'negociacao');
+      // Also update brokerName in local state
+      if (opts?.brokerName) {
+        setRawLots(prev => prev.map(l =>
+          l.id === lot.id ? { ...l, brokerName: opts.brokerName } : l
+        ));
+        setSelectedLot(prev => prev && prev.id === lot.id ? { ...prev, brokerName: opts.brokerName } : prev);
+      }
+      return true;
+    } catch {
+      setActionError('Erro de rede ao registrar negociação.');
+      return false;
+    } finally {
+      setActionLoading(false);
+    }
+  }, [patchLotStatus]);
+
+  const changeStatus = useCallback<UseLotMapResult['changeStatus']>(async (lot, newStatus, opts) => {
+    if (!lot.dbId) {
+      setActionError('Lote ainda não sincronizado com o banco.');
+      return false;
+    }
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      const res = await fetch('/api/lotmap/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lotId: lot.dbId, newStatus, ...opts }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setActionError(json.error ?? 'Falha ao alterar status.'); return false; }
+      patchLotStatus(lot.id, normalizeLotStatus(newStatus) as LotStatus);
+      return true;
+    } catch {
+      setActionError('Erro de rede ao alterar status.');
+      return false;
+    } finally {
+      setActionLoading(false);
+    }
+  }, [patchLotStatus]);
+
   const quadras = useMemo(
     () => Array.from(new Set(rawLots.map(l => l.quadra))).sort(),
     [rawLots],
@@ -276,14 +338,13 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
   // Two-dimensional filtering: quadra is strict (only exact match), status is orthogonal
   const filteredLots = useMemo(() => {
     let result = rawLots;
-    // Strict quadra enforcement — no exceptions
     if (selectedQuadra !== null) {
       result = result.filter(l => l.quadra === selectedQuadra);
     }
-    // Status dimension — independent of quadra
-    if (statusFilter === 'disponiveis') result = result.filter(l => l.status === 'disponivel');
-    else if (statusFilter === 'reservados') result = result.filter(l => l.status === 'reservado');
-    else if (statusFilter === 'vendidos') result = result.filter(l => l.status === 'vendido');
+    if (statusFilter === 'disponiveis')  result = result.filter(l => l.status === 'disponivel');
+    else if (statusFilter === 'reservados')  result = result.filter(l => l.status === 'reservado');
+    else if (statusFilter === 'vendidos')    result = result.filter(l => l.status === 'vendido');
+    else if (statusFilter === 'negociacao')  result = result.filter(l => l.status === 'negociacao');
     return result;
   }, [rawLots, statusFilter, selectedQuadra]);
 
@@ -323,5 +384,7 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
     actionError,
     reserveLot,
     releaseLot,
+    negotiateLot,
+    changeStatus,
   };
 }
