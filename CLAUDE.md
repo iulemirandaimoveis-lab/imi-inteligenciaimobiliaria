@@ -23,6 +23,7 @@ Next.js application for Plataforma de inteligência imobiliária com análise de
 ✓ .claude/QUICK_START.md               # Essential commands
 ✓ .claude/ARCHITECTURE_MAP.md          # File locations
 ✓ .claude/ALTO_BELLEVUE_LOCATION.md    # ⚠️ NEVER change location/tour URLs
+✓ .claude/UI_REGRESSION_POLICY.md     # ⚠️ OBRIGATÓRIO antes de qualquer mudança de UI/layout
 ```
 
 **At task completion:**
