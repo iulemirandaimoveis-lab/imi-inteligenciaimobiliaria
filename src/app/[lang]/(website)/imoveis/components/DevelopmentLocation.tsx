@@ -19,9 +19,9 @@ const COORD_OVERRIDES: Record<string, { lat: number; lng: number; label: string 
 
 // Direct Google Maps short URLs per development — these take priority over computed URLs.
 // NEVER change these without verifying the exact pin with the development team.
-// Alto Bellevue correct link confirmed by client: https://maps.app.goo.gl/vQh4cnsHBcYixe5u8
+// Alto Bellevue correct link confirmed by client: https://maps.app.goo.gl/mRgnY7oMYvxgiViV6
 const DIRECT_MAPS_URLS: Record<string, string> = {
-    'alto-bellevue': 'https://maps.app.goo.gl/vQh4cnsHBcYixe5u8',
+    'alto-bellevue': 'https://maps.app.goo.gl/mRgnY7oMYvxgiViV6',
 };
 
 // Place name search queries for the embed map when no real coordinates are available.
@@ -97,14 +97,14 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
             {/* Map */}
             <motion.div
                 variants={slideUp}
-                className="aspect-[16/9] rounded-[10px] overflow-hidden mb-5 shadow-lg"
-                style={{ border: '1px solid rgba(200,164,74,0.1)' }}
+                className="rounded-[10px] overflow-hidden mb-5 shadow-lg"
+                style={{ border: '1px solid rgba(200,164,74,0.1)', aspectRatio: '4/3' }}
             >
                 <iframe
                     src={mapSrc}
                     width="100%"
                     height="100%"
-                    style={{ border: 0 }}
+                    style={{ border: 0, display: 'block' }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"

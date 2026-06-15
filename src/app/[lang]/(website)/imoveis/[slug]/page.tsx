@@ -449,7 +449,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </section>
                         {/* Mobile: broker + CTA side by side at the bottom */}
                         <section id="corretor" className="lg:hidden">
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-3 items-stretch">
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 <RealtorCard broker={brokerData as any} propertyName={development.name} compact />
                                 <DevelopmentCTA development={development} imiData={imiScores} compact {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
@@ -458,7 +458,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     </div>
 
                     {/* Sidebar — desktop only */}
-                    <aside className="hidden lg:block lg:col-span-4 space-y-6">
+                    <aside className="hidden lg:block lg:col-span-4 lg:sticky lg:top-28 self-start space-y-6">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         <RealtorCard broker={brokerData as any} propertyName={development.name} />
                         <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />

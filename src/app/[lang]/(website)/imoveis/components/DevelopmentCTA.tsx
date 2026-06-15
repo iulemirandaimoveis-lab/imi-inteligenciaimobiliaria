@@ -58,17 +58,17 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone, co
 
     return (
         <>
-            <div className={compact ? 'h-full' : 'lg:sticky lg:top-28 space-y-4'}>
+            <div className={compact ? 'h-full' : 'space-y-4'}>
                 {/* Main CTA Card */}
                 <div className={`rounded-2xl overflow-hidden ${compact ? 'h-full flex flex-col' : ''}`} style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
                     {/* Price Header */}
                     <div className={`${compact ? 'p-3' : 'p-6'} relative overflow-hidden`} style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
                         <p className="text-[10px] uppercase tracking-widest font-bold mb-1" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
                         <p
-                            className={`${compact ? 'text-[18px]' : 'text-[32px]'} font-bold tracking-tight relative z-10`}
+                            className={`${compact ? 'text-[15px]' : 'text-[32px]'} font-bold tracking-tight relative z-10`}
                             style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#0B1928' }}
                         >
-                            <span className="text-[11px] font-normal mr-1" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>
+                            <span className="text-[10px] font-normal mr-0.5" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>
                             {formatPrice(development.priceRange.min)}
                         </p>
                     </div>

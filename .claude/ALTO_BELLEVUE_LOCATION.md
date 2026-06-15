@@ -4,14 +4,14 @@
 Condomínio Alto Bellevue, Bairro Aloísio Pinto, Garanhuns, PE, Brasil
 
 ## Link do Google Maps (confirmado pelo cliente — NUNCA ALTERAR)
-https://maps.app.goo.gl/vQh4cnsHBcYixe5u8
+https://maps.app.goo.gl/mRgnY7oMYvxgiViV6
 
 ## Tour Virtual 360° (Kuula)
 https://kuula.co/share/collection/7KKb9?logo=1&info=0&logosize=68&fs=1&vr=1&zoom=1&initload=0&thumbs=0&margin=20&alpha=0.86&inst=pt
 
 ## Implementação
 - `src/app/[lang]/(website)/imoveis/components/DevelopmentLocation.tsx`
-  - `DIRECT_MAPS_URLS['alto-bellevue']` → link do Maps acima (prioridade máxima)
+  - `DIRECT_MAPS_URLS['alto-bellevue']` → link do Maps acima (prioridade máxima — atualizado pelo cliente em 2026-06-15)
   - `EMBED_PLACE_QUERIES['alto-bellevue']` → query para o mapa embed
 - `src/app/[lang]/(website)/imoveis/components/DevelopmentGallery.tsx`
   - Tour kuula.co abre externamente (`shouldOpenTourExternally`)
