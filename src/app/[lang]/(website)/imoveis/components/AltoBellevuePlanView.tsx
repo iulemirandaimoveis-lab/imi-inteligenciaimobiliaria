@@ -2653,7 +2653,7 @@ export default function AltoBellevuePlanView({
             </button>
           )}
           <div
-            className="flex items-center gap-2 flex-1"
+            className="flex items-center gap-2 flex-1 min-w-0"
             style={{
               height: 34, borderRadius: 10, padding: '0 10px',
               background: '#F7F8FA',
