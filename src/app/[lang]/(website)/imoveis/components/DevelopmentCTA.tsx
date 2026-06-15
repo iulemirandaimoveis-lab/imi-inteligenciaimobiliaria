@@ -58,7 +58,7 @@ export default function DevelopmentCTA({ development, imiData, whatsappPhone, co
 
     return (
         <>
-            <div className={compact ? 'h-full' : 'space-y-4'}>
+            <div className={compact ? 'h-full' : 'lg:sticky lg:top-28 space-y-4'}>
                 {/* Main CTA Card */}
                 <div className={`rounded-2xl overflow-hidden ${compact ? 'h-full flex flex-col' : ''}`} style={{ background: '#FFFFFF', border: '1px solid rgba(184,179,168,0.3)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
                     {/* Price Header */}
