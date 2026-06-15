@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { ArrowLeft, Shield, Sparkles, CreditCard } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
-const SubdivisionLotMap = dynamic(
-  () => import('../../imoveis/components/SubdivisionLotMap'),
+const AltoBellevueGeoMap = dynamic(
+  () => import('../../imoveis/components/AltoBellevueGeoMap'),
   { ssr: false },
 )
 
@@ -51,130 +51,47 @@ export default async function AltoBellevuePage({
   const { lang } = await params
 
   return (
-    <main className="bg-[#F5F0EA]">
+    <main>
 
-      {/* ── Hero ─────────────────────────────────────────── */}
-      <section
-        className="relative overflow-hidden bg-[#0B1928] text-white"
-        style={{ minHeight: '100svh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-      >
-        {/* Dot pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)',
-            backgroundSize: '40px 40px',
-          }}
-        />
-        {/* Radial glow — navy-gold */}
-        <div
-          className="absolute inset-0 opacity-15"
-          style={{
-            background: 'radial-gradient(ellipse 80% 60% at 50% 40%, #1A3A5C 0%, transparent 70%)',
-          }}
-        />
-        {/* Gold accent line (bottom) */}
-        <div
-          className="absolute bottom-0 left-[10%] right-[10%] h-px opacity-30"
-          style={{ background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)' }}
-        />
-
-        <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 lg:px-16 py-24 lg:py-32">
-          {/* Back link */}
+      {/* ── Full-Screen Geospatial Map ──────────────────────────────────── */}
+      {/* The map IS the hero — edge-to-edge, immersive, software-grade */}
+      <div className="relative" style={{ height: '100svh' }}>
+        {/* Back navigation — floats above the map */}
+        <div className="absolute top-0 left-0 z-30 p-4 pointer-events-none">
           <Link
             href={`/${lang}/projetos`}
-            className="inline-flex items-center gap-2 text-white/40 text-xs font-medium hover:text-white/70 transition-colors mb-14 uppercase tracking-widest"
-          >
-            <ArrowLeft size={13} />
-            Projetos
-          </Link>
-
-          {/* Overline */}
-          <p className="text-[#C8A44A] text-[11px] font-bold uppercase tracking-[0.35em] mb-5">
-            Empreendimento · Loteamento Residencial Premium
-          </p>
-
-          {/* Title */}
-          <h1
-            className="font-bold leading-[1.08] mb-3"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(3rem, 8vw, 6.5rem)' }}
-          >
-            Alto
-          </h1>
-          <h1
-            className="font-bold leading-[1.08] mb-8"
+            className="inline-flex items-center gap-2 pointer-events-auto"
             style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
-              fontSize: 'clamp(3rem, 8vw, 6.5rem)',
-              fontStyle: 'italic',
-              color: '#D4C4A0',
+              background: 'rgba(8,20,36,0.88)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(200,164,74,0.25)',
+              borderRadius: 10,
+              padding: '7px 12px',
+              color: 'rgba(255,255,255,0.70)',
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
             }}
           >
-            Bellevue
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-white/50 text-lg sm:text-xl font-light max-w-xl leading-relaxed mb-4">
-            Loteamento residencial premium em Garanhuns, PE.
-          </p>
-          <p className="text-white/35 text-base font-light max-w-md leading-relaxed mb-16">
-            Lotes de 289 a 693 m² com infraestrutura completa, segurança 24h e qualidade de vida.
-          </p>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-0 max-w-md">
-            {[
-              { n: '383', label: 'Lotes' },
-              { n: '289–693', label: 'm² por Lote' },
-              { n: '16', label: 'Quadras' },
-            ].map((stat, i) => (
-              <div
-                key={stat.label}
-                className={`py-5 ${i < 2 ? 'pr-6 border-r border-white/10' : 'pl-6'} ${i > 0 ? 'pl-6' : ''}`}
-              >
-                <p
-                  className="text-3xl font-bold text-white mb-1"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  {stat.n}
-                </p>
-                <p className="text-white/40 text-xs uppercase tracking-widest">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30">
-            <span className="text-[10px] uppercase tracking-[0.3em]">Explorar</span>
-            <div className="w-px h-10 bg-white animate-pulse" style={{ animationDuration: '2s' }} />
-          </div>
+            <ArrowLeft size={12} />
+            Projetos
+          </Link>
         </div>
-      </section>
 
-      {/* ── Interactive Lot Map ──────────────────────────── */}
-      <section className="bg-[#F5F0EA] py-10 lg:py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-          <p className="text-[#C8A44A] text-xs font-bold uppercase tracking-[0.3em] mb-3">
-            Mapa do Loteamento
-          </p>
-          <h2
-            className="text-2xl lg:text-3xl font-bold text-[#0B1928] leading-tight"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-          >
-            Escolha o seu lote
-          </h2>
-        </div>
-        {/* map flush with screen edges on mobile, max-width on desktop */}
-        <div className="max-w-6xl mx-auto">
-          <SubdivisionLotMap
-            developmentId={DEVELOPMENT_ID}
-            developmentName="Alto Bellevue"
-            whatsappPhone={WHATSAPP}
-          />
-        </div>
-      </section>
+        <AltoBellevueGeoMap
+          developmentId={DEVELOPMENT_ID}
+          developmentName="Alto Bellevue"
+          whatsappPhone={WHATSAPP}
+        />
+      </div>
 
-      {/* ── Info cards ───────────────────────────────────── */}
+      {/* ── Info cards ─────────────────────────────────────────────────── */}
       <section className="bg-white py-20 lg:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-14 max-w-lg">
@@ -236,7 +153,7 @@ export default async function AltoBellevuePage({
         </div>
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────── */}
+      {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section className="bg-[#0B1928] text-white py-20 lg:py-24 relative overflow-hidden">
         <div
           className="absolute top-0 left-0 right-0 h-px opacity-20"
