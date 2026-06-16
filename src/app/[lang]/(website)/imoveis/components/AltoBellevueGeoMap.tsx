@@ -203,20 +203,20 @@ function addABLayers(map: MapLibreMap, data: ABMapData, dbLots: DBLot[], darkMod
     id: LAYER.brBg,
     type: 'line',
     source: SOURCE.brLine,
+    layout: { 'line-cap': 'round' },
     paint: {
       'line-color': 'rgba(220,160,40,0.80)',
       'line-width': ['interpolate', ['linear'], ['zoom'], 14, 3, 19, 6],
-      'line-cap': 'round',
     },
   });
   map.addLayer({
     id: LAYER.brFg,
     type: 'line',
     source: SOURCE.brLine,
+    layout: { 'line-cap': 'round' },
     paint: {
       'line-color': 'rgba(255,240,180,0.95)',
       'line-width': ['interpolate', ['linear'], ['zoom'], 14, 1.5, 19, 3.5],
-      'line-cap': 'round',
     },
   });
 
@@ -225,22 +225,20 @@ function addABLayers(map: MapLibreMap, data: ABMapData, dbLots: DBLot[], darkMod
     id: LAYER.streetsBg,
     type: 'line',
     source: SOURCE.streets,
+    layout: { 'line-cap': 'round', 'line-join': 'round' },
     paint: {
       'line-color': darkMode ? 'rgba(150,130,90,0.55)' : 'rgba(190,165,115,0.70)',
       'line-width': ['interpolate', ['linear'], ['zoom'], 14, 3, 18, 8, 20, 14],
-      'line-cap': 'round',
-      'line-join': 'round',
     },
   });
   map.addLayer({
     id: LAYER.streetsFg,
     type: 'line',
     source: SOURCE.streets,
+    layout: { 'line-cap': 'round', 'line-join': 'round' },
     paint: {
       'line-color': darkMode ? 'rgba(220,215,200,0.90)' : 'rgba(255,255,255,0.96)',
       'line-width': ['interpolate', ['linear'], ['zoom'], 14, 1.8, 18, 5.5, 20, 10],
-      'line-cap': 'round',
-      'line-join': 'round',
     },
   });
 
@@ -906,11 +904,13 @@ export default function AltoBellevueGeoMap({
       .eq('development_id', developmentId)
       .order('quadra')
       .order('lot_number')
-      .then(({ data }) => {
-        if (data) setDbLots(data.map(l => ({ ...l, area_m2: Number(l.area_m2) || 0 })) as DBLot[]);
-        setLotsLoading(false);
-      })
-      .catch(() => setLotsLoading(false));
+      .then(
+        ({ data }) => {
+          if (data) setDbLots(data.map(l => ({ ...l, area_m2: Number(l.area_m2) || 0 })) as DBLot[]);
+          setLotsLoading(false);
+        },
+        () => setLotsLoading(false),
+      );
   }, [developmentId]);
 
   // Map data from JSON
