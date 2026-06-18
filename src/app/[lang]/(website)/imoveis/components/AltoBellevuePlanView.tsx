@@ -2266,6 +2266,9 @@ export default function AltoBellevuePlanView({
   const pointerCache = useRef(new Map<number, { x: number; y: number }>());
   const clickTargetRef = useRef<Element | null>(null);
   const allLotsRef = useRef<PlanLot[]>([]);
+  const handleLotClickRef = useRef<((lot: PlanLot) => void) | null>(null);
+  const handleAmenityClickRef = useRef<((a: Amenity) => void) | null>(null);
+  const handleQuadraBadgeClickRef = useRef<((q: string) => void) | null>(null);
 
   const scale = SVG_W / vb.w;
 
@@ -2448,20 +2451,20 @@ export default function AltoBellevuePlanView({
         const lotId = el.getAttribute?.('data-lot-id');
         if (lotId) {
           const lot = allLotsRef.current.find(l => l.id === lotId);
-          if (lot) handleLotClick(lot);
+          if (lot) handleLotClickRef.current?.(lot);
           dispatched = true;
           break;
         }
         const amenityId = el.getAttribute?.('data-amenity-id');
         if (amenityId) {
           const amenity = mapData?.amenities.find(a => a.id === amenityId);
-          if (amenity) handleAmenityClick(amenity);
+          if (amenity) handleAmenityClickRef.current?.(amenity);
           dispatched = true;
           break;
         }
         const quadraBadge = el.getAttribute?.('data-quadra-badge');
         if (quadraBadge) {
-          handleQuadraBadgeClick(quadraBadge);
+          handleQuadraBadgeClickRef.current?.(quadraBadge);
           dispatched = true;
           break;
         }
@@ -2470,7 +2473,7 @@ export default function AltoBellevuePlanView({
       if (!dispatched) { setSelectedLot(null); setSelectedAmenity(null); }
     }
     clickTargetRef.current = null;
-  }, [mapData, handleLotClick, handleAmenityClick, handleQuadraBadgeClick]);
+  }, [mapData]);
 
   // Wheel zoom centered on cursor — deltaY > 0 = zoom out (widen viewBox), < 0 = zoom in
   useEffect(() => {
@@ -2512,6 +2515,7 @@ export default function AltoBellevuePlanView({
       setSelectedLot(lot);
     }
   }, [multiSelectMode, toggleCompare]);
+  handleLotClickRef.current = handleLotClick;
 
   // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
@@ -2519,6 +2523,7 @@ export default function AltoBellevuePlanView({
     const ov = overrideMap.get(a.id) ?? overrideMap.get(a.id.replace(/-\d+$/, ''));
     setSelectedAmenity(ov ? { ...a, ...ov, id: a.id, x: a.x, y: a.y } : a);
   }, [overrideMap]);
+  handleAmenityClickRef.current = handleAmenityClick;
 
   // "Ver no mapa" → centraliza e aproxima na área comum
   const locateAmenity = useCallback((a: { x: number; y: number }) => {
@@ -2620,6 +2625,7 @@ export default function AltoBellevuePlanView({
     setSelectedLot(null);
     focusQuadra(quadra);
   }, [focusQuadra]);
+  handleQuadraBadgeClickRef.current = handleQuadraBadgeClick;
 
   // Busca "A-12", "A12", "a 12" ou só "12" (dentro da quadra ativa).
   const runSearch = useCallback(() => {
