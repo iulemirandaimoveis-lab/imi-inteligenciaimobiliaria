@@ -31,7 +31,6 @@ const NAV_COLS = [
         links: [
             { label: 'Sobre', href: 'sobre' },
             { label: 'Contato', href: 'contato' },
-            { label: 'Construtoras', href: 'construtoras' },
             { label: 'Biblioteca', href: 'biblioteca' },
         ],
     },

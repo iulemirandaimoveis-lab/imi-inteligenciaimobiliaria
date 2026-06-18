@@ -24,7 +24,6 @@ const NAV_MAIN = [
 
 // Itens secundários — dentro do dropdown "Mais ▾"
 const NAV_MORE = [
-    { key: 'construtoras', label: 'Construtoras' },
     { key: 'biblioteca', label: 'Biblioteca' },
     { key: 'sobre', label: 'Sobre' },
     { key: 'contato', label: 'Contato' },
