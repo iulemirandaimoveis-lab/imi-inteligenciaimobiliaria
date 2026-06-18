@@ -1069,11 +1069,15 @@ const MapInner = memo(function MapInner({
         {showTechLayer && showStreetLabels && (
           <g style={{ pointerEvents: 'none', opacity: streetLabelOpacity }}>
             {visibleStreetLabels.map((s, i) => {
-              const fs = Math.max(3.5, 16 / scale);
+              // Scale font so the pill height (fs + 2*padY) fits within the road's
+              // visual stroke width (streetStroke * 7). roadHalfW is half road width;
+              // subtract 0.3 for padY on each side, leaving fs = (roadHalfW - 0.3) * 2.
+              const roadHalfW = Math.max(0.15, streetStroke * 3.5);
+              const fs = Math.min(Math.max(3, (roadHalfW - 0.3) * 2), 10);
               const labelW = estTextWidth(s.name, fs);
-              const padX = Math.max(1.5, 4 / scale);
-              const padY = Math.max(0.8, 2.5 / scale);
-              const rx = Math.max(0.8, 2.5 / scale);
+              const padX = Math.max(0.8, 2 / scale);
+              const padY = 0.3;
+              const rx = Math.max(0.4, 1.5 / scale);
               return (
                 // Rotaciona o nome ao longo do eixo da via (como no PDF/GIS)
                 <g key={`sl-${i}`} transform={`rotate(${s.rot ?? 0} ${s.x} ${s.y})`}>
@@ -2362,7 +2366,10 @@ export default function AltoBellevuePlanView({
   // Pointer handlers — single-finger drag pans the viewBox; two-finger pinch zooms it.
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
-    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    // Pointer capture is set in handlePointerMove only after the drag threshold is
+    // crossed — NOT here. Setting it immediately on every pointerdown redirects
+    // pointerup to the container div, which prevents click events from reaching
+    // the lot <g> elements on desktop (Chrome/Firefox), breaking lot selection.
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointerCache.current.size === 1) {
       // Double-tap zoom: zoom in 2.5× at tap point
@@ -2425,7 +2432,11 @@ export default function AltoBellevuePlanView({
     // re-rendered yet). pointerCache already guarantees we have an active pointer.
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
-    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag.current = true;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+      didDrag.current = true;
+      // Defer setPointerCapture until drag is confirmed so lot onClick events work.
+      (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    }
     lastPos.current = { x: e.clientX, y: e.clientY };
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     setVb(prev => ({
