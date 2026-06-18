@@ -52,7 +52,7 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     ]
     for (const f of numericFields) {
         if (result[f] !== undefined && result[f] !== null && result[f] !== '') {
-            result[f] = Number(result[f]) || null
+            result[f] = Math.round(Number(result[f])) || null
         } else if (result[f] === '') {
             result[f] = null
         }
@@ -348,12 +348,21 @@ export const PUT = apiHandler(developmentPutSchema, async (request: NextRequest,
     for (const key of Object.keys(normalized)) {
         if (normalized[key] === undefined) delete normalized[key]
     }
-    // Auto-geocode on update if address/neighborhood changed but lat/lng not provided
+    // Auto-geocode on update only when the record has no coordinates in the database.
+    // Skipping the geocode API call for records that already have lat/lng prevents
+    // every save (e.g. gallery update) from blocking on an external network request.
     if (!normalized.lat && (normalized.address || normalized.neighborhood || normalized.city)) {
-        const geo = await geocodeAddress(normalized.address, normalized.neighborhood, normalized.city, normalized.state, normalized.country)
-        if (geo) {
-            normalized.lat = geo.lat
-            normalized.lng = geo.lng
+        const { data: existingRecord } = await supabase
+            .from('developments')
+            .select('lat, lng')
+            .eq('id', id)
+            .maybeSingle()
+        if (!existingRecord?.lat) {
+            const geo = await geocodeAddress(normalized.address, normalized.neighborhood, normalized.city, normalized.state, normalized.country)
+            if (geo) {
+                normalized.lat = geo.lat
+                normalized.lng = geo.lng
+            }
         }
     }
     const { data, error } = await supabase
