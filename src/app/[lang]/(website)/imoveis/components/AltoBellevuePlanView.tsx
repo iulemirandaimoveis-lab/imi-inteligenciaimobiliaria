@@ -2419,8 +2419,10 @@ export default function AltoBellevuePlanView({
       return;
     }
 
-    // Single-finger drag: pan the viewBox (drag right → vb.x decreases)
-    if (!isDragging) return;
+    // Single-finger drag: pan the viewBox (drag right → vb.x decreases).
+    // Note: do NOT check `isDragging` state here — it's captured in the closure
+    // and would be stale on the first pointermove after pointerdown (React hasn't
+    // re-rendered yet). pointerCache already guarantees we have an active pointer.
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag.current = true;
@@ -2431,7 +2433,7 @@ export default function AltoBellevuePlanView({
       x: prev.x - dx / rect.width * prev.w,
       y: prev.y - dy / rect.height * prev.h,
     }));
-  }, [isDragging]);
+  }, []);
 
   const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(e.pointerId);
