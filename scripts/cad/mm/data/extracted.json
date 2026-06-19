@@ -1,7 +1,7 @@
 {
   "source": "22702f9d-R07__Planta_de_piso__PLANTA_LOTEADA.dxf",
   "units": "mm",
-  "generatedAt": "2026-06-19T17:24:09.693Z",
+  "generatedAt": "2026-06-19T18:08:17.712Z",
   "bbox": {
     "x0": -411782.7206277471,
     "y0": 426561.1850090589,
@@ -9,6 +9,7 @@
     "y1": 1276227.681508814
   },
   "pitch": 8000,
+  "rotationDeg": -40.827,
   "counts": {
     "quadraLabels": 24,
     "streets": 23,

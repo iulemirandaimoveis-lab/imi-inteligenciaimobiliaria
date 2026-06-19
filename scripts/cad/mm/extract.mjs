@@ -32,22 +32,32 @@ function parseEntities(file) {
   const pairs = [];
   for (let i = 0; i + 1 < lines.length; i += 2) pairs.push([lines[i].trim(), lines[i + 1]]);
   const ents = [];
+  let sx4 = 0, sy4 = 0; // direção dominante das bordas de lote (mod 90°, fase 4θ)
   for (let s = 0; s < pairs.length; s++) {
     if (pairs[s][0] !== '0') continue;
     const type = pairs[s][1].trim();
-    if (type !== 'MTEXT' && type !== 'TEXT') continue;
-    const e = { type, g: {}, text: '' };
+    if (type !== 'MTEXT' && type !== 'TEXT' && type !== 'LINE') continue;
+    const g = {}; let text = '';
     let j = s + 1;
     for (; j < pairs.length && pairs[j][0] !== '0'; j++) {
       const [c, v] = pairs[j];
-      if (!(c in e.g)) e.g[c] = v;
-      if (c === '8') e.layer = v.trim();
-      if (c === '1' || c === '3') e.text += v;
+      if (!(c in g)) g[c] = v;
+      if (c === '1' || c === '3') text += v;
     }
-    ents.push(e);
     s = j - 1;
+    if (type === 'LINE') {
+      // ângulo das bordas de lote (A-DETL-THIN) → de-rotação do plano
+      if ((g['8'] || '').trim() === 'A-DETL-THIN') {
+        const x1 = +g['10'], y1 = +g['20'], x2 = +g['11'], y2 = +g['21'];
+        const len = Math.hypot(x2 - x1, y2 - y1);
+        if (len > 2000 && len < 40000) { const a = Math.atan2(y2 - y1, x2 - x1); sx4 += Math.cos(4 * a) * len; sy4 += Math.sin(4 * a) * len; }
+      }
+      continue;
+    }
+    ents.push({ type, g, layer: (g['8'] || '').trim(), text });
   }
-  return ents;
+  const rotationDeg = +((Math.atan2(sy4, sx4) / 4) * 180 / Math.PI).toFixed(3);
+  return { ents, rotationDeg };
 }
 
 const num = (x) => { const n = parseFloat(x); return Number.isFinite(n) ? n : null; };
@@ -95,7 +105,7 @@ function main() {
     console.error(`DXF não encontrado: ${DXF}\nUse: node scripts/cad/mm/extract.mjs "<caminho.dxf>" (ou MM_DXF=...)`);
     process.exit(1);
   }
-  const ents = parseEntities(DXF);
+  const { ents, rotationDeg } = parseEntities(DXF);
   const txt = ents
     .map((e) => ({ t: cleanText(e.text), x: num(e.g['10']), y: num(e.g['20']), layer: e.layer }))
     .filter((o) => o.x != null && o.t);
@@ -196,6 +206,7 @@ function main() {
     generatedAt: new Date().toISOString(),
     bbox,
     pitch: Math.round(pitch),
+    rotationDeg, // ângulo das bordas de lote (A-DETL-THIN) p/ de-rotação do mapa
     counts: {
       quadraLabels: quadraLabels.length,
       streets: streetsUniq.length,

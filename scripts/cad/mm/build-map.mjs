@@ -50,6 +50,21 @@ function main() {
   const data = JSON.parse(fs.readFileSync(SRC, 'utf8'));
   const lots = data.lots.filter((l) => l.quadra && l.quadra !== '?' && Number.isFinite(l.cadX));
 
+  // ── De-rotação ──────────────────────────────────────────────────────────────
+  // O loteamento é desenhado girado (~41°) no CAD → sem corrigir, o mapa sai torto
+  // (ruas na diagonal). Usa o ângulo REAL das bordas de lote (A-DETL-THIN), medido
+  // pelo extractor (rotationDeg), e gira tudo para deixar as ruas na horizontal/
+  // vertical. Posições continuam reais — só o referencial é alinhado.
+  const theta = ((data.rotationDeg || 0) * Math.PI) / 180;
+  const cosR = Math.cos(-theta), sinR = Math.sin(-theta);
+  const cmx = lots.reduce((s, l) => s + l.cadX, 0) / lots.length;
+  const cmy = lots.reduce((s, l) => s + l.cadY, 0) / lots.length;
+  for (const l of lots) {
+    const dx = l.cadX - cmx, dy = l.cadY - cmy;
+    l.cadX = cmx + dx * cosR - dy * sinR;
+    l.cadY = cmy + dx * sinR + dy * cosR;
+  }
+
   // bbox CAD + transformação afim (flip Y: CAD sobe, SVG desce)
   const xs = lots.map((l) => l.cadX), ys = lots.map((l) => l.cadY);
   const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
@@ -102,8 +117,9 @@ function main() {
   }
   outLots.sort((a, b) => (a.quadra === b.quadra ? +a.lote - +b.lote : a.quadra.localeCompare(b.quadra)));
 
-  // rótulos de rua (transformados)
-  const streetLabels = (data.streets || []).map((s) => { const [x, y] = T(s.x, s.y); return { x, y, name: s.name }; });
+  // rótulos de rua — mesma de-rotação dos lotes, depois transforma
+  const R = (x, y) => [cmx + (x - cmx) * cosR - (y - cmy) * sinR, cmy + (x - cmx) * sinR + (y - cmy) * cosR];
+  const streetLabels = (data.streets || []).map((s) => { const [rx, ry] = R(s.x, s.y); const [x, y] = T(rx, ry); return { x, y, name: s.name }; });
 
   const out = {
     viewBox: `0 0 ${VBW} ${VBH}`,
@@ -116,11 +132,12 @@ function main() {
     perimeter: [],
     streetLabels,
     entrance: null,
-    note: 'Geometria reconstruída do CAD oficial (posições/áreas reais; células Voronoi). Fonte: ' + data.source,
+    note: `Geometria reconstruída do CAD oficial (posições/áreas reais; de-rotação ${(theta * 180 / Math.PI).toFixed(1)}°; células Voronoi). Fonte: ${data.source}`,
   };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, JSON.stringify(out));
 
+  console.log('De-rotação aplicada:', (theta * 180 / Math.PI).toFixed(2), '°');
   console.log('viewBox:', out.viewBox, '| lotes:', outLots.length, '| ruas:', streetLabels.length);
   console.log(`Área das células dentro de ±30% do m² declarado: ${areaOk}/${areaTot} (${(areaOk / areaTot * 100).toFixed(1)}%)`);
   console.log('Saída:', path.relative(process.cwd(), OUT), '(' + (fs.statSync(OUT).size / 1024).toFixed(0) + ' KB)');
