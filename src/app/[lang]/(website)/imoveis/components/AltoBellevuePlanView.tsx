@@ -467,12 +467,11 @@ interface MapInnerProps {
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
-  onBgClick: () => void;
 }
 
 const MapInner = memo(function MapInner({
   lots, allLots, context, showTechLayer, selectedId, compareIds, multiSelectMode, vb, isDragging,
-  activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onPointerDown, onPointerMove, onPointerUp, onBgClick,
+  activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onPointerDown, onPointerMove, onPointerUp,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
   const scale = SVG_W / vb.w;
@@ -548,17 +547,14 @@ const MapInner = memo(function MapInner({
     if (!labels?.length) return [];
 
     if (scale < 3) {
-      // One label per street name at overview zoom — average position across all instances
-      const byName = new Map<string, { x: number; y: number; name: string; rot?: number; n: number }>();
+      // One label per street name — pick the middle occurrence (actually on the road, not an averaged off-road position)
+      const byName = new Map<string, { entries: typeof labels[number][] }>();
       for (const sl of labels) {
         const ex = byName.get(sl.name);
-        if (!ex) {
-          byName.set(sl.name, { ...sl, n: 1 });
-        } else {
-          byName.set(sl.name, { ...ex, x: (ex.x * ex.n + sl.x) / (ex.n + 1), y: (ex.y * ex.n + sl.y) / (ex.n + 1), n: ex.n + 1 });
-        }
+        if (!ex) byName.set(sl.name, { entries: [sl] });
+        else ex.entries.push(sl);
       }
-      return [...byName.values()];
+      return [...byName.values()].map(({ entries }) => entries[Math.floor(entries.length / 2)]);
     }
 
     // At detail zoom: viewport-filtered, deduplicate same-name labels within 80 SVG units
@@ -628,7 +624,6 @@ const MapInner = memo(function MapInner({
         viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
         className="w-full h-full select-none"
         style={{ touchAction: 'none' }}
-        onClick={onBgClick}
         aria-label="Mapa interativo de lotes Alto Bellevue"
         aria-roledescription="Mapa interativo — arraste para mover, role para dar zoom, toque num lote para ver detalhes"
         role="application"
@@ -835,11 +830,11 @@ const MapInner = memo(function MapInner({
               return (
                 <g
                   key={`am-${a.id}`}
+                  data-amenity-id={a.id}
                   style={{ pointerEvents: 'auto', cursor: 'pointer', outline: 'none' }}
                   role="button"
                   tabIndex={0}
                   aria-label={`Área comum: ${a.label}`}
-                  onClick={(e) => { e.stopPropagation(); onAmenityClick(a); }}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onAmenityClick(a); } }}
                 >
                   {/* Glow ring for portaria */}
@@ -945,8 +940,8 @@ const MapInner = memo(function MapInner({
           return (
             <g
               key={lot.id}
+              data-lot-id={lot.id}
               style={{ cursor: multiSelectMode ? 'crosshair' : 'pointer', outline: 'none' }}
-              onClick={(e) => { e.stopPropagation(); onLotClick(lot); }}
               role="button"
               aria-label={`Lote ${lot.lot_number} Quadra ${lot.quadra} — ${cfg.label}${lot.area_m2 ? `, ${Math.round(lot.area_m2 as number)}m²` : ''}${lot.price ? `, ${fmtBRL(lot.price as number)}` : ''}`}
               tabIndex={0}
@@ -1121,11 +1116,11 @@ const MapInner = memo(function MapInner({
           return (
             <g
               key={`qbadge-${quadra}`}
+              data-quadra-badge={quadra}
               role="button"
               tabIndex={0}
               aria-label={`Quadra ${quadra} — ${avail} de ${total} lotes disponíveis. Aproximar quadra.`}
               style={{ pointerEvents: 'auto', cursor: 'pointer', outline: 'none' }}
-              onClick={(e) => { e.stopPropagation(); onQuadraClick(quadra); }}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onQuadraClick(quadra); } }}
             >
               <circle cx={cx} cy={cy} r={hitR} fill="transparent" />
@@ -1336,10 +1331,9 @@ function LotBottomSheet({
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 320 }}
-        className="fixed bottom-0 left-0 right-0 z-[9999] overflow-y-auto"
+        className="fixed bottom-0 left-0 right-0 z-[9999] overflow-y-auto rounded-t-[24px] sm:bottom-4 sm:left-auto sm:right-4 sm:w-[400px] sm:max-w-[calc(100vw-2rem)] sm:rounded-[22px]"
         style={{
           maxHeight: '92vh',
-          borderRadius: '24px 24px 0 0',
           background: '#fff',
           boxShadow: '0 -24px 80px rgba(0,0,0,0.35)',
           paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))',
@@ -1349,8 +1343,8 @@ function LotBottomSheet({
         aria-modal="true"
         aria-label={`Detalhes do lote ${lot.lot_number}, quadra ${lot.quadra}`}
       >
-        {/* Pull handle */}
-        <div className="flex justify-center pt-3 pb-1.5">
+        {/* Pull handle — mobile only */}
+        <div className="flex justify-center pt-3 pb-1.5 sm:hidden">
           <div style={{ width: 36, height: 4, borderRadius: 2, background: '#E5DDD0' }} />
         </div>
 
@@ -2270,6 +2264,11 @@ export default function AltoBellevuePlanView({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
   const pointerCache = useRef(new Map<number, { x: number; y: number }>());
+  const clickTargetRef = useRef<Element | null>(null);
+  const allLotsRef = useRef<PlanLot[]>([]);
+  const handleLotClickRef = useRef<((lot: PlanLot) => void) | null>(null);
+  const handleAmenityClickRef = useRef<((a: Amenity) => void) | null>(null);
+  const handleQuadraBadgeClickRef = useRef<((q: string) => void) | null>(null);
 
   const scale = SVG_W / vb.w;
 
@@ -2325,6 +2324,7 @@ export default function AltoBellevuePlanView({
       return status === l.status ? l : { ...l, status };
     });
   }, [dbLots, planLots, availability]);
+  allLotsRef.current = allLots;
 
   const stats = useMemo(() => {
     const byStatus: Record<string, number> = {};
@@ -2366,10 +2366,8 @@ export default function AltoBellevuePlanView({
   // Pointer handlers — single-finger drag pans the viewBox; two-finger pinch zooms it.
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
-    // Pointer capture is set in handlePointerMove only after the drag threshold is
-    // crossed — NOT here. Setting it immediately on every pointerdown redirects
-    // pointerup to the container div, which prevents click events from reaching
-    // the lot <g> elements on desktop (Chrome/Firefox), breaking lot selection.
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    clickTargetRef.current = e.nativeEvent.target as Element;
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointerCache.current.size === 1) {
       // Double-tap zoom: zoom in 2.5× at tap point
@@ -2432,11 +2430,7 @@ export default function AltoBellevuePlanView({
     // re-rendered yet). pointerCache already guarantees we have an active pointer.
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
-    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
-      didDrag.current = true;
-      // Defer setPointerCapture until drag is confirmed so lot onClick events work.
-      (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
-    }
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     setVb(prev => ({
@@ -2448,8 +2442,38 @@ export default function AltoBellevuePlanView({
 
   const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(e.pointerId);
-    if (pointerCache.current.size === 0) setIsDragging(false);
-  }, []);
+    if (pointerCache.current.size > 0) return;
+    setIsDragging(false);
+    if (!didDrag.current) {
+      let el: Element | null = clickTargetRef.current;
+      let dispatched = false;
+      while (el && !dispatched) {
+        const lotId = el.getAttribute?.('data-lot-id');
+        if (lotId) {
+          const lot = allLotsRef.current.find(l => l.id === lotId);
+          if (lot) handleLotClickRef.current?.(lot);
+          dispatched = true;
+          break;
+        }
+        const amenityId = el.getAttribute?.('data-amenity-id');
+        if (amenityId) {
+          const amenity = mapData?.amenities.find(a => a.id === amenityId);
+          if (amenity) handleAmenityClickRef.current?.(amenity);
+          dispatched = true;
+          break;
+        }
+        const quadraBadge = el.getAttribute?.('data-quadra-badge');
+        if (quadraBadge) {
+          handleQuadraBadgeClickRef.current?.(quadraBadge);
+          dispatched = true;
+          break;
+        }
+        el = el.parentElement;
+      }
+      if (!dispatched) { setSelectedLot(null); setSelectedAmenity(null); }
+    }
+    clickTargetRef.current = null;
+  }, [mapData]);
 
   // Wheel zoom centered on cursor — deltaY > 0 = zoom out (widen viewBox), < 0 = zoom in
   useEffect(() => {
@@ -2491,6 +2515,7 @@ export default function AltoBellevuePlanView({
       setSelectedLot(lot);
     }
   }, [multiSelectMode, toggleCompare]);
+  handleLotClickRef.current = handleLotClick;
 
   // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
@@ -2498,6 +2523,7 @@ export default function AltoBellevuePlanView({
     const ov = overrideMap.get(a.id) ?? overrideMap.get(a.id.replace(/-\d+$/, ''));
     setSelectedAmenity(ov ? { ...a, ...ov, id: a.id, x: a.x, y: a.y } : a);
   }, [overrideMap]);
+  handleAmenityClickRef.current = handleAmenityClick;
 
   // "Ver no mapa" → centraliza e aproxima na área comum
   const locateAmenity = useCallback((a: { x: number; y: number }) => {
@@ -2599,10 +2625,7 @@ export default function AltoBellevuePlanView({
     setSelectedLot(null);
     focusQuadra(quadra);
   }, [focusQuadra]);
-
-  const handleBgClick = useCallback(() => {
-    if (!didDrag.current) setSelectedLot(null);
-  }, []);
+  handleQuadraBadgeClickRef.current = handleQuadraBadgeClick;
 
   // Busca "A-12", "A12", "a 12" ou só "12" (dentro da quadra ativa).
   const runSearch = useCallback(() => {
@@ -2867,7 +2890,6 @@ export default function AltoBellevuePlanView({
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
-            onBgClick={handleBgClick}
           />
         )}
 
