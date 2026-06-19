@@ -122,59 +122,58 @@
 /* ── GLASS CARD UTILITY ─────────────────────────────────────── */
 /* Light mode: clean frosted white card */
 .glass-card {
-  background: rgba(255,255,255,0.82);
-  border: 2px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(11,17,32,0.10);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(11,17,32,0.06), 0 0 0 1px rgba(11,17,32,0.04);
   border-radius: 16px;
 }
 .glass-card:hover {
-  border-color: rgba(0,0,0,0.14);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-color: rgba(11,17,32,0.16);
+  box-shadow: 0 4px 16px rgba(11,17,32,0.10);
 }
-/* Dark mode: frosted dark card */
+/* Dark mode: frosted neutral-dark card (não mais heavy navy) */
 .dark .glass-card {
-  background: rgba(20,28,43,0.82);
-  border: 1px solid rgba(200,164,74,0.12);
-  box-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+  background: rgba(22,27,34,0.85);
+  border: 1px solid rgba(240,246,252,0.10);
+  box-shadow: 0 8px 32px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.04);
 }
 .dark .glass-card:hover {
-  border-color: rgba(200,164,74,0.25);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,.06);
+  border-color: rgba(200,164,74,0.22);
+  box-shadow: 0 8px 32px rgba(0,0,0,.50), inset 0 1px 0 rgba(255,255,255,.06);
 }
 
-/* ── IMI INTELLIGENCE CARD ─────────────────────────────────── */
-/* Light mode: clean white card with subtle shadow */
-/* ── Glass Card v3.2 ─────────────────────────────────────── */
+/* ── IMI INTELLIGENCE CARD — theme-aware ──────────────────── */
+/* Light: card claro com sombra sutil */
 .intel-card {
-  background: rgba(14,28,48,.52);
+  background: rgba(255,255,255,0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(200,164,74,.30);
+  border: 1px solid rgba(11,17,32,0.10);
   border-radius: 10px;
-  box-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+  box-shadow: 0 2px 12px rgba(11,17,32,0.08), inset 0 1px 0 rgba(255,255,255,0.90);
   transition: all 0.25s var(--ease);
   overflow: hidden;
   min-width: 0;
   max-width: 100%;
 }
 .intel-card:hover {
-  border-color: rgba(200,164,74,.12);
-  box-shadow: 0 8px 32px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(200,164,74,.04);
+  border-color: rgba(184,148,58,0.30);
+  box-shadow: 0 4px 20px rgba(11,17,32,0.10), inset 0 1px 0 rgba(255,255,255,0.95);
   transform: translateY(-1px);
 }
-/* Dark mode inherits same glass — unified */
+/* Dark: glass neutro (não mais heavy navy) */
 .dark .intel-card,
 [data-theme="dark"] .intel-card {
-  background: rgba(14,28,48,.52);
-  border-color: rgba(200,164,74,.30);
-  box-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+  background: rgba(22,27,34,.80);
+  border-color: rgba(240,246,252,.10);
+  box-shadow: 0 8px 32px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.04);
 }
 .dark .intel-card:hover,
 [data-theme="dark"] .intel-card:hover {
-  border-color: rgba(200,164,74,.12);
-  box-shadow: 0 8px 32px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(200,164,74,.04);
+  border-color: rgba(200,164,74,.22);
+  box-shadow: 0 8px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(200,164,74,.06);
 }
 
 /* ── PREMIUM CARD VARIANTS ─────────────────────────────────── */
@@ -443,6 +442,36 @@
 }
 .dark .backoffice-root ::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.18);
+}
+
+/* ── LIGHT THEME CARD REFINEMENTS ───────────────────────────── */
+/* Cards do backoffice ganham elevação clara e definida */
+:root .premium-card {
+  background: #FFFFFF;
+  border-color: rgba(11,17,32,0.10);
+  box-shadow: 0 1px 4px rgba(11,17,32,0.06), 0 0 0 1px rgba(11,17,32,0.06);
+}
+:root .premium-card:hover {
+  border-color: rgba(184,148,58,0.28);
+  box-shadow: 0 4px 16px rgba(11,17,32,0.10), 0 0 0 1px rgba(184,148,58,0.12);
+}
+:root .stat-surface {
+  background: #FFFFFF;
+  border-color: rgba(11,17,32,0.10);
+  box-shadow: 0 1px 3px rgba(11,17,32,0.05);
+}
+:root .stat-surface:hover {
+  border-color: rgba(184,148,58,0.28);
+  box-shadow: 0 2px 8px rgba(11,17,32,0.08);
+}
+
+/* ── DARK THEME CARD REFINEMENTS ────────────────────────────── */
+.dark .premium-card::before {
+  background: rgba(255,255,255,0.05);
+}
+.dark .premium-card:hover {
+  border-color: rgba(200,164,74,0.25);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 /* ── PREMIUM CARD — Bloomberg Terminal floating surface ──────── */
