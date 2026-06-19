@@ -2259,6 +2259,7 @@ export default function AltoBellevuePlanView({
     [vb, homeVb]);
   const animRef = useRef<number | null>(null);
   const lastPos = useRef({ x: 0, y: 0 });
+  const downPos = useRef({ x: 0, y: 0 }); // posição do pointerdown — base do "tap slop"
   const didDrag = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -2388,6 +2389,7 @@ export default function AltoBellevuePlanView({
       setIsDragging(true);
       didDrag.current = false;
       lastPos.current = { x: e.clientX, y: e.clientY };
+      downPos.current = { x: e.clientX, y: e.clientY };
     }
   }, [animateTo]);
 
@@ -2428,11 +2430,21 @@ export default function AltoBellevuePlanView({
     // Note: do NOT check `isDragging` state here — it's captured in the closure
     // and would be stale on the first pointermove after pointerdown (React hasn't
     // re-rendered yet). pointerCache already guarantees we have an active pointer.
+    //
+    // "Tap slop": medido a partir do pointerdown (não incremental). Um toque no
+    // celular sempre treme alguns px — com limiar incremental de 3px todo TAP virava
+    // "drag" e o card NUNCA abria no mobile. O dedo treme mais que o mouse, então o
+    // limiar do toque é maior. Enquanto dentro do slop, não consideramos drag nem
+    // movemos o mapa (assim o tap abre o card e não arrasta sem querer).
+    const slop = e.pointerType === 'touch' ? 12 : 4;
+    const movedFromDown = Math.hypot(e.clientX - downPos.current.x, e.clientY - downPos.current.y);
+    if (movedFromDown >= slop) didDrag.current = true;
+
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
-    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (!didDrag.current) return; // ainda é um toque (dentro do slop) — não paneia
     setVb(prev => ({
       ...prev,
       x: prev.x - dx / rect.width * prev.w,

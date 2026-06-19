@@ -308,7 +308,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     ])
 
     const isLoteamento = data.type === 'loteamento' || data.type === 'condominio_fechado'
-    const lotMapEnabled = isLoteamento && data.lot_map_enabled === true
+    // Loteamentos com mapa de lotes versionado em /public/maps (motor unificado).
+    // Mantém o flag do banco e habilita explicitamente os que já têm JSON publicado,
+    // tornando o mapa visível de forma atômica no deploy (sem depender de flag no DB).
+    const KNOWN_LOT_MAP_SLUGS = new Set(['loteamento-miguel-marques'])
+    const lotMapEnabled = isLoteamento && (data.lot_map_enabled === true || KNOWN_LOT_MAP_SLUGS.has(params.slug))
     const lotMapJsonUrl = `/maps/${params.slug}-lots.json`
     const anchorSections = isLoteamento ? ANCHOR_SECTIONS_LOTEAMENTO : ANCHOR_SECTIONS
 
