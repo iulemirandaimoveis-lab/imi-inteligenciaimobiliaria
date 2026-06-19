@@ -58,8 +58,12 @@ export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname
     const origin = request.headers.get('origin')
 
-    // 0. Short-link redirects: /l/:shortCode and /r/:code — public, no locale, no auth
-    if (pathname.startsWith('/l/') || pathname.startsWith('/r/')) {
+    // 0. Short-link redirects and public verification — no locale, no auth required
+    if (
+        pathname.startsWith('/l/') ||
+        pathname.startsWith('/r/') ||
+        pathname === '/verificar'
+    ) {
         return NextResponse.next()
     }
 
