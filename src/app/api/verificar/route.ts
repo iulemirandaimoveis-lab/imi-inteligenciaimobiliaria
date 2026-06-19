@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  const data = rawData as Record<string, unknown>
+  const data = rawData as unknown as Record<string, unknown>
 
   return NextResponse.json({
     valid: true,
