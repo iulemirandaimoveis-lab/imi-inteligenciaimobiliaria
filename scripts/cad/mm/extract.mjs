@@ -32,10 +32,36 @@ function parseEntities(file) {
   const pairs = [];
   for (let i = 0; i + 1 < lines.length; i += 2) pairs.push([lines[i].trim(), lines[i + 1]]);
   const ents = [];
+  const polylines = []; // polígonos fechados (LWPOLYLINE/POLYLINE) — contornos REAIS de lote
   let sx4 = 0, sy4 = 0; // direção dominante das bordas de lote (mod 90°, fase 4θ)
+  let poly = null;      // estado p/ POLYLINE…VERTEX…SEQEND (formato antigo)
   for (let s = 0; s < pairs.length; s++) {
     if (pairs[s][0] !== '0') continue;
     const type = pairs[s][1].trim();
+
+    // LWPOLYLINE: todos os vértices estão na MESMA entidade (códigos 10/20 repetidos).
+    if (type === 'LWPOLYLINE') {
+      const pts = []; let layer = ''; let closed = false; let cx = null; let j = s + 1;
+      for (; j < pairs.length && pairs[j][0] !== '0'; j++) {
+        const [c, v] = pairs[j];
+        if (c === '8') layer = v.trim();
+        else if (c === '70') closed = (parseInt(v, 10) & 1) === 1;
+        else if (c === '10') cx = parseFloat(v);
+        else if (c === '20' && cx != null) { pts.push([cx, parseFloat(v)]); cx = null; }
+      }
+      s = j - 1;
+      if (pts.length >= 3) polylines.push({ layer, closed, pts });
+      continue;
+    }
+    // POLYLINE…VERTEX…SEQEND (formato antigo): acumula vértices entre as entidades.
+    if (type === 'POLYLINE') { poly = { layer: '', closed: false, pts: [] }; let j = s + 1;
+      for (; j < pairs.length && pairs[j][0] !== '0'; j++) { const [c, v] = pairs[j]; if (c === '8') poly.layer = v.trim(); else if (c === '70') poly.closed = (parseInt(v, 10) & 1) === 1; }
+      s = j - 1; continue; }
+    if (type === 'VERTEX' && poly) { const g = {}; let j = s + 1;
+      for (; j < pairs.length && pairs[j][0] !== '0'; j++) { const [c, v] = pairs[j]; if (!(c in g)) g[c] = v; }
+      s = j - 1; if (g['10'] != null && g['20'] != null) poly.pts.push([parseFloat(g['10']), parseFloat(g['20'])]); continue; }
+    if (type === 'SEQEND' && poly) { if (poly.pts.length >= 3) polylines.push(poly); poly = null; continue; }
+
     if (type !== 'MTEXT' && type !== 'TEXT' && type !== 'LINE') continue;
     const g = {}; let text = '';
     let j = s + 1;
@@ -57,7 +83,7 @@ function parseEntities(file) {
     ents.push({ type, g, layer: (g['8'] || '').trim(), text });
   }
   const rotationDeg = +((Math.atan2(sy4, sx4) / 4) * 180 / Math.PI).toFixed(3);
-  return { ents, rotationDeg };
+  return { ents, rotationDeg, polylines };
 }
 
 const num = (x) => { const n = parseFloat(x); return Number.isFinite(n) ? n : null; };
@@ -105,7 +131,7 @@ function main() {
     console.error(`DXF não encontrado: ${DXF}\nUse: node scripts/cad/mm/extract.mjs "<caminho.dxf>" (ou MM_DXF=...)`);
     process.exit(1);
   }
-  const { ents, rotationDeg } = parseEntities(DXF);
+  const { ents, rotationDeg, polylines } = parseEntities(DXF);
   const txt = ents
     .map((e) => ({ t: cleanText(e.text), x: num(e.g['10']), y: num(e.g['20']), layer: e.layer }))
     .filter((o) => o.x != null && o.t);
@@ -176,6 +202,24 @@ function main() {
     }
   });
 
+  // ── Contorno REAL por lote (se o DXF tiver lotes como polígono fechado) ─────────
+  // Para cada lote, acha o menor polígono fechado que contém o rótulo e cuja área
+  // (mm²→m²) bate com o m² declarado (±15%). Sem polígono fechado no DXF → fica null
+  // e o build cai p/ Voronoi. Assim, ao subir um DXF com lotes fechados, os contornos
+  // viram EXATOS automaticamente.
+  const shoela = (pts) => { let a = 0; for (let i = 0; i < pts.length; i++) { const [x1, y1] = pts[i], [x2, y2] = pts[(i + 1) % pts.length]; a += x1 * y2 - x2 * y1; } return Math.abs(a) / 2; };
+  const pip = (x, y, pts) => { let I = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) I = !I; } return I; };
+  const closedPolys = polylines.filter((p) => p.closed && p.pts.length >= 3).map((p) => ({ pts: p.pts, a: shoela(p.pts) })).filter((p) => p.a > 1e5 && p.a < 2e9);
+  let polyMatched = 0;
+  for (const l of lots) {
+    let best = null, bestA = Infinity;
+    for (const p of closedPolys) { if (p.a < bestA && pip(l.x, l.y, p.pts)) { bestA = p.a; best = p; } }
+    if (best && l.area_m2 && Math.abs(best.a / 1e6 - l.area_m2) / l.area_m2 <= 0.15) {
+      l.polygon = best.pts.map(([x, y]) => [Math.round(x), Math.round(y)]); polyMatched++;
+    }
+  }
+  if (closedPolys.length) console.log(`Polígonos fechados no DXF: ${closedPolys.length} | lotes com contorno EXATO: ${polyMatched}/${lots.length}`);
+
   const usedLetter = new Map();
   const quadras = quadraLabels
     .map((ql) => {
@@ -217,7 +261,7 @@ function main() {
     quadras,
     streets: streetsUniq,
     lots: lots
-      .map((l) => ({ quadra: l.quadra ?? '?', n: l.n, area_m2: l.area_m2, cadX: Math.round(l.x), cadY: Math.round(l.y), stray: !!l.stray }))
+      .map((l) => ({ quadra: l.quadra ?? '?', n: l.n, area_m2: l.area_m2, cadX: Math.round(l.x), cadY: Math.round(l.y), stray: !!l.stray, ...(l.polygon ? { polygon: l.polygon } : {}) }))
       .sort((a, b) => (a.quadra === b.quadra ? a.n - b.n : a.quadra.localeCompare(b.quadra))),
   };
 

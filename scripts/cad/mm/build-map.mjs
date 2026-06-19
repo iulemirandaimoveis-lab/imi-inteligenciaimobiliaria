@@ -81,27 +81,38 @@ function main() {
   const byQ = new Map();
   for (const l of lots) { if (!byQ.has(l.quadra)) byQ.set(l.quadra, []); byQ.get(l.quadra).push(l); }
 
-  let areaOk = 0, areaTot = 0;
+  // de-rotação aplicada também aos vértices de polígono real (coords CAD cruas)
+  const Rot = (x, y) => [cmx + (x - cmx) * cosR - (y - cmy) * sinR, cmy + (x - cmx) * sinR + (y - cmy) * cosR];
+
+  let areaOk = 0, areaTot = 0, nExato = 0, nVoronoi = 0;
   const outLots = [];
   for (const [q, group] of byQ) {
     for (const l of group) {
-      // caixa inicial ∝ área (lado ≈ 1.35×√área); Voronoi vs vizinhos recorta as divisas reais
-      const sideM = Math.sqrt(l.area_m2 || 160) * 1.35;          // metros
-      const half = (sideM * 1000) / 2;                            // mm
-      let poly = [
-        [l.cadX - half, l.cadY - half], [l.cadX + half, l.cadY - half],
-        [l.cadX + half, l.cadY + half], [l.cadX - half, l.cadY + half],
-      ];
-      for (const o of group) {
-        if (o === l) continue;
-        const dx = o.cadX - l.cadX, dy = o.cadY - l.cadY;
-        if (Math.hypot(dx, dy) > NEIGHBOR_R) continue;
-        // bissetriz: mantém o lado do lote l. normal aponta p/ l (de o → l): n = (l - o)
-        const mx = (l.cadX + o.cadX) / 2, my = (l.cadY + o.cadY) / 2;
-        poly = clipHalfPlane(poly, mx, my, l.cadX - o.cadX, l.cadY - o.cadY);
-        if (poly.length < 3) break;
+      let poly;
+      if (l.polygon && l.polygon.length >= 3) {
+        // CONTORNO REAL do CAD (polígono fechado) — de-rotacionado. Pixel-a-pixel.
+        poly = l.polygon.map(([x, y]) => Rot(x, y));
+        nExato++;
+      } else {
+        // Fallback: célula de Voronoi dos centroides reais (caixa ∝ área recortada).
+        const sideM = Math.sqrt(l.area_m2 || 160) * 1.35;          // metros
+        const half = (sideM * 1000) / 2;                            // mm
+        poly = [
+          [l.cadX - half, l.cadY - half], [l.cadX + half, l.cadY - half],
+          [l.cadX + half, l.cadY + half], [l.cadX - half, l.cadY + half],
+        ];
+        for (const o of group) {
+          if (o === l) continue;
+          const dx = o.cadX - l.cadX, dy = o.cadY - l.cadY;
+          if (Math.hypot(dx, dy) > NEIGHBOR_R) continue;
+          // bissetriz: mantém o lado do lote l. normal aponta p/ l (de o → l): n = (l - o)
+          const mx = (l.cadX + o.cadX) / 2, my = (l.cadY + o.cadY) / 2;
+          poly = clipHalfPlane(poly, mx, my, l.cadX - o.cadX, l.cadY - o.cadY);
+          if (poly.length < 3) break;
+        }
+        if (poly.length < 3) continue;
+        nVoronoi++;
       }
-      if (poly.length < 3) continue;
       const cellM2 = shoelace(poly) / 1e6;
       if (l.area_m2) { areaTot++; if (Math.abs(cellM2 - l.area_m2) / l.area_m2 <= 0.30) areaOk++; }
       const svgPts = poly.map(([x, y]) => T(x, y));
@@ -150,6 +161,7 @@ function main() {
   fs.writeFileSync(OUT, JSON.stringify(out));
 
   console.log('De-rotação aplicada:', (theta * 180 / Math.PI).toFixed(2), '°');
+  console.log('Contorno: EXATO (CAD) =', nExato, '| Voronoi (fallback) =', nVoronoi);
   console.log('viewBox:', out.viewBox, '| lotes:', outLots.length, '| ruas:', streetLabels.length);
   console.log(`Área das células dentro de ±30% do m² declarado: ${areaOk}/${areaTot} (${(areaOk / areaTot * 100).toFixed(1)}%)`);
   console.log('Saída:', path.relative(process.cwd(), OUT), '(' + (fs.statSync(OUT).size / 1024).toFixed(0) + ' KB)');
