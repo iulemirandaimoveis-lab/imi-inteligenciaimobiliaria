@@ -67,6 +67,13 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
+    // 0c. Redirect /{locale}/verificar → /verificar (canonical QR verification URL)
+    if (locales.some(loc => pathname === `/${loc}/verificar`)) {
+        const url = new URL(request.url)
+        url.pathname = '/verificar'
+        return NextResponse.redirect(url)
+    }
+
     // 0b. Allow /set-password route (auth required but no locale)
     if (pathname === '/set-password') {
         return await updateSession(request)
