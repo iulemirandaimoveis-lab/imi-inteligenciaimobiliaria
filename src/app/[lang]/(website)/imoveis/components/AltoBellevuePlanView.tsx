@@ -1321,7 +1321,7 @@ function LotBottomSheet({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.18 }}
-        className="fixed inset-0 z-[9998]"
+        className="fixed inset-0 z-[9998] lg:pointer-events-none"
         style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
         onClick={onClose}
       />
@@ -1667,7 +1667,7 @@ function AmenityBottomSheet({
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
         onClick={onClose}
-        className="fixed inset-0 z-[9998]"
+        className="fixed inset-0 z-[9998] lg:pointer-events-none"
         style={{ background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
       />
       <motion.div
