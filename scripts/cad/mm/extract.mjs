@@ -217,7 +217,7 @@ function main() {
     quadras,
     streets: streetsUniq,
     lots: lots
-      .map((l) => ({ quadra: l.quadra ?? '?', n: l.n, area_m2: l.area_m2, cadX: Math.round(l.x), cadY: Math.round(l.y) }))
+      .map((l) => ({ quadra: l.quadra ?? '?', n: l.n, area_m2: l.area_m2, cadX: Math.round(l.x), cadY: Math.round(l.y), stray: !!l.stray }))
       .sort((a, b) => (a.quadra === b.quadra ? a.n - b.n : a.quadra.localeCompare(b.quadra))),
   };
 

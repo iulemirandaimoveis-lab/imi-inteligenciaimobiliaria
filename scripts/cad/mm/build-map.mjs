@@ -48,7 +48,11 @@ function clipHalfPlane(poly, mx, my, nx, ny) {
 function main() {
   if (!fs.existsSync(SRC)) { console.error('Falta extracted.json — rode scripts/cad/mm/extract.mjs primeiro.'); process.exit(1); }
   const data = JSON.parse(fs.readFileSync(SRC, 'utf8'));
-  const lots = data.lots.filter((l) => l.quadra && l.quadra !== '?' && Number.isFinite(l.cadX));
+  // Exclui lotes `stray` (fragmento sem rótulo de quadra, longe de qualquer quadra —
+  // posição/quadra incertas). Eles geravam IDs duplicados (ex.: F-3/F-4/F-5) →
+  // chaves React/seleção colidindo. Tratados como pendentes (revisar c/ PDF), como o
+  // B-24 do Alto Bellevue. Não inventar: melhor não renderizar do que renderizar errado.
+  const lots = data.lots.filter((l) => l.quadra && l.quadra !== '?' && Number.isFinite(l.cadX) && !l.stray);
 
   // ── De-rotação ──────────────────────────────────────────────────────────────
   // O loteamento é desenhado girado (~41°) no CAD → sem corrigir, o mapa sai torto
@@ -116,6 +120,14 @@ function main() {
     }
   }
   outLots.sort((a, b) => (a.quadra === b.quadra ? +a.lote - +b.lote : a.quadra.localeCompare(b.quadra)));
+
+  // Garantia defensiva: IDs únicos (id = chave React + chave de status/seleção e de
+  // enriquecimento Supabase QUADRA-lote). Se sobrar duplicata, descarta e avisa.
+  const seenId = new Set();
+  const dupIds = [];
+  const uniqueLots = outLots.filter((l) => { if (seenId.has(l.id)) { dupIds.push(l.id); return false; } seenId.add(l.id); return true; });
+  if (dupIds.length) console.warn('⚠️  IDs duplicados removidos:', JSON.stringify(dupIds));
+  outLots.length = 0; outLots.push(...uniqueLots);
 
   // rótulos de rua — mesma de-rotação dos lotes, depois transforma
   const R = (x, y) => [cmx + (x - cmx) * cosR - (y - cmy) * sinR, cmy + (x - cmx) * sinR + (y - cmy) * cosR];
