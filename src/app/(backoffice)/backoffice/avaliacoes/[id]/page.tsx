@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
     ArrowLeft, FileText, MapPin, Bed, Bath, Ruler, Car,
     DollarSign, Calendar, CheckCircle, Award, User, Phone, Mail,
     Download, Edit, Loader2, AlertTriangle, Trash2, Home,
-    TrendingUp, BarChart2, Sparkles,
+    TrendingUp, BarChart2, Sparkles, QrCode, Copy, ExternalLink,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
@@ -38,6 +38,14 @@ export default function AvaliacaoDetalhesPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [aiAnalysis, setAiAnalysis] = useState<Record<string, any> | null>(null)
     const [aiLoading, setAiLoading] = useState(false)
+    const [qrData, setQrData] = useState<{
+        numero_laudo: string
+        qr_hash: string
+        qr_verificacao_url: string
+        svg: string
+        data_url: string
+    } | null>(null)
+    const [qrLoading, setQrLoading] = useState(false)
 
     useEffect(() => {
         async function fetchAvaliacao() {
@@ -94,6 +102,31 @@ export default function AvaliacaoDetalhesPage() {
                 })
             })
     }, [data?.bairro])
+
+    // Fetch QR code after avaliação loads
+    useEffect(() => {
+        if (!data?.id) return
+        setQrLoading(true)
+        fetch(`/api/avaliacoes/${data.id}/qr`)
+            .then(r => r.ok ? r.json() : null)
+            .then(res => { if (res) setQrData(res) })
+            .catch(() => {})
+            .finally(() => setQrLoading(false))
+    }, [data?.id])
+
+    const handleCopyVerificacaoUrl = useCallback(() => {
+        if (!qrData?.qr_verificacao_url) return
+        navigator.clipboard.writeText(qrData.qr_verificacao_url)
+        toast.success('URL de verificação copiada!')
+    }, [qrData])
+
+    const handleDownloadQr = useCallback(() => {
+        if (!qrData?.data_url) return
+        const a = document.createElement('a')
+        a.href = qrData.data_url
+        a.download = `QR-${qrData.numero_laudo || 'laudo'}.png`
+        a.click()
+    }, [qrData])
 
     const handleDelete = async () => {
         setDeleting(true)
@@ -577,6 +610,93 @@ export default function AvaliacaoDetalhesPage() {
                                     </div>
                                 )}
                             </div>
+                        </div>
+
+                        {/* QR Code & Verificação Digital */}
+                        <div className="rounded-lg p-5" style={{ background: T.surface, border: '1px solid rgba(200,164,74,0.2)' }}>
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                                    style={{ background: 'rgba(200,164,74,0.12)' }}>
+                                    <QrCode size={13} style={{ color: 'var(--imi-ai-gold, #C8A44A)' }} />
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider"
+                                    style={{ color: 'var(--imi-ai-gold, #C8A44A)' }}>
+                                    QR Code de Verificação
+                                </span>
+                            </div>
+
+                            {qrLoading && (
+                                <div className="flex items-center gap-2 py-4 justify-center">
+                                    <Loader2 size={14} className="animate-spin" style={{ color: T.textMuted }} />
+                                    <span className="text-xs" style={{ color: T.textMuted }}>Gerando código...</span>
+                                </div>
+                            )}
+
+                            {!qrLoading && qrData && (
+                                <>
+                                    {/* Numero do laudo */}
+                                    <div className="mb-3">
+                                        <p className="text-[9px] font-semibold uppercase tracking-wider mb-1"
+                                            style={{ color: T.textMuted }}>Nº do Laudo</p>
+                                        <p className="text-sm font-bold tracking-widest"
+                                            style={{ color: 'var(--imi-ai-gold, #C8A44A)', fontFamily: 'monospace' }}>
+                                            {qrData.numero_laudo}
+                                        </p>
+                                    </div>
+
+                                    {/* QR Code image */}
+                                    <div className="flex justify-center mb-3">
+                                        <div className="p-2 rounded-lg" style={{ background: '#fff' }}>
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                            <div style={{ width: 120, height: 120 }}
+                                                dangerouslySetInnerHTML={{ __html: qrData.svg }} />
+                                        </div>
+                                    </div>
+
+                                    {/* Hash */}
+                                    <div className="mb-3">
+                                        <p className="text-[9px] font-semibold uppercase tracking-wider mb-1"
+                                            style={{ color: T.textMuted }}>Hash SHA-256</p>
+                                        <p className="text-[10px] break-all"
+                                            style={{ color: T.textMuted, fontFamily: 'monospace' }}>
+                                            {qrData.qr_hash}
+                                        </p>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handleCopyVerificacaoUrl}
+                                            className="flex-1 flex items-center justify-center gap-1.5 rounded-[6px] text-[10px] font-semibold h-8 hover:opacity-80"
+                                            style={{ background: 'rgba(200,164,74,0.1)', color: 'var(--imi-ai-gold, #C8A44A)', border: '1px solid rgba(200,164,74,0.2)' }}
+                                        >
+                                            <Copy size={10} /> Copiar URL
+                                        </button>
+                                        <button
+                                            onClick={handleDownloadQr}
+                                            className="flex-1 flex items-center justify-center gap-1.5 rounded-[6px] text-[10px] font-semibold h-8 hover:opacity-80"
+                                            style={{ background: 'rgba(200,164,74,0.1)', color: 'var(--imi-ai-gold, #C8A44A)', border: '1px solid rgba(200,164,74,0.2)' }}
+                                        >
+                                            <Download size={10} /> Baixar QR
+                                        </button>
+                                    </div>
+                                    <a
+                                        href={qrData.qr_verificacao_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-2 flex items-center justify-center gap-1.5 rounded-[6px] text-[10px] font-semibold h-8 hover:opacity-80 w-full"
+                                        style={{ background: 'rgba(16,185,129,0.08)', color: 'var(--success, #10B981)', border: '1px solid rgba(16,185,129,0.2)', textDecoration: 'none' }}
+                                    >
+                                        <ExternalLink size={10} /> Ver Página de Verificação
+                                    </a>
+                                </>
+                            )}
+
+                            {!qrLoading && !qrData && (
+                                <p className="text-xs text-center py-3" style={{ color: T.textMuted }}>
+                                    QR indisponível
+                                </p>
+                            )}
                         </div>
 
                         {/* Evaluation Details */}

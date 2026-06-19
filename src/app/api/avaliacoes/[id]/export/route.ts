@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { generatePTAMHtml } from '@/lib/valuation/generate-ptam-html'
 import { AVALIADOR } from '@/config/avaliador'
+import {
+  generateQrHash,
+  buildVerificacaoUrl,
+  generateQrSvg,
+} from '@/lib/avaliacoes/qr-laudo'
 
 export const dynamic = 'force-dynamic'
 
@@ -124,6 +130,37 @@ export async function GET(
         })
       : []
 
+    // QR code — lazy generate if missing, then persist
+    let qrCodeSvg: string | undefined
+    let numeroLaudo = avaliacao.numero_laudo as string | undefined
+    let qrHash = avaliacao.qr_hash as string | undefined
+    let qrUrl = avaliacao.qr_verificacao_url as string | undefined
+
+    try {
+      if (!numeroLaudo) {
+        const { data: numData } = await supabase.rpc('generate_numero_laudo')
+        if (numData) numeroLaudo = numData as string
+      }
+      if (numeroLaudo && !qrHash) {
+        qrHash = generateQrHash({
+          id: avaliacao.id as string,
+          numero_laudo: numeroLaudo,
+          endereco: (avaliacao.endereco as string) || '',
+          created_at: avaliacao.created_at as string,
+        })
+        qrUrl = buildVerificacaoUrl(qrHash)
+        await supabaseAdmin
+          .from('avaliacoes')
+          .update({ numero_laudo: numeroLaudo, qr_hash: qrHash, qr_verificacao_url: qrUrl })
+          .eq('id', params.id)
+      }
+      if (qrUrl) {
+        qrCodeSvg = await generateQrSvg(qrUrl)
+      }
+    } catch {
+      // QR generation is non-blocking — export continues without it
+    }
+
     const html = generatePTAMHtml({
       valuation: {
         ...avaliacao,
@@ -147,6 +184,9 @@ export async function GET(
       photos,
       valorMinimo: valorMin,
       valorMaximo: valorMax,
+      qrCodeSvg,
+      numeroLaudo,
+      qrHash,
     })
 
     return new NextResponse(html, {

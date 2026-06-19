@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { apiHandler, ApiContext } from '@/lib/api-helpers'
 import { avaliacaoSchema, avaliacaoUpdateSchema } from '@/lib/schemas'
 import { createNotification } from '@/lib/notifications'
+import { supabaseAdmin } from '@/lib/supabase/admin'
+import { generateQrHash, buildVerificacaoUrl } from '@/lib/avaliacoes/qr-laudo'
 
 // ─── Zod schema for POST body (loose — accepts camelCase + snake_case) ──────
 const avaliacaoPostSchema = z.object({
@@ -181,6 +183,28 @@ export const POST = apiHandler(avaliacaoPostSchema, async (_request: NextRequest
         .single()
 
     if (error) return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro desconhecido' }, { status: 500 })
+
+    // Auto-generate numero_laudo + qr_hash — fire-and-forget (non-blocking)
+    ;(async () => {
+        try {
+            const { data: numData } = await supabase.rpc('generate_numero_laudo')
+            if (!numData) return
+            const numero_laudo = numData as string
+            const qr_hash = generateQrHash({
+                id: data.id,
+                numero_laudo,
+                endereco: data.endereco || '',
+                created_at: data.created_at,
+            })
+            const qr_verificacao_url = buildVerificacaoUrl(qr_hash)
+            await supabaseAdmin
+                .from('avaliacoes')
+                .update({ numero_laudo, qr_hash, qr_verificacao_url })
+                .eq('id', data.id)
+        } catch {
+            // Non-critical — QR can be lazily generated on first export/view
+        }
+    })()
 
     // Notification — fire-and-forget
     if (user) {

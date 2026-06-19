@@ -31,6 +31,9 @@ export function generatePTAMHtml(params: {
     valor_depreciado: number
     valor_residual: number
   }
+  qrCodeSvg?: string
+  numeroLaudo?: string
+  qrHash?: string
 }): string {
   const {
     valuation, development, comparables, result, photos = [],
@@ -43,6 +46,9 @@ export function generatePTAMHtml(params: {
     valorMaximo,
     liquidez,
     depreciacao,
+    qrCodeSvg,
+    numeroLaudo,
+    qrHash,
   } = params
 
   const fmt = (v: number) =>
@@ -618,6 +624,34 @@ export function generatePTAMHtml(params: {
     line-height: 1.5;
   }
 
+  /* ── COVER QR ── */
+  .cover-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .cover-qr-img svg { width: 90px; height: 90px; border-radius: 4px; background: #fff; padding: 4px; }
+  .cover-qr-label { font-size: 7pt; color: var(--text-muted); text-align: center; text-transform: uppercase; letter-spacing: 0.08em; }
+  .cover-qr-num { font-size: 7pt; color: var(--gold); font-family: monospace; text-align: center; letter-spacing: 1px; }
+
+  /* ── QR VERIFY SECTION ── */
+  .qr-verify-section {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    background: #f8f6f0;
+    border: 1px solid #e0d8c8;
+    border-left: 4px solid #C8A44A;
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 12px;
+  }
+  .qr-verify-qr svg { width: 120px; height: 120px; flex-shrink: 0; border-radius: 4px; }
+  .qr-verify-info { flex: 1; min-width: 0; }
+  .qr-verify-title { font-size: 11pt; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .qr-verify-desc { font-size: 9pt; color: #555; line-height: 1.6; }
+
   @media print {
     body { font-size: 10pt; background: white; color: #1a1a1a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .cover { padding: 40px 60px; background: #050B14 !important; min-height: 100vh; }
@@ -681,6 +715,12 @@ export function generatePTAMHtml(params: {
       ${evaluatorCRECI ? `CRECI ${evaluatorCRECI}` : ''}
       ${evaluatorPhone ? ` · ${evaluatorPhone}` : ''}
     </div>
+    ${qrCodeSvg ? `
+    <div class="cover-qr">
+      <div class="cover-qr-img">${qrCodeSvg}</div>
+      <div class="cover-qr-label">Verificar autenticidade</div>
+      ${numeroLaudo ? `<div class="cover-qr-num">${numeroLaudo}</div>` : ''}
+    </div>` : ''}
     <div class="cover-norm">
       <span>Conforme NBR 14653-1 e NBR 14653-2</span>
       <span>Resolução COFECI 1.066/2007</span>
@@ -836,6 +876,40 @@ export function generatePTAMHtml(params: {
     <div class="commercial-title">Resumo da Avaliação em Linguagem Acessível</div>
     <p>O imóvel avaliado possui valor de mercado estimado em <span class="highlight-value">${fmtBRL(result.estimated_value)}</span>, conforme metodologia NBR 14653. Este valor representa o preço mais provável pelo qual o imóvel seria negociado, em condições normais de mercado, entre partes independentes e bem informadas, sem pressões de qualquer natureza — podendo variar entre <strong>${fmtBRL(conservador)}</strong> (cenário conservador) e <strong>${fmtBRL(agressivo)}</strong> (cenário de valorização), a depender das condições de negociação e do comportamento do mercado local na data da transação.</p>
   </div>
+
+  ${qrCodeSvg && numeroLaudo ? `
+  <h3 data-num="${nextSec()}">Código de Verificação Digital</h3>
+  <div class="qr-verify-section">
+    <div class="qr-verify-qr">${qrCodeSvg}</div>
+    <div class="qr-verify-info">
+      <div class="qr-verify-title">Autenticidade Verificável</div>
+      <p class="qr-verify-desc">
+        Este laudo possui código de verificação digital. Escaneie o QR Code ou acesse
+        a URL abaixo para confirmar a autenticidade e os dados deste documento
+        em tempo real.
+      </p>
+      <table style="max-width:100%;margin-top:12px">
+        <tbody>
+          <tr>
+            <td style="width:30%;color:#8E99AB;font-size:9pt;padding:5px 8px">Número do Laudo</td>
+            <td style="font-family:monospace;font-size:10pt;font-weight:700;color:#C8A44A;padding:5px 8px">${numeroLaudo}</td>
+          </tr>
+          <tr>
+            <td style="width:30%;color:#8E99AB;font-size:9pt;padding:5px 8px">Hash SHA-256</td>
+            <td style="font-family:monospace;font-size:9pt;color:#aaa;word-break:break-all;padding:5px 8px">${qrHash || '—'}</td>
+          </tr>
+          <tr>
+            <td style="width:30%;color:#8E99AB;font-size:9pt;padding:5px 8px">URL de Verificação</td>
+            <td style="font-size:9pt;padding:5px 8px"><a href="https://www.iulemirandaimoveis.com.br/verificar?hash=${qrHash}" style="color:#C8A44A">www.iulemirandaimoveis.com.br/verificar</a></td>
+          </tr>
+          <tr>
+            <td style="width:30%;color:#8E99AB;font-size:9pt;padding:5px 8px">Emitido em</td>
+            <td style="font-size:9pt;padding:5px 8px">${today}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>` : ''}
 
   <h3 data-num="${nextSec()}">Assinaturas</h3>
   <div class="signature-area signatures">
