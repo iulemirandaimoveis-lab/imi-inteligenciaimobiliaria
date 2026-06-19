@@ -67,6 +67,12 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
+    // Block hidden pages — redirect to home
+    if (/^\/(pt|en|es|ja|ar)\/construtoras(\/.*)?$/.test(pathname)) {
+        const lang = pathname.split('/')[1]
+        return NextResponse.redirect(new URL(`/${lang}`, request.url))
+    }
+
     // 0b. Allow /set-password route (auth required but no locale)
     if (pathname === '/set-password') {
         return await updateSession(request)

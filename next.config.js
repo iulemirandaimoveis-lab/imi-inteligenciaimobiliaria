@@ -74,6 +74,21 @@ const nextConfig = {
         },
         optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'sonner', 'date-fns'],
     },
+    // Redirect hidden pages
+    async redirects() {
+        return [
+            {
+                source: '/:lang(pt|en|es|ja|ar)/construtoras',
+                destination: '/:lang',
+                permanent: false,
+            },
+            {
+                source: '/:lang(pt|en|es|ja|ar)/construtoras/:path*',
+                destination: '/:lang',
+                permanent: false,
+            },
+        ]
+    },
     // Security headers
     async headers() {
         return [
