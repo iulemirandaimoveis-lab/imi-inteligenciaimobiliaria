@@ -2444,8 +2444,10 @@ export default function AltoBellevuePlanView({
     pointerCache.current.delete(e.pointerId);
     if (pointerCache.current.size > 0) return;
     setIsDragging(false);
-    if (!didDrag.current) {
-      let el: Element | null = clickTargetRef.current;
+    const clickTarget = clickTargetRef.current;
+    clickTargetRef.current = null;
+    if (!didDrag.current && clickTarget) {
+      let el: Element | null = clickTarget;
       let dispatched = false;
       while (el && !dispatched) {
         const lotId = el.getAttribute?.('data-lot-id');
@@ -2472,7 +2474,6 @@ export default function AltoBellevuePlanView({
       }
       if (!dispatched) { setSelectedLot(null); setSelectedAmenity(null); }
     }
-    clickTargetRef.current = null;
   }, [mapData]);
 
   // Wheel zoom centered on cursor — deltaY > 0 = zoom out (widen viewBox), < 0 = zoom in
