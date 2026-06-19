@@ -64,3 +64,6 @@ backups/
 
 # CAD pipeline intermediate artifacts (derived from huge DXF; never commit)
 scripts/cad/.cache/
+
+# Miguel Marques CAD pipeline — transient diagnostic output (not committed)
+scripts/cad/mm/data/polygons.json
