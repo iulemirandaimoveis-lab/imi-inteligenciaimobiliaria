@@ -101,11 +101,11 @@
   --color-danger:         #E74C3C;
   --color-info:           #3498DB;
 
-  /* ── DS3.1 Shadows ── */
-  --shadow-card:   0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25);
-  --shadow-raised: 0 4px 16px rgba(0,0,0,0.40), 0 2px 6px rgba(0,0,0,0.30);
-  --shadow-float:  0 12px 40px rgba(0,0,0,0.50), 0 4px 12px rgba(0,0,0,0.35);
-  --shadow-gold-glow: 0 0 30px rgba(200,164,74,0.20), 0 0 60px rgba(200,164,74,0.10);
+  /* ── DS3.1 Shadows (light — subtle, modern) ── */
+  --shadow-card:   0 1px 3px rgba(11,17,32,0.06), 0 1px 2px rgba(11,17,32,0.04);
+  --shadow-raised: 0 4px 16px rgba(11,17,32,0.08), 0 2px 6px rgba(11,17,32,0.04);
+  --shadow-float:  0 12px 40px rgba(11,17,32,0.12), 0 4px 12px rgba(11,17,32,0.06);
+  --shadow-gold-glow: 0 0 30px rgba(200,164,74,0.14), 0 0 60px rgba(200,164,74,0.06);
 
   /* ── DS3.1 Spacing Base-4 ── */
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
@@ -323,191 +323,205 @@
 }
 
 .dark {
-  /* ══ DARK THEME — IMI MASTER v2 Canonical Tokens ══ */
+  /* ══ DARK THEME — IMI NIGHT PRO ══
+   * Paleta neutra escura para uso profissional diário.
+   * Inspirado em Linear, Vercel, GitHub Dark — foco em conforto visual.
+   * Fundos navy saturado → cinza neutro escuro; gold mantido como acento premium.
+   */
 
-  /* ── MASTER v2 Raw Tokens ── */
-  --bg: #0B1928;
-  --n: #0F2035;
-  --n2: #162840;
-  --n3: #1D3358;
-  --n4: #243865;
-  --n5: #2B4070;
+  /* ── RAW PALETTE — neutral dark (low saturation) ── */
+  --bg: #0D1117;
+  --n:  #161B22;
+  --n2: #1E2430;
+  --n3: #252B3A;
+  --n4: #2D3448;
+  --n5: #353C54;
   --gold: #C8A44A;
-  --gb: #D4B86A;
-  --gd: #A8842A;
-  --g06: rgba(200,164,74,.06);
-  --g10: rgba(200,164,74,.10);
-  --g20: rgba(200,164,74,.20);
-  --w: #FFF;
-  --t1: #E8E4DC;
-  --t2: #8E99AB;
-  --t3: #4F5B6B;
-  --grn: #4ADE80;
-  --red: #F87171;
-  --blu: #60A5FA;
-  --amb: #FBBF24;
+  --gb:   #D4B868;
+  --gd:   #A8842A;
+  --g06:  rgba(200,164,74,.06);
+  --g10:  rgba(200,164,74,.10);
+  --g20:  rgba(200,164,74,.20);
+  --w:    #FFF;
+  --t1:   #EDF2F8;   /* primary — near-white, eye-friendly */
+  --t2:   #94A3B8;   /* secondary — slate-400, excellent readability */
+  --t3:   #6E7D93;   /* tertiary — visible (prev #4F5B6B was near-invisible) */
+  --grn:  #4ADE80;
+  --red:  #F87171;
+  --blu:  #60A5FA;
+  --amb:  #FBBF24;
   --cyan: #22D3EE;
-  --prp: #A78BFA;
-  --bdr: rgba(255,255,255,.05);
-  --bdg: rgba(200,164,74,.14);
+  --prp:  #A78BFA;
+  --bdr:  rgba(240,246,252,0.10);
+  --bdg:  rgba(200,164,74,.18);
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --fd: var(--font-serif);
-  --fu: var(--font-sans);
-  --fm: var(--font-mono);
+  --fd:   var(--font-serif);
+  --fu:   var(--font-sans);
+  --fm:   var(--font-mono);
   --ease: cubic-bezier(.16,1,.3,1);
 
-  /* ── MASTER v2 → Theme System Mapping ── */
-  --color-offwhite:       #E8E4DC;
-  --color-offwhite-dim:   rgba(232, 228, 220, 0.70);
-  --color-offwhite-mute:  rgba(232, 228, 220, 0.40);
+  /* ── OFFWHITE ── */
+  --color-offwhite:      #EDF2F8;
+  --color-offwhite-dim:  rgba(237,242,248,0.70);
+  --color-offwhite-mute: rgba(237,242,248,0.40);
 
-  /* v3.2 Surface System */
-  --surface-base:         #0B1928;
-  --surface-primary:      #0F2035;
-  --surface-secondary:    #162840;
-  --surface-tertiary:     #1D3358;
-  --surface-elevated:     #243865;
-  --surface-hover:        #2B4070;
-  /* DS3.1 aliases kept for compat */
-  --surface-raised:       #0F2035;
-  --surface-overlay:      #162840;
-  --surface-float:        #1D3358;
-  --surface-border:       #243865;
-  --surface-border-gold:  rgba(200, 164, 74, 0.30);
+  /* ── SURFACE SYSTEM — elevation staircase ── */
+  --surface-base:      #0D1117;
+  --surface-primary:   #161B22;
+  --surface-secondary: #1E2430;
+  --surface-tertiary:  #252B3A;
+  --surface-elevated:  #2D3448;
+  --surface-hover:     #353C54;
+  --surface-raised:    #161B22;
+  --surface-overlay:   #1E2430;
+  --surface-float:     #252B3A;
+  --surface-border:    rgba(240,246,252,0.12);
+  --surface-border-gold: rgba(200,164,74,0.25);
 
-  --bg-base:      #0B1928;
-  --bg-surface:   #0F2035;
-  --bg-elevated:  #162840;
-  --bg-subtle:    rgba(200,164,74,.06);
-  --bg-muted:     rgba(255,255,255,0.02);
-  --bg-overlay:   rgba(255,255,255,0.06);
-  --bg-hover:     rgba(200,164,74,.06);
-  --bg-active:    rgba(200,164,74,.10);
+  /* ── BACKGROUNDS ── */
+  --bg-base:     #0D1117;
+  --bg-surface:  #161B22;
+  --bg-elevated: #1E2430;
+  --bg-subtle:   #1A2030;
+  --bg-muted:    rgba(255,255,255,0.03);
+  --bg-overlay:  rgba(255,255,255,0.06);
+  --bg-hover:    rgba(255,255,255,0.06);
+  --bg-active:   rgba(200,164,74,0.12);
 
-  --border-subtle:  rgba(200,164,74,.15);
-  --border-default: rgba(200,164,74,.30);
-  --border-strong:  rgba(200,164,74,.45);
+  /* ── BORDERS — neutro + gold apenas para acento ── */
+  --border-subtle:  rgba(240,246,252,0.08);
+  --border-default: rgba(240,246,252,0.14);
+  --border-strong:  rgba(240,246,252,0.28);
   --border-focus:   #C8A44A;
 
-  --text-primary:   #E8E4DC;
-  --text-secondary: #8E99AB;
-  --text-tertiary:  #4F5B6B;
-  --text-disabled:  #2E3D63;
-  --text-inverse:   #0B1928;
-  --text-gold:      #C8A44A;
+  /* ── TEXT — hierarquia de contraste melhorada ── */
+  --text-primary:   #EDF2F8;
+  --text-secondary: #94A3B8;
+  --text-tertiary:  #6E7D93;
+  --text-disabled:  #3A4659;
+  --text-inverse:   #0D1117;
+  --text-gold:      #D4B868;
 
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,.05);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,164,74,.14);
-  --shadow-md: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
-  --shadow-lg: 0 16px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(200,164,74,.14);
-  --shadow-xl: 0 32px 64px rgba(0,0,0,0.8), 0 0 0 1px rgba(200,164,74,.20);
-  --shadow-gold: 0 0 20px rgba(200,164,74,0.20);
-  --shadow-glow: 0 0 40px rgba(200,164,74,.04);
-  --shadow-soft: 0 8px 28px rgba(0,0,0,0.28);
+  /* ── SHADOWS — profundidade natural ── */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,.04);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,.06);
+  --shadow-xl: 0 32px 64px rgba(0,0,0,0.70), 0 0 0 1px rgba(255,255,255,.08);
+  --shadow-gold: 0 0 20px rgba(200,164,74,0.18);
+  --shadow-glow: 0 0 40px rgba(200,164,74,.05);
+  --shadow-soft: 0 8px 28px rgba(0,0,0,0.32);
+  /* DS3.1 compat */
+  --shadow-card:   0 1px 3px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.35);
+  --shadow-raised: 0 4px 16px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.40);
+  --shadow-float:  0 12px 40px rgba(0,0,0,0.70), 0 4px 12px rgba(0,0,0,0.45);
+  --shadow-gold-glow: 0 0 30px rgba(200,164,74,0.22), 0 0 60px rgba(200,164,74,0.10);
 
+  /* ── SEMANTIC STATUS ── */
   --success:    #4ADE80;
-  --success-bg: rgba(74,222,128,0.06);
+  --success-bg: rgba(74,222,128,0.08);
   --warning:    #FBBF24;
-  --warning-bg: rgba(251,191,36,0.06);
+  --warning-bg: rgba(251,191,36,0.08);
   --error:      #F87171;
-  --error-bg:   rgba(248,113,113,0.06);
+  --error-bg:   rgba(248,113,113,0.08);
   --info:       #60A5FA;
-  --info-bg:    rgba(96,165,250,0.06);
-  --gold-light: #D4B86A;
-  --gold-dark: #A8842A;
+  --info-bg:    rgba(96,165,250,0.08);
+  --gold-light: #D4B868;
+  --gold-dark:  #A8842A;
   --white: #FFFFFF;
-  --border-gold: rgba(200,164,74,0.35);
-  --border-gold-strong: rgba(200,164,74,0.65);
-  --focus-ring: 0 0 0 3px rgba(200,164,74,0.16);
+  --border-gold:        rgba(200,164,74,0.32);
+  --border-gold-strong: rgba(200,164,74,0.58);
+  --focus-ring: 0 0 0 3px rgba(200,164,74,0.18);
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
 
-  /* ── Legacy backoffice aliases — MASTER v2 mapped ── */
-  --bo-bg:             var(--bg-base);
-  --bo-surface:        var(--bg-base);
-  --bo-surface-alt:    #162840;
-  --bo-elevated:       #1D3358;
-  --bo-border:         var(--border-default);
-  --bo-border-light:   var(--border-subtle);
-  --bo-border-gold:    rgba(200,164,74,0.14);
-  --bo-text:           var(--text-primary);
-  --bo-text-muted:     var(--text-secondary);
-  --bo-text-tertiary:  var(--text-tertiary);
-  --bo-text-dim:       #4F5B6B;
-  --bo-text-accent:    #C8A44A;
-  --bo-text-accent-dim:#A8842A;
-  --bo-hover:          var(--bg-hover);
-  --bo-active-bg:      var(--bg-active);
-  --bo-icon-bg:        rgba(200,164,74,0.06);
-  --bo-shadow:         var(--shadow-sm);
-  --bo-card-shadow:    var(--shadow-md);
-  --bo-shadow-elevated:var(--shadow-xl);
-  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.04);
-  --bo-drawer-bg:      #0F2035;
-  --header-bg:         rgba(11,25,40,0.97);
-  --backdrop-bg:       rgba(11,25,40,0.85);
-  --btn-primary-bg:    #0F2035;
-  --btn-primary-hover: #162840;
-  --btn-primary-text:  #FFFFFF;
-  --bo-accent:         #C8A44A;
-  --bo-accent-dim:     #A8842A;
-  --bo-card:           #162840;
-  --bo-card-hover:     #1D3358;
-  --bo-border-subtle:  var(--border-subtle);
-  --bo-border-strong:  rgba(200,164,74,0.20);
-  --nav-bg:            rgba(11,25,40,0.98);
-  --nav-border:        rgba(200,164,74,0.14);
-  --nav-active:        #C8A44A;
-  --nav-inactive:      #4F5B6B;
-  --bo-success:        var(--success);
-  --bo-success-bg:     var(--success-bg);
-  --bo-warning:        var(--warning);
-  --bo-warning-bg:     var(--warning-bg);
-  --bo-error:          var(--error);
-  --bo-error-bg:       var(--error-bg);
-  --bo-info:           var(--info);
-  --bo-info-bg:        var(--info-bg);
+  /* ── BACKOFFICE ALIASES — mapeados para o novo palette ── */
+  --bo-bg:              #0D1117;
+  --bo-surface:         #0D1117;
+  --bo-surface-alt:     #161B22;
+  --bo-elevated:        #1E2430;
+  --bo-border:          rgba(240,246,252,0.12);
+  --bo-border-light:    rgba(240,246,252,0.07);
+  --bo-border-gold:     rgba(200,164,74,0.18);
+  --bo-text:            #EDF2F8;
+  --bo-text-muted:      #94A3B8;
+  --bo-text-tertiary:   #6E7D93;
+  --bo-text-dim:        #6E7D93;
+  --bo-text-accent:     #D4B868;
+  --bo-text-accent-dim: #C8A44A;
+  --bo-hover:           rgba(255,255,255,0.05);
+  --bo-active-bg:       rgba(200,164,74,0.10);
+  --bo-icon-bg:         rgba(200,164,74,0.08);
+  --bo-shadow:          var(--shadow-sm);
+  --bo-card-shadow:     var(--shadow-md);
+  --bo-shadow-elevated: var(--shadow-xl);
+  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.05);
+  --bo-drawer-bg:       #161B22;
+  --header-bg:          rgba(13,17,23,0.96);
+  --backdrop-bg:        rgba(5,8,15,0.82);
+  /* Primary button em dark = gold (visível e on-brand) */
+  --btn-primary-bg:     #C8A44A;
+  --btn-primary-hover:  #D4B868;
+  --btn-primary-text:   #0D1117;
+  --bo-accent:          #C8A44A;
+  --bo-accent-dim:      #A8842A;
+  --bo-card:            #161B22;
+  --bo-card-hover:      #1E2430;
+  --bo-border-subtle:   rgba(240,246,252,0.07);
+  --bo-border-strong:   rgba(200,164,74,0.22);
+  --nav-bg:             rgba(13,17,23,0.97);
+  --nav-border:         rgba(240,246,252,0.08);
+  --nav-active:         #C8A44A;
+  --nav-inactive:       #6E7D93;
+  --bo-success:         var(--success);
+  --bo-success-bg:      var(--success-bg);
+  --bo-warning:         var(--warning);
+  --bo-warning-bg:      var(--warning-bg);
+  --bo-error:           var(--error);
+  --bo-error-bg:        var(--error-bg);
+  --bo-info:            var(--info);
+  --bo-info-bg:         var(--info-bg);
   --bo-transition:        150ms var(--ease);
   --bo-transition-spring: 300ms var(--ease);
 
-  --sidebar-bg:          #080E1A;
-  --sidebar-border:      rgba(200,164,74,0.14);
-  --sidebar-hover:       rgba(200,164,74,0.06);
-  --sidebar-active:      rgba(200,164,74,0.10);
-  --sidebar-text:        #8E99AB;
-  --sidebar-text-active: #E8E4DC;
+  /* ── SIDEBAR — sempre dark brand, independente do tema ── */
+  --sidebar-bg:          #080D14;
+  --sidebar-border:      rgba(240,246,252,0.07);
+  --sidebar-hover:       rgba(255,255,255,0.06);
+  --sidebar-active:      rgba(200,164,74,0.12);
+  --sidebar-text:        #7E8FA6;
+  --sidebar-text-active: #EDF2F8;
 
-  /* Missing alias used by some components */
-  --text-muted:          var(--text-tertiary);
+  /* ── MISC ALIASES ── */
+  --text-muted:  var(--text-tertiary);
+  --chart-grid:  rgba(255,255,255,0.06);
+  --chart-label: #94A3B8;
 
-  --chart-grid:  rgba(255,255,255,0.05);
-  --chart-label: #8E99AB;
-
-  /* ── MASTER v2 — Gold accent (brandkit) ── */
+  /* ── ACCENT SCALE ── */
   --accent-100: #FFF8E8;
   --accent-200: #FFE8A8;
-  --accent-300: #D4B86A;
+  --accent-300: #D4B868;
   --accent-400: #C8A44A;
   --accent-500: #A8842A;
   --accent-600: #8B6914;
   --accent-glow: rgba(200,164,74,0.30);
 
-  /* ── Warm Platinum (premium elements) ── */
+  /* ── WARM PLATINUM ── */
   --platinum-100: #FFF8E8;
   --platinum-200: #FFE8A8;
-  --platinum-300: #D4B86A;
+  --platinum-300: #D4B868;
   --platinum-400: #A78BFA;
   --platinum-500: #A8842A;
   --platinum-glow: rgba(200,164,74,0.20);
 
-  /* ── Lead temperature — MASTER v2 ── */
+  /* ── LEAD TEMPERATURE ── */
   --lead-hot:    #F87171;
   --lead-warm:   #FBBF24;
   --lead-neutral:#60A5FA;
-  --lead-cold:   #4F5B6B;
+  --lead-cold:   #6E7D93;
 
-  /* Radius — brandkit scale */
+  /* ── RADIUS ── */
   --radius-xs:   3px;
   --radius-sm:   5px;
   --radius-md:   6px;
@@ -517,26 +531,29 @@
   --radius-3xl:  16px;
   --radius-full: 9999px;
 
-  /* v3.2 Touch targets */
-  --touch-min: 44px;
-
-  /* v3.2 Font sizes (accessible minimums — mobile-friendly) */
+  /* ── TOUCH & ACESSIBILIDADE ── */
+  --touch-min:  44px;
   --text-xs:    0.8125rem;
   --text-sm:    0.8125rem;
   --text-base:  0.875rem;
   --text-label: 0.75rem;
 
-  /* v3.2 Typography — D3.1 consolidated */
+  /* ── TIPOGRAFIA ── */
   --font-logo: var(--font-serif);
   --font-body: var(--font-sans);
   --font-mono: var(--font-mono);
 
-  /* ── Theme-aware Glass Surface (dark) ── */
-  --glass-surface:        rgba(15,32,53,.60);
-  --glass-surface-border: rgba(200,164,74,.15);
-  --glass-surface-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+  /* ── GLASS SURFACE (dark — neutro) ── */
+  --glass-surface:        rgba(13,17,23,0.78);
+  --glass-surface-border: rgba(240,246,252,0.10);
+  --glass-surface-shadow: 0 8px 32px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.04);
   --glass-surface-inset:  inset 0 1px 0 rgba(255,255,255,.04);
-  --glass-hover-border:   rgba(200,164,74,.30);
+  --glass-hover-border:   rgba(200,164,74,.28);
+
+  /* ── LEGACY SURFACE ALIASES ── */
+  --surface-0: #0D1117;
+  --surface-1: #161B22;
+  --surface-2: #1E2430;
 }
 
 /* ── Liquid Glass Utilities ─────────────────────────────────── */
@@ -2628,25 +2645,32 @@
 
 /* ── Variants — DS3 ─────────────────────────────────────────  */
 
-/* Primary — gold sólido, white text */
+/* Primary — light: navy | dark: gold */
 .bo-btn-primary {
-  background: var(--n);
-  color: var(--white);
-  border-color: var(--border-gold);
-  box-shadow: 0 2px 8px rgba(0,0,0,.28);
-}
-[data-theme="dark"] .bo-btn-primary,
-.dark .bo-btn-primary {
-  background: var(--n);
-  color: var(--white);
+  background: var(--imi-navy-900, #0B1120);
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .bo-btn-primary:not(:disabled):hover {
-  background: color-mix(in srgb, var(--n) 88%, var(--n2) 12%);
-  border-color: var(--border-gold-strong);
-  box-shadow: 0 6px 18px rgba(0,0,0,.36), var(--shadow-gold);
+  background: var(--imi-navy-800, #101830);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
   transform: translateY(-1px);
 }
 .bo-btn-primary:not(:disabled):active { transform: scale(0.97); }
+[data-theme="dark"] .bo-btn-primary,
+.dark .bo-btn-primary {
+  background: #C8A44A;
+  color: #0D1117;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(200,164,74,0.30);
+}
+[data-theme="dark"] .bo-btn-primary:not(:disabled):hover,
+.dark .bo-btn-primary:not(:disabled):hover {
+  background: #D4B868;
+  box-shadow: 0 4px 16px rgba(200,164,74,0.38);
+  transform: translateY(-1px);
+}
 
 /* Secondary — surface bg + border + text */
 .bo-btn-secondary {
@@ -2660,16 +2684,25 @@
 }
 .bo-btn-secondary:not(:disabled):active { transform: scale(0.97); }
 
-/* Ghost — invisible until hover */
+/* Ghost — neutral em light, levemente visível em dark */
 .bo-btn-ghost {
-  background: rgba(255,255,255,.025);
+  background: transparent;
   color: var(--text-secondary);
-  border-color: var(--border-gold);
+  border-color: var(--border-default);
 }
 .bo-btn-ghost:not(:disabled):hover {
-  background: rgba(255,255,255,.045);
-  color: var(--white);
-  border-color: var(--border-gold-strong);
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+.dark .bo-btn-ghost {
+  background: rgba(255,255,255,.03);
+  border-color: rgba(240,246,252,0.12);
+}
+.dark .bo-btn-ghost:not(:disabled):hover {
+  background: rgba(255,255,255,.07);
+  color: var(--t1);
+  border-color: rgba(240,246,252,0.22);
 }
 
 /* Danger — red tint */
@@ -2789,6 +2822,18 @@ img, video, iframe, canvas, svg {
   background: var(--bg-hover);
 }
 
+/* ── Light theme: ghost btn ── */
+:root .bo-btn-ghost {
+  background: transparent;
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
+}
+:root .bo-btn-ghost:not(:disabled):hover {
+  background: rgba(11,17,32,0.06);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
 /* ── Light theme: bo-btn-outline ── */
 :root .bo-btn-outline {
   background: transparent;
@@ -2802,6 +2847,53 @@ img, video, iframe, canvas, svg {
 }
 :root .shimmer::after {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9) 50%, transparent);
+}
+
+/* ── Dark mode: inputs com borda neutra (não gold constante) ── */
+.dark .backoffice-root .toolbar-input,
+.dark .backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+.dark .backoffice-root select,
+.dark .backoffice-root textarea,
+.dark .backoffice-root .input,
+.dark .backoffice-root .inp {
+  background: var(--bo-elevated) !important;
+  border-color: rgba(240,246,252,0.12) !important;
+  box-shadow: none !important;
+  color: var(--bo-text) !important;
+}
+.dark .backoffice-root .toolbar-input:hover,
+.dark .backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):hover,
+.dark .backoffice-root select:hover,
+.dark .backoffice-root textarea:hover,
+.dark .backoffice-root .input:hover,
+.dark .backoffice-root .inp:hover {
+  border-color: rgba(240,246,252,0.22) !important;
+  box-shadow: none !important;
+}
+.dark .backoffice-root .toolbar-input:focus,
+.dark .backoffice-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):focus,
+.dark .backoffice-root select:focus,
+.dark .backoffice-root textarea:focus,
+.dark .backoffice-root .input:focus,
+.dark .backoffice-root .inp:focus {
+  border-color: rgba(200,164,74,0.55) !important;
+  box-shadow: 0 0 0 3px rgba(200,164,74,0.14) !important;
+  background: color-mix(in srgb, var(--bo-elevated) 92%, var(--n3) 8%) !important;
+}
+
+/* ── Light mode: inp (MASTER v2) — white bg ── */
+:root .inp {
+  background: #FFFFFF;
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+:root .inp::placeholder {
+  color: var(--text-tertiary);
+}
+:root .inp:focus {
+  border-color: var(--imi-gold-500);
+  box-shadow: 0 0 0 3px rgba(184,148,58,0.12);
+  background: #FFFFFF;
 }
 
 /* ── DS3 round button override: action buttons MUST NOT be fully circular ── */
@@ -2874,14 +2966,14 @@ img, video, iframe, canvas, svg {
 /*  IMI MASTER v2 — Utility Classes                             */
 /* ============================================================ */
 
-/* IMI MASTER v2 Glass Cards */
+/* IMI MASTER v2 Glass Cards — theme-aware */
 .G {
-    background: rgba(14,28,48,.52);
+    background: var(--glass-surface, rgba(13,17,23,.78));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(200,164,74,.12);
+    border: 1px solid var(--glass-surface-border, rgba(240,246,252,.10));
     border-radius: 19px;
-    box-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+    box-shadow: var(--glass-surface-shadow, 0 8px 32px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.04));
     padding: 22px;
     position: relative;
     overflow: hidden;
@@ -2897,11 +2989,11 @@ img, video, iframe, canvas, svg {
     background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
 }
 .G:hover {
-    border-color: rgba(200,164,74,.25);
-    box-shadow: 0 8px 32px rgba(0,0,0,.25), 0 0 40px rgba(200,164,74,.04), inset 0 1px 0 rgba(255,255,255,.04);
+    border-color: var(--glass-hover-border, rgba(200,164,74,.28));
+    box-shadow: 0 8px 32px rgba(0,0,0,.30), 0 0 40px rgba(200,164,74,.04), inset 0 1px 0 rgba(255,255,255,.04);
 }
 
-/* IMI MASTER v2 Buttons */
+/* IMI MASTER v2 Buttons — theme-aware */
 .btn-pri {
     position: relative;
     overflow: hidden;
@@ -2910,9 +3002,9 @@ img, video, iframe, canvas, svg {
     justify-content: center;
     gap: 8px;
     padding: 12px 22px;
-    background: var(--n, #0A1624);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,.08);
+    background: var(--btn-primary-bg, var(--n, #0A1624));
+    color: var(--btn-primary-text, #fff);
+    border: 1px solid rgba(255,255,255,.06);
     border-radius: 7px;
     font-family: var(--fu, 'Outfit', sans-serif);
     font-weight: 600;
@@ -2930,11 +3022,11 @@ img, video, iframe, canvas, svg {
     right: 12%;
     height: 2px;
     background: linear-gradient(90deg, transparent, #C8A44A, transparent);
-    opacity: .6;
+    opacity: .5;
 }
 .btn-pri:hover {
-    background: var(--n2, #0E1C30);
-    border-color: rgba(200,164,74,.20);
+    background: var(--btn-primary-hover, var(--n2, #0E1C30));
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
 }
 
 .btn-sec {
@@ -2992,23 +3084,23 @@ img, video, iframe, canvas, svg {
     opacity: .6;
 }
 
-/* IMI MASTER v2 Inputs */
+/* IMI MASTER v2 Inputs — theme-aware */
 .inp {
-    background: rgba(20,36,64,.4);
-    border: 1px solid var(--bdg);
-    color: var(--t1);
+    background: var(--bg-elevated, rgba(20,36,64,.4));
+    border: 1px solid var(--border-default, rgba(200,164,74,.18));
+    color: var(--text-primary, #EDF2F8);
     padding: 10px 14px;
     font-family: var(--fu);
     font-size: 11px;
     border-radius: 10px;
     outline: none;
     width: 100%;
-    transition: all .15s;
+    transition: border-color .15s, box-shadow .15s, background .15s;
 }
-.inp::placeholder { color: var(--t3); }
+.inp::placeholder { color: var(--text-tertiary, #6E7D93); }
 .inp:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(200,164,74,.08);
+    border-color: var(--gold, #C8A44A);
+    box-shadow: 0 0 0 3px rgba(200,164,74,.12);
 }
 
 /* IMI MASTER v2 Badges */
