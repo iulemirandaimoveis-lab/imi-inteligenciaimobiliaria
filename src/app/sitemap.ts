@@ -78,7 +78,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...urls('/sobre', 0.75, 'monthly'),
     ...urls('/contato', 0.80, 'monthly'),
     ...urls('/inteligencia', 0.70, 'weekly'),
-    ...urls('/construtoras', 0.65, 'monthly'),
 
     // Legal
     ...urls('/privacidade', 0.30, 'yearly'),
