@@ -409,6 +409,14 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   const [showCart, setShowCart] = useState(false)
   const [activeStatus, setActiveStatus] = useState('ALL')
   const [activeQuadra, setActiveQuadra] = useState('ALL')
+  const [showTapHint, setShowTapHint] = useState(true)
+
+  // Tap hint dismisses itself so it never permanently covers the map.
+  useEffect(() => {
+    const t = setTimeout(() => setShowTapHint(false), 6000)
+    return () => clearTimeout(t)
+  }, [])
+  useEffect(() => { if (selectedLot) setShowTapHint(false) }, [selectedLot])
 
   // Fit canvas on mount
   useEffect(() => {
@@ -463,13 +471,28 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
     return { total: lots.length, byStatus }
   }, [lots])
 
+  // Keep the content centre inside the viewport so the map can never fully drift
+  // off-screen ("saindo do ar"). Bounds depend on scale, so re-clamp after every
+  // pan and zoom. Viewport in viewBox units is the full canvas (preserveAspectRatio).
+  const clampTransform = useCallback((t: { x: number; y: number; scale: number }) => {
+    const minX = -CANVAS_W / 2
+    const maxX = CANVAS_W / t.scale - CANVAS_W / 2
+    const minY = -CANVAS_H / 2
+    const maxY = CANVAS_H / t.scale - CANVAS_H / 2
+    return {
+      scale: t.scale,
+      x: Math.min(maxX, Math.max(minX, t.x)),
+      y: Math.min(maxY, Math.max(minY, t.y)),
+    }
+  }, [])
+
   // Zoom
   const doZoom = useCallback((factor: number) => {
     setTransform(t => {
       const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, t.scale * factor))
-      return { ...t, scale: newScale }
+      return clampTransform({ ...t, scale: newScale })
     })
-  }, [])
+  }, [clampTransform])
 
   const resetView = useCallback(() => {
     if (containerRef.current) {
@@ -498,6 +521,12 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
     if (pointerCache.current.size === 1) {
+      // Capture mouse/pen only — they lack implicit capture, so a drag that leaves the
+      // div would stop panning. Touch already has implicit capture; forcing it breaks
+      // taps on iOS Safari (pointercancel instead of pointerup).
+      if (e.pointerType !== 'touch') {
+        try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* no-op */ }
+      }
       clickTargetRef.current = e.target as Element
       didDrag.current = false
       downPos.current = { x: e.clientX, y: e.clientY }
@@ -533,12 +562,12 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
     lastPos.current = { x: e.clientX, y: e.clientY }
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
     if (!didDrag.current) return
-    setTransform(t => ({
+    setTransform(t => clampTransform({
       ...t,
       x: t.x + (dx / rect.width) * CANVAS_W / t.scale,
       y: t.y + (dy / rect.height) * CANVAS_H / t.scale,
     }))
-  }, [doZoom])
+  }, [doZoom, clampTransform])
 
   const handlePointerUp = useCallback((_e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(_e.pointerId)
@@ -906,22 +935,32 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
             <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={14} /></MapBtn>
           </div>
 
-          {/* ── Tap hint ── */}
-          <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-            <span
-              className="px-3 py-1.5 rounded-full text-[10px] font-semibold whitespace-nowrap"
-              style={{
-                background: 'rgba(255,255,255,0.90)',
-                color: 'rgba(60,40,10,0.80)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
-                border: '1px solid rgba(184,179,168,0.40)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
-              }}
-            >
-              Toque em um lote para ver detalhes
-            </span>
-          </div>
+          {/* ── Tap hint — auto-dismisses (6s) and on first selection ── */}
+          <AnimatePresence>
+            {showTapHint && !selectedLot && !loading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
+              >
+                <span
+                  className="px-3 py-1.5 rounded-full text-[10px] font-semibold whitespace-nowrap"
+                  style={{
+                    background: 'rgba(255,255,255,0.90)',
+                    color: 'rgba(60,40,10,0.80)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(184,179,168,0.40)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                  }}
+                >
+                  Toque em um lote para ver detalhes
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Loading spinner */}
           {loading && (
