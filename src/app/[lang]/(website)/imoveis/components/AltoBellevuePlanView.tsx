@@ -2367,8 +2367,6 @@ export default function AltoBellevuePlanView({
   // Pointer handlers — single-finger drag pans the viewBox; two-finger pinch zooms it.
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
-    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
-    clickTargetRef.current = e.nativeEvent.target as Element;
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointerCache.current.size === 1) {
       // Double-tap zoom: zoom in 2.5× at tap point
@@ -2522,6 +2520,7 @@ export default function AltoBellevuePlanView({
   const compareIds = useMemo(() => new Set(compareLots.map(l => l.id)), [compareLots]);
 
   const handleLotClick = useCallback((lot: PlanLot) => {
+    if (didDrag.current) return;
     if (multiSelectMode) {
       toggleCompare(lot);
     } else {
@@ -2532,6 +2531,7 @@ export default function AltoBellevuePlanView({
 
   // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
+    if (didDrag.current) return;
     setSelectedLot(null);
     const ov = overrideMap.get(a.id) ?? overrideMap.get(a.id.replace(/-\d+$/, ''));
     setSelectedAmenity(ov ? { ...a, ...ov, id: a.id, x: a.x, y: a.y } : a);
@@ -2635,6 +2635,7 @@ export default function AltoBellevuePlanView({
 
   // Badge no mapa: aproxima a quadra sem ativar o filtro (drill-down visual).
   const handleQuadraBadgeClick = useCallback((quadra: string) => {
+    if (didDrag.current) return;
     setSelectedLot(null);
     focusQuadra(quadra);
   }, [focusQuadra]);
