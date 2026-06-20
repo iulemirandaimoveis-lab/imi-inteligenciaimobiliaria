@@ -2367,15 +2367,48 @@ export default function AltoBellevuePlanView({
     [allLots]
   );
 
+  // Resolve a tap on the SVG to its lot / amenity / quadra-badge action by walking
+  // up from the element under the finger. Shared by pointerup AND pointercancel so a
+  // tap still opens the card on iOS Safari (which can emit pointercancel on a tap).
+  const dispatchTapFromTarget = useCallback((clickTarget: Element | null): boolean => {
+    if (didDrag.current || !clickTarget) return false;
+    let el: Element | null = clickTarget;
+    while (el) {
+      const lotId = el.getAttribute?.('data-lot-id');
+      if (lotId) {
+        const lot = allLotsRef.current.find(l => l.id === lotId);
+        if (lot) handleLotClickRef.current?.(lot);
+        return true;
+      }
+      const amenityId = el.getAttribute?.('data-amenity-id');
+      if (amenityId) {
+        const amenity = mapData?.amenities.find(a => a.id === amenityId);
+        if (amenity) handleAmenityClickRef.current?.(amenity);
+        return true;
+      }
+      const quadraBadge = el.getAttribute?.('data-quadra-badge');
+      if (quadraBadge) {
+        handleQuadraBadgeClickRef.current?.(quadraBadge);
+        return true;
+      }
+      el = el.parentElement;
+    }
+    return false;
+  }, [mapData]);
+
   // Pointer handlers — single-finger drag pans the viewBox; two-finger pinch zooms it.
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointerCache.current.size === 1) {
-      // Capture pointer so pointermove/pointerup always fire on this div even if the
-      // finger drifts to element boundaries — eliminates spurious pointerleave on iOS
-      // that was clearing clickTargetRef before pointerup, preventing card open.
-      try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* no-op */ }
+      // Capture ONLY mouse/pen: those have no implicit capture, so without it a drag
+      // that leaves the div stops firing pointermove/up. Touch pointers already get
+      // implicit capture to the target on pointerdown — forcing explicit capture to
+      // the container made iOS Safari fire pointercancel (not pointerup) on a tap,
+      // so the lot card never opened on mobile. Never capture touch here.
+      if (e.pointerType !== 'touch') {
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* no-op */ }
+      }
       // Double-tap zoom: zoom in 2.5× at tap point
       const now = performance.now();
       const lastTap = lastTapRef.current;
@@ -2465,34 +2498,11 @@ export default function AltoBellevuePlanView({
     const clickTarget = clickTargetRef.current;
     clickTargetRef.current = null;
     if (!didDrag.current && clickTarget) {
-      let el: Element | null = clickTarget;
-      let dispatched = false;
-      while (el && !dispatched) {
-        const lotId = el.getAttribute?.('data-lot-id');
-        if (lotId) {
-          const lot = allLotsRef.current.find(l => l.id === lotId);
-          if (lot) handleLotClickRef.current?.(lot);
-          dispatched = true;
-          break;
-        }
-        const amenityId = el.getAttribute?.('data-amenity-id');
-        if (amenityId) {
-          const amenity = mapData?.amenities.find(a => a.id === amenityId);
-          if (amenity) handleAmenityClickRef.current?.(amenity);
-          dispatched = true;
-          break;
-        }
-        const quadraBadge = el.getAttribute?.('data-quadra-badge');
-        if (quadraBadge) {
-          handleQuadraBadgeClickRef.current?.(quadraBadge);
-          dispatched = true;
-          break;
-        }
-        el = el.parentElement;
-      }
+      const dispatched = dispatchTapFromTarget(clickTarget);
+      // Tap on empty terrain → dismiss any open card/amenity.
       if (!dispatched) { setSelectedLot(null); setSelectedAmenity(null); }
     }
-  }, [mapData]);
+  }, [dispatchTapFromTarget]);
 
   // Pointer left the container (or capture released) — cleanup only, no click dispatch.
   const handlePointerLeave = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -2505,13 +2515,18 @@ export default function AltoBellevuePlanView({
     }
   }, []);
 
-  // Browser cancelled the pointer (scroll, system gesture) — cleanup only, no click dispatch.
-  const handlePointerCancel = useCallback((_e: React.PointerEvent<HTMLDivElement>) => {
-    pointerCache.current.clear();
+  // Browser cancelled the pointer (scroll, system gesture). iOS Safari can emit this
+  // instead of pointerup on a plain tap — so still resolve the tap (open the card)
+  // when no drag happened, then clean up.
+  const handlePointerCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    pointerCache.current.delete(e.pointerId);
+    if (pointerCache.current.size > 0) return;
     setIsDragging(false);
+    const clickTarget = clickTargetRef.current;
     clickTargetRef.current = null;
+    if (!didDrag.current && clickTarget) dispatchTapFromTarget(clickTarget);
     didDrag.current = false;
-  }, []);
+  }, [dispatchTapFromTarget]);
 
   // Wheel zoom centered on cursor — deltaY > 0 = zoom out (widen viewBox), < 0 = zoom in
   useEffect(() => {
