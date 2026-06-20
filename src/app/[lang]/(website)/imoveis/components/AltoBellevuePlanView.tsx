@@ -467,11 +467,14 @@ interface MapInnerProps {
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
+  onPointerLeave: (e: React.PointerEvent<HTMLDivElement>) => void;
+  onPointerCancel: (e: React.PointerEvent<HTMLDivElement>) => void;
 }
 
 const MapInner = memo(function MapInner({
   lots, allLots, context, showTechLayer, selectedId, compareIds, multiSelectMode, vb, isDragging,
   activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onPointerDown, onPointerMove, onPointerUp,
+  onPointerLeave, onPointerCancel,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
   const scale = SVG_W / vb.w;
@@ -617,8 +620,8 @@ const MapInner = memo(function MapInner({
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onPointerLeave={onPointerUp}
-      onPointerCancel={onPointerUp}
+      onPointerLeave={onPointerLeave}
+      onPointerCancel={onPointerCancel}
     >
       <svg
         viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
@@ -2369,6 +2372,10 @@ export default function AltoBellevuePlanView({
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointerCache.current.size === 1) {
+      // Capture pointer so pointermove/pointerup always fire on this div even if the
+      // finger drifts to element boundaries — eliminates spurious pointerleave on iOS
+      // that was clearing clickTargetRef before pointerup, preventing card open.
+      try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* no-op */ }
       // Double-tap zoom: zoom in 2.5× at tap point
       const now = performance.now();
       const lastTap = lastTapRef.current;
@@ -2486,6 +2493,25 @@ export default function AltoBellevuePlanView({
       if (!dispatched) { setSelectedLot(null); setSelectedAmenity(null); }
     }
   }, [mapData]);
+
+  // Pointer left the container (or capture released) — cleanup only, no click dispatch.
+  const handlePointerLeave = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!pointerCache.current.has(e.pointerId)) return;
+    pointerCache.current.delete(e.pointerId);
+    if (pointerCache.current.size === 0) {
+      setIsDragging(false);
+      clickTargetRef.current = null;
+      didDrag.current = false;
+    }
+  }, []);
+
+  // Browser cancelled the pointer (scroll, system gesture) — cleanup only, no click dispatch.
+  const handlePointerCancel = useCallback((_e: React.PointerEvent<HTMLDivElement>) => {
+    pointerCache.current.clear();
+    setIsDragging(false);
+    clickTargetRef.current = null;
+    didDrag.current = false;
+  }, []);
 
   // Wheel zoom centered on cursor — deltaY > 0 = zoom out (widen viewBox), < 0 = zoom in
   useEffect(() => {
@@ -2905,6 +2931,8 @@ export default function AltoBellevuePlanView({
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerLeave}
+            onPointerCancel={handlePointerCancel}
           />
         )}
 
