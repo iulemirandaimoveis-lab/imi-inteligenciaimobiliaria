@@ -5,11 +5,12 @@
  * produz public/maps/loteamento-miguel-marques-lots.json no formato `LotMapData`
  * que `InteractiveLotMap`/`useLotMap` consomem — o MESMO motor do Alto Bellevue.
  *
- * Geometria dos lotes: como o DXF não tem polígonos fechados (lotes = linhas de
- * borda de quadra + cotas), cada célula é a **Voronoi dos centroides REAIS** do
- * lote dentro da quadra (recortada a uma caixa proporcional à área). Isso usa a
- * posição real de cada lote (nada inventado de layout) e ladrilha sem sobreposição.
- * Validado por área: a célula é comparada ao m² declarado.
+ * Geometria dos lotes: o DXF não tem polígonos fechados (lotes = linhas soltas), mas
+ * os centroides REAIS formam uma grade limpa (faixas de lotes empilhados, batendo com
+ * o satélite). Cada célula é uma **grade axis-Voronoi**: testada = meio-caminho até os
+ * vizinhos da mesma coluna; profundidade = área ÷ testada, com o fundo no meio-caminho
+ * até a coluna pareada. Usa só posições/áreas reais e ladrilha com ruas entre os pares.
+ * Quando o DXF trouxer lotes como polígono fechado, o contorno vira EXATO (pixel-a-pixel).
  *
  * Status/preço NÃO entram aqui — o motor enriquece ao vivo do Supabase
  * (subdivision_lots) por chave QUADRA-lote. Default do JSON: disponível/preço nulo.
@@ -24,26 +25,9 @@ const OUT = path.join(process.cwd(), 'public/maps/loteamento-miguel-marques-lots
 
 const TARGET_W = 1600;   // largura do viewBox (unid. SVG)
 const PAD = 48;          // margem no viewBox
-const NEIGHBOR_R = 22000; // raio (mm) p/ considerar vizinhos na Voronoi
 
 // ── Geometria ───────────────────────────────────────────────────────────────────
 const shoelace = (pts) => { let a = 0; for (let i = 0; i < pts.length; i++) { const [x1, y1] = pts[i], [x2, y2] = pts[(i + 1) % pts.length]; a += x1 * y2 - x2 * y1; } return Math.abs(a) / 2; };
-
-/** Recorta polígono convexo pelo semiplano { p : (p-m)·n >= 0 } (Sutherland-Hodgman). */
-function clipHalfPlane(poly, mx, my, nx, ny) {
-  const out = [];
-  const side = (px, py) => (px - mx) * nx + (py - my) * ny;
-  for (let i = 0; i < poly.length; i++) {
-    const a = poly[i], b = poly[(i + 1) % poly.length];
-    const sa = side(a[0], a[1]), sb = side(b[0], b[1]);
-    if (sa >= 0) out.push(a);
-    if ((sa < 0) !== (sb < 0)) {
-      const t = sa / (sa - sb);
-      out.push([a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])]);
-    }
-  }
-  return out;
-}
 
 function main() {
   if (!fs.existsSync(SRC)) { console.error('Falta extracted.json — rode scripts/cad/mm/extract.mjs primeiro.'); process.exit(1); }
@@ -84,35 +68,46 @@ function main() {
   // de-rotação aplicada também aos vértices de polígono real (coords CAD cruas)
   const Rot = (x, y) => [cmx + (x - cmx) * cosR - (y - cmy) * sinR, cmy + (x - cmx) * sinR + (y - cmy) * cosR];
 
-  let areaOk = 0, areaTot = 0, nExato = 0, nVoronoi = 0;
+  // ── Contorno por GRADE (axis-Voronoi dos centroides REAIS) ───────────────────
+  // Os centroides REAIS formam uma grade limpa: faixas (colunas) de lotes empilhados
+  // (confirmado renderizando os centroides — batem com o satélite). Após de-rotação,
+  // a TESTADA (frente) fica no eixo vertical (vizinhos da mesma coluna, bem próximos)
+  // e a PROFUNDIDADE no eixo horizontal. Para cada lote:
+  //   • altura (testada) = meio-caminho até os vizinhos de cima/baixo → ladrilha a coluna;
+  //   • largura = área ÷ altura, com o FUNDO no meio-caminho até a coluna pareada
+  //     (costas-com-costas) e a FRENTE (rua) recebendo o restante.
+  // Dá m² correto, ruas entre os pares e formato fiel. (Edges/Voronoi-caixa antigos
+  // saíam errados: tira/barra comprida — a área batia mas o FORMATO não.)
+  const COLTOL = 5000, ROWTOL = 5000, MAXFR = 22000, MAXDP = 40000; // mm
+  function gridBox(l) {
+    let up = Infinity, down = Infinity, left = Infinity, right = Infinity;
+    for (const o of lots) {
+      if (o === l) continue;
+      if (Math.abs(o.cadX - l.cadX) < COLTOL) { const dy = o.cadY - l.cadY; if (dy > 0) { if (dy < up) up = dy; } else if (-dy < down) down = -dy; }
+      if (Math.abs(o.cadY - l.cadY) < ROWTOL) { const dx = o.cadX - l.cadX; if (dx > 0) { if (dx < right) right = dx; } else if (-dx < left) left = -dx; }
+    }
+    const hUp = (isFinite(up) && up < MAXFR) ? up / 2 : ((isFinite(down) && down < MAXFR) ? down / 2 : 5000);
+    const hDown = (isFinite(down) && down < MAXFR) ? down / 2 : hUp;
+    const height = hUp + hDown;
+    const width = l.area_m2 ? (l.area_m2 * 1e6) / height : 16000;
+    const gl = (isFinite(left) && left < MAXDP) ? left / 2 : Infinity;
+    const gr = (isFinite(right) && right < MAXDP) ? right / 2 : Infinity;
+    let hL, hR;
+    if (gl < gr) { hL = gl; hR = Math.max(2000, width - hL); }
+    else if (gr < gl) { hR = gr; hL = Math.max(2000, width - hR); }
+    else { hL = width / 2; hR = width / 2; }
+    return [[l.cadX - hL, l.cadY - hDown], [l.cadX + hR, l.cadY - hDown], [l.cadX + hR, l.cadY + hUp], [l.cadX - hL, l.cadY + hUp]];
+  }
+
+  let areaOk = 0, areaTot = 0, nExato = 0, nGrid = 0;
   const outLots = [];
   for (const [q, group] of byQ) {
     for (const l of group) {
-      let poly;
-      if (l.polygon && l.polygon.length >= 3) {
-        // CONTORNO REAL do CAD (polígono fechado) — de-rotacionado. Pixel-a-pixel.
-        poly = l.polygon.map(([x, y]) => Rot(x, y));
-        nExato++;
-      } else {
-        // Fallback: célula de Voronoi dos centroides reais (caixa ∝ área recortada).
-        const sideM = Math.sqrt(l.area_m2 || 160) * 1.35;          // metros
-        const half = (sideM * 1000) / 2;                            // mm
-        poly = [
-          [l.cadX - half, l.cadY - half], [l.cadX + half, l.cadY - half],
-          [l.cadX + half, l.cadY + half], [l.cadX - half, l.cadY + half],
-        ];
-        for (const o of group) {
-          if (o === l) continue;
-          const dx = o.cadX - l.cadX, dy = o.cadY - l.cadY;
-          if (Math.hypot(dx, dy) > NEIGHBOR_R) continue;
-          // bissetriz: mantém o lado do lote l. normal aponta p/ l (de o → l): n = (l - o)
-          const mx = (l.cadX + o.cadX) / 2, my = (l.cadY + o.cadY) / 2;
-          poly = clipHalfPlane(poly, mx, my, l.cadX - o.cadX, l.cadY - o.cadY);
-          if (poly.length < 3) break;
-        }
-        if (poly.length < 3) continue;
-        nVoronoi++;
-      }
+      let poly = null;
+      // (1) Polígono fechado do CAD → contorno EXATO (quando o DXF tiver lotes fechados).
+      if (l.polygon && l.polygon.length >= 3) { poly = l.polygon.map(([x, y]) => Rot(x, y)); nExato++; }
+      // (2) Grade axis-Voronoi dos centroides REAIS (testada + profundidade).
+      if (!poly) { poly = gridBox(l); nGrid++; }
       const cellM2 = shoelace(poly) / 1e6;
       if (l.area_m2) { areaTot++; if (Math.abs(cellM2 - l.area_m2) / l.area_m2 <= 0.30) areaOk++; }
       const svgPts = poly.map(([x, y]) => T(x, y));
@@ -161,7 +156,7 @@ function main() {
   fs.writeFileSync(OUT, JSON.stringify(out));
 
   console.log('De-rotação aplicada:', (theta * 180 / Math.PI).toFixed(2), '°');
-  console.log('Contorno: EXATO (CAD) =', nExato, '| Voronoi (fallback) =', nVoronoi);
+  console.log(`Contorno: EXATO(CAD)=${nExato} | GRADE(axis-Voronoi)=${nGrid}`);
   console.log('viewBox:', out.viewBox, '| lotes:', outLots.length, '| ruas:', streetLabels.length);
   console.log(`Área das células dentro de ±30% do m² declarado: ${areaOk}/${areaTot} (${(areaOk / areaTot * 100).toFixed(1)}%)`);
   console.log('Saída:', path.relative(process.cwd(), OUT), '(' + (fs.statSync(OUT).size / 1024).toFixed(0) + ' KB)');

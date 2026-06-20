@@ -33,7 +33,7 @@ function parseEntities(file) {
   for (let i = 0; i + 1 < lines.length; i += 2) pairs.push([lines[i].trim(), lines[i + 1]]);
   const ents = [];
   const polylines = []; // polígonos fechados (LWPOLYLINE/POLYLINE) — contornos REAIS de lote
-  let sx4 = 0, sy4 = 0; // direção dominante das bordas de lote (mod 90°, fase 4θ)
+  const edges = [];     // segmentos A-DETL-THIN — bordas reais p/ contorno híbrido
   let poly = null;      // estado p/ POLYLINE…VERTEX…SEQEND (formato antigo)
   for (let s = 0; s < pairs.length; s++) {
     if (pairs[s][0] !== '0') continue;
@@ -72,18 +72,37 @@ function parseEntities(file) {
     }
     s = j - 1;
     if (type === 'LINE') {
-      // ângulo das bordas de lote (A-DETL-THIN) → de-rotação do plano
+      // segmentos das bordas de lote (A-DETL-THIN) → de-rotação + snapping de contorno
       if ((g['8'] || '').trim() === 'A-DETL-THIN') {
         const x1 = +g['10'], y1 = +g['20'], x2 = +g['11'], y2 = +g['21'];
-        const len = Math.hypot(x2 - x1, y2 - y1);
-        if (len > 2000 && len < 40000) { const a = Math.atan2(y2 - y1, x2 - x1); sx4 += Math.cos(4 * a) * len; sy4 += Math.sin(4 * a) * len; }
+        if (Number.isFinite(x1) && Number.isFinite(x2)) {
+          const len = Math.hypot(x2 - x1, y2 - y1);
+          if (len > 600 && len < 60000) edges.push([Math.round(x1), Math.round(y1), Math.round(x2), Math.round(y2)]);
+        }
       }
       continue;
     }
     ents.push({ type, g, layer: (g['8'] || '').trim(), text });
   }
-  const rotationDeg = +((Math.atan2(sy4, sx4) / 4) * 180 / Math.PI).toFixed(3);
-  return { ents, rotationDeg, polylines };
+  return { ents, edges, polylines };
+}
+
+/**
+ * Ângulo de de-rotação = MODA (pico) do histograma de ângulos das bordas mod 90°,
+ * ponderado por comprimento. A média circular (4θ) é puxada por orientações
+ * secundárias (ruas a ~57°) e erra ~8°; a moda pega a grade dominante real (~41°).
+ */
+function dominantAngleDeg(edges) {
+  const bins = new Array(900).fill(0); // 0.1° em [0,90)
+  for (const [x1, y1, x2, y2] of edges) {
+    const len = Math.hypot(x2 - x1, y2 - y1);
+    if (len < 2000 || len > 40000) continue;
+    let d = (Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI) % 90; if (d < 0) d += 90;
+    bins[Math.min(899, Math.round(d * 10))] += len;
+  }
+  let pk = 0; for (let i = 0; i < 900; i++) if (bins[i] > bins[pk]) pk = i;
+  let sw = 0, swv = 0; for (let i = pk - 20; i <= pk + 20; i++) { const k = (i + 900) % 900; sw += bins[k]; swv += bins[k] * (k / 10); }
+  return +(swv / sw).toFixed(3);
 }
 
 const num = (x) => { const n = parseFloat(x); return Number.isFinite(n) ? n : null; };
@@ -131,7 +150,8 @@ function main() {
     console.error(`DXF não encontrado: ${DXF}\nUse: node scripts/cad/mm/extract.mjs "<caminho.dxf>" (ou MM_DXF=...)`);
     process.exit(1);
   }
-  const { ents, rotationDeg, polylines } = parseEntities(DXF);
+  const { ents, edges, polylines } = parseEntities(DXF);
+  const rotationDeg = dominantAngleDeg(edges);
   const txt = ents
     .map((e) => ({ t: cleanText(e.text), x: num(e.g['10']), y: num(e.g['20']), layer: e.layer }))
     .filter((o) => o.x != null && o.t);
