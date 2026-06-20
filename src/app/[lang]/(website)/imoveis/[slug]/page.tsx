@@ -370,7 +370,10 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     {/* Main content */}
                     <div className="lg:col-span-8 space-y-12 md:space-y-20">
                         <section id="galeria">
-                            <DevelopmentGallery development={development} />
+                            <DevelopmentGallery
+                                development={development}
+                                lotMapAmenities={Array.isArray(data.lot_map_amenities) ? data.lot_map_amenities : undefined}
+                            />
                         </section>
                         <section id="detalhes">
                             <DevelopmentDetails
