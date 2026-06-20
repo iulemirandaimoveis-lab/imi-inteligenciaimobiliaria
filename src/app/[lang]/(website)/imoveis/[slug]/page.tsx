@@ -462,7 +462,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     </div>
 
                     {/* Sidebar — desktop only */}
-                    <aside className="hidden lg:block lg:col-span-4 space-y-6">
+                    <aside className="hidden lg:block lg:col-span-4 self-start space-y-6">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         <RealtorCard broker={brokerData as any} propertyName={development.name} />
                         <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
