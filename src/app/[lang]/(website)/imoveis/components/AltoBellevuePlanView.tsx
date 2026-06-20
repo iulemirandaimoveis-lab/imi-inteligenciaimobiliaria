@@ -2384,6 +2384,7 @@ export default function AltoBellevuePlanView({
         return;
       }
       lastTapRef.current = { time: now, x: e.clientX, y: e.clientY };
+      clickTargetRef.current = e.target as Element;
       setIsDragging(true);
       didDrag.current = false;
       lastPos.current = { x: e.clientX, y: e.clientY };
