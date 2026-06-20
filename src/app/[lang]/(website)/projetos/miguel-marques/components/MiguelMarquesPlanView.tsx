@@ -8,19 +8,22 @@ import {
   X, ZoomIn, ZoomOut, RotateCcw, MessageCircle,
   ShoppingCart, Trash2, Maximize2, Minimize2,
 } from 'lucide-react'
-import { ALL_LOTS, type Lot } from '../data/lotsData'
-import {
-  QUADRA_LAYOUTS, CANVAS_W, CANVAS_H, LAKE,
-  type QuadraLayout,
-} from '../data/masterplanLayout'
+import { type Lot } from '../data/lotsData'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const MIN_SCALE = 0.08
-const MAX_SCALE = 10
+// Geometria REAL extraída do CAD oficial (R07 PLANTA LOTEADA.dxf) + quadra/status
+// do quadro de disponibilidade. Ver scripts/cad/build_miguel_marques.py.
+const GEO_URL = '/maps/miguel-marques-cad-lots.json'
+const DEFAULT_VB = { w: 1200, h: 1386 }
+const MIN_SCALE = 0.6
+const MAX_SCALE = 16
 const WHATSAPP_NUMBER = '5581986141487'
 const GOLD = '#C8A44A'
 const NAVY = '#0B1928'
+
+// Lote com geometria real (polígono) + dados comerciais.
+type GeoLot = Lot & { points: string; labelX: number; labelY: number }
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', {
@@ -50,26 +53,41 @@ const PAYMENT_CONDITIONS = [
 
 const STATUS_FILTER_KEYS = ['ALL', 'disponivel', 'vendido', 'negociacao', 'proprietario'] as const
 
-// ─── Lot grid position generator ─────────────────────────────────────────────
+// ─── Geometria real (CAD) ─────────────────────────────────────────────────────
 
-interface LotPos {
-  x: number; y: number; w: number; h: number; lotIndex: number
-}
+interface GeoData { w: number; h: number; lots: GeoLot[] }
 
-function generateLotPositions(layout: QuadraLayout): LotPos[] {
-  const positions: LotPos[] = []
-  for (let row = 0; row < layout.rows; row++) {
-    for (let col = 0; col < layout.cols; col++) {
-      positions.push({
-        x: layout.x + col * layout.lotW,
-        y: layout.y + row * layout.lotH,
-        w: layout.lotW - 1,
-        h: layout.lotH - 1,
-        lotIndex: row * layout.cols + col,
+/** Carrega os polígonos reais dos lotes (CAD oficial) do JSON estático. */
+function useGeometry(): { geo: GeoData | null; error: boolean } {
+  const [geo, setGeo] = useState<GeoData | null>(null)
+  const [error, setError] = useState(false)
+  useEffect(() => {
+    let alive = true
+    fetch(GEO_URL)
+      .then(r => r.json())
+      .then((d: { viewBox?: string; lots?: Record<string, unknown>[] }) => {
+        if (!alive) return
+        const vb = String(d.viewBox ?? `0 0 ${DEFAULT_VB.w} ${DEFAULT_VB.h}`).split(/\s+/).map(Number)
+        const w = vb[2] || DEFAULT_VB.w
+        const h = vb[3] || DEFAULT_VB.h
+        const lots: GeoLot[] = (d.lots ?? []).map((l) => ({
+          id: String(l.id),
+          quadra: String(l.quadra),
+          lote: Number(l.lote),
+          metragem: Number(l.area) || 0,
+          valor: Number(l.price) || 0,
+          status: String(l.status ?? 'disponivel') as Lot['status'],
+          isLakefront: String(l.quadra) === 'Z',
+          points: String(l.points ?? ''),
+          labelX: Number(l.labelX) || 0,
+          labelY: Number(l.labelY) || 0,
+        })).filter(l => l.points)
+        setGeo({ w, h, lots })
       })
-    }
-  }
-  return positions
+      .catch(() => { if (alive) setError(true) })
+    return () => { alive = false }
+  }, [])
+  return { geo, error }
 }
 
 // ─── MapBtn — matches Alto Bellevue control style ─────────────────────────────
@@ -388,11 +406,28 @@ interface MiguelMarquesPlanViewProps {
 }
 
 export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesPlanViewProps) {
-  const lots = lotsProp ?? ALL_LOTS
+  const { geo, error: geoError } = useGeometry()
+  const CW = geo?.w ?? DEFAULT_VB.w
+  const CH = geo?.h ?? DEFAULT_VB.h
+
+  // Status ao vivo (Supabase, via prop) sobrepõe o status do quadro por id de lote.
+  const propStatusById = useMemo(
+    () => new Map((lotsProp ?? []).map(l => [l.id, l.status])),
+    [lotsProp],
+  )
+  const lots = useMemo<GeoLot[]>(() => {
+    if (!geo) return []
+    return geo.lots.map(g => {
+      const ov = propStatusById.get(g.id)
+      return ov && ov !== g.status ? { ...g, status: ov } : g
+    })
+  }, [geo, propStatusById])
+
   const containerRef = useRef<HTMLDivElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(true)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  useEffect(() => { if (geo || geoError) setLoading(false) }, [geo, geoError])
 
   // Pointer-based pan/zoom — uses Pointer Events only (matches Alto Bellevue)
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 })
@@ -418,20 +453,8 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   }, [])
   useEffect(() => { if (selectedLot) setShowTapHint(false) }, [selectedLot])
 
-  // Fit canvas on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (containerRef.current) {
-        const el = containerRef.current
-        const scaleX = el.clientWidth / CANVAS_W
-        const scaleY = el.clientHeight / CANVAS_H
-        const fit = Math.min(scaleX, scaleY, 1) * 0.90
-        setTransform({ x: 0, y: 0, scale: Math.max(fit, MIN_SCALE) })
-      }
-      setLoading(false)
-    }, 50)
-    return () => clearTimeout(timer)
-  }, [])
+  // viewBox já normaliza o conteúdo para a viewport (scale=1 mostra a planta toda),
+  // então o "fit" é apenas scale=1 — sem recalcular por clientWidth.
 
   // Fullscreen API
   const toggleFullscreen = useCallback(async () => {
@@ -475,16 +498,18 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   // off-screen ("saindo do ar"). Bounds depend on scale, so re-clamp after every
   // pan and zoom. Viewport in viewBox units is the full canvas (preserveAspectRatio).
   const clampTransform = useCallback((t: { x: number; y: number; scale: number }) => {
-    const minX = -CANVAS_W / 2
-    const maxX = CANVAS_W / t.scale - CANVAS_W / 2
-    const minY = -CANVAS_H / 2
-    const maxY = CANVAS_H / t.scale - CANVAS_H / 2
+    // Conteúdo transformado em coords do viewBox: x ∈ [s·tx, s·(CW+tx)]. A viewport
+    // visível é [0, CW]. Mantemos o conteúdo cobrindo (zoom in) ou contido (zoom out),
+    // o que impede o mapa de "sair do ar" em qualquer nível de zoom.
+    const bx = CW * (1 / t.scale - 1)
+    const by = CH * (1 / t.scale - 1)
+    const clamp = (v: number, a: number, b: number) => Math.min(Math.max(a, b), Math.max(Math.min(a, b), v))
     return {
       scale: t.scale,
-      x: Math.min(maxX, Math.max(minX, t.x)),
-      y: Math.min(maxY, Math.max(minY, t.y)),
+      x: clamp(t.x, Math.min(0, bx), Math.max(0, bx)),
+      y: clamp(t.y, Math.min(0, by), Math.max(0, by)),
     }
-  }, [])
+  }, [CW, CH])
 
   // Zoom
   const doZoom = useCallback((factor: number) => {
@@ -495,13 +520,7 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   }, [clampTransform])
 
   const resetView = useCallback(() => {
-    if (containerRef.current) {
-      const el = containerRef.current
-      const scaleX = el.clientWidth / CANVAS_W
-      const scaleY = el.clientHeight / CANVAS_H
-      const fit = Math.min(scaleX, scaleY, 1) * 0.90
-      setTransform({ x: 0, y: 0, scale: Math.max(fit, MIN_SCALE) })
-    }
+    setTransform({ x: 0, y: 0, scale: 1 })
   }, [])
 
   // Wheel zoom
@@ -564,10 +583,10 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
     if (!didDrag.current) return
     setTransform(t => clampTransform({
       ...t,
-      x: t.x + (dx / rect.width) * CANVAS_W / t.scale,
-      y: t.y + (dy / rect.height) * CANVAS_H / t.scale,
+      x: t.x + (dx / rect.width) * CW / t.scale,
+      y: t.y + (dy / rect.height) * CH / t.scale,
     }))
-  }, [doZoom, clampTransform])
+  }, [doZoom, clampTransform, CW, CH])
 
   const handlePointerUp = useCallback((_e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(_e.pointerId)
@@ -598,19 +617,20 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   }, [cartIds])
   const removeFromCart = useCallback((id: string) => setCart(c => c.filter(l => l.id !== id)), [])
 
-  const showLotNumbers = transform.scale >= 2.5
+  const showLotNumbers = transform.scale >= 3
 
-  // Quadra centroids for labels
+  // Quadra centroids (median of real lot label positions — robust to outliers).
   const quadraCentroids = useMemo(() => {
-    const map: Record<string, { x: number; y: number }> = {}
-    for (const layout of QUADRA_LAYOUTS) {
-      map[layout.id] = {
-        x: layout.x + (layout.cols * layout.lotW) / 2,
-        y: layout.y + (layout.rows * layout.lotH) / 2,
-      }
+    const acc = new Map<string, { xs: number[]; ys: number[] }>()
+    for (const l of lots) {
+      const d = acc.get(l.quadra) ?? { xs: [], ys: [] }
+      d.xs.push(l.labelX); d.ys.push(l.labelY); acc.set(l.quadra, d)
     }
+    const median = (a: number[]) => { const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length / 2)] ?? 0 }
+    const map: Record<string, { x: number; y: number }> = {}
+    for (const [q, d] of acc) map[q] = { x: median(d.xs), y: median(d.ys) }
     return map
-  }, [])
+  }, [lots])
 
   return (
     <div
@@ -696,7 +716,7 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
           onPointerCancel={handlePointerUp}
         >
           <svg
-            viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
+            viewBox={`0 0 ${CW} ${CH}`}
             className="w-full h-full"
             style={{ overflow: 'visible', touchAction: 'none' }}
           >
@@ -712,183 +732,89 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
                 <stop offset="60%" stopColor="#D5C9A8" stopOpacity="0.35" />
                 <stop offset="100%" stopColor="#B8AC8C" stopOpacity="0.55" />
               </radialGradient>
-              {/* Lake gradient */}
-              <radialGradient id="mm-lake" cx="50%" cy="40%" r="60%">
-                <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.9" />
-                <stop offset="60%" stopColor="#7DD3FC" stopOpacity="0.75" />
-                <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.60" />
-              </radialGradient>
-              {/* Lake glow */}
-              <filter id="mm-lake-glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-              </filter>
-              {/* Green area gradient */}
-              <linearGradient id="mm-green" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#D4E8CC" />
-                <stop offset="100%" stopColor="#C8DFC0" />
-              </linearGradient>
             </defs>
 
             <g transform={`scale(${transform.scale}) translate(${transform.x},${transform.y})`}>
-              {/* Base terrain */}
-              <rect x={0} y={0} width={CANVAS_W} height={CANVAS_H} fill="url(#mm-base)" />
-              <rect x={0} y={0} width={CANVAS_W} height={CANVAS_H} fill="url(#mm-terrain)" />
+              {/* Terreno (base) — sem ruas/lago sintéticos: a geometria é a planta real */}
+              <rect x={0} y={0} width={CW} height={CH} fill="url(#mm-base)" />
+              <rect x={0} y={0} width={CW} height={CH} fill="url(#mm-terrain)" style={{ pointerEvents: 'none' }} />
 
-              {/* Green vegetation areas (north/south boundaries) */}
-              <rect x={0} y={0} width={CANVAS_W} height={60} fill="url(#mm-green)" opacity={0.6} />
-              <rect x={0} y={2040} width={CANVAS_W} height={60} fill="url(#mm-green)" opacity={0.6} />
-
-              {/* Roads — warm light roads like Alto Bellevue */}
-              {/* Horizontal streets */}
-              <rect x={0}    y={0}    width={CANVAS_W} height={60}  fill="#C8C2AD" />
-              <rect x={0}    y={230}  width={CANVAS_W} height={32}  fill="#D5D0C0" />
-              <rect x={0}    y={510}  width={CANVAS_W} height={32}  fill="#D5D0C0" />
-              <rect x={0}    y={790}  width={CANVAS_W} height={32}  fill="#D5D0C0" />
-              <rect x={0}    y={1060} width={CANVAS_W} height={32}  fill="#D5D0C0" />
-              <rect x={0}    y={1330} width={CANVAS_W} height={32}  fill="#D5D0C0" />
-              <rect x={0}    y={1610} width={CANVAS_W} height={32}  fill="#D5D0C0" />
-              <rect x={0}    y={1880} width={CANVAS_W} height={32}  fill="#D5D0C0" />
-              <rect x={0}    y={2060} width={CANVAS_W} height={60}  fill="#C8C2AD" />
-              {/* Vertical streets */}
-              <rect x={0}    y={0} width={60}  height={CANVAS_H} fill="#C8C2AD" />
-              <rect x={580}  y={0} width={32}  height={CANVAS_H} fill="#D5D0C0" />
-              <rect x={1140} y={0} width={50}  height={CANVAS_H} fill="#C8C2AD" />
-              <rect x={1720} y={0} width={32}  height={CANVAS_H} fill="#D5D0C0" />
-              <rect x={2100} y={0} width={32}  height={CANVAS_H} fill="#D5D0C0" />
-              <rect x={2360} y={0} width={40}  height={CANVAS_H} fill="#C8C2AD" />
-
-              {/* Road center lines (subtle dashes for main roads) */}
-              <line x1={0} y1={30} x2={CANVAS_W} y2={30} stroke="#B8B3A0" strokeWidth={0.5} strokeDasharray="20,12" opacity={0.5} />
-              <line x1={0} y1={2080} x2={CANVAS_W} y2={2080} stroke="#B8B3A0" strokeWidth={0.5} strokeDasharray="20,12" opacity={0.5} />
-              <line x1={30} y1={0} x2={30} y2={CANVAS_H} stroke="#B8B3A0" strokeWidth={0.5} strokeDasharray="20,12" opacity={0.5} />
-
-              {/* Lake area (green buffer around lake) */}
-              <ellipse
-                cx={LAKE.cx} cy={LAKE.cy}
-                rx={LAKE.rx + 40} ry={LAKE.ry + 40}
-                fill="url(#mm-green)"
-                opacity={0.5}
-              />
-
-              {/* Lake */}
-              <ellipse
-                cx={LAKE.cx} cy={LAKE.cy}
-                rx={LAKE.rx} ry={LAKE.ry}
-                fill="url(#mm-lake)"
-                stroke="#38BDF8"
-                strokeWidth={2}
-                filter="url(#mm-lake-glow)"
-              />
-              <text
-                x={LAKE.cx} y={LAKE.cy}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="#0369A1"
-                fontSize={24}
-                fontWeight="bold"
-                fontFamily="system-ui"
-                style={{ pointerEvents: 'none', opacity: 0.8 }}
-              >
-                Lago
-              </text>
-
-              {/* Lot grid rendering */}
-              {QUADRA_LAYOUTS.map(layout => {
-                const positions = generateLotPositions(layout)
-                return positions.map(pos => {
-                  const lotId = `${layout.id}-${pos.lotIndex + 1}`
-                  const lot = lotsById.get(lotId)
-                  if (!lot) return null
-
-                  const isFiltered = !filteredIds.has(lotId)
-                  const isHovered = hoveredId === lotId
-                  const isSelected = selectedLot?.id === lotId
-                  const inCart = cartIds.has(lotId)
-                  const st = getStyle(lot.status)
-
-                  const fillColor = isFiltered
-                    ? 'rgba(220,214,200,0.4)'
-                    : isSelected
-                      ? 'rgba(200,164,74,0.45)'
-                      : inCart
-                        ? 'rgba(34,197,94,0.40)'
-                        : st.fill
-
-                  const strokeColor = isFiltered
-                    ? 'rgba(184,179,168,0.4)'
-                    : isSelected
-                      ? GOLD
-                      : inCart
-                        ? '#16A34A'
-                        : isHovered
-                          ? NAVY
-                          : st.stroke
-
-                  const strokeWidth = (isSelected || isHovered ? 1.5 : 0.7) / transform.scale
-
-                  return (
-                    <rect
-                      key={lotId}
-                      data-lot-id={lotId}
-                      x={pos.x}
-                      y={pos.y}
-                      width={pos.w}
-                      height={pos.h}
-                      fill={fillColor}
-                      stroke={strokeColor}
-                      strokeWidth={strokeWidth}
-                      rx={1}
-                      style={{
-                        cursor: lot.status === 'vendido' ? 'default' : 'pointer',
-                        transition: 'fill 0.1s, stroke 0.1s',
-                      }}
-                      onMouseEnter={() => setHoveredId(lotId)}
-                      onMouseLeave={() => setHoveredId(null)}
-                    />
-                  )
-                })
+              {/* Lotes — polígonos REAIS extraídos do CAD oficial */}
+              {lots.map(lot => {
+                const isFiltered = !filteredIds.has(lot.id)
+                const isHovered = hoveredId === lot.id
+                const isSelected = selectedLot?.id === lot.id
+                const inCart = cartIds.has(lot.id)
+                const st = getStyle(lot.status)
+                const fillColor = isFiltered
+                  ? 'rgba(220,214,200,0.45)'
+                  : isSelected
+                    ? 'rgba(200,164,74,0.5)'
+                    : inCart
+                      ? 'rgba(34,197,94,0.42)'
+                      : st.fill
+                const strokeColor = isFiltered
+                  ? 'rgba(184,179,168,0.45)'
+                  : isSelected
+                    ? GOLD
+                    : inCart
+                      ? '#16A34A'
+                      : isHovered
+                        ? NAVY
+                        : st.stroke
+                const strokeWidth = (isSelected || isHovered ? 1.6 : 0.5) / transform.scale
+                return (
+                  <polygon
+                    key={lot.id}
+                    data-lot-id={lot.id}
+                    points={lot.points}
+                    fill={fillColor}
+                    stroke={strokeColor}
+                    strokeWidth={strokeWidth}
+                    strokeLinejoin="round"
+                    style={{
+                      cursor: lot.status === 'vendido' ? 'default' : 'pointer',
+                      transition: 'fill 0.1s, stroke 0.1s',
+                    }}
+                    onMouseEnter={() => setHoveredId(lot.id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                  />
+                )
               })}
 
-              {/* Lot number labels when zoomed in */}
-              {showLotNumbers && QUADRA_LAYOUTS.map(layout => {
-                const positions = generateLotPositions(layout)
-                return positions.map(pos => {
-                  const lotId = `${layout.id}-${pos.lotIndex + 1}`
-                  if (!filteredIds.has(lotId)) return null
-                  const cx = pos.x + pos.w / 2
-                  const cy = pos.y + pos.h / 2
-                  const fontSize = Math.max(2.5, Math.min(5, 8 / transform.scale))
-                  return (
-                    <text
-                      key={`lbl-${lotId}`}
-                      x={cx}
-                      y={cy}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontSize={fontSize}
-                      fill={selectedLot?.id === lotId ? NAVY : 'rgba(11,25,40,0.75)'}
-                      style={{ pointerEvents: 'none', fontFamily: 'monospace', fontWeight: 600 }}
-                    >
-                      {pos.lotIndex + 1}
-                    </text>
-                  )
-                })
+              {/* Números dos lotes ao aproximar */}
+              {showLotNumbers && lots.map(lot => {
+                if (!filteredIds.has(lot.id)) return null
+                const fontSize = Math.max(2, Math.min(6, 9 / transform.scale))
+                return (
+                  <text
+                    key={`lbl-${lot.id}`}
+                    x={lot.labelX}
+                    y={lot.labelY}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={fontSize}
+                    fill={selectedLot?.id === lot.id ? NAVY : 'rgba(11,25,40,0.8)'}
+                    style={{ pointerEvents: 'none', fontFamily: 'monospace', fontWeight: 600 }}
+                  >
+                    {lot.lote}
+                  </text>
+                )
               })}
 
-              {/* Quadra label badges when zoomed out */}
+              {/* Selos de quadra ao afastar */}
               {!showLotNumbers && (
                 <g style={{ pointerEvents: 'none' }}>
                   {Object.entries(quadraCentroids).map(([q, { x, y }]) => {
-                    const r = Math.max(8, 36 / transform.scale)
-                    const fontSize = Math.max(5, 22 / transform.scale)
+                    const r = Math.max(6, 26 / transform.scale)
+                    const fontSize = Math.max(5, 18 / transform.scale)
                     return (
                       <g key={q} transform={`translate(${x},${y})`}>
                         <circle
                           r={r}
-                          fill="rgba(255,255,255,0.88)"
-                          stroke="rgba(184,179,168,0.4)"
-                          strokeWidth={0.5 / transform.scale}
+                          fill="rgba(255,255,255,0.9)"
+                          stroke="rgba(184,179,168,0.5)"
+                          strokeWidth={0.6 / transform.scale}
                         />
                         <text
                           textAnchor="middle"
