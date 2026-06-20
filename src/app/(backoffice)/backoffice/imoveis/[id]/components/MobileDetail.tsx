@@ -670,7 +670,7 @@ export function MobileImovelDetail({
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
             {/* Editor de Áreas Comuns — acesso rápido */}
-            {(dev.type === 'loteamento' || dev.type === 'condominio_fechado') && (
+            {(dev.type === 'loteamento' || dev.type === 'condominio_fechado' || dev.id === 'ab7d1fc1-f069-4e3b-a515-8e1204c11247') && (
               <Link
                 href={`/backoffice/imoveis/${id}/mapa`}
                 style={{
@@ -793,7 +793,7 @@ export function MobileImovelDetail({
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <p style={EYEBROW}>Áreas Comuns</p>
                 <Link
-                  href={`/backoffice/imoveis/${id}/${(dev.type === 'loteamento' || dev.type === 'condominio_fechado') ? 'mapa' : 'editar'}`}
+                  href={`/backoffice/imoveis/${id}/${(dev.type === 'loteamento' || dev.type === 'condominio_fechado' || dev.id === 'ab7d1fc1-f069-4e3b-a515-8e1204c11247') ? 'mapa' : 'editar'}`}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 5, fontSize: 10,
                     color: 'var(--accent-400)', fontFamily: 'var(--font-sans)',
@@ -831,7 +831,7 @@ export function MobileImovelDetail({
                 ) : (
                   <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-tertiary)', fontSize: 12 }}>
                     Nenhuma foto de áreas comuns cadastrada.{' '}
-                    <Link href={`/backoffice/imoveis/${id}/editar`} style={{ color: 'var(--accent-400)', textDecoration: 'underline' }}>
+                    <Link href={`/backoffice/imoveis/${id}/${(dev.type === 'loteamento' || dev.type === 'condominio_fechado' || dev.id === 'ab7d1fc1-f069-4e3b-a515-8e1204c11247') ? 'mapa' : 'editar'}`} style={{ color: 'var(--accent-400)', textDecoration: 'underline' }}>
                       Adicionar agora
                     </Link>
                   </div>
@@ -888,7 +888,7 @@ export function MobileImovelDetail({
                 Ações de Gestão
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                {(dev.type === 'loteamento' || dev.type === 'condominio_fechado' ? [
+                {(dev.type === 'loteamento' || dev.type === 'condominio_fechado' || dev.id === 'ab7d1fc1-f069-4e3b-a515-8e1204c11247' ? [
                   { icon: Layers, label: 'Lotes', href: `/backoffice/imoveis/${id}/lotes` },
                   { icon: MapPinned, label: 'Áreas do Mapa', href: `/backoffice/imoveis/${id}/mapa` },
                 ] : [

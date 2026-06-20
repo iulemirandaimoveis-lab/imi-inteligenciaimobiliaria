@@ -532,7 +532,7 @@ export function DesktopImovelDetail({
               <div style={{ ...CARD, padding: 24 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                   <p style={EYEBROW}>{(dev.type === 'loteamento' || dev.type === 'condominio_fechado') ? 'Áreas Comuns do Mapa' : 'Áreas Comuns'}</p>
-                  <Link href={`/backoffice/imoveis/${id}/${(dev.type === 'loteamento' || dev.type === 'condominio_fechado') ? 'mapa' : 'editar'}`} style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 11, background: 'rgba(200,164,74,0.12)', borderColor: 'rgba(200,164,74,0.4)', color: 'var(--gold, #C8A44A)' }}>
+                  <Link href={`/backoffice/imoveis/${id}/${(dev.type === 'loteamento' || dev.type === 'condominio_fechado' || dev.id === 'ab7d1fc1-f069-4e3b-a515-8e1204c11247') ? 'mapa' : 'editar'}`} style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 11, background: 'rgba(200,164,74,0.12)', borderColor: 'rgba(200,164,74,0.4)', color: 'var(--gold, #C8A44A)' }}>
                     <MapPinned size={12} /> Gerenciar Fotos e Tour
                   </Link>
                 </div>
@@ -560,7 +560,7 @@ export function DesktopImovelDetail({
                   ) : (
                     <div style={{ textAlign: 'center', padding: '32px 0', color: T.textDim, fontSize: 13 }}>
                       Nenhuma foto de áreas comuns cadastrada.{' '}
-                      <Link href={`/backoffice/imoveis/${id}/editar`} style={{ color: 'var(--gold, var(--accent-400))', textDecoration: 'underline' }}>Adicionar agora</Link>
+                      <Link href={`/backoffice/imoveis/${id}/${(dev.type === 'loteamento' || dev.type === 'condominio_fechado' || dev.id === 'ab7d1fc1-f069-4e3b-a515-8e1204c11247') ? 'mapa' : 'editar'}`} style={{ color: 'var(--gold, var(--accent-400))', textDecoration: 'underline' }}>Adicionar agora</Link>
                     </div>
                   )
                 })()}
@@ -592,7 +592,7 @@ export function DesktopImovelDetail({
                   {[
                     { icon: Edit, label: 'Editar Imóvel', href: `/backoffice/imoveis/${id}/editar`, primary: true },
                     { icon: Scale, label: 'Solicitar Avaliação', href: `/backoffice/avaliacoes/nova?imovel=${id}&nome=${encodeURIComponent(dev.name)}&bairro=${encodeURIComponent(dev.neighborhood ?? '')}&area=${dev.area_from ?? ''}`, primary: true },
-                    ...(dev.type === 'loteamento' || dev.type === 'condominio_fechado'
+                    ...(dev.type === 'loteamento' || dev.type === 'condominio_fechado' || dev.id === 'ab7d1fc1-f069-4e3b-a515-8e1204c11247'
                       ? [
                           { icon: Layers, label: 'Gerenciar Lotes', href: `/backoffice/imoveis/${id}/lotes`, primary: false },
                           { icon: MapPinned, label: 'Áreas Comuns do Mapa', href: `/backoffice/imoveis/${id}/mapa`, primary: false },

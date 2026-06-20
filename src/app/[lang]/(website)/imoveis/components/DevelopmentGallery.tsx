@@ -6,11 +6,20 @@ import Image from 'next/image';
 import { Development } from '../types/development';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface DevelopmentGalleryProps {
-    development: Development;
+interface LotMapAmenity {
+    id: string;
+    title?: string;
+    subtitle?: string;
+    photos?: string[];
+    video?: string;
 }
 
-export default function DevelopmentGallery({ development }: DevelopmentGalleryProps) {
+interface DevelopmentGalleryProps {
+    development: Development;
+    lotMapAmenities?: LotMapAmenity[];
+}
+
+export default function DevelopmentGallery({ development, lotMapAmenities }: DevelopmentGalleryProps) {
     const allImages = [development.images.main, ...development.images.gallery].filter(Boolean) as string[];
     const hasImages = allImages.length > 0;
     const hasVideos = development.images.videos && development.images.videos.length > 0;
@@ -329,6 +338,47 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Common Areas */}
+                {lotMapAmenities && lotMapAmenities.some(a => (a.photos && a.photos.length > 0) || a.video) && (
+                    <div>
+                        <SectionTitle label="Áreas Comuns" />
+                        <div className="space-y-10">
+                            {lotMapAmenities
+                                .filter(a => (a.photos && a.photos.length > 0) || a.video)
+                                .map(area => (
+                                    <div key={area.id}>
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <div className="w-0.5 h-4 rounded-full flex-shrink-0" style={{ background: '#C8A44A' }} />
+                                            <h3 className="text-base font-bold text-gray-800" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
+                                                {area.title || area.id}
+                                            </h3>
+                                        </div>
+                                        {area.photos && area.photos.length > 0 && (
+                                            <div className={`grid gap-3 mb-4 ${area.photos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                                                {area.photos.map((photo, idx) => (
+                                                    <div key={idx} className="relative aspect-[16/10] rounded-[10px] overflow-hidden bg-gray-100">
+                                                        <Image
+                                                            src={photo}
+                                                            alt={`${area.title || area.id} - foto ${idx + 1}`}
+                                                            fill
+                                                            loading="lazy"
+                                                            className="object-cover"
+                                                            sizes="(max-width: 768px) 50vw, 33vw"
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {area.video && (
+                                            <VideoEmbed src={area.video} title={area.title || area.id} />
+                                        )}
+                                    </div>
+                                ))
+                            }
                         </div>
                     </div>
                 )}
