@@ -10,7 +10,6 @@ import DevelopmentLocation from '../components/DevelopmentLocation'
 import DevelopmentUnits from '../components/DevelopmentUnits'
 import dynamic from 'next/dynamic'
 import SubdivisionErrorBoundary from '../components/SubdivisionErrorBoundary'
-const InteractiveLotMap = dynamic(() => import('@/components/maps/InteractiveLotMap'), { ssr: false })
 const SubdivisionLotMap = dynamic(() => import('../components/SubdivisionLotMap'), { ssr: false })
 import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
@@ -313,7 +312,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     // tornando o mapa visível de forma atômica no deploy (sem depender de flag no DB).
     const KNOWN_LOT_MAP_SLUGS = new Set(['loteamento-miguel-marques'])
     const lotMapEnabled = isLoteamento && (data.lot_map_enabled === true || KNOWN_LOT_MAP_SLUGS.has(params.slug))
-    const lotMapJsonUrl = `/maps/${params.slug}-lots.json`
     const anchorSections = isLoteamento ? ANCHOR_SECTIONS_LOTEAMENTO : ANCHOR_SECTIONS
 
     return (
@@ -392,30 +390,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 />
                             ) : lotMapEnabled ? (
                                 <SubdivisionErrorBoundary developmentName={development.name}>
-                                    <div className="scroll-mt-32">
-                                        <div className="flex items-center gap-3 mb-6">
-                                            <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
-                                            <h2 className="text-xl text-gray-900 font-bold tracking-tight" style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
-                                                Planta de Lotes
-                                            </h2>
-                                        </div>
-                                        {params.slug === 'alto-bellevue' ? (
-                                            <SubdivisionLotMap
-                                                developmentId={development.id}
-                                                developmentName={development.name}
-                                                whatsappPhone={whatsappContact}
-                                                mapAmenities={Array.isArray(data.lot_map_amenities) ? data.lot_map_amenities : []}
-                                                virtualTourUrl={data.virtual_tour_url || undefined}
-                                            />
-                                        ) : (
-                                            <InteractiveLotMap
-                                                developmentId={development.id}
-                                                lotMapJsonUrl={lotMapJsonUrl}
-                                                galleryImages={development.images.gallery.slice(0, 4)}
-                                                whatsappContact={whatsappContact}
-                                            />
-                                        )}
-                                    </div>
+                                    <SubdivisionLotMap
+                                        developmentId={development.id}
+                                        developmentName={development.name}
+                                        whatsappPhone={whatsappContact}
+                                        mapAmenities={Array.isArray(data.lot_map_amenities) ? data.lot_map_amenities : []}
+                                        virtualTourUrl={data.virtual_tour_url || undefined}
+                                    />
                                 </SubdivisionErrorBoundary>
                             ) : (
                                 <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
