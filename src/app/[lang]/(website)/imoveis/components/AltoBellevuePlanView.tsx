@@ -467,14 +467,13 @@ interface MapInnerProps {
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
-  onPointerLeave: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerCancel: (e: React.PointerEvent<HTMLDivElement>) => void;
 }
 
 const MapInner = memo(function MapInner({
   lots, allLots, context, showTechLayer, selectedId, compareIds, multiSelectMode, vb, isDragging,
   activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onPointerDown, onPointerMove, onPointerUp,
-  onPointerLeave, onPointerCancel,
+  onPointerCancel,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
   const scale = SVG_W / vb.w;
@@ -620,7 +619,7 @@ const MapInner = memo(function MapInner({
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onPointerLeave={onPointerLeave}
+      onPointerLeave={onPointerUp}
       onPointerCancel={onPointerCancel}
     >
       <svg
@@ -2372,10 +2371,6 @@ export default function AltoBellevuePlanView({
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointerCache.current.size === 1) {
-      // Capture pointer so pointermove/pointerup always fire on this div even if the
-      // finger drifts to element boundaries — eliminates spurious pointerleave on iOS
-      // that was clearing clickTargetRef before pointerup, preventing card open.
-      try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* no-op */ }
       // Double-tap zoom: zoom in 2.5× at tap point
       const now = performance.now();
       const lastTap = lastTapRef.current;
@@ -2442,7 +2437,7 @@ export default function AltoBellevuePlanView({
     // "drag" e o card NUNCA abria no mobile. O dedo treme mais que o mouse, então o
     // limiar do toque é maior. Enquanto dentro do slop, não consideramos drag nem
     // movemos o mapa (assim o tap abre o card e não arrasta sem querer).
-    const slop = e.pointerType === 'touch' ? 12 : 4;
+    const slop = e.pointerType === 'touch' ? 20 : 4;
     const movedFromDown = Math.hypot(e.clientX - downPos.current.x, e.clientY - downPos.current.y);
     if (movedFromDown >= slop) didDrag.current = true;
 
@@ -2493,17 +2488,6 @@ export default function AltoBellevuePlanView({
       if (!dispatched) { setSelectedLot(null); setSelectedAmenity(null); }
     }
   }, [mapData]);
-
-  // Pointer left the container (or capture released) — cleanup only, no click dispatch.
-  const handlePointerLeave = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!pointerCache.current.has(e.pointerId)) return;
-    pointerCache.current.delete(e.pointerId);
-    if (pointerCache.current.size === 0) {
-      setIsDragging(false);
-      clickTargetRef.current = null;
-      didDrag.current = false;
-    }
-  }, []);
 
   // Browser cancelled the pointer (scroll, system gesture) — cleanup only, no click dispatch.
   const handlePointerCancel = useCallback((_e: React.PointerEvent<HTMLDivElement>) => {
@@ -2931,7 +2915,6 @@ export default function AltoBellevuePlanView({
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerLeave}
             onPointerCancel={handlePointerCancel}
           />
         )}
