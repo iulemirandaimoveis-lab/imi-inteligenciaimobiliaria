@@ -3,9 +3,13 @@
 import dynamic from 'next/dynamic'
 import { useMemo, useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { ALL_LOTS, type Lot } from '../data/lotsData'
+import { type Lot } from '../data/lotsData'
 
 const MiguelMarquesPlanView = dynamic(() => import('./MiguelMarquesPlanView'), { ssr: false })
+
+// Universo de lotes = geometria REAL do CAD (mesma fonte do mapa) para que os
+// totais do cabeçalho batam exatamente com o que é renderizado.
+const GEO_URL = '/maps/miguel-marques-cad-lots.json'
 
 const PAYMENT_CONDITIONS = {
   entrada: '1+1 — R$ 1.450 (5%)',
@@ -18,35 +22,55 @@ const PAYMENT_CONDITIONS = {
 const DEVELOPMENT_SLUG = 'loteamento-miguel-marques'
 
 export default function MasterplanSection() {
-  const [effectiveLots, setEffectiveLots] = useState<Lot[]>(ALL_LOTS)
+  const [baseLots, setBaseLots] = useState<Lot[]>([])
+  const [overrides, setOverrides] = useState<Map<string, Lot['status']>>(new Map())
 
-  // Silently overlay live Supabase status — resolve UUID from slug first, then fetch subdivision_lots
+  // Carrega o universo de lotes da geometria real (CAD).
+  useEffect(() => {
+    let alive = true
+    fetch(GEO_URL)
+      .then(r => r.json())
+      .then((d: { lots?: Record<string, unknown>[] }) => {
+        if (!alive) return
+        setBaseLots((d.lots ?? []).map((l) => ({
+          id: String(l.id),
+          quadra: String(l.quadra),
+          lote: Number(l.lote),
+          metragem: Number(l.area) || 0,
+          valor: Number(l.price) || 0,
+          status: String(l.status ?? 'disponivel') as Lot['status'],
+        })))
+      })
+      .catch(() => { /* mantém vazio — o mapa exibe o estado de carregamento */ })
+    return () => { alive = false }
+  }, [])
+
+  // Sobrepõe silenciosamente o status ao vivo do Supabase (resolve UUID pelo slug).
   useEffect(() => {
     const supabase = createClient()
     async function syncStatuses() {
-      // Step 1: resolve development UUID from slug
       const { data: dev } = await supabase
         .from('developments')
         .select('id')
         .eq('slug', DEVELOPMENT_SLUG)
         .single()
       if (!dev?.id) return
-
-      // Step 2: fetch lot statuses using UUID (subdivision_lots.development_id is UUID)
       const { data } = await supabase
         .from('subdivision_lots')
         .select('quadra, lot_number, status')
         .eq('development_id', dev.id)
       if (!data || data.length === 0) return
-
-      // Map quadra-lot_number keys to match lotsData.ts id format (e.g. 'A-1')
-      const overrides = new Map(
+      setOverrides(new Map(
         data.map((r) => [`${r.quadra}-${r.lot_number}`, r.status.toLowerCase() as Lot['status']])
-      )
-      setEffectiveLots(ALL_LOTS.map(l => ({ ...l, status: overrides.get(l.id) ?? l.status })))
+      ))
     }
     syncStatuses()
   }, [])
+
+  const effectiveLots = useMemo(
+    () => baseLots.map(l => ({ ...l, status: overrides.get(l.id) ?? l.status })),
+    [baseLots, overrides],
+  )
 
   const stats = useMemo(() => {
     const disponivel = effectiveLots.filter(l => l.status === 'disponivel').length
